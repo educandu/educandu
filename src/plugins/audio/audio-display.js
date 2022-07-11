@@ -29,9 +29,9 @@ function AudioDisplay({ content }) {
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
-        {content.text && (
-          <div className="AudioDisplay-text">
-            <Markdown>{content.text}</Markdown>
+        {content.copyrightNotice && (
+          <div className="AudioDisplay-copyrightNotice">
+            <Markdown>{content.copyrightNotice}</Markdown>
           </div>
         )}
       </div>

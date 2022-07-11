@@ -33,7 +33,7 @@ class ImageInfo {
       sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: '',
       width: 100,
-      text: '',
+      copyrightNotice: '',
       effect: null
     };
   }

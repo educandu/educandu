@@ -19,7 +19,7 @@ function ImageDisplay({ content }) {
   const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
-  const { text, sourceType, sourceUrl, effect, width } = content;
+  const { copyrightNotice, sourceType, sourceUrl, effect, width } = content;
   const src = getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   useEffect(() => {
@@ -129,7 +129,7 @@ function ImageDisplay({ content }) {
   );
 
   const showMainImageCopyright = !shouldApplyHoverEffect;
-  const showEffectImageCopyright = effect?.text
+  const showEffectImageCopyright = effect?.copyrightNotice
     && (effect.type === EFFECT_TYPE.reveal || (effect.type === EFFECT_TYPE.hover && shouldApplyHoverEffect));
 
   if (hasMainImageFailed) {
@@ -153,9 +153,9 @@ function ImageDisplay({ content }) {
           />
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
-      <div className="ImageDisplay-copyrightInfo">
-        {showMainImageCopyright && <Markdown>{text}</Markdown>}
-        {showEffectImageCopyright && <Markdown>{effect.text}</Markdown>}
+      <div className="ImageDisplay-copyrightNotice">
+        {showMainImageCopyright && <Markdown>{copyrightNotice}</Markdown>}
+        {showEffectImageCopyright && <Markdown>{effect.copyrightNotice}</Markdown>}
       </div>
     </div>
   );

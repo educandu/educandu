@@ -9,15 +9,15 @@ describe('video-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts the text', () => {
+    it('redacts the copyrightNotice', () => {
       const input = {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         posterImage: {},
-        text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
       const result = sut.redactContent(input, '67890');
-      expect(result.text).toBe('[Click me]()');
+      expect(result.copyrightNotice).toBe('[Click me]()');
     });
 
     it('redacts the video source url', () => {
@@ -25,7 +25,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -36,7 +36,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -50,7 +50,7 @@ describe('video-info', () => {
           sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: 'rooms/12345/media/my-image.jpg'
         },
-        text: ''
+        copyrightNotice: ''
       };
       const result = sut.redactContent(input, '67890');
       expect(result.posterImage.sourceUrl).toBe('');
@@ -64,7 +64,7 @@ describe('video-info', () => {
           sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: 'rooms/12345/media/my-image.jpg'
         },
-        text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
       const result = sut.redactContent(input, '12345');
       expect(result).toStrictEqual(input);
@@ -72,12 +72,12 @@ describe('video-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns CDN resources from text', () => {
+    it('returns CDN resources from copyrightNotice', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         posterImage: {},
-        text: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
+        copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
       });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
@@ -87,7 +87,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: 'https://youtube.com/something',
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -97,7 +97,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/video.mp4',
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -107,7 +107,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: null,
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -117,7 +117,7 @@ describe('video-info', () => {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'media/some-video.mp4',
         posterImage: {},
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toEqual(['media/some-video.mp4']);
     });
@@ -130,7 +130,7 @@ describe('video-info', () => {
           sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: 'media/some-image.jpeg'
         },
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toEqual(['media/some-video.mp4', 'media/some-image.jpeg']);
     });

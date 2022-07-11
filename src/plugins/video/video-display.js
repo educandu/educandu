@@ -40,9 +40,9 @@ function VideoDisplay({ content }) {
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
-        {content.text && (
-          <div className="VideoDisplay-text">
-            <Markdown>{content.text}</Markdown>
+        {content.copyrightNotice && (
+          <div className="VideoDisplay-copyrightNotice">
+            <Markdown>{content.copyrightNotice}</Markdown>
           </div>
         )}
       </div>

@@ -170,9 +170,9 @@ function EarTrainingDisplay({ content }) {
             canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
-        {currentTest.sound.text && (
+        {currentTest.sound.copyrightNotice && (
           <div>
-            <Markdown>{currentTest.sound.text}</Markdown>
+            <Markdown>{currentTest.sound.copyrightNotice}</Markdown>
           </div>
         )}
       </div>
@@ -230,13 +230,13 @@ function EarTrainingDisplay({ content }) {
                     sourceUrl: tests[currentTestIndex].questionImage.sourceUrl
                   })}
                   />
-                {!isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].questionImage.text}</Markdown>}
+                {!isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].questionImage.copyrightNotice}</Markdown>}
               </Fragment>
             )}
             {tests[currentTestIndex].mode === TEST_MODE.image && (
               <Fragment>
                 <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
-                {isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].answerImage.text}</Markdown>}
+                {isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].answerImage.copyrightNotice}</Markdown>}
               </Fragment>
             )}
             {tests[currentTestIndex].mode === TEST_MODE.abcCode && (

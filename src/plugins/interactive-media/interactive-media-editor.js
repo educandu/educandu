@@ -47,7 +47,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterDuration, setSelectedChapterDuration] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, copyrightNotice, width, aspectRatio, showVideo } = content;
 
   const playbackDuration = (sourceStopTimecode ?? sourceDuration) - (sourceStartTimecode ?? 0);
 
@@ -177,8 +177,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ showVideo: newShowVideo });
   };
 
-  const handleCopyrightInfoChanged = event => {
-    changeContent({ text: event.target.value });
+  const handleCopyrightNoticeChanged = event => {
+    changeContent({ copyrightNotice: event.target.value });
   };
 
   const handleWidthChanged = newValue => {
@@ -359,7 +359,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
         <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCopyrightInfoChanged} />
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
         </FormItem>
 
         <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>

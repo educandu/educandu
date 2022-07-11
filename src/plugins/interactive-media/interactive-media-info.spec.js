@@ -9,21 +9,21 @@ describe('interactive-media-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts the text', () => {
+    it('redacts the copyrightNotice', () => {
       const input = {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
-        text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
       const result = sut.redactContent(input, '67890');
-      expect(result.text).toBe('[Click me]()');
+      expect(result.copyrightNotice).toBe('[Click me]()');
     });
 
     it('redacts the media source url', () => {
       const input = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
-        text: ''
+        copyrightNotice: ''
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -33,7 +33,7 @@ describe('interactive-media-info', () => {
       const input = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
-        text: ''
+        copyrightNotice: ''
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -43,7 +43,7 @@ describe('interactive-media-info', () => {
       const input = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
-        text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
       const result = sut.redactContent(input, '12345');
       expect(result).toStrictEqual(input);
@@ -51,11 +51,11 @@ describe('interactive-media-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns CDN resources from text', () => {
+    it('returns CDN resources from copyrightNotice', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
-        text: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
+        copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
       });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
@@ -64,7 +64,7 @@ describe('interactive-media-info', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: 'https://youtube.com/something',
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -73,7 +73,7 @@ describe('interactive-media-info', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/video.mp4',
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -82,7 +82,7 @@ describe('interactive-media-info', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: null,
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toHaveLength(0);
     });
@@ -91,7 +91,7 @@ describe('interactive-media-info', () => {
       const result = sut.getCdnResources({
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'media/some-video.mp4',
-        text: ''
+        copyrightNotice: ''
       });
       expect(result).toEqual(['media/some-video.mp4']);
     });

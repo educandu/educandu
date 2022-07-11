@@ -15,7 +15,7 @@ import { StepForwardOutlined, UndoOutlined, CheckOutlined, CloseOutlined, FlagOu
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, text, chapters } = content;
+  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -219,9 +219,9 @@ function InteractiveMediaDisplay({ content }) {
             </div>
           </div>
         )}
-        {text && (
-          <div className="InteractiveMediaDisplay-text">
-            <Markdown>{text}</Markdown>
+        {copyrightNotice && (
+          <div className="InteractiveMediaDisplay-copyrightNotice">
+            <Markdown>{copyrightNotice}</Markdown>
           </div>
         )}
         <div className="InteractiveMediaDisplay-chaptersResolution">

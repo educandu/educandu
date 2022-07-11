@@ -24,7 +24,7 @@ function VideoEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, posterImage } = content;
+  const { sourceType, sourceUrl, copyrightNotice, width, aspectRatio, posterImage } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -61,9 +61,9 @@ function VideoEditor({ content, onContentChanged }) {
     changeContent({ aspectRatio: event.target.value });
   };
 
-  const handleCopyrightInfoChange = event => {
+  const handleCopyrightNoticeChange = event => {
     const { value } = event.target;
-    changeContent({ text: value });
+    changeContent({ copyrightNotice: value });
   };
 
   const handleWidthChange = newValue => {
@@ -147,7 +147,7 @@ function VideoEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCopyrightInfoChange} />
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
         </Form.Item>
       </Form>
     </div>
