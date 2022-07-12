@@ -77,7 +77,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         )}
         {!isRetrievingMediaInfo && currentMediaInfo && (
           <MediaPlayer
-            sourceUrl={currentMediaInfo.sanitizedUrl}
+            source={currentMediaInfo.sanitizedUrl}
             extraCustomContent={(
               <div className="MediaRangeSelector-rangeSelectorArea">
                 <div className="MediaRangeSelector-rangeDisplay">

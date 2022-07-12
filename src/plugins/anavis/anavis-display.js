@@ -70,7 +70,7 @@ function AnavisDisplay({ content }) {
       <div className={`AnavisDisplay-players u-width-${width || 100}`}>
         {sourceUrl && (
           <MediaPlayer
-            sourceUrl={sourceUrl}
+            source={sourceUrl}
             aspectRatio={media.aspectRatio}
             screenMode={media.kind === MEDIA_KIND.audio ? MEDIA_SCREEN_MODE.none : MEDIA_SCREEN_MODE.video}
             />

@@ -168,7 +168,7 @@ function InteractiveMediaDisplay({ content }) {
           <MediaPlayer
             mediaPlayerRef={mediaPlayerRef}
             marks={marks}
-            sourceUrl={sourceUrl}
+            source={sourceUrl}
             screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
             aspectRatio={aspectRatio}
             startTimecode={sourceStartTimecode}
