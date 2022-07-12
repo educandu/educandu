@@ -7,6 +7,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-utils.js';
+import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { cdnObjectShape, storageLocationShape } from '../ui/default-prop-types.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
@@ -16,22 +17,15 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [uploadStarted, setUploadStarted] = useState(false);
-  const [filesUploadStatus, setFilesUploadStatus] = useState(files.reduce((accu, file) => {
-    accu[file.path] = {
-      filePath: file.path,
-      fileName: file.name,
-      uploadEnded: false,
-      error: null
-    };
-    return accu;
-  }, {}));
+  const [filesUploadStatus, setFilesUploadStatus] = useState(files
+    .reduce((accu, file) => ({ ...accu, [file.name]: { fileName: file.name, uploadEnded: false, error: null } }), {}));
 
   const canUploadFile = useCallback((file, currentUsedBytes) => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
       setFilesUploadStatus(previousStatus => {
         const newStatus = cloneDeep(previousStatus);
-        newStatus[file.path].uploadEnded = true;
-        newStatus[file.path].error = t('uploadLimitExceeded', {
+        newStatus[file.name].uploadEnded = true;
+        newStatus[file.name].error = t('uploadLimitExceeded', {
           uploadSize: prettyBytes(file.size, { locale: uiLocale }),
           uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
         });
@@ -45,8 +39,8 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
       if (file.size > availableBytes) {
         setFilesUploadStatus(previousStatus => {
           const newStatus = cloneDeep(previousStatus);
-          newStatus[file.path].uploadEnded = true;
-          newStatus[file.path].error = t('insufficientPrivateStorge');
+          newStatus[file.name].uploadEnded = true;
+          newStatus[file.name].error = t('insufficientPrivateStorge');
           return newStatus;
         });
         return false;
@@ -68,14 +62,14 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
           currentUsedBytes = usedBytes;
           setFilesUploadStatus(previousStatus => {
             const newStatus = cloneDeep(previousStatus);
-            newStatus[file.path].uploadEnded = true;
+            newStatus[file.name].uploadEnded = true;
             return newStatus;
           });
         } catch (error) {
           setFilesUploadStatus(previousStatus => {
             const newStatus = cloneDeep(previousStatus);
-            newStatus[file.path].uploadEnded = true;
-            newStatus.error = error;
+            newStatus[file.name].uploadEnded = true;
+            newStatus[file.name].error = error.message;
             return newStatus;
           });
         }
@@ -97,14 +91,36 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
     })();
   }, [uploadStarted, files, uploadFiles, onUploadFinish]);
 
+  const renderFileStatus = fileStatus => {
+    return (
+      <div className="FilesUploadOverview-fileStatus">
+        <div className="FilesUploadOverview-fileStatusRow">
+          {!fileStatus.uploadEnded && (
+          <LoadingOutlined className="FilesUploadOverview-fileStatusIcon" />
+          )}
+          {fileStatus.uploadEnded && !fileStatus.error && (
+          <CheckOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--green" />
+          )}
+          {fileStatus.uploadEnded && !!fileStatus.error && (
+          <CloseOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--red" />
+          )}
+          {fileStatus.fileName}
+        </div>
+        <div className="FilesUploadOverview-fileStatusError">{fileStatus.error?.toString()}</div>
+      </div>
+    );
+  };
+
   return (
     <div className="FilesUploadOverview">
-      <div className="FilesUploadOverview-headline">{t('headline')}</div>
-      {Object.values(filesUploadStatus).map(status => (
-        <div key={status.filePath}>
-          Uploading {status.fileName} <span>{status.uploadEnded?.toString()}</span>  <span>{status.error?.toString()}</span>
-        </div>
-      ))}
+      <h3 className="FilesUploadOverview-headline">{t('headline')}</h3>
+      <div className="FilesUploadOverview-fileStatusContainer">
+        {Object.values(filesUploadStatus).map(fileStatus => (
+          <div key={fileStatus.fileName} data-key={fileStatus.fileName}>
+            {renderFileStatus(fileStatus)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

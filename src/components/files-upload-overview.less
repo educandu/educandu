@@ -1,5 +1,34 @@
 .FilesUploadOverview {}
 
 .FilesUploadOverview-headline {
-  margin: 0 0 20px 0;
+  margin: 20px 0;
+}
+
+.FilesUploadOverview-fileStatus {
+  margin: 15px;
+}
+
+.FilesUploadOverview-fileStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.FilesUploadOverview-fileStatusError {
+  padding-left: 25px;
+  color: @edu-error-color;
+}
+
+.FilesUploadOverview-fileStatusContainer {
+  overflow: scroll;
+}
+
+.FilesUploadOverview-fileStatusIcon {
+  &.FilesUploadOverview-fileStatusIcon--green {
+    color: @edu-success-color;
+  }
+
+  &.FilesUploadOverview-fileStatusIcon--red {
+    color: @edu-error-color;
+  }
 }
