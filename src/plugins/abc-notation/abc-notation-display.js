@@ -1,6 +1,6 @@
 import React from 'react';
-import Markdown from '../../components/markdown.js';
 import AbcNotation from '../../components/abc-notation.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function AbcNotationDisplay({ content }) {
@@ -8,9 +8,7 @@ function AbcNotationDisplay({ content }) {
     <div className="AbcNotation fa5">
       <div className={`AbcNotation-wrapper u-width-${content.width}`}>
         <AbcNotation abcCode={content.abcCode} displayMidi={content.displayMidi} />
-        <div className="AbcNotation-copyrightInfo">
-          <Markdown>{content.text}</Markdown>
-        </div>
+        <CopyrightNotice value={content.copyrightNotice} />
       </div>
     </div>
   );

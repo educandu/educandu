@@ -26,7 +26,7 @@ function ImageEditor({ content, onContentChanged }) {
   const [currentImageSource, setCurrentImageSource] = useState(null);
   const [clipSizeInPx, setClipSizeInPx] = useState({ width: 0, height: 0 });
 
-  const { sourceType, sourceUrl, width, text, effect } = content;
+  const { sourceType, sourceUrl, width, copyrightNotice, effect } = content;
   const effectType = effect?.type || EFFECT_TYPE.none;
 
   const formItemLayout = {
@@ -106,9 +106,9 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ sourceUrl: value, effect: getResetEffect() });
   };
 
-  const handleCopyrightInfoValueChanged = event => {
+  const handleCopyrightNoticeChanged = event => {
     const { value } = event.target;
-    changeContent({ text: value });
+    changeContent({ copyrightNotice: value });
   };
 
   const handleEffectOptionChange = event => {
@@ -117,7 +117,7 @@ function ImageEditor({ content, onContentChanged }) {
     const baseEffect = {
       sourceType: effect?.sourceType || IMAGE_SOURCE_TYPE.internal,
       sourceUrl: effect?.sourceUrl || '',
-      text: effect?.text || ''
+      copyrightNotice: effect?.copyrightNotice || ''
     };
 
     switch (value) {
@@ -186,9 +186,9 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ effect: newEffect });
   };
 
-  const handleEffectCopyrightInfoValueChanged = event => {
+  const handleEffectCopyrightNoticeChanged = event => {
     const { value } = event.target;
-    const newEffect = { ...effect, text: value };
+    const newEffect = { ...effect, copyrightNotice: value };
     changeContent({ effect: newEffect });
   };
 
@@ -244,8 +244,8 @@ function ImageEditor({ content, onContentChanged }) {
     </FormItem>
   );
 
-  const renderCopyrightInput = (value, onChangeHandler) => (
-    <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+  const renderCopyrightNoticeInput = (value, onChangeHandler) => (
+    <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
       <MarkdownInput value={value} onChange={onChangeHandler} />
     </Form.Item>
   );
@@ -261,7 +261,7 @@ function ImageEditor({ content, onContentChanged }) {
         {sourceType === IMAGE_SOURCE_TYPE.internal
           && renderInternalSourceTypeInput(sourceUrl, handleInternalSourceUrlValueChanged, handleInternalSourceUrlFileNameChanged)}
 
-        {renderCopyrightInput(text, handleCopyrightInfoValueChanged)}
+        {renderCopyrightNoticeInput(copyrightNotice, handleCopyrightNoticeChanged)}
 
         <Form.Item label={t('effectTypeLabel')} {...formItemLayout}>
           <RadioGroup value={effectType} onChange={handleEffectOptionChange}>
@@ -285,7 +285,7 @@ function ImageEditor({ content, onContentChanged }) {
                 {effect.sourceType === IMAGE_SOURCE_TYPE.internal
                     && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
 
-                {renderCopyrightInput(effect.text, handleEffectCopyrightInfoValueChanged)}
+                {renderCopyrightNoticeInput(effect.copyrightNotice, handleEffectCopyrightNoticeChanged)}
               </Fragment>
               )}
 

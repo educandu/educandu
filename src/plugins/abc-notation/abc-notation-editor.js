@@ -10,7 +10,7 @@ import NeverScrollingTextArea from '../../components/never-scrolling-text-area.j
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
-  const { abcCode, width, displayMidi, text } = content;
+  const { abcCode, width, displayMidi, copyrightNotice } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -39,9 +39,9 @@ function AbcNotationEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
-  const handleCurrentTextChanged = event => {
+  const handleCurrentCopyrightNoticeChanged = event => {
     const newValue = event.target.value;
-    changeContent({ text: newValue });
+    changeContent({ copyrightNotice: newValue });
   };
 
   return (
@@ -59,8 +59,8 @@ function AbcNotationEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCurrentTextChanged} />
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCurrentCopyrightNoticeChanged} />
         </Form.Item>
       </Form>
     </div>

@@ -1,10 +1,10 @@
 import React from 'react';
 import { MEDIA_KIND } from './constants.js';
 import colorHelper from '../../ui/color-helper.js';
-import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
@@ -75,11 +75,7 @@ function AnavisDisplay({ content }) {
             screenMode={media.kind === MEDIA_KIND.audio ? MEDIA_SCREEN_MODE.none : MEDIA_SCREEN_MODE.video}
             />
         )}
-        {media.text && (
-          <div className="AnavisDisplay-text">
-            <Markdown>{media.text}</Markdown>
-          </div>
-        )}
+        <CopyrightNotice value={media.copyrightNotice} />
       </div>
     </div>
   );

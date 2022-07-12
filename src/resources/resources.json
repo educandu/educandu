@@ -2105,7 +2105,7 @@
       "youtubeUrl": "Youtube URL",
       "aspectRatio": "Aspect ratio",
       "width": "Width",
-      "copyrightInfos": "Copyright infos",
+      "copyrightNotice": "Copyright notice",
       "videoDisplay": "Video display",
       "source": "Source",
       "size": "Size",
@@ -2125,7 +2125,8 @@
       "deletedRoom": "Deleted room",
       "deletedLesson": "Deleted lesson",
       "reset": "Reset",
-      "randomizedTests": "The tests are arranged in random order"
+      "randomizedTests": "The tests are arranged in random order",
+      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
     }
   },
   {
@@ -2246,7 +2247,7 @@
       "youtubeUrl": "Youtube URL",
       "aspectRatio": "Seitenverhältnis",
       "width": "Breite",
-      "copyrightInfos": "Copyright Infos",
+      "copyrightNotice": "Urheberschutzvermerk",
       "videoDisplay": "Videoanzeige",
       "source": "Quelle",
       "size": "Größe",
@@ -2266,7 +2267,8 @@
       "deletedRoom": "Gelöschter Raum",
       "deletedLesson": "Gelöschte Einheit",
       "reset": "Zurücksetzen",
-      "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet"
+      "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
+      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
     }
   },
   {

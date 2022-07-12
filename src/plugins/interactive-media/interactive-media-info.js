@@ -51,7 +51,7 @@ class InteractiveMediaInfo {
       sourceDuration: 0,
       startTimecode: null,
       stopTimecode: null,
-      text: '',
+      copyrightNotice: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       showVideo: false,
@@ -66,8 +66,8 @@ class InteractiveMediaInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    redactedContent.text = this.gfm.redactCdnResources(
-      redactedContent.text,
+    redactedContent.copyrightNotice = this.gfm.redactCdnResources(
+      redactedContent.copyrightNotice,
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
@@ -81,13 +81,13 @@ class InteractiveMediaInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.text || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
     if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
       cdnResources.push(content.sourceUrl);
     }
 
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
