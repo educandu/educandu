@@ -1485,7 +1485,7 @@
     "namespace": "usedStorage",
     "language": "de",
     "resources": {
-      "label": "Genutztem Speicherplatz",
+      "label": "Genutzter Speicherplatz",
       "storageSpaceExceeded": "Überschreitung"
     }
   },
