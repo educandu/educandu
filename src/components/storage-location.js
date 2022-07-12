@@ -18,7 +18,7 @@ import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
@@ -240,64 +240,68 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   return (
     <div className="StorageLocation">
-      <div className="StorageLocation-buttonsLine">
-        <div />
-        <div className="StorageLocation-filesViewerSelectContainer">
-          <Select
-            value={filesViewerDisplay}
-            onChange={setFilesViewerDisplay}
-            className="StorageLocation-filesViewerSelect"
-            options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
-            />
-        </div>
-      </div>
-      <ReactDropzone
-        ref={dropzoneRef}
-        onDrop={canAcceptFiles ? setUploadQueue : null}
-        noKeyboard
-        noClick
-        >
-        {({ getRootProps, getInputProps, isDragActive }) => (
-          <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
-            <input {...getInputProps()} hidden />
-            <FilesViewer
-              files={files}
-              parentDirectory={parentDirectory}
-              display={filesViewerDisplay}
-              onFileClick={handleFileClick}
-              onFileDoubleClick={handleFileDoubleClick}
-              selectedFileUrl={selectedFile?.portableUrl}
-              onDeleteClick={handleDeleteClick}
-              onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
-              onPreviewClick={handlePreviewClick}
-              canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
-              canDelete={storageLocation.isDeletionEnabled}
-              isLoading={isLoading}
-              />
+      {screen === SCREEN.none && (
+        <Fragment>
+          <div className="StorageLocation-buttonsLine">
+            <div />
+            <div className="StorageLocation-filesViewerSelectContainer">
+              <Select
+                value={filesViewerDisplay}
+                onChange={setFilesViewerDisplay}
+                className="StorageLocation-filesViewerSelect"
+                options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
+                />
+            </div>
           </div>
-        )}
-      </ReactDropzone>
-      <div className="StorageLocation-storageInfo">
-        {storageLocation.type === STORAGE_LOCATION_TYPE.private
+          <ReactDropzone
+            ref={dropzoneRef}
+            onDrop={canAcceptFiles ? setUploadQueue : null}
+            noKeyboard
+            noClick
+            >
+            {({ getRootProps, getInputProps, isDragActive }) => (
+              <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+                <input {...getInputProps()} hidden />
+                <FilesViewer
+                  files={files}
+                  parentDirectory={parentDirectory}
+                  display={filesViewerDisplay}
+                  onFileClick={handleFileClick}
+                  onFileDoubleClick={handleFileDoubleClick}
+                  selectedFileUrl={selectedFile?.portableUrl}
+                  onDeleteClick={handleDeleteClick}
+                  onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
+                  onPreviewClick={handlePreviewClick}
+                  canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
+                  canDelete={storageLocation.isDeletionEnabled}
+                  isLoading={isLoading}
+                  />
+              </div>
+            )}
+          </ReactDropzone>
+          <div className="StorageLocation-storageInfo">
+            {storageLocation.type === STORAGE_LOCATION_TYPE.private
             && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
             && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
-        {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
-          <Alert message={t('publicStorageWarning')} type="warning" showIcon />
-        )}
-      </div>
-      <div className="StorageLocation-buttonsLine">
-        <Button
-          icon={<UploadIcon />}
-          onClick={handleUploadButtonClick}
-          disabled={!canUploadToCurrentDirectory || isLoading}
-          >
-          {t('uploadFiles')}
-        </Button>
-        <div className="StorageLocation-buttonsGroup">
-          <Button onClick={onCancel}>{t('common:cancel')}</Button>
-          {renderSelectButton()}
-        </div>
-      </div>
+            {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
+            <Alert message={t('publicStorageWarning')} type="warning" showIcon />
+            )}
+          </div>
+          <div className="StorageLocation-buttonsLine">
+            <Button
+              icon={<UploadIcon />}
+              onClick={handleUploadButtonClick}
+              disabled={!canUploadToCurrentDirectory || isLoading}
+              >
+              {t('uploadFiles')}
+            </Button>
+            <div className="StorageLocation-buttonsGroup">
+              <Button onClick={onCancel}>{t('common:cancel')}</Button>
+              {renderSelectButton()}
+            </div>
+          </div>
+        </Fragment>
+      )}
 
       {screen === SCREEN.preview && (
       <div className="StorageLocation-screen">

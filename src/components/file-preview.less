@@ -5,6 +5,12 @@
   justify-items: stretch;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr 1fr;
+
+  @media @edu-media-phone {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
 }
 
 .FilePreview-previewArea {
