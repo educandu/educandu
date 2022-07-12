@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useService } from './container-context.js';
 import { useNumberFormat } from './locale-context.js';
 import { Menu, Button, Slider, Dropdown } from 'antd';
-import HttpClient from '../api-clients/http-client.js';
 import MuteIcon from './icons/media-player/mute-icon.js';
 import PlayIcon from './icons/media-player/play-icon.js';
 import PauseIcon from './icons/media-player/pause-icon.js';
@@ -30,10 +28,8 @@ function MediaPlayerControls({
   onVolumeChange,
   onPlaybackRateChange,
   screenMode,
-  sourceUrl,
-  canDownload
+  onDownloadClick
 }) {
-  const httpClient = useService(HttpClient);
   const { formatNumber } = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
 
@@ -43,7 +39,7 @@ function MediaPlayerControls({
 
   const handleSettingsMenuItemClick = ({ key }) => {
     if (key === 'download') {
-      httpClient.download(sourceUrl);
+      onDownloadClick();
     } else if (key.startsWith('playbackRate-')) {
       const newPlaybackRate = Number(key.split('-')[1]);
       setPlaybackRate(newPlaybackRate);
@@ -54,7 +50,7 @@ function MediaPlayerControls({
   const renderSettingsMenu = () => {
     const items = [];
 
-    if (canDownload && sourceUrl) {
+    if (onDownloadClick) {
       items.push({
         key: 'download',
         label: t('download'),
@@ -82,6 +78,12 @@ function MediaPlayerControls({
     return <Menu items={items} onClick={handleSettingsMenuItemClick} />;
   };
 
+  const renderTimeDisplay = () => {
+    return durationInMilliseconds
+      ? <Fragment>{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</Fragment>
+      : <Fragment>--:--&nbsp;/&nbsp;--:--</Fragment>;
+  };
+
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <div className="MediaPlayerControls-controlsGroup">
@@ -98,7 +100,9 @@ function MediaPlayerControls({
             disabled={isMuted}
             />
         </div>
-        <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
+        <div className="MediaPlayerControls-timeDisplay">
+          {renderTimeDisplay()}
+        </div>
       </div>
       <div className="MediaPlayerControls-controlsGroup">
         <div>
@@ -115,9 +119,9 @@ function MediaPlayerControls({
 }
 
 MediaPlayerControls.propTypes = {
-  canDownload: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
   isMuted: PropTypes.bool.isRequired,
+  onDownloadClick: PropTypes.func,
   onPlaybackRateChange: PropTypes.func,
   onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
@@ -125,15 +129,13 @@ MediaPlayerControls.propTypes = {
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  sourceUrl: PropTypes.string,
   volume: PropTypes.number.isRequired
 };
 
 MediaPlayerControls.defaultProps = {
-  canDownload: false,
+  onDownloadClick: null,
   onPlaybackRateChange: () => {},
-  screenMode: MEDIA_SCREEN_MODE.video,
-  sourceUrl: null
+  screenMode: MEDIA_SCREEN_MODE.video
 };
 
 export default MediaPlayerControls;

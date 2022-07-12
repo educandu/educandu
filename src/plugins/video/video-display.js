@@ -34,7 +34,7 @@ function VideoDisplay({ content }) {
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
         {sourceUrl && (
           <MediaPlayer
-            sourceUrl={sourceUrl}
+            source={sourceUrl}
             posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}

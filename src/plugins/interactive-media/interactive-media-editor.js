@@ -365,7 +365,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>
 
         <MediaPlayer
-          sourceUrl={getFullSourceUrl(sourceUrl)}
+          source={getFullSourceUrl(sourceUrl)}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.preview : MEDIA_SCREEN_MODE.none}
           />
 

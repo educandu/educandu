@@ -76,11 +76,11 @@ function FilePreview({ createdOn, size, url }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
+    <MediaPlayer source={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
   );
 
   const renderVideo = () => (
-    <MediaPlayer sourceUrl={url} canDownload />
+    <MediaPlayer source={url} canDownload />
   );
 
   const renderImage = () => (

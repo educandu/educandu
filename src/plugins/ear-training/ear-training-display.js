@@ -5,6 +5,7 @@ import Markdown from '../../components/markdown.js';
 import { getImageUrl } from '../../utils/url-utils.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
+import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
@@ -12,50 +13,18 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 
-const abcOptions = {
-  paddingtop: 0,
-  paddingbottom: 0,
-  paddingright: 0,
-  paddingleft: 0,
-  responsive: 'resize'
-};
-
-const midiOptions = {
-  generateDownload: false,
-  generateInline: true
-};
-
 function EarTrainingDisplay({ content }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
 
-  const abcContainerRef = useRef();
-  const midiContainerRef = useRef();
   const questionImageRef = useRef();
   const answerImageCanvasRef = useRef();
 
   const { title, width } = content;
-  const [abcjs, setAbcjs] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [isCurrentQuestionImageLoaded, setIsCurrentQuestionImageLoaded] = useState(false);
   const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
-
-  useEffect(() => {
-    (async () => {
-      const abcjsModule = await import('abcjs/midi.js');
-      setAbcjs(abcjsModule.default);
-    })();
-  });
-
-  useEffect(() => {
-    const currentTest = tests[currentTestIndex];
-
-    if (currentTest.mode === TEST_MODE.abcCode && abcjs) {
-      abcjs.renderAbc(abcContainerRef.current, showResult ? currentTest.answerAbcCode : currentTest.questionAbcCode, abcOptions);
-      abcjs.renderMidi(midiContainerRef.current, currentTest.answerAbcCode, midiOptions);
-    }
-  }, [abcjs, tests, currentTestIndex, showResult]);
 
   useEffect(() => {
     setIsCurrentQuestionImageLoaded(false);
@@ -132,11 +101,13 @@ function EarTrainingDisplay({ content }) {
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
-        {sourceType === SOUND_SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
+        {sourceType === SOUND_SOURCE_TYPE.midi && (
+          <AbcNotation abcCode={currentTest.answerAbcCode} displayMidi hideNotes />
+        )}
         {sourceType !== SOUND_SOURCE_TYPE.midi && soundUrl && (
           <MediaPlayer
+            source={soundUrl}
             screenMode={MEDIA_SCREEN_MODE.none}
-            sourceUrl={soundUrl}
             canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
@@ -155,38 +126,40 @@ function EarTrainingDisplay({ content }) {
     `u-width-${width}`
   );
 
+  const currentTest = tests[currentTestIndex];
+
   return (
-    <div className="EarTrainingDisplay fa5">
+    <div className="EarTrainingDisplay">
       <div className={`EarTrainingDisplay-testWrapper u-width-${width}`}>
         <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
-        {tests[currentTestIndex].mode === TEST_MODE.image && (
+        {currentTest.mode === TEST_MODE.image && (
           <Fragment>
             <img
               ref={questionImageRef}
               className={questionImageClasses}
               src={getImageUrl({
                 cdnRootUrl: clientConfig.cdnRootUrl,
-                sourceType: tests[currentTestIndex].questionImage.sourceType,
-                sourceUrl: tests[currentTestIndex].questionImage.sourceUrl
+                sourceType: currentTest.questionImage.sourceType,
+                sourceUrl: currentTest.questionImage.sourceUrl
               })}
               />
-            <Markdown>{tests[currentTestIndex].questionImage.text}</Markdown>
+            <Markdown>{currentTest.questionImage.text}</Markdown>
           </Fragment>
         )}
-        {tests[currentTestIndex].mode === TEST_MODE.image && (
+        {currentTest.mode === TEST_MODE.image && (
           <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
         )}
-        {tests[currentTestIndex].mode === TEST_MODE.abcCode && (
-          <div ref={abcContainerRef} />
+        {currentTest.mode === TEST_MODE.abcCode && (
+          <AbcNotation abcCode={showResult ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
         )}
 
         {renderSoundPlayer()}
 
         <div className="EarTrainingDisplay-buttons">
           <Button onClick={handleResetClick}>{t('reset')}</Button>
-          {!showResult && !!tests[currentTestIndex] && (
+          {!showResult && !!currentTest && (
             <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>
           )}
           {showResult && currentTestIndex < tests.length - 1 && (

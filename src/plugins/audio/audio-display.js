@@ -24,8 +24,8 @@ function AudioDisplay({ content }) {
       <div className="AudioDisplay-content">
         {sourceUrl && (
           <MediaPlayer
+            source={sourceUrl}
             screenMode={MEDIA_SCREEN_MODE.none}
-            sourceUrl={sourceUrl}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
