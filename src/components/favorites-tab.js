@@ -1,7 +1,7 @@
 import by from 'thenby';
+import { Modal } from 'antd';
 import Table from './table.js';
 import urls from '../utils/routes.js';
-import { Modal, Tooltip } from 'antd';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import SortingSelector from './sorting-selector.js';
@@ -12,6 +12,7 @@ import DeleteIcon from './icons/general/delete-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import ActionButton, { ACTION_BUTTON_INTENT } from './action-button.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -143,14 +144,12 @@ function FavoritesTab() {
   const renderActions = (_, favorite) => {
     return (
       <div className="FavoritesTab-actions">
-        <Tooltip title={t('common:delete')}>
-          <a
-            className="FavoritesTab-action FavoritesTab-action--delete"
-            onClick={() => handleDeleteClick(favorite)}
-            >
-            <DeleteIcon />
-          </a>
-        </Tooltip>
+        <ActionButton
+          title={t('common:delete')}
+          icon={<DeleteIcon />}
+          intent={ACTION_BUTTON_INTENT.error}
+          onClick={() => handleDeleteClick(favorite)}
+          />
       </div>
     );
   };

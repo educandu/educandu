@@ -1,0 +1,75 @@
+.ActionButton {
+  width: @edu-control-height-sm;
+  height: @edu-control-height-sm;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+
+  &.ActionButton--overlay {
+    width: @edu-control-height-sm - 2px;
+    height: @edu-control-height-sm - 2px;
+    background-color: @edu-white;
+    opacity: 90%;
+    .m-box-shadow;
+  }
+
+  &:hover,
+  &:active {
+    .m-box-shadow-dark;
+    text-decoration: none;
+    background-color: @edu-white;
+  }
+
+  &.ActionButton--default {
+    color: @edu-text-color;
+
+    &:hover,
+    &:active {
+      color: @edu-text-color;
+    }
+  }
+
+  &.ActionButton--info {
+    color: @edu-primary-color-light;
+
+    &:hover,
+    &:active {
+      color: @edu-primary-color-light;
+    }
+  }
+
+  &.ActionButton--success {
+    color: @edu-success-color;
+
+    &:hover,
+    &:active {
+      color: @edu-success-color;
+    }
+  }
+
+  &.ActionButton--warning {
+    color: @edu-warning-color;
+
+    &:hover,
+    &:active {
+      color: @edu-warning-color;
+    }
+  }
+
+  &.ActionButton--error {
+    color: @edu-error-color;
+
+    &:hover,
+    &:active {
+      color: @edu-error-color;
+    }
+  }
+}
+
+.ActionButtonGroup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}

@@ -5,12 +5,12 @@ import urls from '../../utils/routes.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import SortingSelector from '../sorting-selector.js';
-import { Input, Button, Switch, Tooltip } from 'antd';
 import DocumentInfoCell from '../document-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import LanguageIcon from '../localization/language-icon.js';
@@ -21,6 +21,7 @@ import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
@@ -220,26 +221,24 @@ function Docs({ initialState, PageTemplate }) {
   const renderActions = (_actions, row) => {
     return (
       <div className="DocsPage-actions">
-        <Tooltip title={t('common:clone')}>
-          <a
-            className="DocsPage-action DocsPage-action--clone"
+        <ActionButtonGroup>
+          <ActionButton
+            title={t('common:clone')}
+            icon={<DuplicateIcon />}
+            intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handleCloneClick(row)}
-            >
-            <DuplicateIcon />
-          </a>
-        </Tooltip>
-        {row.origin.startsWith(DOCUMENT_ORIGIN.external) && (
-          <Restricted to={permissions.MANAGE_IMPORT}>
-            <Tooltip title={t('common:delete')}>
-              <a
-                className="DocsPage-action DocsPage-action--delete"
+            />
+          {row.origin.startsWith(DOCUMENT_ORIGIN.external) && (
+            <Restricted to={permissions.MANAGE_IMPORT}>
+              <ActionButton
+                title={t('common:delete')}
+                icon={<DeleteIcon />}
+                intent={ACTION_BUTTON_INTENT.error}
                 onClick={() => handleDeleteClick(row)}
-                >
-                <DeleteIcon />
-              </a>
-            </Tooltip>
-          </Restricted>
-        )}
+                />
+            </Restricted>
+          )}
+        </ActionButtonGroup>
       </div>
     );
   };

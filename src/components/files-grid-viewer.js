@@ -10,6 +10,7 @@ import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 import FolderFilledNavigateIcon from './icons/files/folder-filled-navigate-icon.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from './action-button.js';
 
 function FilesGridViewer({
   files,
@@ -57,24 +58,24 @@ function FilesGridViewer({
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
-          <Tooltip title={t('common:preview')}>
-            <a
-              className="FilesGridViewer-action FilesGridViewer-action--preview"
+          <ActionButtonGroup>
+            <ActionButton
+              title={t('common:preview')}
+              icon={<PreviewIcon />}
+              intent={ACTION_BUTTON_INTENT.success}
               onClick={event => handlePreviewClick(event, file)}
-              >
-              <PreviewIcon />
-            </a>
-          </Tooltip>
-          {canDelete && (
-            <Tooltip title={t('common:delete')}>
-              <a
-                className="FilesGridViewer-action FilesGridViewer-action--delete"
+              overlay
+              />
+            {canDelete && (
+              <ActionButton
+                title={t('common:delete')}
+                icon={<DeleteIcon />}
+                intent={ACTION_BUTTON_INTENT.error}
                 onClick={event => handleDeleteClick(event, file)}
-                >
-                <DeleteIcon />
-              </a>
-            </Tooltip>
-          )}
+                overlay
+                />
+            )}
+          </ActionButtonGroup>
         </div>
       </div>
     );

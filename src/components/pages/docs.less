@@ -18,45 +18,7 @@
 }
 
 .DocsPage-actions {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  gap: 5px;
-}
-
-.DocsPage-action {
-  width: @edu-control-height-sm;
-  height: @edu-control-height-sm;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  opacity: 90%;
-
-  &:hover,
-  &:active {
-    .m-box-shadow-dark;
-    text-decoration: none;
-    background-color: @edu-white;
-  }
-
-  &.DocsPage-action--clone {
-    color: @edu-text-color;
-
-    &:hover,
-    &:active {
-      color: @edu-text-color;
-    }
-  }
-
-  &.DocsPage-action--delete {
-    color: @edu-error-color;
-
-    &:hover,
-    &:active {
-      color: @edu-error-color;
-    }
-  }
+  text-align: center;
 }
 
 .DocsPage-newDocumentButton {
