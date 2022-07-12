@@ -1,3 +1,10 @@
 headline:
-  en: Files are being uploaded
-  de: Dateien werden hochgeladen
+  en: Files upload
+  de: Dateien Hochladen
+uploadLimitExceeded:
+  en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
+  de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
+insufficientPrivateStorge:
+  en: Not enough storage space available for file
+  de: Nicht genügend Speicherplatz für die Datei verfügbar
+

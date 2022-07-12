@@ -2,7 +2,6 @@
   margin: 2px 0;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
 }
 
 .StorageLocation-filesViewer {
@@ -48,8 +47,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   background-color: @edu-white;
 }
 
@@ -57,9 +54,16 @@
   display: flex;
   gap: 5px;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+
+  &.is-disabled {
+    color: @edu-text-color-secondary;
+    cursor: not-allowed;
+  }
 }
 
 .StorageLocation-screenSelect {
-  margin: 30px 0 0 auto;
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
 }

@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
+import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { useLocale } from './locale-context.js';
+import { useSetStorageLocation } from './storage-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import StorageApiClient from '../api-clients/storage-api-client.js';
@@ -13,6 +15,7 @@ import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../dom
 
 function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish }) {
   const { uiLocale } = useLocale();
+  const setStorageLocation = useSetStorageLocation();
   const { t } = useTranslation('filesUploadOverview');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
@@ -65,6 +68,7 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
             newStatus[file.name].uploadEnded = true;
             return newStatus;
           });
+          setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
         } catch (error) {
           setFilesUploadStatus(previousStatus => {
             const newStatus = cloneDeep(previousStatus);
@@ -76,9 +80,7 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
       }
     }
 
-    // SetStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
-
-  }, [directory, files, storageApiClient, storageLocation, canUploadFile]);
+  }, [directory, files, canUploadFile, storageApiClient, storageLocation, setStorageLocation]);
 
   useEffect(() => {
     (async () => {
@@ -114,6 +116,11 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
   return (
     <div className="FilesUploadOverview">
       <h3 className="FilesUploadOverview-headline">{t('headline')}</h3>
+      {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
+        <div className="FilesUploadOverview-usedStorage" >
+          <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+        </div>
+      )}
       <div className="FilesUploadOverview-fileStatusContainer">
         {Object.values(filesUploadStatus).map(fileStatus => (
           <div key={fileStatus.fileName} data-key={fileStatus.fileName}>

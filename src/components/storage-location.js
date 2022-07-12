@@ -145,13 +145,15 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     </Button>
   );
 
-  const renderScreenBackButton = onClick => {
-    return (
-      <div className="StorageLocation-screenBack">
+  const renderScreenBackButton = ({ onClick, disabled }) => {
+    const renderText = () => (
+      <div className={classNames('StorageLocation-screenBack', { 'is-disabled': disabled })}>
         <DoubleLeftOutlined />
-        <a onClick={onClick}>{t('common:back')}</a>
+        {t('common:back')}
       </div>
     );
+
+    return disabled ? renderText() : <a onClick={onClick}>{renderText()}</a>;
   };
 
   useEffect(() => {
@@ -280,7 +282,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
             && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
             && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
         {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
-        <Alert message={t('publicStorageWarning')} type="warning" showIcon />
+          <Alert message={t('publicStorageWarning')} type="warning" showIcon />
         )}
       </div>
       <div className="StorageLocation-buttonsLine">
@@ -299,7 +301,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
       {screen === SCREEN.preview && (
       <div className="StorageLocation-screen">
-        {renderScreenBackButton(handlePreviewScreenBackClick)}
+        {renderScreenBackButton({ onClick: handlePreviewScreenBackClick })}
         <FilePreview
           url={selectedFile.url}
           size={selectedFile.size}
@@ -311,7 +313,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
       {screen === SCREEN.uploadOverview && (
       <div className="StorageLocation-screen">
-        {renderScreenBackButton(handleUploadOverviewScreenBackClick)}
+        {renderScreenBackButton({ onClick: handleUploadOverviewScreenBackClick, disabled: isUploading })}
         <FilesUploadOverview
           files={uploadQueue}
           directory={currentDirectory}
