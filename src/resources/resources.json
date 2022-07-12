@@ -1606,7 +1606,6 @@
       "name": "Ear training",
       "nextExercise": "Next exercise",
       "solve": "Solve",
-      "reset": "Reset",
       "abcCode": "ABC code",
       "midi": "MIDI (auto)",
       "testsOrder": "Display order",
@@ -1629,7 +1628,6 @@
       "name": "Gehörbildung",
       "nextExercise": "Nächste Übung",
       "solve": "Auflösen",
-      "reset": "Zurücksetzen",
       "abcCode": "ABC-Code",
       "midi": "MIDI (auto)",
       "testsOrder": "Anzeigereihenfolge",
@@ -1868,9 +1866,7 @@
     "language": "en",
     "resources": {
       "name": "Quick tester",
-      "showAnswer": "Show answer",
-      "questionHeader": "Question {currentTest} of {testsLength}",
-      "teaserLabel": "Link text",
+      "teaser": "Teaser",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random",
@@ -1884,9 +1880,7 @@
     "language": "de",
     "resources": {
       "name": "Schnelltester",
-      "showAnswer": "Antwort anzeigen",
-      "questionHeader": "Frage {currentTest} von {testsLength}",
-      "teaserLabel": "Link-Text",
+      "teaser": "Teaser",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig",
@@ -1903,6 +1897,8 @@
       "columnDistribution": "Column width",
       "columnDistribution_automatic": "Automatic",
       "columnDistribution_even": "Even",
+      "cellAction_convertAllToHeaderCells": "Convert to header cells",
+      "cellAction_convertAllToBodyCells": "Convert to body cells",
       "cellAction_convertToHeaderRow": "Convert to header row",
       "cellAction_convertToBodyRow": "Convert to body row",
       "cellAction_convertToHeaderColumn": "Convert to header column",
@@ -1919,7 +1915,19 @@
       "cellAction_connectToRowAfter": "Connect with cell below",
       "cellAction_connectToColumnBefore": "Connect with cell on the left",
       "cellAction_connectToColumnAfter": "Connect with cell on the right",
-      "cellAction_disconnectCell": "Disconnect cells"
+      "cellAction_disconnectAllCells": "Disconnect cells",
+      "cellAction_disconnectCell": "Disconnect cells",
+      "cellAction_setVerticalAlignmentToTop": "Align content on top",
+      "cellAction_setVerticalAlignmentToMiddle": "Center content vertically",
+      "cellAction_setVerticalAlignmentToBottom": "Align content on bottom",
+      "cellAction_setHorizontalAlignmentToLeft": "Align content on the left",
+      "cellAction_setHorizontalAlignmentToCenter": "Center content horizontally",
+      "cellAction_setHorizontalAlignmentToRight": "Align content on the right",
+      "menuGroup_insert": "Insert",
+      "menuGroup_delete": "Delete",
+      "menuGroup_connect": "Connect",
+      "menuGroup_verticalAlignment": "Vertical alignment",
+      "menuGroup_horizontalAlignment": "Horizontal alignment"
     }
   },
   {
@@ -1930,6 +1938,8 @@
       "columnDistribution": "Spaltenbreite",
       "columnDistribution_automatic": "Automatisch",
       "columnDistribution_even": "Gleichmäßig",
+      "cellAction_convertAllToHeaderCells": "In Kopfzellen konvertieren",
+      "cellAction_convertAllToBodyCells": "In Datenzellen konvertieren",
       "cellAction_convertToHeaderRow": "In Kopfzeile konvertieren",
       "cellAction_convertToBodyRow": "In Datenzeile konvertieren",
       "cellAction_convertToHeaderColumn": "In Kopfspalte konvertieren",
@@ -1946,7 +1956,19 @@
       "cellAction_connectToRowAfter": "Mit Zelle darunter verbinden",
       "cellAction_connectToColumnBefore": "Mit Zelle links verbinden",
       "cellAction_connectToColumnAfter": "Mit Zelle rechts verbinden",
-      "cellAction_disconnectCell": "Zellenverbindung aufheben"
+      "cellAction_disconnectAllCells": "Zellenverbindungen aufheben",
+      "cellAction_disconnectCell": "Zellenverbindung aufheben",
+      "cellAction_setVerticalAlignmentToTop": "Inhalt oben ausrichten",
+      "cellAction_setVerticalAlignmentToMiddle": "Inhalt vertikal zentrieren",
+      "cellAction_setVerticalAlignmentToBottom": "Inhalt unten ausrichten",
+      "cellAction_setHorizontalAlignmentToLeft": "Inhalt linksbündig ausrichten",
+      "cellAction_setHorizontalAlignmentToCenter": "Inhalt horizontal zentrieren",
+      "cellAction_setHorizontalAlignmentToRight": "Inhalt rechtsbündig ausrichten",
+      "menuGroup_insert": "Einfügen",
+      "menuGroup_delete": "Löschen",
+      "menuGroup_connect": "Verbinden",
+      "menuGroup_verticalAlignment": "Vertikale Ausrichtung",
+      "menuGroup_horizontalAlignment": "Horizontale Ausrichtung"
     }
   },
   {
@@ -2083,7 +2105,7 @@
       "youtubeUrl": "Youtube URL",
       "aspectRatio": "Aspect ratio",
       "width": "Width",
-      "copyrightInfos": "Copyright infos",
+      "copyrightNotice": "Copyright notice",
       "videoDisplay": "Video display",
       "source": "Source",
       "size": "Size",
@@ -2101,7 +2123,10 @@
       "answer": "Answer",
       "deletedDocument": "Deleted document",
       "deletedRoom": "Deleted room",
-      "deletedLesson": "Deleted lesson"
+      "deletedLesson": "Deleted lesson",
+      "reset": "Reset",
+      "randomizedTests": "The tests are arranged in random order",
+      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
     }
   },
   {
@@ -2222,7 +2247,7 @@
       "youtubeUrl": "Youtube URL",
       "aspectRatio": "Seitenverhältnis",
       "width": "Breite",
-      "copyrightInfos": "Copyright Infos",
+      "copyrightNotice": "Urheberschutzvermerk",
       "videoDisplay": "Videoanzeige",
       "source": "Quelle",
       "size": "Größe",
@@ -2240,7 +2265,10 @@
       "answer": "Antwort",
       "deletedDocument": "Gelöschtes Dokument",
       "deletedRoom": "Gelöschter Raum",
-      "deletedLesson": "Gelöschte Einheit"
+      "deletedLesson": "Gelöschte Einheit",
+      "reset": "Zurücksetzen",
+      "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
+      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
     }
   },
   {

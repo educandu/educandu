@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import Markdown from '../../components/markdown.js';
 import { getImageUrl } from '../../utils/url-utils.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
@@ -19,7 +19,7 @@ function ImageDisplay({ content }) {
   const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
-  const { text, sourceType, sourceUrl, effect, width } = content;
+  const { copyrightNotice, sourceType, sourceUrl, effect, width } = content;
   const src = getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   useEffect(() => {
@@ -129,7 +129,7 @@ function ImageDisplay({ content }) {
   );
 
   const showMainImageCopyright = !shouldApplyHoverEffect;
-  const showEffectImageCopyright = effect?.text
+  const showEffectImageCopyright = effect?.copyrightNotice
     && (effect.type === EFFECT_TYPE.reveal || (effect.type === EFFECT_TYPE.hover && shouldApplyHoverEffect));
 
   if (hasMainImageFailed) {
@@ -153,10 +153,8 @@ function ImageDisplay({ content }) {
           />
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
-      <div className="ImageDisplay-copyrightInfo">
-        {showMainImageCopyright && <Markdown>{text}</Markdown>}
-        {showEffectImageCopyright && <Markdown>{effect.text}</Markdown>}
-      </div>
+      {showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
+      {showEffectImageCopyright && <CopyrightNotice value={effect.copyrightNotice} />}
     </div>
   );
 }

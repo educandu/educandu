@@ -35,7 +35,7 @@ class QuickTesterInfo {
   getDefaultContent(t) {
     return {
       title: `[${t('common:title')}]`,
-      teaser: `[${t('quickTester:teaserLabel')}]`,
+      teaser: `[${t('quickTester:teaser')}]`,
       tests: [
         {
           question: `[${t('common:question')}]`,
@@ -81,15 +81,15 @@ class QuickTesterInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.title || ''));
-    cdnResources.push(...this.gfm.extractCdnResources(content.teaser || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.title));
+    cdnResources.push(...this.gfm.extractCdnResources(content.teaser));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.question || ''));
-      cdnResources.push(...this.gfm.extractCdnResources(test.answer || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.question));
+      cdnResources.push(...this.gfm.extractCdnResources(test.answer));
     }
 
-    return [...new Set(cdnResources)];
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

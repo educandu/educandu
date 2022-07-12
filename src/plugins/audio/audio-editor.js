@@ -18,7 +18,7 @@ function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
   const clientConfig = useService(ClientConfig);
 
-  const { sourceType, sourceUrl, text } = content;
+  const { sourceType, sourceUrl, copyrightNotice } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -33,21 +33,25 @@ function AudioEditor({ content, onContentChanged }) {
 
   const handleSourceTypeValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '' });
+    changeContent({ sourceType: value, sourceUrl: '', copyrightNotice: '' });
   };
 
   const handleSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
+    changeContent({ sourceUrl: value, copyrightNotice: newCopyrightNotice });
   };
 
   const handleInternalUrlFileNameChange = value => {
     changeContent({ sourceUrl: value });
   };
 
-  const handleCurrentEditorValueChange = event => {
+  const handleCopyrightNoticeChange = event => {
     const newValue = event.target.value;
-    changeContent({ text: newValue });
+    changeContent({ copyrightNotice: newValue });
   };
 
   return (
@@ -85,8 +89,8 @@ function AudioEditor({ content, onContentChanged }) {
             <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
           </FormItem>
         )}
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCurrentEditorValueChange} />
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
         </Form.Item>
       </Form>
     </div>

@@ -1,15 +1,9 @@
 name:
   en: Quick tester
   de: Schnelltester
-showAnswer:
-  en: Show answer
-  de: Antwort anzeigen
-questionHeader:
-  en: Question {currentTest} of {testsLength}
-  de: Frage {currentTest} von {testsLength}
-teaserLabel:
-  en: Link text
-  de: Link-Text
+teaser:
+  en: Teaser
+  de: Teaser
 testsOrder:
   en: Display order
   de: Anzeigereihenfolge

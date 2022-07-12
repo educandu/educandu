@@ -35,7 +35,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortLessons = lessons => [...lessons].sort(by(l => l.schedule).thenBy(l => l.schedule?.startsOn || l.createdOn));
+const sortLessons = lessons => [...lessons].sort(by(l => !!l.schedule).thenBy(l => l.schedule?.startsOn || l.createdOn));
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();

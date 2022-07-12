@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import {
   calculateEvenColumnWidthsInPercent,
   CELL_TYPE,
@@ -71,6 +72,8 @@ describe('table-utils', () => {
       isFirstInColumn: false,
       isLastInColumn: false,
       isConnected: false,
+      verticalAlignment: VERTICAL_ALIGNMENT.top,
+      horizontalAlignment: HORIZONTAL_ALIGNMENT.left,
       ...values
     });
 
@@ -90,6 +93,7 @@ describe('table-utils', () => {
           └─────┴─────┴─────┴─────┘
         `,
         expectedOutput: [
+          { key: DESIGNER_CELL_TYPE.tableHeader, designerCellType: DESIGNER_CELL_TYPE.tableHeader, rowIndex: -1, columnIndex: -1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
@@ -131,6 +135,7 @@ describe('table-utils', () => {
           └─────┴─────┴─────┴─────┘
         `,
         expectedOutput: [
+          { key: DESIGNER_CELL_TYPE.tableHeader, designerCellType: DESIGNER_CELL_TYPE.tableHeader, rowIndex: -1, columnIndex: -1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
@@ -169,6 +174,7 @@ describe('table-utils', () => {
           └─────┴─────┴─────┴─────┘
       `,
         expectedOutput: [
+          { key: DESIGNER_CELL_TYPE.tableHeader, designerCellType: DESIGNER_CELL_TYPE.tableHeader, rowIndex: -1, columnIndex: -1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
@@ -207,6 +213,7 @@ describe('table-utils', () => {
           └─────┴─────┴─────┴─────┘
         `,
         expectedOutput: [
+          { key: DESIGNER_CELL_TYPE.tableHeader, designerCellType: DESIGNER_CELL_TYPE.tableHeader, rowIndex: -1, columnIndex: -1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
@@ -244,6 +251,7 @@ describe('table-utils', () => {
           └─────┴─────┴─────┴─────┘
         `,
         expectedOutput: [
+          { key: DESIGNER_CELL_TYPE.tableHeader, designerCellType: DESIGNER_CELL_TYPE.tableHeader, rowIndex: -1, columnIndex: -1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
           { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
@@ -946,6 +954,30 @@ describe('table-utils', () => {
           │  d  │  e   │      │
           ├─────┼──────┼──────┤
           │  g  │      │      │
+          └─────┴──────┴──────┘
+        `
+      },
+      {
+        description: 'when applied on the whole table',
+        expectation: 'it should disconnect all cells in the table',
+        rowIndex: -1,
+        columnIndex: -1,
+        input: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │  <<  │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │  f   │
+          ├─────┼──────┼──────┤
+          │  g  │  ^^  │  i   │
+          └─────┴──────┴──────┘
+        `,
+        expectedOutput: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │      │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │  f   │
+          ├─────┼──────┼──────┤
+          │  g  │      │  i   │
           └─────┴──────┴──────┘
         `
       }

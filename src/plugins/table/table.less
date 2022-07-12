@@ -1,4 +1,5 @@
 @table-plugin-cell-padding: 5px;
+@table-plugin-designer-header-size: 20px;
 @table-plugin-cell-border-color: @edu-border-color-base;
 @table-plugin-cell-header-background-color: fade(@edu-primary-color-light, 20%);
 @table-plugin-cell-body-background-color: @edu-white;
@@ -25,6 +26,30 @@
   &.TableDisplay-cell--body {
     background-color: @table-plugin-cell-body-background-color;
   }
+
+  &.TableDisplay-cell--verticalAlignmentTop {
+    vertical-align: top;
+  }
+
+  &.TableDisplay-cell--verticalAlignmentMiddle {
+    vertical-align: middle;
+  }
+
+  &.TableDisplay-cell--verticalAlignmentBottom {
+    vertical-align: bottom;
+  }
+
+  &.TableDisplay-cell--horizontalAlignmentLeft {
+    text-align: left;
+  }
+
+  &.TableDisplay-cell--horizontalAlignmentCenter {
+    text-align: center;
+  }
+
+  &.TableDisplay-cell--horizontalAlignmentRight {
+    text-align: right;
+  }
 }
 
 .TableEditor {}
@@ -33,8 +58,8 @@
 
 .TableDesigner-grid {
   display: grid;
-  margin: -20px 0 0 -20px;
-  width: ~"calc(100% + 20px)";
+  margin: -@table-plugin-designer-header-size 0 0 -@table-plugin-designer-header-size;
+  width: %(~"calc(100% + %s)", @table-plugin-designer-header-size);
 }
 
 .TableDesigner-gridCell {
@@ -64,26 +89,36 @@
     }
   }
 
+  &.TableDesigner-gridCell--tableHeader {
+    text-align: center;
+    width: @table-plugin-designer-header-size;
+    height: @table-plugin-designer-header-size;
+  }
+
   &.TableDesigner-gridCell--rowHeader {
     text-align: center;
-    width: 20px;
+    width: @table-plugin-designer-header-size;
   }
 
   &.TableDesigner-gridCell--columnHeader {
     text-align: center;
-    height: 20px;
+    height: @table-plugin-designer-header-size;
   }
 
   &.TableDesigner-gridCell--cellTypeHeader {
     background-color: @table-plugin-cell-header-background-color;
+
+    &.is-active {
+      background-color: fade(@edu-secondary-color-light, 66%) !important;
+    }
   }
 
   &.TableDesigner-gridCell--cellTypeBody {
     background-color: @table-plugin-cell-body-background-color;
-  }
 
-  &.is-active {
-    background-color: fade(@edu-secondary-color-light, 50%) !important;
+    &.is-active {
+      background-color: fade(@edu-secondary-color-light, 33%) !important;
+    }
   }
 }
 

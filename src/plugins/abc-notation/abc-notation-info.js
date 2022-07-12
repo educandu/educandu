@@ -36,7 +36,7 @@ class AbcNotationInfo {
       abcCode: '',
       width: 100,
       displayMidi: true,
-      text: ''
+      copyrightNotice: ''
     };
   }
 
@@ -47,8 +47,8 @@ class AbcNotationInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    redactedContent.text = this.gfm.redactCdnResources(
-      redactedContent.text,
+    redactedContent.copyrightNotice = this.gfm.redactCdnResources(
+      redactedContent.copyrightNotice,
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
@@ -56,7 +56,7 @@ class AbcNotationInfo {
   }
 
   getCdnResources(content) {
-    return this.gfm.extractCdnResources(content.text);
+    return this.gfm.extractCdnResources(content.copyrightNotice);
   }
 }
 

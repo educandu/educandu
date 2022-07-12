@@ -24,7 +24,7 @@ function VideoEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, posterImage } = content;
+  const { sourceType, sourceUrl, copyrightNotice, width, aspectRatio, posterImage } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -36,11 +36,12 @@ function VideoEditor({ content, onContentChanged }) {
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
-  const handleTypeChanged = event => {
+  const handleSourceTypeChanged = event => {
     const { value } = event.target;
     changeContent({
       sourceType: value,
       sourceUrl: '',
+      copyrightNotice: '',
       posterImage: {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
@@ -50,7 +51,11 @@ function VideoEditor({ content, onContentChanged }) {
 
   const handleSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
+    changeContent({ sourceUrl: value, copyrightNotice: newCopyrightNotice });
   };
 
   const handleInternalUrlFileNameChange = value => {
@@ -61,9 +66,9 @@ function VideoEditor({ content, onContentChanged }) {
     changeContent({ aspectRatio: event.target.value });
   };
 
-  const handleCopyrightInfoChange = event => {
+  const handleCopyrightNoticeChange = event => {
     const { value } = event.target;
-    changeContent({ text: value });
+    changeContent({ copyrightNotice: value });
   };
 
   const handleWidthChange = newValue => {
@@ -99,7 +104,7 @@ function VideoEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
-          <RadioGroup value={sourceType} onChange={handleTypeChanged}>
+          <RadioGroup value={sourceType} onChange={handleSourceTypeChanged}>
             <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
             <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
             <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
@@ -146,8 +151,8 @@ function VideoEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCopyrightInfoChange} />
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
         </Form.Item>
       </Form>
     </div>

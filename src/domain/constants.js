@@ -151,6 +151,18 @@ export const CDN_OBJECT_TYPE = {
   file: 'file'
 };
 
+export const VERTICAL_ALIGNMENT = {
+  top: 'top',
+  middle: 'middle',
+  bottom: 'bottom'
+};
+
+export const HORIZONTAL_ALIGNMENT = {
+  left: 'left',
+  center: 'center',
+  right: 'right'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

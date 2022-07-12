@@ -7,6 +7,7 @@ import { Button, Radio, Space, Tooltip } from 'antd';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
@@ -15,7 +16,7 @@ import { StepForwardOutlined, UndoOutlined, CheckOutlined, CloseOutlined, FlagOu
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, text, chapters } = content;
+  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -219,11 +220,7 @@ function InteractiveMediaDisplay({ content }) {
             </div>
           </div>
         )}
-        {text && (
-          <div className="InteractiveMediaDisplay-text">
-            <Markdown>{text}</Markdown>
-          </div>
-        )}
+        <CopyrightNotice value={copyrightNotice} />
         <div className="InteractiveMediaDisplay-chaptersResolution">
           <span className="InteractiveMediaDisplay-chaptersResolutionLabel">{t('currentProgress')}:</span>
           {Object.values(selectedAnswerPerChapter).map(renderChapterResolution)}

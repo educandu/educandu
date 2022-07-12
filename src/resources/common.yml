@@ -348,9 +348,9 @@ aspectRatio:
 width:
   en: Width
   de: Breite
-copyrightInfos:
-  en: Copyright infos
-  de: Copyright Infos
+copyrightNotice:
+  en: Copyright notice
+  de: Urheberschutzvermerk
 videoDisplay:
   en: Video display
   de: Videoanzeige
@@ -405,3 +405,14 @@ deletedRoom:
 deletedLesson:
   en: Deleted lesson
   de: Gelöschte Einheit
+reset:
+  en: Reset
+  de: Zurücksetzen
+randomizedTests:
+  en: The tests are arranged in random order
+  de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
+youtubeCopyrightNotice:
+  en: |
+    Source: [Youtube]({link})
+  de: |
+    Quelle: [Youtube]({link})

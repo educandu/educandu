@@ -1,5 +1,7 @@
+import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import Markdown from '../../components/markdown.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { calculateEvenColumnWidthsInPercent, CELL_TYPE, COLUMN_DISTRIBUTION, createTableCellsInRows } from './table-utils.js';
 
@@ -34,7 +36,17 @@ function TableDisplay({ content }) {
       key: cell.key,
       rowSpan: cell.rowSpan,
       colSpan: cell.columnSpan,
-      className: `TableDisplay-cell TableDisplay-cell--${cell.cellType}`
+      className: classNames({
+        'TableDisplay-cell': true,
+        'TableDisplay-cell--header': cell.cellType === CELL_TYPE.header,
+        'TableDisplay-cell--body': cell.cellType === CELL_TYPE.body,
+        'TableDisplay-cell--verticalAlignmentTop': cell.verticalAlignment === VERTICAL_ALIGNMENT.top,
+        'TableDisplay-cell--verticalAlignmentMiddle': cell.verticalAlignment === VERTICAL_ALIGNMENT.middle,
+        'TableDisplay-cell--verticalAlignmentBottom': cell.verticalAlignment === VERTICAL_ALIGNMENT.bottom,
+        'TableDisplay-cell--horizontalAlignmentLeft': cell.horizontalAlignment === HORIZONTAL_ALIGNMENT.left,
+        'TableDisplay-cell--horizontalAlignmentCenter': cell.horizontalAlignment === HORIZONTAL_ALIGNMENT.center,
+        'TableDisplay-cell--horizontalAlignmentRight': cell.horizontalAlignment === HORIZONTAL_ALIGNMENT.right
+      })
     };
 
     const children = cell.text

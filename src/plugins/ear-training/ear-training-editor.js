@@ -142,10 +142,10 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleQuestionImageTextChange = (event, index) => {
+  const handleQuestionImageCopyrightNoticeChange = (event, index) => {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
-    newTests[index].questionImage.text = value;
+    newTests[index].questionImage.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
@@ -170,10 +170,10 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleAnswerImageTextChange = (event, index) => {
+  const handleAnswerImageCopyrightNoticeChange = (event, index) => {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
-    newTests[index].answerImage.text = value;
+    newTests[index].answerImage.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
@@ -183,7 +183,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
     newTests[index].sound.sourceType = value;
     newTests[index].sound.sourceUrl = value === SOUND_SOURCE_TYPE.midi ? null : '';
-    newTests[index].sound.text = value === SOUND_SOURCE_TYPE.midi ? null : newTests[index].sound.text || '';
+    newTests[index].sound.copyrightNotice = value === SOUND_SOURCE_TYPE.midi ? null : newTests[index].sound.copyrightNotice || '';
 
     changeContent({ tests: newTests });
   };
@@ -201,10 +201,10 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundTextChange = (event, index) => {
+  const handleSoundCopyrightNoticeChange = (event, index) => {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
-    newTests[index].sound.text = value;
+    newTests[index].sound.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
@@ -234,9 +234,9 @@ function EarTrainingEditor({ content, onContentChanged }) {
     );
   };
 
-  const renderTextInput = (index, value, handleValueChange) => {
+  const renderCopyrightNoticeInput = (index, value, handleValueChange) => {
     return (
-      <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+      <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
         <MarkdownInput value={value} onChange={event => handleValueChange(event, index)} />
       </Form.Item>
     );
@@ -288,7 +288,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                   && renderExternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange)}
                 {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.internal
                   && renderInternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange, handleQuestionImageFileNameChange)}
-                {renderTextInput(index, test.questionImage.text, handleQuestionImageTextChange)}
+                {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, handleQuestionImageCopyrightNoticeChange)}
 
                 <Divider plain>{t('testAnswer')}</Divider>
 
@@ -302,7 +302,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                   && renderExternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange)}
                 {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.internal
                   && renderInternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange, handleAnswerImageFileNameChange)}
-                {renderTextInput(index, test.answerImage.text, handleAnswerImageTextChange)}
+                {renderCopyrightNoticeInput(index, test.answerImage.copyrightNotice, handleAnswerImageCopyrightNoticeChange)}
 
               </Fragment>
             )}
@@ -342,7 +342,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
             {test.sound.sourceType === SOUND_SOURCE_TYPE.internal
                 && renderInternalSourceUrlInput(index, test.sound.sourceUrl, handleSoundSourceUrlChange, handleSoundFileNameChange)}
             {test.sound.sourceType !== SOUND_SOURCE_TYPE.midi
-              && renderTextInput(index, test.sound.text, handleSoundTextChange)}
+              && renderCopyrightNoticeInput(index, test.sound.copyrightNotice, handleSoundCopyrightNoticeChange)}
           </ItemPanel>
         ))}
       </Form>

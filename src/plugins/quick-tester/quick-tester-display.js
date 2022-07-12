@@ -1,129 +1,110 @@
-import { Button } from 'antd';
+import { Radio, Tooltip } from 'antd';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import { SwapOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import Markdown from '../../components/markdown.js';
-import { shuffleItems } from '../../utils/array-utils.js';
-import React, { useCallback, useEffect, useState } from 'react';
-import CloseIcon from '../../components/icons/general/close-icon.js';
+import QuickTesterIcon from './quick-tester-icon.js';
+import Collapsible from '../../components/collapsible.js';
+import CardSelector from '../../components/card-selector.js';
+import IterationPanel from '../../components/iteration-panel.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
+import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 function QuickTesterDisplay({ content }) {
-  const [tests, setTests] = useState([]);
   const { t } = useTranslation('quickTester');
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentTestIndex, setCurrentTestIndex] = useState(-1);
-  const [isAnswerVisible, setIsAnswerVisible] = useState(false);
 
-  const restart = useCallback(() => {
-    setCurrentTestIndex(0);
-    setIsAnswerVisible(false);
-    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
-  }, [content.tests, content.testsOrder]);
+  const [tests, setTests] = useState([]);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [viewedTestIndices, setViewedTestIndices] = useState([0]);
+  const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      restart();
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+  }, [content.testsOrder, content.tests]);
+
+  useEffect(() => {
+    setViewedTestIndices(previousIndices => ensureIsIncluded(previousIndices, currentTestIndex));
+  }, [currentTestIndex]);
+
+  const handleAnswerVisibilityChange = event => {
+    const { value } = event.target;
+    setIsCurrentTestAnswerVisible(value);
+  };
+
+  const handleTestCardSelected = testIndex => {
+    if (currentTestIndex !== testIndex) {
+      setCurrentTestIndex(testIndex);
+      setIsCurrentTestAnswerVisible(false);
     }
-
-  }, [isOpen, restart]);
-
-  const showAnswer = () => {
-    setIsAnswerVisible(true);
   };
 
-  const movePrevious = () => {
-    setIsAnswerVisible(false);
+  const handlePreviousTestClick = () => {
     setCurrentTestIndex(i => i - 1);
+    setIsCurrentTestAnswerVisible(false);
   };
 
-  const moveNext = () => {
-    setIsAnswerVisible(false);
+  const handleNextTestClick = () => {
     setCurrentTestIndex(i => i + 1);
+    setIsCurrentTestAnswerVisible(false);
   };
 
-  const open = () => {
-    setIsOpen(true);
+  const handleResetTestsClick = () => {
+    setCurrentTestIndex(0);
+    setViewedTestIndices([0]);
+    setIsCurrentTestAnswerVisible(false);
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
-  const close = () => {
-    setIsOpen(false);
-  };
-
-  const percentDone = tests.length
-    ? Math.max(0, Math.min(100, Math.round(((currentTestIndex + 1) / tests.length) * 100)))
-    : 100;
-
-  if (!isOpen || !tests.length) {
-    return (
-      <div className="QuickTester">
-        <div className="QuickTester-content">
-          <Markdown
-            tag="a"
-            className="QuickTester-initLink"
-            disabled={!content.tests.length}
-            onClick={open}
-            inline
-            >
-            {content.teaser}
-          </Markdown>
-        </div>
-      </div>
-    );
-  }
-
-  const answerDisplay = isAnswerVisible
-    ? <Markdown renderMedia={content.renderMedia}>{tests[currentTestIndex].answer}</Markdown>
-    : <Button type="primary" onClick={showAnswer}>{t('showAnswer')}</Button>;
+  const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index + 1 }) }));
 
   return (
-    <div className="QuickTester">
-      <div className="QuickTester-content">
-        <div className="QuickTester-header">
-          <div className="QuickTester-title">
-            <Markdown inline>{content.title}</Markdown>
-          </div>
-          <div className="QuickTester-closeButton">
-            <Button size="small" icon={<CloseIcon />} onClick={close} />
-          </div>
-        </div>
-        <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />
-        <div className="QuickTester-test">
-          <div className="QuickTester-question">
-            <div className="QuickTester-questionHeader">
-              {t('questionHeader', { currentTest: currentTestIndex + 1, testsLength: tests.length })}
+    <div className="QuickTesterDisplay">
+      <Collapsible
+        title={<Markdown inline>{content.teaser}</Markdown>}
+        isCollapsible
+        isCollapsed
+        icon={<QuickTesterIcon />}
+        >
+        <div className="QuickTesterDisplay-content">
+          <Markdown inline>{content.title}</Markdown>
+          {testCards.length > 1 && (
+            <div className="QuickTesterDisplay-controlPanel">
+              <div>
+                <CardSelector
+                  cards={testCards}
+                  selectedCardIndex={currentTestIndex}
+                  previouslySelectedCardIndices={viewedTestIndices}
+                  onCardSelected={handleTestCardSelected}
+                  />
+                {content.testsOrder === TESTS_ORDER.random && (
+                  <Tooltip title={t('common:randomizedTests')}>
+                    <SwapOutlined className="QuickTesterDisplay-randomTestsIcon" />
+                  </Tooltip>
+                )}
+              </div>
+              <IterationPanel
+                items={testCards}
+                selectedItemIndex={currentTestIndex}
+                onNextClick={handleNextTestClick}
+                onPreviousClick={handlePreviousTestClick}
+                onResetClick={handleResetTestsClick}
+                />
             </div>
-            <div className="QuickTester-questionBody">
-              <Markdown renderMedia={content.renderMedia}>{tests[currentTestIndex].question}</Markdown>
-            </div>
+          )}
+          <div className="QuickTesterDisplay-test">
+            {!isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.question}</Markdown>}
+            {isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.answer}</Markdown>}
           </div>
-          <div className="QuickTester-answer">
-            {answerDisplay}
-          </div>
+          <RadioGroup className="QuickTesterDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
+            <RadioButton className="QuickTesterDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
+            <RadioButton className="QuickTesterDisplay-radioButton" value>{t('common:answer')}</RadioButton>
+          </RadioGroup>
         </div>
-        <div className="QuickTester-buttons">
-          <Button
-            className="QuickTester-button"
-            shape="circle"
-            icon={<LeftOutlined />}
-            disabled={currentTestIndex < 1}
-            onClick={movePrevious}
-            />
-          <Button
-            className="QuickTester-button"
-            shape="circle"
-            icon={<ReloadOutlined />}
-            onClick={restart}
-            />
-          <Button
-            className="QuickTester-button"
-            shape="circle"
-            icon={<RightOutlined />}
-            disabled={!isAnswerVisible || currentTestIndex > tests.length - 2}
-            onClick={moveNext}
-            />
-        </div>
-      </div>
+      </Collapsible>
     </div>
   );
 }

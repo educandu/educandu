@@ -1,0 +1,35 @@
+@card-selector-selected-card-background-color: lighten(@edu-primary-color-light, 35%);
+
+.CardSelector {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.CardSelector-card {
+  width: 20px;
+  height: 30px;
+  font-size: 10px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-base;
+  background-color: @edu-background-color-base;
+
+  &.was-selected {
+    border-color: lighten(@edu-primary-color-light, 25%);
+    background-color: @card-selector-selected-card-background-color;
+  }
+
+  &.is-selected {
+    border-color: @edu-border-color-active;
+    background-color: @card-selector-selected-card-background-color;
+    box-shadow: 0 0 0 @edu-outline-width fade(@edu-border-color-active, @edu-outline-fade);
+  }
+
+  &:hover {
+    border-color: @edu-border-color-active;
+  }
+}

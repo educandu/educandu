@@ -47,7 +47,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterDuration, setSelectedChapterDuration] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, copyrightNotice, width, aspectRatio, showVideo } = content;
 
   const playbackDuration = (sourceStopTimecode ?? sourceDuration) - (sourceStartTimecode ?? 0);
 
@@ -119,12 +119,17 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceDuration: 0,
       sourceStartTimecode: null,
       sourceStopTimecode: null,
+      copyrightNotice: '',
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
 
   const handleSourceUrlChange = async value => {
     const { duration, resourceType, error } = await getMediaInformation(value);
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
     setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: value,
@@ -132,6 +137,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceDuration: duration,
       sourceStartTimecode: null,
       sourceStopTimecode: null,
+      copyrightNotice: newCopyrightNotice,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
     if (error) {
@@ -177,8 +183,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ showVideo: newShowVideo });
   };
 
-  const handleCopyrightInfoChanged = event => {
-    changeContent({ text: event.target.value });
+  const handleCopyrightNoticeChanged = event => {
+    changeContent({ copyrightNotice: event.target.value });
   };
 
   const handleWidthChanged = newValue => {
@@ -358,8 +364,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <FormItem label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
-        <FormItem label={t('common:copyrightInfos')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleCopyrightInfoChanged} />
+        <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
         </FormItem>
 
         <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>

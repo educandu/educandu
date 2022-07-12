@@ -1,17 +1,24 @@
-import { Button } from 'antd';
 import classNames from 'classnames';
+import { Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
 import { getImageUrl } from '../../utils/url-utils.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import CardSelector from '../../components/card-selector.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 function EarTrainingDisplay({ content }) {
   const { t } = useTranslation('earTraining');
@@ -20,17 +27,24 @@ function EarTrainingDisplay({ content }) {
   const questionImageRef = useRef();
   const answerImageCanvasRef = useRef();
 
-  const { title, width } = content;
-  const [showResult, setShowResult] = useState(false);
+  const [tests, setTests] = useState([]);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [viewedTestIndices, setViewedTestIndices] = useState([0]);
+  const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
   const [isCurrentQuestionImageLoaded, setIsCurrentQuestionImageLoaded] = useState(false);
-  const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+
+  const { title, width } = content;
+  const currentTest = tests[currentTestIndex] || null;
+
+  useEffect(() => {
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+  }, [content.testsOrder, content.tests]);
 
   useEffect(() => {
     setIsCurrentQuestionImageLoaded(false);
 
     const questionImage = questionImageRef.current;
-    if (!questionImage || tests[currentTestIndex].mode !== TEST_MODE.image) {
+    if (!questionImage || currentTest.mode !== TEST_MODE.image) {
       return;
     }
 
@@ -39,10 +53,10 @@ function EarTrainingDisplay({ content }) {
     } else {
       questionImage.onload = () => setIsCurrentQuestionImageLoaded(true);
     }
-  }, [tests, currentTestIndex, questionImageRef]);
+  }, [currentTest, questionImageRef]);
 
   useEffect(() => {
-    if (tests[currentTestIndex].mode !== TEST_MODE.image || !isCurrentQuestionImageLoaded) {
+    if (!tests.length || currentTest.mode !== TEST_MODE.image || !isCurrentQuestionImageLoaded) {
       return;
     }
     const questionImage = questionImageRef.current;
@@ -54,8 +68,8 @@ function EarTrainingDisplay({ content }) {
     const answerImage = new Image();
     answerImage.src = getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: tests[currentTestIndex].answerImage.sourceType,
-      sourceUrl: tests[currentTestIndex].answerImage.sourceUrl
+      sourceType: currentTest.answerImage.sourceType,
+      sourceUrl: currentTest.answerImage.sourceUrl
     });
 
     answerImage.onload = () => {
@@ -65,29 +79,41 @@ function EarTrainingDisplay({ content }) {
       const finalHeight = answerImage.naturalHeight * factorToUse;
       const finalWidth = answerImage.naturalWidth * factorToUse;
       context.drawImage(answerImage, 0, 0, answerImage.naturalWidth, answerImage.naturalHeight, 0, 0, finalWidth, finalHeight);
-
     };
-  }, [tests, currentTestIndex, showResult, questionImageRef, answerImageCanvasRef, clientConfig, isCurrentQuestionImageLoaded]);
+  }, [tests, currentTest, questionImageRef, answerImageCanvasRef, clientConfig, isCurrentQuestionImageLoaded]);
 
-  const handleResultClick = () => {
-    setShowResult(true);
+  const handleAnswerVisibilityChange = event => {
+    const { value } = event.target;
+    setIsCurrentTestAnswerVisible(value);
   };
 
-  const handleNextClick = () => {
-    setCurrentTestIndex(currentTestIndex + 1);
-    setShowResult(false);
+  const handleTestCardSelected = testIndex => {
+    if (currentTestIndex !== testIndex) {
+      setCurrentTestIndex(testIndex);
+      setIsCurrentTestAnswerVisible(false);
+    }
   };
 
-  const handleResetClick = () => {
+  const handlePreviousTestClick = () => {
+    setCurrentTestIndex(index => index - 1);
+    setIsCurrentTestAnswerVisible(false);
+  };
+
+  const handleNextTestClick = () => {
+    setCurrentTestIndex(index => index + 1);
+    setIsCurrentTestAnswerVisible(false);
+  };
+
+  const handleResetTestsClick = () => {
     setCurrentTestIndex(0);
-    setShowResult(false);
-    setTests(shuffleItems(tests));
+    setViewedTestIndices([0]);
+    setIsCurrentTestAnswerVisible(false);
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
   const renderSoundPlayer = () => {
     let soundUrl = null;
     let sourceType = SOUND_SOURCE_TYPE.midi;
-    const currentTest = tests[currentTestIndex];
 
     if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
       sourceType = SOUND_SOURCE_TYPE.internal;
@@ -111,61 +137,83 @@ function EarTrainingDisplay({ content }) {
             canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
-        {currentTest.sound.text && (
-          <div>
-            <Markdown>{currentTest.sound.text}</Markdown>
-          </div>
-        )}
+        <CopyrightNotice value={currentTest.sound.copyrightNotice} />
       </div>
     );
   };
 
   const questionImageClasses = classNames(
     'EarTrainingDisplay-questionImage',
-    { 'EarTrainingDisplay-questionImage--toggledOff': showResult },
+    { 'EarTrainingDisplay-questionImage--toggledOff': isCurrentTestAnswerVisible },
     `u-width-${width}`
   );
 
-  const currentTest = tests[currentTestIndex];
+  const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index + 1 }) }));
 
   return (
-    <div className="EarTrainingDisplay">
-      <div className={`EarTrainingDisplay-testWrapper u-width-${width}`}>
+    <div className="EarTrainingDisplay fa5">
+      <div className={`EarTrainingDisplay-contentWrapper u-width-${width}`}>
         <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
-        {currentTest.mode === TEST_MODE.image && (
-          <Fragment>
-            <img
-              ref={questionImageRef}
-              className={questionImageClasses}
-              src={getImageUrl({
-                cdnRootUrl: clientConfig.cdnRootUrl,
-                sourceType: currentTest.questionImage.sourceType,
-                sourceUrl: currentTest.questionImage.sourceUrl
-              })}
+        {testCards.length > 1 && (
+          <div className="EarTrainingDisplay-controlPanel">
+            <div>
+              <CardSelector
+                cards={testCards}
+                onCardSelected={handleTestCardSelected}
+                selectedCardIndex={currentTestIndex}
+                previouslySelectedCardIndices={viewedTestIndices}
+                />
+              {content.testsOrder === TESTS_ORDER.random && (
+                <Tooltip title={t('common:randomizedTests')}>
+                  <SwapOutlined className="EarTrainingDisplay-randomTestsIcon" />
+                </Tooltip>
+              )}
+            </div>
+            <IterationPanel
+              items={testCards}
+              selectedItemIndex={currentTestIndex}
+              onNextClick={handleNextTestClick}
+              onPreviousClick={handlePreviousTestClick}
+              onResetClick={handleResetTestsClick}
               />
-            <Markdown>{currentTest.questionImage.text}</Markdown>
-          </Fragment>
+          </div>
         )}
-        {currentTest.mode === TEST_MODE.image && (
-          <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
-        )}
-        {currentTest.mode === TEST_MODE.abcCode && (
-          <AbcNotation abcCode={showResult ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
+        {tests.length && (
+          <div className="EarTrainingDisplay-test">
+            {currentTest.mode === TEST_MODE.image && (
+              <Fragment>
+                <img
+                  ref={questionImageRef}
+                  className={questionImageClasses}
+                  src={getImageUrl({
+                    cdnRootUrl: clientConfig.cdnRootUrl,
+                    sourceType: currentTest.questionImage.sourceType,
+                    sourceUrl: currentTest.questionImage.sourceUrl
+                  })}
+                  />
+                {!isCurrentTestAnswerVisible && <CopyrightNotice value={currentTest.questionImage.copyrightNotice} />}
+              </Fragment>
+            )}
+            {currentTest.mode === TEST_MODE.image && (
+              <Fragment>
+                <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
+                {isCurrentTestAnswerVisible && <CopyrightNotice value={currentTest.answerImage.copyrightNotice} /> }
+              </Fragment>
+            )}
+            {currentTest.mode === TEST_MODE.abcCode && (
+              <AbcNotation abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
+            )}
+
+            {renderSoundPlayer()}
+          </div>
         )}
 
-        {renderSoundPlayer()}
-
-        <div className="EarTrainingDisplay-buttons">
-          <Button onClick={handleResetClick}>{t('reset')}</Button>
-          {!showResult && !!currentTest && (
-            <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>
-          )}
-          {showResult && currentTestIndex < tests.length - 1 && (
-            <Button type="primary" onClick={handleNextClick}>{t('nextExercise')}</Button>
-          )}
-        </div>
+        <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
+          <RadioButton className="EarTrainingDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
+          <RadioButton className="EarTrainingDisplay-radioButton" value>{t('common:answer')}</RadioButton>
+        </RadioGroup>
       </div>
     </div>
   );

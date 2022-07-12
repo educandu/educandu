@@ -7,9 +7,6 @@ nextExercise:
 solve:
   en: Solve
   de: Auflösen
-reset:
-  en: Reset
-  de: Zurücksetzen
 abcCode:
   en: ABC code
   de: ABC-Code

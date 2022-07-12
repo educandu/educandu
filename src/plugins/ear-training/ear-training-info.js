@@ -37,7 +37,7 @@ class EarTrainingInfo {
     return {
       sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: null,
-      text: null
+      copyrightNotice: null
     };
   }
 
@@ -45,7 +45,7 @@ class EarTrainingInfo {
     return {
       sourceType: SOUND_SOURCE_TYPE.internal,
       sourceUrl: null,
-      text: null
+      copyrightNotice: null
     };
   }
 
@@ -83,20 +83,20 @@ class EarTrainingInfo {
 
     for (const test of redactedContent.tests) {
       if (test.sound) {
-        test.sound.text = this.gfm.redactCdnResources(
-          test.sound.text,
+        test.sound.copyrightNotice = this.gfm.redactCdnResources(
+          test.sound.copyrightNotice,
           url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
         );
       }
       if (test.questionImage) {
-        test.questionImage.text = this.gfm.redactCdnResources(
-          test.questionImage.text,
+        test.questionImage.copyrightNotice = this.gfm.redactCdnResources(
+          test.questionImage.copyrightNotice,
           url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
         );
       }
       if (test.answerImage) {
-        test.answerImage.text = this.gfm.redactCdnResources(
-          test.answerImage.text,
+        test.answerImage.copyrightNotice = this.gfm.redactCdnResources(
+          test.answerImage.copyrightNotice,
           url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
         );
       }
@@ -118,12 +118,12 @@ class EarTrainingInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.title || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.title));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.text || ''));
-      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.text || ''));
-      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.text || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.copyrightNotice));
 
       if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && test.sound.sourceUrl) {
         cdnResources.push(test.sound.sourceUrl);
@@ -135,8 +135,7 @@ class EarTrainingInfo {
         cdnResources.push(test.answerImage.sourceUrl);
       }
     }
-
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
