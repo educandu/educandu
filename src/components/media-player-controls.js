@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { Fragment, useState } from 'react';
 import { useNumberFormat } from './locale-context.js';
 import { Menu, Button, Slider, Dropdown } from 'antd';
 import MuteIcon from './icons/media-player/mute-icon.js';
