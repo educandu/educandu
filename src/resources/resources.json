@@ -398,6 +398,20 @@
     }
   },
   {
+    "namespace": "filesUploadOverview",
+    "language": "en",
+    "resources": {
+      "headline": "Files are being uploaded"
+    }
+  },
+  {
+    "namespace": "filesUploadOverview",
+    "language": "de",
+    "resources": {
+      "headline": "Dateien werden hochgeladen"
+    }
+  },
+  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {

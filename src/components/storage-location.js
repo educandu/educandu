@@ -1,18 +1,16 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import prettyBytes from 'pretty-bytes';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
-import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
 import { Alert, Button, message, Select } from 'antd';
-import { handleApiError } from '../ui/error-helper.js';
 import { DoubleLeftOutlined } from '@ant-design/icons';
 import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import FilesUploadOverview from './files-upload-overview.js';
 import { useSetStorageLocation } from './storage-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { getResourceFullName } from '../utils/resource-utils.js';
@@ -21,19 +19,19 @@ import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
+import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFilesBeforeUpload } from '../utils/storage-utils.js';
+import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-const WIZARD_SCREEN = {
+const SCREEN = {
   none: 'none',
-  preview: 'preview'
+  preview: 'preview',
+  uploadOverview: 'upload-overview'
 };
 
 function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
-  const { uiLocale } = useLocale();
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
@@ -42,19 +40,19 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const dropzoneRef = useRef();
   const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
+  const [screen, setScreen] = useState(SCREEN.none);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
-  const [wizardScreen, setWizardScreen] = useState(WIZARD_SCREEN.none);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const canAcceptFiles = canUploadToCurrentDirectory && !isUploading && !isLoading;
+  const canAcceptFiles = canUploadToCurrentDirectory && !isLoading;
 
   const fetchStorageContent = useCallback(async () => {
     if (!currentDirectoryPath || !isMounted.current) {
@@ -82,58 +80,6 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
       }
     }
   }, [currentDirectoryPath, storageLocation.homePath, storageApiClient, isMounted]);
-
-  const uploadFiles = useCallback(async filesToUpload => {
-    const canUploadFile = (file, currentUsedBytes) => {
-      if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
-        message.error(t('uploadLimitExceeded', {
-          uploadSize: prettyBytes(file.size, { locale: uiLocale }),
-          uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
-        }));
-        return false;
-      }
-
-      if (storageLocation.type === STORAGE_LOCATION_TYPE.private) {
-        const availableBytes = Math.max(0, (storageLocation.maxBytes || 0) - currentUsedBytes);
-        if (file.size > availableBytes) {
-          message.error(t('insufficientPrivateStorge'));
-          return false;
-        }
-      }
-      return true;
-    };
-
-    const hideUploadingMessage = message.loading(t('uploading', { count: filesToUpload.length }), 0);
-
-    const processedFiles = await processFilesBeforeUpload(filesToUpload);
-
-    let uploadErrorOccured = false;
-    let currentUsedBytes = storageLocation.usedBytes;
-
-    try {
-      for (const file of processedFiles) {
-        if (canUploadFile(file, currentUsedBytes)) {
-          // eslint-disable-next-line no-await-in-loop
-          const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path);
-          currentUsedBytes = usedBytes;
-        } else {
-          uploadErrorOccured = true;
-        }
-      }
-    } catch (error) {
-      uploadErrorOccured = true;
-      handleApiError({ error });
-    }
-    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
-
-    hideUploadingMessage();
-
-    if (!uploadErrorOccured) {
-      message.success(t('successfullyUploaded'));
-    }
-
-    await fetchStorageContent();
-  }, [currentDirectory, storageLocation, setStorageLocation, storageApiClient, t, uiLocale, fetchStorageContent]);
 
   const handleFileClick = newFile => {
     setShowInitialFileSelection(false);
@@ -163,24 +109,54 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   };
 
   const handlePreviewClick = () => {
-    setWizardScreen(WIZARD_SCREEN.preview);
+    setScreen(SCREEN.preview);
     onEnterFullscreen();
   };
 
+  const handleUploadButtonClick = () => {
+    dropzoneRef.current.open();
+  };
+
+  const handleUploadStart = useCallback(() => {
+    setIsUploading(true);
+    setScreen(SCREEN.uploadOverview);
+    onEnterFullscreen();
+  }, [onEnterFullscreen]);
+
+  const handleUploadFinish = () => {
+    setUploadQueue([]);
+    setIsUploading(false);
+  };
+
   const handlePreviewScreenBackClick = () => {
-    setWizardScreen(WIZARD_SCREEN.none);
+    setScreen(SCREEN.none);
     onExitFullscreen();
+  };
+
+  const handleUploadOverviewScreenBackClick = async () => {
+    setScreen(SCREEN.none);
+    onExitFullscreen();
+    await fetchStorageContent();
   };
 
   const renderSelectButton = () => (
     <Button
       type="primary"
       onClick={handleSelectClick}
-      disabled={!selectedFile || isUploading || isLoading}
+      disabled={!selectedFile || isLoading}
       >
       {t('common:select')}
     </Button>
   );
+
+  const renderScreenBackButton = onClick => {
+    return (
+      <div className="StorageLocation-screenBack">
+        <DoubleLeftOutlined />
+        <a onClick={onClick}>{t('common:back')}</a>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const checkPreconditions = () => {
@@ -199,31 +175,21 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     };
 
     const startUpload = async () => {
-      if (!uploadQueue.length || isUploading) {
+      if (!uploadQueue.length) {
         return;
       }
 
-      try {
-        const preMet = await checkPreconditions();
-        if (!preMet || !uploadQueue.length || isUploading) {
-          return;
-        }
-
-        setIsUploading(true);
-        await uploadFiles(uploadQueue);
-      } finally {
-        setUploadQueue([]);
-        setIsUploading(false);
+      const preMet = await checkPreconditions();
+      if (!preMet || !uploadQueue.length) {
+        return;
       }
+
+      await handleUploadStart();
     };
 
     startUpload();
 
-  }, [uploadQueue, isUploading, uploadFiles, storageLocation.type, uploadLiabilityCookieName, t]);
-
-  const handleUploadButtonClick = () => {
-    dropzoneRef.current.open();
-  };
+  }, [uploadQueue, handleUploadStart, storageLocation.type, uploadLiabilityCookieName, t]);
 
   useEffect(() => {
     if (!selectedFile) {
@@ -276,7 +242,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
 
   return (
     <div className="StorageLocation">
-      {wizardScreen === WIZARD_SCREEN.none && (
+      {screen === SCREEN.none && (
         <Fragment>
           <div className="StorageLocation-buttonsLine">
             <div />
@@ -326,7 +292,6 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
           <div className="StorageLocation-buttonsLine">
             <Button
               icon={<UploadIcon />}
-              loading={isUploading}
               onClick={handleUploadButtonClick}
               disabled={!canUploadToCurrentDirectory || isLoading}
               >
@@ -340,18 +305,27 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
         </Fragment>
       )}
 
-      {wizardScreen === WIZARD_SCREEN.preview && (
-        <div className="StorageLocation-wizardScreen">
-          <div className="StorageLocation-wizardScreenBack">
-            <DoubleLeftOutlined />
-            <a onClick={handlePreviewScreenBackClick}>{t('common:back')}</a>
-          </div>
+      {screen === SCREEN.preview && (
+        <div className="StorageLocation-screen">
+          {renderScreenBackButton(handlePreviewScreenBackClick)}
           <FilePreview
             url={selectedFile.url}
             size={selectedFile.size}
             createdOn={selectedFile.createdOn}
             />
-          <div className="StorageLocation-wizardScreenSelect">{renderSelectButton()}</div>
+          <div className="StorageLocation-screenSelect">{renderSelectButton()}</div>
+        </div>
+      )}
+
+      {screen === SCREEN.uploadOverview && (
+        <div className="StorageLocation-screen">
+          {renderScreenBackButton(handleUploadOverviewScreenBackClick)}
+          <FilesUploadOverview
+            files={uploadQueue}
+            directory={currentDirectory}
+            storageLocation={storageLocation}
+            onUploadFinish={handleUploadFinish}
+            />
         </div>
       )}
     </div>
