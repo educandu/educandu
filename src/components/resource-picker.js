@@ -22,8 +22,10 @@ function ResourcePicker({ url, onUrlChange }) {
     setIsModalVisible(false);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleCancel = event => {
+    if (!event.key) {
+      setIsModalVisible(false);
+    }
   };
 
   const modalRender = modal => <div onClick={event => event.stopPropagation()}>{modal}</div>;
@@ -37,11 +39,11 @@ function ResourcePicker({ url, onUrlChange }) {
         {t('common:select')}
       </Button>
       <Modal
-        closable
         centered
         width="80%"
         footer={null}
         destroyOnClose
+        closable={false}
         visible={isModalVisible}
         onCancel={handleCancel}
         modalRender={modalRender}

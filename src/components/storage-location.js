@@ -18,9 +18,9 @@ import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
@@ -31,7 +31,7 @@ const SCREEN = {
   uploadOverview: 'upload-overview'
 };
 
-function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
+function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
@@ -110,7 +110,6 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
 
   const handlePreviewClick = () => {
     setScreen(SCREEN.preview);
-    onEnterFullscreen();
   };
 
   const handleUploadButtonClick = () => {
@@ -120,22 +119,19 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const handleUploadStart = useCallback(() => {
     setIsUploading(true);
     setScreen(SCREEN.uploadOverview);
-    onEnterFullscreen();
-  }, [onEnterFullscreen]);
+  }, []);
 
   const handleUploadFinish = () => {
-    setUploadQueue([]);
     setIsUploading(false);
   };
 
   const handlePreviewScreenBackClick = () => {
     setScreen(SCREEN.none);
-    onExitFullscreen();
   };
 
   const handleUploadOverviewScreenBackClick = async () => {
     setScreen(SCREEN.none);
-    onExitFullscreen();
+    setUploadQueue([]);
     await fetchStorageContent();
   };
 
@@ -242,91 +238,87 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
 
   return (
     <div className="StorageLocation">
-      {screen === SCREEN.none && (
-        <Fragment>
-          <div className="StorageLocation-buttonsLine">
-            <div />
-            <div className="StorageLocation-filesViewerSelectContainer">
-              <Select
-                value={filesViewerDisplay}
-                onChange={setFilesViewerDisplay}
-                className="StorageLocation-filesViewerSelect"
-                options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
-                />
-            </div>
+      <div className="StorageLocation-buttonsLine">
+        <div />
+        <div className="StorageLocation-filesViewerSelectContainer">
+          <Select
+            value={filesViewerDisplay}
+            onChange={setFilesViewerDisplay}
+            className="StorageLocation-filesViewerSelect"
+            options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
+            />
+        </div>
+      </div>
+      <ReactDropzone
+        ref={dropzoneRef}
+        onDrop={canAcceptFiles ? setUploadQueue : null}
+        noKeyboard
+        noClick
+        >
+        {({ getRootProps, getInputProps, isDragActive }) => (
+          <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+            <input {...getInputProps()} hidden />
+            <FilesViewer
+              files={files}
+              parentDirectory={parentDirectory}
+              display={filesViewerDisplay}
+              onFileClick={handleFileClick}
+              onFileDoubleClick={handleFileDoubleClick}
+              selectedFileUrl={selectedFile?.portableUrl}
+              onDeleteClick={handleDeleteClick}
+              onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
+              onPreviewClick={handlePreviewClick}
+              canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
+              canDelete={storageLocation.isDeletionEnabled}
+              isLoading={isLoading}
+              />
           </div>
-          <ReactDropzone
-            ref={dropzoneRef}
-            onDrop={canAcceptFiles ? setUploadQueue : null}
-            noKeyboard
-            noClick
-            >
-            {({ getRootProps, getInputProps, isDragActive }) => (
-              <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
-                <input {...getInputProps()} hidden />
-                <FilesViewer
-                  files={files}
-                  parentDirectory={parentDirectory}
-                  display={filesViewerDisplay}
-                  onFileClick={handleFileClick}
-                  onFileDoubleClick={handleFileDoubleClick}
-                  selectedFileUrl={selectedFile?.portableUrl}
-                  onDeleteClick={handleDeleteClick}
-                  onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
-                  onPreviewClick={handlePreviewClick}
-                  canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
-                  canDelete={storageLocation.isDeletionEnabled}
-                  isLoading={isLoading}
-                  />
-              </div>
-            )}
-          </ReactDropzone>
-          <div className="StorageLocation-storageInfo">
-            {storageLocation.type === STORAGE_LOCATION_TYPE.private
+        )}
+      </ReactDropzone>
+      <div className="StorageLocation-storageInfo">
+        {storageLocation.type === STORAGE_LOCATION_TYPE.private
             && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
             && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
-            {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
-            <Alert message={t('publicStorageWarning')} type="warning" showIcon />
-            )}
-          </div>
-          <div className="StorageLocation-buttonsLine">
-            <Button
-              icon={<UploadIcon />}
-              onClick={handleUploadButtonClick}
-              disabled={!canUploadToCurrentDirectory || isLoading}
-              >
-              {t('uploadFiles')}
-            </Button>
-            <div className="StorageLocation-buttonsGroup">
-              <Button onClick={onCancel}>{t('common:cancel')}</Button>
-              {renderSelectButton()}
-            </div>
-          </div>
-        </Fragment>
-      )}
+        {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
+        <Alert message={t('publicStorageWarning')} type="warning" showIcon />
+        )}
+      </div>
+      <div className="StorageLocation-buttonsLine">
+        <Button
+          icon={<UploadIcon />}
+          onClick={handleUploadButtonClick}
+          disabled={!canUploadToCurrentDirectory || isLoading}
+          >
+          {t('uploadFiles')}
+        </Button>
+        <div className="StorageLocation-buttonsGroup">
+          <Button onClick={onCancel}>{t('common:cancel')}</Button>
+          {renderSelectButton()}
+        </div>
+      </div>
 
       {screen === SCREEN.preview && (
-        <div className="StorageLocation-screen">
-          {renderScreenBackButton(handlePreviewScreenBackClick)}
-          <FilePreview
-            url={selectedFile.url}
-            size={selectedFile.size}
-            createdOn={selectedFile.createdOn}
-            />
-          <div className="StorageLocation-screenSelect">{renderSelectButton()}</div>
-        </div>
+      <div className="StorageLocation-screen">
+        {renderScreenBackButton(handlePreviewScreenBackClick)}
+        <FilePreview
+          url={selectedFile.url}
+          size={selectedFile.size}
+          createdOn={selectedFile.createdOn}
+          />
+        <div className="StorageLocation-screenSelect">{renderSelectButton()}</div>
+      </div>
       )}
 
       {screen === SCREEN.uploadOverview && (
-        <div className="StorageLocation-screen">
-          {renderScreenBackButton(handleUploadOverviewScreenBackClick)}
-          <FilesUploadOverview
-            files={uploadQueue}
-            directory={currentDirectory}
-            storageLocation={storageLocation}
-            onUploadFinish={handleUploadFinish}
-            />
-        </div>
+      <div className="StorageLocation-screen">
+        {renderScreenBackButton(handleUploadOverviewScreenBackClick)}
+        <FilesUploadOverview
+          files={uploadQueue}
+          directory={currentDirectory}
+          storageLocation={storageLocation}
+          onUploadFinish={handleUploadFinish}
+          />
+      </div>
       )}
     </div>
   );
@@ -335,8 +327,6 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
 StorageLocation.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
-  onEnterFullscreen: PropTypes.func,
-  onExitFullscreen: PropTypes.func,
   onSelect: PropTypes.func,
   storageLocation: storageLocationShape.isRequired
 };
@@ -344,8 +334,6 @@ StorageLocation.propTypes = {
 StorageLocation.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
-  onEnterFullscreen: () => {},
-  onExitFullscreen: () => {},
   onSelect: () => {}
 };
 

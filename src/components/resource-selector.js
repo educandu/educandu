@@ -12,7 +12,6 @@ const { TabPane } = Tabs;
 function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect }) {
   const { locations } = useStorage();
   const { t } = useTranslation('resourceSelector');
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [visibleLocations, setVisibleLocations] = useState([]);
   const [currentLocationType, setCurrentLocationType] = useState(null);
 
@@ -44,8 +43,6 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
           <StorageLocation
             storageLocation={location}
             initialUrl={initialUrl}
-            onEnterFullscreen={() => setIsFullscreen(true)}
-            onExitFullscreen={() => setIsFullscreen(false)}
             onSelect={onSelect}
             onCancel={onCancel}
             />
@@ -61,7 +58,6 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
         size="small"
         activeKey={currentLocationType || visibleLocations[0]?.type || null}
         onChange={handleLocationTabChange}
-        renderTabBar={isFullscreen ? () => null : null}
         >
         {visibleLocations.map(location => (
           <TabPane key={location.type} tab={t(`storage_${location.type}`)}>

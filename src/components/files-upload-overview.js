@@ -99,6 +99,7 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
 
   return (
     <div className="FilesUploadOverview">
+      <div className="FilesUploadOverview-headline">{t('headline')}</div>
       {Object.values(filesUploadStatus).map(status => (
         <div key={status.filePath}>
           Uploading {status.fileName} <span>{status.uploadEnded?.toString()}</span>  <span>{status.error?.toString()}</span>
