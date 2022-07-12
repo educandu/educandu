@@ -410,7 +410,7 @@
     "namespace": "filesUploadOverview",
     "language": "de",
     "resources": {
-      "headline": "Dateien Hochladen",
+      "headline": "Datei-Upload",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar"
     }
