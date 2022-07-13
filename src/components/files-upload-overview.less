@@ -1,0 +1,43 @@
+.FilesUploadOverview {
+  height: 100%;
+}
+
+.FilesUploadOverview-headline {
+  margin-bottom: 30px;
+}
+
+.FilesUploadOverview-usedStorage {
+  margin-bottom: 20px;
+}
+
+.FilesUploadOverview-fileStatus {
+  padding: 0 15px;
+  margin-bottom: 15px;
+}
+
+.FilesUploadOverview-fileStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.FilesUploadOverview-fileStatusError {
+  padding-left: 25px;
+  font-size: 12px;
+  color: @edu-error-color;
+}
+
+.FilesUploadOverview-fileStatusContainer {
+  max-height: 70%;
+  overflow: auto;
+}
+
+.FilesUploadOverview-fileStatusIcon {
+  &.FilesUploadOverview-fileStatusIcon--green {
+    color: @edu-success-color;
+  }
+
+  &.FilesUploadOverview-fileStatusIcon--red {
+    color: @edu-error-color;
+  }
+}

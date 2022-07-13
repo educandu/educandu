@@ -6,10 +6,6 @@ const staticConfig = [
   {
     root: '/images/flags',
     destination: resolvePathWithinPackage('flag-icon-css', './flags')
-  },
-  {
-    root: '/fonts/fontawesome',
-    destination: resolvePathWithinPackage('@fortawesome/fontawesome-free', './webfonts')
   }
 ];
 
