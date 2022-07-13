@@ -16,12 +16,6 @@ uploading:
 successfullyUploaded:
   en: Upload completed
   de: Hochladen ist abgeschlossen
-uploadLimitExceeded:
-  en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
-  de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
 optimizeImages:
   en: Optimize images for web display
   de: Bilder für Web optimieren
-insufficientPrivateStorge:
-  en: Not enough storage space available for file
-  de: Nicht genügend Speicherplatz für die Datei verfügbar

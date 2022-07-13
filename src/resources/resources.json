@@ -398,6 +398,24 @@
     }
   },
   {
+    "namespace": "filesUploadOverview",
+    "language": "en",
+    "resources": {
+      "headline": "Files upload",
+      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
+      "insufficientPrivateStorge": "Not enough storage space available for file"
+    }
+  },
+  {
+    "namespace": "filesUploadOverview",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Upload",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar"
+    }
+  },
+  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {
@@ -1367,9 +1385,7 @@
       "uploadFiles": "Upload files",
       "uploading": "Uploading {count, plural, =1 {file} other {files}}",
       "successfullyUploaded": "Upload completed",
-      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "optimizeImages": "Optimize images for web display",
-      "insufficientPrivateStorge": "Not enough storage space available for file"
+      "optimizeImages": "Optimize images for web display"
     }
   },
   {
@@ -1382,9 +1398,7 @@
       "uploadFiles": "Dateien hochladen",
       "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
       "successfullyUploaded": "Hochladen ist abgeschlossen",
-      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
-      "optimizeImages": "Bilder für Web optimieren",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar"
+      "optimizeImages": "Bilder für Web optimieren"
     }
   },
   {
@@ -1463,7 +1477,7 @@
     "namespace": "usedStorage",
     "language": "en",
     "resources": {
-      "label": "Used",
+      "label": "Used storage",
       "storageSpaceExceeded": "Exceedance"
     }
   },
@@ -1471,7 +1485,7 @@
     "namespace": "usedStorage",
     "language": "de",
     "resources": {
-      "label": "Benutzt",
+      "label": "Genutzter Speicherplatz",
       "storageSpaceExceeded": "Überschreitung"
     }
   },
