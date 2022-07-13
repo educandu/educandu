@@ -1,6 +1,5 @@
 import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
-import uniqueId from '../../utils/unique-id.js';
 import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
 import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
@@ -77,7 +76,6 @@ export function calculateEvenColumnWidthsInPercent(columnCount) {
 
 export function createEmptyCell(rowIndex, columnIndex) {
   return {
-    key: uniqueId.create(),
     rowIndex,
     columnIndex,
     rowSpan: 1,
@@ -118,7 +116,6 @@ export function createTableDesignerCells(tableModel) {
   const designerCells = [];
 
   designerCells.push({
-    key: DESIGNER_CELL_TYPE.tableHeader,
     designerCellType: DESIGNER_CELL_TYPE.tableHeader,
     columnIndex: -1,
     rowIndex: -1
@@ -126,7 +123,6 @@ export function createTableDesignerCells(tableModel) {
 
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
     designerCells.push({
-      key: `${DESIGNER_CELL_TYPE.columnHeader}-${columnIndex}`,
       designerCellType: DESIGNER_CELL_TYPE.columnHeader,
       rowIndex: -1,
       columnIndex
@@ -135,7 +131,6 @@ export function createTableDesignerCells(tableModel) {
 
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     designerCells.push({
-      key: `${DESIGNER_CELL_TYPE.rowHeader}-${rowIndex}`,
       designerCellType: DESIGNER_CELL_TYPE.rowHeader,
       rowIndex,
       columnIndex: -1
@@ -405,7 +400,6 @@ function createConnectedCell(cells, targetArea) {
   const firstCell = cells[0];
   return {
     ...firstCell,
-    key: uniqueId.create(),
     rowIndex: targetArea.fromRowIndex,
     columnIndex: targetArea.fromColumnIndex,
     rowSpan: (targetArea.toRowIndex - targetArea.fromRowIndex) + 1,
