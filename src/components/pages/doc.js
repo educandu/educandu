@@ -140,7 +140,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleDocumentMetadataModalSave = async ({ templateDocumentKey, ...newMetadata }) => {
-    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentKey: doc.key, metadata: newMetadata });
+    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentId: doc.key, metadata: newMetadata });
 
     setDoc(updatedDoc);
     setIsDocumentMetadataModalVisible(false);
@@ -163,7 +163,7 @@ function Doc({ initialState, PageTemplate }) {
     }));
 
     try {
-      const updatedDoc = await documentApiClient.updateDocumentSections({ documentKey: doc.key, sections: newSections });
+      const updatedDoc = await documentApiClient.updateDocumentSections({ documentId: doc.key, sections: newSections });
 
       const currentSectionKeys = currentSections.map(s => s.key);
       if (updatedDoc.sections.some(s => !currentSectionKeys.includes(s.key))) {
@@ -355,7 +355,7 @@ function Doc({ initialState, PageTemplate }) {
       async () => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentKey: selectedHistoryRevision.key,
+            documentId: selectedHistoryRevision.key,
             revisionId: selectedHistoryRevision._id
           });
 
@@ -372,12 +372,12 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
-    const documentKey = doc.key;
+    const documentId = doc.key;
     const sectionKey = section.key;
     const sectionRevision = section.revision;
 
     try {
-      const { document: updatedDoc } = await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
+      const { document: updatedDoc } = await documentApiClient.hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions });
 
       setDoc(updatedDoc);
       setCurrentSections(updatedDoc.sections);
@@ -385,7 +385,7 @@ function Doc({ initialState, PageTemplate }) {
       handleApiError({ error, logger, t });
     }
 
-    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
+    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
 
     setHistoryRevisions(documentRevisions);
     setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);

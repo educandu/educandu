@@ -7,10 +7,10 @@ class DocumentApiClient {
     this.httpClient = httpClient;
   }
 
-  getDocument(key) {
+  getDocument(documentId) {
     return this.httpClient
       .get(
-        `/api/v1/docs/${encodeURIComponent(key)}`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -35,55 +35,55 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  updateDocumentMetadata({ documentKey, metadata }) {
+  updateDocumentMetadata({ documentId, metadata }) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${encodeURIComponent(documentKey)}/metadata`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}/metadata`,
         metadata,
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  updateDocumentSections({ documentKey, sections }) {
+  updateDocumentSections({ documentId, sections }) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${encodeURIComponent(documentKey)}/sections`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}/sections`,
         { sections },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  restoreDocumentRevision({ documentKey, revisionId }) {
+  restoreDocumentRevision({ documentId, revisionId }) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${encodeURIComponent(documentKey)}/restore`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}/restore`,
         { revisionId },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  getDocumentRevisions(key) {
+  getDocumentRevisions(documentId) {
     return this.httpClient
       .get(
         '/api/v1/docs',
         {
-          params: { key },
+          params: { key: documentId },
           responseType: 'json'
         }
       )
       .then(res => res.data);
   }
 
-  hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions }) {
+  hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     return this.httpClient
       .delete(
         '/api/v1/docs/sections',
         {
           data: {
-            documentKey,
+            documentKey: documentId,
             sectionKey,
             sectionRevision,
             reason,
@@ -95,12 +95,12 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  hardDeleteDocument(documentKey) {
+  hardDeleteDocument(documentId) {
     return this.httpClient
       .delete(
         '/api/v1/docs',
         {
-          data: { documentKey },
+          data: { documentKey: documentId },
           responseType: 'json'
         }
       )
@@ -116,20 +116,20 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  archiveDocument(documentKey) {
+  archiveDocument(documentId) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${encodeURIComponent(documentKey)}/archive`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}/archive`,
         null,
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  unarchiveDocument(documentKey) {
+  unarchiveDocument(documentId) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${encodeURIComponent(documentKey)}/unarchive`,
+        `/api/v1/docs/${encodeURIComponent(documentId)}/unarchive`,
         null,
         { responseType: 'json' }
       )
