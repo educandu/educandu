@@ -34,10 +34,10 @@ function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl({ key, slug, view, templateDocumentKey }) {
-  const keyAndSlugPart = urlUtils.concatParts(encodeURIComponent(key), urlUtils.encodeURIParts(slug));
+function getDocUrl({ id, slug, view, templateDocumentKey }) {
+  const idAndSlugPart = urlUtils.concatParts(encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 
-  const url = urlUtils.concatParts(docsPrefix, keyAndSlugPart);
+  const url = urlUtils.concatParts(docsPrefix, idAndSlugPart);
   const queryString = urlUtils.composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
   return queryString ? `${url}?${queryString}` : url;
 }
@@ -116,7 +116,7 @@ function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
-  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
+  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ id: key, slug }));
 }
 
 function getRoomUrl(id, slug) {

@@ -63,7 +63,7 @@ class DocumentImportTaskProcessor {
       }
     }
 
-    const docUrl = urls.getDocUrl({ key: sortedRevisions[0].key, slug: sortedRevisions[0].slug });
+    const docUrl = urls.getDocUrl({ id: sortedRevisions[0].key, slug: sortedRevisions[0].slug });
     const baseUrl = urls.getImportSourceBaseUrl(importSource);
 
     const originUrl = `${baseUrl}${docUrl}`;

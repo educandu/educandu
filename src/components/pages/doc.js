@@ -123,14 +123,14 @@ function Doc({ initialState, PageTemplate }) {
   useEffect(() => {
     switch (view) {
       case VIEW.edit:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug, view: VIEW.edit }));
         break;
       case VIEW.history:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug, view: VIEW.history }));
         break;
       case VIEW.display:
       default:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug }));
         break;
     }
   }, [user, doc.key, doc.slug, view]);

@@ -19,7 +19,7 @@ function createRecords(importableDocuments, formatDate, languageNameProvider, la
 
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
-    const url = `${importSourceBaseUrl}${urls.getDocUrl({ key: doc.key, slug: doc.slug })}`;
+    const url = `${importSourceBaseUrl}${urls.getDocUrl({ id: doc.key, slug: doc.slug })}`;
 
     return {
       key: doc.key,

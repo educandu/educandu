@@ -63,7 +63,7 @@ class AmbService {
       const contributorUsers = doc.contributors.map(contributorId => userMap[contributorId]);
       const result = cloneDeep(defaultMetadata);
 
-      result.id = urlUtils.concatParts(origin, routes.getDocUrl({ key: doc._id }));
+      result.id = urlUtils.concatParts(origin, routes.getDocUrl({ id: doc._id }));
       result.name = doc.title;
       result.creator = [{ type: 'Person', name: createdByUser.username }];
       result.contributor = contributorUsers.map(user => ({ type: 'Person', name: user.username }));

@@ -67,7 +67,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentCreatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ key: activity.data._id }),
+      href: urls.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -79,7 +79,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ key: activity.data._id }),
+      href: urls.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -91,7 +91,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentMarkedFavoriteActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ key: activity.data._id }),
+      href: urls.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };

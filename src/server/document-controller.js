@@ -57,13 +57,13 @@ class DocumentController {
     }
 
     if (doc.slug !== routeWildcardValue) {
-      return res.redirect(301, routes.getDocUrl({ key: doc.key, slug: doc.slug, view, templateDocumentKey }));
+      return res.redirect(301, routes.getDocUrl({ id: doc._id, slug: doc.slug, view, templateDocumentKey }));
     }
 
     let templateDocument;
     if (templateDocumentKey) {
       if (doc.sections.length) {
-        return res.redirect(302, routes.getDocUrl({ key: doc.key, slug: doc.slug }));
+        return res.redirect(302, routes.getDocUrl({ id: doc._id, slug: doc.slug }));
       }
 
       templateDocument = await this.documentService.getDocumentByKey(templateDocumentKey);

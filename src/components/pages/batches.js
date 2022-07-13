@@ -110,7 +110,7 @@ function Batches({ initialState, PageTemplate }) {
   };
 
   const renderDocumentRegenerationEntityId = taskParams => (
-    <a target="_blank" href={urls.getDocUrl({ key: taskParams.key })} rel="noreferrer noopener">
+    <a target="_blank" href={urls.getDocUrl({ id: taskParams.key })} rel="noreferrer noopener">
       {taskParams.key}
     </a>
   );
@@ -120,7 +120,7 @@ function Batches({ initialState, PageTemplate }) {
     let text;
     switch (taskParams.type) {
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document:
-        url = urls.getDocUrl({ key: taskParams.documentKey });
+        url = urls.getDocUrl({ id: taskParams.documentKey });
         text = taskParams.documentKey;
         break;
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson:
@@ -139,7 +139,7 @@ function Batches({ initialState, PageTemplate }) {
     let text;
     switch (taskParams.type) {
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
-        url = urls.getDocUrl({ key: taskParams.documentKey });
+        url = urls.getDocUrl({ id: taskParams.documentKey });
         text = taskParams.documentKey;
         break;
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:

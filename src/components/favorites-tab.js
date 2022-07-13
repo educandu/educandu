@@ -122,7 +122,7 @@ function FavoritesTab() {
   const getFavoriteUrl = favorite => {
     switch (favorite.type) {
       case FAVORITE_TYPE.document:
-        return urls.getDocUrl({ key: favorite.id });
+        return urls.getDocUrl({ id: favorite.id });
       case FAVORITE_TYPE.room:
         return urls.getRoomUrl(favorite.id);
       case FAVORITE_TYPE.lesson:

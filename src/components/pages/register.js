@@ -86,7 +86,7 @@ function Register({ PageTemplate, SiteLogo }) {
                 <a
                   key="terms-link"
                   title={termsPage?.linkTitle || null}
-                  href={termsPage?.documentKey ? urls.getDocUrl({ key: termsPage.documentKey }) : '#'}
+                  href={termsPage?.documentKey ? urls.getDocUrl({ id: termsPage.documentKey }) : '#'}
                   />
               ]}
               />

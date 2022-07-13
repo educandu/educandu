@@ -164,7 +164,7 @@ function Docs({ initialState, PageTemplate }) {
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
     window.location = urls.getDocUrl({
-      key: newDocument.key,
+      id: newDocument._id,
       slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
       templateDocumentKey: templateDocumentKey || clonedDocument?.key

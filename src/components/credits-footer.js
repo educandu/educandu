@@ -1,4 +1,4 @@
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
@@ -23,8 +23,8 @@ function CreditsFooter({ doc, revision }) {
   const currentHost = request.hostInfo.host;
   const citation = t('citation', { title });
   const url = doc
-    ? `${request.hostInfo.origin}${urls.getDocUrl({ key: doc.key, slug: doc.slug })}`
-    : `${request.hostInfo.origin}${urls.getDocumentRevisionUrl(revision._id)}`;
+    ? `${request.hostInfo.origin}${routes.getDocUrl({ id: doc._id, slug: doc.slug })}`
+    : `${request.hostInfo.origin}${routes.getDocumentRevisionUrl(revision._id)}`;
 
   const date = formatDate(request.timestamp);
 
