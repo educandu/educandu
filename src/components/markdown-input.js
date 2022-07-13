@@ -1,13 +1,17 @@
 import React from 'react';
-import { Input } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
+import { Input, Tooltip } from 'antd';
 import MarkdownHelp from './markdown-help.js';
+import { useTranslation } from 'react-i18next';
 import InputAndPreview from './input-and-preview.js';
+import PreviewIcon from './icons/general/preview-icon.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 
 function MarkdownInput({ minRows, disabled, inline, renderMedia, value, onChange, preview, embeddable, ...rest }) {
+  const { t } = useTranslation('markdownInput');
+
   const renderInlineInput = () => (
     <Input
       {...rest}
@@ -44,13 +48,18 @@ function MarkdownInput({ minRows, disabled, inline, renderMedia, value, onChange
   const renderInput = () => inline ? renderInlineInput() : renderBlockInput();
 
   const renderPreview = () => (
-    <Markdown
-      className={classNames('MarkdownInput-preview', { 'MarkdownInput-preview--inline': inline })}
-      inline={inline}
-      renderMedia={renderMedia}
-      >
-      {value}
-    </Markdown>
+    <div className="MarkdownInput-previewContainer">
+      <Markdown
+        className={classNames('MarkdownInput-preview', { 'MarkdownInput-preview--inline': inline })}
+        inline={inline}
+        renderMedia={renderMedia}
+        >
+        {value}
+      </Markdown>
+      <Tooltip title={t('previewArea')}>
+        <PreviewIcon className="MarkdownInput-previewWatermark" />
+      </Tooltip>
+    </div>
   );
 
   return (

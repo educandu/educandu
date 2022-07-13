@@ -33,6 +33,11 @@
   }
 }
 
+.MarkdownInput-previewContainer {
+  position: relative;
+  display: grid;
+}
+
 .MarkdownInput-preview {
 
   &.MarkdownInput-preview--inline {
@@ -40,4 +45,12 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+}
+
+.MarkdownInput-previewWatermark {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  opacity: 0.4;
+  font-size: 18px;
 }

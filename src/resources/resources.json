@@ -562,6 +562,20 @@
     }
   },
   {
+    "namespace": "markdownInput",
+    "language": "en",
+    "resources": {
+      "previewArea": "Preview area"
+    }
+  },
+  {
+    "namespace": "markdownInput",
+    "language": "de",
+    "resources": {
+      "previewArea": "Vorschaubereich"
+    }
+  },
+  {
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {
