@@ -38,7 +38,7 @@ class BatchService {
     const batch = this._createBatchObject(user._id, BATCH_TYPE.documentImport, batchParams);
 
     const tasks = documentsToImport.map(doc => this._createTaskObject(batch._id, TASK_TYPE.documentImport, {
-      key: doc.key,
+      documentId: doc._id,
       title: doc.title,
       slug: doc.slug,
       language: doc.language,
@@ -87,9 +87,9 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.documentRegeneration);
 
-    const allDocumentKeys = await this.documentStore.getAllDocumentKeys();
+    const allDocumentIds = await this.documentStore.getAllDocumentIds();
 
-    const tasks = allDocumentKeys.map(key => this._createTaskObject(batch._id, TASK_TYPE.documentRegeneration, { key }));
+    const tasks = allDocumentIds.map(documentId => this._createTaskObject(batch._id, TASK_TYPE.documentRegeneration, { documentId }));
 
     await this.transactionRunner.run(async session => {
       await this.batchStore.createBatch(batch, { session });
@@ -108,13 +108,13 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnResourcesConsolidation);
 
-    const [allDocumentKeys, allLessonIds] = await Promise.all([
-      this.documentStore.getAllDocumentKeys(),
+    const [allDocumentIds, allLessonIds] = await Promise.all([
+      this.documentStore.getAllDocumentIds(),
       this.lessonStore.getAllLessonIds()
     ]);
 
     const tasksParams = [
-      ...allDocumentKeys.map(key => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document, documentKey: key })),
+      ...allDocumentIds.map(documentId => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document, documentId })),
       ...allLessonIds.map(id => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson, lessonId: id }))
     ];
 
@@ -137,14 +137,14 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnUploadDirectoryCreation);
 
-    const [allDocumentKeys, allLessonIds, allRoomIds] = await Promise.all([
-      this.documentStore.getAllDocumentKeys(),
+    const [allDocumentIds, allLessonIds, allRoomIds] = await Promise.all([
+      this.documentStore.getAllDocumentIds(),
       this.lessonStore.getAllLessonIds(),
       this.roomStore.getAllPrivateRoomIds()
     ]);
 
     const tasksParams = [
-      ...allDocumentKeys.map(key => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentKey: key })),
+      ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
       ...allLessonIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson, lessonId: id })),
       ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
     ];

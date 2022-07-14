@@ -110,7 +110,7 @@ function Doc({ initialState, PageTemplate }) {
     if (initialView === VIEW.history) {
       (async () => {
         try {
-          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
           setHistoryRevisions(documentRevisions);
           setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
@@ -118,29 +118,29 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
-  }, [initialView, doc.key, view, t, pluginRegistry, documentApiClient]);
+  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
     switch (view) {
       case VIEW.edit:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug, view: VIEW.edit }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.edit }));
         break;
       case VIEW.history:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug, view: VIEW.history }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.history }));
         break;
       case VIEW.display:
       default:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc.key, slug: doc.slug }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug }));
         break;
     }
-  }, [user, doc.key, doc.slug, view]);
+  }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = async ({ templateDocumentKey, ...newMetadata }) => {
-    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentId: doc.key, metadata: newMetadata });
+  const handleDocumentMetadataModalSave = async ({ templateDocumentId, ...newMetadata }) => {
+    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentId: doc._id, metadata: newMetadata });
 
     setDoc(updatedDoc);
     setIsDocumentMetadataModalVisible(false);
@@ -163,7 +163,7 @@ function Doc({ initialState, PageTemplate }) {
     }));
 
     try {
-      const updatedDoc = await documentApiClient.updateDocumentSections({ documentId: doc.key, sections: newSections });
+      const updatedDoc = await documentApiClient.updateDocumentSections({ documentId: doc._id, sections: newSections });
 
       const currentSectionKeys = currentSections.map(s => s.key);
       if (updatedDoc.sections.some(s => !currentSectionKeys.includes(s.key))) {
@@ -311,7 +311,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleHistoryOpen = async () => {
     try {
-      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
       setHistoryRevisions(documentRevisions);
       setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
       setView(VIEW.history);
@@ -355,7 +355,7 @@ function Doc({ initialState, PageTemplate }) {
       async () => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentId: selectedHistoryRevision.key,
+            documentId: selectedHistoryRevision.documentId,
             revisionId: selectedHistoryRevision._id
           });
 
@@ -372,7 +372,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
-    const documentId = doc.key;
+    const documentId = doc._id;
     const sectionKey = section.key;
     const sectionRevision = section.revision;
 
@@ -416,7 +416,7 @@ function Doc({ initialState, PageTemplate }) {
         <div className="DocPage">
           <MetadataTitle
             text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
-            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc.key} />}
+            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />}
             />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}

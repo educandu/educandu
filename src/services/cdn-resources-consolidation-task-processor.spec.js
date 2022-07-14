@@ -38,11 +38,11 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
 
     describe('when type is document', () => {
       const type = CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document;
-      const documentKey = uniqueId.create();
+      const documentId = uniqueId.create();
 
       it('should call consolidateCdnResources on documentService', async () => {
-        await sut.process({ taskParams: { type, documentKey } }, {});
-        sinon.assert.calledWith(documentService.consolidateCdnResources, documentKey);
+        await sut.process({ taskParams: { type, documentId } }, {});
+        sinon.assert.calledWith(documentService.consolidateCdnResources, documentId);
       });
     });
 
@@ -58,15 +58,15 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
 
     describe('when cancellation is requested', () => {
       const type = CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document;
-      const documentKey = uniqueId.create();
+      const documentId = uniqueId.create();
 
       it('should throw an error', async () => {
-        await expect(() => sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
+        await expect(() => sut.process({ taskParams: { type, documentId } }, { cancellationRequested: true })).rejects.toThrow(Error);
       });
 
       it('should not call consolidateCdnResources', async () => {
         try {
-          await sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true });
+          await sut.process({ taskParams: { type, documentId } }, { cancellationRequested: true });
           sinon.assert.fail('This code should not have been reached');
         } catch {
           sinon.assert.notCalled(documentService.consolidateCdnResources);

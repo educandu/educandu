@@ -13,14 +13,14 @@ class DocumentRegenerationTaskProcessor {
   }
 
   async process(task, ctx) {
-    const { key } = task.taskParams;
+    const { documentId } = task.taskParams;
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
     }
 
-    logger.info(`Regenerating document with key ${key}`);
-    await this.documentService.regenerateDocument(key);
+    logger.info(`Regenerating document with id ${documentId}`);
+    await this.documentService.regenerateDocument(documentId);
   }
 }
 

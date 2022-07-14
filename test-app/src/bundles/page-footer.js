@@ -12,7 +12,7 @@ function PageFooter() {
       <div>
         {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
           <span key={index.toString()} className="PageFooter-link">
-            <a href={urls.getDocUrl({ key: fl.documentKey })}>{fl.linkTitle}</a>
+            <a href={urls.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
           </span>
         ))}
       </div>

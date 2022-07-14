@@ -34,15 +34,15 @@ describe('routes', () => {
         id: '_id',
         slug: 'slug',
         view: 'edit',
-        templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
-        expectedResult: '/docs/_id/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
+        templateDocumentId: 'XrF7z7jyDrNFkvH7eyj5T',
+        expectedResult: '/docs/_id/slug?view=edit&templateDocumentId=XrF7z7jyDrNFkvH7eyj5T'
       }
     ];
 
-    testCases.forEach(({ id, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when id is '${id}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
+    testCases.forEach(({ id, slug, view, templateDocumentId, expectedResult }) => {
+      describe(`when id is '${id}', slug is '${slug}', view is '${view}' and templateDocumentId is '${templateDocumentId}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl({ id, slug, view, templateDocumentKey });
+          result = sut.getDocUrl({ id, slug, view, templateDocumentId });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

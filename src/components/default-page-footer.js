@@ -12,7 +12,7 @@ function DefaultPageFooter() {
       <div>
         {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
           <span key={index.toString()} className="DefaultPageFooter-link">
-            <a href={urls.getDocUrl({ id: fl.documentKey })}>{fl.linkTitle}</a>
+            <a href={urls.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
           </span>
         ))}
       </div>

@@ -30,7 +30,7 @@ class ImportService {
 
     const importableDocuments = exportableDocuments
       .map(exportableDocument => {
-        const importedDocument = importedDocuments.find(document => document.key === exportableDocument.key);
+        const importedDocument = importedDocuments.find(document => document._id === exportableDocument._id);
 
         let importType;
 
@@ -43,7 +43,7 @@ class ImportService {
         }
 
         return {
-          key: exportableDocument.key,
+          _id: exportableDocument._id,
           title: exportableDocument.title,
           slug: exportableDocument.slug,
           language: exportableDocument.language,

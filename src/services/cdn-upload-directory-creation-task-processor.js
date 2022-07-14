@@ -18,7 +18,7 @@ class CdnUploadDirectoryCreationTaskProcessor {
   }
 
   async process(task, ctx) {
-    const { type, documentKey, lessonId, roomId } = task.taskParams;
+    const { type, documentId, lessonId, roomId } = task.taskParams;
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
@@ -26,8 +26,8 @@ class CdnUploadDirectoryCreationTaskProcessor {
 
     switch (type) {
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
-        logger.info(`Creating CDN upload directory for document with key ${documentKey}`);
-        await this.documentService.createUploadDirectoryMarkerForDocument(documentKey);
+        logger.info(`Creating CDN upload directory for document with id ${documentId}`);
+        await this.documentService.createUploadDirectoryMarkerForDocument(documentId);
         break;
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:
         logger.info(`Creating CDN upload directory for lesson with ID ${lessonId}`);

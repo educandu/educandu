@@ -214,9 +214,9 @@ export function createTestDocument(container, user, data) {
   });
 }
 
-export function updateTestDocument({ container, documentKey, user, data }) {
+export function updateTestDocument({ container, documentId, user, data }) {
   const documentService = container.get(DocumentService);
-  return documentService.updateDocument({ documentKey, user, data });
+  return documentService.updateDocument({ documentId, user, data });
 }
 
 export async function createTestRevisions(container, user, revisions) {
@@ -238,12 +238,12 @@ export async function createTestRevisions(container, user, revisions) {
 
     lastCreatedDocument = lastCreatedDocument
       // eslint-disable-next-line no-await-in-loop
-      ? await documentService.updateDocument({ documentKey: lastCreatedDocument.key, data, user })
+      ? await documentService.updateDocument({ documentId: lastCreatedDocument._id, data, user })
       // eslint-disable-next-line no-await-in-loop
       : await documentService.createDocument({ data, user });
   }
 
   return lastCreatedDocument
-    ? documentService.getAllDocumentRevisionsByKey(lastCreatedDocument.key)
+    ? documentService.getAllDocumentRevisionsByDocumentId(lastCreatedDocument._id)
     : [];
 }

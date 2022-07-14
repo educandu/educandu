@@ -42,11 +42,11 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
 
     describe('when type is document', () => {
       const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document;
-      const documentKey = uniqueId.create();
+      const documentId = uniqueId.create();
 
       it('should call createUploadDirectoryMarkerForDocument on documentService', async () => {
-        await sut.process({ taskParams: { type, documentKey } }, {});
-        sinon.assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentKey);
+        await sut.process({ taskParams: { type, documentId } }, {});
+        sinon.assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentId);
       });
     });
 
@@ -72,15 +72,15 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
 
     describe('when type is document and cancellation is requested', () => {
       const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document;
-      const documentKey = uniqueId.create();
+      const documentId = uniqueId.create();
 
       it('should throw an error', async () => {
-        await expect(() => sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
+        await expect(() => sut.process({ taskParams: { type, documentId } }, { cancellationRequested: true })).rejects.toThrow(Error);
       });
 
       it('should not call createUploadDirectoryMarkerForDocument', async () => {
         try {
-          await sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true });
+          await sut.process({ taskParams: { type, documentId } }, { cancellationRequested: true });
           sinon.assert.fail('This code should not have been reached');
         } catch {
           sinon.assert.notCalled(documentService.createUploadDirectoryMarkerForDocument);

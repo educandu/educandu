@@ -55,7 +55,7 @@ describe('batch-service', () => {
       };
       documentsToImport = [
         {
-          key: 'v5NSMktadhzquVUAEdzAKg',
+          _id: 'v5NSMktadhzquVUAEdzAKg',
           title: 'doc-1',
           slug: 'doc-1',
           language: 'en',
@@ -65,7 +65,7 @@ describe('batch-service', () => {
           importType: 'add'
         },
         {
-          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          _id: 'sueoX7WCUtSUHT9cWE6UMq',
           title: 'doc-2',
           slug: 'doc-2',
           language: 'en',
@@ -104,7 +104,7 @@ describe('batch-service', () => {
 
       it('creates all tasks of the new batch in the database', async () => {
         const dbEntries = await db.tasks.find({}).toArray();
-        expect(dbEntries).toEqual([
+        const expectedTasks = [
           {
             _id: expect.stringMatching(/\w+/),
             batchId: expect.stringMatching(/\w+/),
@@ -113,6 +113,7 @@ describe('batch-service', () => {
             attempts: [],
             taskParams: {
               ...documentsToImport[0],
+              documentId: documentsToImport[0]._id,
               updatedOn: new Date(documentsToImport[0].updatedOn)
             }
           },
@@ -124,10 +125,15 @@ describe('batch-service', () => {
             attempts: [],
             taskParams: {
               ...documentsToImport[1],
+              documentId: documentsToImport[1]._id,
               updatedOn: new Date(documentsToImport[1].updatedOn)
             }
           }
-        ]);
+        ];
+        delete expectedTasks[0].taskParams._id;
+        delete expectedTasks[1].taskParams._id;
+
+        expect(dbEntries).toEqual(expectedTasks);
       });
 
       it('returns the created batch object', async () => {
@@ -223,7 +229,7 @@ describe('batch-service', () => {
             processed: false,
             attempts: [],
             taskParams: {
-              key: testDocument.key
+              documentId: testDocument._id
             }
           }
         ]);
@@ -294,7 +300,7 @@ describe('batch-service', () => {
       };
       documentsToImport = [
         {
-          key: 'v5NSMktadhzquVUAEdzAKg',
+          _id: 'v5NSMktadhzquVUAEdzAKg',
           title: 'doc-1',
           slug: 'doc-1',
           language: 'en',
@@ -304,7 +310,7 @@ describe('batch-service', () => {
           importType: 'add'
         },
         {
-          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          _id: 'sueoX7WCUtSUHT9cWE6UMq',
           title: 'doc-2',
           slug: 'doc-2',
           language: 'en',
@@ -323,7 +329,7 @@ describe('batch-service', () => {
         documentsToImport,
         user
       });
-      await db.tasks.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      await db.tasks.updateOne({ 'taskParams.documentId': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       result = await sut.getBatchesWithProgress(BATCH_TYPE.documentImport);
     });
 
@@ -382,7 +388,7 @@ describe('batch-service', () => {
       };
       documentsToImport = [
         {
-          key: 'v5NSMktadhzquVUAEdzAKg',
+          _id: 'v5NSMktadhzquVUAEdzAKg',
           title: 'doc-1',
           slug: 'doc-1',
           language: 'en',
@@ -392,7 +398,7 @@ describe('batch-service', () => {
           importType: 'add'
         },
         {
-          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          _id: 'sueoX7WCUtSUHT9cWE6UMq',
           title: 'doc-2',
           slug: 'doc-2',
           language: 'en',
@@ -404,7 +410,7 @@ describe('batch-service', () => {
       ];
 
       await sut.createImportBatch({ importSource, documentsToImport, user });
-      await db.tasks.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      await db.tasks.updateOne({ 'taskParams.documentId': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();
       createdBatchId = dbEntries[0]._id;
       result = await sut.getBatchDetails(createdBatchId);
@@ -434,7 +440,7 @@ describe('batch-service', () => {
               importType: 'add',
               importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
               importedRevision: null,
-              key: documentsToImport[0].key,
+              documentId: documentsToImport[0]._id,
               language: 'en',
               slug: 'doc-1',
               title: 'doc-1',
@@ -451,7 +457,7 @@ describe('batch-service', () => {
               importType: 'update',
               importableRevision: '6AXHKzH3z26r7JKJyPN6er',
               importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-              key: documentsToImport[1].key,
+              documentId: documentsToImport[1]._id,
               language: 'en',
               slug: 'doc-2',
               title: 'doc-2',

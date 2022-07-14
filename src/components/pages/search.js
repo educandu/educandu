@@ -37,7 +37,7 @@ function Search({ PageTemplate }) {
 
   const mapToRows = useCallback(docs => docs.map(doc => (
     {
-      key: doc.key,
+      id: doc._id,
       relevance: doc.tagMatchCount,
       tags: doc.tags,
       title: doc.title,
@@ -104,7 +104,7 @@ function Search({ PageTemplate }) {
 
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
   const renderTitle = (title, row) => {
-    const doc = documents.find(d => d.key === row.key);
+    const doc = documents.find(d => d._id === row.id);
     return !!doc && <DocumentInfoCell doc={doc} />;
   };
 

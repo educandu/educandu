@@ -58,8 +58,8 @@ function SettingsTab({
     handleChange('consentText', value, isValid);
   }, [handleChange]);
 
-  const handleTemplateDocumentChange = useCallback(documentKey => {
-    handleChange('templateDocument', { documentKey }, true);
+  const handleTemplateDocumentChange = useCallback(documentId => {
+    handleChange('templateDocument', { documentId }, true);
   }, [handleChange]);
 
   const handleHelpPageChange = useCallback((value, { isValid }) => {
@@ -154,7 +154,7 @@ function SettingsTab({
       <Collapse className="SettingsTab-collapse">
         <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
           <div className="SettingsTab-templateDocument" >
-            <DocumentSelector documentId={settings.templateDocument?.documentKey} onChange={handleTemplateDocumentChange} />
+            <DocumentSelector documentId={settings.templateDocument?.documentId} onChange={handleTemplateDocumentChange} />
           </div>
         </Collapse.Panel>
       </Collapse>

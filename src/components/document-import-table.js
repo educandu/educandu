@@ -19,10 +19,10 @@ function createRecords(importableDocuments, formatDate, languageNameProvider, la
 
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
-    const url = `${importSourceBaseUrl}${urls.getDocUrl({ id: doc.key, slug: doc.slug })}`;
+    const url = `${importSourceBaseUrl}${urls.getDocUrl({ id: doc._id, slug: doc.slug })}`;
 
     return {
-      key: doc.key,
+      id: doc._id,
       title: doc.title,
       url,
       titleComponent: getTitleComponent(doc.title, url),
@@ -37,7 +37,7 @@ function createRecords(importableDocuments, formatDate, languageNameProvider, la
   });
 }
 
-function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading, onSelectedKeysChange }) {
+function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading, onSelectedIdsChange }) {
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const [records, setRecords] = useState([]);
@@ -86,8 +86,8 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
 
   const tableRowSelection = useMemo(() => ({
     type: 'checkbox',
-    onChange: onSelectedKeysChange
-  }), [onSelectedKeysChange]);
+    onChange: onSelectedIdsChange
+  }), [onSelectedIdsChange]);
 
   return (
     <Table
@@ -107,14 +107,14 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
 DocumentImportTable.propTypes = {
   importSourceBaseUrl: PropTypes.string.isRequired,
   importableDocuments: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
     importType: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     language: PropTypes.string.isRequired,
     updatedOn: PropTypes.string.isRequired
   })).isRequired,
   loading: PropTypes.bool,
-  onSelectedKeysChange: PropTypes.func.isRequired
+  onSelectedIdsChange: PropTypes.func.isRequired
 };
 
 DocumentImportTable.defaultProps = {

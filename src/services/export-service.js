@@ -24,12 +24,12 @@ class ExportService {
       .sort(by(doc => doc.updatedOn, 'desc'));
   }
 
-  async getDocumentExport({ key, toRevision }) {
-    const revisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(key);
+  async getDocumentExport({ documentId, toRevision }) {
+    const revisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     const lastRevisionIndex = revisions.findIndex(revision => revision._id === toRevision);
 
     if (lastRevisionIndex === -1) {
-      throw new BadRequest(`The specified revision '${toRevision}' is invalid for document '${key}'`);
+      throw new BadRequest(`The specified revision '${toRevision}' is invalid for document '${documentId}'`);
     }
 
     const revisionsToExport = revisions.slice(0, lastRevisionIndex + 1);
@@ -39,7 +39,7 @@ class ExportService {
       .map(({ _id, username }) => ({ _id, username }));
 
     if (users.length !== userIds.length) {
-      throw new Error(`Was searching for ${users.length} users in document ${key} up to revision '${toRevision}', but found ${userIds.length}`);
+      throw new Error(`Was searching for ${users.length} users in document ${documentId} up to revision '${toRevision}', but found ${userIds.length}`);
     }
 
     return { revisions: revisionsToExport, users, cdnRootUrl: this.serverConfig.cdnRootUrl };

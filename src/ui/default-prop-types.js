@@ -80,7 +80,7 @@ export const requestProps = {
 
 const settingsDocumentProps = {
   linkTitle: PropTypes.string,
-  documentKey: PropTypes.string
+  documentId: PropTypes.string
 };
 
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
@@ -185,8 +185,6 @@ export const sectionShape = PropTypes.shape({
 });
 
 const commonDocumentOrRevisionProps = {
-  _id: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
   order: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
@@ -198,6 +196,7 @@ const commonDocumentOrRevisionProps = {
 
 export const documentMetadataShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
+  _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: userInDocShape.isRequired
@@ -214,6 +213,7 @@ export const documentMetadataEditShape = PropTypes.shape({
 
 export const documentShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
+  _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: userInDocShape.isRequired,
@@ -223,6 +223,8 @@ export const documentShape = PropTypes.shape({
 
 export const documentRevisionShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
+  _id: PropTypes.string.isRequired,
+  documentId: PropTypes.string.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -268,7 +270,7 @@ export const documentImportTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.documentImport]),
   taskParams: PropTypes.shape({
-    key: PropTypes.string.isRequired,
+    documentId: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
     language: PropTypes.string.isRequired,
@@ -283,7 +285,7 @@ export const documentRegenerationTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.documentRegeneration]),
   taskParams: PropTypes.shape({
-    key: PropTypes.string.isRequired
+    documentId: PropTypes.string.isRequired
   }).isRequired
 });
 
@@ -293,7 +295,7 @@ export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
   taskParams: PropTypes.oneOfType([
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document]),
-      documentKey: PropTypes.string.isRequired
+      documentId: PropTypes.string.isRequired
     }),
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson]),
@@ -308,7 +310,7 @@ export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
   taskParams: PropTypes.oneOfType([
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document]),
-      documentKey: PropTypes.string.isRequired
+      documentId: PropTypes.string.isRequired
     }),
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson]),

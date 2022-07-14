@@ -78,7 +78,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'help',
       label: helpPage?.linkTitle,
       icon: <QuestionOutlined />,
-      onClick: () => { window.location = helpPage ? routes.getDocUrl({ id: helpPage.documentKey }) : ''; },
+      onClick: () => { window.location = helpPage ? routes.getDocUrl({ id: helpPage.documentId }) : ''; },
       showWhen: !!helpPage
     },
     {

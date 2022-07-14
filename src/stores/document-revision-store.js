@@ -13,8 +13,8 @@ class DocumentRevisionStore {
     return this.collection.findOne({ _id: documentRevisionId }, { session });
   }
 
-  getAllDocumentRevisionsByKey(documentKey, { session } = {}) {
-    return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
+  getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
+    return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
 
   saveDocumentRevision(documentRevision, { session } = {}) {
@@ -28,8 +28,8 @@ class DocumentRevisionStore {
       .map(documentRevision => this.collection.replaceOne({ _id: documentRevision._id }, documentRevision, { session, upsert: true })));
   }
 
-  deleteDocumentRevisionsByKey(documentKey, { session } = {}) {
-    return this.collection.deleteMany({ key: documentKey }, { session });
+  deleteDocumentRevisionsByDocumentId(documentId, { session } = {}) {
+    return this.collection.deleteMany({ documentId }, { session });
   }
 }
 

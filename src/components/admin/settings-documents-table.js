@@ -16,15 +16,15 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-const isValidLinkListItem = item => [item.linkTitle, item.documentKey].every(hasValue);
+const isValidLinkListItem = item => [item.linkTitle, item.documentId].every(hasValue);
 
-const newLinkListItem = { linkTitle: '', documentKey: '' };
+const newLinkListItem = { linkTitle: '', documentId: '' };
 
 const settingsDocumentsToLinkList = settingsDocuments => {
   return settingsDocuments.map((settingsDoc, index) => ({
     key: index.toString(),
     linkTitle: settingsDoc?.linkTitle || '',
-    documentKey: settingsDoc?.documentKey || ''
+    documentId: settingsDoc?.documentId || ''
   }));
 };
 
@@ -69,9 +69,9 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
     </FormItem>
   );
 
-  const renderDocumentKey = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.documentKey)} style={{ marginBottom: 0 }}>
-      <DocumentSelector documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
+  const renderDocumentId = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.documentId)} style={{ marginBottom: 0 }}>
+      <DocumentSelector documentId={record.documentId} onChange={value => handleChange(index, 'documentId', value)} />
     </FormItem>
   );
 
@@ -86,7 +86,7 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   const columns = [
     { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
-    { title: t('common:documentTitle'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey },
+    { title: t('common:documentTitle'), key: 'documentId', dataIndex: 'documentId', ellipsis: true, render: renderDocumentId },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
 

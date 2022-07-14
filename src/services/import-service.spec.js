@@ -131,7 +131,7 @@ describe('import-service', () => {
 
     describe('when there are only already imported documents', () => {
       beforeEach(async () => {
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([{ key: 'key', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
+        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([{ _id: 'documentId', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
         exportApiClient.getExports.resolves({ docs: [] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
@@ -145,36 +145,36 @@ describe('import-service', () => {
       beforeEach(async () => {
         documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([]);
         exportApiClient.getExports.resolves({
-          docs: [{ key: 'key', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]
+          docs: [{ _id: 'documentId', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]
         });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
       it('should return an array of documents that can be freshly imported (added)', () => {
-        expect(result).toEqual([{ key: 'key', importedRevision: null, importableRevision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language', importType: 'add' }]);
+        expect(result).toEqual([{ _id: 'documentId', importedRevision: null, importableRevision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language', importType: 'add' }]);
       });
     });
 
     describe('when there are both exportable and already imported documents', () => {
       beforeEach(async () => {
         documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([
-          { key: 'key1', revision: 'revision1a', updatedOn: 'updatedOn1a', title: 'title1a', slug: 'slug1a', language: 'language1a' },
-          { key: 'key2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
-          { key: 'key3', revision: 'revision3a', updatedOn: 'updatedOn3a', title: 'title3a', slug: 'slug3a', language: 'language3a' }
+          { _id: 'documentId1', revision: 'revision1a', updatedOn: 'updatedOn1a', title: 'title1a', slug: 'slug1a', language: 'language1a' },
+          { _id: 'documentId2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
+          { _id: 'documentId3', revision: 'revision3a', updatedOn: 'updatedOn3a', title: 'title3a', slug: 'slug3a', language: 'language3a' }
         ]);
         exportApiClient.getExports.resolves({ docs: [
-          { key: 'key1', revision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b' },
-          { key: 'key2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
-          { key: 'key4', revision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a' }
+          { _id: 'documentId1', revision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b' },
+          { _id: 'documentId2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
+          { _id: 'documentId4', revision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a' }
         ] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
       it('should return the array of importable documents', () => {
         expect(result).toEqual([
-          { key: 'key1', importedRevision: 'revision1a', importableRevision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b', importType: 'update' },
-          { key: 'key2', importedRevision: 'revision2a', importableRevision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a', importType: 'reimport' },
-          { key: 'key4', importedRevision: null, importableRevision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a', importType: 'add' }
+          { _id: 'documentId1', importedRevision: 'revision1a', importableRevision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b', importType: 'update' },
+          { _id: 'documentId2', importedRevision: 'revision2a', importableRevision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a', importType: 'reimport' },
+          { _id: 'documentId4', importedRevision: null, importableRevision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a', importType: 'add' }
         ]);
       });
     });

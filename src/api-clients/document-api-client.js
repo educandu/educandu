@@ -70,7 +70,7 @@ class DocumentApiClient {
       .get(
         '/api/v1/docs',
         {
-          params: { key: documentId },
+          params: { documentId },
           responseType: 'json'
         }
       )
@@ -83,7 +83,7 @@ class DocumentApiClient {
         '/api/v1/docs/sections',
         {
           data: {
-            documentKey: documentId,
+            documentId,
             sectionKey,
             sectionRevision,
             reason,
@@ -100,7 +100,7 @@ class DocumentApiClient {
       .delete(
         '/api/v1/docs',
         {
-          data: { documentKey: documentId },
+          data: { documentId },
           responseType: 'json'
         }
       )

@@ -7,8 +7,8 @@ export const getDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().required()
 });
 
-export const documentKeyParamsOrQuerySchema = joi.object({
-  key: idOrKeySchema.required()
+export const documentIdParamsOrQuerySchema = joi.object({
+  documentId: idOrKeySchema.required()
 });
 
 export const patchDocSectionsBodySchema = joi.object({
@@ -39,7 +39,7 @@ export const restoreRevisionBodySchema = joi.object({
 });
 
 export const hardDeleteSectionBodySchema = joi.object({
-  documentKey: idOrKeySchema.required(),
+  documentId: idOrKeySchema.required(),
   sectionKey: idOrKeySchema.required(),
   sectionRevision: idOrKeySchema.required(),
   reason: joi.string().min(3).required(),
@@ -47,7 +47,7 @@ export const hardDeleteSectionBodySchema = joi.object({
 });
 
 export const hardDeleteDocumentBodySchema = joi.object({
-  documentKey: idOrKeySchema.required()
+  documentId: idOrKeySchema.required()
 });
 
 export const documentSectionDBSchema = joi.object({
@@ -65,7 +65,7 @@ export const documentSectionDBSchema = joi.object({
 
 export const documentRevisionDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  key: idOrKeySchema.required(),
+  documentId: idOrKeySchema.required(),
   order: joi.number().required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
@@ -85,7 +85,6 @@ export const documentRevisionDBSchema = joi.object({
 
 export const documentDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  key: idOrKeySchema.required(),
   order: joi.number().required(),
   revision: idOrKeySchema.required(),
   createdOn: joi.date().required(),
@@ -107,11 +106,10 @@ export const documentDBSchema = joi.object({
 });
 
 export const getDocumentParamsSchema = joi.object({
-  docKey: idOrKeySchema.required(),
-  docSlug: joi.string()
+  documentId: idOrKeySchema.required()
 }).unknown(true);
 
 export const getDocumentQuerySchema = joi.object({
   view: joi.string().valid(...Object.values(DOC_VIEW_QUERY_PARAM)),
-  templateDocumentKey: idOrKeySchema
+  templateDocumentId: idOrKeySchema
 });

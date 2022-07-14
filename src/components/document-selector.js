@@ -13,15 +13,17 @@ function DocumentSelector({ documentId, onChange }) {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
-  const [documentOptions, setDocumentOptions] = useState([]);
-  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
 
-  const updateDocumentOptions = documents => setDocumentOptions(documents.sort(by(d => d.title, { ignoreCase: true })));
+  const updateOptions = documents => setOptions(documents
+    .sort(by(d => d.title, { ignoreCase: true }))
+    .map(doc => ({ key: doc._id, value: doc.title })));
 
   useEffect(() => {
     if (!documentId) {
-      setDocumentOptions([]);
-      setSelectedDocument(null);
+      setOptions([]);
+      setSelectedOption(null);
       return;
     }
 
@@ -31,8 +33,8 @@ function DocumentSelector({ documentId, onChange }) {
       const { doc } = await documentApiClient.getDocument(documentId);
       const { documents } = await documentApiClient.getDocumentsMetadata(doc.title);
 
-      updateDocumentOptions(documents);
-      setSelectedDocument(doc);
+      updateOptions(documents);
+      setSelectedOption({ key: doc._id, value: doc.title });
       setLoading(false);
     })();
   }, [documentId, documentApiClient]);
@@ -45,15 +47,15 @@ function DocumentSelector({ documentId, onChange }) {
       documents = response.documents;
     }
 
-    updateDocumentOptions(documents);
-    setSelectedDocument(null);
+    updateOptions(documents);
+    setSelectedOption(null);
     onChange(null);
   };
 
   const handleSelect = (newDocumentId, option) => {
-    if (newDocumentId !== selectedDocument?._id) {
+    if (newDocumentId !== selectedOption?._id) {
       // Eliminate input text jump between select and re-render
-      setSelectedDocument({ _id: newDocumentId, title: option.children });
+      setSelectedOption({ key: newDocumentId, value: option.children });
       onChange(newDocumentId);
     }
   };
@@ -69,14 +71,14 @@ function DocumentSelector({ documentId, onChange }) {
       allowClear
       loading={loading}
       filterOption={false}
-      value={selectedDocument}
+      value={selectedOption}
       onClear={handleClear}
       onSearch={handleSearch}
       onSelect={handleSelect}
       notFoundContent={null}
       placeholder={t('searchPlaceholder')}
       >
-      {documentOptions.map(doc => <Option key={doc._id}>{doc.title}</Option>)}
+      {options.map(option => <Option key={option.key}>{option.value}</Option>)}
     </Select>
   );
 }

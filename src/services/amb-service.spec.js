@@ -75,14 +75,14 @@ describe('amb-service', () => {
           tags: ['Music', 'Bach', 'Piano', 'Orchestra'],
           language: 'en'
         });
-        await updateTestDocument({ container, documentKey: document1._id, user: contributorUser, data: { ...document1 } });
+        await updateTestDocument({ container, documentId: document1._id, user: contributorUser, data: { ...document1 } });
         document2 = await createTestDocument(container, creatorUser, {
           title: 'Beethoven concert',
           description: 'Draft document',
           tags: [],
           language: 'en'
         });
-        await updateTestDocument({ container, documentKey: document2._id, user: contributorUser, data: { ...document2 } });
+        await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
       });
 
       describe('and there are no settings or serverConfig', () => {

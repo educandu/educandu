@@ -28,7 +28,7 @@ function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
   return [...mergedTags].map(tag => ({ key: tag, value: tag }));
 }
 
-function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocumentMetadata, templateDocumentKey }) {
+function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocumentMetadata, templateDocumentId }) {
   const user = useUser();
   const formRef = useRef(null);
   const { t } = useTranslation('documentMetadataModal');
@@ -109,7 +109,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         language,
         tags,
         review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review,
-        templateDocumentKey: useTemplateDocument ? templateDocumentKey : null
+        templateDocumentId: useTemplateDocument ? templateDocumentId : null
       });
       setLoading(false);
     } catch (error) {
@@ -153,7 +153,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        {templateDocumentKey && (
+        {templateDocumentId && (
           <FormItem name="useTemplateDocument" valuePropName="checked">
             <Checkbox>{t('useTemplateDocument')}</Checkbox>
           </FormItem>
@@ -174,12 +174,12 @@ DocumentMetadataModal.propTypes = {
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  templateDocumentKey: PropTypes.string
+  templateDocumentId: PropTypes.string
 };
 
 DocumentMetadataModal.defaultProps = {
   initialDocumentMetadata: null,
-  templateDocumentKey: null
+  templateDocumentId: null
 };
 
 export default DocumentMetadataModal;
