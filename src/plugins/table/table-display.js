@@ -33,7 +33,7 @@ function TableDisplay({ content }) {
 
   const renderCell = cell => {
     const props = {
-      key: cell.key,
+      key: `${cell.rowIndex}|${cell.columnIndex}`,
       rowSpan: cell.rowSpan,
       colSpan: cell.columnSpan,
       className: classNames({
@@ -70,8 +70,8 @@ function TableDisplay({ content }) {
           <colgroup key={index.toString()} width={`${value}%`} />
         ))}
         <tbody>
-          {rows.map(row => (
-            <tr key={row.map(cell => cell.key).join()}>
+          {rows.map((row, index) => (
+            <tr key={index.toString()}>
               {row.map(renderCell)}
             </tr>
           ))}
