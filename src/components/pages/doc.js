@@ -44,10 +44,12 @@ const VIEW = {
   history: DOC_VIEW_QUERY_PARAM.history
 };
 
-function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
+function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
+  const archived = docRevision ? docRevision.archived : doc.archived;
+  const review = docRevision ? docRevision.review : doc.review;
 
-  if (doc.archived) {
+  if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
   }
 
@@ -63,12 +65,12 @@ function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
     });
   }
 
-  if (currentView === VIEW.edit && hasPendingTemplateSectionKeys) {
+  if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
     alerts.push({ message: t('common:proposedSectionsAlert') });
   }
 
-  if (doc.review) {
-    alerts.push({ message: doc.review, type: ALERT_TYPE.warning });
+  if (review) {
+    alerts.push({ message: review, type: ALERT_TYPE.warning });
   }
 
   return alerts;
@@ -97,10 +99,22 @@ function Doc({ initialState, PageTemplate }) {
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
-  const [alerts, setAlerts] = useState(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
+  const [alerts, setAlerts] = useState(createPageAlerts({
+    t,
+    doc,
+    view,
+    hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+  }));
+
   useEffect(() => {
-    setAlerts(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
-  }, [doc, view, pendingTemplateSectionKeys, t]);
+    setAlerts(createPageAlerts({
+      t,
+      doc,
+      docRevision: selectedHistoryRevision,
+      view,
+      hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+    }));
+  }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (initialView === VIEW.edit || view === VIEW.edit) {
