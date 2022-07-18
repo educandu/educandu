@@ -9,6 +9,11 @@ export const DOCUMENT_ORIGIN = {
   external: 'external'
 };
 
+export const DOCUMENT_ACCESS_LEVEL = {
+  public: 'public',
+  private: 'private'
+};
+
 export const DOCUMENT_IMPORT_TYPE = {
   add: 'add',
   update: 'update',

@@ -8,8 +8,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
-import { ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
+import { DOCUMENT_ACCESS_LEVEL, ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -206,6 +206,7 @@ export function createTestDocument(container, user, data) {
     data: {
       ...data,
       title: data.title ?? 'Title',
+      accessLevel: data.accessLevel ?? DOCUMENT_ACCESS_LEVEL.public,
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en'

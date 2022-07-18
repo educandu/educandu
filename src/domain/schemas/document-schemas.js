@@ -1,6 +1,6 @@
 import joi from 'joi';
-import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
+import { DOCUMENT_ACCESS_LEVEL, DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
 export const getDocumentsTitlesQuerySchema = joi.object({
@@ -22,7 +22,9 @@ export const createDocumentDataBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
-  sections: joi.array().items(sectionSchema)
+  sections: joi.array().items(sectionSchema),
+  roomId: idOrKeySchema,
+  dueOn: joi.date().allow(null)
 });
 
 export const documentMetadataBodySchema = joi.object({
@@ -31,7 +33,8 @@ export const documentMetadataBodySchema = joi.object({
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow(null).allow('')
+  review: joi.string().allow(null).allow(''),
+  dueOn: joi.date().allow(null)
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -66,9 +69,12 @@ export const documentSectionDBSchema = joi.object({
 export const documentRevisionDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
+  roomId: idOrKeySchema.allow(null).allow(''),
   order: joi.number().required(),
+  accessLevel: joi.string().valid(...Object.values(DOCUMENT_ACCESS_LEVEL)).required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
+  dueOn: joi.date().allow(null),
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,
@@ -85,12 +91,15 @@ export const documentRevisionDBSchema = joi.object({
 
 export const documentDBSchema = joi.object({
   _id: idOrKeySchema.required(),
+  roomId: idOrKeySchema.allow(null).allow(''),
   order: joi.number().required(),
+  accessLevel: joi.string().valid(...Object.values(DOCUMENT_ACCESS_LEVEL)).required(),
   revision: idOrKeySchema.required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required(),
+  dueOn: joi.date().allow(null),
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,

@@ -17,7 +17,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
-import { DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ACCESS_LEVEL, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -51,15 +51,16 @@ class DocumentService {
     this.pluginRegistry = pluginRegistry;
   }
 
-  async getAllDocumentsMetadata({ includeArchived } = {}) {
-    const documentsMetadata = includeArchived
-      ? await this.documentStore.getAllDocumentsExtendedMetadata()
-      : await this.documentStore.getAllNonArchivedDocumentsExtendedMetadata();
-
+  async getAllPublicDocumentsMetadata({ includeArchived } = {}) {
+    const conditions = [{ accessLevel: DOCUMENT_ACCESS_LEVEL.public }];
+    if (includeArchived === false) {
+      conditions.push({ archived: false });
+    }
+    const documentsMetadata = await this.documentStore.getDocumentsExtendedMetadataByConditions(conditions);
     return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
   }
 
-  async getDocumentsMetadataByTags(searchQuery) {
+  async getSearchableDocumentsMetadataByTags(searchQuery) {
     const tokens = searchQuery.trim().split(/\s+/);
 
     const positiveTokens = new Set(tokens
@@ -79,6 +80,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
+      { accessLevel: DOCUMENT_ACCESS_LEVEL.public },
       { tags: { $regex: `.*(${[...positiveTokens].join('|')}).*`, $options: 'i' } }
     ];
 
@@ -110,11 +112,12 @@ class DocumentService {
     return this.documentStore.getDocumentTagsMatchingText(searchString);
   }
 
-  async findDocumentsMetadata(query) {
+  async findDocumentsMetadataInSearchableDocuments(query) {
     const sanitizedQuery = escapeStringRegexp(query.trim());
 
     const queryConditions = [
       { archived: false },
+      { accessLevel: DOCUMENT_ACCESS_LEVEL.public },
       { title: { $regex: sanitizedQuery, $options: 'i' } }
     ];
 
@@ -483,10 +486,13 @@ class DocumentService {
     return {
       _id: data._id || uniqueId.create(),
       documentId: data.documentId || uniqueId.create(),
+      roomId: data.roomId || '',
       order: data.order || 0,
+      accessLevel: data.accessLevel || DOCUMENT_ACCESS_LEVEL.public,
       restoredFrom: data.restoredFrom || '',
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
+      dueOn: data.dueOn ? new Date(data.dueOn) : null,
       title: data.title || '',
       description: data.description || '',
       slug: data.slug?.trim() || '',
@@ -520,12 +526,15 @@ class DocumentService {
 
     return {
       _id: lastRevision.documentId,
+      roomId: lastRevision.roomId,
+      accessLevel: lastRevision.accessLevel,
       order: lastRevision.order,
       revision: lastRevision._id,
       createdOn: firstRevision.createdOn,
       createdBy: firstRevision.createdBy,
       updatedOn: lastRevision.createdOn,
       updatedBy: lastRevision.createdBy,
+      dueOn: lastRevision.dueOn,
       title: lastRevision.title,
       description: lastRevision.description,
       slug: lastRevision.slug,

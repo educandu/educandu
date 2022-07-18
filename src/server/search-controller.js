@@ -20,7 +20,7 @@ export default class SearchController {
 
   async handleGetSearchResult(req, res) {
     const { query } = req.query;
-    const docs = await this.documentService.getDocumentsMetadataByTags(query);
+    const docs = await this.documentService.getSearchableDocumentsMetadataByTags(query);
     const result = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
     return res.send({ result });
   }

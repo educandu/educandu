@@ -39,7 +39,7 @@ class DocumentController {
 
   async handleGetDocsPage(req, res) {
     const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
-    const allDocs = await this.documentService.getAllDocumentsMetadata({ includeArchived });
+    const allDocs = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
     const documents = await this.clientDataMappingService.mapDocsOrRevisions(allDocs, req.user);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });
@@ -180,7 +180,7 @@ class DocumentController {
     const { user } = req;
     const { query } = req.query;
 
-    const documentsMetadata = await this.documentService.findDocumentsMetadata(query);
+    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments(query);
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata, user);
 
     return res.send({ documents: mappedDocumentsMetadata });

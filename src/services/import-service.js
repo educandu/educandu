@@ -17,7 +17,7 @@ class ImportService {
   async _getAllImportedDocumentsMetadata(hostName) {
     const origin = `${DOCUMENT_ORIGIN.external}/${hostName}`;
 
-    return (await this.documentStore.getNonArchivedDocumentsMetadataByOrigin(origin))
+    return (await this.documentStore.getPublicNonArchivedDocumentsMetadataByOrigin(origin))
       .sort(by(doc => doc.updatedOn, 'desc'));
   }
 
