@@ -183,7 +183,7 @@ accessType_public:
 accessType_private:
   en: private
   de: privat
-lessonsMode:
+documentsMode:
   en: Lessons handling mode
   de: Einheiten-Bearbeitungsmodus
 lessonsMode_exclusive:

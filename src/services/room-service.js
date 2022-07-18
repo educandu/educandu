@@ -67,7 +67,7 @@ export default class RoomService {
     return !!room;
   }
 
-  async createRoom({ name, slug, access, lessonsMode, user }) {
+  async createRoom({ name, slug, access, documentsMode, user }) {
     const roomId = uniqueId.create();
 
     if (access === ROOM_ACCESS.private) {
@@ -79,7 +79,7 @@ export default class RoomService {
       name,
       slug: slug?.trim() || '',
       access,
-      lessonsMode,
+      documentsMode,
       description: '',
       owner: user._id,
       createdBy: user._id,

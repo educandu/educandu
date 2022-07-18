@@ -417,7 +417,7 @@ describe('client-data-mapping-service', () => {
         room: {
           name: room.name,
           access: room.access,
-          lessonsMode: room.lessonsMode,
+          documentsMode: room.documentsMode,
           owner: {
             username: user1.username
           }

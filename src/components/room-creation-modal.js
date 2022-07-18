@@ -9,7 +9,7 @@ import RoomMetadataForm from './room-metadata-form.js';
 import React, { useState, useRef, useEffect } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -24,7 +24,7 @@ function RoomCreationModal({ isVisible, onClose }) {
     name: t('newRoom'),
     slug: '',
     access: ROOM_ACCESS.private,
-    lessonsMode: ROOM_LESSONS_MODE.exclusive
+    documentsMode: ROOM_DOCUMENTS_MODE.exclusive
   };
 
   useEffect(() => {
@@ -39,10 +39,10 @@ function RoomCreationModal({ isVisible, onClose }) {
     }
   };
 
-  const handleFormSubmitted = async ({ name, slug, access, lessonsMode }) => {
+  const handleFormSubmitted = async ({ name, slug, access, documentsMode }) => {
     try {
       setLoading(true);
-      const newRoom = await roomApiClient.addRoom({ name, slug, access, lessonsMode });
+      const newRoom = await roomApiClient.addRoom({ name, slug, access, documentsMode });
       setLoading(false);
       onClose();
 

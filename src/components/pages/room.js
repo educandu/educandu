@@ -28,7 +28,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_LESSONS_MODE } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
@@ -59,7 +59,7 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
+  const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
 
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
@@ -148,10 +148,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, lessonsMode, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, documentsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, lessonsMode, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, lessonsMode, description });
+      const updatedRoom = { ...room, name, slug, documentsMode, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, documentsMode, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);
@@ -318,7 +318,7 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
             {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>

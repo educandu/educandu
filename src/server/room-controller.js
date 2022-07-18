@@ -64,8 +64,8 @@ export default class RoomController {
 
   async handlePostRoom(req, res) {
     const { user } = req;
-    const { name, slug, access, lessonsMode } = req.body;
-    const newRoom = await this.roomService.createRoom({ name, slug, access, lessonsMode, user });
+    const { name, slug, access, documentsMode } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, slug, access, documentsMode, user });
 
     return res.status(201).send(newRoom);
   }
@@ -73,7 +73,7 @@ export default class RoomController {
   async handlePatchRoom(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { name, slug, lessonsMode, description } = req.body;
+    const { name, slug, documentsMode, description } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -85,7 +85,7 @@ export default class RoomController {
       throw new Forbidden();
     }
 
-    const updatedRoom = await this.roomService.updateRoom({ ...room, name, slug, lessonsMode, description });
+    const updatedRoom = await this.roomService.updateRoom({ ...room, name, slug, documentsMode, description });
     return res.status(201).send(updatedRoom);
   }
 

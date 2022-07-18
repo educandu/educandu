@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -89,7 +89,7 @@ describe('room-controller', () => {
 
         req = {
           user,
-          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, documentsMode: ROOM_DOCUMENTS_MODE.exclusive }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -121,14 +121,14 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS.public,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           description: 'description'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
           description: 'new description',
-          lessonsMode: ROOM_LESSONS_MODE.collaborative
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative
         };
         updatedRoom = {
           ...room,
@@ -181,7 +181,7 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS.public,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -302,7 +302,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           slug: '',
           access: ROOM_ACCESS.private,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
         };
         roomService.getRoomById.resolves(room);
 
@@ -322,7 +322,7 @@ describe('room-controller', () => {
         slug: 'room-slug',
         owner: 'owner',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
       const mappedRoom = { ...room };
 
@@ -464,7 +464,7 @@ describe('room-controller', () => {
         slug: 'room-slug',
         owner: 'owner',
         access: ROOM_ACCESS.public,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
       const mappedRoom = { ...room };

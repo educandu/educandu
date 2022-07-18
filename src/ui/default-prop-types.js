@@ -8,7 +8,7 @@ import {
   DOCUMENT_ACCESS,
   DOCUMENT_IMPORT_TYPE,
   ROOM_ACCESS,
-  ROOM_LESSONS_MODE,
+  ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE
@@ -384,7 +384,7 @@ export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS)).isRequired,
-  lessonsMode: PropTypes.oneOf(Object.values(ROOM_LESSONS_MODE)).isRequired,
+  documentsMode: PropTypes.oneOf(Object.values(ROOM_DOCUMENTS_MODE)).isRequired,
   description: PropTypes.string
 };
 

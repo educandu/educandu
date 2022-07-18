@@ -10,7 +10,7 @@ import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,
@@ -36,7 +36,7 @@ const uploadLimitExceededMiddleware = (req, res, next) => {
 
 const isRoomOwnerOrCollaborator = ({ room, userId }) => {
   const isOwner = room.owner === userId;
-  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === userId);
+  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
   return isOwner || isCollaborator;
 };
 

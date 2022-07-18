@@ -13,7 +13,7 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -223,7 +223,7 @@ export default class StorageService {
       const lesson = await this.lessonStore.getLessonById(lessonId);
       const room = await this.roomStore.getRoomById(lesson.roomId);
       const isRoomOwner = user._id === room.owner;
-      const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
+      const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user._id);
       const rootAndHomePath = getPathForPrivateRoom(room._id);
 
       const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);

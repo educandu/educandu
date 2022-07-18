@@ -54,7 +54,7 @@ export const ROOM_ACCESS = {
   private: 'private'
 };
 
-export const ROOM_LESSONS_MODE = {
+export const ROOM_DOCUMENTS_MODE = {
   exclusive: 'exclusive',
   collaborative: 'collaborative'
 };

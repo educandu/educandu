@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import LessonController from './lesson-controller.js';
-import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -263,7 +263,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -281,7 +281,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: user._id }]
         };
 
@@ -300,7 +300,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: user._id,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: uniqueId.create() }]
         };
         lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
@@ -333,7 +333,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: user._id }]
         };
         lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
@@ -386,7 +386,7 @@ describe('lesson-controller', () => {
         const room = {
           _id: uniqueId.create(),
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: user._id }]
         };
         const lesson = {
@@ -419,7 +419,7 @@ describe('lesson-controller', () => {
         const room = {
           _id: uniqueId.create(),
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: uniqueId.create() }]
         };
         const lesson = {
@@ -457,7 +457,7 @@ describe('lesson-controller', () => {
         room = {
           _id: uniqueId.create(),
           owner: user._id,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: uniqueId.create() }]
         };
         lesson = {
@@ -522,7 +522,7 @@ describe('lesson-controller', () => {
         room = {
           _id: uniqueId.create(),
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: user._id }]
         };
         lesson = {
@@ -617,7 +617,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -637,7 +637,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: user._id }]
         };
 
@@ -656,7 +656,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: user._id,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -681,7 +681,7 @@ describe('lesson-controller', () => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
-          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: user._id }]
         };
 

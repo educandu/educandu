@@ -119,7 +119,7 @@ class ClientDataMappingService {
       room: {
         name: room.name,
         access: room.access,
-        lessonsMode: room.lessonsMode,
+        documentsMode: room.documentsMode,
         owner: {
           username: owner.username
         }

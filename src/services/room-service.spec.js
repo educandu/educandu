@@ -5,7 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -60,7 +60,7 @@ describe('room-service', () => {
         name: 'my room',
         slug: '  my-room  ',
         access: ROOM_ACCESS.public,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
     });
@@ -72,7 +72,7 @@ describe('room-service', () => {
         slug: 'my-room',
         owner: myUser._id,
         access: ROOM_ACCESS.public,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         description: '',
         createdOn: now,
         createdBy: myUser._id,
@@ -96,13 +96,13 @@ describe('room-service', () => {
         await sut.createRoom({
           name: 'my public room',
           access: ROOM_ACCESS.public,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           user: myUser
         }),
         await sut.createRoom({
           name: 'my private room',
           access: ROOM_ACCESS.private,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           user: myUser
         })
       ]);
@@ -154,7 +154,7 @@ describe('room-service', () => {
         name: 'room-name',
         slug: 'room-slug',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
@@ -193,7 +193,7 @@ describe('room-service', () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
@@ -283,7 +283,7 @@ describe('room-service', () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
@@ -306,7 +306,7 @@ describe('room-service', () => {
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         owner: myUser._id,
         members: [
           {

@@ -9,7 +9,7 @@ import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -27,7 +27,7 @@ const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
 const isRoomOwnerOrCollaborator = ({ room, userId }) => {
   const isOwner = room.owner === userId;
-  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === userId);
+  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
   return isOwner || isCollaborator;
 };
 

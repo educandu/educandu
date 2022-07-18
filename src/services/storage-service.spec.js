@@ -10,7 +10,7 @@ import LessonStore from '../stores/lesson-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
-import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
@@ -710,7 +710,7 @@ describe('storage-service', () => {
       describe('and the user is room owner and does not have a storage plan', () => {
         beforeEach(async () => {
           lessonStore.getLessonById.resolves({ roomId: 'room' });
-          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, lessonsMode: ROOM_LESSONS_MODE.exclusive, members: [] });
+          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
 
@@ -732,7 +732,7 @@ describe('storage-service', () => {
       describe('and the user is room owner and has a storage plan', () => {
         beforeEach(async () => {
           lessonStore.getLessonById.resolves({ roomId: 'room' });
-          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, lessonsMode: ROOM_LESSONS_MODE.exclusive, members: [] });
+          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
 
@@ -774,7 +774,7 @@ describe('storage-service', () => {
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
-            lessonsMode: ROOM_LESSONS_MODE.collaborative,
+            documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
             members: [{ userId: collaboratorUser._id }]
           });
 
@@ -811,7 +811,7 @@ describe('storage-service', () => {
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
-            lessonsMode: ROOM_LESSONS_MODE.collaborative,
+            documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
             members: [{ userId: collaboratorUser._id }]
           });
 
