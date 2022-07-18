@@ -311,12 +311,6 @@ describe('user-service', () => {
             title: 'Favorite room'
           },
           {
-            id: lesson._id,
-            type: FAVORITE_TYPE.lesson,
-            setOn: new Date('2022-03-09T10:02:00.000Z'),
-            title: 'Favorite lesson'
-          },
-          {
             id: document._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
@@ -331,11 +325,11 @@ describe('user-service', () => {
     let result;
 
     beforeEach(async () => {
-      result = await sut.addFavorite({ type: FAVORITE_TYPE.lesson, id: '9c348ntxgnr9xy', user: executingUser });
+      result = await sut.addFavorite({ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xy', user: executingUser });
     });
 
     it('should add a new entry to the user\'s favorite collection', () => {
-      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.lesson, id: '9c348ntxgnr9xy', setOn: expect.any(Date) }]);
+      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xy', setOn: expect.any(Date) }]);
     });
   });
 
@@ -347,12 +341,12 @@ describe('user-service', () => {
         $set: {
           favorites: [
             { type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: new Date() },
-            { type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: new Date() }
+            { type: FAVORITE_TYPE.document, id: 'm9vc9qmhc9qcwas', setOn: new Date() }
           ]
         }
       });
 
-      result = await sut.deleteFavorite({ type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', user: executingUser });
+      result = await sut.deleteFavorite({ type: FAVORITE_TYPE.document, id: 'm9vc9qmhc9qcwas', user: executingUser });
     });
 
     it('should remove the matching entries from the user\'s favorite collection', () => {

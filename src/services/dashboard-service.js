@@ -105,6 +105,7 @@ class DashboardService {
       ...joinedRoomActivities,
       ...favoriteActivitiesMetadata
     ]
+      .filter(item => item)
       .sort(by(item => item.timestamp, 'desc'));
 
     if (limit) {

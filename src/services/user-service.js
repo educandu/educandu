@@ -205,12 +205,10 @@ class UserService {
   async getFavorites({ user }) {
     const documentIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.document).map(d => d.id);
     const roomIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.room).map(r => r.id);
-    const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
 
-    const [documents, rooms, lessons] = await Promise.all([
+    const [documents, rooms] = await Promise.all([
       documentIds.length ? await this.documentStore.getDocumentsMetadataByIds(documentIds) : [],
-      roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
-      lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : []
+      roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : []
     ]);
 
     return user.favorites.map(f => {
@@ -221,10 +219,6 @@ class UserService {
       if (f.type === FAVORITE_TYPE.room) {
         const room = rooms.find(r => r._id === f.id);
         return { ...f, title: room?.name ?? null };
-      }
-      if (f.type === FAVORITE_TYPE.lesson) {
-        const lesson = lessons.find(l => l._id === f.id);
-        return { ...f, title: lesson?.title ?? null };
       }
       return { ...f };
     });

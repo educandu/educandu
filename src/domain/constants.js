@@ -75,7 +75,6 @@ export const LESSON_VIEW_QUERY_PARAM = {
 
 export const FAVORITE_TYPE = {
   document: 'document',
-  lesson: 'lesson',
   room: 'room'
 };
 

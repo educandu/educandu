@@ -144,7 +144,7 @@ describe('user-store', () => {
         ...user,
         favorites: [
           { type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: favoriteSetOnDate },
-          { type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }
+          { type: FAVORITE_TYPE.document, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }
         ]
       });
 
@@ -158,7 +158,7 @@ describe('user-store', () => {
     });
 
     it('should remove only the entry with matching criteria from the favorites array', () => {
-      expect(updatedUser.favorites).toStrictEqual([{ type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }]);
+      expect(updatedUser.favorites).toStrictEqual([{ type: FAVORITE_TYPE.document, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }]);
     });
   });
 

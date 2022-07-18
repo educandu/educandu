@@ -22,10 +22,8 @@ const getTranslatedType = (favorite, t) => {
       return t('common:document');
     case FAVORITE_TYPE.room:
       return t('common:room');
-    case FAVORITE_TYPE.lesson:
-      return t('common:lesson');
     default:
-      throw new Error(`Unknown favorite type: ${favorite.type}`);
+      return null;
   }
 };
 
@@ -39,10 +37,8 @@ const getDisplayTitle = (favorite, t) => {
       return `[${t('common:deletedDocument')}]`;
     case FAVORITE_TYPE.room:
       return `[${t('common:deletedRoom')}]`;
-    case FAVORITE_TYPE.lesson:
-      return `[${t('common:deletedLesson')}]`;
     default:
-      throw new Error(`Unknown favorite type: ${favorite.type}`);
+      return null;
   }
 };
 
@@ -125,8 +121,6 @@ function FavoritesTab() {
         return urls.getDocUrl({ id: favorite.id });
       case FAVORITE_TYPE.room:
         return urls.getRoomUrl(favorite.id);
-      case FAVORITE_TYPE.lesson:
-        return urls.getLessonUrl({ id: favorite.id });
       default:
         return null;
     }
