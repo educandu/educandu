@@ -47,7 +47,8 @@ describe('amb-service', () => {
   describe('getDocumentsAmbMetadata', () => {
     let creatorUser;
     let contributorUser;
-    let document;
+    let document1;
+    let document2;
 
     beforeEach(async () => {
       creatorUser = await setupTestUser(container, { username: 'document_creator', email: 'creator@educandu.dev' });
@@ -56,7 +57,7 @@ describe('amb-service', () => {
 
     describe('when there are no unarchived documents', () => {
       beforeEach(async () => {
-        document = await createTestDocument(container, creatorUser, { title: 'Archived document', archived: true });
+        document1 = await createTestDocument(container, creatorUser, { title: 'Archived document', archived: true });
 
         result = await sut.getDocumentsAmbMetadata({ origin });
       });
@@ -68,13 +69,20 @@ describe('amb-service', () => {
 
     describe('when there are unarchived documents', () => {
       beforeEach(async () => {
-        document = await createTestDocument(container, creatorUser, {
+        document1 = await createTestDocument(container, creatorUser, {
           title: 'Bach concert',
           description: 'Concert for piano and orchestra',
           tags: ['Music', 'Bach', 'Piano', 'Orchestra'],
           language: 'en'
         });
-        await updateTestDocument({ container, documentKey: document._id, user: contributorUser, data: { ...document } });
+        await updateTestDocument({ container, documentKey: document1._id, user: contributorUser, data: { ...document1 } });
+        document2 = await createTestDocument(container, creatorUser, {
+          title: 'Beethoven concert',
+          description: 'Draft document',
+          tags: [],
+          language: 'en'
+        });
+        await updateTestDocument({ container, documentKey: document2._id, user: contributorUser, data: { ...document2 } });
       });
 
       describe('and there are no settings or serverConfig', () => {
@@ -82,7 +90,7 @@ describe('amb-service', () => {
           result = await sut.getDocumentsAmbMetadata({ origin });
         });
 
-        it('should return the default data with the document metadata mapped into it', () => {
+        it('should return the default data with the tagged document\'s metadata mapped into it', () => {
           expect(result).toEqual([
             {
               '@context': [
@@ -112,7 +120,7 @@ describe('amb-service', () => {
                   name: 'educandu'
                 }
               ],
-              'id': `${origin}/docs/${document._id}`,
+              'id': `${origin}/docs/${document1._id}`,
               'name': 'Bach concert',
               'creator': [
                 {
@@ -161,7 +169,7 @@ describe('amb-service', () => {
           result = await sut.getDocumentsAmbMetadata({ origin });
         });
 
-        it('should return the default data with the document metadata, settings and serverConfig mapped into it', () => {
+        it('should return the default data with the tagged document\'s metadata, settings and serverConfig mapped into it', () => {
           expect(result).toEqual([
             {
               '@context': [
@@ -192,7 +200,7 @@ describe('amb-service', () => {
                 }
               ],
               'about': [{ id: 'https://w3id.org/kim/hochschulfaechersystematik/n78' }],
-              'id': `${origin}/docs/${document._id}`,
+              'id': `${origin}/docs/${document1._id}`,
               'name': 'Bach concert',
               'creator': [
                 {

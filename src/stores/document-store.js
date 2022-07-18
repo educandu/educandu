@@ -65,6 +65,10 @@ class DocumentStore {
     return this.collection.find({ archived: false }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
+  getAllNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
+    return this.collection.find({ archived: false, $expr: { $gt: [{ $size: '$tags' }, 0] } }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
   getAllDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({}, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
