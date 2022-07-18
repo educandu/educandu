@@ -20,6 +20,18 @@ export default {
     {
       name: '_idx_tags_',
       key: { tags: 1 }
+    },
+    {
+      name: '_idx_roomId_',
+      key: { roomId: 1 }
+    },
+    {
+      name: '_idx_accessLevel_',
+      key: { accessLevel: 1 }
+    },
+    {
+      name: '_idx_accessLevel_archived_',
+      key: { accessLevel: 1, archived: 1 }
     }
   ]
 };

@@ -1136,6 +1136,17 @@ describe('document-service', () => {
         archived: true,
         language: 'en'
       });
+
+      await createTestDocument(container, user, {
+        accessLevel: DOCUMENT_ACCESS_LEVEL.private,
+        title: 'Doc 5',
+        description: 'Description 5',
+        slug: 'doc-5',
+        sections: [],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        archived: false,
+        language: 'en'
+      });
     });
 
     describe('when I search for something that should not match', () => {
@@ -1218,8 +1229,8 @@ describe('document-service', () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cret');
 
         expect(results).toHaveLength(2);
-        expect(results[0].title).toBe('Doc 3');
-        expect(results[1].title).toBe('Doc 1');
+        expect(results[0].title).toBe('Doc 1');
+        expect(results[1].title).toBe('Doc 3');
       });
 
       it('does not return any result when the query contains only minus operator expressions', async () => {

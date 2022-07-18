@@ -13,6 +13,22 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
     };
     await this.db.collection('documentRevisions').updateMany({}, { $set: { ...props } });
     await this.db.collection('documents').updateMany({}, { $set: { ...props } });
+
+    await this.db.collection('documents').createIndexes([
+      {
+        name: '_idx_roomId_',
+        key: { roomId: 1 }
+      },
+      {
+        name: '_idx_accessLevel_',
+        key: { accessLevel: 1 }
+      },
+      {
+        name: '_idx_accessLevel_archived_',
+        key: { accessLevel: 1, archived: 1 }
+      }
+    ]);
+
   }
 
   async down() {
@@ -23,5 +39,9 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
     };
     await this.db.collection('documentRevisions').updateMany({}, { $unset: { ...props } });
     await this.db.collection('documents').updateMany({}, { $unset: { ...props } });
+
+    await this.db.collection('documents').dropIndex('_idx_roomId_');
+    await this.db.collection('documents').dropIndex('_idx_accessLevel_');
+    await this.db.collection('documents').dropIndex('_idx_accessLevel_archived_');
   }
 }
