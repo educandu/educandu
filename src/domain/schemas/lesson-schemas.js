@@ -40,7 +40,7 @@ export const postLessonBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  dueOn: joi.string().allow('').required()
+  dueOn: joi.string().allow('')
 });
 
 export const patchLessonParamsSchema = joi.object({

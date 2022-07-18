@@ -79,7 +79,7 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
     title: initialLessonMetadata.title || t('newLesson'),
     slug: initialLessonMetadata.slug || '',
     language: initialLessonMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    dueOn: initialLessonMetadata.dueOn ? moment(initialLessonMetadata.dueOn) : null,
+    dueOn: initialLessonMetadata.dueOn ? moment(initialLessonMetadata.dueOn) : '',
     enableSequence: false,
     sequenceInterval: LESSON_SEQUENCE_INTERVAL.weekly,
     sequenceCount: 3

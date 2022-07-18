@@ -47,7 +47,7 @@ class LessonService {
       language,
       sections: [],
       cdnResources: [],
-      dueOn: new Date(dueOn)
+      dueOn: dueOn ? new Date(dueOn) : null
     };
 
     try {

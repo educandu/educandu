@@ -190,12 +190,12 @@ export default function Room({ PageTemplate, initialState }) {
     const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
     const renderIcons = isRoomOwner || isRoomCollaborator;
-    const dueDate = upcomingDueDocument?._id === lesson._id ? formatTimeTo(document.dueOn) : null;
+    const dueDate = upcomingDueDocument?._id === lesson._id ? formatTimeTo(lesson.dueOn) : null;
 
     const containerClasses = classNames({
       'RoomPage-lessonInfo': true,
       'RoomPage-lessonInfo--withIcons': renderIcons,
-      'RoomPage-lessonInfo--withDueDate': dueDate
+      'RoomPage-lessonInfo--withDueDate': !!dueDate
     });
 
     return (
@@ -211,7 +211,7 @@ export default function Room({ PageTemplate, initialState }) {
           </div>
         )}
         <div className="RoomPage-lessonInfoItem">
-          {dueDate && <span className="RoomPage-lessonDate">{formatDate(dueDate)}</span>}
+          {lesson.dueOn && <span className="RoomPage-lessonDate">{formatDate(lesson.dueOn)}</span>}
           <a href={url}>{lesson.title}</a>
         </div>
         {dueDate && (
