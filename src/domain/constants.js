@@ -36,13 +36,7 @@ export const TASK_TYPE = {
 
 export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
   room: 'room',
-  lesson: 'lesson',
   document: 'document'
-};
-
-export const CDN_RESOURCES_CONSOLIDATION_TASK_TYPE = {
-  document: 'document',
-  lesson: 'lesson'
 };
 
 export const FEATURE_TOGGLES = {

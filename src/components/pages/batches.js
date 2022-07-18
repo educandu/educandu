@@ -13,7 +13,6 @@ import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../ut
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   BATCH_TYPE,
-  CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE
 } from '../../domain/constants.js';
 import {
@@ -116,20 +115,8 @@ function Batches({ initialState, PageTemplate }) {
   );
 
   const renderCdnResourcesConsolidationEntityId = taskParams => {
-    let url;
-    let text;
-    switch (taskParams.type) {
-      case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document:
-        url = urls.getDocUrl({ id: taskParams.documentId });
-        text = taskParams.documentId;
-        break;
-      case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson:
-        url = urls.getLessonUrl({ id: taskParams.lessonId });
-        text = taskParams.lessonId;
-        break;
-      default:
-        throw new Error(`Invalid task params type '${taskParams.type}'`);
-    }
+    const url = urls.getDocUrl({ id: taskParams.documentId });
+    const text = taskParams.documentId;
 
     return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
   };
@@ -155,17 +142,6 @@ function Batches({ initialState, PageTemplate }) {
     }
 
     return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
-  };
-
-  const renderCdnResourcesConsolidationTaskType = taskParams => {
-    switch (taskParams.type) {
-      case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document:
-        return t('common:document');
-      case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson:
-        return t('common:lesson');
-      default:
-        throw new Error(`Invalid task params type '${taskParams.type}'`);
-    }
   };
 
   const renderCdnUploadDirectoryCreationTaskType = taskParams => {
@@ -247,7 +223,7 @@ function Batches({ initialState, PageTemplate }) {
         title: t('common:type'),
         key: 'taskParamsType',
         dataIndex: 'taskParams',
-        render: renderCdnResourcesConsolidationTaskType
+        render: () => t('common:document')
       });
       break;
     case BATCH_TYPE.cdnUploadDirectoryCreation:

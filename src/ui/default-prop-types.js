@@ -3,7 +3,6 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import {
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
-  CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   DOCUMENT_ACCESS,
   DOCUMENT_IMPORT_TYPE,
@@ -297,16 +296,9 @@ export const documentRegenerationTaskShape = PropTypes.shape({
 export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.cdnResourcesConsolidation]),
-  taskParams: PropTypes.oneOfType([
-    PropTypes.shape({
-      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document]),
-      documentId: PropTypes.string.isRequired
-    }),
-    PropTypes.shape({
-      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson]),
-      lessonId: PropTypes.string.isRequired
-    })
-  ]).isRequired
+  taskParams: PropTypes.shape({
+    documentId: PropTypes.string.isRequired
+  }).isRequired
 });
 
 export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
