@@ -208,7 +208,7 @@ class UserService {
     const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
 
     const [documents, rooms, lessons] = await Promise.all([
-      documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [],
+      documentIds.length ? await this.documentStore.getDocumentsMetadataByIds(documentIds) : [],
       roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
       lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : []
     ]);

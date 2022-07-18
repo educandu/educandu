@@ -22,7 +22,7 @@ describe('document-controller', () => {
 
   beforeEach(() => {
     documentService = {
-      getDocumentByKey: sandbox.stub()
+      getDocumentById: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -35,7 +35,7 @@ describe('document-controller', () => {
     };
 
     user = { _id: uniqueId.create() };
-    doc = { key: uniqueId.create(), slug: '', sections: [] };
+    doc = { _id: uniqueId.create(), slug: '', sections: [] };
 
     sut = new DocumentController(documentService, clientDataMappingService, pageRenderer);
   });
@@ -51,11 +51,11 @@ describe('document-controller', () => {
       beforeEach(() => {
         req = {
           user,
-          params: { 0: '', docKey: doc.key },
+          params: { 0: '', documentId: doc._id },
           query: {}
         };
 
-        documentService.getDocumentByKey.withArgs(doc.docKey).resolves(null);
+        documentService.getDocumentById.withArgs(doc._id).resolves(null);
       });
 
       it('should throw NotFound', async () => {
@@ -67,15 +67,15 @@ describe('document-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         req = {
           user,
-          params: { 0: '/other-slug', docKey: doc.key },
-          query: { view: 'edit', templateDocumentKey: uniqueId.create() }
+          params: { 0: '/other-slug', documentId: doc._id },
+          query: { view: 'edit', templateDocumentId: uniqueId.create() }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
         doc.slug = 'doc-slug';
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
 
         sut.handleGetDocPage(req, res).catch(reject);
       }));
@@ -83,7 +83,7 @@ describe('document-controller', () => {
       it('should redirect to the correct document url', () => {
         expect(res.statusCode).toBe(301);
         expect(res._getRedirectUrl())
-          .toBe(`/docs/${doc.key}/${doc.slug}?view=${req.query.view}&templateDocumentKey=${req.query.templateDocumentKey}`);
+          .toBe(`/docs/${doc._id}/${doc.slug}?view=${req.query.view}&templateDocumentId=${req.query.templateDocumentId}`);
       });
     });
 
@@ -91,12 +91,12 @@ describe('document-controller', () => {
       beforeEach(() => {
         req = {
           user,
-          params: { 0: '', docKey: doc.key },
-          query: { templateDocumentKey: uniqueId.create() }
+          params: { 0: '', documentId: doc._id },
+          query: { templateDocumentId: uniqueId.create() }
         };
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
-        documentService.getDocumentByKey.withArgs(req.query.templateDocumentKey).resolves(null);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(req.query.templateDocumentId).resolves(null);
       });
 
       it('should throw NotFound', async () => {
@@ -106,11 +106,11 @@ describe('document-controller', () => {
 
     describe('when the template document exists but the document already contains sections', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        templateDocument = { key: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create() };
         req = {
           user,
-          params: { 0: '/doc-slug', docKey: doc.key },
-          query: { templateDocumentKey: templateDocument.key }
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { templateDocumentId: templateDocument._id }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -118,15 +118,15 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.sections = [{}];
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
-        documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
 
         sut.handleGetDocPage(req, res).catch(reject);
       }));
 
       it('should redirect to the original document url', () => {
         expect(res.statusCode).toBe(302);
-        expect(res._getRedirectUrl()).toBe(`/docs/${doc.key}/${doc.slug}`);
+        expect(res._getRedirectUrl()).toBe(`/docs/${doc._id}/${doc.slug}`);
       });
     });
 
@@ -136,11 +136,11 @@ describe('document-controller', () => {
       let mappedTemplateDocument;
 
       beforeEach(() => {
-        templateDocument = { key: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create() };
         req = {
           user,
-          params: { 0: '/doc-slug', docKey: doc.key },
-          query: { view: 'other', templateDocumentKey: templateDocument.key }
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'other', templateDocumentId: templateDocument._id }
         };
         res = {};
 
@@ -150,8 +150,8 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
-        documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
@@ -180,11 +180,11 @@ describe('document-controller', () => {
       let mappedTemplateDocument;
 
       beforeEach(() => {
-        templateDocument = { key: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create() };
         req = {
           user,
-          params: { 0: '/doc-slug', docKey: doc.key },
-          query: { view: 'edit', templateDocumentKey: templateDocument.key }
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'edit', templateDocumentId: templateDocument._id }
         };
         res = {};
 
@@ -197,8 +197,8 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
-        documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
 
@@ -221,15 +221,15 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the view query param is \'edit\' but no templateDocumentKey is provided', () => {
+    describe('when the view query param is \'edit\' but no templateDocumentId is provided', () => {
       let mappedDocument;
       let documentRevision;
 
       beforeEach(() => {
-        templateDocument = { key: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create() };
         req = {
           user,
-          params: { 0: '/doc-slug', docKey: doc.key },
+          params: { 0: '/doc-slug', documentId: doc._id },
           query: { view: 'edit' }
         };
         res = {};
@@ -241,8 +241,8 @@ describe('document-controller', () => {
 
         mappedDocument = { ...doc };
 
-        documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
-        documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, null]);
 

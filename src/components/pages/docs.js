@@ -40,7 +40,7 @@ function getDefaultModalState({ t, uiLanguage, settings }) {
   return {
     isVisible: false,
     mode: DOCUMENT_METADATA_MODAL_MODE.create,
-    templateDocumentKey: settings.templateDocument?.documentKey,
+    templateDocumentId: settings.templateDocument?.documentId,
     initialDocumentMetadata: {
       title: t('newDocument'),
       description: '',
@@ -74,7 +74,8 @@ function Docs({ initialState, PageTemplate }) {
 
   const mapToRows = useCallback(docs => docs.map(doc => (
     {
-      key: doc.key,
+      key: doc._id,
+      _id: doc._id,
       title: doc.title,
       createdOn: doc.createdOn,
       updatedOn: doc.updatedOn,
@@ -144,11 +145,11 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleCloneClick = row => {
-    const doc = documents.find(d => d.key === row.key);
+    const doc = documents.find(d => d._id === row._id);
     setClonedDocument(doc);
     setModalState({
       isVisible: true,
-      templateDocumentKey: null,
+      templateDocumentId: null,
       initialDocumentMetadata: {
         title: `${doc.title} ${t('common:copyTitleSuffix')}`,
         description: doc.description,
@@ -159,15 +160,15 @@ function Docs({ initialState, PageTemplate }) {
     });
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, review, templateDocumentKey }) => {
+  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, review, templateDocumentId }) => {
     const newDocument = await documentApiClient.createDocument({ title, description, slug, language, tags, review });
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
     window.location = urls.getDocUrl({
-      key: newDocument.key,
+      id: newDocument._id,
       slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentKey: templateDocumentKey || clonedDocument?.key
+      templateDocumentId: templateDocumentId || clonedDocument?._id
     });
   };
 
@@ -175,29 +176,29 @@ function Docs({ initialState, PageTemplate }) {
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
   };
 
-  const handleDocumentDelete = async documentKey => {
+  const handleDocumentDelete = async documentId => {
     try {
-      await documentApiClient.hardDeleteDocument(documentKey);
-      setDocuments(documents.filter(doc => doc.key !== documentKey));
+      await documentApiClient.hardDeleteDocument(documentId);
+      setDocuments(documents.filter(doc => doc._id !== documentId));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     }
   };
 
   const handleDeleteClick = row => {
-    confirmDocumentDelete(t, row.title, () => handleDocumentDelete(row.key));
+    confirmDocumentDelete(t, row.title, () => handleDocumentDelete(row._id));
   };
 
   const handleArchivedSwitchChange = async (archived, row) => {
     try {
-      const { documentRevision } = archived
-        ? await documentApiClient.unarchiveDocument(row.key)
-        : await documentApiClient.archiveDocument(row.key);
+      const { doc } = archived
+        ? await documentApiClient.unarchiveDocument(row._id)
+        : await documentApiClient.archiveDocument(row._id);
 
       const newDocuments = documents.slice();
       newDocuments
-        .filter(document => document.key === documentRevision.key)
-        .forEach(document => { document.archived = documentRevision.archived; });
+        .filter(document => document._id === doc._id)
+        .forEach(document => { document.archived = doc.archived; });
 
       setDocuments(newDocuments);
     } catch (error) {
@@ -208,7 +209,7 @@ function Docs({ initialState, PageTemplate }) {
   const renderOrigin = originTranslated => <span>{originTranslated}</span>;
   const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
   const renderTitle = (title, row) => {
-    const doc = documents.find(d => d.key === row.key);
+    const doc = documents.find(d => d._id === row._id);
     return !!doc && <DocumentInfoCell doc={doc} />;
   };
 
@@ -328,7 +329,7 @@ function Docs({ initialState, PageTemplate }) {
         <DocumentMetadataModal
           initialDocumentMetadata={modalState.initialDocumentMetadata}
           isVisible={modalState.isVisible}
-          templateDocumentKey={modalState.templateDocumentKey}
+          templateDocumentId={modalState.templateDocumentId}
           mode={DOCUMENT_METADATA_MODAL_MODE.create}
           onSave={handleDocumentMetadataModalSave}
           onClose={handleDocumentMetadataModalClose}

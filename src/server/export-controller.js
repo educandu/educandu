@@ -31,7 +31,7 @@ class ExportController {
   }
 
   async handleGetExport(req, res) {
-    const key = req.params.key;
+    const documentId = req.params.documentId;
     const toRevision = req.query.toRevision;
     const importingSystemSchemaHash = req.query.databaseSchemaHash;
 
@@ -40,7 +40,7 @@ class ExportController {
       throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
     }
 
-    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ key, toRevision });
+    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, toRevision });
 
     return res.send({ revisions, users, cdnRootUrl });
   }
@@ -53,7 +53,7 @@ class ExportController {
     );
 
     router.get(
-      '/api/v1/exports/:key',
+      '/api/v1/exports/:documentId',
       validateQuery(getExportsDocumentQuerySchema),
       (req, res) => this.handleGetExport(req, res)
     );

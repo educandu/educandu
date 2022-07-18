@@ -94,16 +94,16 @@ class DocumentService {
     }));
   }
 
-  getDocumentByKey(documentKey) {
-    return this.documentStore.getDocumentByKey(documentKey);
+  getDocumentById(documentId) {
+    return this.documentStore.getDocumentById(documentId);
   }
 
-  getAllDocumentRevisionsByKey(documentKey) {
-    return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+  getAllDocumentRevisionsByDocumentId(documentId) {
+    return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
   }
 
-  getDocumentRevisionById(id) {
-    return this.documentRevisionStore.getDocumentRevisionById(id);
+  getDocumentRevisionById(documentRevisionId) {
+    return this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
   }
 
   getDocumentTagsMatchingText(searchString) {
@@ -125,25 +125,25 @@ class DocumentService {
 
   async createDocument({ data, user }) {
     let lock;
-    const documentKey = uniqueId.create();
+    const documentId = uniqueId.create();
 
-    await this.createUploadDirectoryMarkerForDocument(documentKey);
+    await this.createUploadDirectoryMarkerForDocument(documentId);
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       let newDocument;
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
         if (existingDocumentRevisions.length) {
-          throw new BadRequest(`Found unexpected existing revisions for document ${documentKey}`);
+          throw new BadRequest(`Found unexpected existing revisions for document ${documentId}`);
         }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
-          key: documentKey,
+          documentId,
           createdBy: user._id,
           order: nextOrder
         });
@@ -156,7 +156,7 @@ class DocumentService {
 
       return newDocument;
     } catch (error) {
-      await this.deleteUploadDirectoryMarkerForDocument(documentKey);
+      await this.deleteUploadDirectoryMarkerForDocument(documentId);
       throw error;
     } finally {
       if (lock) {
@@ -165,22 +165,22 @@ class DocumentService {
     }
   }
 
-  async updateDocument({ documentKey, data, user }) {
+  async updateDocument({ documentId, data, user }) {
     let lock;
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       let newDocument;
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
         if (!existingDocumentRevisions.length) {
-          throw new NotFound(`Could not find existing revisions for document ${documentKey}`);
+          throw new NotFound(`Could not find existing revisions for document ${documentId}`);
         }
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
         if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentKey} cannot be updated because it is not internal`);
+          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
         }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
@@ -188,7 +188,7 @@ class DocumentService {
           ...cloneDeep(ancestorRevision),
           ...data,
           _id: null,
-          key: documentKey,
+          documentId,
           createdOn: null,
           createdBy: user._id,
           order: nextOrder,
@@ -213,38 +213,38 @@ class DocumentService {
     }
   }
 
-  updateDocumentMetadata({ documentKey, metadata, user }) {
+  updateDocumentMetadata({ documentId, metadata, user }) {
     const { title, description, slug, language, tags, review } = metadata;
     const data = { title, description, slug, language, tags, review };
-    return this.updateDocument({ documentKey, data, user });
+    return this.updateDocument({ documentId, data, user });
   }
 
-  updateDocumentSections({ documentKey, sections, user }) {
+  updateDocumentSections({ documentId, sections, user }) {
     const data = { sections };
-    return this.updateDocument({ documentKey, data, user });
+    return this.updateDocument({ documentId, data, user });
   }
 
-  updateArchivedState({ documentKey, user, archived }) {
+  updateArchivedState({ documentId, user, archived }) {
     const data = { archived };
-    return this.updateDocument({ documentKey, data, user });
+    return this.updateDocument({ documentId, data, user });
   }
 
-  async hardDeleteDocument(documentKey) {
-    const document = await this.getDocumentByKey(documentKey);
+  async hardDeleteDocument(documentId) {
+    const document = await this.getDocumentById(documentId);
 
     if (!document.origin.startsWith(DOCUMENT_ORIGIN.external)) {
-      throw new Error(`Only external documents can be hard deleted. Document '${documentKey}' has origin '${document.origin}'`);
+      throw new Error(`Only external documents can be hard deleted. Document '${documentId}' has origin '${document.origin}'`);
     }
 
     let lock;
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
-      logger.info(`Hard deleting external document '${documentKey}'`);
+      logger.info(`Hard deleting external document '${documentId}'`);
 
       await this.transactionRunner.run(async session => {
-        await this.documentStore.deleteDocumentByKey(documentKey, { session });
-        await this.documentRevisionStore.deleteDocumentRevisionsByKey(documentKey, { session });
+        await this.documentStore.deleteDocumentById(documentId, { session });
+        await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
       });
     } finally {
       if (lock) {
@@ -253,22 +253,22 @@ class DocumentService {
     }
   }
 
-  async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
+  async hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     let lock;
     try {
 
-      logger.info(`Hard deleting sections with section key ${sectionKey} in documents with key ${documentKey}`);
+      logger.info(`Hard deleting sections with section key ${sectionKey} in documents with id ${documentId}`);
 
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
-      const revisionsBeforeDelete = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+      const revisionsBeforeDelete = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
 
       if (!revisionsBeforeDelete.length) {
-        throw new NotFound(`Could not find existing revisions for document ${documentKey}`);
+        throw new NotFound(`Could not find existing revisions for document ${documentId}`);
       }
 
       if (revisionsBeforeDelete[revisionsBeforeDelete.length - 1].origin !== DOCUMENT_ORIGIN.internal) {
-        throw new BadRequest(`Document ${documentKey} cannot be updated because it is not internal`);
+        throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
       }
 
       const revisionsAfterDelete = [];
@@ -294,10 +294,10 @@ class DocumentService {
       }
 
       if (revisionsToUpdateById.size) {
-        logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
+        logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with documentId ${documentId}`);
         await this.documentRevisionStore.saveDocumentRevisions([...revisionsToUpdateById.values()]);
       } else {
-        throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
+        throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for documentId ${documentId}`);
       }
 
       const latestDocument = this._buildDocumentFromRevisions(revisionsAfterDelete);
@@ -312,14 +312,14 @@ class DocumentService {
     }
   }
 
-  async restoreDocumentRevision({ documentKey, revisionId, user }) {
+  async restoreDocumentRevision({ documentId, revisionId, user }) {
     let lock;
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
 
         const revisionToRestore = existingDocumentRevisions.find(rev => rev._id === revisionId);
         if (!revisionToRestore) {
@@ -328,7 +328,7 @@ class DocumentService {
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
         if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentKey} cannot be updated because it is not internal`);
+          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
         }
 
         if (revisionToRestore._id === ancestorRevision._id) {
@@ -340,7 +340,7 @@ class DocumentService {
         const newRevision = this._buildDocumentRevision({
           ...clonedRevision,
           _id: null,
-          key: documentKey,
+          documentId,
           createdOn: null,
           createdBy: user._id,
           restoredFrom: revisionToRestore._id,
@@ -358,7 +358,7 @@ class DocumentService {
         await this.documentStore.saveDocument(newDocument, { session });
       });
 
-      return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+      return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -366,30 +366,30 @@ class DocumentService {
     }
   }
 
-  async importDocumentRevisions({ documentKey, revisions, ancestorId, origin, originUrl }) {
+  async importDocumentRevisions({ documentId, revisions, ancestorId, origin, originUrl }) {
     let lock;
 
-    await this.createUploadDirectoryMarkerForDocument(documentKey);
+    await this.createUploadDirectoryMarkerForDocument(documentId);
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       let newDocument;
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
         const latestExistingRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
 
         if (!ancestorId && latestExistingRevision) {
-          throw new Error(`Found unexpected existing revisions for document '${documentKey}'`);
+          throw new Error(`Found unexpected existing revisions for document '${documentId}'`);
         }
 
         if (ancestorId && latestExistingRevision?._id !== ancestorId) {
-          throw new Error(`Import of document '${documentKey}' expected to find revision '${ancestorId}' as the latest revision but found revision '${latestExistingRevision?._id}'`);
+          throw new Error(`Import of document '${documentId}' expected to find revision '${ancestorId}' as the latest revision but found revision '${latestExistingRevision?._id}'`);
         }
 
         const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length);
         const newDocumentRevisions = revisions.map((revision, index) => {
-          return this._buildDocumentRevision({ ...revision, key: documentKey, order: nextOrders[index], origin, originUrl });
+          return this._buildDocumentRevision({ ...revision, documentId, order: nextOrders[index], origin, originUrl });
         });
 
         newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
@@ -398,10 +398,10 @@ class DocumentService {
         await this.documentStore.saveDocument(newDocument, { session });
       });
 
-      return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+      return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     } catch (error) {
       if (!ancestorId) {
-        await this.deleteUploadDirectoryMarkerForDocument(documentKey);
+        await this.deleteUploadDirectoryMarkerForDocument(documentId);
       }
       throw error;
     } finally {
@@ -411,18 +411,18 @@ class DocumentService {
     }
   }
 
-  async regenerateDocument(documentKey) {
+  async regenerateDocument(documentId) {
     let lock;
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
 
         const document = this._buildDocumentFromRevisions(existingDocumentRevisions);
 
-        logger.info(`Saving document '${documentKey}' with revision ${document.revision}`);
+        logger.info(`Saving document '${documentId}' with revision ${document.revision}`);
         await this.documentStore.saveDocument(document, { session });
       });
     } finally {
@@ -432,16 +432,16 @@ class DocumentService {
     }
   }
 
-  async consolidateCdnResources(documentKey) {
+  async consolidateCdnResources(documentId) {
     let lock;
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentId);
 
       await this.transactionRunner.run(async session => {
         const [existingDocumentRevisions, existingDocument] = await Promise.all([
-          this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session }),
-          this.documentStore.getDocumentByKey(documentKey, { session })
+          this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session }),
+          this.documentStore.getDocumentById(documentId, { session })
         ]);
 
         const updatedDocumentRevisions = existingDocumentRevisions.map(revision => ({
@@ -465,14 +465,14 @@ class DocumentService {
     }
   }
 
-  async createUploadDirectoryMarkerForDocument(documentKey) {
-    const homePath = getPublicHomePath(documentKey);
+  async createUploadDirectoryMarkerForDocument(documentId) {
+    const homePath = getPublicHomePath(documentId);
     const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.uploadEmptyObject(directoryMarkerPath);
   }
 
-  async deleteUploadDirectoryMarkerForDocument(documentKey) {
-    const homePath = getPublicHomePath(documentKey);
+  async deleteUploadDirectoryMarkerForDocument(documentId) {
+    const homePath = getPublicHomePath(documentId);
     const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.deleteObject(directoryMarkerPath);
   }
@@ -482,7 +482,7 @@ class DocumentService {
 
     return {
       _id: data._id || uniqueId.create(),
-      key: data.key || uniqueId.create(),
+      documentId: data.documentId || uniqueId.create(),
       order: data.order || 0,
       restoredFrom: data.restoredFrom || '',
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
@@ -519,8 +519,7 @@ class DocumentService {
     const contributors = [...new Set(revisions.map(r => r.createdBy))];
 
     return {
-      _id: lastRevision.key,
-      key: lastRevision.key,
+      _id: lastRevision.documentId,
       order: lastRevision.order,
       revision: lastRevision._id,
       createdOn: firstRevision.createdOn,

@@ -26,12 +26,12 @@ class DocumentImportTaskProcessor {
 
   async process(task, batchParams, ctx) {
     const importSource = this.serverConfig.importSources.find(({ hostName }) => hostName === batchParams.hostName);
-    const { key, importedRevision, importableRevision } = task.taskParams;
+    const { documentId, importedRevision, importableRevision } = task.taskParams;
 
     const documentExport = await this.exportApiClient.getDocumentExport({
       baseUrl: urls.getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
-      documentKey: key,
+      documentId,
       toRevision: importableRevision
     });
 
@@ -63,14 +63,14 @@ class DocumentImportTaskProcessor {
       }
     }
 
-    const docUrl = urls.getDocUrl({ key: sortedRevisions[0].key, slug: sortedRevisions[0].slug });
+    const docUrl = urls.getDocUrl({ id: sortedRevisions[0].documentId, slug: sortedRevisions[0].slug });
     const baseUrl = urls.getImportSourceBaseUrl(importSource);
 
     const originUrl = `${baseUrl}${docUrl}`;
     const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
 
     await this.documentService.importDocumentRevisions({
-      documentKey: key,
+      documentId,
       revisions: sortedRevisions,
       ancestorId: importedRevision,
       origin,

@@ -7,7 +7,7 @@ import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
 const hasValue = value => value && String(value).trim();
 
-const isValidFooterLinkItem = item => [item.linkTitle, item.documentKey].every(hasValue);
+const isValidFooterLinkItem = item => [item.linkTitle, item.documentId].every(hasValue);
 
 function FooterLinksSettings({ footerLinks, onChange }) {
   const { supportedUiLanguages } = useLocale();

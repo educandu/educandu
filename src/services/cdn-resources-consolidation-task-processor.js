@@ -16,7 +16,7 @@ class CdnResourcesConsolidationTaskProcessor {
   }
 
   async process(task, ctx) {
-    const { type, documentKey, lessonId } = task.taskParams;
+    const { type, documentId, lessonId } = task.taskParams;
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
@@ -24,8 +24,8 @@ class CdnResourcesConsolidationTaskProcessor {
 
     switch (type) {
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document:
-        logger.info(`Consolidating CDN resources for document with key ${documentKey}`);
-        await this.documentService.consolidateCdnResources(documentKey);
+        logger.info(`Consolidating CDN resources for document with id ${documentId}`);
+        await this.documentService.consolidateCdnResources(documentId);
         break;
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson:
         logger.info(`Consolidating CDN resources for lesson with ID ${lessonId}`);

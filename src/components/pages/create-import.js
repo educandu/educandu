@@ -14,7 +14,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
   const { t } = useTranslation('createImport');
   const clientConfig = useService(ClientConfig);
   const importApiClient = useSessionAwareApiClient(ImportApiClient);
-  const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
@@ -24,7 +24,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
 
   const handleImportClick = async () => {
     setIsCreatingNewImportBatch(true);
-    const documentsToImport = selectedDocumentKeys.map(key => importableDocuments.find(doc => doc.key === key));
+    const documentsToImport = selectedDocumentIds.map(id => importableDocuments.find(doc => doc._id === id));
 
     try {
       const result = await importApiClient.postImport({ hostName: importSource.hostName, documentsToImport });
@@ -41,7 +41,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
     <Button
       type="primary"
       className="CreateImportPage-importButton"
-      disabled={!selectedDocumentKeys.length}
+      disabled={!selectedDocumentIds.length}
       loading={isCreatingNewImportBatch}
       onClick={handleImportClick}
       >
@@ -54,7 +54,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
       setIsFetchingImportableDocuments(true);
       try {
         const { documents } = await importApiClient.getImports(importSource.hostName);
-        setSelectedDocumentKeys([]);
+        setSelectedDocumentIds([]);
         setImportableDocuments(documents);
       } catch (error) {
         handleApiError({ error, t });
@@ -77,7 +77,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
           importableDocuments={importableDocuments}
           importSourceBaseUrl={importSourceBaseUrl}
           loading={isFetchingImportableDocuments}
-          onSelectedKeysChange={setSelectedDocumentKeys}
+          onSelectedIdsChange={selectedDocumentIds}
           />
         {renderImportButton()}
       </div>

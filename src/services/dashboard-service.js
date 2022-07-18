@@ -87,7 +87,7 @@ class DashboardService {
             data: null,
             isDeprecated: null,
             [completionFunction]: async () => {
-              const document = await this.documentStore.getDocumentMetadataByKey(favorite.id);
+              const document = await this.documentStore.getDocumentMetadataById(favorite.id);
               return {
                 data: { _id: favorite.id, title: document?.title ?? null },
                 isDeprecated: !document

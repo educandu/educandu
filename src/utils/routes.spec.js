@@ -6,43 +6,43 @@ describe('routes', () => {
   describe('getDocUrl', () => {
     const testCases = [
       {
-        key: 'key',
+        id: '_id',
         slug: null,
-        expectedResult: '/docs/key'
+        expectedResult: '/docs/_id'
       },
       {
-        key: 'key',
+        id: '_id',
         slug: 'slug',
-        expectedResult: '/docs/key/slug'
+        expectedResult: '/docs/_id/slug'
       },
       {
-        key: 'key',
+        id: '_id',
         slug: 'slug/slugathor',
-        expectedResult: '/docs/key/slug/slugathor'
+        expectedResult: '/docs/_id/slug/slugathor'
       },
       {
-        key: 'key',
+        id: '_id',
         slug: 's l u g',
-        expectedResult: '/docs/key/s%20l%20u%20g'
+        expectedResult: '/docs/_id/s%20l%20u%20g'
       },
       {
-        key: 'key',
+        id: '_id',
         slug: 's l u g-part1/slug-part-2',
-        expectedResult: '/docs/key/s%20l%20u%20g-part1/slug-part-2'
+        expectedResult: '/docs/_id/s%20l%20u%20g-part1/slug-part-2'
       },
       {
-        key: 'key',
+        id: '_id',
         slug: 'slug',
         view: 'edit',
-        templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
-        expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
+        templateDocumentId: 'XrF7z7jyDrNFkvH7eyj5T',
+        expectedResult: '/docs/_id/slug?view=edit&templateDocumentId=XrF7z7jyDrNFkvH7eyj5T'
       }
     ];
 
-    testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
+    testCases.forEach(({ id, slug, view, templateDocumentId, expectedResult }) => {
+      describe(`when id is '${id}', slug is '${slug}', view is '${view}' and templateDocumentId is '${templateDocumentId}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
+          result = sut.getDocUrl({ id, slug, view, templateDocumentId });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

@@ -86,10 +86,10 @@ describe('export-service', () => {
     const rev3 = { _id: '3', order: 3, createdBy: 'user1' };
 
     beforeEach(() => {
-      sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByKey');
+      sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByDocumentId');
 
       userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
-      documentRevisionStore.getAllDocumentRevisionsByKey.resolves([rev1, rev2, rev3]);
+      documentRevisionStore.getAllDocumentRevisionsByDocumentId.resolves([rev1, rev2, rev3]);
     });
 
     describe('with toRevision = null', () => {
@@ -97,7 +97,7 @@ describe('export-service', () => {
         result = null;
 
         try {
-          await sut.getDocumentExport({ key: 'abc', toRevision: null });
+          await sut.getDocumentExport({ documentId: 'abc', toRevision: null });
         } catch (error) {
           result = error;
         }
@@ -113,7 +113,7 @@ describe('export-service', () => {
         result = null;
 
         try {
-          await sut.getDocumentExport({ key: 'abc', toRevision: '4' });
+          await sut.getDocumentExport({ documentId: 'abc', toRevision: '4' });
         } catch (error) {
           result = error;
         }
@@ -126,7 +126,7 @@ describe('export-service', () => {
 
     describe('with toRevision = \'2\'', () => {
       beforeEach(async () => {
-        result = await sut.getDocumentExport({ key: 'abc', toRevision: '2' });
+        result = await sut.getDocumentExport({ documentId: 'abc', toRevision: '2' });
       });
 
       it('should return revisions', () => {

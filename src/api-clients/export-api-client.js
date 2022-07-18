@@ -25,12 +25,12 @@ class ExportApiClient {
       .then(res => res.data);
   }
 
-  async getDocumentExport({ baseUrl, apiKey, documentKey, toRevision }) {
+  async getDocumentExport({ baseUrl, apiKey, documentId, toRevision }) {
     const databaseSchemaHash = await this.database.getSchemaHash();
 
     return this.httpClient
       .get(
-        `${baseUrl}/api/v1/exports/${encodeURIComponent(documentKey)}`,
+        `${baseUrl}/api/v1/exports/${encodeURIComponent(documentId)}`,
         {
           params: { toRevision, databaseSchemaHash },
           headers: { [API_KEY_HEADER]: apiKey },

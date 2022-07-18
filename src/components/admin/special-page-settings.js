@@ -16,7 +16,7 @@ const settingsToPageList = (supportedUiLanguages, settings = {}) => {
       key: uiLanguage,
       language: uiLanguage,
       linkTitle: setting?.linkTitle || '',
-      documentKey: setting?.documentKey || ''
+      documentId: setting?.documentId || ''
     };
   });
 };
@@ -25,7 +25,7 @@ const pageListToSettings = pageList => {
   return pageList.reduce((map, item) => {
     map[item.language] = {
       linkTitle: item.linkTitle,
-      documentKey: item.documentKey
+      documentId: item.documentId
     };
     return map;
   }, {});
@@ -52,16 +52,16 @@ function SpecialPageSettings({ settings, onChange }) {
     </FormItem>
   );
 
-  const renderDocumentKey = (text, record, index) => (
+  const renderDocumentId = (text, record, index) => (
     <FormItem style={{ marginBottom: 0 }}>
-      <DocumentSelector documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
+      <DocumentSelector documentId={record.documentId} onChange={value => handleChange(index, 'documentId', value)} />
     </FormItem>
   );
 
   const columns = [
     { title: t('common:language'), key: 'language', dataIndex: 'language', render: renderLanguage },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
-    { title: t('common:documentTitle'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey }
+    { title: t('common:documentTitle'), key: 'documentId', dataIndex: 'documentId', ellipsis: true, render: renderDocumentId }
   ];
 
   const data = settingsToPageList(supportedUiLanguages, settings);

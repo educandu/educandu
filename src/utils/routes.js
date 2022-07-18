@@ -34,11 +34,11 @@ function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl({ key, slug, view, templateDocumentKey }) {
-  const keyAndSlugPart = urlUtils.concatParts(encodeURIComponent(key), urlUtils.encodeURIParts(slug));
+function getDocUrl({ id, slug, view, templateDocumentId }) {
+  const idAndSlugPart = urlUtils.concatParts(encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 
-  const url = urlUtils.concatParts(docsPrefix, keyAndSlugPart);
-  const queryString = urlUtils.composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
+  const url = urlUtils.concatParts(docsPrefix, idAndSlugPart);
+  const queryString = urlUtils.composeQueryString([['view', view], ['templateDocumentId', templateDocumentId]]);
   return queryString ? `${url}?${queryString}` : url;
 }
 
@@ -115,8 +115,8 @@ function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
-function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
-  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
+function getImportedDocUrl({ allowUnsecure, hostName, id, slug }) {
+  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ id, slug }));
 }
 
 function getRoomUrl(id, slug) {

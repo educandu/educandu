@@ -3,7 +3,7 @@ import { idOrKeySchema } from './shared-schemas.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../domain/constants.js';
 
 const importedDocumentSchema = joi.object({
-  key: idOrKeySchema.required(),
+  _id: idOrKeySchema.required(),
   title: joi.string().allow('').required(),
   slug: joi.string().allow('').required(),
   language: joi.string().required(),

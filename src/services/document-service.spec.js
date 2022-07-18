@@ -99,8 +99,8 @@ describe('document-service', () => {
       expect(createdRevision._id).toMatch(/\w+/);
     });
 
-    it('creates a document key', () => {
-      expect(createdRevision.key).toMatch(/\w+/);
+    it('creates a document id', () => {
+      expect(createdRevision.documentId).toMatch(/\w+/);
     });
 
     it('saves the revision', () => {
@@ -238,7 +238,7 @@ describe('document-service', () => {
 
       secondTick = new Date(sandbox.clock.tick(1000));
 
-      updatedDocument = await sut.updateDocument({ documentKey: initialDocument._id, data: updatedData, user: secondUser });
+      updatedDocument = await sut.updateDocument({ documentId: initialDocument._id, data: updatedData, user: secondUser });
       persistedSecondRevision = await db.documentRevisions.findOne({ _id: updatedDocument.revision });
     });
 
@@ -246,8 +246,8 @@ describe('document-service', () => {
       expect(persistedSecondRevision._id).toMatch(/\w+/);
     });
 
-    it('sets the same document key', () => {
-      expect(persistedSecondRevision.key).toBe(persistedFirstRevision.key);
+    it('sets the same document id', () => {
+      expect(persistedSecondRevision.documentId).toBe(persistedFirstRevision.documentId);
     });
 
     it('saves the second revision', () => {
@@ -327,14 +327,14 @@ describe('document-service', () => {
 
   describe('importDocumentRevisions', () => {
     let revisions;
-    const documentKey = uniqueId.create();
+    const documentId = uniqueId.create();
     const userId1 = uniqueId.create();
 
     beforeEach(() => {
       revisions = [
         {
           _id: uniqueId.create(),
-          key: documentKey,
+          documentId,
           title: 'Title 1',
           description: 'Description 1',
           slug: 'my-doc-1',
@@ -359,7 +359,7 @@ describe('document-service', () => {
         },
         {
           _id: uniqueId.create(),
-          key: documentKey,
+          documentId,
           title: 'Title 2',
           description: 'Description 2',
           slug: 'my-doc-2',
@@ -388,12 +388,12 @@ describe('document-service', () => {
       let createdDocument;
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentKey, revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        createdDocument = await db.documents.findOne({ key: documentKey });
+        await sut.importDocumentRevisions({ documentId, revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        createdDocument = await db.documents.findOne({ _id: documentId });
       });
 
       it('creates the revisions', async () => {
-        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).sort({ order: 1 }).toArray();
+        const createdRevisions = await db.documentRevisions.find({ documentId }).sort({ order: 1 }).toArray();
 
         expect(createdRevisions).toEqual([
           {
@@ -432,14 +432,14 @@ describe('document-service', () => {
         ]);
       });
 
-      it('creates a document with the given key', () => {
-        expect(createdDocument.key).toBe(documentKey);
+      it('creates a document with the given id', () => {
+        expect(createdDocument._id).toBe(documentId);
       });
 
       it('saves the last revision data onto the document', () => {
-        expect(createdDocument).toMatchObject({
+        const expectedDocument = {
           ...revisions[1],
-          _id: documentKey,
+          _id: documentId,
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
@@ -447,9 +447,14 @@ describe('document-service', () => {
           updatedBy: revisions[1].createdBy,
           order: 2,
           archived: false,
+          origin: 'external/origin.url',
+          originUrl: 'https://origin.url',
           contributors: [revisions[1].createdBy],
           cdnResources: ['media/video-1.mp4']
-        });
+        };
+        delete expectedDocument.documentId;
+
+        expect(createdDocument).toMatchObject(expectedDocument);
       });
     });
 
@@ -457,13 +462,13 @@ describe('document-service', () => {
       let updatedDocument;
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        updatedDocument = await db.documents.findOne({ key: documentKey });
+        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentId, revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        updatedDocument = await db.documents.findOne({ _id: documentId });
       });
 
       it('creates the revisions', async () => {
-        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).toArray();
+        const createdRevisions = await db.documentRevisions.find({ documentId }).toArray();
         expect(createdRevisions).toEqual([
           {
             ...revisions[0],
@@ -501,12 +506,12 @@ describe('document-service', () => {
         ]);
       });
 
-      it('creates a document with the given key', () => {
-        expect(updatedDocument.key).toBe(documentKey);
+      it('creates a document with the given id', () => {
+        expect(updatedDocument._id).toBe(documentId);
       });
 
       it('saves the last revision data onto the document', () => {
-        expect(updatedDocument).toMatchObject({
+        const expectedDocument = {
           ...revisions[1],
           sections: [
             {
@@ -514,7 +519,7 @@ describe('document-service', () => {
               revision: expect.stringMatching(/\w+/)
             }
           ],
-          _id: documentKey,
+          _id: documentId,
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
@@ -524,7 +529,10 @@ describe('document-service', () => {
           archived: false,
           contributors: [revisions[1].createdBy],
           cdnResources: ['media/video-1.mp4']
-        });
+        };
+        delete expectedDocument.documentId;
+
+        expect(updatedDocument).toMatchObject(expectedDocument);
       });
     });
 
@@ -533,17 +541,17 @@ describe('document-service', () => {
       const expectedAncestorId = uniqueId.create();
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
 
         try {
-          await sut.importDocumentRevisions({ documentKey, revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+          await sut.importDocumentRevisions({ documentId, revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         } catch (error) {
           result = error;
         }
       });
 
       it('throws', () => {
-        expect(result?.message).toBe(`Import of document '${documentKey}' expected to find revision '${expectedAncestorId}' as the latest revision but found revision '${revisions[0]._id}'`);
+        expect(result?.message).toBe(`Import of document '${documentId}' expected to find revision '${expectedAncestorId}' as the latest revision but found revision '${revisions[0]._id}'`);
       });
     });
   });
@@ -574,22 +582,16 @@ describe('document-service', () => {
 
         initialDocumentRevisions = await createTestRevisions(container, user, [
           {
-            id: 'id-rev-1',
-            key: 'key',
             title: 'Revision 1',
             slug: 'rev-1',
             sections: [cloneDeep(section1)]
           },
           {
-            id: 'id-rev-2',
-            key: 'key',
             title: 'Revision 2',
             slug: 'rev-2',
             sections: [cloneDeep(section1), cloneDeep(section2)]
           },
           {
-            id: 'id-rev-3',
-            key: 'key',
             title: 'Revision 3',
             slug: 'rev-3',
             sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text' } }]
@@ -603,7 +605,7 @@ describe('document-service', () => {
 
           beforeEach(async () => {
             result = await sut.restoreDocumentRevision({
-              documentKey: initialDocumentRevisions[1].key,
+              documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
               user
             });
@@ -617,8 +619,8 @@ describe('document-service', () => {
             expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
           });
 
-          it('should restore the key', () => {
-            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          it('should restore the documentId', () => {
+            expect(result[3].documentId).toBe(initialDocumentRevisions[1].documentId);
           });
 
           it('should restore the title', () => {
@@ -656,7 +658,7 @@ describe('document-service', () => {
       describe('and a changed section has been hard-deleted in the second document revision only', () => {
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: initialDocumentRevisions[1].key,
+            documentId: initialDocumentRevisions[1].documentId,
             sectionKey: initialDocumentRevisions[1].sections[1].key,
             sectionRevision: initialDocumentRevisions[1].sections[1].revision,
             reason: 'This is a test',
@@ -670,7 +672,7 @@ describe('document-service', () => {
 
           beforeEach(async () => {
             result = await sut.restoreDocumentRevision({
-              documentKey: initialDocumentRevisions[1].key,
+              documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
               user
             });
@@ -684,8 +686,8 @@ describe('document-service', () => {
             expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
           });
 
-          it('should restore the key', () => {
-            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          it('should restore the documentId', () => {
+            expect(result[3].documentId).toBe(initialDocumentRevisions[1].documentId);
           });
 
           it('should restore the title', () => {
@@ -723,7 +725,7 @@ describe('document-service', () => {
       describe('and a changed section has been hard-deleted in the third document revision only', () => {
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: initialDocumentRevisions[2].key,
+            documentId: initialDocumentRevisions[2].documentId,
             sectionKey: initialDocumentRevisions[2].sections[1].key,
             sectionRevision: initialDocumentRevisions[2].sections[1].revision,
             reason: 'This is a test',
@@ -737,7 +739,7 @@ describe('document-service', () => {
 
           beforeEach(async () => {
             result = await sut.restoreDocumentRevision({
-              documentKey: initialDocumentRevisions[1].key,
+              documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
               user
             });
@@ -751,8 +753,8 @@ describe('document-service', () => {
             expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
           });
 
-          it('should restore the key', () => {
-            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          it('should restore the documentId', () => {
+            expect(result[3].documentId).toBe(initialDocumentRevisions[1].documentId);
           });
 
           it('should restore the title', () => {
@@ -804,7 +806,7 @@ describe('document-service', () => {
           archived: false
         });
 
-        updatedDocument = await sut.updateArchivedState({ documentKey: initialDocument.key, user, archived: true });
+        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: true });
       });
 
       it('should create a new revision', () => {
@@ -831,7 +833,7 @@ describe('document-service', () => {
           archived: true
         });
 
-        updatedDocument = await sut.updateArchivedState({ documentKey: initialDocument.key, user, archived: false });
+        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: false });
       });
 
       it('should create a new revision', () => {
@@ -930,7 +932,7 @@ describe('document-service', () => {
 
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: documentRevisionsBeforeDeletion[2].key,
+            documentId: documentRevisionsBeforeDeletion[2].documentId,
             sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
@@ -938,7 +940,7 @@ describe('document-service', () => {
             user
           });
 
-          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
         });
 
         it('deletes all earlier and later occurrences of that section revision', () => {
@@ -989,7 +991,7 @@ describe('document-service', () => {
 
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: documentRevisionsBeforeDeletion[2].key,
+            documentId: documentRevisionsBeforeDeletion[2].documentId,
             sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
@@ -997,7 +999,7 @@ describe('document-service', () => {
             user
           });
 
-          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
         });
 
         it('deletes all occurrences of that section', () => {
@@ -1023,7 +1025,7 @@ describe('document-service', () => {
 
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: documentRevisionsBeforeDeletion[4].key,
+            documentId: documentRevisionsBeforeDeletion[4].documentId,
             sectionKey: documentRevisionsBeforeDeletion[4].sections[1].key,
             sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
             reason: 'My old reason',
@@ -1032,7 +1034,7 @@ describe('document-service', () => {
           });
 
           await sut.hardDeleteSection({
-            documentKey: documentRevisionsBeforeDeletion[2].key,
+            documentId: documentRevisionsBeforeDeletion[2].documentId,
             sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
@@ -1040,7 +1042,7 @@ describe('document-service', () => {
             user
           });
 
-          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
         });
 
         it('does not modify the already hard-deleted revision', () => {
@@ -1058,7 +1060,7 @@ describe('document-service', () => {
 
         beforeEach(async () => {
           await sut.hardDeleteSection({
-            documentKey: documentRevisionsBeforeDeletion[4].key,
+            documentId: documentRevisionsBeforeDeletion[4].documentId,
             sectionKey: documentRevisionsBeforeDeletion[4].sections[1].key,
             sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
             reason: 'My reason',
@@ -1066,7 +1068,7 @@ describe('document-service', () => {
             user
           });
 
-          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
         });
 
         it('removes the cdn resources of the hard-deleted section', () => {
@@ -1230,15 +1232,15 @@ describe('document-service', () => {
 
       initialDocument = await createTestDocument(container, user, { slug: 'old-slug' });
 
-      await db.documentRevisions.updateOne({ key: initialDocument._id }, { $set: { slug: 'new-slug' } });
+      await db.documentRevisions.updateOne({ documentId: initialDocument._id }, { $set: { slug: 'new-slug' } });
 
-      await sut.regenerateDocument(initialDocument.key);
+      await sut.regenerateDocument(initialDocument._id);
 
-      regeneratedDocument = await db.documents.findOne({ _id: initialDocument.key });
+      regeneratedDocument = await db.documents.findOne({ _id: initialDocument._id });
     });
 
     it('should take a lock on the document', () => {
-      sinon.assert.calledWith(lockStore.takeDocumentLock, regeneratedDocument.key);
+      sinon.assert.calledWith(lockStore.takeDocumentLock, regeneratedDocument._id);
     });
 
     it('should release the lock on the document', () => {
@@ -1278,23 +1280,23 @@ describe('document-service', () => {
         }
       };
 
-      const [{ key }] = await createTestRevisions(container, user, [{ sections: [sectionRevision1] }, { sections: [sectionRevision2] }]);
+      const [{ documentId }] = await createTestRevisions(container, user, [{ sections: [sectionRevision1] }, { sections: [sectionRevision2] }]);
 
       await Promise.all([
-        db.documentRevisions.updateMany({ key }, { $set: { cdnResources: [] } }),
-        db.documents.updateOne({ _id: key }, { $set: { cdnResources: [] } })
+        db.documentRevisions.updateMany({ documentId }, { $set: { cdnResources: [] } }),
+        db.documents.updateOne({ _id: documentId }, { $set: { cdnResources: [] } })
       ]);
 
       [documentRevisionsBeforeConsolidation, documentBeforeConsolidation] = await Promise.all([
-        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
-        db.documents.findOne({ _id: key })
+        db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: documentId })
       ]);
 
-      await sut.consolidateCdnResources(key);
+      await sut.consolidateCdnResources(documentId);
 
       [documentRevisionsAfterConsolidation, documentAfterConsolidation] = await Promise.all([
-        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
-        db.documents.findOne({ _id: key })
+        db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: documentId })
       ]);
     });
 

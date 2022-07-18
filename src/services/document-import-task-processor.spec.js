@@ -45,7 +45,7 @@ describe('document-import-task-processor', () => {
     let revision3;
     let cdnRootUrl;
     let batchParams;
-    let documentKey;
+    let documentId;
 
     const now = new Date();
 
@@ -66,7 +66,7 @@ describe('document-import-task-processor', () => {
 
     describe('a task to import a new document', () => {
       beforeEach(async () => {
-        documentKey = uniqueId.create();
+        documentId = uniqueId.create();
 
         batchParams = { hostName: 'host.name' };
         cdnRootUrl = 'https://cdn.integration.openmusic.academy';
@@ -76,7 +76,7 @@ describe('document-import-task-processor', () => {
 
         revision1 = {
           _id: uniqueId.create(),
-          key: documentKey,
+          documentId,
           slug: 'slug-1',
           tags: ['tag-1'],
           title: 'title-1',
@@ -104,7 +104,7 @@ describe('document-import-task-processor', () => {
 
         revision2 = {
           _id: uniqueId.create(),
-          key: documentKey,
+          documentId,
           slug: 'slug-2',
           tags: ['tag-2'],
           title: 'title-2',
@@ -130,7 +130,7 @@ describe('document-import-task-processor', () => {
         };
         task = {
           taskParams: {
-            key: documentKey,
+            documentId,
             importedRevision: null,
             importableRevision: revision2._id
           }
@@ -150,7 +150,7 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(exportApiClient.getDocumentExport, {
           baseUrl: `https://${batchParams.hostName}`,
           apiKey: importSource.apiKey,
-          documentKey: task.taskParams.key,
+          documentId: task.taskParams.documentId,
           toRevision: task.taskParams.importableRevision
         });
       });
@@ -190,7 +190,7 @@ describe('document-import-task-processor', () => {
       });
 
       it('should create the revisions', async () => {
-        const importedRevisions = await db.documentRevisions.find({ key: documentKey }, { sort: [['order', 1]] }).toArray();
+        const importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
@@ -203,7 +203,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 1,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
             cdnResources: ['media/video-1.mp4'],
             archived: false
           },
@@ -218,7 +218,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 2,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
             cdnResources: ['media/video-2.mp4'],
             archived: false
           }
@@ -226,8 +226,8 @@ describe('document-import-task-processor', () => {
       });
 
       it('should create the document', async () => {
-        const importedDocument = await db.documents.findOne({ key: documentKey });
-        expect(importedDocument).toMatchObject({
+        const importedDocument = await db.documents.findOne({ _id: documentId });
+        const expectedDocument = {
           ...revision2,
           sections: [
             {
@@ -235,7 +235,7 @@ describe('document-import-task-processor', () => {
               revision: expect.stringMatching(/\w+/)
             }
           ],
-          _id: documentKey,
+          _id: documentId,
           revision: revision2._id,
           createdOn: now,
           createdBy: revision1.createdBy,
@@ -243,11 +243,14 @@ describe('document-import-task-processor', () => {
           updatedBy: revision2.createdBy,
           order: 2,
           origin: `external/${batchParams.hostName}`,
-          originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
+          originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
           cdnResources: ['media/video-2.mp4'],
           archived: false,
           contributors: [user1._id, user2._id]
-        });
+        };
+        delete expectedDocument.documentId;
+
+        expect(importedDocument).toMatchObject(expectedDocument);
       });
 
       describe('followed by a task to update the document', () => {
@@ -257,7 +260,7 @@ describe('document-import-task-processor', () => {
 
           revision3 = {
             _id: uniqueId.create(),
-            key: documentKey,
+            documentId,
             slug: 'slug-3',
             tags: ['tag-3'],
             title: 'title-3',
@@ -284,7 +287,7 @@ describe('document-import-task-processor', () => {
 
           task = {
             taskParams: {
-              key: documentKey,
+              documentId,
               importedRevision: revision2._id,
               importableRevision: revision3._id
             }
@@ -304,7 +307,7 @@ describe('document-import-task-processor', () => {
           sinon.assert.calledWith(exportApiClient.getDocumentExport, {
             baseUrl: `https://${batchParams.hostName}`,
             apiKey: importSource.apiKey,
-            documentKey: task.taskParams.key,
+            documentId: task.taskParams.documentId,
             toRevision: task.taskParams.importableRevision
           });
         });
@@ -342,15 +345,15 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 3,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-3`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
             archived: false
           });
         });
 
         it('should update the document', async () => {
-          const importedDocument = await db.documents.findOne({ key: documentKey });
-          expect(importedDocument).toMatchObject({
+          const importedDocument = await db.documents.findOne({ _id: documentId });
+          const expectedDocument = {
             ...revision3,
             sections: [
               {
@@ -358,7 +361,7 @@ describe('document-import-task-processor', () => {
                 revision: expect.stringMatching(/\w+/)
               }
             ],
-            _id: documentKey,
+            _id: documentId,
             revision: revision3._id,
             createdOn: now,
             createdBy: revision1.createdBy,
@@ -366,11 +369,14 @@ describe('document-import-task-processor', () => {
             updatedBy: revision3.createdBy,
             order: 3,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-3`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
             archived: false,
             contributors: [user1._id, user2._id, user3._id]
-          });
+          };
+          delete expectedDocument.documentId;
+
+          expect(importedDocument).toMatchObject(expectedDocument);
         });
       });
     });

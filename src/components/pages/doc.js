@@ -44,10 +44,12 @@ const VIEW = {
   history: DOC_VIEW_QUERY_PARAM.history
 };
 
-function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
+function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
+  const archived = docRevision ? docRevision.archived : doc.archived;
+  const review = docRevision ? docRevision.review : doc.review;
 
-  if (doc.archived) {
+  if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
   }
 
@@ -63,12 +65,12 @@ function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
     });
   }
 
-  if (currentView === VIEW.edit && hasPendingTemplateSectionKeys) {
+  if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
     alerts.push({ message: t('common:proposedSectionsAlert') });
   }
 
-  if (doc.review) {
-    alerts.push({ message: doc.review, type: ALERT_TYPE.warning });
+  if (review) {
+    alerts.push({ message: review, type: ALERT_TYPE.warning });
   }
 
   return alerts;
@@ -97,10 +99,22 @@ function Doc({ initialState, PageTemplate }) {
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
-  const [alerts, setAlerts] = useState(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
+  const [alerts, setAlerts] = useState(createPageAlerts({
+    t,
+    doc,
+    view,
+    hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+  }));
+
   useEffect(() => {
-    setAlerts(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
-  }, [doc, view, pendingTemplateSectionKeys, t]);
+    setAlerts(createPageAlerts({
+      t,
+      doc,
+      docRevision: selectedHistoryRevision,
+      view,
+      hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+    }));
+  }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (initialView === VIEW.edit || view === VIEW.edit) {
@@ -110,7 +124,7 @@ function Doc({ initialState, PageTemplate }) {
     if (initialView === VIEW.history) {
       (async () => {
         try {
-          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
           setHistoryRevisions(documentRevisions);
           setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
@@ -118,29 +132,29 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
-  }, [initialView, doc.key, view, t, pluginRegistry, documentApiClient]);
+  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
     switch (view) {
       case VIEW.edit:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.edit }));
         break;
       case VIEW.history:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.history }));
         break;
       case VIEW.display:
       default:
-        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug }));
+        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug }));
         break;
     }
-  }, [user, doc.key, doc.slug, view]);
+  }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = async ({ templateDocumentKey, ...newMetadata }) => {
-    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentKey: doc.key, metadata: newMetadata });
+  const handleDocumentMetadataModalSave = async ({ templateDocumentId, ...newMetadata }) => {
+    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentId: doc._id, metadata: newMetadata });
 
     setDoc(updatedDoc);
     setIsDocumentMetadataModalVisible(false);
@@ -163,7 +177,7 @@ function Doc({ initialState, PageTemplate }) {
     }));
 
     try {
-      const updatedDoc = await documentApiClient.updateDocumentSections({ documentKey: doc.key, sections: newSections });
+      const updatedDoc = await documentApiClient.updateDocumentSections({ documentId: doc._id, sections: newSections });
 
       const currentSectionKeys = currentSections.map(s => s.key);
       if (updatedDoc.sections.some(s => !currentSectionKeys.includes(s.key))) {
@@ -311,7 +325,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleHistoryOpen = async () => {
     try {
-      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
       setHistoryRevisions(documentRevisions);
       setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
       setView(VIEW.history);
@@ -355,7 +369,7 @@ function Doc({ initialState, PageTemplate }) {
       async () => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentKey: selectedHistoryRevision.key,
+            documentId: selectedHistoryRevision.documentId,
             revisionId: selectedHistoryRevision._id
           });
 
@@ -372,12 +386,12 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
-    const documentKey = doc.key;
+    const documentId = doc._id;
     const sectionKey = section.key;
     const sectionRevision = section.revision;
 
     try {
-      const { document: updatedDoc } = await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
+      const { document: updatedDoc } = await documentApiClient.hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions });
 
       setDoc(updatedDoc);
       setCurrentSections(updatedDoc.sections);
@@ -385,7 +399,7 @@ function Doc({ initialState, PageTemplate }) {
       handleApiError({ error, logger, t });
     }
 
-    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
+    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
 
     setHistoryRevisions(documentRevisions);
     setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
@@ -416,7 +430,7 @@ function Doc({ initialState, PageTemplate }) {
         <div className="DocPage">
           <MetadataTitle
             text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
-            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc.key} />}
+            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />}
             />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}

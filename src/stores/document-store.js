@@ -4,7 +4,6 @@ import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
   _id: 1,
-  key: 1,
   revision: 1,
   createdOn: 1,
   updatedOn: 1,
@@ -15,7 +14,6 @@ const documentMetadataProjection = {
 
 const documentExtendedMetadataProjection = {
   _id: 1,
-  key: 1,
   order: 1,
   revision: 1,
   title: 1,
@@ -41,24 +39,24 @@ class DocumentStore {
     this.collection = db.documents;
   }
 
-  getDocumentByKey(key, { session } = {}) {
-    return this.collection.findOne({ key }, { session });
+  getDocumentById(id, { session } = {}) {
+    return this.collection.findOne({ _id: id }, { session });
   }
 
-  getDocumentMetadataByKey(key, { session } = {}) {
-    return this.collection.findOne({ key }, { projection: documentMetadataProjection, session });
+  getDocumentMetadataById(id, { session } = {}) {
+    return this.collection.findOne({ _id: id }, { projection: documentMetadataProjection, session });
   }
 
-  getAllDocumentRevisionsByKey(documentKey, { session } = {}) {
-    return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
+  getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
+    return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
 
-  getAllDocumentKeys({ session } = {}) {
-    return this.collection.distinct('key', {}, { session });
+  getAllDocumentIds({ session } = {}) {
+    return this.collection.distinct('_id', {}, { session });
   }
 
-  getDocumentsMetadataByKeys(keys, { session } = {}) {
-    return this.collection.find({ key: { $in: keys } }, { session }).toArray();
+  getDocumentsMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { session }).toArray();
   }
 
   getAllNonArchivedDocumentsExtendedMetadata({ session } = {}) {
@@ -111,8 +109,8 @@ class DocumentStore {
     return this.collection.replaceOne({ _id: document._id }, document, { session, upsert: true });
   }
 
-  deleteDocumentByKey(key, { session } = {}) {
-    return this.collection.deleteOne({ key }, { session });
+  deleteDocumentById(id, { session } = {}) {
+    return this.collection.deleteOne({ _id: id }, { session });
   }
 
   _getTagsQuery(searchString) {

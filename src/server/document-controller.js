@@ -11,7 +11,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
-  documentKeyParamsOrQuerySchema,
+  documentIdParamsOrQuerySchema,
   documentMetadataBodySchema,
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
@@ -47,26 +47,26 @@ class DocumentController {
 
   async handleGetDocPage(req, res) {
     const { user } = req;
-    const { docKey } = req.params;
-    const { view, templateDocumentKey } = req.query;
+    const { documentId } = req.params;
+    const { view, templateDocumentId } = req.query;
     const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params[0]);
 
-    const doc = await this.documentService.getDocumentByKey(docKey);
+    const doc = await this.documentService.getDocumentById(documentId);
     if (!doc) {
       throw new NotFound();
     }
 
     if (doc.slug !== routeWildcardValue) {
-      return res.redirect(301, routes.getDocUrl({ key: doc.key, slug: doc.slug, view, templateDocumentKey }));
+      return res.redirect(301, routes.getDocUrl({ id: doc._id, slug: doc.slug, view, templateDocumentId }));
     }
 
     let templateDocument;
-    if (templateDocumentKey) {
+    if (templateDocumentId) {
       if (doc.sections.length) {
-        return res.redirect(302, routes.getDocUrl({ key: doc.key, slug: doc.slug }));
+        return res.redirect(302, routes.getDocUrl({ id: doc._id, slug: doc.slug }));
       }
 
-      templateDocument = await this.documentService.getDocumentByKey(templateDocumentKey);
+      templateDocument = await this.documentService.getDocumentById(templateDocumentId);
       if (!templateDocument) {
         throw new NotFound();
       }
@@ -92,9 +92,9 @@ class DocumentController {
   async handlePatchDocumentMetadata(req, res) {
     const { user } = req;
     const metadata = req.body;
-    const { key: documentKey } = req.params;
+    const { documentId } = req.params;
 
-    const updatedDocument = await this.documentService.updateDocumentMetadata({ documentKey, metadata, user });
+    const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
     return res.status(201).send(mappedUpdatedDocument);
   }
@@ -102,9 +102,9 @@ class DocumentController {
   async handlePatchDocumentSections(req, res) {
     const { user } = req;
     const { sections } = req.body;
-    const { key: documentKey } = req.params;
+    const { documentId } = req.params;
 
-    const updatedDocument = await this.documentService.updateDocumentSections({ documentKey, sections, user });
+    const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
     return res.status(201).send(mappedUpdatedDocument);
   }
@@ -112,14 +112,14 @@ class DocumentController {
   async handlePatchDocumentRestoreRevision(req, res) {
     const { user } = req;
     const { revisionId } = req.body;
-    const { key: documentKey } = req.params;
+    const { documentId } = req.params;
 
-    const documentRevisions = await this.documentService.restoreDocumentRevision({ documentKey, revisionId, user });
+    const documentRevisions = await this.documentService.restoreDocumentRevision({ documentId, revisionId, user });
     if (!documentRevisions.length) {
       throw new NotFound();
     }
 
-    const updatedDocument = await this.documentService.getDocumentByKey(documentKey);
+    const updatedDocument = await this.documentService.getDocumentById(documentId);
     const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
     const mappedDocumentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(documentRevisions, user);
 
@@ -127,30 +127,34 @@ class DocumentController {
   }
 
   async handlePatchDocArchive(req, res) {
-    const revision = await this.documentService.updateArchivedState({ documentKey: req.params.key, user: req.user, archived: true });
-    if (!revision) {
+    const { documentId } = req.params;
+
+    const updatedDocument = await this.documentService.updateArchivedState({ documentId, user: req.user, archived: true });
+    if (!updatedDocument) {
       throw new NotFound();
     }
 
-    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
-    return res.send({ documentRevision });
+    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, req.user);
+    return res.send({ doc: mappedDocument });
   }
 
   async handlePatchDocUnarchive(req, res) {
-    const revision = await this.documentService.updateArchivedState({ documentKey: req.params.key, user: req.user, archived: false });
-    if (!revision) {
+    const { documentId } = req.params;
+
+    const updatedDocument = await this.documentService.updateArchivedState({ documentId, user: req.user, archived: false });
+    if (!updatedDocument) {
       throw new NotFound();
     }
 
-    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
-    return res.send({ documentRevision });
+    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, req.user);
+    return res.send({ doc: mappedDocument });
   }
 
   async handleGetDocs(req, res) {
     const { user } = req;
-    const { key } = req.query;
+    const { documentId } = req.query;
 
-    const revisions = await this.documentService.getAllDocumentRevisionsByKey(key);
+    const revisions = await this.documentService.getAllDocumentRevisionsByDocumentId(documentId);
     if (!revisions.length) {
       throw new NotFound();
     }
@@ -161,9 +165,9 @@ class DocumentController {
 
   async handleGetDoc(req, res) {
     const { user } = req;
-    const { key } = req.params;
+    const { documentId } = req.params;
 
-    const doc = await this.documentService.getDocumentByKey(key);
+    const doc = await this.documentService.getDocumentById(documentId);
     if (!doc) {
       throw new NotFound();
     }
@@ -184,15 +188,15 @@ class DocumentController {
 
   async handleDeleteDocSection(req, res) {
     const { user } = req;
-    const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
-    const document = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
+    const { documentId, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
+    const document = await this.documentService.hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
     const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(document, req.user);
     return res.send({ document: mappedDocument });
   }
 
   async handleDeleteDoc(req, res) {
-    const { documentKey } = req.body;
-    await this.documentService.hardDeleteDocument(documentKey);
+    const { documentId } = req.body;
+    await this.documentService.hardDeleteDocument(documentId);
     return res.send({});
   }
 
@@ -211,7 +215,7 @@ class DocumentController {
     );
 
     router.get(
-      '/docs/:docKey*',
+      '/docs/:documentId*',
       validateParams(getDocumentParamsSchema),
       validateQuery(getDocumentQuerySchema),
       needsPermission({
@@ -232,47 +236,47 @@ class DocumentController {
     );
 
     router.patch(
-      '/api/v1/docs/:key/metadata',
+      '/api/v1/docs/:documentId/metadata',
       jsonParser,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsOrQuerySchema),
+      validateParams(documentIdParamsOrQuerySchema),
       validateBody(documentMetadataBodySchema),
       (req, res) => this.handlePatchDocumentMetadata(req, res)
     );
 
     router.patch(
-      '/api/v1/docs/:key/sections',
+      '/api/v1/docs/:documentId/sections',
       jsonParserLargePayload,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsOrQuerySchema),
+      validateParams(documentIdParamsOrQuerySchema),
       validateBody(patchDocSectionsBodySchema),
       (req, res) => this.handlePatchDocumentSections(req, res)
     );
 
     router.patch(
-      '/api/v1/docs/:key/restore',
+      '/api/v1/docs/:documentId/restore',
       jsonParser,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsOrQuerySchema),
+      validateParams(documentIdParamsOrQuerySchema),
       validateBody(restoreRevisionBodySchema),
       (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
     );
 
     router.patch(
-      '/api/v1/docs/:key/archive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
+      '/api/v1/docs/:documentId/archive',
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocArchive(req, res)
     );
 
     router.patch(
-      '/api/v1/docs/:key/unarchive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
+      '/api/v1/docs/:documentId/unarchive',
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 
     router.get(
       '/api/v1/docs',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(documentKeyParamsOrQuerySchema)],
+      [needsPermission(permissions.VIEW_DOCS), validateQuery(documentIdParamsOrQuerySchema)],
       (req, res) => this.handleGetDocs(req, res)
     );
 
@@ -283,8 +287,8 @@ class DocumentController {
     );
 
     router.get(
-      '/api/v1/docs/:key',
-      [needsPermission(permissions.VIEW_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
+      '/api/v1/docs/:documentId',
+      [needsPermission(permissions.VIEW_DOCS), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handleGetDoc(req, res)
     );
 

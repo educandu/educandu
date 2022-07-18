@@ -13,7 +13,7 @@ function DocumentInfoCell({ doc }) {
   ];
 
   return (
-    <a className="InfoCell" href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>
+    <a className="InfoCell" href={urls.getDocUrl({ id: doc._id, slug: doc.slug })}>
       <div className="InfoCell-mainText">{doc.title}</div>
       {doc.description && <div className="InfoCell-description">{doc.description}</div>}
       <div className="InfoCell-subtext">{dates.join(' | ')}</div>
