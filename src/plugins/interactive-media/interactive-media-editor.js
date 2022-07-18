@@ -43,6 +43,7 @@ const tailFormItemLayout = {
     offset: 4
   }
 };
+
 function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
