@@ -11,7 +11,6 @@ import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import DocumentSelector from '../document-selector.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
@@ -73,10 +72,6 @@ function SettingsTab({
 
   const handleFooterLinksChange = useCallback((value, { isValid }) => {
     handleChange('footerLinks', value, isValid);
-  }, [handleChange]);
-
-  const handleDefaultTagsChange = useCallback((value, { isValid }) => {
-    handleChange('defaultTags', value, isValid);
   }, [handleChange]);
 
   const handlePluginHelpTextChange = useCallback((pluginType, value, { isValid }) => {
@@ -187,15 +182,6 @@ function SettingsTab({
           <FooterLinksSettings
             footerLinks={settings.footerLinks}
             onChange={handleFooterLinksChange}
-            />
-        </Collapse.Panel>
-      </Collapse>
-
-      <Collapse className="SettingsTab-collapse">
-        <Collapse.Panel header={t('defaultTagsHeader')} key="defaultTags">
-          <DefaultTagsSettings
-            defaultTags={settings.defaultTags || []}
-            onChange={handleDefaultTagsChange}
             />
         </Collapse.Panel>
       </Collapse>

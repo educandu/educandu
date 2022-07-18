@@ -3,7 +3,6 @@ import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
-import { useSettings } from './settings-context.js';
 import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select } from 'antd';
@@ -24,22 +23,20 @@ export const DOCUMENT_METADATA_MODAL_MODE = {
   update: 'update'
 };
 
-function composeTagOptions(defaultTags, initialDocumentTags = [], tagSuggestions = []) {
-  const mergedTags = new Set([...defaultTags, ...initialDocumentTags, ...tagSuggestions]);
+function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
+  const mergedTags = new Set([...initialDocumentTags, ...tagSuggestions]);
   return [...mergedTags].map(tag => ({ key: tag, value: tag }));
 }
 
 function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocumentMetadata, templateDocumentKey }) {
   const user = useUser();
   const formRef = useRef(null);
-  const settings = useSettings();
-  const defaultTags = settings?.defaultTags || [];
   const { t } = useTranslation('documentMetadataModal');
   const documentApiClient = useService(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
 
-  const [tagOptions, setTagOptions] = useState(composeTagOptions(defaultTags, initialDocumentMetadata?.tags));
+  const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
 
   const titleValidationRules = [
     {
@@ -84,11 +81,11 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
 
   const handleTagSearch = async typedInTag => {
     try {
-      if (typedInTag.length !== 3) {
+      if (typedInTag.length < 3) {
         return;
       }
       const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(typedInTag);
-      const newTagOptions = composeTagOptions(defaultTags, initialDocumentMetadata?.tags, tagSuggestions);
+      const newTagOptions = composeTagOptions(initialDocumentMetadata?.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
       handleApiError({ error, t });
@@ -150,7 +147,10 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
             mode="tags"
             tokenSeparators={[' ', '\t']}
             onSearch={handleTagSearch}
+            notFoundContent={null}
             options={tagOptions}
+            autoComplete="none"
+            placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
         {templateDocumentKey && (

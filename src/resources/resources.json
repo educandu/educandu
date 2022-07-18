@@ -26,22 +26,6 @@
     }
   },
   {
-    "namespace": "defaultTagsSettings",
-    "language": "en",
-    "resources": {
-      "rank": "Rank",
-      "tag": "Tag"
-    }
-  },
-  {
-    "namespace": "defaultTagsSettings",
-    "language": "de",
-    "resources": {
-      "rank": "Rang",
-      "tag": "Tag"
-    }
-  },
-  {
     "namespace": "settingsDocumentsTable",
     "language": "en",
     "resources": {
@@ -66,7 +50,6 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "consentHeader": "Consent text",
-      "defaultTagsHeader": "Default tags",
       "documentRegenerationHeader": "Document regeneration",
       "documentRegenerationButton": "Regenerate documents",
       "cdnResourcesConsolidationHeader": "CDN resources consolidation",
@@ -89,7 +72,6 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "consentHeader": "Zustimmungstext",
-      "defaultTagsHeader": "Vordefinierte Tags",
       "documentRegenerationHeader": "Dokumentwiederherstellung",
       "documentRegenerationButton": "Dokumente neu erstellen",
       "cdnResourcesConsolidationHeader": "Konsolidierung der CDN-Ressourcen",
@@ -275,6 +257,7 @@
       "editDocument": "Edit document",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
+      "tagsPlaceholder": "Enter keywords",
       "useTemplateDocument": "Use default template",
       "review": "Review"
     }
@@ -287,6 +270,7 @@
       "editDocument": "Dokument bearbeiten",
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
+      "tagsPlaceholder": "Stickwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
       "review": "Review"
     }
