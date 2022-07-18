@@ -48,7 +48,7 @@ class AmbService {
   }
 
   async getDocumentsAmbMetadata({ origin }) {
-    const docs = await this.documentStore.getAllNonArchivedDocumentsExtendedMetadata();
+    const docs = await this.documentStore.getAllNonArchivedTaggedDocumentsExtendedMetadata();
 
     const userIds = extractUserIdsFromDocsOrRevisions(docs);
     const userObjects = await this.userStore.getUsersByIds(userIds);
