@@ -39,8 +39,8 @@ class InteractiveMediaInfo {
       startTimecode: 0,
       title: `[${t('interactiveMedia:chapter')}]`,
       question: `[${t('common:question')}]`,
-      answers: [`[${t('common:answer')}]`],
-      correctAnswerIndex: 0
+      answers: [],
+      correctAnswerIndex: -1
     };
   }
 

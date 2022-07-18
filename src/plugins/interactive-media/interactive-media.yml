@@ -37,6 +37,9 @@ answers:
 addAnswer:
   en: Add answer
   de: Antwort hinzufügen
+addAnswerInfo:
+  en: "In order to allow the user to examine their knowledge, you can put the text above into a question and add possible answers here:"
+  de: "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, können Sie den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:"
 markCorrectAnswer:
   en: Mark as correct answer
   de: Als richtige Antwort markieren

@@ -37,6 +37,12 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
+const tailFormItemLayout = {
+  wrapperCol: {
+    span: 14,
+    offset: 4
+  }
+};
 function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
@@ -247,17 +253,33 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const handleChapterAnswerDeleteClick = index => {
     const newChapters = cloneDeep(chapters);
-    if (index === newChapters[selectedChapterIndex].correctAnswerIndex) {
-      newChapters[selectedChapterIndex].correctAnswerIndex = 0;
+    const currentChapter = newChapters[selectedChapterIndex];
+
+    currentChapter.answers = removeItemAt(currentChapter.answers, index);
+
+    let newCorrectAnswerIndex;
+    if (index > currentChapter.correctAnswerIndex) {
+      newCorrectAnswerIndex = currentChapter.correctAnswerIndex;
+    } else if (index < currentChapter.correctAnswerIndex) {
+      newCorrectAnswerIndex = currentChapter.correctAnswerIndex - 1;
+    } else {
+      newCorrectAnswerIndex = currentChapter.answers.length ? 0 : -1;
     }
 
-    newChapters[selectedChapterIndex].answers = removeItemAt(newChapters[selectedChapterIndex].answers, index);
+    currentChapter.correctAnswerIndex = newCorrectAnswerIndex;
+
     changeContent({ chapters: newChapters });
   };
 
   const handleNewChapterAnswerClick = () => {
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex].answers.push(`[${t('common:answer')}]`);
+    const currentChapter = newChapters[selectedChapterIndex];
+
+    currentChapter.answers.push(`[${t('common:answer')}]`);
+    if (currentChapter.correctAnswerIndex === -1) {
+      currentChapter.correctAnswerIndex = 0;
+    }
+
     changeContent({ chapters: newChapters });
   };
 
@@ -281,10 +303,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           onClick={() => handleChapterAnswerMarkClick(index)}
           />
       </Tooltip>
-      <DeleteButton
-        onClick={() => handleChapterAnswerDeleteClick(index)}
-        disabled={!selectedChapterDuration || chapters[selectedChapterIndex].answers.length === 1}
-        />
+      <DeleteButton onClick={() => handleChapterAnswerDeleteClick(index)} />
     </div>
   );
 
@@ -436,6 +455,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 onChange={handleChapterQuestionChange}
                 value={chapters?.[selectedChapterIndex].question || ''}
                 />
+            </FormItem>
+            <FormItem {...tailFormItemLayout}>
+              <div>{t('addAnswerInfo')}</div>
             </FormItem>
             <FormItem label={t('answers')} {...formItemLayout}>
               {(chapters?.[selectedChapterIndex].answers || []).map(renderAnswer)}
