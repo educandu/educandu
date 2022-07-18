@@ -129,10 +129,6 @@ function Batches({ initialState, PageTemplate }) {
         url = urls.getDocUrl({ id: taskParams.documentId });
         text = taskParams.documentId;
         break;
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:
-        url = urls.getLessonUrl({ id: taskParams.lessonId });
-        text = taskParams.lessonId;
-        break;
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
         url = urls.getRoomUrl({ id: taskParams.roomId });
         text = taskParams.roomId;
@@ -148,8 +144,6 @@ function Batches({ initialState, PageTemplate }) {
     switch (taskParams.type) {
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
         return t('common:document');
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:
-        return t('common:lesson');
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
         return t('common:room');
       default:

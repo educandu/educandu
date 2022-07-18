@@ -310,10 +310,6 @@ export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
       documentId: PropTypes.string.isRequired
     }),
     PropTypes.shape({
-      type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson]),
-      lessonId: PropTypes.string.isRequired
-    }),
-    PropTypes.shape({
       type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room]),
       roomId: PropTypes.string.isRequired
     })

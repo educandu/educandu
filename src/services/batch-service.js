@@ -130,15 +130,13 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnUploadDirectoryCreation);
 
-    const [allDocumentIds, allLessonIds, allRoomIds] = await Promise.all([
+    const [allDocumentIds, allRoomIds] = await Promise.all([
       this.documentStore.getAllDocumentIds(),
-      this.lessonStore.getAllLessonIds(),
       this.roomStore.getAllPrivateRoomIds()
     ]);
 
     const tasksParams = [
       ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
-      ...allLessonIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson, lessonId: id })),
       ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
     ];
 

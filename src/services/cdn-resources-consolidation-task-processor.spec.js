@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
-import LessonService from './lesson-service.js';
 import DocumentService from './document-service.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
@@ -8,7 +7,6 @@ import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidatio
 describe('CdnResourcesConsolidationTaskProcessor', () => {
   let container;
   let documentService;
-  let lessonService;
   const sandbox = sinon.createSandbox();
 
   let sut;
@@ -16,7 +14,6 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     documentService = container.get(DocumentService);
-    lessonService = container.get(LessonService);
     sut = container.get(CdnResourcesConsolidationTaskProcessor);
   });
 
@@ -26,7 +23,6 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
 
   beforeEach(() => {
     sandbox.stub(documentService, 'consolidateCdnResources');
-    sandbox.stub(lessonService, 'consolidateCdnResources');
   });
 
   afterEach(() => {

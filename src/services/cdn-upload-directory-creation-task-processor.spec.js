@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
-import LessonService from './lesson-service.js';
 import DocumentService from './document-service.js';
 import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../domain/constants.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
@@ -10,7 +9,6 @@ import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-crea
 describe('CdnUploadDirectoryCreationTaskProcessor', () => {
   let container;
   let documentService;
-  let lessonService;
   let roomService;
   const sandbox = sinon.createSandbox();
 
@@ -19,7 +17,6 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     documentService = container.get(DocumentService);
-    lessonService = container.get(LessonService);
     roomService = container.get(RoomService);
     sut = container.get(CdnUploadDirectoryCreationTaskProcessor);
   });
@@ -30,7 +27,6 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
 
   beforeEach(() => {
     sandbox.stub(documentService, 'createUploadDirectoryMarkerForDocument');
-    sandbox.stub(lessonService, 'createUploadDirectoryMarkerForLesson');
     sandbox.stub(roomService, 'createUploadDirectoryMarkerForRoom');
   });
 
@@ -47,16 +43,6 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
       it('should call createUploadDirectoryMarkerForDocument on documentService', async () => {
         await sut.process({ taskParams: { type, documentId } }, {});
         sinon.assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentId);
-      });
-    });
-
-    describe('when type is lesson', () => {
-      const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson;
-      const lessonId = uniqueId.create();
-
-      it('should call createUploadDirectoryMarkerForLesson on lessonService', async () => {
-        await sut.process({ taskParams: { type, lessonId } }, {});
-        sinon.assert.calledWith(lessonService.createUploadDirectoryMarkerForLesson, lessonId);
       });
     });
 

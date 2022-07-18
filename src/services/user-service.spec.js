@@ -9,7 +9,6 @@ import {
   pruneTestEnvironment,
   setupTestUser,
   createTestRoom,
-  createTestLesson,
   createTestDocument
 } from '../test-helper.js';
 
@@ -274,11 +273,9 @@ describe('user-service', () => {
     describe('when there are favorites', () => {
       let document;
       let room;
-      let lesson;
 
       beforeEach(async () => {
         room = await createTestRoom(container, { name: 'Favorite room' });
-        lesson = await createTestLesson(container, { title: 'Favorite lesson' });
         document = await createTestDocument(container, user, { title: 'Favorite document' });
 
         const favorites = [
@@ -286,11 +283,6 @@ describe('user-service', () => {
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
             id: room._id
-          },
-          {
-            type: FAVORITE_TYPE.lesson,
-            setOn: new Date('2022-03-09T10:02:00.000Z'),
-            id: lesson._id
           },
           {
             type: FAVORITE_TYPE.document,
