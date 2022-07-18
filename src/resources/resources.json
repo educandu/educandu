@@ -609,10 +609,7 @@
       "roomCreatedActivity": "New room created",
       "roomUpdatedActivity": "Room updated",
       "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Private room joined",
-      "lessonCreatedActivity": "New lesson created",
-      "lessonUpdatedActivity": "Lesson updated",
-      "lessonMarkedFavoriteActivity": "Lesson marked as favorite"
+      "roomJoinedActivity": "Private room joined"
     }
   },
   {
@@ -627,10 +624,7 @@
       "roomCreatedActivity": "Neuen Raum erstellt",
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Privatem Raum beigetreten",
-      "lessonCreatedActivity": "Neue Einheit erstellt",
-      "lessonUpdatedActivity": "Einheit bearbeitet",
-      "lessonMarkedFavoriteActivity": "Einheit als Favorit hinzugefügt"
+      "roomJoinedActivity": "Privatem Raum beigetreten"
     }
   },
   {

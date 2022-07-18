@@ -25,8 +25,6 @@ class DashboardService {
     const updatedRooms = await this.roomStore.getLatestRoomsUpdatedByUser(userId, { limit });
     const createdDocuments = await this.documentStore.getLatestDocumentsMetadataCreatedByUser(userId, { limit });
     const updatedDocuments = await this.documentStore.getLatestDocumentsMetadataUpdatedByUser(userId, { limit });
-    const createdLessons = await this.lessonStore.getLatestLessonsMetadataCreatedByUser(userId, { limit });
-    const updatedLessons = await this.lessonStore.getLatestLessonsMetadataUpdatedByUser(userId, { limit });
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
@@ -63,20 +61,6 @@ class DashboardService {
       isDeprecated: false
     }));
 
-    const createdLessonActivities = createdLessons.map(lesson => ({
-      type: USER_ACTIVITY_TYPE.lessonCreated,
-      timestamp: lesson.createdOn,
-      data: { _id: lesson._id, title: lesson.title },
-      isDeprecated: false
-    }));
-
-    const updatedLessonActivities = updatedLessons.map(lesson => ({
-      type: USER_ACTIVITY_TYPE.lessonUpdated,
-      timestamp: lesson.updatedOn,
-      data: { _id: lesson._id, title: lesson.title },
-      isDeprecated: false
-    }));
-
     const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
     const favoriteActivitiesMetadata = latestFavorites.map(favorite => {
       switch (favorite.type) {
@@ -108,20 +92,6 @@ class DashboardService {
               };
             }
           };
-        case FAVORITE_TYPE.lesson:
-          return {
-            type: USER_ACTIVITY_TYPE.lessonMarkedFavorite,
-            timestamp: favorite.setOn,
-            data: null,
-            isDeprecated: null,
-            [completionFunction]: async () => {
-              const lesson = await this.lessonStore.getLessonMetadataById(favorite.id);
-              return {
-                data: { _id: favorite.id, title: lesson?.title ?? null },
-                isDeprecated: !lesson
-              };
-            }
-          };
         default:
           return null;
       }
@@ -133,8 +103,6 @@ class DashboardService {
       ...createdRoomActivities,
       ...updatedRoomActivities,
       ...joinedRoomActivities,
-      ...createdLessonActivities,
-      ...updatedLessonActivities,
       ...favoriteActivitiesMetadata
     ]
       .sort(by(item => item.timestamp, 'desc'));

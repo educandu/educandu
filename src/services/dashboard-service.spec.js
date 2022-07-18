@@ -4,7 +4,6 @@ import DashboardService from './dashboard-service.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 import {
   createTestDocument,
-  createTestLesson,
   createTestRoom,
   destroyTestEnvironment,
   pruneTestEnvironment,
@@ -55,9 +54,6 @@ describe('dashboard-service', () => {
       let joinedRoom;
       let createdRoom;
       let favoriteRoom;
-      let createdLesson;
-      let updatedLesson;
-      let favoriteLesson;
       let createdDocument;
       let updatedDocument;
       let favoriteDocument;
@@ -108,30 +104,7 @@ describe('dashboard-service', () => {
           members: [{ userId: user._id, joinedOn: new Date('2022-03-09T10:07:00.000Z') }]
         });
 
-        createdLesson = await createTestLesson(container, {
-          createdBy: user._id,
-          title: 'Created lesson',
-          createdOn: new Date('2022-03-09T10:08:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:08:00.000Z')
-        });
-
-        updatedLesson = await createTestLesson(container, {
-          createdBy: otherUser._id,
-          title: 'Created lesson [other]',
-          createdOn: new Date('2022-03-09T10:09:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:09:00.000Z')
-        });
-        await db.lessons.updateOne({ _id: updatedLesson._id }, {
-          $set: {
-            updatedBy: user._id,
-            title: 'Updated lesson',
-            createdOn: new Date('2022-03-09T10:09:00.000Z'),
-            updatedOn: new Date('2022-03-09T10:10:00.000Z')
-          }
-        });
-
         favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', owner: otherUser._id, createdBy: otherUser._id });
-        favoriteLesson = await createTestLesson(container, { title: 'Created popular lesson [other]', createdBy: otherUser._id });
         favoriteDocument = await createTestDocument(container, otherUser, { title: 'Created popular document [other]' });
         await db.users.updateOne({ _id: user._id }, {
           $set: {
@@ -140,11 +113,6 @@ describe('dashboard-service', () => {
                 type: FAVORITE_TYPE.room,
                 setOn: new Date('2022-03-09T10:11:00.000Z'),
                 id: favoriteRoom._id
-              },
-              {
-                type: FAVORITE_TYPE.lesson,
-                setOn: new Date('2022-03-09T10:12:00.000Z'),
-                id: favoriteLesson._id
               },
               {
                 type: FAVORITE_TYPE.document,
@@ -166,39 +134,12 @@ describe('dashboard-service', () => {
             }
           },
           {
-            type: USER_ACTIVITY_TYPE.lessonMarkedFavorite,
-            timestamp: new Date('2022-03-09T10:12:00.000Z'),
-            isDeprecated: false,
-            data: {
-              _id: favoriteLesson._id,
-              title: 'Created popular lesson [other]'
-            }
-          },
-          {
             type: USER_ACTIVITY_TYPE.roomMarkedFavorite,
             timestamp: new Date('2022-03-09T10:11:00.000Z'),
             isDeprecated: false,
             data: {
               _id: favoriteRoom._id,
               name: 'Created popular room [other]'
-            }
-          },
-          {
-            type: USER_ACTIVITY_TYPE.lessonUpdated,
-            timestamp: new Date('2022-03-09T10:10:00.000Z'),
-            isDeprecated: false,
-            data: {
-              _id: updatedLesson._id,
-              title: 'Updated lesson'
-            }
-          },
-          {
-            type: USER_ACTIVITY_TYPE.lessonCreated,
-            timestamp: new Date('2022-03-09T10:08:00.000Z'),
-            isDeprecated: false,
-            data: {
-              _id: createdLesson._id,
-              title: 'Created lesson'
             }
           },
           {
@@ -467,90 +408,12 @@ describe('dashboard-service', () => {
       });
     });
 
-    describe('when there are more \'lesson-created\' activities than the set limit', () => {
-      let latestCreatedLesson;
-
-      beforeEach(async () => {
-        await createTestLesson(container, {
-          createdBy: user._id,
-          title: 'Created lesson 1',
-          createdOn: new Date('2022-03-09T10:00:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:00:00.000Z')
-        });
-        latestCreatedLesson = await createTestLesson(container, {
-          createdBy: user._id,
-          title: 'Created lesson 2',
-          createdOn: new Date('2022-03-09T10:01:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:01:00.000Z')
-        });
-
-        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
-      });
-
-      it('should return only the latest created lessons', () => {
-        expect(result).toEqual([
-          {
-            type: USER_ACTIVITY_TYPE.lessonCreated,
-            timestamp: new Date('2022-03-09T10:01:00.000Z'),
-            isDeprecated: false,
-            data: {
-              _id: latestCreatedLesson._id,
-              title: 'Created lesson 2'
-            }
-          }
-        ]);
-      });
-    });
-
-    describe('when there are more \'lesson-updated\' activities than the set limit', () => {
-      let updatedLesson;
-
-      beforeEach(async () => {
-        updatedLesson = await createTestLesson(container, {
-          createdBy: user._id,
-          title: 'Created lesson',
-          createdOn: new Date('2022-03-09T10:00:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:00:00.000Z')
-        });
-        await db.lessons.updateOne({ _id: updatedLesson._id }, {
-          $set: {
-            title: 'Lesson update 1',
-            createdOn: new Date('2022-03-09T10:00:00.000Z'),
-            updatedOn: new Date('2022-03-09T10:01:00.000Z')
-          }
-        });
-        await db.lessons.updateOne({ _id: updatedLesson._id }, {
-          $set: {
-            title: 'Lesson update 2',
-            createdOn: new Date('2022-03-09T10:00:00.000Z'),
-            updatedOn: new Date('2022-03-09T10:02:00.000Z')
-          }
-        });
-
-        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
-      });
-
-      it('should return only the latest created lessons', () => {
-        expect(result).toEqual([
-          {
-            type: USER_ACTIVITY_TYPE.lessonUpdated,
-            timestamp: new Date('2022-03-09T10:02:00.000Z'),
-            isDeprecated: false,
-            data: {
-              _id: updatedLesson._id,
-              title: 'Lesson update 2'
-            }
-          }
-        ]);
-      });
-    });
-
     describe('when there are more \'marked-as-favorite\' activities than the set limit', () => {
       let latestFavorite;
 
       beforeEach(async () => {
         const favorite1 = await createTestRoom(container, { name: 'Favorite 1', owner: otherUser._id, createdBy: otherUser._id });
-        const favorite2 = await createTestLesson(container, { title: 'Favorite 2', createdBy: otherUser._id });
+        const favorite2 = await createTestDocument(container, otherUser, { title: 'Favorite 2' });
         latestFavorite = await createTestDocument(container, otherUser, { title: 'Favorite 3' });
         await db.users.updateOne({ _id: user._id }, {
           $set: {
@@ -561,7 +424,7 @@ describe('dashboard-service', () => {
                 id: favorite1._id
               },
               {
-                type: FAVORITE_TYPE.lesson,
+                type: FAVORITE_TYPE.document,
                 setOn: new Date('2022-03-09T10:02:00.000Z'),
                 id: favorite2._id
               },

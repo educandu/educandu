@@ -86,10 +86,7 @@ export const USER_ACTIVITY_TYPE = {
   roomCreated: 'room-created',
   roomUpdated: 'room-updated',
   roomMarkedFavorite: 'room-marked-favorite',
-  roomJoined: 'room-joined',
-  lessonCreated: 'lesson-created',
-  lessonUpdated: 'lesson-updated',
-  lessonMarkedFavorite: 'lesson-marked-favorite'
+  roomJoined: 'room-joined'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {
