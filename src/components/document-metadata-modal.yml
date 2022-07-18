@@ -10,6 +10,9 @@ titleRequired:
 descriptionTooLong:
   en: The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}
   de: Die Beschreibung darf nicht länger als {maxChars} Zeichen sein
+tagsPlaceholder:
+  en: Enter keywords
+  de: Stichwörter angeben
 useTemplateDocument:
   en: Use default template
   de: Standardvorlage benutzen

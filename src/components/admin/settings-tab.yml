@@ -13,9 +13,6 @@ footerLinksHeader:
 consentHeader:
   en: Consent text
   de: Zustimmungstext
-defaultTagsHeader:
-  en: Default tags
-  de: Vordefinierte Tags
 documentRegenerationHeader:
   en: Document regeneration
   de: Dokumentwiederherstellung

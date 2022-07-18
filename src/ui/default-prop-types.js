@@ -96,7 +96,6 @@ export const settingsShape = PropTypes.shape({
   helpPage: PropTypes.objectOf(settingsDocumentShape),
   termsPage: PropTypes.objectOf(settingsDocumentShape),
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
-  defaultTags: PropTypes.arrayOf(PropTypes.string),
   license: PropTypes.shape(settingsLicenseProps)
 });
 
