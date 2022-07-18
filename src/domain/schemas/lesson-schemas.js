@@ -23,9 +23,7 @@ export const lessonDBSchema = joi.object({
   language: joi.string().case('lower').required(),
   sections: joi.array().items(lessonSectionDBSchema).required(),
   cdnResources: joi.array().items(joi.string()).required(),
-  schedule: joi.object({
-    startsOn: joi.date().required()
-  }).allow(null)
+  dueOn: joi.date().allow(null)
 });
 
 export const getLessonParamsSchema = joi.object({
@@ -42,9 +40,7 @@ export const postLessonBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  schedule: joi.object({
-    startsOn: joi.string().required()
-  }).allow(null)
+  dueOn: joi.string().allow('').required()
 });
 
 export const patchLessonParamsSchema = joi.object({
@@ -55,9 +51,7 @@ export const patchLessonMetadataBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  schedule: joi.object({
-    startsOn: joi.string().required()
-  }).allow(null)
+  dueOn: joi.string().allow('')
 });
 
 export const patchLessonSectionsBodySchema = joi.object({

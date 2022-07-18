@@ -53,7 +53,7 @@ function RoomCard({ room, invitation }) {
       </div>
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
-        <div>{t(`common:lessonsMode_${room.documentsMode}`)}</div>
+        <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
       </div>
       {!!room.createdOn && (
         <div className="RoomCard-infoRow">

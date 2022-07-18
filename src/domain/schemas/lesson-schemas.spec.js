@@ -14,7 +14,7 @@ describe('lessonDBSchema', () => {
     slug: '0123-123',
     language: 'en',
     cdnResources: [],
-    schedule: null,
+    dueOn: null,
     sections: [
       {
         key: 'JD9fjjdj00e8jfkjdhjHNFLD436',

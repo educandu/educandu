@@ -85,7 +85,7 @@ class LessonController {
 
   async handlePostLesson(req, res) {
     const { user } = req;
-    const { roomId, title, slug, language, schedule } = req.body;
+    const { roomId, title, slug, language, dueOn } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -97,7 +97,7 @@ class LessonController {
       throw new Forbidden();
     }
 
-    const newLesson = await this.lessonService.createLesson({ userId: user._id, roomId, title, slug, language, schedule });
+    const newLesson = await this.lessonService.createLesson({ userId: user._id, roomId, title, slug, language, dueOn });
 
     return res.status(201).send(newLesson);
   }
@@ -105,13 +105,13 @@ class LessonController {
   async handlePatchLessonMetadata(req, res) {
     const { user } = req;
     const { lessonId } = req.params;
-    const { title, slug, language, schedule } = req.body;
+    const { title, slug, language, dueOn } = req.body;
 
     await this._authorizeLessonWriteAccess(req);
 
     const updatedLesson = await this.lessonService.updateLessonMetadata(
       lessonId,
-      { userId: user._id, title, slug, language, schedule }
+      { userId: user._id, title, slug, language, dueOn }
     );
     return res.status(201).send(updatedLesson);
   }

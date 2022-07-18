@@ -7,21 +7,21 @@ class LessonApiClient {
     this.httpClient = httpClient;
   }
 
-  addLesson({ roomId, title, slug, language, schedule }) {
+  addLesson({ roomId, title, slug, language, dueOn }) {
     return this.httpClient
       .post(
         '/api/v1/lessons',
-        { roomId, title, slug, language, schedule },
+        { roomId, title, slug, language, dueOn },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  updateLessonMetadata({ lessonId, title, slug, language, schedule }) {
+  updateLessonMetadata({ lessonId, title, slug, language, dueOn }) {
     return this.httpClient
       .patch(
         `/api/v1/lessons/${encodeURIComponent(lessonId)}/metadata`,
-        { title, slug, language, schedule },
+        { title, slug, language, dueOn },
         { responseType: 'json' }
       )
       .then(res => res.data);

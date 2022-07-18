@@ -7,9 +7,9 @@ editLesson:
 titleRequired:
   en: Please specify a lesson title
   de: Bitte geben Sie einen Einheit Titel an
-startsOn:
-  en: Date
-  de: Datum
+dueOn:
+  en: Due date
+  de: Termin
 createSequence:
   en: Create sequence
   de: Reihe anlegen

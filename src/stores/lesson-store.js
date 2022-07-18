@@ -8,7 +8,7 @@ const lessonMetadataProjection = {
   title: 1,
   slug: 1,
   language: 1,
-  schedule: 1,
+  dueOn: 1,
   createdOn: 1,
   updatedOn: 1
 };

@@ -404,9 +404,7 @@ export const lessonMetadataProps = {
   title: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
-  schedule: PropTypes.shape({
-    startsOn: PropTypes.string
-  })
+  dueOn: PropTypes.string
 };
 
 export const lessonSectionShape = PropTypes.shape({

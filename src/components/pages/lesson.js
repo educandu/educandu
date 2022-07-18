@@ -83,7 +83,7 @@ function Lesson({ PageTemplate, initialState }) {
       title: updatedLesson.title,
       slug: updatedLesson.slug,
       language: updatedLesson.language,
-      schedule: updatedLesson.schedule
+      dueOn: updatedLesson.dueOn
     }));
     setIsLessonMetadataModalVisible(false);
   };
@@ -255,9 +255,7 @@ function Lesson({ PageTemplate, initialState }) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
   }
 
-  const startsOn = lesson.schedule?.startsOn
-    ? formatDate(lesson.schedule.startsOn)
-    : '';
+  const dueOn = lesson.dueOn ? formatDate(lesson.dueOn) : '';
 
   return (
     <Fragment>
@@ -299,7 +297,7 @@ function Lesson({ PageTemplate, initialState }) {
             status={controlStatus}
             metadata={(
               <Fragment >
-                <span className="LessonPage-editControlPanelItem">{startsOn}</span>
+                <span className="LessonPage-editControlPanelItem">{dueOn}</span>
                 <span className="LessonPage-editControlPanelItem">{lesson.title}</span>
               </Fragment>
             )}

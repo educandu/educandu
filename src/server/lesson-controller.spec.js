@@ -303,7 +303,7 @@ describe('lesson-controller', () => {
           documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           members: [{ userId: uniqueId.create() }]
         };
-        lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        lesson = { roomId, title: 'title', slug: 'slug', language: 'language', dueOn: null };
         newLesson = { _id: lessonId, ...lesson };
 
         req = { user, body: lesson };
@@ -336,7 +336,7 @@ describe('lesson-controller', () => {
           documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
           members: [{ userId: user._id }]
         };
-        lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        lesson = { roomId, title: 'title', slug: 'slug', language: 'language', dueOn: null };
         newLesson = { _id: lessonId, ...lesson };
 
         req = { user, body: lesson };
@@ -466,15 +466,13 @@ describe('lesson-controller', () => {
           title: 'title',
           slug: 'slug',
           language: 'language',
-          schedule: {
-            startsOn: new Date().toISOString()
-          }
+          dueOn: new Date().toISOString()
         };
         requestBody = {
           title: 'new title',
           slug: 'new-slug',
           language: 'new language',
-          schedule: { startsOn: new Date().toISOString() }
+          dueOn: new Date().toISOString()
         };
         updatedLesson = {
           ...lesson,
@@ -531,15 +529,13 @@ describe('lesson-controller', () => {
           title: 'title',
           slug: 'slug',
           language: 'language',
-          schedule: {
-            startsOn: new Date().toISOString()
-          }
+          dueOn: new Date().toISOString()
         };
         requestBody = {
           title: 'new title',
           slug: 'new-slug',
           language: 'new language',
-          schedule: { startsOn: new Date().toISOString() }
+          dueOn: new Date().toISOString()
         };
         updatedLesson = {
           ...lesson,
@@ -652,7 +648,7 @@ describe('lesson-controller', () => {
 
     describe('when the user owns the room containing the lesson', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', dueOn: null };
         room = {
           _id: roomId,
           owner: user._id,
@@ -677,7 +673,7 @@ describe('lesson-controller', () => {
 
     describe('when the user is a collaborator of the room containing the lesson', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', dueOn: null };
         room = {
           _id: roomId,
           owner: uniqueId.create(),

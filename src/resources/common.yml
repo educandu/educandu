@@ -186,10 +186,10 @@ accessType_private:
 documentsMode:
   en: Lessons handling mode
   de: Einheiten-Bearbeitungsmodus
-lessonsMode_exclusive:
+documentsMode__exclusive:
   en: exclusive
   de: exklusiv
-lessonsMode_collaborative:
+documentsMode__collaborative:
   en: collaborative
   de: kollaborativ
 documentTitle:

@@ -54,7 +54,7 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
 
   const [loading, setLoading] = useState(false);
 
-  const [hasStartDate, setHasStartDate] = useState(false);
+  const [hasDueDate, setHasDueDate] = useState(false);
   const [isSequenceExpanded, setIsSequenceExpanded] = useState(false);
 
   const titleValidationRules = [
@@ -79,7 +79,7 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
     title: initialLessonMetadata.title || t('newLesson'),
     slug: initialLessonMetadata.slug || '',
     language: initialLessonMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    startsOn: initialLessonMetadata.schedule?.startsOn ? moment(initialLessonMetadata.schedule.startsOn) : null,
+    dueOn: initialLessonMetadata.dueOn ? moment(initialLessonMetadata.dueOn) : null,
     enableSequence: false,
     sequenceInterval: LESSON_SEQUENCE_INTERVAL.weekly,
     sequenceCount: 3
@@ -91,7 +91,7 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
 
   useEffect(() => {
     if (isVisible) {
-      setHasStartDate(false);
+      setHasDueDate(false);
       setIsSequenceExpanded(false);
       formRef.current?.resetFields();
     }
@@ -107,11 +107,11 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
     onCancel();
   };
 
-  const handleValuesChange = (_, { startsOn }) => {
-    setHasStartDate(!!startsOn);
+  const handleValuesChange = (_, { dueOn }) => {
+    setHasDueDate(!!dueOn);
   };
 
-  const handleFinish = async ({ title, slug, language, startsOn, enableSequence, sequenceInterval, sequenceCount }) => {
+  const handleFinish = async ({ title, slug, language, dueOn, enableSequence, sequenceInterval, sequenceCount }) => {
     try {
       setLoading(true);
 
@@ -121,18 +121,18 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
         title,
         slug: slug || '',
         language,
-        schedule: startsOn ? { startsOn: startsOn.toISOString() } : null
+        dueOn: dueOn ? dueOn.toISOString() : ''
       };
 
       if (mode === LESSON_MODAL_MODE.create) {
         const savedLessons = [];
-        const lessonsToSave = enableSequence && sequenceCount > 1 && startsOn
+        const lessonsToSave = enableSequence && sequenceCount > 1 && dueOn
           ? Array.from({ length: sequenceCount }, (_, index) => ({
             ...cloneDeep(mappedLesson),
             lessonId: null,
             title: `${mappedLesson.title} (${index + 1})`,
             slug: mappedLesson.slug ? `${mappedLesson.slug}/${index + 1}` : '',
-            schedule: { startsOn: moment(startsOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString() }
+            dueOn: moment(dueOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString()
           }))
           : [mappedLesson];
 
@@ -190,7 +190,7 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
         <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules}>
           <Input />
         </FormItem>
-        <FormItem label={t('startsOn')} name="startsOn">
+        <FormItem label={t('dueOn')} name="dueOn">
           <DatePicker
             inputReadOnly
             style={{ width: '100%' }}
@@ -207,10 +207,10 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
             <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
               <Alert className="LessonMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} />
               <FormItem label={t('sequenceInterval')} name="sequenceInterval">
-                <Select options={lessonSequenceIntervalOptions} disabled={!hasStartDate} />
+                <Select options={lessonSequenceIntervalOptions} disabled={!hasDueDate} />
               </FormItem>
               <FormItem label={t('sequenceCount')} name="sequenceCount" rules={[{ type: 'integer', min: 1, max: 100 }]}>
-                <InputNumber style={{ width: '100%' }} disabled={!hasStartDate} min={1} max={100} />
+                <InputNumber style={{ width: '100%' }} disabled={!hasDueDate} min={1} max={100} />
               </FormItem>
             </CollapsePanel>
           </Collapse>

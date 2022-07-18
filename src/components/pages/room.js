@@ -11,13 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
 import { useDateFormat } from '../locale-context.js';
-import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
+import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -35,7 +35,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortLessons = lessons => [...lessons].sort(by(l => !!l.schedule).thenBy(l => l.schedule?.startsOn || l.createdOn));
+const sortLessons = lessons => [...lessons].sort(by(l => l.dueOn || l.createdOn));
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
@@ -61,7 +61,7 @@ export default function Room({ PageTemplate, initialState }) {
   const isRoomOwner = user?._id === room.owner.key;
   const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
 
-  const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
+  const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, lessons);
 
   useEffect(() => {
     history.replaceState(null, '', urls.getRoomUrl(room._id, room.slug));
@@ -189,9 +189,8 @@ export default function Room({ PageTemplate, initialState }) {
   const renderLesson = lesson => {
     const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
-    const startsOn = lesson.schedule?.startsOn;
     const renderIcons = isRoomOwner || isRoomCollaborator;
-    const dueDate = upcommingLesson?._id === lesson._id ? formatTimeTo(startsOn) : null;
+    const dueDate = upcomingDueDocument?._id === lesson._id ? formatTimeTo(document.dueOn) : null;
 
     const containerClasses = classNames({
       'RoomPage-lessonInfo': true,
@@ -212,7 +211,7 @@ export default function Room({ PageTemplate, initialState }) {
           </div>
         )}
         <div className="RoomPage-lessonInfoItem">
-          {startsOn && <span className="RoomPage-lessonDate">{formatDate(startsOn)}</span>}
+          {dueDate && <span className="RoomPage-lessonDate">{formatDate(dueDate)}</span>}
           <a href={url}>{lesson.title}</a>
         </div>
         {dueDate && (

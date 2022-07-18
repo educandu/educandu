@@ -24,7 +24,7 @@ describe('lesson-store', () => {
       language: 'en',
       sections: [],
       cdnResources: [],
-      schedule: null
+      dueOn: null
     };
   });
 

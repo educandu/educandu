@@ -32,15 +32,15 @@ describe('lesson-service', () => {
     beforeEach(async () => {
       roomId = uniqueId.create();
 
-      await createTestLesson(container, { _id: 'lesson1', roomId, schedule: { startsOn: new Date('2022-05-16T18:04:13.896Z') } });
+      await createTestLesson(container, { _id: 'lesson1', roomId, dueOn: new Date('2022-05-16T18:04:13.896Z') });
       await createTestLesson(container, { _id: 'lesson2', roomId });
-      await createTestLesson(container, { _id: 'lesson3', roomId, schedule: { startsOn: new Date('2023-04-12T05:00:00.815Z') } });
-      await createTestLesson(container, { _id: 'lesson4', roomId, schedule: { startsOn: new Date('2022-06-16T18:04:13.896Z') } });
+      await createTestLesson(container, { _id: 'lesson3', roomId, dueOn: new Date('2023-04-12T05:00:00.815Z') });
+      await createTestLesson(container, { _id: 'lesson4', roomId, dueOn: new Date('2022-06-16T18:04:13.896Z') });
 
       result = await sut.getLessonsMetadata(roomId);
     });
 
-    it('should return the lessons sorted by startsOn date', () => {
+    it('should return the lessons sorted by dueOn date', () => {
       expect(result.map(l => l._id)).toEqual(['lesson2', 'lesson1', 'lesson4', 'lesson3']);
     });
   });

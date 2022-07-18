@@ -277,25 +277,16 @@ class ClientDataMappingService {
     };
   }
 
-  _mapLessonSchedule(rawSchedule) {
-    const startsOn = rawSchedule.startsOn && rawSchedule.startsOn.toISOString();
-
-    return {
-      ...rawSchedule,
-      startsOn
-    };
-  }
-
   _mapLessonMetadata(rawLesson) {
     const createdOn = rawLesson.createdOn && rawLesson.createdOn.toISOString();
     const updatedOn = rawLesson.updatedOn && rawLesson.updatedOn.toISOString();
-    const schedule = rawLesson.schedule && this._mapLessonSchedule(rawLesson.schedule);
+    const dueOn = rawLesson.dueOn && rawLesson.dueOn.toISOString();
 
     return {
       ...rawLesson,
       createdOn,
       updatedOn,
-      schedule
+      dueOn
     };
   }
 

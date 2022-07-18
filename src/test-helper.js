@@ -187,7 +187,7 @@ export async function createTestLesson(container, lessonValues) {
     roomId: lessonValues.roomId || uniqueId.create(),
     title: lessonValues.title || 'my-lesson',
     slug: lessonValues.slug || 'my-lesson-slug',
-    schedule: lessonValues.schedule || null,
+    dueOn: lessonValues.dueOn || null,
     createdOn: lessonValues.createdOn || now,
     createdBy,
     updatedOn: lessonValues.updatedOn || now,

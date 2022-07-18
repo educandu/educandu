@@ -27,19 +27,13 @@ class LessonService {
 
   async getLessonsMetadata(roomId) {
     const lessons = await this.lessonStore.getLessonsMetadataByRoomId(roomId);
-    return lessons.sort(by(l => l.schedule?.startsOn || 0));
+    return lessons.sort(by(l => l.dueOn || 0));
   }
 
-  async createLesson({ userId, roomId, title, slug, language, schedule }) {
+  async createLesson({ userId, roomId, title, slug, language, dueOn }) {
     const lessonId = uniqueId.create();
 
     await this.createUploadDirectoryMarkerForLesson(lessonId);
-
-    const mappedSchedule = schedule
-      ? {
-        startsOn: new Date(schedule.startsOn)
-      }
-      : null;
 
     const lesson = {
       _id: lessonId,
@@ -53,7 +47,7 @@ class LessonService {
       language,
       sections: [],
       cdnResources: [],
-      schedule: mappedSchedule
+      dueOn: new Date(dueOn)
     };
 
     try {
@@ -78,19 +72,15 @@ class LessonService {
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 
-  async updateLessonMetadata(lessonId, { userId, title, slug, language, schedule }) {
+  async updateLessonMetadata(lessonId, { userId, title, slug, language, dueOn }) {
     const lesson = await this.getLessonById(lessonId);
-
-    const mappedSchedule = schedule
-      ? { startsOn: new Date(schedule.startsOn) }
-      : null;
 
     const updatedLesson = {
       ...lesson,
       title,
       slug: slug || '',
       language,
-      schedule: mappedSchedule,
+      dueOn: dueOn ? new Date(dueOn) : null,
       updatedOn: new Date(),
       updatedBy: userId
     };

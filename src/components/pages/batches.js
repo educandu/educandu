@@ -208,7 +208,7 @@ function Batches({ initialState, PageTemplate }) {
       break;
     case BATCH_TYPE.cdnResourcesConsolidation:
       taskTableColumns.push({
-        title: `${t('common:document')} / ${t('common:lesson')}`,
+        title: `${t('common:document')}}`,
         key: 'taskParamsTypeEntityId',
         dataIndex: 'taskParams',
         render: renderCdnResourcesConsolidationEntityId
@@ -222,7 +222,7 @@ function Batches({ initialState, PageTemplate }) {
       break;
     case BATCH_TYPE.cdnUploadDirectoryCreation:
       taskTableColumns.push({
-        title: `${t('common:document')} / ${t('common:lesson')} / ${t('common:room')}`,
+        title: `${t('common:document')} / ${t('common:room')}`,
         key: 'taskParamsTypeEntityId',
         dataIndex: 'taskParams',
         render: renderCdnUploadDirectoryCreationEntityId

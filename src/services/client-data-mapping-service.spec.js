@@ -434,9 +434,7 @@ describe('client-data-mapping-service', () => {
         {
           createdOn: new Date(),
           updatedOn: new Date(),
-          schedule: {
-            startsOn: new Date()
-          }
+          dueOn: new Date()
         }
       ];
       result = await sut.mapLessonsMetadata(lessons);
@@ -447,9 +445,7 @@ describe('client-data-mapping-service', () => {
         {
           createdOn: lessons[0].createdOn.toISOString(),
           updatedOn: lessons[0].updatedOn.toISOString(),
-          schedule: {
-            startsOn: lessons[0].schedule.startsOn.toISOString()
-          }
+          dueOn: lessons[0].dueOn.toISOString()
         }
       ]);
     });
