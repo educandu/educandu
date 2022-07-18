@@ -12,7 +12,7 @@ descriptionTooLong:
   de: Die Beschreibung darf nicht länger als {maxChars} Zeichen sein
 tagsPlaceholder:
   en: Enter keywords
-  de: Stickwörter angeben
+  de: Stichwörter angeben
 useTemplateDocument:
   en: Use default template
   de: Standardvorlage benutzen

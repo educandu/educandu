@@ -270,7 +270,7 @@
       "editDocument": "Dokument bearbeiten",
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
-      "tagsPlaceholder": "Stickwörter angeben",
+      "tagsPlaceholder": "Stichwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
       "review": "Review"
     }
