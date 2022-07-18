@@ -13,6 +13,7 @@ function MediaPlayerTrack({
   sourceUrl,
   aspectRatio,
   screenMode,
+  screenOverlay,
   startTimecode,
   stopTimecode,
   progressIntervalInMilliseconds,
@@ -187,12 +188,17 @@ function MediaPlayerTrack({
           onProgress={handleProgress}
           onClickPreview={handleClickPreview}
           />
+        {screenMode === MEDIA_SCREEN_MODE.audio && currentPlayState !== MEDIA_PLAY_STATE.initializing && (
+          <div className="MediaPlayerTrack--audioModeOverlay">
+            <AudioIcon />
+          </div>
+        )}
+        {screenOverlay && (
+          <div className="MediaPlayerTrack--screenOverlay">
+            {screenOverlay}
+          </div>
+        )}
       </div>
-      {screenMode === MEDIA_SCREEN_MODE.audio && currentPlayState !== MEDIA_PLAY_STATE.initializing && (
-        <div className="MediaPlayerTrack--audioModeOverlay">
-          <AudioIcon />
-        </div>
-      )}
     </div>
   );
 }
@@ -209,6 +215,7 @@ MediaPlayerTrack.propTypes = {
   posterImageUrl: PropTypes.string,
   progressIntervalInMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
+  screenOverlay: PropTypes.node,
   sourceUrl: PropTypes.string.isRequired,
   startTimecode: PropTypes.number,
   stopTimecode: PropTypes.number,
@@ -228,6 +235,7 @@ MediaPlayerTrack.defaultProps = {
   onProgress: () => {},
   playbackRate: 1,
   posterImageUrl: null,
+  screenOverlay: null,
   startTimecode: null,
   stopTimecode: null,
   trackRef: {

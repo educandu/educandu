@@ -3,16 +3,19 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-function CardSelector({ cards, selectedCardIndex, previouslySelectedCardIndices, onCardSelected }) {
+function CardSelector({ cards, selectedCardIndex, visitedCardIndices, treatSelectedCardAsVisited, disabled, onCardSelected }) {
   const renderCard = (card, index) => {
+    const isSelected = selectedCardIndex === index;
+    const isVisited = visitedCardIndices.includes(index);
     const classes = classNames({
       'CardSelector-card': true,
-      'is-selected': selectedCardIndex === index,
-      'was-selected': previouslySelectedCardIndices.includes(index)
+      'is-disabled': disabled,
+      'is-selected': !disabled && isSelected,
+      'is-visited': !disabled && (isVisited || (treatSelectedCardAsVisited && isSelected))
     });
 
     return (
-      <Tooltip title={card.tooltip} key={index}>
+      <Tooltip title={card.tooltip} key={index} disabled={disabled}>
         <div className={classes} onClick={() => onCardSelected(index)}>
           {card.label}
         </div>
@@ -30,13 +33,17 @@ CardSelector.propTypes = {
     label: PropTypes.string,
     tooltip: PropTypes.string
   })).isRequired,
+  disabled: PropTypes.bool,
   onCardSelected: PropTypes.func.isRequired,
-  previouslySelectedCardIndices: PropTypes.arrayOf(PropTypes.number),
-  selectedCardIndex: PropTypes.number.isRequired
+  selectedCardIndex: PropTypes.number.isRequired,
+  treatSelectedCardAsVisited: PropTypes.bool,
+  visitedCardIndices: PropTypes.arrayOf(PropTypes.number)
 };
 
 CardSelector.defaultProps = {
-  previouslySelectedCardIndices: []
+  disabled: false,
+  treatSelectedCardAsVisited: false,
+  visitedCardIndices: []
 };
 
 export default CardSelector;

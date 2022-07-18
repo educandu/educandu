@@ -46,9 +46,6 @@ continue:
 replay:
   en: Replay
   de: Wiederholen
-end:
-  en: End
-  de: Enden
 reset:
   en: Reset
   de: Zurücksetzen
