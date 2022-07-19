@@ -8,9 +8,11 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
+import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import documentsUtils from '../utils/documents-utils.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
@@ -30,6 +32,7 @@ class DocumentService {
       DocumentRevisionStore,
       DocumentOrderStore,
       DocumentStore,
+      RoomStore,
       BatchStore,
       TaskStore,
       LockStore,
@@ -39,11 +42,12 @@ class DocumentService {
   }
 
   // eslint-disable-next-line max-params
-  constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
+  constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, roomStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
     this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
+    this.roomStore = roomStore;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
@@ -147,12 +151,14 @@ class DocumentService {
         }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
+        const room = data.roomId ? await this.roomStore.getRoomById(data.roomId) : null;
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
           documentId,
           createdBy: user._id,
-          order: nextOrder
+          order: nextOrder,
+          accessLevel: documentsUtils.determineDocumentAccessLevelFromRoom(room)
         });
 
         newDocument = this._buildDocumentFromRevisions([newRevision]);
@@ -221,8 +227,8 @@ class DocumentService {
   }
 
   updateDocumentMetadata({ documentId, metadata, user }) {
-    const { title, description, slug, language, tags, review } = metadata;
-    const data = { title, description, slug, language, tags, review };
+    const { title, description, slug, language, tags, dueOn, review } = metadata;
+    const data = { title, description, slug, language, tags, dueOn, review };
     return this.updateDocument({ documentId, data, user });
   }
 

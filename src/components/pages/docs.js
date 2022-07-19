@@ -7,7 +7,6 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import SortingSelector from '../sorting-selector.js';
@@ -21,33 +20,27 @@ import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
 
-function getDefaultLanguageFromUiLanguage(uiLanguage) {
-  switch (uiLanguage) {
-    case 'de': return 'de';
-    default: return 'en';
-  }
-}
-
-function getDefaultModalState({ t, uiLanguage, settings }) {
+function getDocumentMetadataModalState({ documentToClone, settings, t }) {
   return {
     isVisible: false,
-    mode: DOCUMENT_METADATA_MODAL_MODE.create,
-    templateDocumentId: settings.templateDocument?.documentId,
-    initialDocumentMetadata: {
-      title: t('newDocument'),
-      description: '',
-      slug: '',
-      tags: [],
-      language: getDefaultLanguageFromUiLanguage(uiLanguage)
-    }
+    cloneDocumentId: documentToClone?._id,
+    templateDocumentId: documentToClone ? null : settings.templateDocument?.documentId,
+    initialDocumentMetadata: documentToClone
+      ? {
+        ...documentToClone,
+        title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
+        slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
+        tags: [...documentToClone.tags]
+      }
+      : {}
   };
 }
 
@@ -68,8 +61,6 @@ function Docs({ initialState, PageTemplate }) {
   const user = useUser();
   const settings = useSettings();
   const { t } = useTranslation('docs');
-  const { uiLanguage } = useLocale();
-  const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const mapToRows = useCallback(docs => docs.map(doc => (
@@ -91,7 +82,7 @@ function Docs({ initialState, PageTemplate }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
   const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
-  const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ settings, t }));
 
   const sortingOptions = [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
@@ -137,43 +128,27 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleNewDocumentClick = () => {
-    setClonedDocument(null);
-    setModalState({
-      ...getDefaultModalState({ t, uiLanguage, settings }),
-      isVisible: true
-    });
+    setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ settings, t }), isVisible: true });
   };
 
   const handleCloneClick = row => {
-    const doc = documents.find(d => d._id === row._id);
-    setClonedDocument(doc);
-    setModalState({
-      isVisible: true,
-      templateDocumentId: null,
-      initialDocumentMetadata: {
-        title: `${doc.title} ${t('common:copyTitleSuffix')}`,
-        description: doc.description,
-        slug: doc.slug ? `${doc.slug}-${t('common:copySlugSuffix')}` : '',
-        tags: [...doc.tags],
-        language: doc.language
-      }
-    });
+    const documentToClone = documents.find(d => d._id === row._id);
+    setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ documentToClone, settings, t }), isVisible: true });
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, review, templateDocumentId }) => {
-    const newDocument = await documentApiClient.createDocument({ title, description, slug, language, tags, review });
-    setModalState(getDefaultModalState({ t, uiLanguage, settings }));
+  const handleDocumentMetadataModalSave = (newDocument, templateDocumentId) => {
+    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
 
     window.location = urls.getDocUrl({
       id: newDocument._id,
       slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentId: templateDocumentId || clonedDocument?._id
+      templateDocumentId: documentMetadataModalState.cloneDocumentId || templateDocumentId
     });
   };
 
   const handleDocumentMetadataModalClose = () => {
-    setModalState(getDefaultModalState({ t, uiLanguage, settings }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleDocumentDelete = async documentId => {
@@ -327,10 +302,10 @@ function Docs({ initialState, PageTemplate }) {
           </Restricted>
         </aside>
         <DocumentMetadataModal
-          initialDocumentMetadata={modalState.initialDocumentMetadata}
-          isVisible={modalState.isVisible}
-          templateDocumentId={modalState.templateDocumentId}
           mode={DOCUMENT_METADATA_MODAL_MODE.create}
+          isVisible={documentMetadataModalState.isVisible}
+          templateDocumentId={documentMetadataModalState.templateDocumentId}
+          initialDocumentMetadata={documentMetadataModalState.initialDocumentMetadata}
           onSave={handleDocumentMetadataModalSave}
           onClose={handleDocumentMetadataModalClose}
           />

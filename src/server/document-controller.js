@@ -83,8 +83,7 @@ class DocumentController {
     }
 
     const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
-
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
+    const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];
 

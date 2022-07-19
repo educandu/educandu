@@ -77,6 +77,7 @@ function DocumentMetadataModal({
 
   const initialValues = {
     title: initialDocumentMetadata.title || t('newDocument'),
+    description: initialDocumentMetadata.description || '',
     slug: initialDocumentMetadata.slug || '',
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
@@ -192,7 +193,12 @@ function DocumentMetadataModal({
             dueOn: moment(dueOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString(),
             review: mappedDocument.review
           }))
-          : [mappedDocument];
+          : [
+            {
+              ...cloneDeep(mappedDocument),
+              roomId: initialDocumentMetadata.roomId
+            }
+          ];
 
         for (const documentToSave of documentsToSave) {
           // eslint-disable-next-line no-await-in-loop
@@ -311,7 +317,7 @@ function DocumentMetadataModal({
 DocumentMetadataModal.propTypes = {
   allowMultiple: PropTypes.bool,
   initialDocumentMetadata: PropTypes.oneOfType([
-    PropTypes.shape({ roomId: PropTypes.string.isRequired }),
+    PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
   ]),
   isVisible: PropTypes.bool.isRequired,
