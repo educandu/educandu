@@ -177,29 +177,6 @@ export async function createTestRoom(container, roomValues) {
   return room;
 }
 
-export async function createTestLesson(container, lessonValues) {
-  const db = container.get(Database);
-  const now = new Date();
-  const createdBy = lessonValues.createdBy || uniqueId.create();
-
-  const lesson = {
-    _id: lessonValues._id || uniqueId.create(),
-    roomId: lessonValues.roomId || uniqueId.create(),
-    title: lessonValues.title || 'my-lesson',
-    slug: lessonValues.slug || 'my-lesson-slug',
-    dueOn: lessonValues.dueOn || null,
-    createdOn: lessonValues.createdOn || now,
-    createdBy,
-    updatedOn: lessonValues.updatedOn || now,
-    updatedBy: lessonValues.updatedBy || createdBy,
-    language: lessonValues.language || 'en',
-    sections: lessonValues.sections || [],
-    cdnResources: lessonValues.cdnResources || []
-  };
-  await db.lessons.insertOne(lesson);
-  return lesson;
-}
-
 export function createTestDocument(container, user, data) {
   const documentService = container.get(DocumentService);
   return documentService.createDocument({

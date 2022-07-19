@@ -63,10 +63,10 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
           </RadioGroup>
         </FormItem>
       </div>
-      <FormItem label={t('common:documentsMode')} name="documentsMode" initialValue={room.documentsMode} tooltip={t('lessonsModeInfo')}>
+      <FormItem label={t('common:documentsMode')} name="documentsMode" initialValue={room.documentsMode} tooltip={t('documentsModeInfo')}>
         <RadioGroup>
-          <RadioButton value={ROOM_DOCUMENTS_MODE.exclusive}>{t('common:lessonsMode_exclusive')}</RadioButton>
-          <RadioButton value={ROOM_DOCUMENTS_MODE.collaborative}>{t('common:lessonsMode_collaborative')}</RadioButton>
+          <RadioButton value={ROOM_DOCUMENTS_MODE.exclusive}>{t('common:documentsMode_exclusive')}</RadioButton>
+          <RadioButton value={ROOM_DOCUMENTS_MODE.collaborative}>{t('common:documentsMode_collaborative')}</RadioButton>
         </RadioGroup>
       </FormItem>
       {editMode && (
