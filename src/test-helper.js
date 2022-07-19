@@ -9,7 +9,7 @@ import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { DOCUMENT_ACCESS_LEVEL, ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
+import { DOCUMENT_ACCESS, ROLE, ROOM_ACCESS, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -166,7 +166,7 @@ export async function createTestRoom(container, roomValues) {
   const room = {
     _id: roomValues._id || uniqueId.create(),
     name: roomValues.name || 'my-room',
-    access: roomValues.access || ROOM_ACCESS_LEVEL.public,
+    access: roomValues.access || ROOM_ACCESS.public,
     lessonsMode: roomValues.lessonsMode || ROOM_LESSONS_MODE.exclusive,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
@@ -206,7 +206,7 @@ export function createTestDocument(container, user, data) {
     data: {
       ...data,
       title: data.title ?? 'Title',
-      accessLevel: data.accessLevel ?? DOCUMENT_ACCESS_LEVEL.public,
+      access: data.access ?? DOCUMENT_ACCESS.public,
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en'

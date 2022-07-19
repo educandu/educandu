@@ -9,7 +9,7 @@ export const DOCUMENT_ORIGIN = {
   external: 'external'
 };
 
-export const DOCUMENT_ACCESS_LEVEL = {
+export const DOCUMENT_ACCESS = {
   public: 'public',
   private: 'private'
 };
@@ -49,7 +49,7 @@ export const FEATURE_TOGGLES = {
   import: 'import'
 };
 
-export const ROOM_ACCESS_LEVEL = {
+export const ROOM_ACCESS = {
   public: 'public',
   private: 'private'
 };

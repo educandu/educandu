@@ -26,12 +26,12 @@ export default {
       key: { roomId: 1 }
     },
     {
-      name: '_idx_accessLevel_',
-      key: { accessLevel: 1 }
+      name: '_idx_access_',
+      key: { access: 1 }
     },
     {
-      name: '_idx_accessLevel_archived_',
-      key: { accessLevel: 1, archived: 1 }
+      name: '_idx_access_archived_',
+      key: { access: 1, archived: 1 }
     }
   ]
 };

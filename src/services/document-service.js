@@ -17,7 +17,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
-import { DOCUMENT_ACCESS_LEVEL, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -52,7 +52,7 @@ class DocumentService {
   }
 
   async getAllPublicDocumentsMetadata({ includeArchived } = {}) {
-    const conditions = [{ accessLevel: DOCUMENT_ACCESS_LEVEL.public }];
+    const conditions = [{ access: DOCUMENT_ACCESS.public }];
     if (includeArchived === false) {
       conditions.push({ archived: false });
     }
@@ -80,7 +80,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
-      { accessLevel: DOCUMENT_ACCESS_LEVEL.public },
+      { access: DOCUMENT_ACCESS.public },
       { tags: { $regex: `.*(${[...positiveTokens].join('|')}).*`, $options: 'i' } }
     ];
 
@@ -117,7 +117,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
-      { accessLevel: DOCUMENT_ACCESS_LEVEL.public },
+      { access: DOCUMENT_ACCESS.public },
       { title: { $regex: sanitizedQuery, $options: 'i' } }
     ];
 
@@ -488,7 +488,7 @@ class DocumentService {
       documentId: data.documentId || uniqueId.create(),
       roomId: data.roomId || '',
       order: data.order || 0,
-      accessLevel: data.accessLevel || DOCUMENT_ACCESS_LEVEL.public,
+      access: data.access || DOCUMENT_ACCESS.public,
       restoredFrom: data.restoredFrom || '',
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
@@ -527,7 +527,7 @@ class DocumentService {
     return {
       _id: lastRevision.documentId,
       roomId: lastRevision.roomId,
-      accessLevel: lastRevision.accessLevel,
+      access: lastRevision.access,
       order: lastRevision.order,
       revision: lastRevision._id,
       createdOn: firstRevision.createdOn,

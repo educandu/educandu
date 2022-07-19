@@ -1,5 +1,5 @@
 import HttpClient from './http-client.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 
 class RoomApiClient {
   static inject() { return [HttpClient]; }
@@ -51,7 +51,7 @@ class RoomApiClient {
   deleteAllPrivateRoomsForUser({ ownerId }) {
     return this.httpClient
       .delete(
-        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}&access=${encodeURIComponent(ROOM_ACCESS_LEVEL.private)}`,
+        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}&access=${encodeURIComponent(ROOM_ACCESS.private)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

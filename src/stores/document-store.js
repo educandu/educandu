@@ -1,6 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { DOCUMENT_ACCESS_LEVEL } from '../domain/constants.js';
+import { DOCUMENT_ACCESS } from '../domain/constants.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
@@ -71,7 +71,7 @@ class DocumentStore {
   getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({
       archived: false,
-      accessLevel: DOCUMENT_ACCESS_LEVEL.public,
+      access: DOCUMENT_ACCESS.public,
       $expr: { $gt: [{ $size: '$tags' }, 0] }
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
@@ -82,7 +82,7 @@ class DocumentStore {
 
   getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
     return this.collection.find(
-      { archived: false, origin, accessLevel: DOCUMENT_ACCESS_LEVEL.public },
+      { archived: false, origin, access: DOCUMENT_ACCESS.public },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }

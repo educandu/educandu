@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -89,7 +89,7 @@ describe('room-controller', () => {
 
         req = {
           user,
-          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -120,7 +120,7 @@ describe('room-controller', () => {
           owner: user._id,
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS_LEVEL.public,
+          access: ROOM_ACCESS.public,
           lessonsMode: ROOM_LESSONS_MODE.exclusive,
           description: 'description'
         };
@@ -180,7 +180,7 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS_LEVEL.public,
+          access: ROOM_ACCESS.public,
           lessonsMode: ROOM_LESSONS_MODE.exclusive
         };
 
@@ -301,7 +301,7 @@ describe('room-controller', () => {
         const room = {
           _id: uniqueId.create(),
           slug: '',
-          access: ROOM_ACCESS_LEVEL.private,
+          access: ROOM_ACCESS.private,
           lessonsMode: ROOM_LESSONS_MODE.exclusive
         };
         roomService.getRoomById.resolves(room);
@@ -321,7 +321,7 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.private,
+        access: ROOM_ACCESS.private,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       const mappedRoom = { ...room };
@@ -463,7 +463,7 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.public,
+        access: ROOM_ACCESS.public,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
@@ -683,12 +683,12 @@ describe('room-controller', () => {
     const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
     const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
     const userDrake = [{ _id: uniqueId.create(), email: 'drake@test.com' }];
-    const roomA = { _id: uniqueId.create(), name: 'Room A', access: ROOM_ACCESS_LEVEL.private, members: [{ userId: userJacky._id }, { userId: userClare._id }] };
-    const roomB = { _id: uniqueId.create(), name: 'Room B', access: ROOM_ACCESS_LEVEL.private, members: [{ userId: userClare._id }, { userId: userDrake._id }] };
-    const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS_LEVEL.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
+    const roomA = { _id: uniqueId.create(), name: 'Room A', access: ROOM_ACCESS.private, members: [{ userId: userJacky._id }, { userId: userClare._id }] };
+    const roomB = { _id: uniqueId.create(), name: 'Room B', access: ROOM_ACCESS.private, members: [{ userId: userClare._id }, { userId: userDrake._id }] };
+    const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
 
     beforeEach(() => new Promise((resolve, reject) => {
-      req = { user, query: { ownerId: user._id, access: ROOM_ACCESS_LEVEL.private } };
+      req = { user, query: { ownerId: user._id, access: ROOM_ACCESS.private } };
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', resolve);
 

@@ -5,9 +5,9 @@ import {
   CDN_OBJECT_TYPE,
   CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
-  DOCUMENT_ACCESS_LEVEL,
+  DOCUMENT_ACCESS,
   DOCUMENT_IMPORT_TYPE,
-  ROOM_ACCESS_LEVEL,
+  ROOM_ACCESS,
   ROOM_LESSONS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
@@ -193,7 +193,7 @@ const commonDocumentOrRevisionProps = {
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
-  accessLevel: PropTypes.oneOf(Object.values(DOCUMENT_ACCESS_LEVEL)),
+  access: PropTypes.oneOf(Object.values(DOCUMENT_ACCESS)),
   roomId: PropTypes.string,
   dueOn: PropTypes.string
 };
@@ -383,7 +383,7 @@ export const roomMemberShape = PropTypes.shape({
 export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
-  access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired,
+  access: PropTypes.oneOf(Object.values(ROOM_ACCESS)).isRequired,
   lessonsMode: PropTypes.oneOf(Object.values(ROOM_LESSONS_MODE)).isRequired,
   description: PropTypes.string
 };

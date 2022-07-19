@@ -1294,7 +1294,7 @@
     "language": "en",
     "resources": {
       "roomNameRequired": "Please specify a room name",
-      "accessLevelInfo": "Public rooms are visible to all users, private rooms only to room members.",
+      "accessInfo": "Public rooms are visible to all users, private rooms only to room members.",
       "lessonsModeInfo": "In exclusive room lessons can be managed only by the owner, in collaborative rooms by all room members."
     }
   },
@@ -1303,7 +1303,7 @@
     "language": "de",
     "resources": {
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
-      "accessLevelInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
+      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
       "lessonsModeInfo": "In exklusiven Räumen können Unterrischtseinheiten nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },

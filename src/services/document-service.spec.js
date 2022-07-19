@@ -6,7 +6,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { DOCUMENT_ACCESS_LEVEL, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
+import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -336,7 +336,7 @@ describe('document-service', () => {
           _id: uniqueId.create(),
           documentId,
           roomId: uniqueId.create(),
-          accessLevel: DOCUMENT_ACCESS_LEVEL.public,
+          access: DOCUMENT_ACCESS.public,
           title: 'Title 1',
           description: 'Description 1',
           slug: 'my-doc-1',
@@ -364,7 +364,7 @@ describe('document-service', () => {
           _id: uniqueId.create(),
           documentId,
           roomId: '',
-          accessLevel: DOCUMENT_ACCESS_LEVEL.public,
+          access: DOCUMENT_ACCESS.public,
           title: 'Title 2',
           description: 'Description 2',
           slug: 'my-doc-2',
@@ -1138,7 +1138,7 @@ describe('document-service', () => {
       });
 
       await createTestDocument(container, user, {
-        accessLevel: DOCUMENT_ACCESS_LEVEL.private,
+        access: DOCUMENT_ACCESS.private,
         title: 'Doc 5',
         description: 'Description 5',
         slug: 'doc-5',

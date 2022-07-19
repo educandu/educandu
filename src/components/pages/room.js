@@ -28,7 +28,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
@@ -317,7 +317,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
-            {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
+            {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
             <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
           </div>
           {!isRoomOwner && (

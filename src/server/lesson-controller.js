@@ -9,7 +9,7 @@ import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -64,7 +64,7 @@ class LessonController {
     }
 
     const room = await this.roomService.getRoomById(lesson.roomId);
-    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+    const isPrivateRoom = room.access === ROOM_ACCESS.private;
     const isRoomOwnerOrMember = user && (room.owner === user._id || room.members.some(member => member.userId === user._id));
 
     if (isPrivateRoom && !user) {

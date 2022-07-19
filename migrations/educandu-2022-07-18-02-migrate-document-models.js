@@ -9,7 +9,7 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
     const props = {
       roomId: '',
       dueOn: null,
-      accessLevel: 'public'
+      access: 'public'
     };
     await this.db.collection('documentRevisions').updateMany({}, { $set: { ...props } });
     await this.db.collection('documents').updateMany({}, { $set: { ...props } });
@@ -20,12 +20,12 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
         key: { roomId: 1 }
       },
       {
-        name: '_idx_accessLevel_',
-        key: { accessLevel: 1 }
+        name: '_idx_access_',
+        key: { access: 1 }
       },
       {
-        name: '_idx_accessLevel_archived_',
-        key: { accessLevel: 1, archived: 1 }
+        name: '_idx_access_archived_',
+        key: { access: 1, archived: 1 }
       }
     ]);
 
@@ -35,13 +35,13 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
     const props = {
       roomId: null,
       dueOn: null,
-      accessLevel: null
+      access: null
     };
     await this.db.collection('documentRevisions').updateMany({}, { $unset: { ...props } });
     await this.db.collection('documents').updateMany({}, { $unset: { ...props } });
 
     await this.db.collection('documents').dropIndex('_idx_roomId_');
-    await this.db.collection('documents').dropIndex('_idx_accessLevel_');
-    await this.db.collection('documents').dropIndex('_idx_accessLevel_archived_');
+    await this.db.collection('documents').dropIndex('_idx_access_');
+    await this.db.collection('documents').dropIndex('_idx_access_archived_');
   }
 }

@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
-import { DOCUMENT_ACCESS_LEVEL, DOC_VIEW_QUERY_PARAM } from '../constants.js';
+import { DOCUMENT_ACCESS, DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
 export const getDocumentsTitlesQuerySchema = joi.object({
@@ -71,7 +71,7 @@ export const documentRevisionDBSchema = joi.object({
   documentId: idOrKeySchema.required(),
   roomId: idOrKeySchema.allow(null).allow(''),
   order: joi.number().required(),
-  accessLevel: joi.string().valid(...Object.values(DOCUMENT_ACCESS_LEVEL)).required(),
+  access: joi.string().valid(...Object.values(DOCUMENT_ACCESS)).required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   dueOn: joi.date().allow(null),
@@ -93,7 +93,7 @@ export const documentDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   roomId: idOrKeySchema.allow(null).allow(''),
   order: joi.number().required(),
-  accessLevel: joi.string().valid(...Object.values(DOCUMENT_ACCESS_LEVEL)).required(),
+  access: joi.string().valid(...Object.values(DOCUMENT_ACCESS)).required(),
   revision: idOrKeySchema.required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),

@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema, slugSchema } from './shared-schemas.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../constants.js';
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
   token: idOrKeySchema.required()
@@ -9,7 +9,7 @@ export const getRoomMembershipConfirmationParamsSchema = joi.object({
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
   slug: slugSchema,
-  access: joi.string().valid(...Object.values(ROOM_ACCESS_LEVEL)).required(),
+  access: joi.string().valid(...Object.values(ROOM_ACCESS)).required(),
   lessonsMode: joi.string().valid(...Object.values(ROOM_LESSONS_MODE)).required()
 });
 
@@ -39,7 +39,7 @@ export const patchRoomBodySchema = joi.object({
 
 export const deleteRoomsQuerySchema = joi.object({
   ownerId: idOrKeySchema.required(),
-  access: joi.string().valid(...Object.values(ROOM_ACCESS_LEVEL))
+  access: joi.string().valid(...Object.values(ROOM_ACCESS))
 });
 
 export const deleteRoomParamsSchema = joi.object({

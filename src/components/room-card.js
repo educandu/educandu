@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import PublicIcon from './icons/general/public-icon.js';
 import PrivateIcon from './icons/general/private-icon.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
 function RoomCard({ room, invitation }) {
@@ -31,8 +31,8 @@ function RoomCard({ room, invitation }) {
   const renderAccess = () => {
     return (
       <div className="RoomCard-accessCell">
-        {room.access === ROOM_ACCESS_LEVEL.private && <PrivateIcon />}
-        {room.access === ROOM_ACCESS_LEVEL.public && <PublicIcon />}
+        {room.access === ROOM_ACCESS.private && <PrivateIcon />}
+        {room.access === ROOM_ACCESS.public && <PublicIcon />}
         <span>{t(`common:accessType_${room.access}`)}</span>
       </div>
     );

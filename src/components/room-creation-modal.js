@@ -9,7 +9,7 @@ import RoomMetadataForm from './room-metadata-form.js';
 import React, { useState, useRef, useEffect } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -23,7 +23,7 @@ function RoomCreationModal({ isVisible, onClose }) {
   const defaultRoom = {
     name: t('newRoom'),
     slug: '',
-    access: ROOM_ACCESS_LEVEL.private,
+    access: ROOM_ACCESS.private,
     lessonsMode: ROOM_LESSONS_MODE.exclusive
   };
 

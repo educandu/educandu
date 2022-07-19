@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataShape } from '../ui/default-prop-types.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -56,10 +56,10 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         <Input />
       </FormItem>
       <div>
-        <FormItem label={t('common:access')} name="access" initialValue={room.access} tooltip={t('accessLevelInfo')}>
+        <FormItem label={t('common:access')} name="access" initialValue={room.access} tooltip={t('accessInfo')}>
           <RadioGroup disabled={editMode}>
-            <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('common:accessType_private')}</RadioButton>
-            <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('common:accessType_public')}</RadioButton>
+            <RadioButton value={ROOM_ACCESS.private}>{t('common:accessType_private')}</RadioButton>
+            <RadioButton value={ROOM_ACCESS.public}>{t('common:accessType_public')}</RadioButton>
           </RadioGroup>
         </FormItem>
       </div>
