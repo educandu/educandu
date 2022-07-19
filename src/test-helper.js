@@ -9,7 +9,7 @@ import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { DOCUMENT_ACCESS, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
+import { ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);

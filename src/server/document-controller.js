@@ -9,7 +9,7 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentIdParamsOrQuerySchema,
@@ -33,6 +33,12 @@ const isRoomOwnerOrCollaborator = ({ room, userId }) => {
   const isOwner = room.owner === userId;
   const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
   return isOwner || isCollaborator;
+};
+
+const isRoomOwnerOrMember = ({ room, userId }) => {
+  const isOwner = room.owner === userId;
+  const isMember = room.members.some(m => m.userId === userId);
+  return isOwner || isMember;
 };
 
 class DocumentController {
@@ -83,6 +89,11 @@ class DocumentController {
     }
 
     const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+
+    if (room?.access === ROOM_ACCESS.private && !isRoomOwnerOrMember({ room, userId: user._id })) {
+      throw new Forbidden();
+    }
+
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];

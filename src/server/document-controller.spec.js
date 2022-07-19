@@ -3,9 +3,10 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import DocumentController from './document-controller.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, Forbidden } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -53,7 +54,11 @@ describe('document-controller', () => {
   });
 
   describe('handleGetDocPage', () => {
+    let mappedRoom;
+    let mappedDocument;
+    let templateSections;
     let templateDocument;
+    let mappedTemplateDocument;
 
     describe('when the document does not exist', () => {
       beforeEach(() => {
@@ -139,10 +144,6 @@ describe('document-controller', () => {
     });
 
     describe('when the view query param is not \'edit\'', () => {
-      let mappedDocument;
-      let templateSections;
-      let mappedTemplateDocument;
-
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
         req = {
@@ -181,12 +182,7 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document belongs to a room', () => {
-      let mappedRoom;
-      let mappedDocument;
-      let templateSections;
-      let mappedTemplateDocument;
-
+    describe('when the document belongs to a public room', () => {
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
         req = {
@@ -198,6 +194,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        room.access = ROOM_ACCESS.public;
 
         templateSections = [{}];
         mappedRoom = { ...room };
@@ -233,11 +230,111 @@ describe('document-controller', () => {
       });
     });
 
+    describe('when the document belongs to a private room and the user is not a room owner or member', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create() };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        room.access = ROOM_ACCESS.private;
+        room.owner = uniqueId.create();
+        room.members = [];
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document belongs to a private room and the user is the room owner', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create() };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        room.access = ROOM_ACCESS.private;
+        room.owner = user._id;
+        room.members = [];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+      });
+    });
+
+    describe('when the document belongs to a private room and the user is a room member', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create() };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        room.access = ROOM_ACCESS.private;
+        room.owner = uniqueId.create();
+        room.members = [{ userId: user._id }];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+      });
+    });
+
     describe('when the view query param is \'edit\'', () => {
-      let mappedDocument;
       let documentRevision;
-      let templateSections;
-      let mappedTemplateDocument;
 
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
@@ -282,7 +379,6 @@ describe('document-controller', () => {
     });
 
     describe('when the view query param is \'edit\' but no templateDocumentId is provided', () => {
-      let mappedDocument;
       let documentRevision;
 
       beforeEach(() => {
