@@ -4,12 +4,12 @@ privateRoomSubtitle:
 publicRoomSubtitle:
   en: Public room
   de: öffentlicher Raum
-exclusiveLessonsSubtitle:
-  en: Exclusive lessons
-  de: exklusive Einheiten
-collaborativeLessonsSubtitle:
-  en: Collaborative lessons
-  de: kollaborative Einheiten
+exclusiveDocumentsSubtitle:
+  en: Exclusive documents
+  de: exklusive Dokumente
+collaborativeDocumentsSubtitle:
+  en: Collaborative documents
+  de: kollaborative Dokumente
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am
@@ -19,18 +19,18 @@ roomMembersHeader:
 invitationsHeader:
   en: Outstanding invitations ({count})
   de: Ausstehende Einladungen ({count})
-lessonsTabTitle:
-  en: Lessons
-  de: Einheiten
+documentsTabTitle:
+  en: Documents
+  de: Dokumente
 membersTabTitle:
   en: Room members
   de: Raummitglieder
 settingsTabTitle:
   en: Settings
   de: Einstellungen
-lessonsPlaceholder:
-  en: The room does not contain any lessons
-  de: Der Raum enthält keine Einheiten
+documentsPlaceholder:
+  en: The room does not contain any documents
+  de: Der Raum enthält keine Dokumente
 thisWeek:
   en: This week
   de: Diese Woche
