@@ -10,11 +10,13 @@ const { NotFound } = httpErrors;
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let documentService;
   let clientDataMappingService;
+  let documentService;
   let pageRenderer;
+  let roomService;
 
   let user;
+  let room;
   let doc;
   let req;
   let res;
@@ -25,7 +27,12 @@ describe('document-controller', () => {
       getDocumentById: sandbox.stub()
     };
 
+    roomService = {
+      getRoomById: sandbox.stub()
+    };
+
     clientDataMappingService = {
+      mapRoom: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       createProposedSections: sandbox.stub()
     };
@@ -35,9 +42,10 @@ describe('document-controller', () => {
     };
 
     user = { _id: uniqueId.create() };
+    room = { _id: uniqueId.create() };
     doc = { _id: uniqueId.create(), slug: '', sections: [] };
 
-    sut = new DocumentController(documentService, clientDataMappingService, pageRenderer);
+    sut = new DocumentController(documentService, roomService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -157,7 +165,7 @@ describe('document-controller', () => {
         clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
 
-        sut.handleGetDocPage(req, res);
+        return sut.handleGetDocPage(req, res);
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
@@ -169,7 +177,59 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+      });
+    });
+
+    describe('when the document belongs to a room', () => {
+      let mappedRoom;
+      let mappedDocument;
+      let templateSections;
+      let mappedTemplateDocument;
+
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create() };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call clientDataMappingService.mapRoom', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, room, user);
+      });
+
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
+      });
+
+      it('should call clientDataMappingService.createProposedSections', () => {
+        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
       });
     });
 
@@ -205,7 +265,7 @@ describe('document-controller', () => {
         clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
 
-        sut.handleGetDocPage(req, res);
+        return sut.handleGetDocPage(req, res);
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
@@ -217,7 +277,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
       });
     });
 
@@ -248,7 +308,7 @@ describe('document-controller', () => {
 
         pageRenderer.sendPage.resolves();
 
-        sut.handleGetDocPage(req, res);
+        return sut.handleGetDocPage(req, res);
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
@@ -260,7 +320,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections: [] });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [] });
       });
     });
   });

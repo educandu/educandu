@@ -183,7 +183,6 @@ export function createTestDocument(container, user, data) {
     data: {
       ...data,
       title: data.title ?? 'Title',
-      access: data.access ?? DOCUMENT_ACCESS.public,
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en'
