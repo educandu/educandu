@@ -114,6 +114,10 @@ class DocumentStore {
     return this.collection.deleteOne({ _id: id }, { session });
   }
 
+  deleteDocumentsByRoomId(roomId, { session }) {
+    return this.collection.deleteMany({ roomId }, { session });
+  }
+
   _getTagsQuery(searchString) {
     return [
       { $unwind: '$tags' },

@@ -6,18 +6,20 @@ import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
-import LessonStore from '../stores/lesson-store.js';
+import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
 
+  let documentRevisionStore;
   let roomInvitationStore;
   let serverConfig;
-  let lessonStore;
+  let documentStore;
   let storagePlan;
   let roomStore;
   let lockStore;
@@ -35,12 +37,13 @@ describe('storage-service', () => {
     cdn = container.get(Cdn);
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
-    lessonStore = container.get(LessonStore);
     serverConfig = container.get(ServerConfig);
+    documentStore = container.get(DocumentStore);
     roomInvitationStore = container.get(RoomInvitationStore);
+    documentRevisionStore = container.get(DocumentRevisionStore);
 
-    sut = container.get(StorageService);
     db = container.get(Database);
+    sut = container.get(StorageService);
   });
 
   afterAll(async () => {
@@ -53,8 +56,9 @@ describe('storage-service', () => {
     sandbox.stub(cdn, 'deleteObjects');
     sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(lockStore, 'takeUserLock');
-    sandbox.stub(lessonStore, 'deleteLessonsByRoomId');
-    sandbox.stub(lessonStore, 'getLessonById');
+    sandbox.stub(documentStore, 'deleteDocumentsByRoomId');
+    sandbox.stub(documentStore, 'getDocumentById');
+    sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId');
     sandbox.stub(roomStore, 'getRoomById');
     sandbox.stub(roomStore, 'deleteRoomById');
     sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
@@ -593,7 +597,8 @@ describe('storage-service', () => {
       lockStore.takeUserLock.resolves(lock);
       lockStore.releaseLock.resolves();
 
-      lessonStore.deleteLessonsByRoomId.resolves();
+      documentStore.deleteDocumentsByRoomId.resolves();
+      documentRevisionStore.deleteDocumentsByRoomId.resolves();
       roomInvitationStore.deleteRoomInvitationsByRoomId.resolves();
       roomStore.deleteRoomById.resolves();
 
@@ -619,8 +624,12 @@ describe('storage-service', () => {
       sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
     });
 
-    it('should call lessonStore.deleteLessonsByRoomId', () => {
-      sinon.assert.calledWith(lessonStore.deleteLessonsByRoomId, roomId, { session: sinon.match.object });
+    it('should call documentStore.deleteDocumentsByRoomId', () => {
+      sinon.assert.calledWith(documentStore.deleteDocumentsByRoomId, roomId, { session: sinon.match.object });
+    });
+
+    it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {
+      sinon.assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, roomId, { session: sinon.match.object });
     });
 
     it('should call roomInvitationStore.deleteRoomInvitationsByRoomId', () => {
@@ -662,7 +671,8 @@ describe('storage-service', () => {
 
     describe('when user is not provided', () => {
       beforeEach(async () => {
-        result = await sut.getStorageLocations({ documentId: 'document', lessonId: 'lesson' });
+        documentStore.getDocumentById.resolves({});
+        result = await sut.getStorageLocations({ documentId: 'documentId' });
       });
       it('should return empty array', () => {
         expect(result).toEqual([]);
@@ -672,7 +682,8 @@ describe('storage-service', () => {
     describe('when documentId is provided', () => {
       describe(`and the user has ${ROLE.user} role`, () => {
         beforeEach(async () => {
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'document' });
+          documentStore.getDocumentById.resolves({});
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
         it('should return the public storage location with deletion disabled', () => {
@@ -680,7 +691,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/document',
+              homePath: 'media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -689,8 +700,9 @@ describe('storage-service', () => {
 
       describe(`and the user has ${ROLE.admin} role`, () => {
         beforeEach(async () => {
+          documentStore.getDocumentById.resolves({});
           const myAdminUser = await setupTestUser(container, { roles: [ROLE.admin] });
-          result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'document' });
+          result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'documentId' });
         });
 
         it('should return the public storage location with deletion enabled', () => {
@@ -698,7 +710,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/document',
+              homePath: 'media/documentId',
               isDeletionEnabled: true
             }
           ]);
@@ -706,15 +718,15 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when lessonId is provided', () => {
+    describe('when documentId of a document in a room is provided', () => {
       describe('and the user is room owner and does not have a storage plan', () => {
         beforeEach(async () => {
-          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
 
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'document' });
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
         it('should return the public storage location', () => {
@@ -722,7 +734,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/document',
+              homePath: 'media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -731,12 +743,12 @@ describe('storage-service', () => {
 
       describe('and the user is room owner and has a storage plan', () => {
         beforeEach(async () => {
-          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
 
-          result = await sut.getStorageLocations({ user: myUser, lessonId: 'lesson' });
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
         it('should return the public and private storage locations, with private storage deletion enabled', () => {
@@ -744,7 +756,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/lesson',
+              homePath: 'media/documentId',
               isDeletionEnabled: false
             },
             {
@@ -770,7 +782,7 @@ describe('storage-service', () => {
             email: 'owner@test.com'
           });
 
-          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
@@ -778,7 +790,7 @@ describe('storage-service', () => {
             members: [{ userId: collaboratorUser._id }]
           });
 
-          result = await sut.getStorageLocations({ user: collaboratorUser, lessonId: 'lesson' });
+          result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
         it('should return the public storage location', () => {
@@ -786,7 +798,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/lesson',
+              homePath: 'media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -807,7 +819,7 @@ describe('storage-service', () => {
             storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
           });
 
-          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
@@ -815,7 +827,7 @@ describe('storage-service', () => {
             members: [{ userId: collaboratorUser._id }]
           });
 
-          result = await sut.getStorageLocations({ user: collaboratorUser, lessonId: 'lesson' });
+          result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
         it('should return the public and private storage locations, with private storage deletion enabled', () => {
@@ -823,7 +835,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              homePath: 'media/lesson',
+              homePath: 'media/documentId',
               isDeletionEnabled: false
             },
             {

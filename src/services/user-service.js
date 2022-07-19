@@ -6,7 +6,6 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -27,14 +26,13 @@ const PASSWORD_SALT_ROUNDS = 1024;
 const logger = new Logger(import.meta.url);
 
 class UserService {
-  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LessonStore, LockStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore]; }
 
-  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lessonStore, lockStore) {
+  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lockStore) {
     this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
     this.roomStore = roomStore;
-    this.lessonStore = lessonStore;
     this.documentStore = documentStore;
     this.lockStore = lockStore;
   }

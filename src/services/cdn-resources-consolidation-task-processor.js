@@ -1,17 +1,15 @@
 import Logger from '../common/logger.js';
-import LessonService from './lesson-service.js';
 import DocumentService from './document-service.js';
 
 const logger = new Logger(import.meta.url);
 
 class CdnResourcesConsolidationTaskProcessor {
   static get inject() {
-    return [DocumentService, LessonService];
+    return [DocumentService];
   }
 
-  constructor(documentService, lessonService) {
+  constructor(documentService) {
     this.documentService = documentService;
-    this.lessonService = lessonService;
   }
 
   async process(task, ctx) {

@@ -5,7 +5,6 @@ import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
@@ -18,16 +17,15 @@ const CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE = 'Cannot create a new import batch 
 
 class BatchService {
   static get inject() {
-    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, LessonStore, RoomStore];
+    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
   }
 
-  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, lessonStore, roomStore) {
+  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore) {
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.documentStore = documentStore;
-    this.lessonStore = lessonStore;
     this.roomStore = roomStore;
   }
 

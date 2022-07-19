@@ -65,13 +65,6 @@ class ClientDataMappingService {
     }));
   }
 
-  createProposedLessonSections(lesson) {
-    return lesson.sections.map(section => ({
-      ...section,
-      key: uniqueId.create()
-    }));
-  }
-
   async mapDocOrRevision(docOrRevision, user) {
     const grantedPermissions = getAllUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions([docOrRevision]);
@@ -154,14 +147,6 @@ class ClientDataMappingService {
 
   mapRoomInvitations(invitations) {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
-  }
-
-  mapLesson(lesson) {
-    return this._mapLesson(lesson);
-  }
-
-  mapLessonsMetadata(lessons) {
-    return lessons.map(lesson => this._mapLessonMetadata(lesson));
   }
 
   mapUserActivities(activities) {
@@ -274,37 +259,6 @@ class ClientDataMappingService {
       ...rawInvitation,
       sentOn,
       expires
-    };
-  }
-
-  _mapLessonMetadata(rawLesson) {
-    const createdOn = rawLesson.createdOn && rawLesson.createdOn.toISOString();
-    const updatedOn = rawLesson.updatedOn && rawLesson.updatedOn.toISOString();
-    const dueOn = rawLesson.dueOn && rawLesson.dueOn.toISOString();
-
-    return {
-      ...rawLesson,
-      createdOn,
-      updatedOn,
-      dueOn
-    };
-  }
-
-  _mapLesson(rawLesson) {
-    const sections = rawLesson.sections.map(section => this._mapLessonSection(section));
-
-    return {
-      ...rawLesson,
-      ...this._mapLessonMetadata(rawLesson),
-      sections
-    };
-  }
-
-  _mapLessonSection(section) {
-    return {
-      key: section.key,
-      type: section.type,
-      content: section.content
     };
   }
 

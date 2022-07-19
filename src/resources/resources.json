@@ -135,7 +135,6 @@
       "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberUsername}\" from the room?",
       "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
       "leaveRoomConfirmation": "Do you really want to leave room \"{roomName}\"?",
-      "deleteLessonConfirmation": "Do you really want to delete lesson \"{lessonName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
@@ -166,7 +165,6 @@
       "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
       "leaveRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich verlassen?",
-      "deleteLessonConfirmation": "Möchten Sie die Einheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
@@ -365,7 +363,7 @@
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents, rooms and lessons that you have marked as favorite."
+      "info": "Here you can find all documents and rooms that you have marked as favorite."
     }
   },
   {
@@ -376,7 +374,7 @@
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente, Räume und Einheiten, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie alle Dokumente und Räume, die Sie als Favorit markiert haben."
     }
   },
   {
@@ -461,36 +459,6 @@
     "resources": {
       "expand": "+ {count} weitere",
       "collapse": "weniger anzeigen"
-    }
-  },
-  {
-    "namespace": "lessonMetadataModal",
-    "language": "en",
-    "resources": {
-      "newLesson": "New lesson",
-      "editLesson": "Edit lesson",
-      "titleRequired": "Please specify a lesson title",
-      "dueOn": "Due date",
-      "createSequence": "Create sequence",
-      "sequenceInterval": "Interval",
-      "sequenceCount": "Number",
-      "sequenceInfoBoxHeader": "Lesson sequences",
-      "sequenceInfoBoxDescription": "Here you can create multiple lessons at once.\nThe date specified above is used as the first scheduling.\nA sequential number is appended to the title or URL path for each lesson.\n"
-    }
-  },
-  {
-    "namespace": "lessonMetadataModal",
-    "language": "de",
-    "resources": {
-      "newLesson": "Neue Einheit",
-      "editLesson": "Einheit bearbeiten",
-      "titleRequired": "Bitte geben Sie einen Einheit Titel an",
-      "dueOn": "Termin",
-      "createSequence": "Reihe anlegen",
-      "sequenceInterval": "Intervall",
-      "sequenceCount": "Anzahl",
-      "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jede Einheit eine laufende Nummer angehängt.\n"
     }
   },
   {
@@ -1301,7 +1269,7 @@
     "resources": {
       "roomNameRequired": "Please specify a room name",
       "accessInfo": "Public rooms are visible to all users, private rooms only to room members.",
-      "documentsModeInfo": "In exclusive room lessons can be managed only by the owner, in collaborative rooms by all room members."
+      "documentsModeInfo": "In exclusive room documents can be managed only by the owner, in collaborative rooms by all room members."
     }
   },
   {
@@ -1310,7 +1278,7 @@
     "resources": {
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
       "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
-      "documentsModeInfo": "In exklusiven Räumen können Unterrischtseinheiten nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
+      "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },
   {
@@ -1323,7 +1291,6 @@
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
-      "sortedByLessonsMode": "Sorted by lessons handling mode",
       "sortedByRole": "Sorted by role",
       "ownedRoomsHeadline": "Rooms that you created",
       "memberRoomsHeadline": "Rooms that you are a member of",
@@ -1341,7 +1308,6 @@
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
-      "sortedByLessonsMode": "Nach Einheiten-Bearbeitungsmodus sortiert",
       "sortedByRole": "Nach Rolle sortiert",
       "ownedRoomsHeadline": "Räume, die Sie erstellt haben",
       "memberRoomsHeadline": "Räume, in denen Sie Mitglied sind",
@@ -2033,7 +1999,6 @@
       "revision": "Revision",
       "document": "Document",
       "room": "Room",
-      "lesson": "Lesson",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
@@ -2135,7 +2100,6 @@
       "answer": "Answer",
       "deletedDocument": "Deleted document",
       "deletedRoom": "Deleted room",
-      "deletedLesson": "Deleted lesson",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
@@ -2177,7 +2141,6 @@
       "revision": "Revision",
       "document": "Dokument",
       "room": "Raum",
-      "lesson": "Einheit",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
@@ -2279,7 +2242,6 @@
       "answer": "Antwort",
       "deletedDocument": "Gelöschtes Dokument",
       "deletedRoom": "Gelöschter Raum",
-      "deletedLesson": "Gelöschte Einheit",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
@@ -2296,8 +2258,7 @@
       "createImport": "Create import",
       "imports": "Imports",
       "batches": "Batch details",
-      "docs": "Documents",
-      "lesson": "Lesson - {lessonTitle}"
+      "docs": "Documents"
     }
   },
   {
@@ -2311,8 +2272,7 @@
       "createImport": "Import erstellen",
       "imports": "Importe",
       "batches": "Chargen-Details",
-      "docs": "Dokumente",
-      "lesson": "Einheit - {lessonTitle}"
+      "docs": "Dokumente"
     }
   },
   {

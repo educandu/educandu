@@ -1,19 +1,17 @@
 import by from 'thenby';
 import RoomStore from '../stores/room-store.js';
 import UserStore from '../stores/user-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 
 const completionFunction = Symbol('completion');
 
 class DashboardService {
-  static get inject() { return [UserStore, DocumentStore, RoomStore, LessonStore]; }
+  static get inject() { return [UserStore, DocumentStore, RoomStore]; }
 
-  constructor(userStore, documentStore, roomStore, lessonStore) {
+  constructor(userStore, documentStore, roomStore) {
     this.userStore = userStore;
     this.roomStore = roomStore;
-    this.lessonStore = lessonStore;
     this.documentStore = documentStore;
   }
 

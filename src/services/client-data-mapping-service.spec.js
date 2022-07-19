@@ -425,29 +425,4 @@ describe('client-data-mapping-service', () => {
       });
     });
   });
-
-  describe('mapLessonsMetadata', () => {
-    let lessons;
-
-    beforeEach(async () => {
-      lessons = [
-        {
-          createdOn: new Date(),
-          updatedOn: new Date(),
-          dueOn: new Date()
-        }
-      ];
-      result = await sut.mapLessonsMetadata(lessons);
-    });
-
-    it('should map the lessons metadata', () => {
-      expect(result).toEqual([
-        {
-          createdOn: lessons[0].createdOn.toISOString(),
-          updatedOn: lessons[0].updatedOn.toISOString(),
-          dueOn: lessons[0].dueOn.toISOString()
-        }
-      ]);
-    });
-  });
 });

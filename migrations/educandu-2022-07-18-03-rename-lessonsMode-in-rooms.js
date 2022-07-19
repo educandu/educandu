@@ -6,10 +6,10 @@ export default class Educandu_2022_07_18_03_rename_lessonsMode_in_rooms {
   }
 
   async up() {
-    await this.db.collection('rooms').update({}, { $rename: { lessonsMode: 'documentsMode' } });
+    await this.db.collection('rooms').updateMany({}, { $rename: { lessonsMode: 'documentsMode' } });
   }
 
   async down() {
-    await this.db.collection('rooms').update({}, { $rename: { documentsMode: 'lessonsMode' } });
+    await this.db.collection('rooms').updateMany({}, { $rename: { documentsMode: 'lessonsMode' } });
   }
 }

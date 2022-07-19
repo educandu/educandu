@@ -398,30 +398,6 @@ export const invitationShape = PropTypes.shape({
   email: PropTypes.string.isRequired
 });
 
-export const lessonMetadataProps = {
-  _id: PropTypes.string.isRequired,
-  roomId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  language: PropTypes.string.isRequired,
-  dueOn: PropTypes.string
-};
-
-export const lessonSectionShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  content: PropTypes.object
-});
-
-export const lessonMetadataShape = PropTypes.shape({
-  ...lessonMetadataProps
-});
-
-export const lessonShape = PropTypes.shape({
-  ...lessonMetadataProps,
-  sections: PropTypes.arrayOf(lessonSectionShape).isRequired
-});
-
 export const userActivitiesShape = PropTypes.shape({
   type: PropTypes.oneOf(Object.values(USER_ACTIVITY_TYPE)).isRequired,
   timestamp: PropTypes.string.isRequired,

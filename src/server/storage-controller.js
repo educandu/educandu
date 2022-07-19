@@ -148,8 +148,7 @@ class StorageController {
     router.use(async (req, _res, next) => {
       const { user } = req;
       const documentId = urls.getDocIdIfDocUrl(req.originalUrl);
-      const lessonId = urls.getLessonIdIfLessonUrl(req.originalUrl);
-      const locations = await this.storageService.getStorageLocations({ user, documentId, lessonId });
+      const locations = await this.storageService.getStorageLocations({ user, documentId });
 
       // eslint-disable-next-line require-atomic-updates
       req.storage = { locations };
