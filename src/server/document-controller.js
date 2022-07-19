@@ -82,10 +82,13 @@ class DocumentController {
       templateDocument = null;
     }
 
+    const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections, room: mappedRoom });
   }
 
   async handlePostDocument(req, res) {
