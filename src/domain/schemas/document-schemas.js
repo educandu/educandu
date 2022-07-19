@@ -24,7 +24,7 @@ export const createDocumentDataBodySchema = joi.object({
   review: joi.string().allow(null).allow(''),
   sections: joi.array().items(sectionSchema),
   roomId: idOrKeySchema,
-  dueOn: joi.date().allow(null)
+  dueOn: joi.string().allow('')
 });
 
 export const documentMetadataBodySchema = joi.object({

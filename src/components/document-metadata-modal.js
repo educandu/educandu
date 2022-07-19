@@ -1,20 +1,25 @@
+import moment from 'moment';
+import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
+import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
-import { useService } from './container-context.js';
 import inputValidators from '../utils/input-validators.js';
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, Input, Modal, Checkbox, Select } from 'antd';
 import LanguageSelect from './localization/language-select.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { useDateFormat, useLocale } from './locale-context.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
+import { Form, Input, Modal, Checkbox, Select, DatePicker, Collapse, InputNumber } from 'antd';
 
 const FormItem = Form.Item;
+const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
 
@@ -23,20 +28,63 @@ export const DOCUMENT_METADATA_MODAL_MODE = {
   update: 'update'
 };
 
+const DOCUMENT_SEQUENCE_INTERVAL = {
+  daily: 'daily',
+  weekly: 'weekly',
+  monthly: 'monthly',
+  yearly: 'yearly'
+};
+
+const MOMENT_INTERVAL_UNITS = {
+  daily: 'day',
+  weekly: 'week',
+  monthly: 'month',
+  yearly: 'year'
+};
+
 function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
   const mergedTags = new Set([...initialDocumentTags, ...tagSuggestions]);
   return [...mergedTags].map(tag => ({ key: tag, value: tag }));
 }
 
-function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocumentMetadata, templateDocumentId }) {
+function getDefaultLanguageFromUiLanguage(uiLanguage) {
+  switch (uiLanguage) {
+    case 'de': return 'de';
+    default: return 'en';
+  }
+}
+
+function DocumentMetadataModal({
+  isVisible,
+  mode,
+  allowMultiple,
+  onSave,
+  onClose,
+  initialDocumentMetadata,
+  templateDocumentId
+}) {
   const user = useUser();
   const formRef = useRef(null);
+  const { uiLanguage } = useLocale();
+  const { dateTimeFormat } = useDateFormat();
   const { t } = useTranslation('documentMetadataModal');
-  const documentApiClient = useService(DocumentApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
-
+  const [hasDueDate, setHasDueDate] = useState(false);
+  const [isSequenceExpanded, setIsSequenceExpanded] = useState(false);
   const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
+
+  const initialValues = {
+    title: initialDocumentMetadata.title || t('newDocument'),
+    slug: initialDocumentMetadata.slug || '',
+    tags: initialDocumentMetadata.tags || [],
+    language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
+    dueOn: initialDocumentMetadata.dueOn ? moment(initialDocumentMetadata.dueOn) : '',
+    enableSequence: false,
+    sequenceInterval: DOCUMENT_SEQUENCE_INTERVAL.weekly,
+    sequenceCount: 3
+  };
 
   const titleValidationRules = [
     {
@@ -75,6 +123,8 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
 
   useEffect(() => {
     if (isVisible && formRef.current) {
+      setHasDueDate(false);
+      setIsSequenceExpanded(false);
       formRef.current.resetFields();
     }
   }, [isVisible]);
@@ -98,27 +148,89 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
     }
   };
 
-  const handleOnFinish = async ({ title, description, slug, language, tags, review, useTemplateDocument }) => {
+  const handleCancel = () => onClose();
+
+  const handleValuesChange = (_, { dueOn }) => {
+    setHasDueDate(!!dueOn);
+  };
+
+  const handleFinish = async ({
+    title,
+    description,
+    slug,
+    language,
+    tags,
+    dueOn,
+    enableSequence,
+    sequenceInterval,
+    sequenceCount,
+    review,
+    useTemplateDocument
+  }) => {
     try {
       setLoading(true);
 
-      await onSave({
+      const mappedDocument = {
         title: (title || '').trim(),
         slug: (slug || '').trim(),
         description: (description || '').trim(),
         language,
         tags,
-        review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review,
-        templateDocumentId: useTemplateDocument ? templateDocumentId : null
-      });
-      setLoading(false);
+        dueOn: dueOn ? dueOn.toISOString() : '',
+        review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review
+      };
+
+      if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
+        const savedDocuments = [];
+        const documentsToSave = enableSequence && sequenceCount > 1 && dueOn
+          ? Array.from({ length: sequenceCount }, (_, index) => ({
+            ...cloneDeep(mappedDocument),
+            roomId: initialDocumentMetadata.roomId,
+            title: `${mappedDocument.title} (${index + 1})`,
+            slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '',
+            tags: mappedDocument.tags,
+            dueOn: moment(dueOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString(),
+            review: mappedDocument.review
+          }))
+          : [mappedDocument];
+
+        for (const documentToSave of documentsToSave) {
+          // eslint-disable-next-line no-await-in-loop
+          savedDocuments.push(await documentApiClient.createDocument(documentToSave));
+        }
+
+        onSave(allowMultiple ? savedDocuments : savedDocuments[0], useTemplateDocument ? templateDocumentId : null);
+      } else {
+        const savedDocument = await documentApiClient.updateDocumentMetadata({ documentId: initialDocumentMetadata._id, metadata: mappedDocument });
+        onSave(savedDocument);
+      }
     } catch (error) {
-      setLoading(false);
       errorHelper.handleApiError({ error, logger, t });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCancel = () => onClose();
+  const disabledMorningHours = [...Array(7).keys()];
+  const disabledEveningHours = [...Array(24).keys()].splice(21);
+  const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
+  const firstEnabledHour = disabledMorningHours[disabledMorningHours.length - 1] + 1;
+
+  const disabledTime = () => {
+    return {
+      disabledHours: () => [...disabledMorningHours, ...disabledEveningHours],
+      disabledMinutes: () => disabledMinutes
+    };
+  };
+
+  const handleSequenceCollapseChange = ([value]) => {
+    setIsSequenceExpanded(value === 'sequence');
+    formRef.current?.setFieldsValue({ enableSequence: value === 'sequence' });
+  };
+
+  const documentSequenceIntervalOptions = useMemo(() => {
+    return Object.values(DOCUMENT_SEQUENCE_INTERVAL).map(value => ({ value, label: t(`common:${value}`) }));
+  }, [t]);
 
   return (
     <Modal
@@ -128,8 +240,9 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
       onCancel={handleCancel}
       maskClosable={false}
       okButtonProps={{ loading }}
+      okText={t('common:save')}
       >
-      <Form onFinish={handleOnFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialDocumentMetadata}>
+      <Form onFinish={handleFinish} ref={formRef} onValuesChange={handleValuesChange} name="document-metadata-form" layout="vertical" initialValues={initialValues}>
         <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
           <Input />
         </FormItem>
@@ -153,6 +266,33 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
+        {initialDocumentMetadata?.roomId && (
+          <FormItem label={t('dueOn')} name="dueOn">
+            <DatePicker
+              inputReadOnly
+              style={{ width: '100%' }}
+              format={dateTimeFormat}
+              disabledTime={disabledTime}
+              showTime={{ defaultValue: moment(`${firstEnabledHour}:00`, 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
+              />
+          </FormItem>
+        )}
+        <FormItem name="enableSequence" valuePropName="checked" hidden>
+          <Checkbox />
+        </FormItem>
+        {mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple && (
+          <Collapse className="DocumentMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleSequenceCollapseChange} ghost>
+            <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
+              <Alert className="DocumentMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} />
+              <FormItem label={t('sequenceInterval')} name="sequenceInterval">
+                <Select options={documentSequenceIntervalOptions} disabled={!hasDueDate} />
+              </FormItem>
+              <FormItem label={t('sequenceCount')} name="sequenceCount" rules={[{ type: 'integer', min: 1, max: 100 }]}>
+                <InputNumber style={{ width: '100%' }} disabled={!hasDueDate} min={1} max={100} />
+              </FormItem>
+            </CollapsePanel>
+          </Collapse>
+        )}
         {templateDocumentId && (
           <FormItem name="useTemplateDocument" valuePropName="checked">
             <Checkbox>{t('useTemplateDocument')}</Checkbox>
@@ -169,7 +309,11 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
 }
 
 DocumentMetadataModal.propTypes = {
-  initialDocumentMetadata: documentMetadataEditShape,
+  allowMultiple: PropTypes.bool,
+  initialDocumentMetadata: PropTypes.oneOfType([
+    PropTypes.shape({ roomId: PropTypes.string.isRequired }),
+    documentMetadataEditShape
+  ]),
   isVisible: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
@@ -178,6 +322,7 @@ DocumentMetadataModal.propTypes = {
 };
 
 DocumentMetadataModal.defaultProps = {
+  allowMultiple: false,
   initialDocumentMetadata: null,
   templateDocumentId: null
 };

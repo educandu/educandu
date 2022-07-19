@@ -4,11 +4,12 @@ import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import RoomService from '../services/room-service.js';
 import DocumentService from '../services/document-service.js';
-import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentIdParamsOrQuerySchema,
@@ -23,18 +24,25 @@ import {
   getDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, BadRequest, Forbidden } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
-class DocumentController {
-  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
+const isRoomOwnerOrCollaborator = ({ room, userId }) => {
+  const isOwner = room.owner === userId;
+  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
+  return isOwner || isCollaborator;
+};
 
-  constructor(documentService, clientDataMappingService, pageRenderer) {
+class DocumentController {
+  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, PageRenderer]; }
+
+  constructor(documentService, roomService, clientDataMappingService, pageRenderer) {
+    this.roomService = roomService;
+    this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
-    this.pageRenderer = pageRenderer;
   }
 
   async handleGetDocsPage(req, res) {
@@ -84,6 +92,18 @@ class DocumentController {
     const { user } = req;
     const data = req.body;
 
+    if (data.roomId) {
+      const room = await this.roomService.getRoomById(data.roomId);
+
+      if (!room) {
+        throw new BadRequest(`Unknown room id '${data.roomId}'`);
+      }
+
+      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+    }
+
     const newDocument = await this.documentService.createDocument({ data, user });
     const mappedNewDocument = await this.clientDataMappingService.mapDocOrRevision(newDocument, user);
     return res.status(201).send(mappedNewDocument);
@@ -94,6 +114,8 @@ class DocumentController {
     const metadata = req.body;
     const { documentId } = req.params;
 
+    await this._authorizeDocumentWriteAccess(req);
+
     const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
     return res.status(201).send(mappedUpdatedDocument);
@@ -103,6 +125,8 @@ class DocumentController {
     const { user } = req;
     const { sections } = req.body;
     const { documentId } = req.params;
+
+    await this._authorizeDocumentWriteAccess(req);
 
     const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
@@ -195,8 +219,29 @@ class DocumentController {
   }
 
   async handleDeleteDoc(req, res) {
+    const { user } = req;
     const { documentId } = req.body;
+
+    const document = await this.documentService.getDocumentById(documentId);
+
+    if (!document) {
+      throw new NotFound();
+    }
+
+    let canDeleteRoomDocument = false;
+    const canDeleteExternalDocument = document.origin.startsWith(DOCUMENT_ORIGIN.external) && hasUserPermission(req.user, permissions.MANAGE_IMPORT);
+
+    if (document.roomId) {
+      const room = await this.roomService.getRoomById(document.roomId);
+      canDeleteRoomDocument = isRoomOwnerOrCollaborator({ room, userId: user._id });
+    }
+
+    if (!canDeleteExternalDocument && !canDeleteRoomDocument) {
+      throw new Forbidden();
+    }
+
     await this.documentService.hardDeleteDocument(documentId);
+
     return res.send({});
   }
 
@@ -205,6 +250,25 @@ class DocumentController {
 
     const result = await this.documentService.getDocumentTagsMatchingText(searchString);
     return res.send(result.length ? result[0].uniqueTags : []);
+  }
+
+  async _authorizeDocumentWriteAccess(req) {
+    const { user } = req;
+    const { documentId } = req.params;
+
+    const document = await this.documentService.getDocumentById(documentId);
+
+    if (!document) {
+      throw new NotFound();
+    }
+
+    if (document.roomId) {
+      const room = await this.roomService.getRoomById(document.roomId);
+
+      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+    }
   }
 
   registerPages(router) {
@@ -300,7 +364,7 @@ class DocumentController {
 
     router.delete(
       '/api/v1/docs',
-      [needsPermission(permissions.MANAGE_IMPORT), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
+      [needsPermission(permissions.VIEW_DOCS), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
       (req, res) => this.handleDeleteDoc(req, res)
     );
 

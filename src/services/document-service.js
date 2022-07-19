@@ -237,12 +237,6 @@ class DocumentService {
   }
 
   async hardDeleteDocument(documentId) {
-    const document = await this.getDocumentById(documentId);
-
-    if (!document.origin.startsWith(DOCUMENT_ORIGIN.external)) {
-      throw new Error(`Only external documents can be hard deleted. Document '${documentId}' has origin '${document.origin}'`);
-    }
-
     let lock;
     try {
       lock = await this.lockStore.takeDocumentLock(documentId);

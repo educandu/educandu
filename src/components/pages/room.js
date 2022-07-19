@@ -18,17 +18,16 @@ import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
 import documentsUtils from '../../utils/documents-utils.js';
-import LessonMetadataModal from '../lesson-metadata-modal.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
-import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, documentMetadataShape } from '../../ui/default-prop-types.js';
+import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
@@ -375,13 +374,13 @@ export default function Room({ PageTemplate, initialState }) {
           </Tabs>
         )}
 
-        <LessonMetadataModal
+        <DocumentMetadataModal
           mode={DOCUMENT_METADATA_MODAL_MODE.create}
           isVisible={documentMetadataModalState.isVisible}
           allowMultiple={!documentMetadataModalState.isCloning}
-          initialLessonMetadata={documentMetadataModalState.initialDocumentMetadata}
+          initialDocumentMetadata={documentMetadataModalState.initialDocumentMetadata}
           onSave={handleDocumentMetadataModalSave}
-          onCancel={handleDocumentMetadataModalCancel}
+          onClose={handleDocumentMetadataModalCancel}
           />
       </div>
     </PageTemplate>);
