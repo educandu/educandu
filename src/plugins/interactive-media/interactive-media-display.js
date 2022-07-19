@@ -167,7 +167,6 @@ function InteractiveMediaDisplay({ content }) {
             canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
-        <CopyrightNotice value={copyrightNotice} />
         <div className="InteractiveMediaDisplay-progressBar">
           <div className="InteractiveMediaDisplay-progressBarCards">
             <div>
@@ -191,6 +190,7 @@ function InteractiveMediaDisplay({ content }) {
             alwaysAllowPreviousClick
             />
         </div>
+        <CopyrightNotice value={copyrightNotice} />
       </div>
     </div>
   );
