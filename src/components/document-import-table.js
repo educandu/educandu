@@ -23,6 +23,7 @@ function createRecords(importableDocuments, formatDate, languageNameProvider, la
 
     return {
       id: doc._id,
+      key: doc._id,
       title: doc.title,
       url,
       titleComponent: getTitleComponent(doc.title, url),
