@@ -77,7 +77,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
           importableDocuments={importableDocuments}
           importSourceBaseUrl={importSourceBaseUrl}
           loading={isFetchingImportableDocuments}
-          onSelectedIdsChange={selectedDocumentIds}
+          onSelectedIdsChange={setSelectedDocumentIds}
           />
         {renderImportButton()}
       </div>
