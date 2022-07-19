@@ -363,7 +363,7 @@ describe('document-service', () => {
         {
           _id: uniqueId.create(),
           documentId,
-          roomId: '',
+          roomId: null,
           access: DOCUMENT_ACCESS.public,
           title: 'Title 2',
           description: 'Description 2',

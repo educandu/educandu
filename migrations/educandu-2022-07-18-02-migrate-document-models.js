@@ -7,7 +7,7 @@ export default class Educandu_2022_07_18_02_migrate_documents_models {
 
   async up() {
     const props = {
-      roomId: '',
+      roomId: null,
       dueOn: null,
       access: 'public'
     };

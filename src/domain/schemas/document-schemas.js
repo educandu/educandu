@@ -69,7 +69,7 @@ export const documentSectionDBSchema = joi.object({
 export const documentRevisionDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
-  roomId: idOrKeySchema.allow(null).allow(''),
+  roomId: idOrKeySchema.allow(null),
   order: joi.number().required(),
   access: joi.string().valid(...Object.values(DOCUMENT_ACCESS)).required(),
   createdOn: joi.date().required(),
@@ -91,7 +91,7 @@ export const documentRevisionDBSchema = joi.object({
 
 export const documentDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  roomId: idOrKeySchema.allow(null).allow(''),
+  roomId: idOrKeySchema.allow(null),
   order: joi.number().required(),
   access: joi.string().valid(...Object.values(DOCUMENT_ACCESS)).required(),
   revision: idOrKeySchema.required(),

@@ -486,7 +486,7 @@ class DocumentService {
     return {
       _id: data._id || uniqueId.create(),
       documentId: data.documentId || uniqueId.create(),
-      roomId: data.roomId || '',
+      roomId: data.roomId || null,
       order: data.order || 0,
       access: data.access || DOCUMENT_ACCESS.public,
       restoredFrom: data.restoredFrom || '',
