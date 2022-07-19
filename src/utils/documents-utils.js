@@ -13,7 +13,7 @@ const determineUpcomingDueDocument = (now, documents) => {
   return upcomingDueDocument;
 };
 
-const determineDocumentAccessLevelFromRoom = room => {
+const determineDocumentAccessFromRoom = room => {
   switch (room?.access) {
     case ROOM_ACCESS_LEVEL.private:
       return DOCUMENT_ACCESS_LEVEL.private;
@@ -26,5 +26,5 @@ const determineDocumentAccessLevelFromRoom = room => {
 
 export default {
   determineUpcomingDueDocument,
-  determineDocumentAccessLevelFromRoom
+  determineDocumentAccessFromRoom
 };

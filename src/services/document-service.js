@@ -158,7 +158,7 @@ class DocumentService {
           documentId,
           createdBy: user._id,
           order: nextOrder,
-          accessLevel: documentsUtils.determineDocumentAccessLevelFromRoom(room)
+          access: documentsUtils.determineDocumentAccessFromRoom(room)
         });
 
         newDocument = this._buildDocumentFromRevisions([newRevision]);
