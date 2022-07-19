@@ -1,6 +1,6 @@
 import RoomStore from './room-store.js';
 import uniqueId from '../utils/unique-id.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
 describe('room-store', () => {
@@ -96,8 +96,8 @@ describe('room-store', () => {
 
     beforeEach(async () => {
       [myRoom, otherRoom] = await Promise.all([
-        createTestRoom(container, { name: 'my room', access: ROOM_ACCESS_LEVEL.public, owner: myUser._id }),
-        createTestRoom(container, { name: 'not my room', access: ROOM_ACCESS_LEVEL.public, owner: otherUser._id })
+        createTestRoom(container, { name: 'my room', access: ROOM_ACCESS.public, owner: myUser._id }),
+        createTestRoom(container, { name: 'not my room', access: ROOM_ACCESS.public, owner: otherUser._id })
       ]);
     });
 

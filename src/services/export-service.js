@@ -20,7 +20,7 @@ class ExportService {
   }
 
   async getAllExportableDocumentsMetadata() {
-    return (await this.documentStore.getNonArchivedDocumentsMetadataByOrigin(DOCUMENT_ORIGIN.internal))
+    return (await this.documentStore.getPublicNonArchivedDocumentsMetadataByOrigin(DOCUMENT_ORIGIN.internal))
       .sort(by(doc => doc.updatedOn, 'desc'));
   }
 

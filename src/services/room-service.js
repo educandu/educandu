@@ -15,7 +15,7 @@ import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
   INVALID_ROOM_INVITATION_REASON,
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
-  ROOM_ACCESS_LEVEL,
+  ROOM_ACCESS,
   STORAGE_DIRECTORY_MARKER_NAME
 } from '../domain/constants.js';
 
@@ -70,7 +70,7 @@ export default class RoomService {
   async createRoom({ name, slug, access, lessonsMode, user }) {
     const roomId = uniqueId.create();
 
-    if (access === ROOM_ACCESS_LEVEL.private) {
+    if (access === ROOM_ACCESS.private) {
       await this.createUploadDirectoryMarkerForRoom(roomId);
     }
 
@@ -91,7 +91,7 @@ export default class RoomService {
     try {
       await this.roomStore.saveRoom(newRoom);
     } catch (error) {
-      if (access === ROOM_ACCESS_LEVEL.private) {
+      if (access === ROOM_ACCESS.private) {
         await this.deleteUploadDirectoryMarkerForRoom(roomId);
       }
       throw error;

@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { DOCUMENT_ACCESS } from '../domain/constants.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
@@ -59,33 +60,29 @@ class DocumentStore {
     return this.collection.find({ _id: { $in: ids } }, { session }).toArray();
   }
 
-  getAllNonArchivedDocumentsExtendedMetadata({ session } = {}) {
-    return this.collection.find({ archived: false }, { projection: documentExtendedMetadataProjection, session }).toArray();
-  }
-
-  getAllNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
-    return this.collection.find({ archived: false, $expr: { $gt: [{ $size: '$tags' }, 0] } }, { projection: documentExtendedMetadataProjection, session }).toArray();
-  }
-
-  getAllDocumentsExtendedMetadata({ session } = {}) {
-    return this.collection.find({}, { projection: documentExtendedMetadataProjection, session }).toArray();
+  getDocumentsMetadataByConditions(conditions, { session } = {}) {
+    return this.collection.find({ $and: conditions }, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getDocumentsExtendedMetadataByConditions(conditions, { session } = {}) {
     return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
-  getDocumentsMetadataByConditions(conditions, { session } = {}) {
-    return this.collection.find({ $and: conditions }, { projection: documentMetadataProjection, session }).toArray();
+  getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
+    return this.collection.find({
+      archived: false,
+      access: DOCUMENT_ACCESS.public,
+      $expr: { $gt: [{ $size: '$tags' }, 0] }
+    }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
   getDocumentTagsMatchingText(text) {
     return this.collection.aggregate(this._getTagsQuery(text)).toArray();
   }
 
-  getNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
+  getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
     return this.collection.find(
-      { archived: false, origin },
+      { archived: false, origin, access: DOCUMENT_ACCESS.public },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }

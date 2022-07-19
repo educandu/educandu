@@ -10,7 +10,7 @@ import LessonStore from '../stores/lesson-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
-import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
@@ -640,7 +640,7 @@ describe('storage-service', () => {
     });
 
     it('should call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
-      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerIdAndAccess, { ownerId: myUser._id, access: ROOM_ACCESS_LEVEL.private });
+      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerIdAndAccess, { ownerId: myUser._id, access: ROOM_ACCESS.private });
     });
 
     it('should call cdn.listObjects for the remaining private room', () => {

@@ -1,5 +1,5 @@
 import Database from './database.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 
 class RoomStore {
   static get inject() { return [Database]; }
@@ -17,7 +17,7 @@ class RoomStore {
   }
 
   getAllPrivateRoomIds({ session } = {}) {
-    return this.collection.distinct('_id', { access: ROOM_ACCESS_LEVEL.private }, { session });
+    return this.collection.distinct('_id', { access: ROOM_ACCESS.private }, { session });
   }
 
   deleteRoomById(roomId, { session } = {}) {
@@ -37,7 +37,7 @@ class RoomStore {
   }
 
   getPrivateRoomsByOwnerId(ownerId, { session } = {}) {
-    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS_LEVEL.private }, { session }).toArray();
+    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS.private }, { session }).toArray();
   }
 
   async getRoomIdsByOwnerIdAndAccess({ ownerId, access }, { session } = {}) {

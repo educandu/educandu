@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import LessonController from './lesson-controller.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -69,7 +69,7 @@ describe('lesson-controller', () => {
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
         req = { params: { 0: '', lessonId }, query: {} };
-        room = { _id: roomId, access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
+        room = { _id: roomId, access: ROOM_ACCESS.private, owner: uniqueId.create(), members: [] };
         lesson = { _id: lessonId, slug: '', roomId };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
@@ -116,7 +116,7 @@ describe('lesson-controller', () => {
       beforeEach(() => {
         req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
-        room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
+        room = { access: ROOM_ACCESS.private, owner: uniqueId.create(), members: [] };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -131,7 +131,7 @@ describe('lesson-controller', () => {
       beforeEach(() => {
         req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
-        room = { access: ROOM_ACCESS_LEVEL.private, owner: user._id, members: [] };
+        room = { access: ROOM_ACCESS.private, owner: user._id, members: [] };
         mappedLesson = { ...lesson };
         mappedRoom = { ...room, owner: { _id: room.owner } };
 
@@ -152,7 +152,7 @@ describe('lesson-controller', () => {
       beforeEach(() => {
         req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
-        room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [{ userId: user._id }] };
+        room = { access: ROOM_ACCESS.private, owner: uniqueId.create(), members: [{ userId: user._id }] };
         mappedLesson = { ...lesson };
         mappedRoom = { ...room, owner: { _id: room.owner } };
 
@@ -173,7 +173,7 @@ describe('lesson-controller', () => {
       beforeEach(() => {
         req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
-        room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
+        room = { access: ROOM_ACCESS.public, owner: uniqueId.create(), members: [] };
         mappedLesson = { ...lesson };
         mappedRoom = { ...room, owner: { _id: room.owner } };
 
@@ -200,7 +200,7 @@ describe('lesson-controller', () => {
         templateLessonId = uniqueId.create();
         req = { user, params: { 0: '/slug', lessonId }, query: { templateLessonId } };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
-        room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
+        room = { access: ROOM_ACCESS.public, owner: uniqueId.create(), members: [] };
         mappedLesson = { ...lesson };
         mappedRoom = { ...room, owner: { _id: room.owner } };
         templateLesson = {

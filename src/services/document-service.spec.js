@@ -6,7 +6,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
+import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -335,12 +335,15 @@ describe('document-service', () => {
         {
           _id: uniqueId.create(),
           documentId,
+          roomId: uniqueId.create(),
+          access: DOCUMENT_ACCESS.public,
           title: 'Title 1',
           description: 'Description 1',
           slug: 'my-doc-1',
           language: 'en',
           createdOn: new Date().toISOString(),
           createdBy: userId1,
+          dueOn: new Date().toISOString(),
           sections: [
             {
               ...createDefaultSection(),
@@ -360,12 +363,15 @@ describe('document-service', () => {
         {
           _id: uniqueId.create(),
           documentId,
+          roomId: null,
+          access: DOCUMENT_ACCESS.public,
           title: 'Title 2',
           description: 'Description 2',
           slug: 'my-doc-2',
           language: 'en',
           createdOn: new Date().toISOString(),
           createdBy: userId1,
+          dueOn: null,
           sections: [
             {
               ...createDefaultSection(),
@@ -407,6 +413,7 @@ describe('document-service', () => {
             ],
             order: 1,
             createdOn: new Date(revisions[0].createdOn),
+            dueOn: new Date(revisions[0].dueOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -443,6 +450,7 @@ describe('document-service', () => {
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
+          dueOn: null,
           updatedOn: now,
           updatedBy: revisions[1].createdBy,
           order: 2,
@@ -481,6 +489,7 @@ describe('document-service', () => {
             ],
             order: 1,
             createdOn: new Date(revisions[0].createdOn),
+            dueOn: new Date(revisions[0].dueOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -497,6 +506,7 @@ describe('document-service', () => {
             ],
             order: 2,
             createdOn: new Date(revisions[1].createdOn),
+            dueOn: null,
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -1081,7 +1091,7 @@ describe('document-service', () => {
 
   });
 
-  describe('getDocumentsMetadataByTags', () => {
+  describe('getSearchableDocumentsMetadataByTags', () => {
     let doc1 = null;
     let doc2 = null;
     let doc3 = null;
@@ -1126,11 +1136,22 @@ describe('document-service', () => {
         archived: true,
         language: 'en'
       });
+
+      await createTestDocument(container, user, {
+        access: DOCUMENT_ACCESS.private,
+        title: 'Doc 5',
+        description: 'Description 5',
+        slug: 'doc-5',
+        sections: [],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        archived: false,
+        language: 'en'
+      });
     });
 
     describe('when I search for something that should not match', () => {
       it('should return an empty array', async () => {
-        const results = await sut.getDocumentsMetadataByTags('I can not find anything in this db');
+        const results = await sut.getSearchableDocumentsMetadataByTags('I can not find anything in this db');
         expect(results).toHaveLength(0);
       });
     });
@@ -1144,7 +1165,7 @@ describe('document-service', () => {
 
       testCases.forEach(test => {
         it(`should return ${test.resultLength} documents for ${test.query} `, async () => {
-          const results = await sut.getDocumentsMetadataByTags(test.query);
+          const results = await sut.getSearchableDocumentsMetadataByTags(test.query);
           expect(results).toHaveLength(test.resultLength);
         });
       });
@@ -1153,14 +1174,14 @@ describe('document-service', () => {
 
     describe('when I search for a string that leads no valid tags', () => {
       it('should return an empty array', async () => {
-        const results = await sut.getDocumentsMetadataByTags('to o sh or t');
+        const results = await sut.getSearchableDocumentsMetadataByTags('to o sh or t');
         expect(results).toHaveLength(0);
       });
     });
 
     describe('when I search with a query that returns a single document', () => {
       it('should project the data correctly', async () => {
-        const results = await sut.getDocumentsMetadataByTags('Wolf   gang \t beat Oven');
+        const results = await sut.getSearchableDocumentsMetadataByTags('Wolf   gang \t beat Oven');
 
         expect(results).toHaveLength(1);
         const result = results[0];
@@ -1176,12 +1197,12 @@ describe('document-service', () => {
 
     describe('when I search with a query that returns multiple documents', () => {
       it('does not contain archived documents', async () => {
-        const results = await sut.getDocumentsMetadataByTags('music');
+        const results = await sut.getSearchableDocumentsMetadataByTags('music');
         expect(results.map(result => result.title)).not.toContain('Doc 4');
       });
 
       it('contains all documents with the correct tag match count', async () => {
-        const results = await sut.getDocumentsMetadataByTags('music instructor goga');
+        const results = await sut.getSearchableDocumentsMetadataByTags('music instructor goga');
 
         expect(results).toHaveLength(3);
 
@@ -1198,22 +1219,22 @@ describe('document-service', () => {
 
     describe('when I search using the minus search operators', () => {
       it('excludes all documents containing a tag entirely matched by the minus search operator', async () => {
-        const results = await sut.getDocumentsMetadataByTags('music -goga -cretu');
+        const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cretu');
 
         expect(results).toHaveLength(1);
         expect(results[0].title).toBe('Doc 3');
       });
 
       it('does not exclude documents with tags only partially matched by the minus search operator', async () => {
-        const results = await sut.getDocumentsMetadataByTags('music -goga -cret');
+        const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cret');
 
         expect(results).toHaveLength(2);
-        expect(results[0].title).toBe('Doc 3');
-        expect(results[1].title).toBe('Doc 1');
+        expect(results[0].title).toBe('Doc 1');
+        expect(results[1].title).toBe('Doc 3');
       });
 
       it('does not return any result when the query contains only minus operator expressions', async () => {
-        const results = await sut.getDocumentsMetadataByTags('-cretu');
+        const results = await sut.getSearchableDocumentsMetadataByTags('-cretu');
 
         expect(results).toHaveLength(0);
       });

@@ -1,5 +1,5 @@
 import { validate } from '../validation.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../constants.js';
 import { postRoomBodySchema, patchRoomBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
@@ -8,7 +8,7 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        access: ROOM_ACCESS_LEVEL.public,
+        access: ROOM_ACCESS.public,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
@@ -20,7 +20,7 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        access: ROOM_ACCESS_LEVEL.private,
+        access: ROOM_ACCESS.private,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
@@ -32,7 +32,7 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        access: ROOM_ACCESS_LEVEL.public,
+        access: ROOM_ACCESS.public,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
@@ -44,7 +44,7 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        access: ROOM_ACCESS_LEVEL.public,
+        access: ROOM_ACCESS.public,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
@@ -57,7 +57,7 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null,
-        access: ROOM_ACCESS_LEVEL.public,
+        access: ROOM_ACCESS.public,
         lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 

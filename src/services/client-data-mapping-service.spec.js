@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
-import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
@@ -335,7 +335,7 @@ describe('client-data-mapping-service', () => {
           joinedOn: new Date()
         }
       ],
-      access: ROOM_ACCESS_LEVEL.public
+      access: ROOM_ACCESS.public
     };
 
     beforeEach(async () => {

@@ -3,7 +3,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 class TestsController {
   static get inject() { return [PageRenderer, RoomService, StorageService]; }
@@ -30,7 +30,7 @@ class TestsController {
     ];
 
     const rooms = await this.roomService.getRoomsOwnedByUser(user?._id || 'hihi');
-    const privateRoom = rooms.find(r => r.access === ROOM_ACCESS_LEVEL.private);
+    const privateRoom = rooms.find(r => r.access === ROOM_ACCESS.private);
 
     if (privateRoom) {
       const isRoomOwner = user._id === privateRoom.owner;

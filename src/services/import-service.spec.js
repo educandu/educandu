@@ -90,7 +90,7 @@ describe('import-service', () => {
     let result;
 
     beforeEach(() => {
-      sandbox.stub(documentStore, 'getNonArchivedDocumentsMetadataByOrigin');
+      sandbox.stub(documentStore, 'getPublicNonArchivedDocumentsMetadataByOrigin');
       sandbox.stub(exportApiClient, 'getExports');
 
       importSource = {
@@ -104,7 +104,7 @@ describe('import-service', () => {
     describe('on every call', () => {
       beforeEach(async () => {
         exportApiClient.getExports.resolves({ docs: [] });
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([]);
+        documentStore.getPublicNonArchivedDocumentsMetadataByOrigin.resolves([]);
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
@@ -112,14 +112,14 @@ describe('import-service', () => {
         sinon.assert.calledWith(exportApiClient.getExports, { baseUrl: 'http://other-system.com', apiKey: 'FSDdsh35nADh44nADCD8' });
       });
 
-      it('should call documentStore.getNonArchivedDocumentsMetadataByOrigin', () => {
-        sinon.assert.calledWith(documentStore.getNonArchivedDocumentsMetadataByOrigin, 'external/other-system.com');
+      it('should call documentStore.getPublicNonArchivedDocumentsMetadataByOrigin', () => {
+        sinon.assert.calledWith(documentStore.getPublicNonArchivedDocumentsMetadataByOrigin, 'external/other-system.com');
       });
     });
 
     describe('when there are no exportable and no already imported documents', () => {
       beforeEach(async () => {
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([]);
+        documentStore.getPublicNonArchivedDocumentsMetadataByOrigin.resolves([]);
         exportApiClient.getExports.resolves({ docs: [] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
@@ -131,7 +131,7 @@ describe('import-service', () => {
 
     describe('when there are only already imported documents', () => {
       beforeEach(async () => {
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([{ _id: 'documentId', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
+        documentStore.getPublicNonArchivedDocumentsMetadataByOrigin.resolves([{ _id: 'documentId', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
         exportApiClient.getExports.resolves({ docs: [] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
@@ -143,7 +143,7 @@ describe('import-service', () => {
 
     describe('when there are only exportable documents', () => {
       beforeEach(async () => {
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([]);
+        documentStore.getPublicNonArchivedDocumentsMetadataByOrigin.resolves([]);
         exportApiClient.getExports.resolves({
           docs: [{ _id: 'documentId', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]
         });
@@ -157,7 +157,7 @@ describe('import-service', () => {
 
     describe('when there are both exportable and already imported documents', () => {
       beforeEach(async () => {
-        documentStore.getNonArchivedDocumentsMetadataByOrigin.resolves([
+        documentStore.getPublicNonArchivedDocumentsMetadataByOrigin.resolves([
           { _id: 'documentId1', revision: 'revision1a', updatedOn: 'updatedOn1a', title: 'title1a', slug: 'slug1a', language: 'language1a' },
           { _id: 'documentId2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
           { _id: 'documentId3', revision: 'revision3a', updatedOn: 'updatedOn3a', title: 'title3a', slug: 'slug3a', language: 'language3a' }

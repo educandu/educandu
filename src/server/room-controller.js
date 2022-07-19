@@ -11,7 +11,7 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -207,7 +207,7 @@ export default class RoomController {
       return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
-    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+    const isPrivateRoom = room.access === ROOM_ACCESS.private;
     if (isPrivateRoom && !userId) {
       throw new Unauthorized();
     }
