@@ -1,4 +1,5 @@
 import HttpClient from './http-client.js';
+import urlUtils from '../utils/url-utils.js';
 
 class StorageApiClient {
   static inject() { return [HttpClient]; }
@@ -7,10 +8,10 @@ class StorageApiClient {
     this.httpClient = httpClient;
   }
 
-  getCdnObjects(parentPath) {
+  getCdnObjects({ parentPath, searchTerm = null, recursive = false }) {
     return this.httpClient
       .get(
-        `/api/v1/storage/objects?parentPath=${encodeURIComponent(parentPath)}`,
+        `/api/v1/storage/objects?${urlUtils.composeQueryString({ parentPath, searchTerm, recursive })}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -38,7 +38,7 @@ function getDocUrl({ id, slug, view, templateDocumentId }) {
   const idAndSlugPart = urlUtils.concatParts(encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 
   const url = urlUtils.concatParts(docsPrefix, idAndSlugPart);
-  const queryString = urlUtils.composeQueryString([['view', view], ['templateDocumentId', templateDocumentId]]);
+  const queryString = urlUtils.composeQueryString({ view, templateDocumentId });
   return queryString ? `${url}?${queryString}` : url;
 }
 
@@ -95,7 +95,7 @@ function getLogoutUrl() {
 }
 
 function getDashboardUrl({ tab } = {}) {
-  const queryString = urlUtils.composeQueryString([['tab', tab]]);
+  const queryString = urlUtils.composeQueryString({ tab });
   return queryString ? `${dashboardPath}?${queryString}` : dashboardPath;
 }
 
@@ -125,7 +125,7 @@ function getRoomUrl(id, slug) {
 
 function getLessonUrl({ id, slug, view, templateLessonId }) {
   const url = urlUtils.concatParts(lessonsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
-  const queryString = urlUtils.composeQueryString([['view', view], ['templateLessonId', templateLessonId]]);
+  const queryString = urlUtils.composeQueryString({ view, templateLessonId });
   return queryString ? `${url}?${queryString}` : url;
 }
 

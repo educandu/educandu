@@ -21,7 +21,7 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
     if (value.length < MIN_CHAR_COUNT) {
       Modal.error({
         title: t('common:error'),
-        content: t('searchTextTooShort', { minCharCount: MIN_CHAR_COUNT }),
+        content: t('common:searchTextTooShort', { minCharCount: MIN_CHAR_COUNT }),
         onOk: () => inputRef.current.focus()
       });
     } else {

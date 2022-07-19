@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import sut from './url-utils.js';
 
 describe('url-utils', () => {
@@ -56,6 +57,48 @@ describe('url-utils', () => {
         });
         it(`it should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('composeQueryString', () => {
+    const testCases = [
+      {
+        input: {},
+        expectedResult: ''
+      },
+      {
+        input: { a: null },
+        expectedResult: ''
+      },
+      {
+        // eslint-disable-next-line no-undefined
+        input: { a: undefined },
+        expectedResult: ''
+      },
+      {
+        input: { a: '', b: false },
+        expectedResult: 'a=&b=false'
+      },
+      {
+        input: { a: true, b: 3.239847 },
+        expectedResult: 'a=true&b=3.239847'
+      },
+      {
+        input: { a: 'Tom&Jerry', b: new Date('2022-07-19T15:57:33.984Z') },
+        expectedResult: 'a=Tom%26Jerry&b=2022-07-19T15%3A57%3A33.984Z'
+      }
+    ];
+
+    testCases.forEach(({ input, expectedResult }) => {
+      describe(`when input is ${JSON.stringify(input)}`, () => {
+        let actualResult;
+        beforeEach(() => {
+          actualResult = sut.composeQueryString(input);
+        });
+        it(`should return '${expectedResult}'`, () => {
+          expect(actualResult).toBe(expectedResult);
         });
       });
     });
