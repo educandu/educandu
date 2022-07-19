@@ -22,7 +22,7 @@ import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
+import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 
@@ -39,7 +39,7 @@ function Lesson({ PageTemplate, initialState }) {
   const { formatDate } = useDateFormat();
   const pluginRegistry = useService(PluginRegistry);
 
-  const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
+  const startsInEditMode = request.query.view === DOC_VIEW_QUERY_PARAM.edit;
 
   const { room } = initialState;
   const isRoomOwner = user?._id === room.owner.key;
@@ -67,7 +67,7 @@ function Lesson({ PageTemplate, initialState }) {
 
   useEffect(() => {
     if (isInEditMode) {
-      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
+      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: DOC_VIEW_QUERY_PARAM.edit }));
     } else {
       history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
     }

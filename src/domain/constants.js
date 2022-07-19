@@ -69,10 +69,6 @@ export const DOC_VIEW_QUERY_PARAM = {
   history: 'history'
 };
 
-export const LESSON_VIEW_QUERY_PARAM = {
-  edit: 'edit'
-};
-
 export const FAVORITE_TYPE = {
   document: 'document',
   room: 'room'

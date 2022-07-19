@@ -34,7 +34,7 @@ export const documentMetadataBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
-  dueOn: joi.date().allow(null)
+  dueOn: joi.string().allow('')
 });
 
 export const restoreRevisionBodySchema = joi.object({
