@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, no-console, no-await-in-loop */
 
-export default class Educandu_2022_07_18_03_rename_lessonsMode_in_rooms {
+export default class Educandu_2022_07_20_01_rename_lessonsMode_in_rooms {
   constructor(db) {
     this.db = db;
   }
