@@ -96,8 +96,9 @@
 }
 
 .InteractiveMediaEditor-answer {
-  display: flex;
+  display: grid;
   align-items: center;
+  grid-template-columns: 1fr auto auto;
   margin-bottom: @edu-content-padding;
 }
 
@@ -116,19 +117,13 @@
 }
 
 .InteractiveMediaDisplay-overlay {
-  position: absolute;
   padding: @edu-content-padding;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background-color: @edu-background-color-light;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   overflow: auto;
 }
-
 
 .InteractiveMediaDisplay-overlayChapterTitle {
   flex: none;
@@ -158,10 +153,6 @@
   display: flex;
   gap: @edu-controls-group-gap;
   align-items: center;
-
-  &.is-disabled {
-    color: @edu-text-color-secondary;
-  }
 }
 
 .InteractiveMediaDisplay-answerMark {
@@ -176,7 +167,6 @@
   color: @edu-error-color;
 }
 
-
 .InteractiveMediaDisplay-overlayChapterControls {
   flex: none;
   display: flex;
@@ -184,66 +174,15 @@
   justify-content: flex-end;
 }
 
-.InteractiveMediaDisplay-chaptersResolution {
-  margin-top: 25px;
+.InteractiveMediaDisplay-progressBar {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.InteractiveMediaDisplay-progressBarCards {
   display: flex;
   align-items: center;
-  gap: 5px;
-}
-
-.InteractiveMediaDisplay-chaptersResolutionLabel {
-  margin-right: 10px;
-}
-
-.InteractiveMediaDisplay-chapterResolutionContainer {
-  width: 15px;
-  height: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.InteractiveMediaDisplay-chapterResolution {
-  width: 10px;
-  height: 10px;
-  padding: 3px;
-  border-radius: 50%;
-  background-color: @edu-background-color-base;
-
-  &.InteractiveMediaDisplay-chapterResolution--correctAnswer {
-    background-color: @edu-success-color;
-  }
-
-  &.InteractiveMediaDisplay-chapterResolution--incorrectAnswer {
-    background-color: @edu-error-color;
-  }
-}
-
-.InteractiveMediaDisplay-overlayResults {
-  flex: 1 0 auto;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.InteractiveMediaDisplay-overlayResultsTitle {
-  font-size: 20px;
-  margin-bottom: 30px;
-}
-
-.InteractiveMediaDisplay-overlayResultsChapter {
-  display: flex;
-  gap: @edu-controls-group-gap;
-  align-items: center;
-  justify-content: center;
-}
-
-.InteractiveMediaDisplay-overlayResultsChapterTitle {
-  .m-overflow-ellipsis;
-  width: 300px;
-}
-
-.InteractiveMediaDisplay-overlayResultsSummary {
-  margin-top: 30px;
+  gap: 10px;
 }

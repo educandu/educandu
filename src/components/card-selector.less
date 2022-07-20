@@ -18,18 +18,24 @@
   border: 1px solid @edu-border-color-base;
   background-color: @edu-background-color-base;
 
-  &.was-selected {
+  &.is-disabled {
+    cursor: not-allowed;
+    color: @edu-disabled-color;
+    border-color: @edu-disabled-color;
+    background-color: @edu-background-color-light;
+  }
+
+  &.is-visited {
     border-color: lighten(@edu-primary-color-light, 25%);
     background-color: @card-selector-selected-card-background-color;
   }
 
   &.is-selected {
     border-color: @edu-border-color-active;
-    background-color: @card-selector-selected-card-background-color;
     box-shadow: 0 0 0 @edu-outline-width fade(@edu-border-color-active, @edu-outline-fade);
   }
 
-  &:hover {
+  &:not(.is-disabled):hover {
     border-color: @edu-border-color-active;
   }
 }

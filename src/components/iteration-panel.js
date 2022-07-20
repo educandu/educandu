@@ -4,7 +4,7 @@ import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
-function IterationPanel({ items, selectedItemIndex, onNextClick, onPreviousClick, onResetClick }) {
+function IterationPanel({ itemCount, selectedItemIndex, alwaysAllowPreviousClick, disabled, onNextClick, onPreviousClick, onResetClick }) {
   const { t } = useTranslation();
 
   return (
@@ -12,20 +12,21 @@ function IterationPanel({ items, selectedItemIndex, onNextClick, onPreviousClick
       <Button
         shape="circle"
         icon={<LeftOutlined />}
-        disabled={selectedItemIndex === 0}
+        disabled={disabled || (!alwaysAllowPreviousClick && selectedItemIndex === 0)}
         onClick={onPreviousClick}
         />
-      <Tooltip title={t('common:reset')}>
+      <Tooltip title={t('common:reset')} disabled={disabled}>
         <Button
           shape="circle"
           icon={<ReloadOutlined />}
+          disabled={disabled}
           onClick={onResetClick}
           />
       </Tooltip>
       <Button
         shape="circle"
         icon={<RightOutlined />}
-        disabled={selectedItemIndex === items.length - 1}
+        disabled={disabled || selectedItemIndex === itemCount - 1}
         onClick={onNextClick}
         />
     </div>
@@ -33,11 +34,18 @@ function IterationPanel({ items, selectedItemIndex, onNextClick, onPreviousClick
 }
 
 IterationPanel.propTypes = {
-  items: PropTypes.array.isRequired,
+  alwaysAllowPreviousClick: PropTypes.bool,
+  disabled: PropTypes.bool,
+  itemCount: PropTypes.number.isRequired,
   onNextClick: PropTypes.func.isRequired,
   onPreviousClick: PropTypes.func.isRequired,
   onResetClick: PropTypes.func.isRequired,
   selectedItemIndex: PropTypes.number.isRequired
+};
+
+IterationPanel.defaultProps = {
+  alwaysAllowPreviousClick: false,
+  disabled: false
 };
 
 export default IterationPanel;

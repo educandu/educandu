@@ -77,8 +77,9 @@ function QuickTesterDisplay({ content }) {
                 <CardSelector
                   cards={testCards}
                   selectedCardIndex={currentTestIndex}
-                  previouslySelectedCardIndices={viewedTestIndices}
+                  visitedCardIndices={viewedTestIndices}
                   onCardSelected={handleTestCardSelected}
+                  treatSelectedCardAsVisited
                   />
                 {content.testsOrder === TESTS_ORDER.random && (
                   <Tooltip title={t('common:randomizedTests')}>
@@ -87,7 +88,7 @@ function QuickTesterDisplay({ content }) {
                 )}
               </div>
               <IterationPanel
-                items={testCards}
+                itemCount={testCards.length}
                 selectedItemIndex={currentTestIndex}
                 onNextClick={handleNextTestClick}
                 onPreviousClick={handlePreviousTestClick}

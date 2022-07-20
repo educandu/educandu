@@ -10,7 +10,7 @@ const MARK_TIMECODE_WIDTH_IN_PX = 40;
 function MediaPlayerProgressBar({
   durationInMilliseconds,
   playedMilliseconds,
-  marks,
+  parts,
   onSeek,
   onSeekStart,
   onSeekEnd
@@ -137,17 +137,21 @@ function MediaPlayerProgressBar({
     };
   }, [isDragging, handleWindowMouseMove, handleWindowMouseUp, handleWindowTouchMove, handleWindowTouchEnd]);
 
-  const renderMark = mark => {
-    const leftPx = msToPxRatio * mark.timecode;
+  const renderPartStart = part => {
+    if (part.startTimecode === 0) {
+      return <Fragment key={part.startTimecode} />;
+    }
+
+    const leftPx = msToPxRatio * part.startTimecode;
 
     return (
-      <Fragment key={mark.key}>
+      <Fragment key={part.startTimecode}>
         <div className="MediaPlayerProgressBar-mark" style={{ left: `${leftPx}px` }} />
         <div
           className="MediaPlayerProgressBar-markTimecode"
           style={{ width: `${MARK_TIMECODE_WIDTH_IN_PX}px`, left: `${leftPx - (MARK_TIMECODE_WIDTH_IN_PX / 2)}px` }}
           >
-          {formatMillisecondsAsDuration(mark.timecode)}
+          {formatMillisecondsAsDuration(part.startTimecode)}
         </div>
       </Fragment>
     );
@@ -169,7 +173,7 @@ function MediaPlayerProgressBar({
         </div>
       )}
       <div className="MediaPlayerProgressBar-progress" style={{ width: `${currentProgressInPx}px` }} />
-      {isMediaLoaded && marks.map(renderMark)}
+      {isMediaLoaded && parts.map(renderPartStart)}
       <div
         className="MediaPlayerProgressBar-interractionOverlay"
         onMouseDown={handleBarMouseDown}
@@ -184,21 +188,19 @@ function MediaPlayerProgressBar({
 
 MediaPlayerProgressBar.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
-  marks: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    timecode: PropTypes.number.isRequired,
-    text: PropTypes.string
-  })),
   onSeek: PropTypes.func.isRequired,
   onSeekEnd: PropTypes.func,
   onSeekStart: PropTypes.func,
+  parts: PropTypes.arrayOf(PropTypes.shape({
+    startTimecode: PropTypes.number.isRequired
+  })),
   playedMilliseconds: PropTypes.number.isRequired
 };
 
 MediaPlayerProgressBar.defaultProps = {
-  marks: [],
   onSeekEnd: () => {},
-  onSeekStart: () => {}
+  onSeekStart: () => {},
+  parts: [{ startTimecode: 0 }]
 };
 
 export default MediaPlayerProgressBar;

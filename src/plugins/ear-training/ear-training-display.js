@@ -163,7 +163,8 @@ function EarTrainingDisplay({ content }) {
                 cards={testCards}
                 onCardSelected={handleTestCardSelected}
                 selectedCardIndex={currentTestIndex}
-                previouslySelectedCardIndices={viewedTestIndices}
+                visitedCardIndices={viewedTestIndices}
+                treatSelectedCardAsVisited
                 />
               {content.testsOrder === TESTS_ORDER.random && (
                 <Tooltip title={t('common:randomizedTests')}>
@@ -172,7 +173,7 @@ function EarTrainingDisplay({ content }) {
               )}
             </div>
             <IterationPanel
-              items={testCards}
+              itemCount={testCards.length}
               selectedItemIndex={currentTestIndex}
               onNextClick={handleNextTestClick}
               onPreviousClick={handlePreviousTestClick}
