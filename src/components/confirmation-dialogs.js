@@ -102,18 +102,6 @@ export function confirmLeaveRoom(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
-export function confirmLessonDelete(t, lessonName, onOk, onCancel = () => { }) {
-  confirm({
-    title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:deleteLessonConfirmation', { lessonName }),
-    okText: t('common:yes'),
-    okType: 'danger',
-    cancelText: t('common:no'),
-    onOk,
-    onCancel
-  });
-}
-
 export function confirmCdnFileDelete(t, fileName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),

@@ -417,41 +417,12 @@ describe('client-data-mapping-service', () => {
         room: {
           name: room.name,
           access: room.access,
-          lessonsMode: room.lessonsMode,
+          documentsMode: room.documentsMode,
           owner: {
             username: user1.username
           }
         }
       });
-    });
-  });
-
-  describe('mapLessonsMetadata', () => {
-    let lessons;
-
-    beforeEach(async () => {
-      lessons = [
-        {
-          createdOn: new Date(),
-          updatedOn: new Date(),
-          schedule: {
-            startsOn: new Date()
-          }
-        }
-      ];
-      result = await sut.mapLessonsMetadata(lessons);
-    });
-
-    it('should map the lessons metadata', () => {
-      expect(result).toEqual([
-        {
-          createdOn: lessons[0].createdOn.toISOString(),
-          updatedOn: lessons[0].updatedOn.toISOString(),
-          schedule: {
-            startsOn: lessons[0].schedule.startsOn.toISOString()
-          }
-        }
-      ]);
     });
   });
 });

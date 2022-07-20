@@ -18,13 +18,11 @@ const resetPasswordPath = '/reset-password';
 const docsPrefix = '/docs/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
-const lessonsPrefix = '/lessons/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
-const lessonPageRegex = new RegExp(`^(?:${escapeStringRegexp(lessonsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
 function getDocsUrl() {
   return docsPath;
@@ -123,20 +121,9 @@ function getRoomUrl(id, slug) {
   return urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 }
 
-function getLessonUrl({ id, slug, view, templateLessonId }) {
-  const url = urlUtils.concatParts(lessonsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
-  const queryString = urlUtils.composeQueryString({ view, templateLessonId });
-  return queryString ? `${url}?${queryString}` : url;
-}
-
 function getDocIdIfDocUrl(url) {
   const documentId = url.match(docPageRegex)?.[1];
   return documentId || null;
-}
-
-function getLessonIdIfLessonUrl(url) {
-  const lessonId = url.match(lessonPageRegex)?.[1];
-  return lessonId || null;
 }
 
 export default {
@@ -163,7 +150,5 @@ export default {
   getBatchUrl,
   getImportedDocUrl,
   getImportSourceBaseUrl,
-  getLessonUrl,
-  getDocIdIfDocUrl,
-  getLessonIdIfLessonUrl
+  getDocIdIfDocUrl
 };

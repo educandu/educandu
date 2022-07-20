@@ -5,10 +5,9 @@ import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TASK_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -18,16 +17,15 @@ const CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE = 'Cannot create a new import batch 
 
 class BatchService {
   static get inject() {
-    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, LessonStore, RoomStore];
+    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
   }
 
-  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, lessonStore, roomStore) {
+  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore) {
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.documentStore = documentStore;
-    this.lessonStore = lessonStore;
     this.roomStore = roomStore;
   }
 
@@ -108,15 +106,8 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnResourcesConsolidation);
 
-    const [allDocumentIds, allLessonIds] = await Promise.all([
-      this.documentStore.getAllDocumentIds(),
-      this.lessonStore.getAllLessonIds()
-    ]);
-
-    const tasksParams = [
-      ...allDocumentIds.map(documentId => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document, documentId })),
-      ...allLessonIds.map(id => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson, lessonId: id }))
-    ];
+    const allDocumentIds = await this.documentStore.getAllDocumentIds();
+    const tasksParams = allDocumentIds.map(documentId => ({ documentId }));
 
     const tasks = tasksParams.map(param => this._createTaskObject(batch._id, TASK_TYPE.cdnResourcesConsolidation, param));
 
@@ -137,15 +128,13 @@ class BatchService {
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnUploadDirectoryCreation);
 
-    const [allDocumentIds, allLessonIds, allRoomIds] = await Promise.all([
+    const [allDocumentIds, allRoomIds] = await Promise.all([
       this.documentStore.getAllDocumentIds(),
-      this.lessonStore.getAllLessonIds(),
       this.roomStore.getAllPrivateRoomIds()
     ]);
 
     const tasksParams = [
       ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
-      ...allLessonIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson, lessonId: id })),
       ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
     ];
 

@@ -117,8 +117,8 @@ export function getPrivateRoomsRootPath() {
   return 'rooms';
 }
 
-export function getPublicHomePath(documentOrLessonId) {
-  return `media/${documentOrLessonId}`;
+export function getPublicHomePath(documentId) {
+  return `media/${documentId}`;
 }
 
 export function getPathForPrivateRoom(roomId) {

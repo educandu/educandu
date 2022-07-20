@@ -23,7 +23,6 @@ const MANAGE_SETTINGS = 'manage-settings';
 const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const OWN_ROOMS = 'own-rooms';
 const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
-const OWN_LESSONS = 'own-lessons';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 
@@ -35,7 +34,6 @@ const userPermissions = [
   DELETE_OWN_FILES,
   CREATE_FILE,
   OWN_ROOMS,
-  OWN_LESSONS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_PRIVATE_ROOMS
 ];
@@ -110,7 +108,6 @@ export default {
   DELETE_ANY_STORAGE_FILE,
   OWN_ROOMS,
   DELETE_FOREIGN_ROOMS,
-  OWN_LESSONS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_PRIVATE_ROOMS
 };

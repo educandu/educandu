@@ -2,7 +2,7 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -10,61 +10,77 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
+import roomUtils from '../../utils/room-utils.js';
 import { useDateFormat } from '../locale-context.js';
-import lessonsUtils from '../../utils/lessons-utils.js';
+import { useSettings } from '../settings-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
+import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
-import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
-import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_LESSONS_MODE } from '../../domain/constants.js';
-import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
+import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../../domain/constants.js';
+import { roomShape, invitationShape, documentMetadataShape } from '../../ui/default-prop-types.js';
+import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortLessons = lessons => [...lessons].sort(by(l => !!l.schedule).thenBy(l => l.schedule?.startsOn || l.createdOn));
+const sortDocuments = documents => [...documents].sort(by(l => l.dueOn || l.createdOn));
+
+function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
+  return {
+    isVisible: false,
+    cloneDocumentId: documentToClone?._id,
+    templateDocumentId: documentToClone ? null : settings.templateDocument?.documentId,
+    initialDocumentMetadata: documentToClone
+      ? {
+        ...documentToClone,
+        title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
+        slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
+        tags: [...documentToClone.tags]
+      }
+      : {
+        roomId: room._id
+      }
+  };
+}
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const now = new Date();
   const formRef = useRef(null);
+  const settings = useSettings();
   const { t } = useTranslation('room');
   const { formatDate, formatTimeTo } = useDateFormat();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [lessons, setLessons] = useState(sortLessons(initialState.lessons));
+  const [documents, setDocuments] = useState(sortDocuments(initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
-  const [lessonMetadataModalState, setLessonMetadataModalState] = useState({
-    isVisible: false,
-    isCloning: false,
-    templateLessonId: null,
-    initialLessonMetadata: { roomId: room._id }
-  });
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ room, settings, t }));
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
+  const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
-  const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
+  const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
   useEffect(() => {
-    history.replaceState(null, '', urls.getRoomUrl(room._id, room.slug));
+    history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
 
   const handleCreateInvitationButtonClick = event => {
@@ -75,7 +91,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleRoomDelete = async () => {
     try {
       await roomApiClient.deleteRoom(room._id);
-      window.location = urls.getDashboardUrl();
+      window.location = routes.getDashboardUrl();
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -84,7 +100,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleLeaveRoom = async () => {
     try {
       await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: user._id });
-      window.location = urls.getDashboardUrl({ tab: 'rooms' });
+      window.location = routes.getDashboardUrl({ tab: 'rooms' });
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -109,37 +125,28 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleNewLessonClick = (lessonToClone = null) => {
-    setLessonMetadataModalState({
-      isVisible: true,
-      isCloning: !!lessonToClone,
-      templateLessonId: lessonToClone?._id || null,
-      initialLessonMetadata: lessonToClone
-        ? {
-          ...lessonToClone,
-          title: `${lessonToClone.title} ${t('common:copyTitleSuffix')}`,
-          slug: lessonToClone.slug ? `${lessonToClone.slug}-${t('common:copySlugSuffix')}` : ''
-        }
-        : {
-          roomId: room._id
-        }
+  const handleNewDocumentClick = (documentToClone = null) => {
+    setDocumentMetadataModalState({
+      ...getDocumentMetadataModalState({ documentToClone, room, settings, t }),
+      isVisible: true
     });
   };
 
-  const handleLessonMetadataModalSave = createdLessonOrLessons => {
-    const lessonToShow = lessonMetadataModalState.isCloning ? createdLessonOrLessons : createdLessonOrLessons[0];
-    window.location = urls.getLessonUrl({
-      id: lessonToShow._id,
-      slug: lessonToShow.slug,
-      view: LESSON_VIEW_QUERY_PARAM.edit,
-      templateLessonId: lessonMetadataModalState.isCloning ? lessonMetadataModalState.templateLessonId : null
+  const handleDocumentMetadataModalSave = (createdDocumentOrDocuments, templateDocumentId) => {
+    const documentToShow = documentMetadataModalState.cloneDocumentId ? createdDocumentOrDocuments : createdDocumentOrDocuments[0];
+
+    window.location = routes.getDocUrl({
+      id: documentToShow._id,
+      slug: documentToShow.slug,
+      view: DOC_VIEW_QUERY_PARAM.edit,
+      templateDocumentId: documentMetadataModalState.cloneDocumentId || templateDocumentId
     });
 
-    setLessonMetadataModalState(prev => ({ ...prev, isVisible: false }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
-  const handleLessonMetadataModalCancel = () => {
-    setLessonMetadataModalState(prev => ({ ...prev, isVisible: false }));
+  const handleDocumentMetadataModalCancel = () => {
+    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleUpdateRoomClick = () => {
@@ -148,10 +155,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, lessonsMode, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, documentsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, lessonsMode, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, lessonsMode, description });
+      const updatedRoom = { ...room, name, slug, documentsMode, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, documentsMode, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);
@@ -165,10 +172,10 @@ export default function Room({ PageTemplate, initialState }) {
     setIsRoomUpdateButtonDisabled(false);
   };
 
-  const handleDeleteLessonClick = lesson => {
-    confirmLessonDelete(t, lesson.title, async () => {
-      await lessonApiClient.deleteLesson(lesson._id);
-      setLessons(sortLessons(ensureIsExcluded(lessons, lesson)));
+  const handleDeleteDocumentClick = doc => {
+    confirmDocumentDelete(t, doc.title, async () => {
+      await documentApiClient.hardDeleteDocument(doc._id);
+      setDocuments(sortDocuments(ensureIsExcluded(documents, doc)));
     });
   };
 
@@ -186,37 +193,34 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
-  const renderLesson = lesson => {
-    const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
-
-    const startsOn = lesson.schedule?.startsOn;
-    const renderIcons = isRoomOwner || isRoomCollaborator;
-    const dueDate = upcommingLesson?._id === lesson._id ? formatTimeTo(startsOn) : null;
+  const renderDocument = doc => {
+    const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+    const dueDate = upcomingDueDocument?._id === doc._id ? formatTimeTo(doc.dueOn) : null;
 
     const containerClasses = classNames({
-      'RoomPage-lessonInfo': true,
-      'RoomPage-lessonInfo--withIcons': renderIcons,
-      'RoomPage-lessonInfo--withDueDate': dueDate
+      'RoomPage-documentInfo': true,
+      'RoomPage-documentInfo--withIcons': isRoomOwnerOrCollaborator,
+      'RoomPage-documentInfo--withDueDate': !!dueDate
     });
 
     return (
-      <div key={lesson._id} className={containerClasses}>
-        {renderIcons && (
-          <div className="RoomPage-lessonInfoItem RoomPage-lessonInfoItem--icons">
+      <div key={doc._id} className={containerClasses}>
+        {isRoomOwnerOrCollaborator && (
+          <div className="RoomPage-documentInfoItem RoomPage-documentInfoItem--icons">
             <Tooltip title={t('common:clone')}>
-              <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
+              <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewDocumentClick(doc)} />
             </Tooltip>
             <Tooltip title={t('common:delete')}>
-              <DeleteButton onClick={() => handleDeleteLessonClick(lesson)} />
+              <DeleteButton onClick={() => handleDeleteDocumentClick(doc)} />
             </Tooltip>
           </div>
         )}
-        <div className="RoomPage-lessonInfoItem">
-          {startsOn && <span className="RoomPage-lessonDate">{formatDate(startsOn)}</span>}
-          <a href={url}>{lesson.title}</a>
+        <div className="RoomPage-documentInfoItem">
+          {doc.dueOn && <span className="RoomPage-documentDueOnDate">{formatDate(doc.dueOn)}</span>}
+          <a href={url}>{doc.title}</a>
         </div>
         {dueDate && (
-          <div className="RoomPage-lessonInfoItem">
+          <div className="RoomPage-documentInfoItem">
             {dueDate}
           </div>
         )}
@@ -284,23 +288,23 @@ export default function Room({ PageTemplate, initialState }) {
     </Card>
   );
 
-  const renderRoomLessonsCard = () => (
+  const renderRoomDocumentsCard = () => (
     <Card
       className="RoomPage-card"
-      actions={(isRoomOwner || isRoomCollaborator) && [
+      actions={isRoomOwnerOrCollaborator && [
         <Button
           className="RoomPage-cardButton"
-          key="createLesson"
+          key="createDocument"
           type="primary"
           shape="circle"
           icon={<PlusOutlined />}
           size="medium"
-          onClick={() => handleNewLessonClick()}
+          onClick={() => handleNewDocumentClick()}
           />
       ]}
       >
       {room.description && <Markdown className="RoomPage-description" renderMedia>{room.description}</Markdown>}
-      {lessons.length ? lessons.map(renderLesson) : t('lessonsPlaceholder')}
+      {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
     </Card>
   );
 
@@ -308,7 +312,7 @@ export default function Room({ PageTemplate, initialState }) {
     <PageTemplate>
       <div className="RoomPage">
         <Breadcrumb className="Breadcrumbs">
-          <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+          <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
           <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
         </Breadcrumb>
         <MetadataTitle
@@ -318,19 +322,19 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
             {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}DocumentsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
           )}
         </div>
 
-        {!isRoomOwner && renderRoomLessonsCard()}
+        {!isRoomOwner && renderRoomDocumentsCard()}
 
         {isRoomOwner && (
           <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
-            <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
-              {renderRoomLessonsCard()}
+            <TabPane className="Tabs-tabPane" tab={t('documentsTabTitle')} key="1">
+              {renderRoomDocumentsCard()}
             </TabPane>
 
             <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
@@ -375,13 +379,14 @@ export default function Room({ PageTemplate, initialState }) {
           </Tabs>
         )}
 
-        <LessonMetadataModal
-          mode={LESSON_MODAL_MODE.create}
-          isVisible={lessonMetadataModalState.isVisible}
-          allowMultiple={!lessonMetadataModalState.isCloning}
-          initialLessonMetadata={lessonMetadataModalState.initialLessonMetadata}
-          onSave={handleLessonMetadataModalSave}
-          onCancel={handleLessonMetadataModalCancel}
+        <DocumentMetadataModal
+          mode={DOCUMENT_METADATA_MODAL_MODE.create}
+          isVisible={documentMetadataModalState.isVisible}
+          allowMultiple={!documentMetadataModalState.cloneDocumentId}
+          templateDocumentId={documentMetadataModalState.templateDocumentId}
+          initialDocumentMetadata={documentMetadataModalState.initialDocumentMetadata}
+          onSave={handleDocumentMetadataModalSave}
+          onClose={handleDocumentMetadataModalCancel}
           />
       </div>
     </PageTemplate>);
@@ -392,6 +397,6 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape).isRequired,
-    lessons: PropTypes.arrayOf(lessonMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };

@@ -8,10 +8,8 @@ import { userActivitiesShape } from '../ui/default-prop-types.js';
 import ItemEditedIcon from './icons/user-activities/item-edited-icon.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
-import LessonCreatedIcon from './icons/user-activities/lesson-created-icon.js';
 import DocumentCreatedIcon from './icons/user-activities/document-created-icon.js';
 import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
-import LessonMarkedFavoriteIcon from './icons/user-activities/lesson-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
 function NewsTab({ activities }) {
@@ -32,11 +30,6 @@ function NewsTab({ activities }) {
         case USER_ACTIVITY_TYPE.roomMarkedFavorite:
         case USER_ACTIVITY_TYPE.roomJoined:
           deprecatedTitle = t('common:deletedRoom');
-          break;
-        case USER_ACTIVITY_TYPE.lessonCreated:
-        case USER_ACTIVITY_TYPE.lessonUpdated:
-        case USER_ACTIVITY_TYPE.lessonMarkedFavorite:
-          deprecatedTitle = t('common:deletedLesson');
           break;
         default:
           throw new Error(`Invalid activity type: ${type}`);
@@ -144,42 +137,6 @@ function NewsTab({ activities }) {
     });
   };
 
-  const renderLessonCreatedActivity = activity => {
-    return renderActivity({
-      icon: <LessonCreatedIcon />,
-      type: activity.type,
-      timestamp: activity.timestamp,
-      description: t('lessonCreatedActivity'),
-      title: activity.data.title,
-      href: urls.getLessonUrl({ id: activity.data._id }),
-      isDeprecated: activity.isDeprecated
-    });
-  };
-
-  const renderLessonUpdatedActivity = activity => {
-    return renderActivity({
-      icon: <ItemEditedIcon />,
-      type: activity.type,
-      timestamp: activity.timestamp,
-      description: t('lessonUpdatedActivity'),
-      title: activity.data.title,
-      href: urls.getLessonUrl({ id: activity.data._id }),
-      isDeprecated: activity.isDeprecated
-    });
-  };
-
-  const renderLessonMarkedFavoriteActivity = activity => {
-    return renderActivity({
-      icon: <LessonMarkedFavoriteIcon />,
-      type: activity.type,
-      timestamp: activity.timestamp,
-      description: t('lessonMarkedFavoriteActivity'),
-      title: activity.data.title,
-      href: urls.getLessonUrl({ id: activity.data._id }),
-      isDeprecated: activity.isDeprecated
-    });
-  };
-
   const renderActivityByType = activity => {
     switch (activity.type) {
       case USER_ACTIVITY_TYPE.documentCreated:
@@ -196,12 +153,6 @@ function NewsTab({ activities }) {
         return renderRoomMarkedFavoriteActivity(activity);
       case USER_ACTIVITY_TYPE.roomJoined:
         return renderRoomJoinedActivity(activity);
-      case USER_ACTIVITY_TYPE.lessonCreated:
-        return renderLessonCreatedActivity(activity);
-      case USER_ACTIVITY_TYPE.lessonUpdated:
-        return renderLessonUpdatedActivity(activity);
-      case USER_ACTIVITY_TYPE.lessonMarkedFavorite:
-        return renderLessonMarkedFavoriteActivity(activity);
       default:
         return null;
     }

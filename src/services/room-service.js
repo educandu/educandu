@@ -7,7 +7,6 @@ import urlUtils from '../utils/url-utils.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import { ensureIsExcluded } from '../utils/array-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { getPathForPrivateRoom } from '../utils/storage-utils.js';
@@ -25,15 +24,14 @@ const logger = new Logger(import.meta.url);
 
 export default class RoomService {
   static get inject() {
-    return [Cdn, RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, TransactionRunner];
+    return [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, TransactionRunner];
   }
 
-  constructor(cdn, roomStore, roomInvitationStore, lessonStore, lockStore, userStore, transactionRunner) {
+  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, transactionRunner) {
     this.cdn = cdn;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
-    this.lessonStore = lessonStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
   }
@@ -67,7 +65,7 @@ export default class RoomService {
     return !!room;
   }
 
-  async createRoom({ name, slug, access, lessonsMode, user }) {
+  async createRoom({ name, slug, access, documentsMode, user }) {
     const roomId = uniqueId.create();
 
     if (access === ROOM_ACCESS.private) {
@@ -79,7 +77,7 @@ export default class RoomService {
       name,
       slug: slug?.trim() || '',
       access,
-      lessonsMode,
+      documentsMode,
       description: '',
       owner: user._id,
       createdBy: user._id,

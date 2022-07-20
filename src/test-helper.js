@@ -9,7 +9,7 @@ import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { DOCUMENT_ACCESS, ROLE, ROOM_ACCESS, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
+import { ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -167,7 +167,7 @@ export async function createTestRoom(container, roomValues) {
     _id: roomValues._id || uniqueId.create(),
     name: roomValues.name || 'my-room',
     access: roomValues.access || ROOM_ACCESS.public,
-    lessonsMode: roomValues.lessonsMode || ROOM_LESSONS_MODE.exclusive,
+    documentsMode: roomValues.documentsMode || ROOM_DOCUMENTS_MODE.exclusive,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),
@@ -177,36 +177,12 @@ export async function createTestRoom(container, roomValues) {
   return room;
 }
 
-export async function createTestLesson(container, lessonValues) {
-  const db = container.get(Database);
-  const now = new Date();
-  const createdBy = lessonValues.createdBy || uniqueId.create();
-
-  const lesson = {
-    _id: lessonValues._id || uniqueId.create(),
-    roomId: lessonValues.roomId || uniqueId.create(),
-    title: lessonValues.title || 'my-lesson',
-    slug: lessonValues.slug || 'my-lesson-slug',
-    schedule: lessonValues.schedule || null,
-    createdOn: lessonValues.createdOn || now,
-    createdBy,
-    updatedOn: lessonValues.updatedOn || now,
-    updatedBy: lessonValues.updatedBy || createdBy,
-    language: lessonValues.language || 'en',
-    sections: lessonValues.sections || [],
-    cdnResources: lessonValues.cdnResources || []
-  };
-  await db.lessons.insertOne(lesson);
-  return lesson;
-}
-
 export function createTestDocument(container, user, data) {
   const documentService = container.get(DocumentService);
   return documentService.createDocument({
     data: {
       ...data,
       title: data.title ?? 'Title',
-      access: data.access ?? DOCUMENT_ACCESS.public,
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en'

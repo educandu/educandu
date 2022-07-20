@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import StorageController from './storage-controller.js';
-import { ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { BadRequest, Unauthorized } = httpErrors;
 
@@ -70,7 +70,7 @@ describe('storage-controller', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, query: { parentPath: `rooms/${room._id}/media` } };
         res = {};
       });
@@ -88,7 +88,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
         parentDirectory = `rooms/${room._id}`;
         currentDirectory = `rooms/${room._id}/media`;
         objects = [];
@@ -127,7 +127,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         parentDirectory = `rooms/${room._id}`;
         currentDirectory = `rooms/${room._id}/media`;
         objects = [];
@@ -233,7 +233,7 @@ describe('storage-controller', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = {};
       });
@@ -249,7 +249,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
         req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -282,7 +282,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -337,7 +337,7 @@ describe('storage-controller', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
         res = {};
       });
@@ -353,7 +353,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
-        room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
         req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -386,7 +386,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -416,7 +416,7 @@ describe('storage-controller', () => {
     describe('when storage path type is public', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
-        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
         req = { user, query: { path: 'media/object-to-delete' } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });

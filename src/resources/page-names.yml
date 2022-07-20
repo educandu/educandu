@@ -22,6 +22,3 @@ batches:
 docs:
   en: Documents
   de: Dokumente
-lesson:
-  en: Lesson - {lessonTitle}
-  de: Einheit - {lessonTitle}

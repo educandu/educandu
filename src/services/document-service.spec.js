@@ -6,8 +6,8 @@ import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
-import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE, ROOM_ACCESS } from '../domain/constants.js';
+import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -1137,8 +1137,9 @@ describe('document-service', () => {
         language: 'en'
       });
 
+      const room = await createTestRoom(container, { access: ROOM_ACCESS.private });
       await createTestDocument(container, user, {
-        access: DOCUMENT_ACCESS.private,
+        roomId: room._id,
         title: 'Doc 5',
         description: 'Description 5',
         slug: 'doc-5',

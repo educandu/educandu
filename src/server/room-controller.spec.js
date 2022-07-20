@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -15,7 +15,7 @@ describe('room-controller', () => {
 
   let clientDataMappingService;
   let storageService;
-  let lessonService;
+  let documentService;
   let serverConfig;
   let pageRenderer;
   let roomService;
@@ -40,8 +40,8 @@ describe('room-controller', () => {
       removeRoomMember: sandbox.stub(),
       deleteRoomInvitation: sandbox.stub()
     };
-    lessonService = {
-      getLessonsMetadata: sandbox.stub()
+    documentService = {
+      getDocumentsMetadataByRoomId: sandbox.stub()
     };
     userService = {
       getUserById: sandbox.stub()
@@ -65,14 +65,14 @@ describe('room-controller', () => {
 
     clientDataMappingService = {
       mapRoom: sandbox.stub(),
-      mapLessonsMetadata: sandbox.stub(),
+      mapDocsOrRevisions: sandbox.stub(),
       mapRoomInvitations: sandbox.stub()
     };
 
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, lessonService, userService, storageService, mailService, clientDataMappingService, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, documentService, userService, storageService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -89,7 +89,7 @@ describe('room-controller', () => {
 
         req = {
           user,
-          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, documentsMode: ROOM_DOCUMENTS_MODE.exclusive }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -121,14 +121,14 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS.public,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           description: 'description'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
           description: 'new description',
-          lessonsMode: ROOM_LESSONS_MODE.collaborative
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative
         };
         updatedRoom = {
           ...room,
@@ -181,7 +181,7 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS.public,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -302,7 +302,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           slug: '',
           access: ROOM_ACCESS.private,
-          lessonsMode: ROOM_LESSONS_MODE.exclusive
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
         };
         roomService.getRoomById.resolves(room);
 
@@ -322,7 +322,7 @@ describe('room-controller', () => {
         slug: 'room-slug',
         owner: 'owner',
         access: ROOM_ACCESS.private,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
       const mappedRoom = { ...room };
 
@@ -337,19 +337,19 @@ describe('room-controller', () => {
           user: { _id: 'owner' }
         };
 
-        const lessons = [];
+        const documents = [];
         const invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
-        const mappedLessons = [];
+        const mappedDocuments = [];
         const mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
 
-          lessonService.getLessonsMetadata.resolves(lessons);
+          documentService.getDocumentsMetadataByRoomId.resolves(documents);
           roomService.getRoomInvitations.resolves(invitations);
 
-          clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+          clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
           clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
@@ -371,12 +371,12 @@ describe('room-controller', () => {
           sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
         });
 
-        it('should call getLessonsMetadata', () => {
-          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
+        it('should call getDocumentsMetadataByRoomId', () => {
+          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
         });
 
-        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
+        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -385,7 +385,7 @@ describe('room-controller', () => {
             request,
             {},
             PAGE_NAME.room,
-            { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations }
+            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
           );
         });
       });
@@ -396,15 +396,15 @@ describe('room-controller', () => {
           user: { _id: 'member' }
         };
 
-        const lessons = [];
-        const mappedLessons = [];
+        const documents = [];
+        const mappedDocuments = [];
         const mappedInvitations = [];
 
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
-          lessonService.getLessonsMetadata.resolves(lessons);
+          documentService.getDocumentsMetadataByRoomId.resolves(documents);
 
-          clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+          clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
           clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
@@ -422,12 +422,12 @@ describe('room-controller', () => {
           sinon.assert.notCalled(roomService.getRoomInvitations);
         });
 
-        it('should call getLessonsMetadata', () => {
-          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
+        it('should call getDocumentsMetadataByRoomId', () => {
+          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
         });
 
-        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
+        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -436,7 +436,7 @@ describe('room-controller', () => {
             request,
             {},
             PAGE_NAME.room,
-            { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations }
+            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
           );
         });
       });
@@ -464,20 +464,20 @@ describe('room-controller', () => {
         slug: 'room-slug',
         owner: 'owner',
         access: ROOM_ACCESS.public,
-        lessonsMode: ROOM_LESSONS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
       const mappedRoom = { ...room };
 
-      const lessons = [];
-      const mappedLessons = [];
+      const documents = [];
+      const mappedDocuments = [];
 
       beforeEach(() => {
         roomService.getRoomById.resolves(room);
-        lessonService.getLessonsMetadata.resolves(lessons);
+        documentService.getDocumentsMetadataByRoomId.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
-        clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+        clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
       });
 
       describe('and the request is made by a user who is not the owner', () => {
@@ -490,7 +490,7 @@ describe('room-controller', () => {
           roomService.getRoomInvitations.resolves([]);
           clientDataMappingService.mapRoomInvitations.returns([]);
 
-          lessonService.getLessonsMetadata.resolves(lessons);
+          documentService.getDocumentsMetadataByRoomId.resolves(documents);
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -514,12 +514,12 @@ describe('room-controller', () => {
           sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
         });
 
-        it('should call getLessonsMetadata', () => {
-          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
+        it('should call getDocumentsMetadataByRoomId', () => {
+          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
         });
 
-        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
+        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -528,7 +528,7 @@ describe('room-controller', () => {
             request,
             {},
             PAGE_NAME.room,
-            { room: mappedRoom, lessons: mappedLessons, invitations: [] }
+            { room: mappedRoom, documents: mappedDocuments, invitations: [] }
           );
         });
       });
@@ -546,7 +546,7 @@ describe('room-controller', () => {
           roomService.getRoomInvitations.resolves(invitations);
           clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
-          lessonService.getLessonsMetadata.resolves(lessons);
+          documentService.getDocumentsMetadataByRoomId.resolves(documents);
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -564,7 +564,7 @@ describe('room-controller', () => {
             request,
             {},
             PAGE_NAME.room,
-            { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations }
+            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
           );
         });
       });

@@ -25,12 +25,3 @@ roomMarkedFavoriteActivity:
 roomJoinedActivity:
   en: Private room joined
   de: Privatem Raum beigetreten
-lessonCreatedActivity:
-  en: New lesson created
-  de: Neue Einheit erstellt
-lessonUpdatedActivity:
-  en: Lesson updated
-  de: Einheit bearbeitet
-lessonMarkedFavoriteActivity:
-  en: Lesson marked as favorite
-  de: Einheit als Favorit hinzugefügt

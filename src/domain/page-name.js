@@ -18,6 +18,5 @@ export const PAGE_NAME = {
   browserNotSupported: 'browser-not-supported',
   room: 'room',
   roomMembershipConfirmation: 'room-membership-confirmation',
-  lesson: 'lesson',
   tests: 'tests'
 };

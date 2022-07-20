@@ -24,7 +24,7 @@ export const createDocumentDataBodySchema = joi.object({
   review: joi.string().allow(null).allow(''),
   sections: joi.array().items(sectionSchema),
   roomId: idOrKeySchema,
-  dueOn: joi.date().allow(null)
+  dueOn: joi.string().allow('')
 });
 
 export const documentMetadataBodySchema = joi.object({
@@ -34,7 +34,7 @@ export const documentMetadataBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
-  dueOn: joi.date().allow(null)
+  dueOn: joi.string().allow('')
 });
 
 export const restoreRevisionBodySchema = joi.object({

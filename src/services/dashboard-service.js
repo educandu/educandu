@@ -1,19 +1,17 @@
 import by from 'thenby';
 import RoomStore from '../stores/room-store.js';
 import UserStore from '../stores/user-store.js';
-import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 
 const completionFunction = Symbol('completion');
 
 class DashboardService {
-  static get inject() { return [UserStore, DocumentStore, RoomStore, LessonStore]; }
+  static get inject() { return [UserStore, DocumentStore, RoomStore]; }
 
-  constructor(userStore, documentStore, roomStore, lessonStore) {
+  constructor(userStore, documentStore, roomStore) {
     this.userStore = userStore;
     this.roomStore = roomStore;
-    this.lessonStore = lessonStore;
     this.documentStore = documentStore;
   }
 
@@ -25,8 +23,6 @@ class DashboardService {
     const updatedRooms = await this.roomStore.getLatestRoomsUpdatedByUser(userId, { limit });
     const createdDocuments = await this.documentStore.getLatestDocumentsMetadataCreatedByUser(userId, { limit });
     const updatedDocuments = await this.documentStore.getLatestDocumentsMetadataUpdatedByUser(userId, { limit });
-    const createdLessons = await this.lessonStore.getLatestLessonsMetadataCreatedByUser(userId, { limit });
-    const updatedLessons = await this.lessonStore.getLatestLessonsMetadataUpdatedByUser(userId, { limit });
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
@@ -63,20 +59,6 @@ class DashboardService {
       isDeprecated: false
     }));
 
-    const createdLessonActivities = createdLessons.map(lesson => ({
-      type: USER_ACTIVITY_TYPE.lessonCreated,
-      timestamp: lesson.createdOn,
-      data: { _id: lesson._id, title: lesson.title },
-      isDeprecated: false
-    }));
-
-    const updatedLessonActivities = updatedLessons.map(lesson => ({
-      type: USER_ACTIVITY_TYPE.lessonUpdated,
-      timestamp: lesson.updatedOn,
-      data: { _id: lesson._id, title: lesson.title },
-      isDeprecated: false
-    }));
-
     const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
     const favoriteActivitiesMetadata = latestFavorites.map(favorite => {
       switch (favorite.type) {
@@ -108,20 +90,6 @@ class DashboardService {
               };
             }
           };
-        case FAVORITE_TYPE.lesson:
-          return {
-            type: USER_ACTIVITY_TYPE.lessonMarkedFavorite,
-            timestamp: favorite.setOn,
-            data: null,
-            isDeprecated: null,
-            [completionFunction]: async () => {
-              const lesson = await this.lessonStore.getLessonMetadataById(favorite.id);
-              return {
-                data: { _id: favorite.id, title: lesson?.title ?? null },
-                isDeprecated: !lesson
-              };
-            }
-          };
         default:
           return null;
       }
@@ -133,10 +101,9 @@ class DashboardService {
       ...createdRoomActivities,
       ...updatedRoomActivities,
       ...joinedRoomActivities,
-      ...createdLessonActivities,
-      ...updatedLessonActivities,
       ...favoriteActivitiesMetadata
     ]
+      .filter(item => item)
       .sort(by(item => item.timestamp, 'desc'));
 
     if (limit) {

@@ -60,6 +60,10 @@ class DocumentStore {
     return this.collection.find({ _id: { $in: ids } }, { session }).toArray();
   }
 
+  getDocumentsMetadataByRoomId(roomId, { session } = {}) {
+    return this.collection.find({ roomId }, { session }).toArray();
+  }
+
   getDocumentsMetadataByConditions(conditions, { session } = {}) {
     return this.collection.find({ $and: conditions }, { projection: documentMetadataProjection, session }).toArray();
   }
@@ -108,6 +112,10 @@ class DocumentStore {
 
   deleteDocumentById(id, { session } = {}) {
     return this.collection.deleteOne({ _id: id }, { session });
+  }
+
+  deleteDocumentsByRoomId(roomId, { session }) {
+    return this.collection.deleteMany({ roomId }, { session });
   }
 
   _getTagsQuery(searchString) {

@@ -6,33 +6,49 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import LessonStore from '../stores/lesson-store.js';
+import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
 
 export default class StorageService {
-  static get inject() { return [ServerConfig, Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
+  static get inject() {
+    return [ServerConfig, Cdn, RoomStore, RoomInvitationStore, DocumentStore, DocumentRevisionStore, StoragePlanStore, UserStore, LockStore, TransactionRunner];
+  }
 
   // eslint-disable-next-line max-params
-  constructor(serverConfig, cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, lockStore, transactionRunner) {
+  constructor(
+    serverConfig,
+    cdn,
+    roomStore,
+    roomInvitationStore,
+    documentStore,
+    documentRevisionStore,
+    storagePlanStore,
+    userStore,
+    lockStore,
+    transactionRunner
+  ) {
     this.cdn = cdn;
     this.lockStore = lockStore;
     this.roomStore = roomStore;
     this.userStore = userStore;
-    this.lessonStore = lessonStore;
     this.serverConfig = serverConfig;
+    this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
+    this.documentRevisionStore = documentRevisionStore;
   }
 
   getAllStoragePlans() {
@@ -180,7 +196,8 @@ export default class StorageService {
       logger.info(`Deleting room with ID ${roomId}`);
 
       await this.transactionRunner.run(async session => {
-        await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
+        await this.documentRevisionStore.deleteDocumentsByRoomId(roomId, { session });
+        await this.documentStore.deleteDocumentsByRoomId(roomId, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
         await this.roomStore.deleteRoomById(roomId, { session });
       });
@@ -203,42 +220,41 @@ export default class StorageService {
     }
   }
 
-  async getStorageLocations({ user, documentId, lessonId }) {
+  async getStorageLocations({ user, documentId }) {
     const locations = [];
 
     if (!user) {
       return locations;
     }
 
-    if (documentId || lessonId) {
+    if (documentId) {
       locations.push({
         type: STORAGE_LOCATION_TYPE.public,
         rootPath: getPublicRootPath(),
-        homePath: getPublicHomePath(documentId || lessonId),
+        homePath: getPublicHomePath(documentId),
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
       });
-    }
 
-    if (lessonId) {
-      const lesson = await this.lessonStore.getLessonById(lessonId);
-      const room = await this.roomStore.getRoomById(lesson.roomId);
-      const isRoomOwner = user._id === room.owner;
-      const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
-      const rootAndHomePath = getPathForPrivateRoom(room._id);
+      const doc = await this.documentStore.getDocumentById(documentId);
+      if (doc.roomId) {
+        const room = await this.roomStore.getRoomById(doc.roomId);
+        const isRoomOwner = user._id === room.owner;
+        const rootAndHomePath = getPathForPrivateRoom(room._id);
 
-      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
+        const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
 
-      if (roomOwner.storage.plan) {
-        const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
+        if (roomOwner.storage.plan) {
+          const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
 
-        locations.push({
-          type: STORAGE_LOCATION_TYPE.private,
-          usedBytes: roomOwner.storage.usedBytes,
-          maxBytes: roomOwnerStoragePlan.maxBytes,
-          rootPath: rootAndHomePath,
-          homePath: rootAndHomePath,
-          isDeletionEnabled: isRoomOwner || isRoomCollaborator
-        });
+          locations.push({
+            type: STORAGE_LOCATION_TYPE.private,
+            usedBytes: roomOwner.storage.usedBytes,
+            maxBytes: roomOwnerStoragePlan.maxBytes,
+            rootPath: rootAndHomePath,
+            homePath: rootAndHomePath,
+            isDeletionEnabled: isRoomOwnerOrCollaborator({ room, userId: user._id })
+          });
+        }
       }
     }
 

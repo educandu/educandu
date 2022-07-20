@@ -31,6 +31,10 @@ class DocumentRevisionStore {
   deleteDocumentRevisionsByDocumentId(documentId, { session } = {}) {
     return this.collection.deleteMany({ documentId }, { session });
   }
+
+  deleteDocumentsByRoomId(roomId, { session }) {
+    return this.collection.deleteMany({ roomId }, { session });
+  }
 }
 
 export default DocumentRevisionStore;

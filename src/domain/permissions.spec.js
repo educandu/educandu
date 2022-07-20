@@ -67,7 +67,6 @@ describe('permissions', () => {
           permissions.DELETE_OWN_FILES,
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
-          permissions.OWN_LESSONS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS
         ]);
@@ -90,7 +89,6 @@ describe('permissions', () => {
           permissions.DELETE_OWN_FILES,
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
-          permissions.OWN_LESSONS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS,
           permissions.HARD_DELETE_SECTION,
@@ -119,7 +117,6 @@ describe('permissions', () => {
           permissions.DELETE_OWN_FILES,
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
-          permissions.OWN_LESSONS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS,
           permissions.HARD_DELETE_SECTION,

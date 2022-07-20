@@ -21,17 +21,17 @@
   margin-bottom: 50px;
 }
 
-.RoomPage-lessonInfo {
+.RoomPage-documentInfo {
   gap: 20px;
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr;
 
-  &.RoomPage-lessonInfo--withIcons {
+  &.RoomPage-documentInfo--withIcons {
     grid-template-columns: auto 1fr;
   }
 
-  &.RoomPage-lessonInfo--withDueDate {
+  &.RoomPage-documentInfo--withDueDate {
     grid-template-columns: 1fr auto;
     border: 1px solid fade(@edu-primary-color-light, 10%);
     background-color: fade(@edu-primary-color-light, 5%);
@@ -39,31 +39,27 @@
     border-right: none;
   }
 
-  &.RoomPage-lessonInfo--withIcons.RoomPage-lessonInfo--withDueDate {
+  &.RoomPage-documentInfo--withIcons.RoomPage-documentInfo--withDueDate {
     grid-template-columns: auto 1fr auto;
   }
 }
 
-.RoomPage-lessonInfoItem {
+.RoomPage-documentInfoItem {
   padding: 10px;
 
-  &.RoomPage-lessonInfoItem--icons {
+  &.RoomPage-documentInfoItem--icons {
     white-space: nowrap;
     padding-left: 5px;
   }
 }
 
-.RoomPage-lessonDate {
+.RoomPage-documentDueOnDate {
   display: inline-block;
   width: @room-date-label-width;
 
   @media @edu-media-phone {
     display: block;
   }
-}
-
-.RoomPage-newLessonButton {
-  margin-top: 15px;
 }
 
 .RoomPage-membersRow {

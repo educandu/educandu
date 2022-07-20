@@ -36,13 +36,7 @@ export const TASK_TYPE = {
 
 export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
   room: 'room',
-  lesson: 'lesson',
   document: 'document'
-};
-
-export const CDN_RESOURCES_CONSOLIDATION_TASK_TYPE = {
-  document: 'document',
-  lesson: 'lesson'
 };
 
 export const FEATURE_TOGGLES = {
@@ -54,7 +48,7 @@ export const ROOM_ACCESS = {
   private: 'private'
 };
 
-export const ROOM_LESSONS_MODE = {
+export const ROOM_DOCUMENTS_MODE = {
   exclusive: 'exclusive',
   collaborative: 'collaborative'
 };
@@ -75,13 +69,8 @@ export const DOC_VIEW_QUERY_PARAM = {
   history: 'history'
 };
 
-export const LESSON_VIEW_QUERY_PARAM = {
-  edit: 'edit'
-};
-
 export const FAVORITE_TYPE = {
   document: 'document',
-  lesson: 'lesson',
   room: 'room'
 };
 
@@ -92,10 +81,7 @@ export const USER_ACTIVITY_TYPE = {
   roomCreated: 'room-created',
   roomUpdated: 'room-updated',
   roomMarkedFavorite: 'room-marked-favorite',
-  roomJoined: 'room-joined',
-  lessonCreated: 'lesson-created',
-  lessonUpdated: 'lesson-updated',
-  lessonMarkedFavorite: 'lesson-marked-favorite'
+  roomJoined: 'room-joined'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {

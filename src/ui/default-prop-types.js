@@ -3,12 +3,11 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import {
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
-  CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   DOCUMENT_ACCESS,
   DOCUMENT_IMPORT_TYPE,
   ROOM_ACCESS,
-  ROOM_LESSONS_MODE,
+  ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE
@@ -297,16 +296,9 @@ export const documentRegenerationTaskShape = PropTypes.shape({
 export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.cdnResourcesConsolidation]),
-  taskParams: PropTypes.oneOfType([
-    PropTypes.shape({
-      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document]),
-      documentId: PropTypes.string.isRequired
-    }),
-    PropTypes.shape({
-      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson]),
-      lessonId: PropTypes.string.isRequired
-    })
-  ]).isRequired
+  taskParams: PropTypes.shape({
+    documentId: PropTypes.string.isRequired
+  }).isRequired
 });
 
 export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
@@ -316,10 +308,6 @@ export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document]),
       documentId: PropTypes.string.isRequired
-    }),
-    PropTypes.shape({
-      type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson]),
-      lessonId: PropTypes.string.isRequired
     }),
     PropTypes.shape({
       type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room]),
@@ -384,7 +372,7 @@ export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS)).isRequired,
-  lessonsMode: PropTypes.oneOf(Object.values(ROOM_LESSONS_MODE)).isRequired,
+  documentsMode: PropTypes.oneOf(Object.values(ROOM_DOCUMENTS_MODE)).isRequired,
   description: PropTypes.string
 };
 
@@ -408,32 +396,6 @@ export const invitationBasicShape = PropTypes.shape(invitationBasicProps);
 export const invitationShape = PropTypes.shape({
   ...invitationBasicProps,
   email: PropTypes.string.isRequired
-});
-
-export const lessonMetadataProps = {
-  _id: PropTypes.string.isRequired,
-  roomId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  language: PropTypes.string.isRequired,
-  schedule: PropTypes.shape({
-    startsOn: PropTypes.string
-  })
-};
-
-export const lessonSectionShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  content: PropTypes.object
-});
-
-export const lessonMetadataShape = PropTypes.shape({
-  ...lessonMetadataProps
-});
-
-export const lessonShape = PropTypes.shape({
-  ...lessonMetadataProps,
-  sections: PropTypes.arrayOf(lessonSectionShape).isRequired
 });
 
 export const userActivitiesShape = PropTypes.shape({

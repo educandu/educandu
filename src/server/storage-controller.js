@@ -7,10 +7,11 @@ import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
+import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,
@@ -32,12 +33,6 @@ const uploadLimitExceededMiddleware = (req, res, next) => {
   return requestSize && requestSize > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES
     ? next(new Error(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, requested ${prettyBytes(requestSize)}.`))
     : next();
-};
-
-const isRoomOwnerOrCollaborator = ({ room, userId }) => {
-  const isOwner = room.owner === userId;
-  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === userId);
-  return isOwner || isCollaborator;
 };
 
 class StorageController {
@@ -148,8 +143,7 @@ class StorageController {
     router.use(async (req, _res, next) => {
       const { user } = req;
       const documentId = urls.getDocIdIfDocUrl(req.originalUrl);
-      const lessonId = urls.getLessonIdIfLessonUrl(req.originalUrl);
-      const locations = await this.storageService.getStorageLocations({ user, documentId, lessonId });
+      const locations = await this.storageService.getStorageLocations({ user, documentId });
 
       // eslint-disable-next-line require-atomic-updates
       req.storage = { locations };

@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { Breadcrumb, message } from 'antd';
 import PropTypes from 'prop-types';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
@@ -22,11 +22,11 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
+import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -83,10 +83,14 @@ function Doc({ initialState, PageTemplate }) {
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const { room } = initialState;
+  const isRoomOwner = user?._id === room?.owner.key;
+  const isRoomCollaborator = room?.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room?.members.some(m => m.userId === user?._id);
+
   const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
-  const isEditViewAllowed = !isExternalDocument && !initialState.doc.archived;
+  const isEditViewAllowed = (room && (isRoomOwner || isRoomCollaborator)) || (!isExternalDocument && !initialState.doc.archived);
   const isHardDeletionAllowed = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
 
   const [isDirty, setIsDirty] = useState(false);
@@ -153,9 +157,7 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = async ({ templateDocumentId, ...newMetadata }) => {
-    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentId: doc._id, metadata: newMetadata });
-
+  const handleDocumentMetadataModalSave = updatedDoc => {
     setDoc(updatedDoc);
     setIsDocumentMetadataModalVisible(false);
   };
@@ -428,6 +430,13 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
+          {room && (
+            <Breadcrumb className="Breadcrumbs">
+              <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+              <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
+              <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
+            </Breadcrumb>
+          )}
           <MetadataTitle
             text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
             extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />}
@@ -493,7 +502,8 @@ Doc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     doc: documentShape.isRequired,
-    templateSections: PropTypes.arrayOf(sectionShape)
+    templateSections: PropTypes.arrayOf(sectionShape),
+    room: roomShape
   }).isRequired
 };
 
