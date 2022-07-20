@@ -107,7 +107,7 @@ export function range({ from, to, step }) {
   return [...Array(Math.floor((to - from) / actualStep) + 1)].map((_, i) => from + (i * actualStep));
 }
 
-export function unique(items, keyFunc = item => item) {
+export function ensureIsUnique(items, keyFunc = item => item) {
   const result = [];
   const consumedKeys = new Set();
   for (let i = 0; i < items.length; i += 1) {

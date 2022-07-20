@@ -9,7 +9,7 @@ import {
   replaceItem,
   splitIntoChunks,
   range,
-  unique
+  ensureIsUnique
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -227,10 +227,10 @@ describe('array-utils', () => {
     });
   });
 
-  describe('unique', () => {
+  describe('ensureIsUnique', () => {
     it('does not return duplicate items', () => {
       const input = ['a', 'b', 'c', 'b', 'd', 'e'];
-      expect(unique(input)).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
+      expect(ensureIsUnique(input)).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
     });
 
     it('uses the provided key generator to determine identity', () => {
@@ -240,7 +240,7 @@ describe('array-utils', () => {
         return counter;
       };
       const input = ['a', 'b', 'c', 'b', 'd', 'e'];
-      expect(unique(input, nextCounterValue)).toStrictEqual(['a', 'b', 'c', 'b', 'd', 'e']);
+      expect(ensureIsUnique(input, nextCounterValue)).toStrictEqual(['a', 'b', 'c', 'b', 'd', 'e']);
     });
   });
 });

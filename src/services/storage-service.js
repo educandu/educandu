@@ -6,9 +6,9 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import { unique } from '../utils/array-utils.js';
 import LessonStore from '../stores/lesson-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -322,7 +322,7 @@ export default class StorageService {
       throw new NotFound();
     }
 
-    const objects = unique(
+    const objects = ensureIsUnique(
       cdnObjects
         .map(obj => {
           const isDirectory = !!obj.prefix;
