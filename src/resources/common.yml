@@ -309,6 +309,12 @@ sortedByArchived:
 searchPlaceholder:
   en: Search terms
   de: Suchbegriffe
+search:
+  en: Search
+  de: Suche
+searchTextTooShort:
+  en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
+  de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein
 capacity:
   en: Capacity
   de: Kapazität

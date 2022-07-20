@@ -12,8 +12,12 @@ function encodeURIParts(path) {
   return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
 }
 
-function composeQueryString(keyValuePairs) {
-  return new URLSearchParams(keyValuePairs.filter(([, value]) => value)).toString();
+function composeQueryString(keyValueMap) {
+  const cleanedUpKeyValuePairs = Object.entries(keyValueMap)
+    .filter(([, value]) => typeof value !== 'undefined' && value !== null)
+    .map(([key, value]) => [key, value instanceof Date ? value.toISOString() : value.toString()]);
+
+  return new URLSearchParams(cleanedUpKeyValuePairs).toString();
 }
 
 function createFullyQualifiedUrl(pathname) {

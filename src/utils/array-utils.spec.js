@@ -8,7 +8,8 @@ import {
   replaceItemAt,
   replaceItem,
   splitIntoChunks,
-  range
+  range,
+  ensureIsUnique
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -223,6 +224,23 @@ describe('array-utils', () => {
         const result = range({ from, to, step });
         expect(result).toEqual(expectedResult);
       });
+    });
+  });
+
+  describe('ensureIsUnique', () => {
+    it('does not return duplicate items', () => {
+      const input = ['a', 'b', 'c', 'b', 'd', 'e'];
+      expect(ensureIsUnique(input)).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
+    });
+
+    it('uses the provided key generator to determine identity', () => {
+      let counter = 0;
+      const nextCounterValue = () => {
+        counter += 1;
+        return counter;
+      };
+      const input = ['a', 'b', 'c', 'b', 'd', 'e'];
+      expect(ensureIsUnique(input, nextCounterValue)).toStrictEqual(['a', 'b', 'c', 'b', 'd', 'e']);
     });
   });
 });

@@ -8,6 +8,7 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import LessonStore from '../stores/lesson-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -135,13 +136,21 @@ export default class StorageService {
     return { usedBytes };
   }
 
-  getObjects({ parentPath, recursive }) {
-    return this._getObjects({
+  async getObjects({ parentPath, searchTerm, recursive }) {
+    const { parentDirectory, currentDirectory, objects } = await this._getObjects({
       parentPath,
       recursive,
       includeEmptyObjects: false,
       ignoreNonExistingPath: false
     });
+
+    return {
+      parentDirectory,
+      currentDirectory,
+      objects: searchTerm
+        ? objects.filter(obj => obj.path.toLowerCase().includes(searchTerm.toLowerCase()))
+        : objects
+    };
   }
 
   async deleteObject({ path, storageClaimingUserId }) {
@@ -313,28 +322,33 @@ export default class StorageService {
       throw new NotFound();
     }
 
-    const objects = cdnObjects.map(obj => {
-      const isDirectory = !!obj.prefix;
-      const path = isDirectory ? obj.prefix : obj.name;
-      const objectSegments = path.split('/').filter(seg => !!seg);
-      const lastSegment = objectSegments[objectSegments.length - 1];
-      const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
+    const objects = ensureIsUnique(
+      cdnObjects
+        .map(obj => {
+          const isDirectory = !!obj.prefix;
+          const path = isDirectory ? obj.prefix : obj.name;
+          const objectSegments = path.split('/').filter(seg => !!seg);
+          const lastSegment = objectSegments[objectSegments.length - 1];
+          const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
 
-      if (!includeEmptyObjects && !isDirectory && lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
-        return null;
-      }
+          if (!includeEmptyObjects && !isDirectory && lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
+            return null;
+          }
 
-      return {
-        displayName: lastSegment,
-        parentPath: objectSegments.slice(0, -1).join('/'),
-        path: objectSegments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
-        portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
-        createdOn: isDirectory ? null : obj.lastModified,
-        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
-        size: isDirectory ? null : obj.size
-      };
-    }).filter(obj => obj);
+          return {
+            displayName: lastSegment,
+            parentPath: objectSegments.slice(0, -1).join('/'),
+            path: objectSegments.join('/'),
+            url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
+            portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
+            createdOn: isDirectory ? null : obj.lastModified,
+            type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
+            size: isDirectory ? null : obj.size
+          };
+        })
+        .filter(obj => obj),
+      obj => obj.portableUrl
+    );
 
     return { parentDirectory, currentDirectory, objects };
   }

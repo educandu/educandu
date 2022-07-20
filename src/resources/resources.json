@@ -1344,20 +1344,6 @@
     }
   },
   {
-    "namespace": "searchBar",
-    "language": "en",
-    "resources": {
-      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long"
-    }
-  },
-  {
-    "namespace": "searchBar",
-    "language": "de",
-    "resources": {
-      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
-    }
-  },
-  {
     "namespace": "sortingSelector",
     "language": "en",
     "resources": {
@@ -1380,6 +1366,9 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "This directory is publicly accessible",
+      "searchOngoing": "Searching …",
+      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
+      "closeSearchResult": "Back to directory view",
       "uploadFiles": "Upload files",
       "uploading": "Uploading {count, plural, =1 {file} other {files}}",
       "successfullyUploaded": "Upload completed",
@@ -1393,6 +1382,9 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "searchOngoing": "Suche …",
+      "searchResultInfo": "Sie sehen Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
+      "closeSearchResult": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen",
       "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
       "successfullyUploaded": "Hochladen ist abgeschlossen",
@@ -2104,6 +2096,8 @@
       "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
       "searchPlaceholder": "Search terms",
+      "search": "Search",
+      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
       "capacity": "Capacity",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
@@ -2246,6 +2240,8 @@
       "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "searchPlaceholder": "Suchbegriffe",
+      "search": "Suche",
+      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
       "capacity": "Kapazität",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",

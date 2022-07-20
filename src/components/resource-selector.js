@@ -58,6 +58,7 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
         size="small"
         activeKey={currentLocationType || visibleLocations[0]?.type || null}
         onChange={handleLocationTabChange}
+        destroyInactiveTabPane
         >
         {visibleLocations.map(location => (
           <TabPane key={location.type} tab={t(`storage_${location.type}`)}>

@@ -3,11 +3,9 @@ import classNames from 'classnames';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import reactDropzoneNs from 'react-dropzone';
-import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { useService } from './container-context.js';
-import { Alert, Button, message, Select } from 'antd';
-import { DoubleLeftOutlined } from '@ant-design/icons';
+import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import FilesUploadOverview from './files-upload-overview.js';
@@ -17,16 +15,23 @@ import { getResourceFullName } from '../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
+import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { DoubleLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
+const { Search } = Input;
+
+const MIN_SEARCH_TERM_LENGTH = 3;
+
 const SCREEN = {
-  none: 'none',
+  directory: 'directory',
+  search: 'search',
   preview: 'preview',
   uploadOverview: 'upload-overview'
 };
@@ -40,46 +45,64 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const dropzoneRef = useRef();
   const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
-  const [screen, setScreen] = useState(SCREEN.none);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
+  const [screenStack, setScreenStack] = useState([SCREEN.directory]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
+  const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
   const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const canAcceptFiles = canUploadToCurrentDirectory && !isLoading;
+  const screen = screenStack[screenStack.length - 1];
+  const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
+  const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
-  const fetchStorageContent = useCallback(async () => {
+  const canAcceptFiles = screen === SCREEN.directory && canUploadToCurrentDirectory && !isLoading;
+
+  const fetchStorageContent = useCallback(async searchText => {
     if (!currentDirectoryPath || !isMounted.current) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects(currentDirectoryPath);
+      const result = await storageApiClient.getCdnObjects({
+        parentPath: searchText ? storageLocation.rootPath : currentDirectoryPath,
+        searchTerm: searchText ?? null,
+        recursive: !!searchText
+      });
+
       if (!isMounted.current) {
         return;
       }
 
-      setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
-      setParentDirectory(result.parentDirectory);
-      setCurrentDirectory(result.currentDirectory);
-      setFiles(result.objects);
+      if (searchText) {
+        setSearchResult(result.objects);
+        setLastExecutedSearchTerm(searchText);
+      } else {
+        setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
+        setParentDirectory(result.parentDirectory);
+        setCurrentDirectory(result.currentDirectory);
+        setFiles(result.objects);
+      }
+
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-      if (err.status === 404) {
+      if (err.status === 404 && !searchText) {
         setCurrentDirectoryPath(storageLocation.homePath);
       } else {
         message.error(err.message);
       }
     }
-  }, [currentDirectoryPath, storageLocation.homePath, storageApiClient, isMounted]);
+  }, [currentDirectoryPath, storageLocation.homePath, storageLocation.rootPath, storageApiClient, isMounted]);
 
   const handleFileClick = newFile => {
     setShowInitialFileSelection(false);
@@ -104,12 +127,13 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   const handleDeleteClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
-    await fetchStorageContent();
+    setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
+    setSearchResult(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
     setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
   };
 
   const handlePreviewClick = () => {
-    setScreen(SCREEN.preview);
+    pushScreen(SCREEN.preview);
   };
 
   const handleUploadButtonClick = () => {
@@ -118,7 +142,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   const handleUploadStart = useCallback(() => {
     setIsUploading(true);
-    setScreen(SCREEN.uploadOverview);
+    pushScreen(SCREEN.uploadOverview);
   }, []);
 
   const handleUploadFinish = () => {
@@ -126,13 +150,38 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   };
 
   const handlePreviewScreenBackClick = () => {
-    setScreen(SCREEN.none);
+    popScreen();
   };
 
   const handleUploadOverviewScreenBackClick = async () => {
-    setScreen(SCREEN.none);
+    popScreen();
     setUploadQueue([]);
     await fetchStorageContent();
+  };
+
+  const handleSearchTermChange = event => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchClick = async () => {
+    if (searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
+      Modal.error({
+        title: t('common:error'),
+        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
+      });
+
+      return;
+    }
+
+    pushScreen(SCREEN.search);
+    await fetchStorageContent(searchTerm);
+  };
+
+  const handleCloseSearchClick = () => {
+    setLastExecutedSearchTerm('');
+    setSearchResult([]);
+    setSearchTerm('');
+    popScreen();
   };
 
   const renderSelectButton = () => (
@@ -145,15 +194,49 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     </Button>
   );
 
-  const renderScreenBackButton = ({ onClick, disabled }) => {
-    const renderText = () => (
-      <div className={classNames('StorageLocation-screenBack', { 'is-disabled': disabled })}>
-        <DoubleLeftOutlined />
-        {t('common:back')}
-      </div>
-    );
+  const renderScreenBackButton = ({ text = t('common:back'), onClick, noMargin = false, disabled = false }) => {
+    const classes = classNames({
+      'StorageLocation-screenBack': true,
+      'StorageLocation-screenBack--noMargin': noMargin,
+      'is-disabled': disabled
+    });
 
-    return disabled ? renderText() : <a onClick={onClick}>{renderText()}</a>;
+    const content = <div className={classes}><DoubleLeftOutlined />{text}</div>;
+    return disabled ? content : <a onClick={onClick}>{content}</a>;
+  };
+
+  const renderSearchInfo = () => {
+    const searchMessage = isLoading
+      ? t('searchOngoing')
+      : (
+        <Trans
+          t={t}
+          i18nKey="searchResultInfo"
+          values={{ searchTerm: lastExecutedSearchTerm }}
+          components={[<i key="0" />]}
+          />
+      );
+
+    const searchAction = renderScreenBackButton({
+      text: t('closeSearchResult'),
+      onClick: handleCloseSearchClick,
+      disabled: isLoading,
+      noMargin: true
+    });
+
+    return <Alert type="info" message={searchMessage} action={searchAction} showIcon />;
+  };
+
+  const renderStorageInfo = () => {
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
+      return <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />;
+    }
+
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.public) {
+      return <Alert message={t('publicStorageWarning')} type="warning" showIcon />;
+    }
+
+    return null;
   };
 
   useEffect(() => {
@@ -193,14 +276,32 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     if (!selectedFile) {
       return;
     }
-    const previouslySelectedFileStillExists = (files || []).some(file => file.portableUrl === selectedFile.portableUrl);
+
+    let collectionToUse;
+    switch (screen) {
+      case SCREEN.directory:
+        collectionToUse = files;
+        break;
+      case SCREEN.search:
+        collectionToUse = searchResult;
+        break;
+      default:
+        collectionToUse = null;
+        break;
+    }
+
+    if (!collectionToUse) {
+      return;
+    }
+
+    const previouslySelectedFileStillExists = collectionToUse.some(file => file.portableUrl === selectedFile.portableUrl);
     if (!previouslySelectedFileStillExists) {
       setSelectedFile(null);
     }
-  }, [selectedFile, files]);
+  }, [screen, selectedFile, files, searchResult]);
 
   useEffect(() => {
-    if (!files?.length || !showInitialFileSelection) {
+    if (!files.length || !showInitialFileSelection) {
       return;
     }
 
@@ -240,10 +341,18 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   return (
     <div className="StorageLocation">
-      {screen === SCREEN.none && (
+      {(screen === SCREEN.directory || screen === SCREEN.search) && (
         <Fragment>
           <div className="StorageLocation-buttonsLine">
-            <div />
+            <div>
+              <Search
+                placeholder={t('common:search')}
+                value={searchTerm}
+                onSearch={handleSearchClick}
+                onChange={handleSearchTermChange}
+                enterButton={<SearchOutlined />}
+                />
+            </div>
             <div className="StorageLocation-filesViewerSelectContainer">
               <Select
                 value={filesViewerDisplay}
@@ -263,8 +372,8 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
               <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
                 <input {...getInputProps()} hidden />
                 <FilesViewer
-                  files={files}
-                  parentDirectory={parentDirectory}
+                  files={screen === SCREEN.search ? searchResult : files}
+                  parentDirectory={screen === SCREEN.search ? null : parentDirectory}
                   display={filesViewerDisplay}
                   onFileClick={handleFileClick}
                   onFileDoubleClick={handleFileDoubleClick}
@@ -272,26 +381,21 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
                   onDeleteClick={handleDeleteClick}
                   onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
                   onPreviewClick={handlePreviewClick}
-                  canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
+                  canNavigateToParent={screen === SCREEN.directory && currentDirectory?.path?.length > storageLocation.rootPath.length}
                   canDelete={storageLocation.isDeletionEnabled}
                   isLoading={isLoading}
                   />
               </div>
             )}
           </ReactDropzone>
-          <div className="StorageLocation-storageInfo">
-            {storageLocation.type === STORAGE_LOCATION_TYPE.private
-            && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
-            && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
-            {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
-            <Alert message={t('publicStorageWarning')} type="warning" showIcon />
-            )}
+          <div className="StorageLocation-locationInfo">
+            {screen === SCREEN.search ? renderSearchInfo() : renderStorageInfo()}
           </div>
           <div className="StorageLocation-buttonsLine">
             <Button
               icon={<UploadIcon />}
               onClick={handleUploadButtonClick}
-              disabled={!canUploadToCurrentDirectory || isLoading}
+              disabled={!canAcceptFiles}
               >
               {t('uploadFiles')}
             </Button>
