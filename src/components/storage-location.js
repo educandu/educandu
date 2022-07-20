@@ -55,6 +55,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.directory]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
+  const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
   const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
@@ -84,6 +85,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
       if (searchText) {
         setSearchResult(result.objects);
+        setLastExecutedSearchTerm(searchText);
       } else {
         setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
         setParentDirectory(result.parentDirectory);
@@ -175,6 +177,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   };
 
   const handleCloseSearchClick = () => {
+    setLastExecutedSearchTerm('');
     setSearchResult([]);
     setSearchTerm('');
     popScreen();
@@ -190,29 +193,40 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     </Button>
   );
 
-  const renderScreenBackButton = ({ onClick, disabled }) => {
-    const renderText = () => (
-      <div className={classNames('StorageLocation-screenBack', { 'is-disabled': disabled })}>
-        <DoubleLeftOutlined />
-        {t('common:back')}
-      </div>
-    );
+  const renderScreenBackButton = ({ text = t('common:back'), onClick, noMargin = false, disabled = false }) => {
+    const classes = classNames({
+      'StorageLocation-screenBack': true,
+      'StorageLocation-screenBack--noMargin': noMargin,
+      'is-disabled': disabled
+    });
 
-    return disabled ? renderText() : <a onClick={onClick}>{renderText()}</a>;
+    const content = <div className={classes}><DoubleLeftOutlined />{text}</div>;
+    return disabled ? content : <a onClick={onClick}>{content}</a>;
+  };
+
+  const renderSearchInfo = () => {
+    const searchMessage = isLoading
+      ? t('searchOngoing')
+      : (
+        <Trans
+          t={t}
+          i18nKey="searchResultInfo"
+          values={{ searchTerm: lastExecutedSearchTerm }}
+          components={[<i key="0" />]}
+          />
+      );
+
+    const searchAction = renderScreenBackButton({
+      text: t('closeSearchResult'),
+      onClick: handleCloseSearchClick,
+      disabled: isLoading,
+      noMargin: true
+    });
+
+    return <Alert type="info" message={searchMessage} action={searchAction} showIcon />;
   };
 
   const renderStorageInfo = () => {
-    if (screen === SCREEN.search) {
-      return (
-        <Alert
-          type="info"
-          message={<Trans t={t} i18nKey="searchResultInfo" values={{ searchTerm }} components={[<i key="0" />]} />}
-          action={<Button type="link" onClick={handleCloseSearchClick}>{t('closeSearchResult')}</Button>}
-          showIcon
-          />
-      );
-    }
-
     if (storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
       return <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />;
     }
@@ -373,8 +387,8 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
               </div>
             )}
           </ReactDropzone>
-          <div className="StorageLocation-storageInfo">
-            {renderStorageInfo()}
+          <div className="StorageLocation-locationInfo">
+            {screen === SCREEN.search ? renderSearchInfo() : renderStorageInfo()}
           </div>
           <div className="StorageLocation-buttonsLine">
             <Button

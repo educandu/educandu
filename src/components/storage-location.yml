@@ -7,6 +7,9 @@ filesView_grid:
 publicStorageWarning:
   en: This directory is publicly accessible
   de: Dieses Verzeichnis ist öffentlich zugänglich
+searchOngoing:
+  en: Searching …
+  de: Suche …
 searchResultInfo:
   en: You are seeing results for the search term <0>{searchTerm}</0>
   de: Sie sehen Ergebnisse für den Suchbegriff <0>{searchTerm}</0>
