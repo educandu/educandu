@@ -1,7 +1,7 @@
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 export const isRoomOwnerOrMember = ({ room, userId }) => {
-  const isOwner = room.owner === userId;
+  const isOwner = (room.owner.key || room.owner) === userId;
   const isMember = room.members.some(m => m.userId === userId);
   return isOwner || isMember;
 };
