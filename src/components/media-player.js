@@ -98,6 +98,10 @@ function MediaPlayer({
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
   useEffect(() => {
+    setSourceUrl(sourceType === SOURCE_TYPE.eager ? source : null);
+  }, [source, sourceType]);
+
+  useEffect(() => {
     if (isSeeking) {
       return;
     }

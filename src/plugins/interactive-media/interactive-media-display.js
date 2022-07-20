@@ -148,8 +148,8 @@ function InteractiveMediaDisplay({ content }) {
 
   return (
     <div className="InteractiveMediaDisplay">
-      <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
-        {sourceUrl && (
+      {sourceUrl && (
+        <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
           <MediaPlayer
             mediaPlayerRef={mediaPlayerRef}
             parts={parts}
@@ -166,32 +166,32 @@ function InteractiveMediaDisplay({ content }) {
             onSeek={handleSeek}
             canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
             />
-        )}
-        <div className="InteractiveMediaDisplay-progressBar">
-          <div className="InteractiveMediaDisplay-progressBarCards">
-            <div>
-              {t('currentProgress')}:
+          <div className="InteractiveMediaDisplay-progressBar">
+            <div className="InteractiveMediaDisplay-progressBarCards">
+              <div>
+                {t('currentProgress')}:
+              </div>
+              <CardSelector
+                cards={chapterCards}
+                selectedCardIndex={currentChapterIndex}
+                visitedCardIndices={visitedChapters}
+                onCardSelected={handleGotoChapterClick}
+                disabled={!isMediaReady}
+                />
             </div>
-            <CardSelector
-              cards={chapterCards}
-              selectedCardIndex={currentChapterIndex}
-              visitedCardIndices={visitedChapters}
-              onCardSelected={handleGotoChapterClick}
+            <IterationPanel
+              itemCount={chapters.length}
+              selectedItemIndex={currentChapterIndex}
+              onPreviousClick={handleReplayChapterClick}
+              onResetClick={handleResetChaptersClick}
+              onNextClick={handleNextChapterClick}
               disabled={!isMediaReady}
+              alwaysAllowPreviousClick
               />
           </div>
-          <IterationPanel
-            itemCount={chapters.length}
-            selectedItemIndex={currentChapterIndex}
-            onPreviousClick={handleReplayChapterClick}
-            onResetClick={handleResetChaptersClick}
-            onNextClick={handleNextChapterClick}
-            disabled={!isMediaReady}
-            alwaysAllowPreviousClick
-            />
+          <CopyrightNotice value={copyrightNotice} />
         </div>
-        <CopyrightNotice value={copyrightNotice} />
-      </div>
+      )}
     </div>
   );
 }

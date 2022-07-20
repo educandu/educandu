@@ -1766,7 +1766,7 @@
       "question": "Question",
       "answers": "Answers",
       "addAnswer": "Add answer",
-      "addAnswerInfo": "In order to allow the user to examine their knowledge, you can put the text above into a question and add possible answers here:",
+      "addAnswerInfo": "In order to allow the user to review their knowledge, you can put the text above into a question and add possible answers here:",
       "markCorrectAnswer": "Mark as correct answer",
       "continue": "Continue",
       "replay": "Replay",
