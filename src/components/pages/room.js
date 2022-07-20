@@ -10,6 +10,7 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
+import roomUtils from '../../utils/room-utils.js';
 import { useDateFormat } from '../locale-context.js';
 import { useSettings } from '../settings-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
@@ -27,9 +28,9 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
+import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../../domain/constants.js';
 import { roomShape, invitationShape, documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
@@ -74,7 +75,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ room, settings, t }));
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
+  const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
   const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
@@ -194,19 +195,17 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderDocument = doc => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
-
-    const renderIcons = isRoomOwner || isRoomCollaborator;
     const dueDate = upcomingDueDocument?._id === doc._id ? formatTimeTo(doc.dueOn) : null;
 
     const containerClasses = classNames({
       'RoomPage-documentInfo': true,
-      'RoomPage-documentInfo--withIcons': renderIcons,
+      'RoomPage-documentInfo--withIcons': isRoomOwnerOrCollaborator,
       'RoomPage-documentInfo--withDueDate': !!dueDate
     });
 
     return (
       <div key={doc._id} className={containerClasses}>
-        {renderIcons && (
+        {isRoomOwnerOrCollaborator && (
           <div className="RoomPage-documentInfoItem RoomPage-documentInfoItem--icons">
             <Tooltip title={t('common:clone')}>
               <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewDocumentClick(doc)} />
@@ -292,7 +291,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomDocumentsCard = () => (
     <Card
       className="RoomPage-card"
-      actions={(isRoomOwner || isRoomCollaborator) && [
+      actions={isRoomOwnerOrCollaborator && [
         <Button
           className="RoomPage-cardButton"
           key="createDocument"

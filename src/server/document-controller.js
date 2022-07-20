@@ -9,7 +9,8 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { isRoomOwnerOrCollaborator, isRoomOwnerOrMember } from '../utils/room-utils.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentIdParamsOrQuerySchema,
@@ -28,18 +29,6 @@ const { NotFound, BadRequest, Forbidden } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
-
-const isRoomOwnerOrCollaborator = ({ room, userId }) => {
-  const isOwner = room.owner === userId;
-  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
-  return isOwner || isCollaborator;
-};
-
-const isRoomOwnerOrMember = ({ room, userId }) => {
-  const isOwner = room.owner === userId;
-  const isMember = room.members.some(m => m.userId === userId);
-  return isOwner || isMember;
-};
 
 class DocumentController {
   static get inject() { return [DocumentService, RoomService, ClientDataMappingService, PageRenderer]; }
