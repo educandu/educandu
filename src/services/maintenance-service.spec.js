@@ -8,6 +8,7 @@ describe('maintenance-service', () => {
   let cdn;
   let database;
   let lockStore;
+  let lessonConvertor;
 
   beforeAll(() => {
     cdn = {
@@ -21,7 +22,10 @@ describe('maintenance-service', () => {
       takeMaintenanceLock: () => Promise.reject(new Error('not stubbed')),
       releaseLock: () => Promise.reject(new Error('not stubbed'))
     };
-    sut = new MaintenanceService(cdn, database, lockStore);
+    lessonConvertor = {
+      convertAllLessonsToDocuments: () => Promise.reject(new Error('not stubbed'))
+    };
+    sut = new MaintenanceService(cdn, database, lessonConvertor, lockStore);
   });
 
   beforeEach(() => {
@@ -30,6 +34,7 @@ describe('maintenance-service', () => {
     sandbox.stub(database, 'checkDb');
     sandbox.stub(lockStore, 'takeMaintenanceLock');
     sandbox.stub(lockStore, 'releaseLock');
+    sandbox.stub(lessonConvertor, 'convertAllLessonsToDocuments');
   });
 
   afterEach(() => {
@@ -45,6 +50,7 @@ describe('maintenance-service', () => {
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
         cdn.uploadEmptyObject.resolves();
+        lessonConvertor.convertAllLessonsToDocuments.resolves();
 
         await sut.runMaintenance();
       });
@@ -65,6 +71,10 @@ describe('maintenance-service', () => {
         sinon.assert.calledOnce(database.checkDb);
       });
 
+      it('should have run the lessons conversion', () => {
+        sinon.assert.calledOnce(lessonConvertor.convertAllLessonsToDocuments);
+      });
+
       it('should have created the initial CDN directories', () => {
         sinon.assert.calledTwice(cdn.uploadEmptyObject);
       });
@@ -81,6 +91,7 @@ describe('maintenance-service', () => {
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
         cdn.uploadEmptyObject.resolves();
+        lessonConvertor.convertAllLessonsToDocuments.resolves();
 
         await sut.runMaintenance();
       });
@@ -100,6 +111,10 @@ describe('maintenance-service', () => {
       it('should have run the checks once', () => {
         sinon.assert.calledOnce(database.checkDb);
       });
+
+      it('should have run the lessons conversion', () => {
+        sinon.assert.calledOnce(lessonConvertor.convertAllLessonsToDocuments);
+      });
     });
 
     describe('when an error occurs during migrations', () => {
@@ -111,6 +126,7 @@ describe('maintenance-service', () => {
         database.runMigrationScripts.rejects(new Error('Migration failed'));
         database.checkDb.resolves();
         cdn.uploadEmptyObject.resolves();
+        lessonConvertor.convertAllLessonsToDocuments.resolves();
 
         caughtError = null;
         try {
@@ -138,6 +154,10 @@ describe('maintenance-service', () => {
 
       it('should not have run the checks', () => {
         sinon.assert.notCalled(database.checkDb);
+      });
+
+      it('should have not run the lessons conversion', () => {
+        sinon.assert.notCalled(lessonConvertor.convertAllLessonsToDocuments);
       });
 
       it('should not have created the initial CDN directories', () => {
