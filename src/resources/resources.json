@@ -282,7 +282,7 @@
       "sequenceInterval": "Intervall",
       "sequenceCount": "Anzahl",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "sequenceInfoBoxDescription": "Hier können Sie mehrere Dokumente gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
     }
   },
   {
