@@ -13,10 +13,10 @@ class ArticlesController {
 
   registerPages(router) {
     router.get('/lessons/*', async (req, res) => {
-      const slug = req.params[0] || '';
-      const doc = await this.documentStore.findOne({ slug });
+      const id = req.params[0] || '';
+      const doc = await this.documentStore.getDocumentById(id);
       if (!doc) {
-        throw new NotFound(`Lesson '${slug}' could  not be found`);
+        throw new NotFound(`Lesson '${id}' could  not be found`);
       }
 
       res.redirect(301, routes.getDocUrl({ id: doc._id, slug: doc.slug }));
