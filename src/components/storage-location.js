@@ -22,7 +22,6 @@ import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
-import { ensureIsExcluded } from '../utils/array-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -128,8 +127,8 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   const handleDeleteClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
-    setFiles(oldItems => ensureIsExcluded(oldItems, file));
-    setSearchResult(oldItems => ensureIsExcluded(oldItems, file));
+    setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
+    setSearchResult(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
     setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
   };
 
