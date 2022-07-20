@@ -4,7 +4,12 @@ export default class Educandu_2022_07_19_01_rename_question_to_text_in_interacti
     this.db = db;
   }
 
-  async collectionUp(collectionName) {
+  renameProperty(item, oldName, newName) {
+    item[newName] = item[oldName];
+    delete item[oldName];
+  }
+
+  async processCollection(collectionName, oldName, newName) {
     const toUpdate = await this.db.collection(collectionName).find({ 'sections.type': 'interactive-media' }).toArray();
     let updateCount = 0;
 
@@ -13,8 +18,7 @@ export default class Educandu_2022_07_19_01_rename_question_to_text_in_interacti
       for (const section of doc.sections) {
         if (section.type === 'interactive-media' && section.content) {
           for (const chapter of section.content.chapters) {
-            chapter.text = chapter.question;
-            delete chapter.question;
+            this.renameProperty(chapter, oldName, newName);
             docWasUpdated = true;
           }
           console.log(`Updating ${collectionName} ${doc._id} - section ${section.key}`);
@@ -29,29 +33,12 @@ export default class Educandu_2022_07_19_01_rename_question_to_text_in_interacti
     return updateCount;
   }
 
-  async collectionDown(collectionName) {
-    const toUpdate = await this.db.collection(collectionName).find({ 'sections.type': 'interactive-media' }).toArray();
-    let updateCount = 0;
+  collectionUp(collectionName) {
+    return this.processCollection(collectionName, 'question', 'text');
+  }
 
-    for (const doc of toUpdate) {
-      let docWasUpdated = false;
-      for (const section of doc.sections) {
-        if (section.type === 'interactive-media' && section.content) {
-          for (const chapter of section.content.chapters) {
-            chapter.question = chapter.text;
-            delete chapter.text;
-            docWasUpdated = true;
-          }
-          console.log(`Updating ${collectionName} ${doc._id} - section ${section.key}`);
-        }
-      }
-      if (docWasUpdated) {
-        updateCount += 1;
-        await this.db.collection(collectionName).replaceOne({ _id: doc._id }, doc);
-      }
-    }
-
-    return updateCount;
+  collectionDown(collectionName) {
+    return this.processCollection(collectionName, 'text', 'question');
   }
 
   async up() {
