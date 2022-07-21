@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
 import { DOCUMENT_ORIGIN, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
@@ -29,11 +30,13 @@ describe('document-controller', () => {
     documentService = {
       createDocument: sandbox.stub(),
       getDocumentById: sandbox.stub(),
-      hardDeleteDocument: sandbox.stub()
+      hardDeleteDocument: sandbox.stub(),
+      getAllPublicDocumentsMetadata: sandbox.stub()
     };
 
     roomService = {
-      getRoomById: sandbox.stub()
+      getRoomById: sandbox.stub(),
+      getRoomsMinimalMetadataByIds: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -56,6 +59,82 @@ describe('document-controller', () => {
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('handleGetDocsPage', () => {
+    let rooms;
+    let documents;
+    let mappedDocuments;
+
+    beforeEach(() => {
+      rooms = [{ _id: 'R1' }];
+      documents = [
+        { _id: 'D1', roomId: null },
+        { _id: 'D2', roomId: 'R1' },
+        { _id: 'D3', roomId: 'R1' }
+      ];
+
+      mappedDocuments = cloneDeep(documents);
+
+      roomService.getRoomsMinimalMetadataByIds.resolves(rooms);
+      documentService.getAllPublicDocumentsMetadata.resolves(documents);
+      clientDataMappingService.mapDocsOrRevisions.resolves(mappedDocuments);
+      pageRenderer.sendPage.resolves();
+    });
+
+    describe(`when user has '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
+      beforeEach(() => {
+        user.permissions = [permissions.MANAGE_ARCHIVED_DOCS];
+
+        req = { user };
+        res = {};
+
+        return sut.handleGetDocsPage(req, res);
+      });
+
+      it('should call documentService.getAllPublicDocumentsMetadata', () => {
+        sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: true });
+      });
+
+      it('should call roomService.getRoomsMinimalMetadataByIds', () => {
+        sinon.assert.calledWith(roomService.getRoomsMinimalMetadataByIds, ['R1']);
+      });
+
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments, rooms });
+      });
+    });
+
+    describe(`when user does not have '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
+      beforeEach(() => {
+        user.permissions = [];
+
+        res = {};
+        req = { user };
+
+        return sut.handleGetDocsPage(req, res);
+      });
+
+      it('should call documentService.getAllPublicDocumentsMetadata', () => {
+        sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: false });
+      });
+
+      it('should call roomService.getRoomsMinimalMetadataByIds', () => {
+        sinon.assert.calledWith(roomService.getRoomsMinimalMetadataByIds, ['R1']);
+      });
+
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments, rooms });
+      });
+    });
   });
 
   describe('handleGetDocPage', () => {
