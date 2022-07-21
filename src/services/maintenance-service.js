@@ -3,6 +3,7 @@ import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
+import LessonConvertor from './lesson-convertor.js';
 import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 import { getPrivateRoomsRootPath, getPublicRootPath } from '../utils/storage-utils.js';
 
@@ -11,12 +12,13 @@ const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 const logger = new Logger(import.meta.url);
 
 export default class MaintenanceService {
-  static get inject() { return [Cdn, Database, LockStore]; }
+  static get inject() { return [Cdn, Database, LessonConvertor, LockStore]; }
 
-  constructor(cdn, database, lockStore) {
+  constructor(cdn, database, lessonConvertor, lockStore) {
     this.cdn = cdn;
     this.database = database;
     this.lockStore = lockStore;
+    this.lessonConvertor = lessonConvertor;
   }
 
   async runMaintenance() {
@@ -36,6 +38,10 @@ export default class MaintenanceService {
         // eslint-disable-next-line no-await-in-loop
         await this.database.checkDb();
         logger.info('Finished database checks successfully');
+
+        // eslint-disable-next-line no-await-in-loop
+        await this.lessonConvertor.convertAllLessonsToDocuments();
+        logger.info('Finished converting lessons to documents succesfully');
 
         logger.info('Creating basic CDN directories');
         // eslint-disable-next-line no-await-in-loop

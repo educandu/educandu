@@ -11,6 +11,7 @@ import usersSpec from './collection-specs/users.js';
 import tasksSpec from './collection-specs/tasks.js';
 import roomsSpec from './collection-specs/rooms.js';
 import locksSpec from './collection-specs/locks.js';
+import lessonsSpec from './collection-specs/lessons.js';
 import batchesSpec from './collection-specs/batches.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import settingsSpec from './collection-specs/settings.js';
@@ -35,6 +36,7 @@ const collectionSpecs = [
   batchesSpec,
   settingsSpec,
   sessionsSpec,
+  lessonsSpec,
   documentsSpec,
   storagePlansSpec,
   documentOrdersSpec,
