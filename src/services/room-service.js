@@ -40,6 +40,10 @@ export default class RoomService {
     return this.roomStore.getRoomById(roomId);
   }
 
+  getRoomsMinimalMetadataByIds(roomIds) {
+    return this.roomStore.getRoomsMinimalMetadataByIds(roomIds);
+  }
+
   getRoomInvitationById(roomInvitationId) {
     return this.roomInvitationStore.getRoomInvitationById(roomInvitationId);
   }

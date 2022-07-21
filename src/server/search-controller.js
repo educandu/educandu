@@ -1,17 +1,20 @@
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import RoomService from '../services/room-service.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import { validateQuery } from '../domain/validation-middleware.js';
 import { getSearchQuerySchema } from '../domain/schemas/search-schemas.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 export default class SearchController {
-  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(documentService, clientDataMappingService, pageRenderer) {
+  constructor(documentService, roomService, clientDataMappingService, pageRenderer) {
+    this.roomService = roomService;
+    this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
-    this.pageRenderer = pageRenderer;
   }
 
   handleGetSearchPage(req, res) {
@@ -21,8 +24,12 @@ export default class SearchController {
   async handleGetSearchResult(req, res) {
     const { query } = req.query;
     const docs = await this.documentService.getSearchableDocumentsMetadataByTags(query);
-    const result = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
-    return res.send({ result });
+    const roomIds = ensureIsUnique(docs.map(doc => doc.roomId).filter(roomId => roomId));
+    const rooms = await this.roomService.getRoomsMinimalMetadataByIds(roomIds);
+
+    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
+
+    return res.send({ documents: mappedDocuments, rooms });
   }
 
   registerPages(router) {

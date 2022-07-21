@@ -17,12 +17,12 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
-import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { documentMetadataShape, roomMinimalMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
@@ -66,7 +66,7 @@ function Docs({ initialState, PageTemplate }) {
   const mapToRows = useCallback(docs => docs.map(doc => (
     {
       key: doc._id,
-      _id: doc._id,
+      documentId: doc._id,
       title: doc.title,
       createdOn: doc.createdOn,
       updatedOn: doc.updatedOn,
@@ -132,7 +132,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleCloneClick = row => {
-    const documentToClone = documents.find(d => d._id === row._id);
+    const documentToClone = documents.find(d => d._id === row.documentId);
     setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ documentToClone, settings, t }), isVisible: true });
   };
 
@@ -167,8 +167,8 @@ function Docs({ initialState, PageTemplate }) {
   const handleArchivedSwitchChange = async (archived, row) => {
     try {
       const { doc } = archived
-        ? await documentApiClient.unarchiveDocument(row._id)
-        : await documentApiClient.archiveDocument(row._id);
+        ? await documentApiClient.unarchiveDocument(row.documentId)
+        : await documentApiClient.archiveDocument(row.documentId);
 
       const newDocuments = documents.slice();
       newDocuments
@@ -183,9 +183,11 @@ function Docs({ initialState, PageTemplate }) {
 
   const renderOrigin = originTranslated => <span>{originTranslated}</span>;
   const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
-  const renderTitle = (title, row) => {
-    const doc = documents.find(d => d._id === row._id);
-    return !!doc && <DocumentInfoCell doc={doc} />;
+  const renderTitle = (_title, row) => {
+    const doc = documents.find(d => d._id === row.documentId);
+    const room = doc.roomId ? initialState.rooms.find(r => r._id === doc.roomId) : null;
+
+    return !!doc && <DocumentInfoCell doc={doc} room={room} />;
   };
 
   const renderCreatedBy = (_user, row) => {
@@ -317,7 +319,8 @@ function Docs({ initialState, PageTemplate }) {
 Docs.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    rooms: PropTypes.arrayOf(roomMinimalMetadataShape)
   }).isRequired
 };
 

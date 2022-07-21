@@ -26,19 +26,20 @@ function Search({ PageTemplate }) {
   const { t } = useTranslation('search');
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
+  const [rooms, setRooms] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [unselectedTags, setUnselectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
+  const [unselectedTags, setUnselectedTags] = useState([]);
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
   const mapToRows = useCallback(docs => docs.map(doc => (
     {
       key: doc._id,
-      _id: doc._id,
+      documentId: doc._id,
       relevance: doc.tagMatchCount,
       tags: doc.tags,
       title: doc.title,
@@ -69,8 +70,9 @@ function Search({ PageTemplate }) {
       try {
         const trimmedSearchText = searchText.trim();
         history.replaceState(null, '', urls.getSearchUrl(trimmedSearchText));
-        const { result } = await searchApiClient.search(trimmedSearchText);
-        setDocuments(result);
+        const result = await searchApiClient.search(trimmedSearchText);
+        setRooms(result.rooms);
+        setDocuments(result.documents);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -104,9 +106,11 @@ function Search({ PageTemplate }) {
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
-  const renderTitle = (title, row) => {
-    const doc = documents.find(d => d._id === row._id);
-    return !!doc && <DocumentInfoCell doc={doc} />;
+  const renderTitle = (_title, row) => {
+    const doc = documents.find(d => d._id === row.documentId);
+    const room = doc.roomId ? rooms.find(r => r._id === doc.roomId) : null;
+
+    return !!doc && <DocumentInfoCell doc={doc} room={room} />;
   };
 
   const renderCellTags = tags => (

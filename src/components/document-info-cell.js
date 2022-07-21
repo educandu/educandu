@@ -2,9 +2,9 @@ import React from 'react';
 import urls from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
-import { documentMetadataShape } from '../ui/default-prop-types.js';
+import { documentMetadataShape, roomMinimalMetadataShape } from '../ui/default-prop-types.js';
 
-function DocumentInfoCell({ doc }) {
+function DocumentInfoCell({ doc, room }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInfoCell');
   const dates = [
@@ -14,6 +14,7 @@ function DocumentInfoCell({ doc }) {
 
   return (
     <a className="InfoCell" href={urls.getDocUrl({ id: doc._id, slug: doc.slug })}>
+      {room?.name}
       <div className="InfoCell-mainText">{doc.title}</div>
       {doc.description && <div className="InfoCell-description">{doc.description}</div>}
       <div className="InfoCell-subtext">{dates.join(' | ')}</div>
@@ -22,7 +23,12 @@ function DocumentInfoCell({ doc }) {
 }
 
 DocumentInfoCell.propTypes = {
-  doc: documentMetadataShape.isRequired
+  doc: documentMetadataShape.isRequired,
+  room: roomMinimalMetadataShape
+};
+
+DocumentInfoCell.defaultProps = {
+  room: null
 };
 
 export default DocumentInfoCell;
