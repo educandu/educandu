@@ -99,6 +99,7 @@ export default class StorageService {
   async uploadFiles({ parentPath, files, storageClaimingUserId }) {
     let lock;
     let usedBytes = 0;
+    let uploadedFiles = [];
 
     try {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
@@ -111,8 +112,8 @@ export default class StorageService {
       }
 
       if (storageLocationType === STORAGE_LOCATION_TYPE.public) {
-        await this._uploadFiles(files, parentPath);
-        return { usedBytes };
+        uploadedFiles = await this._uploadFiles(files, parentPath);
+        return { uploadedFiles, usedBytes };
       }
 
       if (!user.storage.plan) {
@@ -127,13 +128,13 @@ export default class StorageService {
         throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
       }
 
-      await this._uploadFiles(files, parentPath);
+      uploadedFiles = await this._uploadFiles(files, parentPath);
       usedBytes = await this._updateUserUsedBytes(user._id);
     } finally {
       this.lockStore.releaseLock(lock);
     }
 
-    return { usedBytes };
+    return { uploadedFiles, usedBytes };
   }
 
   async getObjects({ parentPath, searchTerm, recursive }) {
@@ -265,11 +266,30 @@ export default class StorageService {
   }
 
   async _uploadFiles(files, parentPath) {
-    const uploads = files.map(async file => {
-      const fileName = componseUniqueFileName(file.originalname, parentPath);
-      await this.cdn.uploadObject(fileName, file.path);
+    const cdnPathByOriginalName = files.reduce((map, file) => {
+      map[file.originalname] = componseUniqueFileName(file.originalname, parentPath);
+      return map;
+    }, {});
+
+    const originalNameByCdnPath = Object.fromEntries(Object.entries(cdnPathByOriginalName).map(([key, value]) => [value, key]));
+
+    await Promise.all(files.map(file => this.cdn.uploadObject(cdnPathByOriginalName[file.originalname], file.path)));
+
+    const { objects } = await this._getObjects({
+      parentPath,
+      recursive: true,
+      includeEmptyObjects: true,
+      ignoreNonExistingPath: true
     });
-    await Promise.all(uploads);
+
+    return objects.reduce((uploadedFiles, obj) => {
+      const originalName = originalNameByCdnPath[obj.path];
+      if (originalName) {
+        uploadedFiles[originalName] = obj;
+      }
+
+      return uploadedFiles;
+    }, {});
   }
 
   async _updateUserUsedBytes(userId) {

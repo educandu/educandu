@@ -8,6 +8,8 @@ import { useService } from './container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import { Alert, Input, message, Modal, Select } from 'antd';
+import DialogFooterButtons from './dialog-footer-buttons.js';
 import FilesUploadOverview from './files-upload-overview.js';
 import { useSetStorageLocation } from './storage-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -15,7 +17,6 @@ import { getResourceFullName } from '../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
-import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { DoubleLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
@@ -53,6 +54,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
+  const [lastUploadedFile, setLastUploadedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.directory]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
@@ -125,6 +127,10 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     onSelect(selectedFile.portableUrl);
   };
 
+  const handleUploadSelectClick = () => {
+    onSelect(lastUploadedFile.portableUrl);
+  };
+
   const handleDeleteClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
     setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
@@ -145,7 +151,14 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     pushScreen(SCREEN.uploadOverview);
   }, []);
 
-  const handleUploadFinish = () => {
+  const handleUploadFinish = ({ uploadedFiles, failedFiles }) => {
+    const uploadedFileValues = Object.values(uploadedFiles);
+    const failedFileValues = Object.values(failedFiles);
+
+    if (!failedFileValues.length && uploadedFileValues.length === 1) {
+      setLastUploadedFile(uploadedFileValues[0]);
+    }
+
     setIsUploading(false);
   };
 
@@ -156,6 +169,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const handleUploadOverviewScreenBackClick = async () => {
     popScreen();
     setUploadQueue([]);
+    setLastUploadedFile(null);
     await fetchStorageContent();
   };
 
@@ -183,16 +197,6 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     setSearchTerm('');
     popScreen();
   };
-
-  const renderSelectButton = () => (
-    <Button
-      type="primary"
-      onClick={handleSelectClick}
-      disabled={!selectedFile || isLoading}
-      >
-      {t('common:select')}
-    </Button>
-  );
 
   const renderScreenBackButton = ({ text = t('common:back'), onClick, noMargin = false, disabled = false }) => {
     const classes = classNames({
@@ -391,19 +395,20 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           <div className="StorageLocation-locationInfo">
             {screen === SCREEN.search ? renderSearchInfo() : renderStorageInfo()}
           </div>
-          <div className="StorageLocation-buttonsLine">
-            <Button
-              icon={<UploadIcon />}
-              onClick={handleUploadButtonClick}
-              disabled={!canAcceptFiles}
-              >
-              {t('uploadFiles')}
-            </Button>
-            <div className="StorageLocation-buttonsGroup">
-              <Button onClick={onCancel}>{t('common:cancel')}</Button>
-              {renderSelectButton()}
-            </div>
-          </div>
+          <DialogFooterButtons
+            onCancel={onCancel}
+            onOk={handleSelectClick}
+            okButtonText={t('common:select')}
+            okDisabled={!selectedFile || isLoading}
+            extraButtons={[
+              {
+                icon: <UploadIcon />,
+                text: t('uploadFiles'),
+                disabled: !canAcceptFiles,
+                onClick: handleUploadButtonClick
+              }
+            ]}
+            />
         </Fragment>
       )}
 
@@ -415,7 +420,11 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           size={selectedFile.size}
           createdOn={selectedFile.createdOn}
           />
-        <div className="StorageLocation-screenSelect">{renderSelectButton()}</div>
+        <DialogFooterButtons
+          onCancel={onCancel}
+          onOk={handleSelectClick}
+          okButtonText={t('common:select')}
+          />
       </div>
       )}
 
@@ -427,6 +436,15 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           directory={currentDirectory}
           storageLocation={storageLocation}
           onUploadFinish={handleUploadFinish}
+          showPreviewAfterUpload={uploadQueue.length === 1}
+          />
+        <DialogFooterButtons
+          allowOk={uploadQueue.length === 1}
+          onCancel={onCancel}
+          onOk={handleUploadSelectClick}
+          okButtonText={t('common:select')}
+          okDisabled={!lastUploadedFile || isUploading}
+          cancelDisabled={isUploading}
           />
       </div>
       )}

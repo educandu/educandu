@@ -11,6 +11,10 @@
     flex-direction: column;
     overflow-y: auto;
   }
+
+  &.FilePreview--compact {
+    grid-template-columns: 1fr 2fr;
+  }
 }
 
 .FilePreview-previewArea {
@@ -25,11 +29,27 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+
+  &.FilePreview-previewArea--compact {
+    height: 280px;
+  }
 }
 
 .FilePreview-detailsArea {
   grid-row: 1;
   grid-column: 2;
+
+  &.FilePreview-detailsArea--compact {
+    gap: 0 18px;
+    display: grid;
+    grid-auto-flow: row;
+    align-items: baseline;
+    grid-template-columns: auto 1fr;
+
+    @media @edu-media-phone {
+      display: none;
+    }
+  }
 }
 
 .FilePreview-detailLabel {

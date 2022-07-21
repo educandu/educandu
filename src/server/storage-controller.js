@@ -82,9 +82,9 @@ class StorageController {
     }
 
     const { storageClaimingUserId } = await this._checkPathAccess(parentPath, user);
-    const { usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
+    const { uploadedFiles, usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
 
-    return res.status(201).send({ usedBytes });
+    return res.status(201).send({ uploadedFiles, usedBytes });
   }
 
   async _checkPathAccess(path, user) {

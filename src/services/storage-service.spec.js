@@ -274,6 +274,7 @@ describe('storage-service', () => {
       lock = { id: uniqueId.create() };
       lockStore.takeUserLock.resolves(lock);
       lockStore.releaseLock.resolves();
+      sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.domain.com');
     });
 
     describe('when the storage type is unknown', () => {
@@ -302,14 +303,29 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is public', () => {
+      const id = 'xyz';
+      const docId = uniqueId.create();
+
+      let filesAfterUpload;
+
       beforeEach(async () => {
-        parentPath = 'media';
+        parentPath = `media/${docId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
         ];
+
+        filesAfterUpload = [
+          { name: `media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+        ];
+
+        cdn.listObjects.withArgs({ prefix: `media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
+        cdn.listObjects.resolves([]);
+
         cdn.uploadObject.resolves();
 
+        sandbox.stub(uniqueId, 'create').returns(id);
         result = await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
       });
 
@@ -319,8 +335,8 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         sinon.assert.calledTwice(cdn.uploadObject);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file1-(.+)\.jpeg/), files[0].path);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file2-(.+)\.jpeg/), files[1].path);
+        sinon.assert.calledWith(cdn.uploadObject, `media/${docId}/file1-${id}.jpeg`, files[0].path);
+        sinon.assert.calledWith(cdn.uploadObject, `media/${docId}/file2-${id}.jpeg`, files[1].path);
       });
 
       it('should release the lock', () => {
@@ -328,7 +344,35 @@ describe('storage-service', () => {
       });
 
       it('should return zero used bytes', () => {
-        expect(result).toEqual({ usedBytes: 0 });
+        expect(result).toEqual({ uploadedFiles: expect.any(Object), usedBytes: 0 });
+      });
+
+      it('should return the uploaded files', () => {
+        expect(result).toEqual({
+          uploadedFiles: {
+            'file1.jpeg': {
+              displayName: `file1-${id}.jpeg`,
+              parentPath: `media/${docId}`,
+              path: `media/${docId}/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/media/${docId}/file1-${id}.jpeg`,
+              portableUrl: `cdn://media/${docId}/file1-${id}.jpeg`,
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: 'file',
+              size: 3000000
+            },
+            'file2.jpeg': {
+              displayName: `file2-${id}.jpeg`,
+              parentPath: `media/${docId}`,
+              path: `media/${docId}/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/media/${docId}/file2-${id}.jpeg`,
+              portableUrl: `cdn://media/${docId}/file2-${id}.jpeg`,
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: 'file',
+              size: 3000000
+            }
+          },
+          usedBytes: expect.any(Number)
+        });
       });
     });
 
@@ -397,33 +441,45 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is private and the user has enough storage space left', () => {
-      let allOwnedPrivateRoomIds;
-      let oldFiles;
+      const id = 'xyz';
+      const otherRoomId = uniqueId.create();
+
+      let filesInRoomBeforeUpload;
+      let filesInRoomAfterUpload;
+      let filesInOtherRoom;
 
       beforeEach(async () => {
         parentPath = `rooms/${roomId}/media`;
         files = [
-          { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 3 * 1000 * 1000 },
-          { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 3 * 1000 * 1000 }
+          { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
-        oldFiles = [
-          { size: 1 * 1000 * 1000 },
-          { size: 1 * 1000 * 1000 }
+        filesInRoomBeforeUpload = [
+          { name: `rooms/${roomId}/media/old-file-1-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `rooms/${roomId}/media/old-file-2-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
-        allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
-        const usedBytes = oldFiles.reduce((totalSize, file) => totalSize + file.size, 0);
+        filesInRoomAfterUpload = [
+          ...filesInRoomBeforeUpload,
+          { name: `rooms/${roomId}/media/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `rooms/${roomId}/media/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+        ];
+
+        filesInOtherRoom = [{ name: `rooms/${otherRoomId}/media/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
+
+        const usedBytes = [...filesInRoomBeforeUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0);
         myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
-        roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([oldFiles[0], files[0], files[1]]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([oldFiles[1]]);
+        roomStore.getRoomIdsByOwnerIdAndAccess.resolves([roomId, otherRoomId]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesInRoomAfterUpload);
+        cdn.listObjects.withArgs({ prefix: `rooms/${otherRoomId}/media/`, recursive: true }).resolves(filesInOtherRoom);
         cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
 
+        sandbox.stub(uniqueId, 'create').returns(id);
         result = await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
       });
 
@@ -438,14 +494,14 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.listObjects for each room', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${otherRoomId}/media/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
         expect(updatedUser.storage.usedBytes)
-          .toBe(oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size);
+          .toBe([...filesInRoomAfterUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0));
       });
 
       it('should release the lock', () => {
@@ -453,7 +509,38 @@ describe('storage-service', () => {
       });
 
       it('should return the recalculated used bytes', () => {
-        expect(result).toEqual({ usedBytes: oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size });
+        expect(result).toEqual({
+          uploadedFiles: expect.any(Object),
+          usedBytes: [...filesInRoomAfterUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0)
+        });
+      });
+
+      it('should return the uploaded files', () => {
+        expect(result).toEqual({
+          uploadedFiles: {
+            'file1.jpeg': {
+              displayName: `file1-${id}.jpeg`,
+              parentPath: `rooms/${roomId}/media`,
+              path: `rooms/${roomId}/media/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/rooms/${roomId}/media/file1-${id}.jpeg`,
+              portableUrl: `cdn://rooms/${roomId}/media/file1-${id}.jpeg`,
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: 'file',
+              size: 3000000
+            },
+            'file2.jpeg': {
+              displayName: `file2-${id}.jpeg`,
+              parentPath: `rooms/${roomId}/media`,
+              path: `rooms/${roomId}/media/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/rooms/${roomId}/media/file2-${id}.jpeg`,
+              portableUrl: `cdn://rooms/${roomId}/media/file2-${id}.jpeg`,
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: 'file',
+              size: 3000000
+            }
+          },
+          usedBytes: expect.any(Number)
+        });
       });
     });
   });
