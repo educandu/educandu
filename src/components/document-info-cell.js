@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import RoomIcon from './icons/general/room-icon.js';
 import { useDateFormat } from './locale-context.js';
-import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { documentMetadataShape, roomMinimalMetadataShape } from '../ui/default-prop-types.js';
 
 function DocumentInfoCell({ doc, room }) {
@@ -20,7 +20,7 @@ function DocumentInfoCell({ doc, room }) {
     <div className="DocumentInfoCell" >
       {showFrame && (
         <a href={routes.getRoomUrl(room._id, room.slug)} className="DocumentInfoCell-topFrame">
-          <RoomJoinedIcon />{room.name}
+          <RoomIcon />{room.name}
         </a>
       )}
 
