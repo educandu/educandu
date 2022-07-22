@@ -50,7 +50,7 @@ class DocumentStore {
   }
 
   getDocumentsMetadataBySlug(slug, { session } = {}) {
-    return this.collection.find({ slug }, { projection: documentMetadataProjection, session }.toArray());
+    return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
