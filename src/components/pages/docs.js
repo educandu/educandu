@@ -1,8 +1,8 @@
 import by from 'thenby';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import Restricted from '../restricted.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { Input, Button, Switch } from 'antd';
@@ -139,7 +139,7 @@ function Docs({ initialState, PageTemplate }) {
   const handleDocumentMetadataModalSave = (newDocument, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
 
-    window.location = urls.getDocUrl({
+    window.location = routes.getDocUrl({
       id: newDocument._id,
       slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,

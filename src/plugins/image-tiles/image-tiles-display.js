@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
@@ -26,7 +26,7 @@ const getTileLinkUrl = tile => {
     case LINK_SOURCE_TYPE.external:
       return link.sourceUrl;
     case LINK_SOURCE_TYPE.document:
-      return link.documentId ? urls.getDocUrl({ id: link.documentId }) : '';
+      return link.documentId ? routes.getDocUrl({ id: link.documentId }) : '';
     default:
       return '';
   }

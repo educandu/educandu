@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import { settingsProps } from '../ui/default-prop-types.js';
 
 function ErrorPage({ error, settings, uiLanguage, i18n }) {
@@ -28,7 +28,7 @@ function ErrorPage({ error, settings, uiLanguage, i18n }) {
         <div className="ErrorPage-footerContent">
           {(settings.footerLinks?.[uiLanguage] || []).map((fl, index) => (
             <span key={index.toString()} className="ErrorPage-footerLink">
-              <a href={urls.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+              <a href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
             </span>
           ))}
         </div>

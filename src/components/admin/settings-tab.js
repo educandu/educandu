@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Button, Collapse, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -100,7 +100,7 @@ function SettingsTab({
   const handleStartDocumentRegenerationClick = async () => {
     try {
       const batch = await adminApiClient.postDocumentRegenerationRequest();
-      window.location = urls.getBatchUrl(batch._id);
+      window.location = routes.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
     }
@@ -109,7 +109,7 @@ function SettingsTab({
   const handleStartCdnResourcesConsolidationClick = async () => {
     try {
       const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
-      window.location = urls.getBatchUrl(batch._id);
+      window.location = routes.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
     }
@@ -118,14 +118,14 @@ function SettingsTab({
   const handleStartCdnUploadDirectoryCreationClick = async () => {
     try {
       const batch = await adminApiClient.postCdnUploadDirectoryCreationRequest();
-      window.location = urls.getBatchUrl(batch._id);
+      window.location = routes.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
     }
   };
 
   const renderLastBatchExecution = batch => batch && (
-    <span>{t('lastExecution')}: <a href={urls.getBatchUrl(batch._id)}>{formatDate(batch.createdOn)}</a></span>
+    <span>{t('lastExecution')}: <a href={routes.getBatchUrl(batch._id)}>{formatDate(batch.createdOn)}</a></span>
   );
 
   return (
