@@ -150,7 +150,7 @@ export default class RoomController {
     const updatedRoom = await this.roomService.removeRoomMember({ room, memberUserId });
     const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
     if (memberUserId !== user._id) {
-      await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.username, memberUser });
+      await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.displayName, memberUser });
     }
     return res.send({ room: mappedRoom });
   }
@@ -171,7 +171,7 @@ export default class RoomController {
 
     const remainingRoomInvitations = await this.roomService.deleteRoomInvitation({ room, invitation });
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(remainingRoomInvitations);
-    await this.mailService.sendRoomInvitationDeletionNotificationEmail({ roomName: room.name, ownerName: user.username, email: invitation.email });
+    await this.mailService.sendRoomInvitationDeletionNotificationEmail({ roomName: room.name, ownerName: user.displayName, email: invitation.email });
 
     return res.send({ invitations: mappedInvitations });
   }
@@ -183,7 +183,7 @@ export default class RoomController {
 
     const { origin } = requestUtils.getHostInfo(req);
     const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
-    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
+    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.displayName, email, invitationLink });
 
     return res.status(201).send(invitation);
   }
@@ -258,7 +258,7 @@ export default class RoomController {
     await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: roomOwner._id });
     await this.mailService.sendRoomDeletionNotificationEmails({
       roomName: room.name,
-      ownerName: roomOwner.username,
+      ownerName: roomOwner.displayName,
       roomMembers: room.members
     });
   }

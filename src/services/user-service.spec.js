@@ -35,8 +35,8 @@ describe('user-service', () => {
 
   beforeEach(async () => {
     password = 'john-doe-12345$$$';
-    user = await setupTestUser(container, { username: 'John Doe', email: 'john-doe@test.com', password });
-    executingUser = await setupTestUser(container, { username: 'Emilia Watson', email: 'emilia-watson@test.com' });
+    user = await setupTestUser(container, { email: 'john-doe@test.com', password, displayName: 'John Doe' });
+    executingUser = await setupTestUser(container, { email: 'emilia-watson@test.com', displayName: 'Emilia Watson' });
   });
 
   afterEach(async () => {
@@ -48,16 +48,16 @@ describe('user-service', () => {
 
     describe('when provider doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: user.username, password, provider: 'unknown' });
+        result = await sut.authenticateUser({ email: user.email, password, provider: 'unknown' });
       });
       it('should return null', () => {
         expect(result).toBe(false);
       });
     });
 
-    describe('when emailOrUsername doesn\'t match', () => {
+    describe('when email doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: 'unknown', password });
+        result = await sut.authenticateUser({ email: 'unknown', password });
       });
       it('should return null', () => {
         expect(result).toBe(false);
@@ -66,60 +66,28 @@ describe('user-service', () => {
 
     describe('when password doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: user.email, password: 'wrong!' });
+        result = await sut.authenticateUser({ email: user.email, password: 'wrong!' });
       });
       it('should return null', () => {
         expect(result).toBe(false);
       });
     });
 
-    describe('when provider matches and emailOrUsername matches the email', () => {
+    describe('when provider and email match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: user.email, password });
+        result = await sut.authenticateUser({ email: user.email, password });
       });
       it('should return the user', () => {
         expect(result).toEqual(user);
       });
     });
 
-    describe('when provider matches and emailOrUsername matches the email in a different casing', () => {
+    describe('when provider matches and email matches in a different casing', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: user.email.toUpperCase(), password });
+        result = await sut.authenticateUser({ email: user.email.toUpperCase(), password });
       });
       it('should return the user', () => {
         expect(result).toEqual(user);
-      });
-    });
-
-    describe('when provider matches and emailOrUsername matches the username', () => {
-      beforeEach(async () => {
-        result = await sut.authenticateUser({ emailOrUsername: user.username, password });
-      });
-      it('should return the user', () => {
-        expect(result).toEqual(user);
-      });
-    });
-
-    describe('when provider matches and emailOrUsername matches the username and the email', () => {
-      let user1;
-      let user2;
-      let result1;
-      let result2;
-
-      beforeEach(async () => {
-        const password1 = 'abcde9475!!!';
-        const password2 = 'owiem1002???';
-
-        user1 = await setupTestUser(container, { username: 'peter', email: 'peter@peterson.com', password: password1 });
-        user2 = await setupTestUser(container, { username: 'peter@peterson.com', email: 'different-peter@peterson.com', password: password2 });
-        result1 = await sut.authenticateUser({ emailOrUsername: 'peter@peterson.com', password: password1 });
-        result2 = await sut.authenticateUser({ emailOrUsername: 'different-peter@peterson.com', password: password2 });
-      });
-      it('should return the user where the email matches', () => {
-        expect(result1).toEqual(user1);
-      });
-      it('should still find the other user by email', () => {
-        expect(result2).toEqual(user2);
       });
     });
   });

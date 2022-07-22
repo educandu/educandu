@@ -51,8 +51,8 @@ describe('amb-service', () => {
     let document2;
 
     beforeEach(async () => {
-      creatorUser = await setupTestUser(container, { username: 'document_creator', email: 'creator@educandu.dev' });
-      contributorUser = await setupTestUser(container, { username: 'document_contributor', email: 'contributor@educandu.dev' });
+      creatorUser = await setupTestUser(container, { email: 'creator@educandu.dev', displayName: 'Document Creator' });
+      contributorUser = await setupTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor' });
     });
 
     describe('when there are no unarchived documents', () => {
@@ -124,16 +124,16 @@ describe('amb-service', () => {
               'name': 'Bach concert',
               'creator': [
                 {
-                  name: 'document_creator',
+                  name: 'Document Creator',
                   type: 'Person'
                 }
               ],
               'contributor': [
                 {
-                  name: 'document_creator',
+                  name: 'Document Creator',
                   type: 'Person'
                 }, {
-                  name: 'document_contributor',
+                  name: 'Document Contributor',
                   type: 'Person'
                 }
               ],
@@ -204,16 +204,16 @@ describe('amb-service', () => {
               'name': 'Bach concert',
               'creator': [
                 {
-                  name: 'document_creator',
+                  name: 'Document Creator',
                   type: 'Person'
                 }
               ],
               'contributor': [
                 {
-                  name: 'document_creator',
+                  name: 'Document Creator',
                   type: 'Person'
                 }, {
-                  name: 'document_contributor',
+                  name: 'Document Contributor',
                   type: 'Person'
                 }
               ],

@@ -14,7 +14,7 @@ describe('user-store', () => {
   });
 
   beforeEach(async () => {
-    user = await setupTestUser(container, { username: 'mark', email: 'mark@markson.com', provider: 'educandu' });
+    user = await setupTestUser(container, { email: 'mark@markson.com', displayName: 'Mark', provider: 'educandu' });
   });
 
   afterEach(async () => {
@@ -54,25 +54,23 @@ describe('user-store', () => {
     });
   });
 
-  describe('findActiveUsersByEmailOrUsername', () => {
-    let matchingUsernameUser;
+  describe('findActiveUsersByEmail', () => {
     let matchingEmailUser;
     let otherProviderUser;
     let closedAccountUser;
 
     beforeEach(async () => {
-      matchingUsernameUser = await setupTestUser(container, { username: 'username', email: 'other_1' });
-      matchingEmailUser = await setupTestUser(container, { username: 'other_2', email: 'email' });
-      otherProviderUser = await setupTestUser(container, { username: 'other_3', email: 'other_3' });
-      await sut.saveUser({ ...otherProviderUser, username: 'username', provider: 'other_3' });
-      closedAccountUser = await setupTestUser(container, { username: 'other_4', email: 'other_4' });
+      matchingEmailUser = await setupTestUser(container, { email: 'email', displayName: 'Other user 2' });
+      otherProviderUser = await setupTestUser(container, { email: 'other_3', displayName: 'Other user 3' });
+      await sut.saveUser({ ...otherProviderUser, provider: 'other_3', displayName: 'Other user' });
+      closedAccountUser = await setupTestUser(container, { email: 'other_4', displayName: 'Other user 4' });
       await sut.saveUser({ ...closedAccountUser, email: 'email', accountClosedOn: new Date() });
 
-      result = await sut.findActiveUsersByEmailOrUsername({ provider: 'educandu', username: 'username', email: 'email' });
+      result = await sut.findActiveUsersByEmail({ email: 'email', provider: 'educandu' });
     });
 
     it('should return all matching active users', () => {
-      expect(result).toEqual([matchingUsernameUser, matchingEmailUser]);
+      expect(result).toEqual([matchingEmailUser]);
     });
   });
 
@@ -97,7 +95,7 @@ describe('user-store', () => {
 
     describe('when account is closed', () => {
       beforeEach(async () => {
-        const currentUser = await setupTestUser(container, { username: 'jim', email: 'jim@jameson.com', provider: 'educandu', accountClosedOn: new Date() });
+        const currentUser = await setupTestUser(container, { email: 'jim@jameson.com', displayName: 'Jim', provider: 'educandu', accountClosedOn: new Date() });
         result = await sut.findActiveUserByProviderAndEmail({ provider: currentUser.provider, currentUser: user.email });
       });
       it('should return null', () => {

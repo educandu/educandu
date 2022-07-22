@@ -11,15 +11,11 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findActiveUsersByEmailOrUsername({ provider, email, username }, { session } = {}) {
+  findActiveUsersByEmail({ provider, email }, { session } = {}) {
     const queryFilters = [];
 
     if (email) {
       queryFilters.push({ email });
-    }
-
-    if (username) {
-      queryFilters.push({ username });
     }
 
     if (!queryFilters.length) {
@@ -33,10 +29,6 @@ class UserStore {
 
   findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
     return this.collection.findOne({ provider, verificationCode }, { session });
-  }
-
-  findUserByProviderAndUsername({ provider, username }, { session } = {}) {
-    return this.collection.findOne({ $and: [{ provider }, { username }] }, { session });
   }
 
   findActiveUserByProviderAndEmail({ provider, email }, { session } = {}) {

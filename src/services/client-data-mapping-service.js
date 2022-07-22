@@ -24,7 +24,7 @@ class ClientDataMappingService {
     return {
       _id: user._id,
       provider: user.provider,
-      username: user.username,
+      displayName: user.displayName,
       email: user.email,
       roles: user.roles,
       profile: user.profile,
@@ -114,7 +114,7 @@ class ClientDataMappingService {
         access: room.access,
         documentsMode: room.documentsMode,
         owner: {
-          username: owner.username
+          displayName: owner.displayName
         }
       }
     };
@@ -134,7 +134,7 @@ class ClientDataMappingService {
       return {
         userId: member.userId,
         joinedOn: member.joinedOn && member.joinedOn.toISOString(),
-        username: memberDetails.username
+        displayName: memberDetails.displayName
       };
     });
 
@@ -170,7 +170,7 @@ class ClientDataMappingService {
     const mappedUser = {
       _id: user._id,
       key: user._id,
-      username: user.username
+      displayName: user.displayName
     };
 
     if (grantedPermissions.includes(permissions.SEE_USER_EMAIL)) {

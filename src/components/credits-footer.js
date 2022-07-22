@@ -33,8 +33,8 @@ function CreditsFooter({ doc, revision }) {
 
   const renderUser = user => {
     return user.email
-      ? <a href={`mailto:${user.email}`}>{user.username}</a>
-      : <span>{user.username}</span>;
+      ? <a href={`mailto:${user.email}`}>{user.displayName}</a>
+      : <span>{user.displayName}</span>;
   };
 
   const renderDocumentContributors = () => {

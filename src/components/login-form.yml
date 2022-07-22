@@ -1,12 +1,9 @@
-enterEmailOrUsername:
-  en: Please enter your email address or user name
-  de: Bitte geben Sie Ihre E-Mail-Adresse oder Ihren Benutzernamen an
+enterEmail:
+  en: Please enter your email address
+  de: Bitte geben Sie Ihre E-Mail-Adresse
 enterPassword:
   en: Please enter your password
   de: Bitte geben Sie Ihr Kennwort an
 loginFailed:
   en: Login failed. Please check your input.
   de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.
-emailOrUsername:
-  en: Email address or user name
-  de: E-Mail-Adresse oder Benutzername

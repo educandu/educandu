@@ -55,8 +55,7 @@ export const ROOM_DOCUMENTS_MODE = {
 
 export const SAVE_USER_RESULT = {
   success: 'success',
-  duplicateEmail: 'duplicate-email',
-  duplicateUsername: 'duplicate-username'
+  duplicateEmail: 'duplicate-email'
 };
 
 export const ERROR_CODES = {

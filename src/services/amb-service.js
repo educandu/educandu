@@ -65,8 +65,8 @@ class AmbService {
 
       result.id = urlUtils.concatParts(origin, routes.getDocUrl({ id: doc._id }));
       result.name = doc.title;
-      result.creator = [{ type: 'Person', name: createdByUser.username }];
-      result.contributor = contributorUsers.map(user => ({ type: 'Person', name: user.username }));
+      result.creator = [{ type: 'Person', name: createdByUser.displayName }];
+      result.contributor = contributorUsers.map(user => ({ type: 'Person', name: user.displayName }));
       result.description = doc.description;
       result.keywords = doc.tags;
       if (licenseUrl) {

@@ -1,21 +1,21 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { FAVORITE_TYPE, ROLE } from '../constants.js';
-import { minPasswordLength, minUsernameLength, passwordValidationPattern } from '../validation-constants.js';
+import { minPasswordLength, minDisplayNameLength, passwordValidationPattern, maxDisplayNameLength } from '../validation-constants.js';
 
-const usernameSchema = joi.string().min(minUsernameLength);
-const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
 const emailSchema = joi.string().case('lower');
+const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
+const displayNameSchema = joi.string().min(minDisplayNameLength).max(maxDisplayNameLength);
 
 export const postUserBodySchema = joi.object({
-  username: usernameSchema.required(),
+  email: emailSchema.required(),
   password: passwordSchema.required(),
-  email: emailSchema.required()
+  displayName: displayNameSchema.required()
 });
 
 export const postUserAccountBodySchema = joi.object({
-  username: usernameSchema.required(),
-  email: emailSchema.required()
+  email: emailSchema.required(),
+  displayName: displayNameSchema.required()
 });
 
 export const postUserProfileBodySchema = joi.object({
@@ -61,6 +61,6 @@ export const favoriteBodySchema = joi.object({
 });
 
 export const loginBodySchema = joi.object({
-  emailOrUsername: joi.string().required(),
+  email: joi.string().required(),
   password: joi.string().required()
 });

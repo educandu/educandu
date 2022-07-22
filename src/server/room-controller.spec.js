@@ -57,7 +57,7 @@ describe('room-controller', () => {
     };
     user = {
       _id: uniqueId.create(),
-      username: 'dagobert-the-third'
+      displayName: 'dagobert-the-third'
     };
     serverConfig = {
       areRoomsEnabled: true
@@ -710,14 +710,20 @@ describe('room-controller', () => {
     });
 
     it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomName: roomA.name, ownerName: user.username, roomMembers: roomA.members });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomName: roomB.name, ownerName: user.username, roomMembers: roomB.members });
+      sinon.assert.calledWith(
+        mailService.sendRoomDeletionNotificationEmails,
+        { roomName: roomA.name, ownerName: user.displayName, roomMembers: roomA.members }
+      );
+      sinon.assert.calledWith(
+        mailService.sendRoomDeletionNotificationEmails,
+        { roomName: roomB.name, ownerName: user.displayName, roomMembers: roomB.members }
+      );
     });
 
     it('should not call mailService.sendRoomDeletionNotificationEmails for rooms with a different access level', () => {
       sinon.assert.neverCalledWith(mailService.sendRoomDeletionNotificationEmails, {
         roomName: roomC.name,
-        ownerName: user.username,
+        ownerName: user.displayName,
         roomMembers: roomC.members
       });
     });
@@ -795,7 +801,10 @@ describe('room-controller', () => {
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails with the right emails', () => {
-        sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomMembers: room.members, roomName: room.name, ownerName: user.username });
+        sinon.assert.calledWith(
+          mailService.sendRoomDeletionNotificationEmails,
+          { roomMembers: room.members, roomName: room.name, ownerName: user.displayName }
+        );
       });
 
       it('should return status 200', () => {

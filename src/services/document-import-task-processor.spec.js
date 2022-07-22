@@ -71,8 +71,8 @@ describe('document-import-task-processor', () => {
         batchParams = { hostName: 'host.name' };
         cdnRootUrl = 'https://cdn.integration.openmusic.academy';
 
-        user1 = { _id: uniqueId.create(), username: 'username-1' };
-        user2 = { _id: uniqueId.create(), username: 'username-2' };
+        user1 = { _id: uniqueId.create(), displayName: 'User 1' };
+        user2 = { _id: uniqueId.create(), displayName: 'User 2' };
 
         revision1 = {
           _id: uniqueId.create(),
@@ -167,7 +167,7 @@ describe('document-import-task-processor', () => {
           profile: null,
           provider: `external/${batchParams.hostName}`,
           roles: [],
-          username: user1.username,
+          displayName: user1.displayName,
           verificationCode: null
         });
         expect(importedUser2).toMatchObject({
@@ -179,7 +179,7 @@ describe('document-import-task-processor', () => {
           profile: null,
           provider: `external/${batchParams.hostName}`,
           roles: [],
-          username: user2.username,
+          displayName: user2.displayName,
           verificationCode: null
         });
       });
@@ -256,7 +256,7 @@ describe('document-import-task-processor', () => {
       describe('followed by a task to update the document', () => {
 
         beforeEach(async () => {
-          user3 = { _id: uniqueId.create(), username: 'username-3' };
+          user3 = { _id: uniqueId.create(), displayName: 'User 3' };
 
           revision3 = {
             _id: uniqueId.create(),
@@ -323,7 +323,7 @@ describe('document-import-task-processor', () => {
             profile: null,
             provider: `external/${batchParams.hostName}`,
             roles: [],
-            username: user3.username,
+            displayName: user3.displayName,
             verificationCode: null
           });
         });

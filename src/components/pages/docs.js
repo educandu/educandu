@@ -102,7 +102,7 @@ function Docs({ initialState, PageTemplate }) {
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
     language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction)),
-    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.username, { direction: sorting.direction, ignoreCase: true })),
+    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.displayName, { direction: sorting.direction, ignoreCase: true })),
     origin: rowsToSort => rowsToSort.sort(by(row => row.origin, { direction: sorting.direction, ignoreCase: true })),
     archived: rowsToSort => rowsToSort.sort(by(row => row.archived, sorting.direction))
   }), [sorting.direction]);
@@ -113,7 +113,7 @@ function Docs({ initialState, PageTemplate }) {
 
     const filteredRows = filterText
       ? newRows.filter(row => row.title.toLowerCase().includes(filterText.toLowerCase())
-        || row.createdBy.username.toLowerCase().includes(filterText.toLowerCase()))
+        || row.createdBy.displayName.toLowerCase().includes(filterText.toLowerCase()))
       : newRows;
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
@@ -192,8 +192,8 @@ function Docs({ initialState, PageTemplate }) {
 
   const renderCreatedBy = (_user, row) => {
     return row.createdBy.email
-      ? <span>{row.createdBy.username} | <a href={`mailto:${row.createdBy.email}`}>{t('common:email')}</a></span>
-      : <span>{row.createdBy.username}</span>;
+      ? <span>{row.createdBy.displayName} | <a href={`mailto:${row.createdBy.email}`}>{t('common:email')}</a></span>
+      : <span>{row.createdBy.displayName}</span>;
   };
 
   const renderActions = (_actions, row) => {

@@ -30,15 +30,15 @@ function Login() {
         <Trans
           t={t}
           i18nKey="loginState"
-          components={[<b key="username" />]}
-          values={{ username: user.username }}
+          components={[<b key="displayName" />]}
+          values={{ displayName: user.displayName }}
           />
       </span>
     );
 
     return (
       <Tooltip title={popoverTitle} placement="bottomRight">
-        <Avatar className="Avatar" src={gravatarUrl} alt={user.username} shape="circle" size="large" onClick={handleAvatarClick} />
+        <Avatar className="Avatar" src={gravatarUrl} alt={user.displayName} shape="circle" size="large" onClick={handleAvatarClick} />
       </Tooltip>
     );
   };

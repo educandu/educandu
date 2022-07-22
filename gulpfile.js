@@ -42,7 +42,7 @@ const testAppEnv = {
   TEST_APP_SESSION_COOKIE_NAME: 'SESSION_ID_TEST_APP_LOCAL',
   TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
-  TEST_APP_INITIAL_USER: JSON.stringify({ username: 'test', password: 'test', email: 'test@test.com' }),
+  TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
   TEST_APP_ARE_ROOMS_ENABLED: true.toString(),
   TEST_APP_IMPORT_SOURCES: JSON.stringify([{ name: 'ELMU - Integration', hostName: 'integration.elmu.online', apiKey: '03a026b939154f41bb1dabf578a33e11' }]),

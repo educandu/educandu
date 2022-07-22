@@ -5,5 +5,5 @@ register:
   en: Register
   de: Registrieren
 loginState:
-  en: You are logged on as <0>{username}</0>
-  de: Sie sind angemeldet als <0>{username}</0>
+  en: Hello <0>{displayName}</0>!
+  de: Hallo <0>{displayName}</0>!

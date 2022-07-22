@@ -22,8 +22,8 @@ describe('client-data-mapping-service', () => {
   });
 
   beforeEach(async () => {
-    user1 = await setupTestUser(container, { username: 'user1', email: 'user1@test.com' });
-    user2 = await setupTestUser(container, { username: 'user2', email: 'user2@test.com' });
+    user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
+    user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
 
   afterEach(async () => {
@@ -43,7 +43,7 @@ describe('client-data-mapping-service', () => {
       dbUser = {
         _id: 'k991UQneLdmDGrAgqR7s6q',
         provider: 'educandu',
-        username: 'test',
+        displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
         roles: ['user', 'admin'],
@@ -76,7 +76,7 @@ describe('client-data-mapping-service', () => {
       expect(result).toStrictEqual({
         _id: 'k991UQneLdmDGrAgqR7s6q',
         provider: 'educandu',
-        username: 'test',
+        displayName: 'Test user',
         email: 'test@test.com',
         roles: ['user', 'admin'],
         profile: null,
@@ -147,7 +147,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
           batchParams: {},
@@ -172,7 +172,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user2._id,
             key: user2._id,
-            username: user2.username
+            displayName: user2.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
           batchParams: {},
@@ -225,7 +225,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
           batchParams: {},
@@ -279,7 +279,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
           batchParams: {},
@@ -305,18 +305,18 @@ describe('client-data-mapping-service', () => {
     const owner = {
       _id: 'owner',
       email: 'owner@owner',
-      username: 'owner',
+      displayName: 'Owner user',
       storage: { plan: 'basic', usedBytes: 20, reminders: [] }
     };
 
     const member1 = {
       _id: 'member1',
-      username: 'member1'
+      displayName: 'Member user 1'
     };
 
     const member2 = {
       _id: 'member2',
-      username: 'member2'
+      displayName: 'Member user 2'
     };
 
     const room = {
@@ -358,7 +358,7 @@ describe('client-data-mapping-service', () => {
         createdOn: room.createdOn.toISOString(),
         updatedOn: room.createdOn.toISOString(),
         owner: {
-          username: owner.username,
+          displayName: owner.displayName,
           email: owner.email,
           _id: owner._id,
           key: owner._id
@@ -366,12 +366,12 @@ describe('client-data-mapping-service', () => {
         members: [
           {
             userId: room.members[0].userId,
-            username: member1.username,
+            displayName: member1.displayName,
             joinedOn: room.members[0].joinedOn.toISOString()
           },
           {
             userId: room.members[1].userId,
-            username: member2.username,
+            displayName: member2.displayName,
             joinedOn: room.members[1].joinedOn.toISOString()
           }
         ]
@@ -419,7 +419,7 @@ describe('client-data-mapping-service', () => {
           access: room.access,
           documentsMode: room.documentsMode,
           owner: {
-            username: user1.username
+            displayName: user1.displayName
           }
         }
       });

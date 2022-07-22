@@ -22,8 +22,8 @@ function RoomCard({ room, invitation }) {
     return (
       <span className="RoomCard-owner">
         {`${t('common:owner')}: `}
-        {!!room.owner.email && <a href={`mailto:${room.owner.email}`}>{room.owner.username}</a>}
-        {!room.owner.email && room.owner.username}
+        {!!room.owner.email && <a href={`mailto:${room.owner.email}`}>{room.owner.displayName}</a>}
+        {!room.owner.email && room.owner.displayName}
       </span>
     );
   };
@@ -102,8 +102,8 @@ const looseRoomProps = {
   createdOn: PropTypes.string,
   updatedOn: PropTypes.string,
   owner: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    email: PropTypes.string
+    email: PropTypes.string,
+    displayName: PropTypes.string.isRequired
   }),
   members: PropTypes.arrayOf(roomMemberShape)
 };

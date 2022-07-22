@@ -266,7 +266,7 @@ function Batches({ initialState, PageTemplate }) {
           <div>{t('common:status')}: {renderBatchStatus(batch.progress)}</div>
           <div>{t('common:createdOn')}: {renderDate(batch.createdOn)}</div>
           <div>{t('common:completedOn')}: {renderDate(batch.completedOn)}</div>
-          <div>{t('common:user')}: {batch.createdBy.username}</div>
+          <div>{t('common:user')}: {batch.createdBy.displayName}</div>
         </div>
         {!!batch.errors.length && (
           <List

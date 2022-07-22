@@ -150,8 +150,8 @@ export const userFavoriteShape = PropTypes.shape({
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
   email: PropTypes.string,
+  displayName: PropTypes.string.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,
@@ -170,8 +170,8 @@ export const pageNameProps = {
 
 const userInDocShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  email: PropTypes.string // This is only visible to super users
+  email: PropTypes.string, // This is only visible to super users
+  displayName: PropTypes.string.isRequired
 });
 
 export const sectionShape = PropTypes.shape({
@@ -358,14 +358,14 @@ export const cdnUploadDirectoryCreationBatchDetailsShape = PropTypes.shape({
 
 export const roomOwnerShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  email: PropTypes.string
+  email: PropTypes.string,
+  displayName: PropTypes.string.isRequired
 });
 
 export const roomMemberShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   joinedOn: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired
 });
 
 export const roomMetadataProps = {

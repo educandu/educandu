@@ -45,7 +45,7 @@ function HistoryControlPanel({
         <div>{t('common:revision')}: <b>{index + 1}</b></div>
         <div>{t('common:date')}: <b>{formatDate(revision.createdOn)}</b></div>
         <div>{t('common:language')}: <b>{languageName}</b></div>
-        <div>{t('common:user')}: <b>{revision.createdBy.username}</b></div>
+        <div>{t('common:user')}: <b>{revision.createdBy.displayName}</b></div>
         <div>{t('common:id')}: <b>{revision._id}</b></div>
         {revision.restoredFrom && (
           <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>
