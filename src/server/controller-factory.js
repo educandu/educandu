@@ -1,3 +1,4 @@
+import routes from '../utils/routes.js';
 import { Container } from '../common/di.js';
 import AmbController from './amb-controller.js';
 import RoomController from './room-controller.js';
@@ -11,7 +12,6 @@ import SearchController from './search-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
-import LessonController from './lesson-controller.js';
 import StorageController from './storage-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
@@ -36,7 +36,6 @@ const controllerTypes = [
   ErrorController,
   RoomController,
   DashboardController,
-  LessonController,
   RevisionController,
   PdfJsApiController,
   AdminController,
@@ -52,6 +51,11 @@ class ControllerFactory {
 
   registerAdditionalControllers(additionalControllers) {
     controllerTypes.push(...additionalControllers);
+  }
+
+  registerPermanentRedirects(router) {
+    router.get('/lessons/:id', (req, res) => res.redirect(301, routes.getDocUrl({ id: req.params.id })));
+    router.get('/revs/articles/:id', (req, res) => res.redirect(301, routes.getDocumentRevisionUrl(req.params.id)));
   }
 
   getAllControllers() {

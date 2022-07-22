@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
@@ -60,7 +60,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentCreatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -72,7 +72,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -84,7 +84,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentMarkedFavoriteActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -96,7 +96,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -108,7 +108,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -120,7 +120,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -132,7 +132,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };

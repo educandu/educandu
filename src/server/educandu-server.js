@@ -67,6 +67,9 @@ export default class EducanduServer {
       }));
     }
 
+    logger.info('Rrgistering permanent redirects');
+    this.controllerFactory.registerPermanentRedirects(router);
+
     this.controllerFactory.registerAdditionalControllers(this.serverConfig.additionalControllers);
     const controllers = this.controllerFactory.getAllControllers();
 

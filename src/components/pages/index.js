@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import SearchBar from '../search-bar.js';
+import routes from '../../utils/routes.js';
 
 function Index({ HomePageTemplate }) {
   const handleSearch = searchText => {
-    window.location = urls.getSearchUrl(searchText.trim());
+    window.location = routes.getSearchUrl(searchText.trim());
   };
 
   return (
