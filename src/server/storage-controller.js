@@ -1,9 +1,9 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/routes.js';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
+import routes from '../utils/routes.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
@@ -142,7 +142,7 @@ class StorageController {
   registerMiddleware(router) {
     router.use(async (req, _res, next) => {
       const { user } = req;
-      const documentId = urls.getDocIdIfDocUrl(req.originalUrl);
+      const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
       const locations = await this.storageService.getStorageLocations({ user, documentId });
 
       // eslint-disable-next-line require-atomic-updates

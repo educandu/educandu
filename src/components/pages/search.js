@@ -2,8 +2,8 @@ import by from 'thenby';
 import { Tag } from 'antd';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import SearchBar from '../search-bar.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
@@ -69,7 +69,7 @@ function Search({ PageTemplate }) {
       setIsSearching(true);
       try {
         const trimmedSearchText = searchText.trim();
-        history.replaceState(null, '', urls.getSearchUrl(trimmedSearchText));
+        history.replaceState(null, '', routes.getSearchUrl(trimmedSearchText));
         const result = await searchApiClient.search(trimmedSearchText);
         setRooms(result.rooms);
         setDocuments(result.documents);

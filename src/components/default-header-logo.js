@@ -1,5 +1,5 @@
 import React from 'react';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 
 export default function DefaultHeaderLogo() {
   const renderImage = () => (
@@ -23,6 +23,6 @@ export default function DefaultHeaderLogo() {
     </svg>);
 
   return (
-    <a style={{ display: 'flex' }} href={urls.getHomeUrl()}>{renderImage()}</a>
+    <a style={{ display: 'flex' }} href={routes.getHomeUrl()}>{renderImage()}</a>
   );
 }

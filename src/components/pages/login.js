@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import LoginForm from '../login-form.js';
+import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import { Button } from 'antd';
@@ -12,7 +12,7 @@ function Login({ PageTemplate, SiteLogo }) {
   const { t } = useTranslation('login');
 
   const redirectAfterLogin = () => {
-    window.location = request.query.redirect || urls.getDefaultLoginRedirectUrl();
+    window.location = request.query.redirect || routes.getDefaultLoginRedirectUrl();
   };
 
   const handleLoginClick = () => {
@@ -32,7 +32,7 @@ function Login({ PageTemplate, SiteLogo }) {
             onLoginSucceeded={redirectAfterLogin}
             />
           <div className="LoginPage-forgotPasswordLink">
-            <a href={urls.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+            <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
           </div>
           <div className="LoginPage-loginButton">
             <Button type="primary" size="large" onClick={handleLoginClick} block>

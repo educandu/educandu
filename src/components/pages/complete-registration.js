@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
+import routes from '../../utils/routes.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { userShape } from '../../ui/default-prop-types.js';
@@ -17,7 +17,7 @@ function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
         seconds={10}
         isRunning={isCountdownRunning}
         onComplete={() => {
-          window.location = urls.getLoginUrl();
+          window.location = routes.getLoginUrl();
         }}
         >
         {seconds => (
@@ -25,7 +25,7 @@ function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
             t={t}
             i18nKey="redirectMessage"
             values={{ seconds }}
-            components={[<a key="login-link" href={urls.getLoginUrl()} />]}
+            components={[<a key="login-link" href={routes.getLoginUrl()} />]}
             />
         )}
       </Countdown>
@@ -35,7 +35,7 @@ function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
   const registrationFailureContent = () => (
     <React.Fragment>
       <p>{t('registrationFailure')}</p>
-      <a href={urls.getHomeUrl()}>{t('homeLink')}</a>
+      <a href={routes.getHomeUrl()}>{t('homeLink')}</a>
     </React.Fragment>
   );
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import by from 'thenby';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import UserService from './user-service.js';
@@ -29,7 +29,7 @@ class DocumentImportTaskProcessor {
     const { documentId, importedRevision, importableRevision } = task.taskParams;
 
     const documentExport = await this.exportApiClient.getDocumentExport({
-      baseUrl: urls.getImportSourceBaseUrl(importSource),
+      baseUrl: routes.getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentId,
       toRevision: importableRevision
@@ -63,8 +63,8 @@ class DocumentImportTaskProcessor {
       }
     }
 
-    const docUrl = urls.getDocUrl({ id: sortedRevisions[0].documentId, slug: sortedRevisions[0].slug });
-    const baseUrl = urls.getImportSourceBaseUrl(importSource);
+    const docUrl = routes.getDocUrl({ id: sortedRevisions[0].documentId, slug: sortedRevisions[0].slug });
+    const baseUrl = routes.getImportSourceBaseUrl(importSource);
 
     const originUrl = `${baseUrl}${docUrl}`;
     const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
 
@@ -12,7 +12,7 @@ function DefaultPageFooter() {
       <div>
         {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
           <span key={index.toString()} className="DefaultPageFooter-link">
-            <a href={urls.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+            <a href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
           </span>
         ))}
       </div>

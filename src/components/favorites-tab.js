@@ -1,7 +1,7 @@
 import by from 'thenby';
 import { Modal } from 'antd';
 import Table from './table.js';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import SortingSelector from './sorting-selector.js';
@@ -118,9 +118,9 @@ function FavoritesTab() {
   const getFavoriteUrl = favorite => {
     switch (favorite.type) {
       case FAVORITE_TYPE.document:
-        return urls.getDocUrl({ id: favorite.id });
+        return routes.getDocUrl({ id: favorite.id });
       case FAVORITE_TYPE.room:
-        return urls.getRoomUrl(favorite.id);
+        return routes.getRoomUrl(favorite.id);
       default:
         return null;
     }

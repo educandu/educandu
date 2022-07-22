@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import React, { Fragment, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
@@ -50,13 +50,13 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
       <p>
         <Trans t={t} i18nKey="confirmationSuccess" values={{ roomName }} components={[<b key="room-name-bold" />]} />
       </p>
-      <Countdown isRunning seconds={10} onComplete={() => { window.location = urls.getRoomUrl(roomId, roomSlug); }}>
+      <Countdown isRunning seconds={10} onComplete={() => { window.location = routes.getRoomUrl(roomId, roomSlug); }}>
         {seconds => (
           <Trans
             t={t}
             i18nKey="redirectMessage"
             values={{ roomName, seconds }}
-            components={[<a key="login-link" href={urls.getRoomUrl(roomId, roomSlug)} />]}
+            components={[<a key="login-link" href={routes.getRoomUrl(roomId, roomSlug)} />]}
             />
         )}
       </Countdown>
@@ -66,7 +66,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const renderInvalidMessage = text => (
     <Fragment>
       <p>{text}</p>
-      <a href={urls.getHomeUrl()}>{t('homeLink')}</a>
+      <a href={routes.getHomeUrl()}>{t('homeLink')}</a>
     </Fragment>
   );
 

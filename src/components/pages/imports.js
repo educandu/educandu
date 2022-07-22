@@ -1,7 +1,7 @@
 import by from 'thenby';
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
 import { useDateFormat } from '../locale-context.js';
@@ -35,10 +35,10 @@ function Imports({ initialState, PageTemplate }) {
   }));
 
   const handleCreateImport = source => {
-    window.location = urls.getCreateImportUrl(source.importSourceHost);
+    window.location = routes.getCreateImportUrl(source.importSourceHost);
   };
 
-  const renderId = id => <a href={urls.getBatchUrl(id)}>{t('viewBatch')}</a>;
+  const renderId = id => <a href={routes.getBatchUrl(id)}>{t('viewBatch')}</a>;
 
   const renderStatus = batch => {
     if (batch.progress === 1) {

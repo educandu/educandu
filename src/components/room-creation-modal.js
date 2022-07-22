@@ -1,7 +1,7 @@
 
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
@@ -46,7 +46,7 @@ function RoomCreationModal({ isVisible, onClose }) {
       setLoading(false);
       onClose();
 
-      window.location = urls.getRoomUrl(newRoom._id, newRoom.slug);
+      window.location = routes.getRoomUrl(newRoom._id, newRoom.slug);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       setLoading(false);

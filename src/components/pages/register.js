@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
@@ -86,7 +86,7 @@ function Register({ PageTemplate, SiteLogo }) {
                 <a
                   key="terms-link"
                   title={termsPage?.linkTitle || null}
-                  href={termsPage?.documentId ? urls.getDocUrl({ id: termsPage.documentId }) : '#'}
+                  href={termsPage?.documentId ? routes.getDocUrl({ id: termsPage.documentId }) : '#'}
                   />
               ]}
               />
@@ -103,7 +103,7 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const registrationConfirmation = (
     <Markdown className="RegisterPage-confirmation">
-      {t('registrationConfirmationMessage', { loginPageUrl: urls.getLoginUrl() })}
+      {t('registrationConfirmationMessage', { loginPageUrl: routes.getLoginUrl() })}
     </Markdown>
   );
 
