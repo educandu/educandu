@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import MiniPager from './mini-pager.js';
 import { message, Tooltip } from 'antd';
@@ -21,7 +22,7 @@ import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
 
 const logger = new Logger(import.meta.url);
 
-function FilePreview({ createdOn, size, url }) {
+function FilePreview({ createdOn, size, url, compact }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -139,11 +140,11 @@ function FilePreview({ createdOn, size, url }) {
   }
 
   return (
-    <div className="FilePreview">
-      <div className="FilePreview-previewArea">
+    <div className={classNames('FilePreview', { 'FilePreview--compact': compact })}>
+      <div className={classNames('FilePreview-previewArea', { 'FilePreview-previewArea--compact': compact })}>
         {renderPreview()}
       </div>
-      <div className="FilePreview-detailsArea">
+      <div className={classNames('FilePreview-detailsArea', { 'FilePreview-detailsArea--compact': compact })}>
         <div className="FilePreview-detailLabel">
           {t('common:name')}
         </div>
@@ -204,9 +205,14 @@ function FilePreview({ createdOn, size, url }) {
 }
 
 FilePreview.propTypes = {
+  compact: PropTypes.bool,
   createdOn: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
   url: PropTypes.string.isRequired
+};
+
+FilePreview.defaultProps = {
+  compact: false
 };
 
 export default FilePreview;

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import UsedStorage from './used-storage.js';
+import FilePreview from './file-preview.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { useLocale } from './locale-context.js';
@@ -13,7 +14,7 @@ import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons
 import { cdnObjectShape, storageLocationShape } from '../ui/default-prop-types.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
-function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish }) {
+function FilesUploadOverview({ files, directory, storageLocation, showPreviewAfterUpload, onUploadFinish }) {
   const { uiLocale } = useLocale();
   const setStorageLocation = useSetStorageLocation();
   const { t } = useTranslation('filesUploadOverview');
@@ -21,7 +22,10 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
 
   const [uploadStarted, setUploadStarted] = useState(false);
   const [filesUploadStatus, setFilesUploadStatus] = useState(files
-    .reduce((accu, file) => ({ ...accu, [file.name]: { fileName: file.name, uploadEnded: false, error: null } }), {}));
+    .reduce((accu, file) => ({
+      ...accu,
+      [file.name]: { fileName: file.name, uploadEnded: false, error: null, uploadedFile: null }
+    }), {}));
 
   const canUploadFile = useCallback((file, currentUsedBytes) => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
@@ -53,6 +57,11 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
   }, [storageLocation, uiLocale, t]);
 
   const uploadFiles = useCallback(async () => {
+    const result = {
+      uploadedFiles: {},
+      failedFiles: {}
+    };
+
     const processedFiles = await processFilesBeforeUpload(files);
 
     let currentUsedBytes = storageLocation.usedBytes;
@@ -61,15 +70,18 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
       if (canUploadFile(file, currentUsedBytes)) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          const { usedBytes } = await storageApiClient.uploadFiles([file], directory.path);
+          const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], directory.path);
+          result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
           currentUsedBytes = usedBytes;
           setFilesUploadStatus(previousStatus => {
             const newStatus = cloneDeep(previousStatus);
             newStatus[file.name].uploadEnded = true;
+            newStatus[file.name].uploadedFile = Object.values(uploadedFiles)[0];
             return newStatus;
           });
           setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
         } catch (error) {
+          result.failedFiles = { ...result.failedFiles, [file.name]: file };
           setFilesUploadStatus(previousStatus => {
             const newStatus = cloneDeep(previousStatus);
             newStatus[file.name].uploadEnded = true;
@@ -80,6 +92,8 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
       }
     }
 
+    return result;
+
   }, [directory, files, canUploadFile, storageApiClient, storageLocation, setStorageLocation]);
 
   useEffect(() => {
@@ -88,8 +102,8 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
         return;
       }
       setUploadStarted(true);
-      await uploadFiles();
-      onUploadFinish();
+      const result = await uploadFiles();
+      onUploadFinish(result);
     })();
   }, [uploadStarted, files, uploadFiles, onUploadFinish]);
 
@@ -108,7 +122,17 @@ function FilesUploadOverview({ files, directory, storageLocation, onUploadFinish
           )}
           {fileStatus.fileName}
         </div>
-        <div className="FilesUploadOverview-fileStatusError">{fileStatus.error?.toString()}</div>
+        {fileStatus.error && <div className="FilesUploadOverview-fileStatusError">{fileStatus.error.toString()}</div>}
+        {showPreviewAfterUpload && fileStatus.uploadedFile && (
+          <div className="FilesUploadOverview-fileStatusPreview">
+            <FilePreview
+              url={fileStatus.uploadedFile.url}
+              size={fileStatus.uploadedFile.size}
+              createdOn={fileStatus.uploadedFile.createdOn}
+              compact
+              />
+          </div>
+        )}
       </div>
     );
   };
@@ -136,6 +160,7 @@ FilesUploadOverview.propTypes = {
   directory: cdnObjectShape.isRequired,
   files: PropTypes.arrayOf(PropTypes.object).isRequired,
   onUploadFinish: PropTypes.func.isRequired,
+  showPreviewAfterUpload: PropTypes.bool.isRequired,
   storageLocation: storageLocationShape.isRequired
 };
 
