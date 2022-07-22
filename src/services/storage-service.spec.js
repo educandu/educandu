@@ -11,7 +11,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
-import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, DOCUMENT_ACCESS, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
@@ -719,9 +719,30 @@ describe('storage-service', () => {
     });
 
     describe('when documentId of a document in a room is provided', () => {
+      describe(`and the room/document access is '${DOCUMENT_ACCESS.public}'`, () => {
+        beforeEach(async () => {
+          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.public });
+          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
+
+          myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
+
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
+        });
+
+        it('should return the public storage location', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              homePath: 'media/documentId',
+              isDeletionEnabled: false
+            }
+          ]);
+        });
+      });
       describe('and the user is room owner and does not have a storage plan', () => {
         beforeEach(async () => {
-          documentStore.getDocumentById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
@@ -743,7 +764,7 @@ describe('storage-service', () => {
 
       describe('and the user is room owner and has a storage plan', () => {
         beforeEach(async () => {
-          documentStore.getDocumentById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
@@ -782,7 +803,7 @@ describe('storage-service', () => {
             email: 'owner@test.com'
           });
 
-          documentStore.getDocumentById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
@@ -819,7 +840,7 @@ describe('storage-service', () => {
             storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
           });
 
-          documentStore.getDocumentById.resolves({ roomId: 'room' });
+          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,

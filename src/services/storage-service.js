@@ -15,7 +15,7 @@ import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, DOCUMENT_ACCESS, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -236,7 +236,7 @@ export default class StorageService {
       });
 
       const doc = await this.documentStore.getDocumentById(documentId);
-      if (doc.roomId) {
+      if (doc.roomId && doc.access === DOCUMENT_ACCESS.private) {
         const room = await this.roomStore.getRoomById(doc.roomId);
         const isRoomOwner = user._id === room.owner;
         const rootAndHomePath = getPathForPrivateRoom(room._id);
