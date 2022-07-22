@@ -77,6 +77,8 @@ export default function Room({ PageTemplate, initialState }) {
   const isRoomOwner = user?._id === room.owner.key;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
+  const isRoomDeletionDisabled = room.access === ROOM_ACCESS.public;
+  const isDocumentDeletionDisabled = room.access === ROOM_ACCESS.public;
   const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
   useEffect(() => {
@@ -211,7 +213,11 @@ export default function Room({ PageTemplate, initialState }) {
               <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewDocumentClick(doc)} />
             </Tooltip>
             <Tooltip title={t('common:delete')}>
-              <DeleteButton onClick={() => handleDeleteDocumentClick(doc)} />
+              <DeleteButton
+                disabled={isDocumentDeletionDisabled}
+                onClick={() => handleDeleteDocumentClick(doc)}
+                className={classNames('RoomPage-documentDeleteButton', { 'is-disabled': isDocumentDeletionDisabled })}
+                />
             </Tooltip>
           </div>
         )}
@@ -305,6 +311,10 @@ export default function Room({ PageTemplate, initialState }) {
       >
       {room.description && <Markdown className="RoomPage-description" renderMedia>{room.description}</Markdown>}
       {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
+
+      {isRoomOwnerOrCollaborator && isDocumentDeletionDisabled && (
+        <div className="RoomPage-deletionDisabledSubtext">{t('publicDocumentDeletionNotAllowed')}</div>
+      )}
     </Card>
   );
 
@@ -372,7 +382,20 @@ export default function Room({ PageTemplate, initialState }) {
                     <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
                     <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
                   </div>
-                  <Button className="RoomPage-cardDangerActionButton" type="primary" icon={<DeleteIcon />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
+                  <div className="RoomPage-cardDangerActionButtonContainer">
+                    <Button
+                      type="primary"
+                      icon={<DeleteIcon />}
+                      onClick={handleDeleteRoomClick}
+                      disabled={isRoomDeletionDisabled}
+                      className={classNames('RoomPage-cardDangerActionButton', { 'is-disabled': isRoomDeletionDisabled })}
+                      >
+                      {t('deleteRoomButton')}
+                    </Button>
+                    {isRoomDeletionDisabled && (
+                      <div className="RoomPage-deletionDisabledSubtext">{t('publicRoomDeletionNotAllowed')}</div>
+                    )}
+                  </div>
                 </div>
               </Card>
             </TabPane>

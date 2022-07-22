@@ -53,6 +53,18 @@
   }
 }
 
+.RoomPage-documentDeleteButton {
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0 5px;
+
+  &.is-disabled {
+    &::after {
+      content: ' *';
+    }
+  }
+}
+
 .RoomPage-documentDueOnDate {
   display: inline-block;
   width: @room-date-label-width;
@@ -105,6 +117,29 @@
   display: block;
 }
 
-.RoomPage-cardDangerActionButton {
+.RoomPage-cardDangerActionButtonContainer {
   margin-left: @edu-content-padding;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.RoomPage-cardDangerActionButton {
+
+  &.is-disabled {
+    &::after {
+      content: " *";
+    }
+  }
+}
+
+.RoomPage-deletionDisabledSubtext {
+  &::before {
+    content: "* ";
+  }
+
+  text-align: right;
+  font-size: 12px;
+  margin-top: 5px;
+  font-style: italic;
 }

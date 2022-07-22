@@ -979,7 +979,9 @@
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
       "revokeInvitation": "Revoke invitation",
-      "leaveRoom": "Leave room"
+      "leaveRoom": "Leave room",
+      "publicDocumentDeletionNotAllowed": "Public documents can not be deleted!",
+      "publicRoomDeletionNotAllowed": "Public rooms can not be deleted!"
     }
   },
   {
@@ -1006,7 +1008,9 @@
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
       "revokeInvitation": "Einladung widerrufen",
-      "leaveRoom": "Raum verlassen"
+      "leaveRoom": "Raum verlassen",
+      "publicDocumentDeletionNotAllowed": "Öffentliche Dokumente können nicht gelöscht werden!",
+      "publicRoomDeletionNotAllowed": "Öffentliche Räume können nicht gelöscht werden!"
     }
   },
   {
