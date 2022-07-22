@@ -1,4 +1,3 @@
-import urls from '../utils/routes.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -20,10 +19,6 @@ class RevisionController {
     this.clientDataMappingService = clientDataMappingService;
   }
 
-  handleGetArticlePage(req, res) {
-    res.redirect(301, urls.getDocumentRevisionUrl(req.params.id));
-  }
-
   async handleGetRevisionPage(req, res) {
     const { user } = req;
     const revision = await this.documentService.getDocumentRevisionById(req.params.id);
@@ -43,11 +38,6 @@ class RevisionController {
   }
 
   registerPages(router) {
-    router.get(
-      '/revs/articles/:id',
-      (req, res) => this.handleGetArticlePage(req, res)
-    );
-
     router.get(
       '/revs/:id',
       (req, res) => this.handleGetRevisionPage(req, res)
