@@ -15,6 +15,7 @@ const documentMetadataProjection = {
 
 const documentExtendedMetadataProjection = {
   _id: 1,
+  roomId: 1,
   order: 1,
   revision: 1,
   title: 1,

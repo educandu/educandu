@@ -376,6 +376,12 @@ export const roomMetadataProps = {
   description: PropTypes.string
 };
 
+export const roomMinimalMetadataShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  slug: PropTypes.string
+});
+
 export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
 
 export const roomShape = PropTypes.shape({

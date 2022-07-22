@@ -1,6 +1,12 @@
 import Database from './database.js';
 import { ROOM_ACCESS } from '../domain/constants.js';
 
+const roomsMinimalMetadataProjection = {
+  _id: 1,
+  slug: 1,
+  name: 1
+};
+
 class RoomStore {
   static get inject() { return [Database]; }
 
@@ -14,6 +20,10 @@ class RoomStore {
 
   getRoomsByIds(roomIds, { session } = {}) {
     return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
+  }
+
+  getRoomsMinimalMetadataByIds(roomIds, { session } = {}) {
+    return this.collection.find({ _id: { $in: roomIds } }, { projection: roomsMinimalMetadataProjection, session }).toArray();
   }
 
   getAllPrivateRoomIds({ session } = {}) {

@@ -5,6 +5,7 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -42,10 +43,14 @@ class DocumentController {
 
   async handleGetDocsPage(req, res) {
     const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
-    const allDocs = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
-    const documents = await this.clientDataMappingService.mapDocsOrRevisions(allDocs, req.user);
+    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });
+    const roomIds = ensureIsUnique(documents.map(doc => doc.roomId).filter(roomId => roomId));
+    const rooms = await this.roomService.getRoomsMinimalMetadataByIds(roomIds);
+
+    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents: mappedDocuments, rooms });
   }
 
   async handleGetDocPage(req, res) {
