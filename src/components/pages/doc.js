@@ -90,7 +90,7 @@ function Doc({ initialState, PageTemplate }) {
   const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
-  const isEditViewAllowed = (room && (isRoomOwner || isRoomCollaborator)) || (!isExternalDocument && !initialState.doc.archived);
+  const isEditViewAllowed = room ? isRoomOwner || isRoomCollaborator : !isExternalDocument && !initialState.doc.archived;
   const isHardDeletionAllowed = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
 
   const [isDirty, setIsDirty] = useState(false);
