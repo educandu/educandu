@@ -61,3 +61,9 @@ revokeInvitation:
 leaveRoom:
   en: Leave room
   de: Raum verlassen
+publicDocumentDeletionNotAllowed:
+  en: Public documents can not be deleted!
+  de: Öffentliche Dokumente können nicht gelöscht werden!
+publicRoomDeletionNotAllowed:
+  en: Public rooms can not be deleted!
+  de: Öffentliche Räume können nicht gelöscht werden!
