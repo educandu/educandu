@@ -342,7 +342,6 @@
     "language": "en",
     "resources": {
       "enterEmail": "Please enter an email address",
-      "emailIsInvalid": "The value you provided is not a valid email address",
       "emailIsInUse": "The email address is already registered"
     }
   },
@@ -351,7 +350,6 @@
     "language": "de",
     "resources": {
       "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
-      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
       "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
@@ -885,14 +883,16 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "forgotPassword": "Forgot your password?"
+      "forgotPassword": "Forgot your password?",
+      "hintContent": "The username is no longer supported for logging in.\nIt continues to be shown as the name under which you author website content.\n"
     }
   },
   {
     "namespace": "login",
     "language": "de",
     "resources": {
-      "forgotPassword": "Kennwort vergessen?"
+      "forgotPassword": "Kennwort vergessen?",
+      "hintContent": "Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.\nDer bleibt als Autorennamen für alle von Ihnen bearbeiteten Website-Inhalt.\n"
     }
   },
   {
@@ -2101,7 +2101,8 @@
       "deletedRoom": "Deleted room",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
-      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
+      "emailIsInvalid": "The value you provided is not a valid email address"
     }
   },
   {
@@ -2244,7 +2245,8 @@
       "deletedRoom": "Gelöschter Raum",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
-      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
+      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse"
     }
   },
   {

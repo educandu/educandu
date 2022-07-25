@@ -1,9 +1,6 @@
 enterEmail:
   en: Please enter an email address
   de: Bitte geben Sie eine E-Mail-Adresse an
-emailIsInvalid:
-  en: The value you provided is not a valid email address
-  de: Ihre Eingabe ist keine gültige E-Mail-Adresse
 emailIsInUse:
   en: The email address is already registered
   de: Die E-Mail-Adresse ist bereits vergeben

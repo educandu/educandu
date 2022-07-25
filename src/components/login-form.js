@@ -73,6 +73,10 @@ export default function LoginForm({
       required: true,
       message: t('enterEmail'),
       whitespace: true
+    },
+    {
+      type: 'email',
+      message: t('common:emailIsInvalid')
     }
   ];
 
@@ -91,6 +95,7 @@ export default function LoginForm({
       className="LoginForm"
       onFinish={handleFinish}
       scrollToFirstError
+      validateTrigger="onSubmit"
       >
       <Form.Item
         label={t('common:emailAddress')}

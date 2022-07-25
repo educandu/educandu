@@ -419,3 +419,6 @@ youtubeCopyrightNotice:
     Source: [Youtube]({link})
   de: |
     Quelle: [Youtube]({link})
+emailIsInvalid:
+  en: The value you provided is not a valid email address
+  de: Ihre Eingabe ist keine gültige E-Mail-Adresse

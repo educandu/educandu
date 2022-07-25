@@ -27,7 +27,7 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
     },
     {
       type: 'email',
-      message: t('emailIsInvalid')
+      message: t('common:emailIsInvalid')
     },
     {
       validator: (_rule, value) => {
