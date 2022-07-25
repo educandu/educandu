@@ -37,7 +37,7 @@ function Dashboard({ initialState, PageTemplate }) {
   };
 
   return (
-    <PageTemplate disableProfileWarning>
+    <PageTemplate>
       <div className="DashboardPage">
 
         <section className="DashboardPage-headerSection">
