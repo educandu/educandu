@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Markdown from '../markdown.js';
 import ProfileHeader from '../profile-header.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
 
@@ -15,6 +16,12 @@ export default function User({ PageTemplate, initialState }) {
           displayName={user.displayName}
           organization={user.organization}
           />
+
+        {!!user.introduction && (
+          <section className="UserPage-introduction">
+            <Markdown renderMedia>{user.introduction}</Markdown>
+          </section>
+        )}
       </div>
     </PageTemplate>
   );
