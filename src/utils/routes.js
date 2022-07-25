@@ -16,6 +16,7 @@ const createImportPath = '/create-import';
 const resetPasswordPath = '/reset-password';
 
 const docsPrefix = '/docs/';
+const usersPrefix = '/users/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const completeRegistrationPrefix = '/complete-registration/';
@@ -30,6 +31,10 @@ function getDocsUrl() {
 
 function getUsersUrl() {
   return usersPath;
+}
+
+function getUserUrl(id) {
+  return urlUtils.concatParts(usersPrefix, encodeURIComponent(id));
 }
 
 function getDocUrl({ id, slug, view, templateDocumentId }) {
@@ -127,6 +132,7 @@ function getDocIdIfDocUrl(url) {
 }
 
 export default {
+  getUserUrl,
   getDocsUrl,
   getUsersUrl,
   getDocUrl,

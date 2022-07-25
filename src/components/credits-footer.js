@@ -32,9 +32,7 @@ function CreditsFooter({ doc, revision }) {
   const renderOriginalUrl = () => <LiteralUrlLink href={originalUrl} targetBlank />;
 
   const renderUser = user => {
-    return user.email
-      ? <a href={`mailto:${user.email}`}>{user.displayName}</a>
-      : <span>{user.displayName}</span>;
+    return <a href={routes.getUserUrl(user._id)}>{user.displayName}</a>;
   };
 
   const renderDocumentContributors = () => {

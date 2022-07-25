@@ -2,6 +2,7 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import { Table, Tabs, Select } from 'antd';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
@@ -217,8 +218,8 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const renderDisplayName = displayName => {
-    return <b>{displayName}</b>;
+  const renderDisplayName = (displayName, user) => {
+    return <a href={routes.getUserUrl(user._id)}>{displayName}</a>;
   };
 
   const renderEmail = email => {

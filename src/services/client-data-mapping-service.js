@@ -16,6 +16,21 @@ class ClientDataMappingService {
     this.storagePlanStore = storagePlanStore;
   }
 
+  mapWebsitePublicUser(user) {
+    if (!user) {
+      return null;
+    }
+
+    return {
+      _id: user._id,
+      email: user.email,
+      displayName: user.displayName,
+      organization: user.organization,
+      introduction: user.introduction,
+      accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : null
+    };
+  }
+
   mapWebsiteUser(user) {
     if (!user) {
       return null;

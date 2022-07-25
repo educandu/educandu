@@ -18,12 +18,12 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
-import React, { useEffect, useRef, useState } from 'react';
 import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
@@ -318,6 +318,14 @@ export default function Room({ PageTemplate, initialState }) {
     </Card>
   );
 
+  const accessText = t(`${room.access}RoomSubtitle`);
+  const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
+  const renderOwnerLink = () => (
+    <Fragment>
+      {t('common:owner')}: <a href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
+    </Fragment>
+  );
+
   return (
     <PageTemplate>
       <div className="RoomPage">
@@ -332,7 +340,7 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
             {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}DocumentsSubtitle`)} | {t('common:owner')}: {room.owner.displayName}</span>
+            <span>{accessText} | {documentsModeText} | {renderOwnerLink()}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>

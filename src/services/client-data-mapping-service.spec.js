@@ -35,6 +35,42 @@ describe('client-data-mapping-service', () => {
     await destroyTestEnvironment(container);
   });
 
+  describe('mapWebsitePublicUser', () => {
+    let dbUser;
+    const accountClosedOn = new Date();
+
+    beforeEach(() => {
+      dbUser = {
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        provider: 'educandu',
+        displayName: 'Test user',
+        passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
+        email: 'test@test.com',
+        roles: ['user', 'admin'],
+        expires: null,
+        verificationCode: null,
+        lockedOut: false,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
+        storage: {},
+        favorites: [],
+        accountClosedOn
+      };
+      result = sut.mapWebsitePublicUser(dbUser);
+    });
+
+    it('should map the user from the database', () => {
+      expect(result).toStrictEqual({
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        displayName: 'Test user',
+        email: 'test@test.com',
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
+        accountClosedOn: accountClosedOn.toISOString()
+      });
+    });
+  });
+
   describe('mapWebsiteUser', () => {
     let dbUser;
     const favoriteSetOnDate = new Date();

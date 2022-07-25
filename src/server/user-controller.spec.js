@@ -4,15 +4,19 @@ import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import UserController from './user-controller.js';
 import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
+import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 
 const { NotFound } = httpErrors;
 
 describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
+
   let passwordResetRequestService;
-  let storageService;
   let clientDataMappingService;
+  let storageService;
+  let pageRenderer;
   let userService;
   let mailService;
   let sut;
@@ -22,6 +26,7 @@ describe('user-controller', () => {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
+      getUserById: sandbox.stub(),
       getUserByEmailAddress: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
@@ -40,11 +45,15 @@ describe('user-controller', () => {
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMappingService = {
-      mapWebsiteUser: sandbox.stub()
+      mapWebsiteUser: sandbox.stub(),
+      mapWebsitePublicUser: sandbox.stub()
     };
+    pageRenderer = {
+      sendPage: sandbox.stub()
+    };
+    const roomService = {};
     const serverConfig = {};
     const database = {};
-    const pageRenderer = {};
 
     sut = new UserController(
       serverConfig,
@@ -54,12 +63,61 @@ describe('user-controller', () => {
       passwordResetRequestService,
       mailService,
       clientDataMappingService,
+      roomService,
       pageRenderer
     );
   });
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('handleGetUserPage', () => {
+    let req;
+    let res;
+
+    describe('when the user does not exist', () => {
+      beforeEach(() => {
+        const userId = uniqueId.create();
+        req = { params: { userId } };
+        res = {};
+
+        userService.getUserById.withArgs(userId).resolves(null);
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleGetUserPage(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the user exists', () => {
+      let mappedUser;
+
+      beforeEach(() => {
+        const user = {
+          _id: uniqueId.create(),
+          email: 'educandu@test.com',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          accountClosedOn: new Date()
+        };
+
+        req = { params: { userId: user._id } };
+        res = {};
+
+        mappedUser = cloneDeep(user);
+
+        userService.getUserById.withArgs(user._id).resolves(user);
+        clientDataMappingService.mapWebsitePublicUser.withArgs(user).returns(mappedUser);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetUserPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', { user: mappedUser });
+      });
+    });
   });
 
   describe('handlePostUser', () => {
