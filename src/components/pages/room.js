@@ -37,7 +37,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortDocuments = documents => [...documents].sort(by(l => l.dueOn || l.createdOn));
+const sortDocuments = documents => [...documents].sort(by(d => !!d.dueOn).thenBy(d => d.dueOn || d.createdOn));
 
 function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
   return {
