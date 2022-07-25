@@ -50,7 +50,8 @@ describe('client-data-mapping-service', () => {
         expires: null,
         verificationCode: null,
         lockedOut: false,
-        profile: null,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0,
@@ -79,7 +80,8 @@ describe('client-data-mapping-service', () => {
         displayName: 'Test user',
         email: 'test@test.com',
         roles: ['user', 'admin'],
-        profile: null,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0

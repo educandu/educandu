@@ -8,7 +8,6 @@ import { useDialogs } from './dialog-context.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
-import DisplayNameFormItem from './displayName-form-item.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCloseAccount } from './confirmation-dialogs.js';
@@ -26,19 +25,18 @@ function AccountTab() {
 
   const [state, setState] = useState({
     email: null,
-    displayName: null,
     forbiddenEmails: []
   });
 
   useEffect(() => {
-    setState(prev => ({ ...prev, email: user.email, displayName: user.displayName }));
+    setState(prev => ({ ...prev, email: user.email }));
   }, [user]);
 
   const formRef = useRef();
 
-  const saveAccountData = async ({ email, displayName }) => {
+  const saveAccountData = async ({ email }) => {
     try {
-      const { result, user: updatedUser } = await userApiClient.saveUserAccount({ email, displayName });
+      const { result, user: updatedUser } = await userApiClient.saveUserAccount({ email });
 
       switch (result) {
         case SAVE_USER_RESULT.success:
@@ -57,8 +55,8 @@ function AccountTab() {
     }
   };
 
-  const handleAccountFinish = ({ email, displayName }) => {
-    dialogs.confirmWithPassword(user.email, () => saveAccountData({ email, displayName: displayName.trim() }));
+  const handleAccountFinish = ({ email }) => {
+    dialogs.confirmWithPassword(user.email, () => saveAccountData({ email }));
   };
 
   const handleResetPasswordClick = async () => {
@@ -87,7 +85,6 @@ function AccountTab() {
       <div className="AccountTab-headline">{t('credentialsHeadline')}</div>
       <section className="AccountTab-section">
         <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError layout="vertical">
-          <DisplayNameFormItem name="displayName" initialValue={user.displayName} />
           <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} />
           <FormItem>
             <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>

@@ -32,10 +32,6 @@ function Dashboard({ initialState, PageTemplate }) {
   const { rooms, invitations, activities } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
-  const personName = [user.profile?.firstName, user.profile?.lastName].filter(name => name).join(' ');
-  const headerTitle = personName || user.displayName;
-  const headerSubtitle = personName ? `${user.displayName} | ${user.email}` : user.email;
-
   const handleTabChange = tab => {
     history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
@@ -49,8 +45,8 @@ function Dashboard({ initialState, PageTemplate }) {
             <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
           </div>
           <div>
-            <span className="DashboardPage-headerTitle">{headerTitle}</span>
-            <span className="DashboardPage-headerSubtitle">{headerSubtitle}</span>
+            <span className="DashboardPage-headerTitle">{user.displayName}</span>
+            <span className="DashboardPage-headerSubtitle">{user.email}</span>
           </div>
         </section>
 

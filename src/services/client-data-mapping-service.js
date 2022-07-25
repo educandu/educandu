@@ -27,7 +27,8 @@ class ClientDataMappingService {
       displayName: user.displayName,
       email: user.email,
       roles: user.roles,
-      profile: user.profile,
+      organization: user.organization,
+      introduction: user.introduction,
       storage: {
         plan: user.storage.plan,
         usedBytes: user.storage.usedBytes

@@ -147,7 +147,7 @@ export default class StorageService {
       uploadedFiles = await this._uploadFiles(files, parentPath);
       usedBytes = await this._updateUserUsedBytes(user._id);
     } finally {
-      this.lockStore.releaseLock(lock);
+      await this.lockStore.releaseLock(lock);
     }
 
     return { uploadedFiles, usedBytes };
@@ -184,7 +184,7 @@ export default class StorageService {
 
       return { usedBytes };
     } finally {
-      this.lockStore.releaseLock(lock);
+      await this.lockStore.releaseLock(lock);
     }
   }
 
@@ -217,7 +217,7 @@ export default class StorageService {
 
       return { usedBytes };
     } finally {
-      this.lockStore.releaseLock(lock);
+      await this.lockStore.releaseLock(lock);
     }
   }
 
@@ -260,6 +260,20 @@ export default class StorageService {
     }
 
     return locations;
+  }
+
+  async updateUserUsedBytes(userId) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeUserLock(userId);
+
+      const usedBytes = await this._updateUserUsedBytes(userId);
+
+      return usedBytes;
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
   }
 
   async _calculateUserUsedBytes(userId) {

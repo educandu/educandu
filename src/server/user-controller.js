@@ -156,22 +156,23 @@ class UserController {
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
     const provider = req.user.provider;
-    const { email, displayName } = req.body;
+    const { email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email, displayName });
+    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email });
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
     const userId = req.user._id;
-    const { profile } = req.body;
-    const savedProfile = await this.userService.updateUserProfile(userId, profile);
-    if (!savedProfile) {
+    const { displayName, organization, introduction } = req.body;
+    const updatedUser = await this.userService.updateUserProfile({ userId, displayName, organization, introduction });
+
+    if (!updatedUser) {
       throw new NotFound();
     }
 
-    res.status(201).send({ profile: savedProfile });
+    res.status(201).send({ user: updatedUser });
   }
 
   handlePostUserLogin(req, res, next) {

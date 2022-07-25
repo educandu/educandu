@@ -1,68 +1,47 @@
-import by from 'thenby';
 import Alert from './alert.js';
 import gravatar from 'gravatar';
-import memoizee from 'memoizee';
 import React, { useState } from 'react';
 import Logger from '../common/logger.js';
-import localeCompare from 'locale-compare';
 import errorHelper from '../ui/error-helper.js';
 import { useLocale } from './locale-context.js';
-import { useService } from './container-context.js';
+import MarkdownInput from './markdown-input.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useSetUser, useUser } from './user-context.js';
+import { Form, Input, Avatar, Button, message } from 'antd';
+import DisplayNameFormItem from './displayName-form-item.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import CountryNameProvider from '../data/country-name-provider.js';
-import { Form, Input, Avatar, Button, Select, message } from 'antd';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
 
 const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 const AVATAR_SIZE = 110;
-
-const createCountryNames = memoizee((countryNameProvider, uiLanguage) => {
-  return Object.entries(countryNameProvider.getData(uiLanguage))
-    .map(([key, name]) => ({ key, name }))
-    .sort(by(x => x.name, { cmp: localeCompare(uiLanguage) }));
-}, { max: 1 });
 
 function ProfileTab() {
   const user = useUser();
   const setUser = useSetUser();
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('profileTab');
-  const countryNameProvider = useService(CountryNameProvider);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
-  const profile = user.profile || { country: '' };
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const gravatarRagistrationUrl = `https://${uiLanguage}.gravatar.com/`;
 
   const [showAvatarDescription, setShowAvatarDescription] = useState(false);
 
-  const saveProfile = async profileToSave => {
+  const handleFinish = async values => {
     try {
-      const { profile: newProfile } = await userApiClient.saveUserProfile({ profile: profileToSave });
-      setUser({ ...user, profile: newProfile });
+      const { user: updatedUser } = await userApiClient.saveUserProfile({
+        displayName: values.displayName,
+        organization: values.organization,
+        introduction: values.introduction
+      });
+      setUser({ ...updatedUser });
       message.success(t('updateSuccessMessage'));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     }
-  };
-
-  const handleProfileFinish = values => {
-    saveProfile({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      street: values.street,
-      streetSupplement: values.streetSupplement,
-      postalCode: values.postalCode,
-      city: values.city,
-      country: values.country
-    });
   };
 
   const handleShowAvatarDescriptionClick = () => {
@@ -100,38 +79,26 @@ function ProfileTab() {
             />
           )}
         </div>
-        <Form onFinish={handleProfileFinish} scrollToFirstError layout="vertical">
-          <FormItem label={t('firstName')} name="firstName" initialValue={profile.firstName || ''}>
+        <Form onFinish={handleFinish} scrollToFirstError layout="vertical">
+          <DisplayNameFormItem
+            name="displayName"
+            className="ProfileTab-input"
+            initialValue={user.displayName}
+            />
+          <FormItem
+            name="organization"
+            label={t('organization')}
+            className="ProfileTab-input"
+            initialValue={user.organization || ''}
+            >
             <Input type="text" />
           </FormItem>
-          <FormItem label={t('lastName')} name="lastName" initialValue={profile.lastName || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem label={t('street')} name="street" initialValue={profile.street || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem label={t('streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem label={t('postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem label={t('city')} name="city" initialValue={profile.city || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem label={t('country')} name="country" initialValue={profile.country || ''}>
-            <Select
-              optionFilterProp="title"
-              showSearch
-              allowClear
-              autoComplete="none"
-              >
-              {createCountryNames(countryNameProvider, uiLanguage).map(cn => (
-                <Option key={cn.key} value={cn.key} title={cn.name}>
-                  <CountryFlagAndName code={cn.key} name={cn.name} />
-                </Option>
-              ))}
-            </Select>
+          <FormItem
+            name="introduction"
+            label={t('introduction')}
+            initialValue={user.introduction || ''}
+            >
+            <MarkdownInput preview minRows={5} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit">{t('common:save')}</Button>

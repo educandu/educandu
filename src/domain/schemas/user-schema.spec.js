@@ -113,8 +113,8 @@ describe('postUserBodySchema', () => {
 });
 
 describe('postUserAccountBodySchema', () => {
-  const validBody = { email, displayName };
-  const invalidTestCases = [...invalidDisplayNameCases, ...invalidEmailCases]
+  const validBody = { email };
+  const invalidTestCases = [...invalidEmailCases]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
   describe('when body contains correct data', () => {
@@ -123,16 +123,9 @@ describe('postUserAccountBodySchema', () => {
     });
   });
 
-  describe('when displayName is missing', () => {
-    it('should fail validation', () => {
-      const body = { password };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
-    });
-  });
-
   describe('when email is missing', () => {
     it('should fail validation', () => {
-      const body = { displayName };
+      const body = { };
       expect(() => validate(body, postUserBodySchema)).toThrow();
     });
   });
@@ -207,30 +200,28 @@ describe('postUserPasswordResetCompletionBodySchema', () => {
 });
 
 describe('postUserProfileBodySchema', () => {
-  describe('when body contains no profile', () => {
+  describe('when body contains no data', () => {
     it('should fail validation', () => {
       expect(() => validate({}, postUserProfileBodySchema)).toThrow();
     });
   });
 
-  describe('when body contains empty profile', () => {
+  describe('when body contains with empty data', () => {
     it('should pass validation', () => {
-      expect(() => validate({ profile: {} }, postUserProfileBodySchema)).not.toThrow();
+      expect(() => validate({
+        displayName: '',
+        organization: '',
+        introduction: ''
+      }, postUserProfileBodySchema)).toThrow();
     });
   });
 
-  describe('when body contains profile with empty data', () => {
+  describe('when body contains displayName', () => {
     it('should pass validation', () => {
       expect(() => validate({
-        profile: {
-          city: '',
-          country: '',
-          firstName: '',
-          lastName: '',
-          postalCode: '',
-          street: '',
-          streetSupplement: ''
-        }
+        displayName: 'Educandu User',
+        organization: '',
+        introduction: ''
       }, postUserProfileBodySchema)).not.toThrow();
     });
   });
