@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
@@ -18,6 +19,9 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
+
+    sandbox.stub(urlUtils, 'getGravatarUrl');
+
     sut = container.get(ClientDataMappingService);
   });
 
@@ -56,6 +60,7 @@ describe('client-data-mapping-service', () => {
         favorites: [],
         accountClosedOn
       };
+      urlUtils.getGravatarUrl.withArgs(dbUser.email).returns('www://avatar.domain/12345');
       result = sut.mapWebsitePublicUser(dbUser);
     });
 
@@ -66,6 +71,7 @@ describe('client-data-mapping-service', () => {
         email: 'test@test.com',
         organization: 'Educandu',
         introduction: 'Educandu test user',
+        avatarUrl: 'www://avatar.domain/12345',
         accountClosedOn: accountClosedOn.toISOString()
       });
     });

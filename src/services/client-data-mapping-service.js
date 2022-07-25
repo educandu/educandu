@@ -1,4 +1,5 @@
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
@@ -27,6 +28,7 @@ class ClientDataMappingService {
       displayName: user.displayName,
       organization: user.organization,
       introduction: user.introduction,
+      avatarUrl: urlUtils.getGravatarUrl(user.email),
       accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : null
     };
   }

@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
-import { getImageUrl } from '../../utils/url-utils.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
 import AbcNotation from '../../components/abc-notation.js';
@@ -66,7 +66,7 @@ function EarTrainingDisplay({ content }) {
     canvas.height = questionImage.height;
 
     const answerImage = new Image();
-    answerImage.src = getImageUrl({
+    answerImage.src = urlUtils.getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
       sourceType: currentTest.answerImage.sourceType,
       sourceUrl: currentTest.answerImage.sourceUrl
@@ -188,7 +188,7 @@ function EarTrainingDisplay({ content }) {
                 <img
                   ref={questionImageRef}
                   className={questionImageClasses}
-                  src={getImageUrl({
+                  src={urlUtils.getImageUrl({
                     cdnRootUrl: clientConfig.cdnRootUrl,
                     sourceType: currentTest.questionImage.sourceType,
                     sourceUrl: currentTest.questionImage.sourceUrl

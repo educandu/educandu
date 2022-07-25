@@ -1,0 +1,30 @@
+.ProfileHeader {
+  display: grid;
+  grid-gap: 35px;
+  align-items: center;
+  justify-content: center;
+  grid-auto-flow: column;
+
+  @media @edu-media-phone {
+    grid-gap: 15px;
+    grid-auto-flow: row;
+  }
+}
+
+.ProfileHeader-avatar {
+  margin: 0 auto;
+}
+
+.ProfileHeader-displayName {
+  display: block;
+  font-weight: bold;
+  color: @edu-text-color;
+  font-size: @edu-heading-1-size;
+}
+
+.ProfileHeader-email,
+.ProfileHeader-organization {
+  display: block;
+  font-size: 12px;
+  color: @edu-text-color-secondary;
+}

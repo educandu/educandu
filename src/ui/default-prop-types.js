@@ -157,6 +157,7 @@ export const publicUserShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
   introduction: PropTypes.string,
+  avatarUrl: PropTypes.string,
   accountClosedOn: PropTypes.string
 });
 
