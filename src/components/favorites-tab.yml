@@ -11,5 +11,5 @@ targetDeletedMessage:
   en: The target of this link has been deleted
   de: Das Ziel dieses Links wurde gelöscht
 info:
-  en: Here you can find all documents and rooms that you have marked as favorite.
-  de: Hier finden Sie alle Dokumente und Räume, die Sie als Favorit markiert haben.
+  en: Here you can find all documents, rooms and users that you have marked as favorite.
+  de: Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben.

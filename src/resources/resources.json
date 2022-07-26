@@ -377,7 +377,7 @@
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents and rooms that you have marked as favorite."
+      "info": "Here you can find all documents, rooms and users that you have marked as favorite."
     }
   },
   {
@@ -388,7 +388,7 @@
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente und Räume, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben."
     }
   },
   {
