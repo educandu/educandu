@@ -211,15 +211,15 @@ class UserService {
     return user.favorites.map(f => {
       if (f.type === FAVORITE_TYPE.document) {
         const document = documents.find(d => d._id === f.id);
-        return { ...f, title: document?.title ?? null };
+        return { ...f, name: document?.title ?? null };
       }
       if (f.type === FAVORITE_TYPE.room) {
         const room = rooms.find(r => r._id === f.id);
-        return { ...f, title: room?.name ?? null };
+        return { ...f, name: room?.name ?? null };
       }
       if (f.type === FAVORITE_TYPE.user) {
         const favoriteUser = users.find(u => u._id === f.id);
-        return { ...f, title: favoriteUser?.displayName ?? null };
+        return { ...f, name: favoriteUser?.displayName ?? null };
       }
       return { ...f };
     });
