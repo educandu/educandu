@@ -231,8 +231,8 @@
     "language": "de",
     "resources": {
       "enterDisplayName": "Bitte geben Sie einen Anzeigenamen an",
-      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
-      "displayNameIsTooLong": "Der Anzeigename muss höchstens {length} Zeichen lang sein"
+      "displayNameIsTooShort": "Der Anzeigename darf mindestens {length} Zeichen lang sein",
+      "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
     }
   },
   {
