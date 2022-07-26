@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import { useTranslation } from 'react-i18next';
+import FavoriteStar from '../favorite-star.js';
 import ProfileHeader from '../profile-header.js';
+import { FAVORITE_TYPE } from '../../domain/constants.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
 
 export default function User({ PageTemplate, initialState }) {
@@ -13,13 +15,17 @@ export default function User({ PageTemplate, initialState }) {
     <PageTemplate>
       <div className="UserPage">
         <div className="UserPage-header">
-          <ProfileHeader
-            className="UserPage-header"
-            email={user.email}
-            avatarUrl={user.avatarUrl}
-            displayName={user.displayName}
-            organization={user.organization}
-            />
+          <div className="UserPage-headerProfile">
+            <ProfileHeader
+              email={user.email}
+              avatarUrl={user.avatarUrl}
+              displayName={user.displayName}
+              organization={user.organization}
+              />
+          </div>
+          <div className="UserPage-headerStar">
+            <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
+          </div>
         </div>
 
         {!!user.introduction && (

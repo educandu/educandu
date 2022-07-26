@@ -70,7 +70,8 @@ export const DOC_VIEW_QUERY_PARAM = {
 
 export const FAVORITE_TYPE = {
   document: 'document',
-  room: 'room'
+  room: 'room',
+  user: 'user'
 };
 
 export const USER_ACTIVITY_TYPE = {
