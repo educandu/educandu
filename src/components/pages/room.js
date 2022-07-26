@@ -182,7 +182,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleDeleteRoomMemberClick = member => {
-    confirmRoomMemberDelete(t, member.username, async () => {
+    confirmRoomMemberDelete(t, member.displayName, async () => {
       const response = await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: member.userId });
       setRoom(response.room);
     });
@@ -247,7 +247,7 @@ export default function Room({ PageTemplate, initialState }) {
                   <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
                 </Tooltip>
                 <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
-                <span>{member.username}</span>
+                <span>{member.displayName}</span>
               </Space>
             </List.Item>)}
           />
@@ -332,7 +332,7 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
             {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}DocumentsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}DocumentsSubtitle`)} | {t('common:owner')}: {room.owner.displayName}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>

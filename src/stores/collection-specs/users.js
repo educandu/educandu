@@ -8,11 +8,6 @@ export default {
       partialFilterExpression: { $and: [{ email: { $type: 'string' } }, { accountClosedOn: null }] }
     },
     {
-      name: '_idx_username_provider_',
-      key: { username: 1, provider: 1 },
-      unique: true
-    },
-    {
       name: '_idx_expires_',
       key: { expires: 1 },
       expireAfterSeconds: 0

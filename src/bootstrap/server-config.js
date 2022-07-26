@@ -34,9 +34,9 @@ const configSchema = joi.object({
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),
   initialUser: joi.object({
-    username: joi.string().required(),
+    email: joi.string().required(),
     password: joi.string().required(),
-    email: joi.string().required()
+    displayName: joi.string().required()
   }).allow(null),
   exposeErrorDetails: joi.boolean().default(false),
   exportApiKey: joi.string(),

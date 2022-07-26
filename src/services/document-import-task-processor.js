@@ -40,7 +40,7 @@ class DocumentImportTaskProcessor {
     }
 
     await Promise.all(documentExport.users
-      .map(user => this.userService.ensureExternalUser({ _id: user._id, username: user.username, hostName: batchParams.hostName })));
+      .map(user => this.userService.ensureExternalUser({ _id: user._id, displayName: user.displayName, hostName: batchParams.hostName })));
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');

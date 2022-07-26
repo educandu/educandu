@@ -1,3 +1,10 @@
 forgotPassword:
   en: Forgot your password?
   de: Kennwort vergessen?
+hintContent:
+  en: |
+    The username is no longer supported for logging in.
+    It continues to be shown as the name under which you author website content.
+  de: |
+    Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.
+    Er bleibt als Autorenname für alle von Ihnen bearbeiteten Website-Inhalte bestehen.

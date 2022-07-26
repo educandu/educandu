@@ -16,11 +16,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  register({ username, password, email }) {
+  register({ email, password, displayName }) {
     return this.httpClient
       .post(
         '/api/v1/users',
-        { username, password, email },
+        { email, password, displayName },
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -46,11 +46,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  login({ emailOrUsername, password }) {
+  login({ email, password }) {
     return this.httpClient
       .post(
         '/api/v1/users/login',
-        { emailOrUsername, password },
+        { email, password },
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -66,11 +66,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserAccount({ username, email }) {
+  saveUserAccount({ email, displayName }) {
     return this.httpClient
       .post(
         '/api/v1/users/account',
-        { username, email },
+        { email, displayName },
         { responseType: 'json' }
       )
       .then(res => res.data);

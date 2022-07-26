@@ -25,7 +25,7 @@ class MailService {
     this.translators = SUPPORTED_UI_LANGUAGES.map(language => this.resourceManager.createI18n(language).t);
   }
 
-  sendRegistrationVerificationEmail({ email, username, verificationLink }) {
+  sendRegistrationVerificationEmail({ email, displayName, verificationLink }) {
     logger.info(`Creating email with registration verification link ${verificationLink}`);
 
     const subject = this.translators
@@ -34,7 +34,7 @@ class MailService {
 
     const text = this.translators
       .map(t => t('mailService:registrationVerificationEmail.text', {
-        username,
+        displayName,
         verificationLink,
         hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
       }))
@@ -42,7 +42,7 @@ class MailService {
 
     const html = this.translators
       .map(t => t('mailService:registrationVerificationEmail.html', {
-        username: htmlescape(username),
+        displayName: htmlescape(displayName),
         verificationLink,
         hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
       }))
@@ -52,7 +52,7 @@ class MailService {
     return this._sendMail(message);
   }
 
-  sendPasswordResetEmail({ email, username, completionLink }) {
+  sendPasswordResetEmail({ email, displayName, completionLink }) {
     logger.info(`Creating email with password reset request completion link ${completionLink}`);
 
     const subject = this.translators
@@ -61,7 +61,7 @@ class MailService {
 
     const text = this.translators
       .map(t => t('mailService:passwordResetEmail.text', {
-        username,
+        displayName,
         completionLink,
         hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
       }))
@@ -69,7 +69,7 @@ class MailService {
 
     const html = this.translators
       .map(t => t('mailService:passwordResetEmail.html', {
-        username: htmlescape(username),
+        displayName: htmlescape(displayName),
         completionLink,
         hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
       }))
@@ -125,12 +125,12 @@ class MailService {
       .join(' / ');
 
     const text = this.translators
-      .map(t => t('mailService:roomMemberRemovalNotificationEmail.text', { username: memberUser.username, ownerName, roomName }))
+      .map(t => t('mailService:roomMemberRemovalNotificationEmail.text', { displayName: memberUser.displayName, ownerName, roomName }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:roomMemberRemovalNotificationEmail.html', {
-        username: htmlescape(memberUser.username), ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+        displayName: htmlescape(memberUser.displayName), ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
       }))
       .join('\n');
 

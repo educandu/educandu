@@ -192,7 +192,7 @@ function Users({ initialState, PageTemplate }) {
   };
 
   const handleDeleteAllPrivateRoomsClick = user => {
-    confirmAllPrivateRoomsDelete(t, user.username, async () => {
+    confirmAllPrivateRoomsDelete(t, user.displayName, async () => {
       const oldStorage = user.storage;
 
       const newStorage = {
@@ -218,7 +218,7 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const renderUsername = (username, user) => {
+  const renderDisplayName = (displayName, user) => {
     const { profile } = user;
 
     if (profile) {
@@ -259,12 +259,12 @@ function Users({ initialState, PageTemplate }) {
 
       return (
         <Popover content={content} title={t('profile')} trigger="hover">
-          <b>{username}</b>
+          <b>{displayName}</b>
         </Popover>
       );
     }
 
-    return <b>{username}</b>;
+    return <b>{displayName}</b>;
   };
 
   const renderEmail = email => {
@@ -325,7 +325,7 @@ function Users({ initialState, PageTemplate }) {
       <ol className="UsersPage-reminders">
         {user.storage.reminders.map(reminder => (
           <li key={reminder.timestamp}>
-            {formatDate(reminder.timestamp)} ({usersById.get(reminder.createdBy)?.username || t('common:unknown')})
+            {formatDate(reminder.timestamp)} ({usersById.get(reminder.createdBy)?.displayName || t('common:unknown')})
           </li>
         ))}
       </ol>
@@ -352,11 +352,11 @@ function Users({ initialState, PageTemplate }) {
 
   const internalUserTableColumns = [
     {
-      title: () => t('common:username'),
-      dataIndex: 'username',
-      key: 'username',
-      sorter: by(x => x.username, { ignoreCase: true }),
-      render: renderUsername
+      title: () => t('common:displayName'),
+      dataIndex: 'displayName',
+      key: 'displayName',
+      sorter: by(x => x.displayName, { ignoreCase: true }),
+      render: renderDisplayName
     }, {
       title: () => t('common:email'),
       dataIndex: 'email',
@@ -393,11 +393,11 @@ function Users({ initialState, PageTemplate }) {
 
   const externalUserTableColumns = [
     {
-      title: () => t('common:username'),
-      dataIndex: 'username',
-      key: 'username',
-      sorter: by(x => x.username, { ignoreCase: true }),
-      render: renderUsername
+      title: () => t('common:displayName'),
+      dataIndex: 'displayName',
+      key: 'displayName',
+      sorter: by(x => x.displayName, { ignoreCase: true }),
+      render: renderDisplayName
     }, {
       title: () => t('importSource'),
       dataIndex: 'importSource',
@@ -408,11 +408,11 @@ function Users({ initialState, PageTemplate }) {
 
   const storageUserTableColumns = [
     {
-      title: () => t('common:username'),
-      dataIndex: 'username',
-      key: 'username',
-      sorter: by(x => x.username, { ignoreCase: true }),
-      render: renderUsername
+      title: () => t('common:displayName'),
+      dataIndex: 'displayName',
+      key: 'displayName',
+      sorter: by(x => x.displayName, { ignoreCase: true }),
+      render: renderDisplayName
     }, {
       title: () => t('common:email'),
       dataIndex: 'email',

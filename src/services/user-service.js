@@ -49,14 +49,9 @@ class UserService {
     return email ? this.userStore.getUserByEmailAddress(email.toLowerCase()) : null;
   }
 
-  async updateUserAccount({ userId, provider, username, email }) {
+  async updateUserAccount({ userId, provider, email, displayName }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
-
-    const existingUserWithUsername = await this.userStore.findUserByProviderAndUsername({ provider, username });
-    if (existingUserWithUsername && existingUserWithUsername._id !== userId) {
-      return { result: SAVE_USER_RESULT.duplicateUsername, user: null };
-    }
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
     if (existingActiveUserWithEmail && existingActiveUserWithEmail._id !== userId) {
@@ -64,7 +59,7 @@ class UserService {
     }
 
     const user = await this.userStore.getUserById(userId);
-    const updatedUser = { ...user, username, email: lowerCasedEmail };
+    const updatedUser = { ...user, email: lowerCasedEmail, displayName };
 
     await this.userStore.saveUser(updatedUser);
     return { result: SAVE_USER_RESULT.success, user: updatedUser };
@@ -102,7 +97,7 @@ class UserService {
       ...this._buildEmptyUser(),
       _id: userId,
       email: user.email,
-      username: user.username,
+      displayName: user.displayName,
       provider: user.provider,
       accountClosedOn: new Date()
     };
@@ -234,13 +229,8 @@ class UserService {
     return updatedUser;
   }
 
-  async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
+  async createUser({ email, password, displayName, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
-
-    const existingUserWithUsername = await this.userStore.findUserByProviderAndUsername({ provider, username });
-    if (existingUserWithUsername) {
-      return { result: SAVE_USER_RESULT.duplicateUsername, user: null };
-    }
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
     if (existingActiveUserWithEmail) {
@@ -249,9 +239,9 @@ class UserService {
 
     const user = this._buildEmptyUser();
     user.provider = provider;
-    user.username = username;
-    user.passwordHash = await this._hashPassword(password);
     user.email = lowerCasedEmail;
+    user.passwordHash = await this._hashPassword(password);
+    user.displayName = displayName;
     user.roles = roles;
     user.expires = verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate();
     user.verificationCode = verified ? null : uniqueId.create();
@@ -261,11 +251,11 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user };
   }
 
-  async ensureExternalUser({ _id, username, hostName }) {
+  async ensureExternalUser({ _id, displayName, hostName }) {
     const user = {
       ...this._buildEmptyUser(),
       _id,
-      username,
+      displayName,
       provider: `external/${hostName}`
     };
     await this.userStore.saveUser(user);
@@ -291,16 +281,15 @@ class UserService {
     return user;
   }
 
-  async authenticateUser({ emailOrUsername, password, provider = DEFAULT_PROVIDER_NAME }) {
-    if (!emailOrUsername || !password) {
+  async authenticateUser({ email, password, provider = DEFAULT_PROVIDER_NAME }) {
+    if (!email || !password) {
       return false;
     }
 
-    const lowerCasedEmailOrUsername = emailOrUsername.toLowerCase() || '';
+    const lowerCasedEmail = email.toLowerCase() || '';
 
-    const possibleMatches = await this.userStore.findActiveUsersByEmailOrUsername({
-      email: lowerCasedEmailOrUsername,
-      username: emailOrUsername,
+    const possibleMatches = await this.userStore.findActiveUsersByEmail({
+      email: lowerCasedEmail,
       provider
     });
 
@@ -313,7 +302,7 @@ class UserService {
         user = possibleMatches[0];
         break;
       default:
-        user = possibleMatches.find(match => match.email === lowerCasedEmailOrUsername);
+        user = possibleMatches.find(match => match.email === lowerCasedEmail);
     }
 
     if (!user || user.expires || user.lockedOut) {
@@ -371,9 +360,9 @@ class UserService {
     return {
       _id: uniqueId.create(),
       provider: null,
-      username: null,
-      passwordHash: null,
       email: null,
+      passwordHash: null,
+      displayName: null,
       roles: [],
       expires: null,
       verificationCode: null,

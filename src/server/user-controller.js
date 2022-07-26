@@ -140,14 +140,14 @@ class UserController {
   }
 
   async handlePostUser(req, res) {
-    const { username, password, email } = req.body;
+    const { email, password, displayName } = req.body;
 
-    const { result, user } = await this.userService.createUser({ username, password, email });
+    const { result, user } = await this.userService.createUser({ email, password, displayName });
 
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestUtils.getHostInfo(req);
       const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
-      await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
+      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationLink });
     }
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
@@ -156,9 +156,9 @@ class UserController {
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
     const provider = req.user.provider;
-    const { username, email } = req.body;
+    const { email, displayName } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email, displayName });
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
@@ -202,7 +202,7 @@ class UserController {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestUtils.getHostInfo(req);
       const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
-      await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
+      await this.mailService.sendPasswordResetEmail({ email: user.email, displayName: user.displayName, completionLink });
     }
 
     res.status(201).send({});
@@ -342,10 +342,10 @@ class UserController {
     }));
 
     passport.use('local', new LocalStrategy({
-      usernameField: 'emailOrUsername',
+      usernameField: 'email',
       passwordField: 'password'
-    }, (emailOrUsername, password, cb) => {
-      this.userService.authenticateUser({ emailOrUsername, password })
+    }, (email, password, cb) => {
+      this.userService.authenticateUser({ email, password })
         .then(user => cb(null, user || false))
         .catch(err => cb(err));
     }));

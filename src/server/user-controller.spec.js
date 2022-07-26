@@ -72,7 +72,7 @@ describe('user-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          body: { username: 'test1234', email: 'test@test.com', password: 'abcd1234' }
+          body: { email: 'test@test.com', password: 'abcd1234', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -90,8 +90,8 @@ describe('user-controller', () => {
 
       it('should call sendRegistrationVerificationEmail', () => {
         sinon.assert.calledWith(mailService.sendRegistrationVerificationEmail, {
-          username: 'test1234',
           email: 'test@test.com',
+          displayName: 'Test 1234',
           verificationLink: 'https://localhost/complete-registration/verificationCode'
         });
       });
@@ -108,7 +108,7 @@ describe('user-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          body: { username: 'test1234', email: 'test@test.com', password: 'abcd1234' }
+          body: { email: 'test@test.com', password: 'abcd1234', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -151,7 +151,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234, provider: 'educandu' },
-          body: { username: 'test1234', email: 'test@test.com' }
+          body: { email: 'test@test.com', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -164,7 +164,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserAccount', () => {
-        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', username: 'test1234', email: 'test@test.com' });
+        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com', displayName: 'Test 1234' });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -184,7 +184,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { username: 'test1234', email: 'test@test.com' }
+          body: { email: 'test@test.com', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -275,7 +275,7 @@ describe('user-controller', () => {
 
     describe('with known email', () => {
       const user = {
-        username: 'johndoe',
+        displayName: 'johndoe',
         email: 'john.doe@gmail.com'
       };
 
@@ -301,8 +301,8 @@ describe('user-controller', () => {
       });
 
       it('should call mailService.sendPasswordResetEmail', () => {
-        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { username: user.username,
-          email: user.email,
+        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
+          displayName: user.displayName,
           completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
       });
 

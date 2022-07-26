@@ -165,6 +165,9 @@ owner:
 email:
   en: Email
   de: E-Mail
+emailAddress:
+  en: Email address
+  de: E-Mail-Adresse
 name:
   en: Name
   de: Name
@@ -213,9 +216,9 @@ id:
 user:
   en: User
   de: Benutzer
-username:
-  en: User name
-  de: Benutzername
+displayName:
+  en: Display name
+  de: Anzeigename
 password:
   en: Password
   de: Kennwort
@@ -416,3 +419,6 @@ youtubeCopyrightNotice:
     Source: [Youtube]({link})
   de: |
     Quelle: [Youtube]({link})
+emailIsInvalid:
+  en: The value you provided is not a valid email address
+  de: Ihre Eingabe ist keine gültige E-Mail-Adresse

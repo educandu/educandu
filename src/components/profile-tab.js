@@ -89,7 +89,7 @@ function ProfileTab() {
       <div className="ProfileTab-headline">{t('personalInfoHeadline')}</div>
       <section className="ProfileTab-section">
         <div className="ProfileTab-avatar">
-          <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
+          <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
           <a onClick={handleShowAvatarDescriptionClick}>{t('changePicture')}</a>
           {showAvatarDescription && (
           <Alert

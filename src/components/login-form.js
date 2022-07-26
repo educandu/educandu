@@ -13,7 +13,7 @@ const logger = new Logger(import.meta.url);
 
 export default function LoginForm({
   name,
-  fixedEmailOrUsername,
+  fixedEmail,
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
@@ -30,7 +30,7 @@ export default function LoginForm({
   }
 
   useEffect(() => {
-    ensureFormValuesAfterHydration(form, ['emailOrUsername', 'password']);
+    ensureFormValuesAfterHydration(form, ['email', 'password']);
   }, [form]);
 
   const showLoginError = () => {
@@ -41,10 +41,10 @@ export default function LoginForm({
     setLoginError(null);
   };
 
-  const login = async ({ emailOrUsername, password }) => {
+  const login = async ({ email, password }) => {
     try {
       onLoginStarted();
-      const { user } = await userApiClient.login({ emailOrUsername, password });
+      const { user } = await userApiClient.login({ email, password });
       if (user) {
         setUser(user);
         onLoginSucceeded();
@@ -60,19 +60,23 @@ export default function LoginForm({
 
   const handleFinish = values => {
     clearLoginError();
-    const { emailOrUsername, password } = values;
-    login({ emailOrUsername: emailOrUsername.trim(), password });
+    const { email, password } = values;
+    login({ email: email.trim(), password });
   };
 
   const handlePressEnter = () => {
     form.submit();
   };
 
-  const emailOrUsernameValidationRules = [
+  const emailValidationRules = [
     {
       required: true,
-      message: t('enterEmailOrUsername'),
+      message: t('enterEmail'),
       whitespace: true
+    },
+    {
+      type: 'email',
+      message: t('common:emailIsInvalid')
     }
   ];
 
@@ -91,13 +95,14 @@ export default function LoginForm({
       className="LoginForm"
       onFinish={handleFinish}
       scrollToFirstError
+      validateTrigger="onSubmit"
       >
       <Form.Item
-        label={t('emailOrUsername')}
-        name="emailOrUsername"
-        rules={fixedEmailOrUsername ? [] : emailOrUsernameValidationRules}
-        initialValue={fixedEmailOrUsername || ''}
-        hidden={!!fixedEmailOrUsername}
+        label={t('common:emailAddress')}
+        name="email"
+        rules={fixedEmail ? [] : emailValidationRules}
+        initialValue={fixedEmail || ''}
+        hidden={!!fixedEmail}
         >
         <Input onPressEnter={handlePressEnter} />
       </Form.Item>
@@ -114,7 +119,7 @@ export default function LoginForm({
 }
 
 LoginForm.propTypes = {
-  fixedEmailOrUsername: PropTypes.string,
+  fixedEmail: PropTypes.string,
   formRef: PropTypes.shape({
     current: PropTypes.object
   }),
@@ -125,7 +130,7 @@ LoginForm.propTypes = {
 };
 
 LoginForm.defaultProps = {
-  fixedEmailOrUsername: null,
+  fixedEmail: null,
   formRef: null,
   name: 'login-form',
   onLoginFailed: () => {},

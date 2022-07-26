@@ -52,7 +52,7 @@ function Imports({ initialState, PageTemplate }) {
 
   const renderDate = date => <span>{formatDate(date)}</span>;
 
-  const renderUser = user => <span>{user.username}</span>;
+  const renderUser = user => <span>{user.displayName}</span>;
 
   const columns = [
     { title: t('batchId'), key: '_id', dataIndex: '_id', width: '150px', render: renderId },

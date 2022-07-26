@@ -88,7 +88,7 @@ describe('export-service', () => {
     beforeEach(() => {
       sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByDocumentId');
 
-      userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
+      userStore.getUsersByIds.resolves([{ _id: 'user1', displayName: 'JohnDoe' }]);
       documentRevisionStore.getAllDocumentRevisionsByDocumentId.resolves([rev1, rev2, rev3]);
     });
 
@@ -130,7 +130,7 @@ describe('export-service', () => {
       });
 
       it('should return revisions', () => {
-        expect(result).toEqual({ revisions: [rev1, rev2], users: [{ _id: 'user1', username: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
+        expect(result).toEqual({ revisions: [rev1, rev2], users: [{ _id: 'user1', displayName: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
       });
     });
   });

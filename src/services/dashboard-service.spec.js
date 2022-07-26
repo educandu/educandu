@@ -31,8 +31,8 @@ describe('dashboard-service', () => {
   });
 
   beforeEach(async () => {
-    user = await setupTestUser(container, { username: 'user', email: 'user@test.com' });
-    otherUser = await setupTestUser(container, { username: 'other', email: 'other@test.com' });
+    user = await setupTestUser(container, { email: 'user@test.com', displayName: 'My user' });
+    otherUser = await setupTestUser(container, { email: 'other@test.com', displayName: 'Other user' });
   });
 
   afterEach(async () => {
