@@ -42,7 +42,6 @@ describe('client-data-mapping-service', () => {
   describe('mapWebsitePublicUser', () => {
     let viewedUser;
     let viewingUser;
-    const accountClosedOn = new Date();
 
     beforeEach(() => {
       viewedUser = {
@@ -59,7 +58,7 @@ describe('client-data-mapping-service', () => {
         introduction: 'Educandu test user',
         storage: {},
         favorites: [],
-        accountClosedOn
+        accountClosedOn: null
       };
       urlUtils.getGravatarUrl.withArgs(viewedUser.email).returns('www://avatar.domain/12345');
     });
@@ -77,6 +76,29 @@ describe('client-data-mapping-service', () => {
           organization: 'Educandu',
           introduction: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+
+    describe('when the viewing user has closed their account', () => {
+      const accountClosedOn = new Date();
+
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewedUser.accountClosedOn = accountClosedOn;
+
+        urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the remaining public user data excluding the avatar', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/placeholder',
           accountClosedOn: accountClosedOn.toISOString()
         });
       });
@@ -95,7 +117,7 @@ describe('client-data-mapping-service', () => {
           organization: 'Educandu',
           introduction: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
-          accountClosedOn: accountClosedOn.toISOString()
+          accountClosedOn: null
         });
       });
     });
@@ -114,7 +136,7 @@ describe('client-data-mapping-service', () => {
           organization: 'Educandu',
           introduction: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
-          accountClosedOn: accountClosedOn.toISOString()
+          accountClosedOn: null
         });
       });
     });

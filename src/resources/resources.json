@@ -1048,6 +1048,20 @@
     }
   },
   {
+    "namespace": "user",
+    "language": "en",
+    "resources": {
+      "accountClosed": "This user account is closed."
+    }
+  },
+  {
+    "namespace": "user",
+    "language": "de",
+    "resources": {
+      "accountClosed": "Dieser Benutzerkonto ist geschlossen."
+    }
+  },
+  {
     "namespace": "users",
     "language": "en",
     "resources": {

@@ -27,7 +27,7 @@ class ClientDataMappingService {
       displayName: viewedUser.displayName,
       organization: viewedUser.organization,
       introduction: viewedUser.introduction,
-      avatarUrl: urlUtils.getGravatarUrl(viewedUser.email),
+      avatarUrl: urlUtils.getGravatarUrl(viewedUser.accountClosedOn ? null : viewedUser.email),
       accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
     };
 
