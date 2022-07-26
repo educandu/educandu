@@ -21,7 +21,7 @@
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "closeAccountDetails": "Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Anzeigenamen wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.",
+      "closeAccountDetails": "Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
     }
   },
@@ -488,7 +488,7 @@
     "namespace": "loginForm",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte geben Sie Ihre E-Mail-Adresse",
+      "enterEmail": "Bitte geben Sie Ihre E-Mail-Adresse an",
       "enterPassword": "Bitte geben Sie Ihr Kennwort an",
       "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
     }
@@ -892,7 +892,7 @@
     "language": "de",
     "resources": {
       "forgotPassword": "Kennwort vergessen?",
-      "hintContent": "Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.\nDer bleibt als Autorennamen für alle von Ihnen bearbeiteten Website-Inhalt.\n"
+      "hintContent": "Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.\nEr bleibt als Autorenname für alle von Ihnen bearbeiteten Website-Inhalte bestehen.\n"
     }
   },
   {
@@ -2179,7 +2179,7 @@
       "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
-      "displayName": "Anzeigenamen",
+      "displayName": "Anzeigename",
       "password": "Kennwort",
       "text": "Text",
       "update": "Aktualisieren",
