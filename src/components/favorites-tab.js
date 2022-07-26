@@ -22,6 +22,8 @@ const getTranslatedType = (favorite, t) => {
       return t('common:document');
     case FAVORITE_TYPE.room:
       return t('common:room');
+    case FAVORITE_TYPE.user:
+      return t('common:user');
     default:
       return null;
   }
