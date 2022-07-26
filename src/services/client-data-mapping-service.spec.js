@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import permissions from '../domain/permissions.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -20,12 +21,11 @@ describe('client-data-mapping-service', () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
 
-    sandbox.stub(urlUtils, 'getGravatarUrl');
-
     sut = container.get(ClientDataMappingService);
   });
 
   beforeEach(async () => {
+    sandbox.stub(urlUtils, 'getGravatarUrl');
     user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
     user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
@@ -40,11 +40,12 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapWebsitePublicUser', () => {
-    let dbUser;
+    let viewedUser;
+    let viewingUser;
     const accountClosedOn = new Date();
 
     beforeEach(() => {
-      dbUser = {
+      viewedUser = {
         _id: 'k991UQneLdmDGrAgqR7s6q',
         provider: 'educandu',
         displayName: 'Test user',
@@ -60,19 +61,61 @@ describe('client-data-mapping-service', () => {
         favorites: [],
         accountClosedOn
       };
-      urlUtils.getGravatarUrl.withArgs(dbUser.email).returns('www://avatar.domain/12345');
-      result = sut.mapWebsitePublicUser(dbUser);
+      urlUtils.getGravatarUrl.withArgs(viewedUser.email).returns('www://avatar.domain/12345');
     });
 
-    it('should map the user from the database', () => {
-      expect(result).toStrictEqual({
-        _id: 'k991UQneLdmDGrAgqR7s6q',
-        displayName: 'Test user',
-        email: 'test@test.com',
-        organization: 'Educandu',
-        introduction: 'Educandu test user',
-        avatarUrl: 'www://avatar.domain/12345',
-        accountClosedOn: accountClosedOn.toISOString()
+    describe('when the viewing user is annonymous', () => {
+      beforeEach(() => {
+        viewingUser = null;
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: accountClosedOn.toISOString()
+        });
+      });
+    });
+
+    describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: accountClosedOn.toISOString()
+        });
+      });
+    });
+
+    describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.SEE_USER_EMAIL] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data including the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          email: 'test@test.com',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: accountClosedOn.toISOString()
+        });
       });
     });
   });

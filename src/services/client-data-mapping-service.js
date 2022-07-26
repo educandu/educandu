@@ -17,20 +17,25 @@ class ClientDataMappingService {
     this.storagePlanStore = storagePlanStore;
   }
 
-  mapWebsitePublicUser(user) {
-    if (!user) {
+  mapWebsitePublicUser({ viewedUser, viewingUser }) {
+    if (!viewedUser) {
       return null;
     }
 
-    return {
-      _id: user._id,
-      email: user.email,
-      displayName: user.displayName,
-      organization: user.organization,
-      introduction: user.introduction,
-      avatarUrl: urlUtils.getGravatarUrl(user.email),
-      accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : null
+    const mappedViewedUser = {
+      _id: viewedUser._id,
+      displayName: viewedUser.displayName,
+      organization: viewedUser.organization,
+      introduction: viewedUser.introduction,
+      avatarUrl: urlUtils.getGravatarUrl(viewedUser.email),
+      accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
     };
+
+    if (getAllUserPermissions(viewingUser).includes(permissions.SEE_USER_EMAIL)) {
+      mappedViewedUser.email = viewedUser.email;
+    }
+
+    return mappedViewedUser;
   }
 
   mapWebsiteUser(user) {

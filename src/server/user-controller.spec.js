@@ -76,7 +76,7 @@ describe('user-controller', () => {
     let req;
     let res;
 
-    describe('when the user does not exist', () => {
+    describe('when the viewed user does not exist', () => {
       beforeEach(() => {
         const userId = uniqueId.create();
         req = { params: { userId } };
@@ -90,32 +90,36 @@ describe('user-controller', () => {
       });
     });
 
-    describe('when the user exists', () => {
-      let mappedUser;
+    describe('when the viewed user exists', () => {
+      let mappedViewedUser;
 
       beforeEach(() => {
-        const user = {
+        const viewedUser = {
           _id: uniqueId.create(),
           email: 'educandu@test.com',
           organization: 'Educandu',
           introduction: 'Educandu test user',
           accountClosedOn: new Date()
         };
+        const viewingUser = { _id: uniqueId.create() };
 
-        req = { params: { userId: user._id } };
+        req = {
+          user: viewingUser,
+          params: { userId: viewedUser._id }
+        };
         res = {};
 
-        mappedUser = cloneDeep(user);
+        mappedViewedUser = cloneDeep(viewedUser);
 
-        userService.getUserById.withArgs(user._id).resolves(user);
-        clientDataMappingService.mapWebsitePublicUser.withArgs(user).returns(mappedUser);
+        userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
+        clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetUserPage(req, res);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', { user: mappedUser });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', { user: mappedViewedUser });
       });
     });
   });

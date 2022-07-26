@@ -130,14 +130,15 @@ class UserController {
 
   async handleGetUserPage(req, res) {
     const { userId } = req.params;
+    const viewingUser = req.user;
 
-    const user = await this.userService.getUserById(userId);
-    if (!user) {
+    const viewedUser = await this.userService.getUserById(userId);
+    if (!viewedUser) {
       throw new NotFound();
     }
-    const mappedUser = this.clientDataMappingService.mapWebsitePublicUser(user);
+    const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedUser });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
   }
 
   async handleGetUsersPage(req, res) {
