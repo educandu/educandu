@@ -601,7 +601,8 @@
       "roomCreatedActivity": "New room created",
       "roomUpdatedActivity": "Room updated",
       "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Private room joined"
+      "roomJoinedActivity": "Private room joined",
+      "userMarkedFavoriteActivity": "User marked as favorite"
     }
   },
   {
@@ -616,7 +617,8 @@
       "roomCreatedActivity": "Neuen Raum erstellt",
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Privatem Raum beigetreten"
+      "roomJoinedActivity": "Privatem Raum beigetreten",
+      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
     }
   },
   {

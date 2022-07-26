@@ -10,6 +10,7 @@ import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
 import DocumentCreatedIcon from './icons/user-activities/document-created-icon.js';
 import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
+import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
 function NewsTab({ activities }) {
@@ -137,6 +138,18 @@ function NewsTab({ activities }) {
     });
   };
 
+  const renderUserMarkedFavoriteActivity = activity => {
+    return renderActivity({
+      icon: <UserMarkedFavoriteIcon />,
+      type: activity.type,
+      timestamp: activity.timestamp,
+      description: t('userMarkedFavoriteActivity'),
+      title: activity.data.displayName,
+      href: routes.getUserUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
+    });
+  };
+
   const renderActivityByType = activity => {
     switch (activity.type) {
       case USER_ACTIVITY_TYPE.documentCreated:
@@ -153,6 +166,8 @@ function NewsTab({ activities }) {
         return renderRoomMarkedFavoriteActivity(activity);
       case USER_ACTIVITY_TYPE.roomJoined:
         return renderRoomJoinedActivity(activity);
+      case USER_ACTIVITY_TYPE.userMarkedFavorite:
+        return renderUserMarkedFavoriteActivity(activity);
       default:
         return null;
     }

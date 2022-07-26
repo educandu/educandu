@@ -90,6 +90,20 @@ class DashboardService {
               };
             }
           };
+        case FAVORITE_TYPE.user:
+          return {
+            type: USER_ACTIVITY_TYPE.userMarkedFavorite,
+            timestamp: favorite.setOn,
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
+              const favoriteUser = await this.userStore.getUserById(favorite.id);
+              return {
+                data: { _id: favorite.id, displayName: favoriteUser?.displayName ?? null },
+                isDeprecated: !favoriteUser
+              };
+            }
+          };
         default:
           return null;
       }

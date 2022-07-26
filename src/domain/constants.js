@@ -81,7 +81,8 @@ export const USER_ACTIVITY_TYPE = {
   roomCreated: 'room-created',
   roomUpdated: 'room-updated',
   roomMarkedFavorite: 'room-marked-favorite',
-  roomJoined: 'room-joined'
+  roomJoined: 'room-joined',
+  userMarkedFavorite: 'user-marked-favorite'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {
