@@ -17,11 +17,21 @@ const email = 'joedoe78@gmail.com';
 const invalidDisplayNameCases = [
   {
     description: 'displayName is shorter than min length',
-    body: { displayName: [...Array(minDisplayNameLength - 1).keys()].join('') }
+    body: { displayName: Array.from({ length: minDisplayNameLength - 1 }, () => 'x').join('') }
   },
   {
     description: 'displayName is longer than max length',
-    body: { displayName: [...Array(maxDisplayNameLength + 1).keys()].join('') }
+    body: { displayName: Array.from({ length: maxDisplayNameLength + 1 }, () => 'x').join('') }
+  }
+];
+const validDisplayNameCases = [
+  {
+    description: 'displayName is as long as min length',
+    body: { displayName: Array.from({ length: minDisplayNameLength }, () => 'x').join('') }
+  },
+  {
+    description: 'displayName is as long as max length',
+    body: { displayName: Array.from({ length: maxDisplayNameLength }, () => 'x').join('') }
   }
 ];
 
@@ -39,6 +49,12 @@ const invalidPasswordCases = [
     body: { password: '12345678' }
   }
 ];
+const validPasswordCases = [
+  {
+    description: 'password is longer than min length and contains digits',
+    body: { password }
+  }
+];
 
 const invalidEmailCases = [
   {
@@ -46,17 +62,21 @@ const invalidEmailCases = [
     body: { email: 'JoeDoe78@gmail.com' }
   }
 ];
+const validEmailCases = [
+  {
+    description: 'email is lowercased',
+    body: { email }
+  }
+];
 
 describe('postUserBodySchema', () => {
   const validBody = { email, password, displayName };
-  const invalidTestCases = [...invalidDisplayNameCases, ...invalidPasswordCases, ...invalidEmailCases]
+
+  const validTestCases = [...validDisplayNameCases, ...validPasswordCases, ...validEmailCases]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
-  describe('when body contains correct data', () => {
-    it('should pass validation', () => {
-      expect(() => validate(validBody, postUserBodySchema)).not.toThrow();
-    });
-  });
+  const invalidTestCases = [...invalidDisplayNameCases, ...invalidPasswordCases, ...invalidEmailCases]
+    .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
   describe('when displayName is missing', () => {
     it('should fail validation', () => {
@@ -76,6 +96,12 @@ describe('postUserBodySchema', () => {
     it('should fail validation', () => {
       const body = { password, displayName };
       expect(() => validate(body, postUserBodySchema)).toThrow();
+    });
+  });
+
+  validTestCases.forEach(({ description, body }) => {
+    describe(description, () => {
+      it('should pass validation', () => expect(() => validate(body, postUserBodySchema)).not.toThrow());
     });
   });
 
