@@ -3,7 +3,7 @@ enterDisplayName:
   de: Bitte geben Sie einen Anzeigenamen an
 displayNameIsTooShort:
   en: The display name must be at least {length} characters long
-  de: Der Anzeigenamen muss mindestens {length} Zeichen lang sein
+  de: Der Anzeigename muss mindestens {length} Zeichen lang sein
 displayNameIsTooLong:
   en: The display name must be at most {length} characters long
-  de: Der Anzeigenamen muss höchstens {length} Zeichen lang sein
+  de: Der Anzeigename muss höchstens {length} Zeichen lang sein
