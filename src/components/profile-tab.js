@@ -1,5 +1,6 @@
 import Alert from './alert.js';
 import gravatar from 'gravatar';
+import routes from '../utils/routes.js';
 import React, { useState } from 'react';
 import Logger from '../common/logger.js';
 import errorHelper from '../ui/error-helper.js';
@@ -52,7 +53,15 @@ function ProfileTab() {
     setShowAvatarDescription(false);
   };
 
-  const avatarDescription = (
+  const renderInfo = () => (
+    <Trans
+      t={t}
+      i18nKey="info"
+      components={[<a key="user-page-link" href={routes.getUserUrl(user._id)} rel="noopener noreferrer" />]}
+      />
+  );
+
+  const renderAvatarDescription = () => (
     <div>
       <Trans
         t={t}
@@ -64,7 +73,7 @@ function ProfileTab() {
 
   return (
     <div className="ProfileTab">
-      <div className="ProfileTab-tabInfo">{t('info')}</div>
+      <div className="ProfileTab-tabInfo">{renderInfo()}</div>
       <div className="ProfileTab-headline">{t('personalInfoHeadline')}</div>
       <section className="ProfileTab-section">
         <div className="ProfileTab-avatar">
@@ -73,7 +82,7 @@ function ProfileTab() {
           {showAvatarDescription && (
           <Alert
             message={t('howToChangePicture')}
-            description={avatarDescription}
+            description={renderAvatarDescription()}
             closable
             afterClose={handleAvatarDescriptionAfterClose}
             />
@@ -98,7 +107,7 @@ function ProfileTab() {
             label={t('introduction')}
             initialValue={user.introduction || ''}
             >
-            <MarkdownInput preview minRows={5} />
+            <MarkdownInput preview renderMedia minRows={5} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit">{t('common:save')}</Button>

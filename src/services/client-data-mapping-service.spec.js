@@ -1,6 +1,8 @@
 import sinon from 'sinon';
+import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import permissions from '../domain/permissions.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -18,10 +20,12 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
+
     sut = container.get(ClientDataMappingService);
   });
 
   beforeEach(async () => {
+    sandbox.stub(urlUtils, 'getGravatarUrl');
     user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
     user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
@@ -33,6 +37,109 @@ describe('client-data-mapping-service', () => {
 
   afterAll(async () => {
     await destroyTestEnvironment(container);
+  });
+
+  describe('mapWebsitePublicUser', () => {
+    let viewedUser;
+    let viewingUser;
+
+    beforeEach(() => {
+      viewedUser = {
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        provider: 'educandu',
+        displayName: 'Test user',
+        passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
+        email: 'test@test.com',
+        roles: ['user', 'admin'],
+        expires: null,
+        verificationCode: null,
+        lockedOut: false,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
+        storage: {},
+        favorites: [],
+        accountClosedOn: null
+      };
+      urlUtils.getGravatarUrl.withArgs(viewedUser.email).returns('www://avatar.domain/12345');
+    });
+
+    describe('when the viewing user is annonymous', () => {
+      beforeEach(() => {
+        viewingUser = null;
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+
+    describe('when the viewing user has closed their account', () => {
+      const accountClosedOn = new Date();
+
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewedUser.accountClosedOn = accountClosedOn;
+
+        urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the remaining public user data excluding the avatar', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/placeholder',
+          accountClosedOn: accountClosedOn.toISOString()
+        });
+      });
+    });
+
+    describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+
+    describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.SEE_USER_EMAIL] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data including the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          email: 'test@test.com',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
   });
 
   describe('mapWebsiteUser', () => {

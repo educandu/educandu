@@ -151,6 +151,16 @@ export const userShape = PropTypes.shape({
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
 });
 
+export const publicUserShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  email: PropTypes.string,
+  displayName: PropTypes.string.isRequired,
+  organization: PropTypes.string,
+  introduction: PropTypes.string,
+  avatarUrl: PropTypes.string,
+  accountClosedOn: PropTypes.string
+});
+
 export const userProps = {
   user: userShape
 };

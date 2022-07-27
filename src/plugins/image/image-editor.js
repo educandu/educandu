@@ -1,9 +1,9 @@
 import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import urlUtils from '../../utils/url-utils.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
-import { getImageUrl } from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -35,7 +35,7 @@ function ImageEditor({ content, onContentChanged }) {
   };
 
   useEffect(() => {
-    setCurrentImageSource(getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl }));
+    setCurrentImageSource(urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl }));
   }, [clientConfig, sourceType, sourceUrl]);
 
   const updateClipState = useCallback(() => {

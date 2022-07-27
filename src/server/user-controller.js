@@ -128,6 +128,19 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
+  async handleGetUserPage(req, res) {
+    const { userId } = req.params;
+    const viewingUser = req.user;
+
+    const viewedUser = await this.userService.getUserById(userId);
+    if (!viewedUser) {
+      throw new NotFound();
+    }
+    const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
+  }
+
   async handleGetUsersPage(req, res) {
     const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
     const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
@@ -380,6 +393,8 @@ class UserController {
   }
 
   registerPages(router) {
+    router.get('/users/:userId', (req, res) => this.handleGetUserPage(req, res));
+
     router.get('/register', (req, res) => this.handleGetRegisterPage(req, res));
 
     router.get('/reset-password', (req, res) => this.handleGetResetPasswordPage(req, res));
@@ -392,7 +407,7 @@ class UserController {
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
-    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
+    // Router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }
 
   registerApi(router) {

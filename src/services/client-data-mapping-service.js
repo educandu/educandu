@@ -1,4 +1,5 @@
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
@@ -14,6 +15,27 @@ class ClientDataMappingService {
     this.userStore = userStore;
     this.roomStore = roomStore;
     this.storagePlanStore = storagePlanStore;
+  }
+
+  mapWebsitePublicUser({ viewedUser, viewingUser }) {
+    if (!viewedUser) {
+      return null;
+    }
+
+    const mappedViewedUser = {
+      _id: viewedUser._id,
+      displayName: viewedUser.displayName,
+      organization: viewedUser.organization,
+      introduction: viewedUser.introduction,
+      avatarUrl: urlUtils.getGravatarUrl(viewedUser.accountClosedOn ? null : viewedUser.email),
+      accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
+    };
+
+    if (getAllUserPermissions(viewingUser).includes(permissions.SEE_USER_EMAIL)) {
+      mappedViewedUser.email = viewedUser.email;
+    }
+
+    return mappedViewedUser;
   }
 
   mapWebsiteUser(user) {

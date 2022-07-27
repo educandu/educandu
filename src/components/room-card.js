@@ -22,8 +22,7 @@ function RoomCard({ room, invitation }) {
     return (
       <span className="RoomCard-owner">
         {`${t('common:owner')}: `}
-        {!!room.owner.email && <a href={`mailto:${room.owner.email}`}>{room.owner.displayName}</a>}
-        {!room.owner.email && room.owner.displayName}
+        <a href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
       </span>
     );
   };

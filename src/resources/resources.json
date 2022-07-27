@@ -231,7 +231,7 @@
     "language": "de",
     "resources": {
       "enterDisplayName": "Bitte geben Sie einen Anzeigenamen an",
-      "displayNameIsTooShort": "Der Anzeigename darf mindestens {length} Zeichen lang sein",
+      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
       "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
     }
   },
@@ -1048,6 +1048,20 @@
     }
   },
   {
+    "namespace": "user",
+    "language": "en",
+    "resources": {
+      "accountClosed": "This user account was closed."
+    }
+  },
+  {
+    "namespace": "user",
+    "language": "de",
+    "resources": {
+      "accountClosed": "Dieses Benutzerkonto wurde geschlossen."
+    }
+  },
+  {
     "namespace": "users",
     "language": "en",
     "resources": {
@@ -1171,7 +1185,7 @@
     "namespace": "profileTab",
     "language": "en",
     "resources": {
-      "info": "Here you can provide additional information about yourself. This information is currently not publicly accessible.",
+      "info": "Here you can provide additional information about yourself. This information is publicly accessible through your <0>profile page</0>.",
       "personalInfoHeadline": "Personal info",
       "changePicture": "Change profile picture",
       "howToChangePicture": "How can I change my profile picture?",
@@ -1185,7 +1199,7 @@
     "namespace": "profileTab",
     "language": "de",
     "resources": {
-      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.",
+      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihrer <0>Profilseite</0> öffentlich sichtbar.",
       "personalInfoHeadline": "Persönlichen Daten",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",

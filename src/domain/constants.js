@@ -153,6 +153,8 @@ export const HORIZONTAL_ALIGNMENT = {
   right: 'right'
 };
 
+export const AVATAR_SIZE = 110;
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

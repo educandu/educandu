@@ -191,9 +191,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderCreatedBy = (_user, row) => {
-    return row.createdBy.email
-      ? <span>{row.createdBy.displayName} | <a href={`mailto:${row.createdBy.email}`}>{t('common:email')}</a></span>
-      : <span>{row.createdBy.displayName}</span>;
+    return <a href={routes.getUserUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
   };
 
   const renderActions = (_actions, row) => {
