@@ -1051,14 +1051,14 @@
     "namespace": "user",
     "language": "en",
     "resources": {
-      "accountClosed": "This user account is closed."
+      "accountClosed": "This user account was closed."
     }
   },
   {
     "namespace": "user",
     "language": "de",
     "resources": {
-      "accountClosed": "Dieser Benutzerkonto ist geschlossen."
+      "accountClosed": "Dieses Benutzerkonto wurde geschlossen."
     }
   },
   {
@@ -1199,7 +1199,7 @@
     "namespace": "profileTab",
     "language": "de",
     "resources": {
-      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihren <0>Profilseite</0> öffentlich sichtbar.",
+      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihrer <0>Profilseite</0> öffentlich sichtbar.",
       "personalInfoHeadline": "Persönlichen Daten",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",
