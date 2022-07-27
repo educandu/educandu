@@ -168,6 +168,17 @@ class ClientDataMappingService {
     };
   }
 
+  mapRoomsMetadata(rooms) {
+    return rooms.map(room => ({
+      _id: room._id,
+      slug: room.slug,
+      name: room.name,
+      access: room.access,
+      documentsMode: room.documentsMode,
+      createdOn: room.createdOn.toISOString()
+    }));
+  }
+
   mapRoomInvitations(invitations) {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
   }

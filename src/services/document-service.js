@@ -69,6 +69,11 @@ class DocumentService {
     return documentsMetadata.sort(by(doc => doc.createdOn, 'asc'));
   }
 
+  async getMetadataOfLatestDocumentsCreatedByUser(createdBy) {
+    const documentsMetadata = await this.documentStore.getDocumentsMetadataByCreatedBy(createdBy);
+    return documentsMetadata.sort(by(doc => doc.createdOn, 'desc'));
+  }
+
   async getSearchableDocumentsMetadataByTags(searchQuery) {
     const tokens = searchQuery.trim().split(/\s+/);
 

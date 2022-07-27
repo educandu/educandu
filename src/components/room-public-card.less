@@ -1,0 +1,36 @@
+.RoomPublicCard {
+  width: 250px;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-background-color-base;
+  padding: @edu-content-padding;
+}
+
+.RoomPublicCard-title {
+  height: 50px;
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.RoomPublicCard-divider {
+  margin: 0 0 15px 0;
+}
+
+.RoomPublicCard-infoRow {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  padding: 0 10px;
+  color: lighten(@edu-text-color, 10%);
+}
+
+.RoomPublicCard-button {
+  margin-top: auto;
+}

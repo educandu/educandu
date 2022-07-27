@@ -6,9 +6,9 @@ import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
 import PrivateIcon from './icons/general/private-icon.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
 function RoomCard({ room, invitation }) {
@@ -95,10 +95,9 @@ function RoomCard({ room, invitation }) {
   );
 }
 
-const looseRoomProps = {
+const roomProps = {
   ...roomMetadataProps,
   _id: PropTypes.string,
-  createdOn: PropTypes.string,
   updatedOn: PropTypes.string,
   owner: PropTypes.shape({
     email: PropTypes.string,
@@ -109,7 +108,7 @@ const looseRoomProps = {
 
 RoomCard.propTypes = {
   invitation: invitationBasicShape,
-  room: PropTypes.shape(looseRoomProps).isRequired
+  room: PropTypes.shape(roomProps).isRequired
 };
 
 RoomCard.defaultProps = {

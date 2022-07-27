@@ -199,6 +199,16 @@ const commonDocumentOrRevisionProps = {
 };
 
 export const documentMetadataShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  revision: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  language: PropTypes.string.isRequired
+});
+
+export const documentExtendedMetadataShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
   _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
@@ -370,8 +380,10 @@ export const roomMemberShape = PropTypes.shape({
 });
 
 export const roomMetadataProps = {
+  _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
+  createdOn: PropTypes.string,
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS)).isRequired,
   documentsMode: PropTypes.oneOf(Object.values(ROOM_DOCUMENTS_MODE)).isRequired,
   description: PropTypes.string
@@ -387,7 +399,6 @@ export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
 
 export const roomShape = PropTypes.shape({
   ...roomMetadataProps,
-  _id: PropTypes.string.isRequired,
   owner: roomOwnerShape.isRequired,
   members: PropTypes.arrayOf(roomMemberShape)
 });

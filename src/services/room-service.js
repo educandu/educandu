@@ -1,3 +1,4 @@
+import by from 'thenby';
 import moment from 'moment';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
@@ -50,6 +51,11 @@ export default class RoomService {
 
   getRoomsOwnedByUser(userId) {
     return this.roomStore.getRoomsByOwnerId(userId);
+  }
+
+  async getLatestPublicRoomsOwnedByUser(userId) {
+    const rooms = await this.roomStore.getPublicRoomsByOwnerId(userId);
+    return rooms.sort(by(room => room.createdOn, 'desc'));
   }
 
   getPrivateRoomsOwnedByUser(userId) {

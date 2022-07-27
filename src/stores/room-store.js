@@ -46,6 +46,10 @@ class RoomStore {
     return this.collection.find({ owner: ownerId }, { session }).toArray();
   }
 
+  getPublicRoomsByOwnerId(ownerId, { session } = {}) {
+    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS.public }, { session }).toArray();
+  }
+
   getPrivateRoomsByOwnerId(ownerId, { session } = {}) {
     return this.collection.find({ owner: ownerId, access: ROOM_ACCESS.private }, { session }).toArray();
   }

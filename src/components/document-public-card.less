@@ -1,0 +1,62 @@
+@document-public-card-vertical-line-left-padding: 40px;
+@document-public-card-notebook-line-height: 30px;
+@document-public-card-horizontal-padding: @edu-content-padding;
+@document-public-card-backround: lighten(@edu-background-color-light, 0%);
+@document-public-card-notebook-left-padding: @document-public-card-vertical-line-left-padding - @document-public-card-horizontal-padding + 15px;
+
+.DocumentPublicCard {
+  position: relative;
+  width: 250px;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  background-color: @edu-white;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-base;
+  background-color: @document-public-card-backround;
+  padding: 20px @document-public-card-horizontal-padding 20px @document-public-card-horizontal-padding;
+
+  &::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    width: 2px;
+    height: 100%;
+    opacity: 0.5;
+    background-color: @edu-primary-color-light;
+    left: @document-public-card-vertical-line-left-padding;
+  }
+}
+
+.DocumentPublicCard-notebook {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-image: repeating-linear-gradient(@document-public-card-backround 0px,
+      @document-public-card-backround @document-public-card-notebook-line-height - 1px,
+      @edu-border-color-dark @document-public-card-notebook-line-height);
+}
+
+.DocumentPublicCard-notebookText {
+  font-size: 14px;
+  padding-top: 6px;
+  padding-left: @document-public-card-notebook-left-padding;
+  line-height: @document-public-card-notebook-line-height;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.DocumentPublicCard-notebookLink {
+  display: flex;
+  gap: 5px;
+  font-size: 13px;
+  align-items: center;
+  margin: auto 0 5px auto;
+  color: lighten(@edu-text-color, 10%);
+}
+
+.DocumentPublicCard-notebookLinkArrow {
+  font-size: 12px;
+}

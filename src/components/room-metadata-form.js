@@ -4,7 +4,7 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
-import { roomMetadataShape } from '../ui/default-prop-types.js';
+import { roomMetadataProps } from '../ui/default-prop-types.js';
 import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -78,6 +78,11 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
   );
 }
 
+const roomMetadataFormShape = {
+  ...roomMetadataProps,
+  _id: PropTypes.string
+};
+
 RoomMetadataForm.defaultProps = {
   editMode: false,
   onFieldsChange: () => {}
@@ -90,7 +95,7 @@ RoomMetadataForm.propTypes = {
   }).isRequired,
   onFieldsChange: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
-  room: roomMetadataShape.isRequired
+  room: PropTypes.shape(roomMetadataFormShape).isRequired
 };
 
 export default RoomMetadataForm;

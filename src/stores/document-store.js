@@ -53,6 +53,10 @@ class DocumentStore {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
+  getDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
+    return this.collection.find({ createdBy }, { projection: documentMetadataProjection, session }).toArray();
+  }
+
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
