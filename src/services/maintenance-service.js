@@ -22,35 +22,12 @@ export default class MaintenanceService {
   }
 
   async runMaintenance() {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      let lock;
+    let lock = null;
+
+    while (!lock) {
       try {
         // eslint-disable-next-line no-await-in-loop
         lock = await this.lockStore.takeMaintenanceLock(MaintenanceService.MAINTENANCE_LOCK_KEY);
-
-        logger.info('Starting database migrations');
-        // eslint-disable-next-line no-await-in-loop
-        await this.database.runMigrationScripts();
-        logger.info('Finished database migrations successfully');
-
-        logger.info('Starting database checks');
-        // eslint-disable-next-line no-await-in-loop
-        await this.database.checkDb();
-        logger.info('Finished database checks successfully');
-
-        // eslint-disable-next-line no-await-in-loop
-        await this.lessonConvertor.convertAllLessonsToDocuments();
-        logger.info('Finished converting lessons to documents succesfully');
-
-        logger.info('Creating basic CDN directories');
-        // eslint-disable-next-line no-await-in-loop
-        await this.cdn.uploadEmptyObject(`${getPublicRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
-        // eslint-disable-next-line no-await-in-loop
-        await this.cdn.uploadEmptyObject(`${getPrivateRoomsRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
-        logger.info('Finished creating basic CDN directories successfully');
-
-        return;
       } catch (error) {
         if (error.code === MONGO_DUPLUCATE_KEY_ERROR_CODE) {
           logger.info(`Maintenance lock is already taken, waiting for ${MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC} sec.`);
@@ -59,12 +36,27 @@ export default class MaintenanceService {
         } else {
           throw error;
         }
-      } finally {
-        if (lock) {
-          // eslint-disable-next-line no-await-in-loop
-          await this.lockStore.releaseLock(lock);
-        }
       }
+    }
+
+    try {
+      logger.info('Starting database migrations');
+      await this.database.runMigrationScripts();
+      logger.info('Finished database migrations successfully');
+
+      logger.info('Starting database checks');
+      await this.database.checkDb();
+      logger.info('Finished database checks successfully');
+
+      await this.lessonConvertor.convertAllLessonsToDocuments();
+      logger.info('Finished converting lessons to documents succesfully');
+
+      logger.info('Creating basic CDN directories');
+      await this.cdn.uploadEmptyObject(`${getPublicRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
+      await this.cdn.uploadEmptyObject(`${getPrivateRoomsRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
+      logger.info('Finished creating basic CDN directories successfully');
+    } finally {
+      await this.lockStore.releaseLock(lock);
     }
   }
 }
