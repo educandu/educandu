@@ -14,20 +14,13 @@ export const postUserBodySchema = joi.object({
 });
 
 export const postUserAccountBodySchema = joi.object({
-  email: emailSchema.required(),
-  displayName: displayNameSchema.required()
+  email: emailSchema.required()
 });
 
 export const postUserProfileBodySchema = joi.object({
-  profile: joi.object({
-    city: joi.string().allow(''),
-    country: joi.string().allow(''),
-    firstName: joi.string().allow(''),
-    lastName: joi.string().allow(''),
-    postalCode: joi.string().allow(''),
-    street: joi.string().allow(''),
-    streetSupplement: joi.string().allow('')
-  }).required()
+  displayName: displayNameSchema.required(),
+  organization: joi.string().allow(''),
+  introduction: joi.string().allow('')
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({

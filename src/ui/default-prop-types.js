@@ -122,16 +122,6 @@ export const storagePlanWithAssignedUserCountShape = PropTypes.shape({
   ...storagePlanWithAssignedUserCountProps
 });
 
-export const userProfileShape = PropTypes.shape({
-  city: PropTypes.string,
-  country: PropTypes.string,
-  firstName: PropTypes.string,
-  lastName: PropTypes.string,
-  postalCode: PropTypes.string,
-  street: PropTypes.string,
-  streetSupplement: PropTypes.string
-});
-
 export const userStorageShape = PropTypes.shape({
   plan: PropTypes.string,
   usedBytes: PropTypes.number,
@@ -152,10 +142,11 @@ export const userShape = PropTypes.shape({
   provider: PropTypes.string.isRequired,
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
+  organization: PropTypes.string,
+  introduction: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,
-  profile: userProfileShape,
   storage: userStorageShape,
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
 });

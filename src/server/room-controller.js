@@ -106,6 +106,8 @@ export default class RoomController {
       await this._deleteRoom({ room, roomOwner });
     }
 
+    await this.storageService.updateUserUsedBytes(ownerId);
+
     return res.send({});
   }
 

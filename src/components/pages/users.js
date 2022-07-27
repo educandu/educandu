@@ -1,6 +1,7 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
+import { Table, Tabs, Select } from 'antd';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
@@ -8,14 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import errorHelper from '../../ui/error-helper.js';
 import React, { useEffect, useState } from 'react';
-import { Table, Popover, Tabs, Select } from 'antd';
 import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 import { confirmAllPrivateRoomsDelete } from '../confirmation-dialogs.js';
 import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
@@ -218,52 +217,7 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const renderDisplayName = (displayName, user) => {
-    const { profile } = user;
-
-    if (profile) {
-      const content = (
-        <table>
-          <tbody>
-            <tr>
-              <td>{t('firstName')}:&nbsp;&nbsp;</td>
-              <td>{profile.firstName}</td>
-            </tr>
-            <tr>
-              <td>{t('lastName')}:&nbsp;&nbsp;</td>
-              <td>{profile.lastName}</td>
-            </tr>
-            <tr>
-              <td>{t('street')}:&nbsp;&nbsp;</td>
-              <td>{profile.street}</td>
-            </tr>
-            <tr>
-              <td>{t('streetSupplement')}:&nbsp;&nbsp;</td>
-              <td>{profile.streetSupplement}</td>
-            </tr>
-            <tr>
-              <td>{t('postalCode')}:&nbsp;&nbsp;</td>
-              <td>{profile.postalCode}</td>
-            </tr>
-            <tr>
-              <td>{t('city')}:&nbsp;&nbsp;</td>
-              <td>{profile.city}</td>
-            </tr>
-            <tr>
-              <td>{t('country')}:&nbsp;&nbsp;</td>
-              <td>{profile.country ? <CountryFlagAndName code={profile.country} name={profile.country} /> : ''}</td>
-            </tr>
-          </tbody>
-        </table>
-      );
-
-      return (
-        <Popover content={content} title={t('profile')} trigger="hover">
-          <b>{displayName}</b>
-        </Popover>
-      );
-    }
-
+  const renderDisplayName = displayName => {
     return <b>{displayName}</b>;
   };
 

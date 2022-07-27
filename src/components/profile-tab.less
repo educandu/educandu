@@ -9,7 +9,20 @@
 }
 
 .ProfileTab-section {
-  .m-section-content-narrow;
+  .m-section-content;
+
+  @media @edu-media-phone {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.ProfileTab-input {
+  max-width: 50%;
+
+  @media @edu-media-phone {
+    max-width: none;
+  }
 }
 
 .ProfileTab-avatar {

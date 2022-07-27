@@ -10,27 +10,12 @@ changePicture:
 howToChangePicture:
   en: How can I change my profile picture?
   de: Wie ändere ich mein Profilbild?
-firstName:
-  en: First name(s)
-  de: Vorname(n)
-lastName:
-  en: Last name
-  de: Nachname
-street:
-  en: Street
-  de: Straße
-streetSupplement:
-  en: Street supplement
-  de: Straße (Zusatz)
-postalCode:
-  en: Postal code
-  de: Postleitzahl
-city:
-  en: City
-  de: Ort
-country:
-  en: Country
-  de: Land
+organization:
+  en: Organization
+  de: Organisation
+introduction:
+  en: Introduction
+  de: Vorstellung
 updateSuccessMessage:
   en: Your profile was updated successfully.
   de: Ihr Profil wurde erfolgreich aktualisiert.

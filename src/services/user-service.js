@@ -49,28 +49,30 @@ class UserService {
     return email ? this.userStore.getUserByEmailAddress(email.toLowerCase()) : null;
   }
 
-  async updateUserAccount({ userId, provider, email, displayName }) {
+  async updateUserAccount({ userId, provider, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+
     if (existingActiveUserWithEmail && existingActiveUserWithEmail._id !== userId) {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
     const user = await this.userStore.getUserById(userId);
-    const updatedUser = { ...user, email: lowerCasedEmail, displayName };
+    const updatedUser = { ...user, email: lowerCasedEmail };
 
     await this.userStore.saveUser(updatedUser);
     return { result: SAVE_USER_RESULT.success, user: updatedUser };
   }
 
-  async updateUserProfile(userId, newProfile) {
+  async updateUserProfile({ userId, displayName, organization, introduction }) {
     logger.info(`Updating profile for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    user.profile = newProfile;
-    await this.userStore.saveUser(user);
-    return user.profile;
+    const updatedUser = { ...user, displayName, organization, introduction };
+
+    await this.userStore.saveUser(updatedUser);
+    return updatedUser;
   }
 
   async updateUserRoles(userId, newRoles) {
@@ -363,11 +365,12 @@ class UserService {
       email: null,
       passwordHash: null,
       displayName: null,
+      organization: null,
+      introduction: null,
       roles: [],
       expires: null,
       verificationCode: null,
       lockedOut: false,
-      profile: null,
       storage: {
         plan: null,
         usedBytes: 0,

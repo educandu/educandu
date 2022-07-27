@@ -151,7 +151,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234, provider: 'educandu' },
-          body: { email: 'test@test.com', displayName: 'Test 1234' }
+          body: { email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -164,7 +164,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserAccount', () => {
-        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com', displayName: 'Test 1234' });
+        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com' });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -184,7 +184,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { email: 'test@test.com', displayName: 'Test 1234' }
+          body: { email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -215,28 +215,32 @@ describe('user-controller', () => {
   describe('handlePostUserProfile', () => {
     let req;
     let res;
+    let updatedUser;
 
     describe('with all data correctly provided', () => {
-      const profile = { firstName: 'john', lastName: 'doe' };
+      const displayName = 'John Doe';
+      const organization = 'Educandu';
+      const introduction = 'Educandu test user';
 
       beforeEach(() => new Promise((resolve, reject) => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { profile }
+          body: { displayName, organization, introduction }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
         res.on('end', resolve);
+        updatedUser = { ...updatedUser };
 
-        userService.updateUserProfile.resolves(profile);
+        userService.updateUserProfile.resolves(updatedUser);
 
         sut.handlePostUserProfile(req, res).catch(reject);
       }));
 
       it('should call userService.updateUserProfile', () => {
-        sinon.assert.calledWith(userService.updateUserProfile, 1234, profile);
+        sinon.assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, introduction });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -245,19 +249,19 @@ describe('user-controller', () => {
 
       it('should return the result object', () => {
         const response = res._getData();
-        expect(response).toEqual({ profile });
+        expect(response).toEqual({ user: updatedUser });
       });
     });
 
     describe('with invalid user id', () => {
-      const profile = { firstName: 'john', lastName: 'doe' };
+      const displayName = 'John Doe';
 
       beforeEach(() => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { profile }
+          body: { displayName }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
         userService.updateUserProfile.resolves(null);

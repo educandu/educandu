@@ -66,21 +66,21 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserAccount({ email, displayName }) {
+  saveUserAccount({ email }) {
     return this.httpClient
       .post(
         '/api/v1/users/account',
-        { email, displayName },
+        { email },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  saveUserProfile({ profile }) {
+  saveUserProfile({ displayName, organization, introduction }) {
     return this.httpClient
       .post(
         '/api/v1/users/profile',
-        { profile },
+        { displayName, organization, introduction },
         { responseType: 'json' }
       )
       .then(res => res.data);
