@@ -196,7 +196,6 @@ function SettingsTab({
                 tab={t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`)}
                 >
                 <MarkdownSettingInSupportedLanguages
-                  required
                   settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
                   onChange={(value, { isValid }) => handlePluginHelpTextChange(pluginInfo.type, value, { isValid })}
                   />
