@@ -407,7 +407,7 @@ class UserController {
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
-    // Router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
+    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }
 
   registerApi(router) {
