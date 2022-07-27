@@ -1,5 +1,5 @@
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import { trimChaptersToFitRange, analyzeMediaUrl, formatMillisecondsAsDuration } from './media-utils.js';
+import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration } from './media-utils.js';
 
 describe('media-utils', () => {
 
@@ -130,64 +130,28 @@ describe('media-utils', () => {
     });
   });
 
-  describe('trimChaptersToFitRange', () => {
+  describe('formatMediaPosition', () => {
+    const percentageFormatter = new Intl.NumberFormat('en', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    const formatPercentage = num => percentageFormatter.format(num);
+
     const testCases = [
-      {
-        description: 'when the chapters fit into the whole media (no range set)',
-        expectation: 'should not delete any chapters',
-        input: {
-          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }],
-          duration: 1000,
-          range: { startTimecode: null, stopTimecode: null }
-        },
-        expectedResult: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }]
-      },
-      {
-        description: 'when the chapters fit into the selected media range',
-        expectation: 'should not delete any chapters',
-        input: {
-          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }],
-          duration: 2000,
-          range: { startTimecode: 500, stopTimecode: 1500 }
-        },
-        expectedResult: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }]
-      },
-      {
-        description: 'when the chapters do not fit into the whole media (no range set)',
-        expectation: 'should delete overflowing chapters at the and',
-        input: {
-          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
-          duration: 1000,
-          range: { startTimecode: null, stopTimecode: null }
-        },
-        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
-      },
-      {
-        description: 'when the chapters do not fit into the selected media range',
-        expectation: 'should delete overflowing chapters at the and',
-        input: {
-          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
-          duration: 2000,
-          range: { startTimecode: 500, stopTimecode: 1500 }
-        },
-        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
-      },
-      {
-        description: 'when the media length is 0',
-        expectation: 'should only keep the first chapter (starting at timecode 0)',
-        input: {
-          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
-          duration: 0,
-          range: { startTimecode: null, stopTimecode: null }
-        },
-        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
-      }
+      { position: 0, duration: 0, expectedResult: '0.00%' },
+      { position: 0.5, duration: 0, expectedResult: '50.00%' },
+      { position: 1, duration: 0, expectedResult: '100.00%' },
+      { position: 0, duration: 60000, expectedResult: '00:00' },
+      { position: 0.50, duration: 60000, expectedResult: '00:30' },
+      { position: 1, duration: 60000, expectedResult: '01:00' }
     ];
 
-    testCases.forEach(({ description, expectation, input, expectedResult }) => {
-      describe(description, () => {
-        it(expectation, () => {
-          expect(trimChaptersToFitRange(input)).toStrictEqual(expectedResult);
+    testCases.forEach(({ position, duration, expectedResult }) => {
+      describe(`when called with position = ${position} and duration = ${duration}`, () => {
+        it(`should return '${expectedResult}'`, () => {
+          expect(formatMediaPosition({ formatPercentage, position, duration })).toBe(expectedResult);
         });
       });
     });

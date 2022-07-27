@@ -7,6 +7,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import Timeline from '../../components/timeline.js';
 import { handleError } from '../../ui/error-helper.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
@@ -14,17 +15,17 @@ import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import DebouncedInput from '../../components/debounced-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { useNumberFormat } from '../../components/locale-context.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import { Button, Divider, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { analyzeMediaUrl, determineMediaDuration, formatMediaPosition } from '../../utils/media-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { trimChaptersToFitRange, analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -44,60 +45,69 @@ const tailFormItemLayout = {
   }
 };
 
+const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
+
 function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
+  const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('interactiveMedia');
+  const [sourceDuration, setSourceDuration] = useState(0);
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
-
-  const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
-
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
-  const [selectedChapterDuration, setSelectedChapterDuration] = useState(0);
+  const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, copyrightNotice, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, playbackRange, chapters, copyrightNotice, width, aspectRatio, showVideo } = content;
 
-  const playbackDuration = (sourceStopTimecode ?? sourceDuration) - (sourceStartTimecode ?? 0);
+  const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
 
   useEffect(() => {
-    const nextChapterStartTimecode = chapters[selectedChapterIndex + 1]?.startTimecode || sourceDuration;
-    setSelectedChapterDuration(nextChapterStartTimecode - chapters[selectedChapterIndex].startTimecode);
-
-  }, [chapters, sourceDuration, selectedChapterIndex]);
+    const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
+    setSelectedChapterFraction(nextChapterStartPosition - chapters[selectedChapterIndex].startPosition);
+  }, [chapters, selectedChapterIndex, playbackDuration]);
 
   const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
     ? `${clientConfig.cdnRootUrl}/${url}`
     : url || null;
 
   const getMediaInformation = async url => {
-    const unknownResult = {
+    const defaultResult = {
       sanitizedUrl: url,
       duration: 0,
-      startTimecode: null,
-      stopTimecode: null,
-      resourceType: RESOURCE_TYPE.unknown
+      range: [0, 1],
+      resourceType: RESOURCE_TYPE.unknown,
+      error: null
     };
 
     if (!url) {
-      return unknownResult;
+      return defaultResult;
     }
 
     try {
       const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
       if (isInvalidSourceUrl) {
-        return unknownResult;
+        return defaultResult;
       }
 
       setIsDeterminingDuration(true);
       const completeUrl = getFullSourceUrl(url);
       const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
       const duration = await determineMediaDuration(completeUrl);
-      return { sanitizedUrl, duration, startTimecode, stopTimecode, resourceType };
+      const range = [
+        startTimecode ? Math.max(0, Math.min(1, startTimecode / duration)) : playbackRange[0],
+        stopTimecode ? Math.max(0, Math.min(1, stopTimecode / duration)) : playbackRange[1]
+      ];
+      return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
     } catch (error) {
-      return { ...unknownResult, error };
+      return { ...defaultResult, error };
     } finally {
       setIsDeterminingDuration(false);
     }
   };
+
+  useOnComponentMounted(async () => {
+    const { duration } = await getMediaInformation(sourceUrl);
+    setSourceDuration(duration);
+  });
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -109,9 +119,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
-  const handleChapterStartTimecodeChange = (key, newStartTimecode) => {
+  const handleChapterStartPositionChange = (key, newStartPosition) => {
     const chapter = chapters.find(p => p.key === key);
-    chapter.startTimecode = newStartTimecode;
+    chapter.startPosition = newStartPosition;
     const newChapters = [...chapters];
     changeContent({ chapters: newChapters });
   };
@@ -122,64 +132,42 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({
       sourceType: value,
       sourceUrl: '',
+      range: [0, 1],
       showVideo: false,
-      sourceDuration: 0,
-      sourceStartTimecode: null,
-      sourceStopTimecode: null,
-      copyrightNotice: '',
-      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+      copyrightNotice: ''
     });
   };
 
-  const handleSourceUrlChange = async value => {
-    const { duration, resourceType, error } = await getMediaInformation(value);
+  const handleSourceUrlChangeComplete = async value => {
+    const { sanitizedUrl, duration, range, resourceType, error } = await getMediaInformation(value);
+    setSourceDuration(duration);
+
     const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: value })
       : copyrightNotice;
 
-    setSelectedChapterIndex(0);
     changeContent({
-      sourceUrl: value,
+      sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : value,
       showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
-      sourceDuration: duration,
-      sourceStartTimecode: null,
-      sourceStopTimecode: null,
-      copyrightNotice: newCopyrightNotice,
-      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+      playbackRange: range,
+      copyrightNotice: newCopyrightNotice
     });
+
     if (error) {
       handleError({ error, logger, t });
     }
   };
 
-  const handleSourceUrlBlur = () => {
-    const { sanitizedUrl, startTimecode, stopTimecode } = analyzeMediaUrl(sourceUrl);
-    setSelectedChapterIndex(0);
-    changeContent({
-      sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : sourceUrl,
-      sourceStartTimecode: startTimecode,
-      sourceStopTimecode: stopTimecode
-    });
+  const handleSourceUrlChange = value => {
+    changeContent({ sourceUrl: value });
   };
 
-  const handleMediaRangeChange = newRange => {
-    const newChapters = trimChaptersToFitRange({
-      chapters,
-      duration: sourceDuration,
-      range: newRange
-    });
-
-    setSelectedChapterIndex(oldIndex => Math.min(oldIndex, newChapters.length - 1));
-
-    changeContent({
-      sourceStartTimecode: newRange.startTimecode,
-      sourceStopTimecode: newRange.stopTimecode,
-      chapters: newChapters
-    });
+  const handleSourceUrlBlur = event => {
+    handleSourceUrlChangeComplete(event.target.value);
   };
 
-  const handleInternalUrlFileNameChanged = async value => {
-    await handleSourceUrlChange(value);
+  const handlePlaybackRangeChange = newRange => {
+    changeContent({ playbackRange: newRange });
   };
 
   const handleAspectRatioChanged = event => {
@@ -198,19 +186,20 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
-  const handleChapterAdd = startTimecode => {
-    const chapter = { ...interactiveMediaInfo.getDefaultChapter(t), startTimecode };
+  const handleChapterAdd = startPosition => {
+    const chapter = { ...interactiveMediaInfo.getDefaultChapter(t), startPosition };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
     changeContent({ chapters: newChapters });
   };
 
   const handleChapterDelete = key => {
     const chapterIndex = chapters.findIndex(p => p.key === key);
-    const nextChapter = chapters[chapterIndex + 1];
-    if (nextChapter) {
-      nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
-    }
+    const deletedChapterStartPosition = chapters[chapterIndex].startPosition;
     const newChapters = removeItemAt(chapters, chapterIndex);
+    const followingChapter = newChapters[chapterIndex];
+    if (followingChapter) {
+      followingChapter.startPosition = deletedChapterStartPosition;
+    }
     if (selectedChapterIndex > newChapters.length - 1) {
       setSelectedChapterIndex(newChapters.length - 1);
     }
@@ -284,12 +273,24 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const renderPlaybackRangeInfo = () => {
+    const from = playbackRange[0] !== 0
+      ? formatMediaPosition({ formatPercentage, position: playbackRange[0], duration: sourceDuration })
+      : 'start';
+
+    const to = playbackRange[1] !== 1
+      ? formatMediaPosition({ formatPercentage, position: playbackRange[1], duration: sourceDuration })
+      : 'end';
+
+    return t('playbackRangeInfo', { from, to });
+  };
+
   const renderAnswer = (answer, index) => (
     <div className="InteractiveMediaEditor-answer" key={index}>
       <MarkdownInput
         inline
         value={answer}
-        disabled={!selectedChapterDuration}
+        disabled={!selectedChapterFraction}
         onChange={event => handleChapterAnswerChanged(index, event)}
         />
       <Tooltip title={t('markCorrectAnswer')}>
@@ -300,7 +301,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             'InteractiveMediaEditor-answerCheckmark',
             { 'is-active': chapters[selectedChapterIndex].correctAnswerIndex === index }
           )}
-          disabled={!selectedChapterDuration}
+          disabled={!selectedChapterFraction}
           onClick={() => handleChapterAnswerMarkClick(index)}
           />
       </Tooltip>
@@ -320,13 +321,13 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         </FormItem>
         {sourceType === MEDIA_SOURCE_TYPE.external && (
           <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+            <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
           </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
-              <DebouncedInput
+              <Input
                 addonBefore={`${clientConfig.cdnRootUrl}/`}
                 value={sourceUrl}
                 onChange={handleSourceUrlChange}
@@ -334,14 +335,14 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 />
               <ResourcePicker
                 url={storageLocationPathToUrl(sourceUrl)}
-                onUrlChange={url => handleInternalUrlFileNameChanged(urlToStorageLocationPath(url))}
+                onUrlChange={url => handleSourceUrlChangeComplete(urlToStorageLocationPath(url))}
                 />
             </div>
           </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+            <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
           </FormItem>
         )}
         <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
@@ -367,17 +368,11 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         </FormItem>
         <FormItem label={t('playbackRange')} {...formItemLayout}>
           <div className="u-input-and-button">
-            <Input
-              value={t('playbackRangeInfo', {
-                from: sourceStartTimecode ? formatMillisecondsAsDuration(sourceStartTimecode) : 'start',
-                to: sourceStopTimecode ? formatMillisecondsAsDuration(sourceStopTimecode) : 'end'
-              })}
-              readOnly
-              />
+            <Input value={renderPlaybackRangeInfo()} readOnly />
             <MediaRangeSelector
               sourceUrl={getFullSourceUrl(sourceUrl)}
-              range={{ startTimecode: sourceStartTimecode, stopTimecode: sourceStopTimecode }}
-              onRangeChange={handleMediaRangeChange}
+              range={playbackRange}
+              onRangeChange={handlePlaybackRangeChange}
               />
           </div>
         </FormItem>
@@ -396,12 +391,12 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           />
 
         <Timeline
-          length={playbackDuration}
+          durationInMilliseconds={playbackDuration}
           parts={chapters}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
           onPartDelete={handleChapterDelete}
-          onStartTimecodeChange={handleChapterStartTimecodeChange}
+          onStartPositionChange={handleChapterStartPositionChange}
           />
 
         {chapters.length && (
@@ -434,17 +429,17 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
             <FormItem label={t('startTimecode')} {...formItemLayout}>
               <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMillisecondsAsDuration(chapters[selectedChapterIndex].startTimecode)}
+                {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
               </span>
             </FormItem>
             <FormItem label={t('duration')} {...formItemLayout}>
               <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMillisecondsAsDuration(selectedChapterDuration)}
+                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
             </FormItem>
             <FormItem label={t('common:title')} {...formItemLayout}>
               <Input
-                disabled={!selectedChapterDuration}
+                disabled={!selectedChapterFraction}
                 onChange={handleChapterTitleChange}
                 value={chapters[selectedChapterIndex].title}
                 />
@@ -452,7 +447,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             <FormItem label={t('question')} {...formItemLayout}>
               <MarkdownInput
                 preview
-                disabled={!selectedChapterDuration}
+                disabled={!selectedChapterFraction}
                 onChange={handleChapterQuestionChange}
                 value={chapters?.[selectedChapterIndex].question || ''}
                 />
@@ -468,7 +463,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                   size="small"
                   type="primary"
                   icon={<PlusOutlined />}
-                  disabled={!selectedChapterDuration}
+                  disabled={!selectedChapterFraction}
                   onClick={handleNewChapterAnswerClick}
                   />
               </Tooltip>

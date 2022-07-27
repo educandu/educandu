@@ -40,8 +40,8 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
   let shouldContinueSearching = !!durationInMilliseconds;
   while (partIndex < parts.length && shouldContinueSearching) {
     const isLastPart = partIndex === parts.length - 1;
-    const startTimecode = parts[partIndex].startTimecode;
-    const endTimecode = isLastPart ? durationInMilliseconds : parts[partIndex + 1].startTimecode;
+    const startTimecode = parts[partIndex].startPosition * durationInMilliseconds;
+    const endTimecode = (parts[partIndex + 1]?.startPosition || 1) * durationInMilliseconds;
     const millisecondsBeforeOrAfterEnd = Math.abs(endTimecode - playedMilliseconds);
 
     // The part end event for the last part will be triggered by `handleEndReached`, so we exclude it here:
@@ -63,8 +63,7 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 
 function MediaPlayer({
   source,
-  startTimecode,
-  stopTimecode,
+  playbackRange,
   aspectRatio,
   screenMode,
   screenOverlay,
@@ -121,7 +120,7 @@ function MediaPlayer({
 
   const handleSeek = milliseconds => {
     setLastReachedPartEndIndex(-1);
-    trackRef.current.seekTo(milliseconds);
+    trackRef.current.seekToTimecode(milliseconds);
     onSeek(milliseconds);
   };
 
@@ -195,19 +194,24 @@ function MediaPlayer({
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
     togglePlay: trackRef.current?.togglePlay,
-    seekTo: milliseconds => {
+    seekToPosition: position => {
       setLastReachedPartEndIndex(-1);
-      trackRef.current?.seekTo(milliseconds);
-      onSeek(milliseconds);
+      const { trackPosition } = trackRef.current?.seekToPosition(position) || { trackPosition: 0 };
+      onSeek(trackPosition);
+    },
+    seekToTimecode: timecode => {
+      setLastReachedPartEndIndex(-1);
+      const { trackPosition } = trackRef.current?.seekToTimecode(timecode) || { trackPosition: 0 };
+      onSeek(trackPosition);
     },
     seekToPart: partIndex => {
       setLastReachedPartEndIndex(partIndex - 1);
-      trackRef.current.seekTo(parts[partIndex]?.startTimecode || 0);
+      trackRef.current.seekToPosition(parts[partIndex]?.startPosition || 0);
     },
     reset: () => {
       setLastReachedPartEndIndex(-1);
       trackRef.current.pause();
-      trackRef.current.seekTo(0);
+      trackRef.current.seekToPosition(0);
     }
   };
 
@@ -226,8 +230,7 @@ function MediaPlayer({
           aspectRatio={aspectRatio}
           screenMode={screenMode}
           screenOverlay={screenOverlay}
-          startTimecode={startTimecode}
-          stopTimecode={stopTimecode}
+          playbackRange={playbackRange}
           playbackRate={playbackRate}
           progressIntervalInMilliseconds={PROGRESS_INTERVAL_IN_MILLISECONDS}
           onDuration={handleDuration}
@@ -279,14 +282,13 @@ MediaPlayer.propTypes = {
   onReady: PropTypes.func,
   onSeek: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
-    startTimecode: PropTypes.number.isRequired
+    startPosition: PropTypes.number.isRequired
   })),
+  playbackRange: PropTypes.arrayOf(PropTypes.number),
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
-  source: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  startTimecode: PropTypes.number,
-  stopTimecode: PropTypes.number
+  source: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
 MediaPlayer.defaultProps = {
@@ -303,13 +305,12 @@ MediaPlayer.defaultProps = {
   onPlayingPartIndexChange: () => {},
   onReady: () => {},
   onSeek: () => {},
-  parts: [{ startTimecode: 0 }],
+  parts: [{ startPosition: 0 }],
+  playbackRange: [0, 1],
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
-  source: null,
-  startTimecode: null,
-  stopTimecode: null
+  source: null
 };
 
 export default MediaPlayer;

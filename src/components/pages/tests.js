@@ -1,16 +1,27 @@
 /* eslint-disable no-console, max-len */
 
+import by from 'thenby';
 import PropTypes from 'prop-types';
+import Timeline from '../timeline.js';
 import MediaPlayer from '../media-player.js';
 import React, { useRef, useState } from 'react';
-import { Button, Form, Input, Tabs } from 'antd';
 import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
 import ResourceSelector from '../resource-selector.js';
+import { removeItemAt } from '../../utils/array-utils.js';
+import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
-import { HORIZONTAL_ALIGNMENT, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import MediaRangeSelector from '../media-range-selector.js';
 
 const { TabPane } = Tabs;
+
+let timelineCounter = 0;
+const createTimelinePart = (startPosition = 0) => {
+  timelineCounter += 1;
+  const key = `Part ${timelineCounter}`;
+  return { key, title: key, startPosition };
+};
 
 function Tests({ PageTemplate }) {
   // Page
@@ -22,11 +33,36 @@ function Tests({ PageTemplate }) {
     window.history.replaceState(null, null, url.href);
   };
 
+  // Timeline
+  const [timelineDuration, setTimelineDuration] = useState(5 * 60 * 1000);
+  const [timelineParts, setTimelineParts] = useState([createTimelinePart(0), createTimelinePart(0.25), createTimelinePart(0.5)]);
+  const handleTimelinePartAdd = startPosition => {
+    setTimelineParts(oldParts => [...oldParts, createTimelinePart(startPosition)].sort(by(p => p.startTimecode)));
+  };
+  const handleTimelinePartDelete = key => {
+    const partIndex = timelineParts.findIndex(p => p.key === key);
+    const deletedPartTimeCode = timelineParts[partIndex].startTimecode;
+    const newParts = removeItemAt(timelineParts, partIndex);
+    const followingPart = newParts[partIndex];
+    if (followingPart) {
+      followingPart.startTimecode = deletedPartTimeCode;
+    }
+    setTimelineParts(newParts.sort(by(p => p.startTimecode)));
+  };
+  const handleTimelineStartTimecodeChange = (key, newValue) => {
+    setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startTimecode: newValue } : p).sort(by(p => p.startTimecode)));
+  };
+
+  // MediaRangeSelector
+  const [mrsSource, setMrsSource] = useState('');
+  const [mrsRange, setMrsRange] = useState([0, 1]);
+
   // MediaPlayer
   const mpPlayerRef = useRef();
   const mpEventLogRef = useRef();
-  const [mpSource, setMpSource] = useState(null);
+  const [mpSource, setMpSource] = useState('');
   const [mpEventLog, setMpEventLog] = useState('');
+  const [mpScreenMode, setMpScreenMode] = useState(MEDIA_SCREEN_MODE.none);
   const handleMpEvent = (eventName, ...args) => {
     setMpEventLog(currentLog => `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`);
     setTimeout(() => {
@@ -50,11 +86,48 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="Timeline" key="Timeline">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              Duration in milliseconds:
+              <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={1} value={timelineDuration} onChange={setTimelineDuration} />
+              <Button onClick={() => setTimelineDuration(0)}>Set to unknown</Button>
+              <Button onClick={() => setTimelineDuration(5 * 60 * 1000)}>Set to 5 minutes</Button>
+              <Button onClick={() => setTimelineDuration(10 * 60 * 1000)}>Set to 10 minutes</Button>
+            </div>
+            <Timeline
+              durationInMilliseconds={timelineDuration}
+              parts={timelineParts}
+              selectedPartIndex={-1}
+              onPartAdd={handleTimelinePartAdd}
+              onPartDelete={handleTimelinePartDelete}
+              onStartTimecodeChange={handleTimelineStartTimecodeChange}
+              />
+          </TabPane>
+          <TabPane tab="MediaRangeSelector" key="MediaRangeSelector">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              Source:
+              <Input value={mrsSource} readOnly />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <Button onClick={() => setMrsSource('')}>Reset</Button>
+              <Button onClick={() => setMrsSource('https://www.youtube.com/watch?v=H3hBitGg_NI')}>Set to YouTube</Button>
+              <Button onClick={() => setMrsSource('https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4')}>Set to External</Button>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              Range: {JSON.stringify(mrsRange)}
+            </div>
+            <MediaRangeSelector
+              sourceUrl={mrsSource}
+              range={mrsRange}
+              onRangeChange={setMrsRange}
+              />
+          </TabPane>
           <TabPane tab="MediaPlayer" key="MediaPlayer">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
               <div>
                 <MediaPlayer
                   source={mpSource}
+                  screenMode={mpScreenMode}
                   mediaPlayerRef={mpPlayerRef}
                   onPartEndReached={(...args) => handleMpEvent('onPartEndReached', ...args)}
                   onEndReached={(...args) => handleMpEvent('onEndReached', ...args)}
@@ -71,6 +144,10 @@ function Tests({ PageTemplate }) {
                   <Button onClick={() => setMpSource('https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4')}>Set to External</Button>
                 </div>
                 <div>{typeof mpSource === 'function' ? '<FUNC>' : String(mpSource)}</div>
+                <h6>Screen mode</h6>
+                <Radio.Group value={mpScreenMode} onChange={event => setMpScreenMode(event.target.value)}>
+                  {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
+                </Radio.Group>
                 <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
                 <div>
                   <Button onClick={() => mpPlayerRef.current.play()}>play</Button>

@@ -4,6 +4,7 @@ import reactPlayerNs from 'react-player';
 import React, { useRef, useState } from 'react';
 import AudioIcon from './icons/general/audio-icon.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../utils/media-utils.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -14,8 +15,7 @@ function MediaPlayerTrack({
   aspectRatio,
   screenMode,
   screenOverlay,
-  startTimecode,
-  stopTimecode,
+  playbackRange,
   progressIntervalInMilliseconds,
   volume,
   isMuted,
@@ -29,9 +29,9 @@ function MediaPlayerTrack({
   onPlayStateChange
 }) {
   const playerRef = useRef();
-  const [lastProgress, setLastProgress] = useState(0);
+  const [sourceDuration, setSourceDuration] = useState(0);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
-  const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
+  const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
 
   const changePlayState = newPlayState => {
@@ -39,14 +39,18 @@ function MediaPlayerTrack({
     onPlayStateChange?.(newPlayState);
   };
 
-  const changeProgress = newProgress => {
-    setLastProgress(newProgress);
-    onProgress?.(newProgress - (startTimecode || 0));
+  const changeProgress = newSourceTimecode => {
+    const trackStartTimecode = playbackRange[0] * sourceDuration;
+    setLastProgressTimecode(newSourceTimecode);
+    onProgress?.(newSourceTimecode - trackStartTimecode);
   };
 
-  const seekToStartIfNecessary = duration => {
-    if (duration && ((startTimecode && lastProgress < startTimecode) || (stopTimecode && lastProgress >= stopTimecode))) {
-      playerRef.current.seekTo((startTimecode || 0) / duration);
+  const seekToStartIfNecessary = newSourceDuration => {
+    const newTrackStartTimecode = playbackRange[0] * newSourceDuration;
+    const newTrackStopTimecode = playbackRange[1] * newSourceDuration;
+
+    if (newSourceDuration && ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode))) {
+      playerRef.current.seekTo(newTrackStartTimecode / newSourceDuration);
     }
   };
 
@@ -76,11 +80,19 @@ function MediaPlayerTrack({
   };
 
   trackRef.current = {
-    seekTo(milliseconds) {
+    seekToPosition(trackPosition) {
       setLastSeekTimestamp(Date.now());
-      const realMilliseconds = milliseconds + (startTimecode || 0);
-      playerRef.current.seekTo(realMilliseconds / durationInMilliseconds);
-      changeProgress(realMilliseconds);
+      const trackStartTimecode = playbackRange[0] * sourceDuration;
+      const sourcePosition = getSourcePositionFromTrackPosition(trackPosition, playbackRange);
+      const sourceTimecode = sourcePosition * sourceDuration;
+      const trackTimecode = sourceTimecode - trackStartTimecode;
+      playerRef.current.seekTo(sourcePosition);
+      changeProgress(sourceTimecode);
+      return { trackPosition, trackTimecode, sourcePosition, sourceTimecode };
+    },
+    seekToTimecode(trackTimecode) {
+      const trackDuration = getTrackDurationFromSourceDuration(sourceDuration, playbackRange);
+      return trackRef.current.seekToPosition(trackDuration ? trackTimecode / trackDuration : 0);
     },
     play() {
       changePlayState(MEDIA_PLAY_STATE.playing);
@@ -109,7 +121,7 @@ function MediaPlayerTrack({
       }
 
       if (newPlayState === MEDIA_PLAY_STATE.playing) {
-        seekToStartIfNecessary(durationInMilliseconds);
+        seekToStartIfNecessary(sourceDuration);
       }
 
       changePlayState(newPlayState);
@@ -117,10 +129,12 @@ function MediaPlayerTrack({
   };
 
   const handleProgress = progress => {
-    const progressInMilliseconds = progress.playedSeconds * 1000;
-    if (stopTimecode && progressInMilliseconds > stopTimecode) {
+    const currentSourceTimestamp = progress.played * sourceDuration;
+    const trackStopTimecode = playbackRange[1] * sourceDuration;
+
+    if (currentSourceTimestamp > trackStopTimecode) {
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
-      changeProgress(stopTimecode);
+      changeProgress(trackStopTimecode);
       handleEnded();
 
       return;
@@ -128,15 +142,16 @@ function MediaPlayerTrack({
 
     const millisecondsSinceLastSeek = Date.now() - lastSeekTimestamp;
     if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && currentPlayState !== MEDIA_PLAY_STATE.buffering) {
-      changeProgress(progressInMilliseconds);
+      changeProgress(currentSourceTimestamp);
     }
   };
 
-  const handleDuration = duration => {
-    const durationInMillis = duration * 1000;
-    setDurationInMilliseconds(durationInMillis);
-    onDuration?.(Math.min(stopTimecode || Number.MAX_VALUE, durationInMillis) - (startTimecode || 0));
-    seekToStartIfNecessary(durationInMillis);
+  const handleDuration = sourceDurationInSeconds => {
+    const newSourceDuration = sourceDurationInSeconds * 1000;
+    const newTrackDuration = (playbackRange[1] - playbackRange[0]) * newSourceDuration;
+    setSourceDuration(newSourceDuration);
+    onDuration(newTrackDuration);
+    seekToStartIfNecessary(newSourceDuration);
   };
 
   const handleClickPreview = () => {
@@ -211,14 +226,13 @@ MediaPlayerTrack.propTypes = {
   onEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
+  playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   posterImageUrl: PropTypes.string,
   progressIntervalInMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
   sourceUrl: PropTypes.string.isRequired,
-  startTimecode: PropTypes.number,
-  stopTimecode: PropTypes.number,
   trackRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -233,11 +247,10 @@ MediaPlayerTrack.defaultProps = {
   onEndReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
+  playbackRange: [0, 1],
   playbackRate: 1,
   posterImageUrl: null,
   screenOverlay: null,
-  startTimecode: null,
-  stopTimecode: null,
   trackRef: {
     current: null
   },

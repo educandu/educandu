@@ -106,7 +106,16 @@ export function formatMillisecondsAsDuration(milliseconds) {
   return totalHours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
 }
 
-export function trimChaptersToFitRange({ chapters, duration, range }) {
-  const newPlaybackDuration = (range.stopTimecode || duration) - (range.startTimecode || 0);
-  return chapters.filter(chapter => chapter.startTimecode === 0 || chapter.startTimecode < newPlaybackDuration);
+export function formatMediaPosition({ formatPercentage, position, duration = 0 }) {
+  return duration
+    ? formatMillisecondsAsDuration(position * duration)
+    : formatPercentage(position);
+}
+
+export function getSourcePositionFromTrackPosition(trackPosition, playbackRange) {
+  return playbackRange[0] + ((playbackRange[1] - playbackRange[0]) * trackPosition);
+}
+
+export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange) {
+  return (playbackRange[1] - playbackRange[0]) * sourceDuration;
 }

@@ -1,6 +1,6 @@
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function usePermission(permissionToCheck) {
   const user = useUser();
@@ -52,4 +52,14 @@ export function useDebouncedCallback(callback, timeLimit = 250) {
       storedCallback.current(...args);
     }, timeLimit);
   }, [timeLimit, storedCallback]);
+}
+
+export function useOnComponentMounted(callback) {
+  const [isCallbackCalled, setIsCallbackCalled] = useState(false);
+  useEffect(() => {
+    if (!isCallbackCalled) {
+      callback();
+      setIsCallbackCalled(true);
+    }
+  }, [callback, isCallbackCalled]);
 }
