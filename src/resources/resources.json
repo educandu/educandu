@@ -377,7 +377,7 @@
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents and rooms that you have marked as favorite."
+      "info": "Here you can find all documents, rooms and users that you have marked as favorite."
     }
   },
   {
@@ -388,7 +388,7 @@
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente und Räume, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben."
     }
   },
   {
@@ -601,7 +601,8 @@
       "roomCreatedActivity": "New room created",
       "roomUpdatedActivity": "Room updated",
       "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Private room joined"
+      "roomJoinedActivity": "Private room joined",
+      "userMarkedFavoriteActivity": "User marked as favorite"
     }
   },
   {
@@ -616,7 +617,8 @@
       "roomCreatedActivity": "Neuen Raum erstellt",
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Privatem Raum beigetreten"
+      "roomJoinedActivity": "Privatem Raum beigetreten",
+      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
     }
   },
   {

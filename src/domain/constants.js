@@ -70,7 +70,8 @@ export const DOC_VIEW_QUERY_PARAM = {
 
 export const FAVORITE_TYPE = {
   document: 'document',
-  room: 'room'
+  room: 'room',
+  user: 'user'
 };
 
 export const USER_ACTIVITY_TYPE = {
@@ -80,7 +81,8 @@ export const USER_ACTIVITY_TYPE = {
   roomCreated: 'room-created',
   roomUpdated: 'room-updated',
   roomMarkedFavorite: 'room-marked-favorite',
-  roomJoined: 'room-joined'
+  roomJoined: 'room-joined',
+  userMarkedFavorite: 'user-marked-favorite'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {

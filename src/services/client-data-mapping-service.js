@@ -181,7 +181,7 @@ class ClientDataMappingService {
       id: favorite.id,
       type: favorite.type,
       setOn: favorite.setOn.toISOString(),
-      title: favorite.title || ''
+      name: favorite.name || ''
     }));
   }
 

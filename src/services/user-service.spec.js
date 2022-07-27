@@ -239,23 +239,30 @@ describe('user-service', () => {
     });
 
     describe('when there are favorites', () => {
-      let document;
-      let room;
+      let favoriteDocument;
+      let favoriteRoom;
+      let favoriteUser;
 
       beforeEach(async () => {
-        room = await createTestRoom(container, { name: 'Favorite room' });
-        document = await createTestDocument(container, user, { title: 'Favorite document' });
+        favoriteRoom = await createTestRoom(container, { name: 'Favorite room' });
+        favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document' });
+        favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
 
         const favorites = [
           {
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
-            id: room._id
+            id: favoriteRoom._id
           },
           {
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
-            id: document._id
+            id: favoriteDocument._id
+          },
+          {
+            type: FAVORITE_TYPE.user,
+            setOn: new Date('2022-03-09T10:05:00.000Z'),
+            id: favoriteUser._id
           }
         ];
 
@@ -265,16 +272,22 @@ describe('user-service', () => {
       it('should return an array containing the user favorites', () => {
         expect(result).toEqual([
           {
-            id: room._id,
+            id: favoriteRoom._id,
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
-            title: 'Favorite room'
+            name: 'Favorite room'
           },
           {
-            id: document._id,
+            id: favoriteDocument._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
-            title: 'Favorite document'
+            name: 'Favorite document'
+          },
+          {
+            id: favoriteUser._id,
+            type: FAVORITE_TYPE.user,
+            setOn: new Date('2022-03-09T10:05:00.000Z'),
+            name: 'Favorite user'
           }
         ]);
       });

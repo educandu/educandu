@@ -25,3 +25,6 @@ roomMarkedFavoriteActivity:
 roomJoinedActivity:
   en: Private room joined
   de: Privatem Raum beigetreten
+userMarkedFavoriteActivity:
+  en: User marked as favorite
+  de: Benutzer als Favorit hinzugefügt

@@ -22,14 +22,16 @@ const getTranslatedType = (favorite, t) => {
       return t('common:document');
     case FAVORITE_TYPE.room:
       return t('common:room');
+    case FAVORITE_TYPE.user:
+      return t('common:user');
     default:
       return null;
   }
 };
 
-const getDisplayTitle = (favorite, t) => {
-  if (favorite.title) {
-    return favorite.title;
+const getDisplayName = (favorite, t) => {
+  if (favorite.name) {
+    return favorite.name;
   }
 
   switch (favorite.type) {
@@ -53,13 +55,13 @@ function FavoritesTab() {
 
   const sortingOptions = useMemo(() => [
     { label: t('setOn'), appliedLabel: t('sortedBySetOn'), value: 'setOn' },
-    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'displayTitle' },
+    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'displayName' },
     { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'translatedType' }
   ], [t]);
 
   const sorters = useMemo(() => ({
     setOn: (rowsToSort, direction) => rowsToSort.sort(by(row => row.setOn, direction)),
-    displayTitle: (rowsToSort, direction) => rowsToSort.sort(by(row => row.title, { direction, ignoreCase: true }).thenBy(row => row.setOn, 'desc')),
+    displayName: (rowsToSort, direction) => rowsToSort.sort(by(row => row.displayName, { direction, ignoreCase: true }).thenBy(row => row.setOn, 'desc')),
     translatedType: (rowsToSort, direction) => rowsToSort.sort(by(row => row.translatedType, direction).thenBy(row => row.setOn, 'desc'))
   }), []);
 
@@ -67,8 +69,8 @@ function FavoritesTab() {
     const rows = favorites.map(favorite => {
       return {
         id: favorite.id,
-        title: favorite.title,
-        displayTitle: getDisplayTitle(favorite, t),
+        name: favorite.name,
+        displayName: getDisplayName(favorite, t),
         setOn: favorite.setOn,
         type: favorite.type,
         translatedType: getTranslatedType(favorite, t)
@@ -106,7 +108,7 @@ function FavoritesTab() {
   };
 
   const handleFavoriteClick = (event, favorite) => {
-    if (!favorite.title) {
+    if (!favorite.name) {
       event.preventDefault();
       Modal.error({
         title: t('common:error'),
@@ -121,15 +123,17 @@ function FavoritesTab() {
         return routes.getDocUrl({ id: favorite.id });
       case FAVORITE_TYPE.room:
         return routes.getRoomUrl(favorite.id);
+      case FAVORITE_TYPE.user:
+        return routes.getUserUrl(favorite.id);
       default:
         return null;
     }
   };
 
-  const renderDisplayTitle = (_, favorite) => {
+  const renderDisplayName = (_, favorite) => {
     return (
       <a className="InfoCell" href={getFavoriteUrl(favorite)} onClick={event => handleFavoriteClick(event, favorite)}>
-        <div className="InfoCell-mainText">{favorite.displayTitle}</div>
+        <div className="InfoCell-mainText">{favorite.displayName}</div>
         <div className="InfoCell-subtext">{`${t('set')}: ${formatDate(favorite.setOn)}`}</div>
       </a>
     );
@@ -150,10 +154,10 @@ function FavoritesTab() {
 
   const columns = [
     {
-      key: 'displayTitle',
-      title: t('common:title'),
-      dataIndex: 'displayTitle',
-      render: renderDisplayTitle
+      key: 'displayName',
+      title: t('common:name'),
+      dataIndex: 'displayName',
+      render: renderDisplayName
     },
     {
       key: 'translatedType',
