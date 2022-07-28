@@ -3,7 +3,6 @@ import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
-import LessonConvertor from './lesson-convertor.js';
 import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 import { getPrivateRoomsRootPath, getPublicRootPath } from '../utils/storage-utils.js';
 
@@ -12,13 +11,12 @@ const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 const logger = new Logger(import.meta.url);
 
 export default class MaintenanceService {
-  static get inject() { return [Cdn, Database, LessonConvertor, LockStore]; }
+  static get inject() { return [Cdn, Database, LockStore]; }
 
-  constructor(cdn, database, lessonConvertor, lockStore) {
+  constructor(cdn, database, lockStore) {
     this.cdn = cdn;
     this.database = database;
     this.lockStore = lockStore;
-    this.lessonConvertor = lessonConvertor;
   }
 
   async runMaintenance() {
@@ -47,9 +45,6 @@ export default class MaintenanceService {
       logger.info('Starting database checks');
       await this.database.checkDb();
       logger.info('Finished database checks successfully');
-
-      await this.lessonConvertor.convertAllLessonsToDocuments();
-      logger.info('Finished converting lessons to documents succesfully');
 
       logger.info('Creating basic CDN directories');
       await this.cdn.uploadEmptyObject(`${getPublicRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
