@@ -304,22 +304,6 @@
     }
   },
   {
-    "namespace": "documentPublicCard",
-    "language": "en",
-    "resources": {
-      "coauthors": "Co-authors",
-      "toDocument": "To document"
-    }
-  },
-  {
-    "namespace": "documentPublicCard",
-    "language": "de",
-    "resources": {
-      "coauthors": "Mitautoren",
-      "toDocument": "Zum Dokument"
-    }
-  },
-  {
     "namespace": "documentSelector",
     "language": "en",
     "resources": {
@@ -603,6 +587,48 @@
       "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
       "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
+    }
+  },
+  {
+    "namespace": "minimalDocumentCard",
+    "language": "en",
+    "resources": {
+      "coauthors": "Co-authors",
+      "toDocument": "To document"
+    }
+  },
+  {
+    "namespace": "minimalDocumentCard",
+    "language": "de",
+    "resources": {
+      "coauthors": "Mitautoren",
+      "toDocument": "Zum Dokument"
+    }
+  },
+  {
+    "namespace": "minimalRoomCard",
+    "language": "en",
+    "resources": {
+      "documentsMode": "Mode",
+      "button": "Enter room",
+      "updated": "Updated",
+      "joined": "Joined",
+      "invited": "Invited",
+      "members": "Members",
+      "acceptInvitation": "The invitation received by email is valid until **{date}**."
+    }
+  },
+  {
+    "namespace": "minimalRoomCard",
+    "language": "de",
+    "resources": {
+      "documentsMode": "Modus",
+      "button": "Raum betreten",
+      "updated": "Aktualisiert",
+      "joined": "Eingetreten",
+      "invited": "Eingeladen",
+      "members": "Mitglieder",
+      "acceptInvitation": "Die per E-Mail geschickte Einladung ist bis **{date}** gültig."
     }
   },
   {
@@ -1321,32 +1347,6 @@
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
       "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
       "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
-    }
-  },
-  {
-    "namespace": "roomPublicCard",
-    "language": "en",
-    "resources": {
-      "documentsMode": "Mode",
-      "button": "Enter room",
-      "updated": "Updated",
-      "joined": "Joined",
-      "invited": "Invited",
-      "members": "Members",
-      "acceptInvitation": "The invitation received by email is valid until **{date}**."
-    }
-  },
-  {
-    "namespace": "roomPublicCard",
-    "language": "de",
-    "resources": {
-      "documentsMode": "Modus",
-      "button": "Raum betreten",
-      "updated": "Aktualisiert",
-      "joined": "Eingetreten",
-      "invited": "Eingeladen",
-      "members": "Mitglieder",
-      "acceptInvitation": "Die per E-Mail geschickte Einladung ist bis **{date}** gültig."
     }
   },
   {

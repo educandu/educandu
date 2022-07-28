@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FavoriteStar from '../favorite-star.js';
 import ProfileHeader from '../profile-header.js';
-import RoomPublicCard from '../room-public-card.js';
+import MinimalRoomCard from '../minimal-room-card.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
-import DocumentPublicCard from '../document-public-card.js';
+import MinimalDocumentCard from '../minimal-document-card.js';
 import { documentMetadataShape, publicUserShape, roomMetadataShape } from '../../ui/default-prop-types.js';
 
 const CARD_BATCH_SIZE = 8;
@@ -32,7 +32,7 @@ export default function User({ PageTemplate, initialState }) {
     }
     return (
       <div key={doc._id}>
-        <DocumentPublicCard doc={doc} />
+        <MinimalDocumentCard doc={doc} />
       </div>
     );
   };
@@ -43,7 +43,7 @@ export default function User({ PageTemplate, initialState }) {
     }
     return (
       <div key={room._id}>
-        <RoomPublicCard room={room} />
+        <MinimalRoomCard room={room} />
       </div>
     );
   };
