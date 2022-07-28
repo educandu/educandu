@@ -1,7 +1,7 @@
 @minima-document-card-notebook-line-height: 25px;
 @minima-document-card-vertical-line-left-padding: 35px;
 @minima-document-card-horizontal-padding: @edu-content-padding;
-@minima-document-card-backround: lighten(@edu-background-color-light, 0%);
+@minima-document-card-backround: lighten(@edu-background-color-light, 1%);
 @minima-document-card-notebook-left-padding: @minima-document-card-vertical-line-left-padding - @minima-document-card-horizontal-padding + 15px;
 
 .MinimalDocumentCard {
@@ -23,7 +23,7 @@
     width: 2px;
     height: 100%;
     opacity: 0.5;
-    background-color: @edu-primary-color-light;
+    background-color: lighten(@edu-primary-color-light, 10%);
     left: @minima-document-card-vertical-line-left-padding;
   }
 }
@@ -34,12 +34,12 @@
   height: 100%;
   background-image: repeating-linear-gradient(@minima-document-card-backround 0px,
       @minima-document-card-backround @minima-document-card-notebook-line-height - 1px,
-      @edu-border-color-dark @minima-document-card-notebook-line-height);
+      darken(@edu-border-color-base, 2%) @minima-document-card-notebook-line-height);
 }
 
 .MinimalDocumentCard-notebookText {
   font-size: 14px;
-  padding-top: 6px;
+  padding-top: 4px;
   padding-left: @minima-document-card-notebook-left-padding;
   line-height: @minima-document-card-notebook-line-height;
   display: -webkit-box;
@@ -51,7 +51,7 @@
 .MinimalDocumentCard-notebookDate {
   font-size: 12px;
   font-style: italic;
-  margin: auto auto 24px 50px;
+  margin: auto auto 26px 50px;
   color: lighten(@edu-text-color, 10%);
 }
 
