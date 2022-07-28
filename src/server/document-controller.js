@@ -227,7 +227,7 @@ class DocumentController {
 
   async handleDeleteDoc(req, res) {
     const { user } = req;
-    const { documentId } = req.params;
+    const { documentId } = req.body;
 
     const document = await this.documentService.getDocumentById(documentId);
 
