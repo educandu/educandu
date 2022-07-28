@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import { useDateFormat } from './locale-context.js';
 import { roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
+import RoomJoinedIcon from '../components/icons/user-activities/room-joined-icon.js';
 
 function RoomPublicCard({ room }) {
+  const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomPublicCard');
 
   const handleButtonClick = () => {
@@ -20,7 +23,11 @@ function RoomPublicCard({ room }) {
         <span>{t('documentsMode')}:</span>
         <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
       </div>
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}>{t('button')}</Button>
+      <div className="RoomPublicCard-infoRow">
+        <span>{t('common:created')}:</span>
+        <div className="RoomPublicCard-date">{formatDate(room.createdOn)}</div>
+      </div>
+      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>
     </div>
   );
 }

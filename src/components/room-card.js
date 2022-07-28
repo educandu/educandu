@@ -9,6 +9,7 @@ import { useDateFormat } from './locale-context.js';
 import { ROOM_ACCESS } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
 import PrivateIcon from './icons/general/private-icon.js';
+import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
 function RoomCard({ room, invitation }) {
@@ -89,7 +90,7 @@ function RoomCard({ room, invitation }) {
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expires) })}</Markdown>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}>{t('button')}</Button>
+      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>
       {!!invitation && <div className="RoomCard-disablingOverlay" />}
     </div>
   );
