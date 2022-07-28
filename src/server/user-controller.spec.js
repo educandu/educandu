@@ -41,7 +41,7 @@ describe('user-controller', () => {
       getAllStoragePlans: sandbox.stub()
     };
     documentService = {
-      getMetadataOfLatestDocumentsCreatedByUser: sandbox.stub()
+      getMetadataOfLatestPublicDocumentsCreatedByUser: sandbox.stub()
     };
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
@@ -133,7 +133,7 @@ describe('user-controller', () => {
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
         roomService.getLatestPublicRoomsOwnedByUser.withArgs(viewedUser._id).resolves(rooms);
-        documentService.getMetadataOfLatestDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
+        documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
 
         clientDataMappingService.mapRoomsMetadata.withArgs(rooms).returns(mappedRooms);
         clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
