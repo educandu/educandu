@@ -787,7 +787,7 @@ describe('document-controller', () => {
   describe('handleDeleteDoc', () => {
     describe('when the documentId is unknown', () => {
       beforeEach(() => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
 
         documentService.getDocumentById.withArgs(doc._id).resolves(null);
       });
@@ -799,7 +799,7 @@ describe('document-controller', () => {
 
     describe('when the document is external but the user does not have the right permissions', () => {
       beforeEach(() => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
 
         doc.origin = `${DOCUMENT_ORIGIN.external}/educandu`;
         user.permissions = [];
@@ -814,7 +814,7 @@ describe('document-controller', () => {
 
     describe('when the document is external and the user has the right permissions', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -834,7 +834,7 @@ describe('document-controller', () => {
 
     describe('when the document is internal and public, and does not belong to a room', () => {
       beforeEach(() => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
 
         doc.origin = DOCUMENT_ORIGIN.internal;
         doc.access = DOCUMENT_ACCESS.public;
@@ -850,7 +850,7 @@ describe('document-controller', () => {
 
     describe('when the document is internal and public, and belongs to a room', () => {
       beforeEach(() => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
 
         doc.roomId = room._id;
         doc.origin = DOCUMENT_ORIGIN.internal;
@@ -867,7 +867,7 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room of which the user is not owner or collaborator', () => {
       beforeEach(() => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
 
         doc.roomId = room._id;
         doc.origin = DOCUMENT_ORIGIN.internal;
@@ -886,7 +886,7 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room of which the user is owner', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -910,7 +910,7 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room of which the user is collaborator', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, params: { documentId: doc._id } };
+        req = { user, body: { documentId: doc._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
