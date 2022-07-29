@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { documentMetadataShape } from '../ui/default-prop-types.js';
+import classNames from 'classnames';
 
 function DocumentCard({ doc }) {
   const { formatDate } = useDateFormat();
@@ -40,7 +41,11 @@ function DocumentCard({ doc }) {
             <div>{formatDate(doc.updatedOn)}</div>
           </div>
         )}
-        <a className="DocumentCard-notebookLink" href={docUrl} onClick={handleLinkClick}>
+        <a
+          href={docUrl}
+          onClick={handleLinkClick}
+          className={classNames('DocumentCard-notebookLink', { 'DocumentCard-notebookLink--deletedDocument': isDeletedDocument })}
+          >
           {t('toDocument')}
           <div className="DocumentCard-notebookLinkArrow"><DoubleRightOutlined /></div>
         </a>
