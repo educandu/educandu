@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
-import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
+import { Button, Divider, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { ROOM_ACCESS } from '../domain/constants.js';
@@ -18,7 +18,8 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
 
-  const userAsMember = room.members?.find(member => member.userId === user?._id);
+  const isDeletedRoom = !room;
+  const userAsMember = room?.members?.find(member => member.userId === user?._id);
   const showOwner = !!(userAsMember || invitation || alwaysRenderOwner);
 
   const renderOwner = () => {
@@ -40,48 +41,62 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
     );
   };
 
-  const handleButtonClick = () => {
-    window.location = routes.getRoomUrl(room._id, room.slug);
+  const handleButtonClick = event => {
+    if (isDeletedRoom) {
+      event.preventDefault();
+      Modal.error({
+        title: t('common:error'),
+        content: t('common:targetDeletedMessage')
+      });
+    } else {
+      window.location = routes.getRoomUrl(room._id, room.slug);
+    }
   };
+
+  const roomName = isDeletedRoom ? `[${t('common:deletedRoom')}]` : room.name;
 
   return (
     <div className="RoomCard">
       <div className="RoomCard-header">
-        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{room.name}</div>
-        {showOwner && renderOwner()}
+        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
+        {showOwner && !isDeletedRoom && renderOwner()}
       </div>
       <Divider className="RoomCard-divider" />
+      {!!room?.access && (
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('common:access')}:</span>
         <div>{renderAccess()}</div>
       </div>
+      )}
+      {!!room?.documentsMode && (
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
         <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
       </div>
-      {!!room.createdOn && (
-        <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('common:created')}:</span>
-          <div>{formatDate(room.createdOn)}</div>
-        </div>
       )}
-      {!!room.updatedOn && (
-        <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
-          <div>{formatDate(room.updatedOn)}</div>
-        </div>
+      {!!room?.createdOn && (
+      <div className="RoomCard-infoRow">
+        <span className="RoomCard-infoLabel">{t('common:created')}:</span>
+        <div>{formatDate(room.createdOn)}</div>
+      </div>
       )}
-      {!userAsMember && !!room.members && (
-        <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('members')}:</span>
-          <div>{room.members.length}</div>
-        </div>
+      {!!room?.updatedOn && (
+      <div className="RoomCard-infoRow">
+        <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
+        <div>{formatDate(room.updatedOn)}</div>
+      </div>
+      )}
+      {!userAsMember && !!room?.members?.length && (
+      <div className="RoomCard-infoRow">
+        <span className="RoomCard-infoLabel">{t('members')}:</span>
+        <div>{room.members.length}</div>
+      </div>
       )}
       {!!userAsMember && (
-        <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('joined')}:</span>
-          <div>{formatDate(userAsMember.joinedOn)}</div>
-        </div>
+      <div className="RoomCard-infoRow">
+        <span className="RoomCard-infoLabel">{t('joined')}:</span>
+        <div>{formatDate(userAsMember.joinedOn)}</div>
+      </div>
       )}
       {!!invitation?.sentOn && (
         <div className="RoomCard-infoRow">
@@ -114,12 +129,13 @@ const roomProps = {
 RoomCard.propTypes = {
   alwaysRenderOwner: PropTypes.bool,
   invitation: invitationBasicShape,
-  room: PropTypes.shape(roomProps).isRequired
+  room: PropTypes.shape(roomProps)
 };
 
 RoomCard.defaultProps = {
   alwaysRenderOwner: false,
-  invitation: null
+  invitation: null,
+  room: null
 };
 
 export default RoomCard;

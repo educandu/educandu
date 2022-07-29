@@ -389,7 +389,6 @@
     "namespace": "favoritesTab",
     "language": "en",
     "resources": {
-      "targetDeletedMessage": "The target of this link has been deleted",
       "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
       "favoriteUsers": "Users you have added to favorites",
       "favoriteRooms": "Rooms you have added to favorites",
@@ -400,7 +399,6 @@
     "namespace": "favoritesTab",
     "language": "de",
     "resources": {
-      "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
       "info": "Hier finden Sie Ihre persönlichen Favoriten. Durch Klick auf das Sternsymbol können Sie Favoriten entfernen.",
       "favoriteUsers": "Benutzer, die Sie zu den Favoriten hinzugefügt haben",
       "favoriteRooms": "Räume, die Sie zu den Favoriten hinzugefügt haben",
@@ -2123,6 +2121,7 @@
       "question": "Question",
       "answer": "Answer",
       "deletedDocument": "Deleted document",
+      "targetDeletedMessage": "The target of this link has been deleted",
       "deletedRoom": "Deleted room",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
@@ -2268,6 +2267,7 @@
       "question": "Frage",
       "answer": "Antwort",
       "deletedDocument": "Gelöschtes Dokument",
+      "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
       "deletedRoom": "Gelöschter Raum",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
