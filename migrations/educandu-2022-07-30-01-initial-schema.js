@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-export default class Educandu_2022_07_29_01_initial_schema {
+export default class Educandu_2022_07_30_01_initial_schema {
   constructor(db) {
     this.db = db;
   }
