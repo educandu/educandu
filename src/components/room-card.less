@@ -5,7 +5,7 @@
 .RoomCard {
   position: relative;
   width: 250px;
-  height: 300px;
+  height: 270px;
   display: flex;
   flex-direction: column;
   padding: @room-card-padding;
@@ -24,12 +24,27 @@
   background-color: @edu-white;
 }
 
+.RoomCard-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 48px;
+}
+
+.RoomCard-divider {
+  margin: 15px 0;
+}
+
 .RoomCard-name {
-  .m-overflow-ellipsis;
+  .m-line-clamp(1);
   width: @room-card-header-width;
   align-self: center;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
+
+  &.RoomCard-name--doubleLine {
+    .m-line-clamp(2);
+  }
 }
 
 .RoomCard-owner {
@@ -37,7 +52,7 @@
   width: @room-card-header-width;
   align-self: center;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   padding-top: 3px;
   color: @edu-text-color-secondary;
 }
@@ -45,8 +60,8 @@
 .RoomCard-infoRow {
   display: flex;
   gap: 10px;
-  font-size: 13px;
-  padding: 0 0px 5px 5px;
+  font-size: 12px;
+  padding: 0 0px 5px 10px;
   color: lighten(@edu-text-color, 10%);
 
   &:last-of-type {

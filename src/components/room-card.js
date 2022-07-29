@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
@@ -18,6 +19,7 @@ function RoomCard({ room, invitation }) {
   const { t } = useTranslation('roomCard');
 
   const userAsMember = room.members?.find(member => member.userId === user?._id);
+  const showOwner = !!(userAsMember || invitation);
 
   const renderOwner = () => {
     return (
@@ -44,9 +46,11 @@ function RoomCard({ room, invitation }) {
 
   return (
     <div className="RoomCard">
-      <div className="RoomCard-name">{room.name}</div>
-      {!!(userAsMember || invitation) && renderOwner()}
-      <Divider />
+      <div className="RoomCard-header">
+        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{room.name}</div>
+        {showOwner && renderOwner()}
+      </div>
+      <Divider className="RoomCard-divider" />
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('common:access')}:</span>
         <div>{renderAccess()}</div>

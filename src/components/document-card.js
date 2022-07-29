@@ -14,12 +14,12 @@ function DocumentCard({ doc }) {
       <div className="DocumentCard-notebook">
         <div className="DocumentCard-notebookText">{doc.title}</div>
         <div className="DocumentCard-infoRow">
-          <span className="DocumentCard-infoLabel">{t('common:created')}: </span>
-          {formatDate(doc.createdOn)}
+          <div>{t('common:created')}: </div>
+          <div>{formatDate(doc.createdOn)}</div>
         </div>
         <div className="DocumentCard-infoRow">
-          <span className="DocumentCard-infoLabel">{t('common:updated')}: </span>
-          {formatDate(doc.updatedOn)}
+          <div>{t('common:updated')}: </div>
+          <div>{formatDate(doc.updatedOn)}</div>
         </div>
         <a className="DocumentCard-notebookLink" href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}>
           {t('toDocument')}

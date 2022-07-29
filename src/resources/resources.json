@@ -236,6 +236,22 @@
     }
   },
   {
+    "namespace": "documentCard",
+    "language": "en",
+    "resources": {
+      "coauthors": "Co-authors",
+      "toDocument": "To document"
+    }
+  },
+  {
+    "namespace": "documentCard",
+    "language": "de",
+    "resources": {
+      "coauthors": "Mitautoren",
+      "toDocument": "Zum Dokument"
+    }
+  },
+  {
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
@@ -587,22 +603,6 @@
       "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
       "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
-    }
-  },
-  {
-    "namespace": "minimalDocumentCard",
-    "language": "en",
-    "resources": {
-      "coauthors": "Co-authors",
-      "toDocument": "To document"
-    }
-  },
-  {
-    "namespace": "minimalDocumentCard",
-    "language": "de",
-    "resources": {
-      "coauthors": "Mitautoren",
-      "toDocument": "Zum Dokument"
     }
   },
   {

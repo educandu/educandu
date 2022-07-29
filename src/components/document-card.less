@@ -1,19 +1,17 @@
 @document-card-horizontal-padding: 10px;
-@document-card-notebook-line-height: 25px;
 @document-card-vertical-line-left-padding: 30px;
-@document-card-backround: lighten(@edu-background-color-light, 1%);
 @document-card-notebook-left-padding: @document-card-vertical-line-left-padding - @document-card-horizontal-padding + 15px;
 
 .DocumentCard {
   position: relative;
   width: 250px;
-  height: 250px;
+  height: 210px;
   display: flex;
   flex-direction: column;
   background-color: @edu-white;
   border-radius: @edu-border-radius-base;
-  border: 1px solid @edu-border-color-base;
-  background-color: @document-card-backround;
+  border: 1px solid @edu-border-color-light;
+  background-color: lighten(@edu-background-color-light, 1%);
   padding: 15px @document-card-horizontal-padding 15px @document-card-horizontal-padding;
 
   &::before {
@@ -35,38 +33,24 @@
 }
 
 .DocumentCard-notebookText {
-  font-size: 15px;
+  .m-line-clamp(3);
+  font-size: 14px;
   padding-top: 4px;
+  line-height: 25px;
   padding-left: @document-card-notebook-left-padding;
-  line-height: @document-card-notebook-line-height;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.DocumentCard-notebookDate {
-  font-size: 12px;
-  font-style: italic;
-  margin: auto auto 26px 50px;
-  color: lighten(@edu-text-color, 10%);
 }
 
 .DocumentCard-infoRow {
   display: flex;
-  gap: 10px;
-  font-size: 13px;
+  justify-content: space-between;
+  font-size: 12px;
   margin: auto 0 4px 0;
-  padding-left: @document-card-notebook-left-padding;
+  padding-left: @document-card-notebook-left-padding + 10px;
   color: lighten(@edu-text-color, 10%);
 
   &:last-of-type {
-    margin: 0 0 @document-card-notebook-line-height 0;
+    margin: 0 0 15px 0;
   }
-}
-
-.DocumentCard-infoLabel {
-  flex: 0 0 50px;
 }
 
 .DocumentCard-notebookLink {
