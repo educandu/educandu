@@ -14,11 +14,11 @@ info:
   en: Here you can find all users, rooms and documents that you have marked as favorite.
   de: Hier finden Sie alle Benutzer, Räume und Dokumente, die Sie als Favorit markiert haben.
 favoriteUsers:
-  en: Favorite users
-  de: Favorite Benutzer
+  en: Users you have added to your favorites
+  de: Benutzer, die Sie als Favorit hinzugefügt haben
 favoriteRooms:
-  en: Favorite rooms
-  de: Favorite Räume
+  en: Rooms you have added to your favorites
+  de: Räume, die Sie als Favorit hinzugefügt haben
 favoriteDocuments:
-  en: Favorite documents
-  de: Favorite Dokumente
+  en: Documents you have added to your favorites
+  de: Dokumente, die Sie als Favorit hinzugefügt haben
