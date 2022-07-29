@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-export default class Educandu_2022_01_17_01_initial_schema {
+export default class Educandu_2022_07_30_01_initial_schema {
   constructor(db) {
     this.db = db;
   }
@@ -10,32 +10,18 @@ export default class Educandu_2022_01_17_01_initial_schema {
     const createCollectionWithIndexes = async (collectionName, indexes) => {
       if (!existingCollections.find(collection => collection.name === collectionName)) {
         await this.db.createCollection(collectionName);
-      }
-      if (indexes?.length) {
-        await this.db.collection(collectionName).createIndexes(indexes);
+        if (indexes?.length) {
+          await this.db.collection(collectionName).createIndexes(indexes);
+        }
       }
     };
 
-    await createCollectionWithIndexes('batchLocks', [
-      {
-        name: '_idx_expires_',
-        key: { expires: 1 },
-        expireAfterSeconds: 0
-      }
-    ]);
     await createCollectionWithIndexes('batches', []);
-    await createCollectionWithIndexes('documentLocks', [
-      {
-        name: '_idx_expires_',
-        key: { expires: 1 },
-        expireAfterSeconds: 0
-      }
-    ]);
     await createCollectionWithIndexes('documentOrders', []);
     await createCollectionWithIndexes('documentRevisions', [
       {
-        name: '_idx_key_',
-        key: { key: 1 }
+        name: '_idx_documentId_',
+        key: { documentId: 1 }
       },
       {
         name: '_idx_order_',
@@ -43,12 +29,20 @@ export default class Educandu_2022_01_17_01_initial_schema {
         unique: true
       },
       {
-        name: '_idx_key_order_',
-        key: { key: 1, order: 1 },
+        name: '_idx_documentId_order_',
+        key: { documentId: 1, order: 1 },
         unique: true
       }
     ]);
     await createCollectionWithIndexes('documents', [
+      {
+        name: '_idx_createdBy_',
+        key: { createdBy: -1 }
+      },
+      {
+        name: '_idx_updatedBy_',
+        key: { updatedBy: -1 }
+      },
       {
         name: '_idx_updatedOn_',
         key: { updatedOn: -1 }
@@ -60,15 +54,26 @@ export default class Educandu_2022_01_17_01_initial_schema {
       {
         name: '_idx_tags_',
         key: { tags: 1 }
-      }
-    ]);
-    await createCollectionWithIndexes('lessons', [
+      },
       {
         name: '_idx_roomId_',
         key: { roomId: 1 }
+      },
+      {
+        name: '_idx_access_',
+        key: { access: 1 }
+      },
+      {
+        name: '_idx_access_archived_',
+        key: { access: 1, archived: 1 }
       }
     ]);
-    await createCollectionWithIndexes('maintenanceLocks', [
+    await createCollectionWithIndexes('locks', [
+      {
+        name: '_idx_type_key_',
+        key: { type: 1, key: 1 },
+        unique: true
+      },
       {
         name: '_idx_expires_',
         key: { expires: 1 },
@@ -76,7 +81,13 @@ export default class Educandu_2022_01_17_01_initial_schema {
       }
     ]);
     await createCollectionWithIndexes('migrations', []);
-    await createCollectionWithIndexes('passwordResetRequests', []);
+    await createCollectionWithIndexes('passwordResetRequests', [
+      {
+        name: '_idx_expires_',
+        key: { expires: 1 },
+        expireAfterSeconds: 0
+      }
+    ]);
     await createCollectionWithIndexes('roomInvitations', [
       {
         name: '_idx_expires_',
@@ -94,21 +105,26 @@ export default class Educandu_2022_01_17_01_initial_schema {
         unique: true
       }
     ]);
-    await createCollectionWithIndexes('roomLocks', [
-      {
-        name: '_idx_expires_',
-        key: { expires: 1 },
-        expireAfterSeconds: 0
-      }
-    ]);
     await createCollectionWithIndexes('rooms', [
       {
         name: '_idx_owner_',
         key: { owner: 1 }
       },
       {
+        name: '_idx_created_by_',
+        key: { createdBy: -1 }
+      },
+      {
+        name: '_idx_updated_by_',
+        key: { updatedBy: -1 }
+      },
+      {
         name: '_idx_members_user_id_',
         key: { 'members.userId': 1 }
+      },
+      {
+        name: '_idx_members_user_id_desc_',
+        key: { 'members.userId': -1 }
       }
     ]);
     await createCollectionWithIndexes('sessions', [
@@ -119,11 +135,11 @@ export default class Educandu_2022_01_17_01_initial_schema {
       }
     ]);
     await createCollectionWithIndexes('settings', []);
-    await createCollectionWithIndexes('taskLocks', [
+    await createCollectionWithIndexes('storagePlans', [
       {
-        name: '_idx_expires_',
-        key: { expires: 1 },
-        expireAfterSeconds: 0
+        name: '_idx_name',
+        key: { name: 1 },
+        unique: true
       }
     ]);
     await createCollectionWithIndexes('tasks', [
@@ -142,15 +158,10 @@ export default class Educandu_2022_01_17_01_initial_schema {
     ]);
     await createCollectionWithIndexes('users', [
       {
-        name: '_idx_email',
-        key: { email: 1 },
+        name: '_idx_email_accountClosedOn_',
+        key: { email: 1, accountClosedOn: 1 },
         unique: true,
-        partialFilterExpression: { email: { $type: 'string' } }
-      },
-      {
-        name: '_idx_username_provider_',
-        key: { username: 1, provider: 1 },
-        unique: true
+        partialFilterExpression: { $and: [{ email: { $type: 'string' } }, { accountClosedOn: null }] }
       },
       {
         name: '_idx_expires_',
@@ -173,22 +184,18 @@ export default class Educandu_2022_01_17_01_initial_schema {
   }
 
   async down() {
-    await this.db.dropCollection('batchLocks');
     await this.db.dropCollection('batches');
-    await this.db.dropCollection('documentLocks');
     await this.db.dropCollection('documentOrders');
     await this.db.dropCollection('documentRevisions');
     await this.db.dropCollection('documents');
-    await this.db.dropCollection('lessons');
-    await this.db.dropCollection('maintenanceLocks');
+    await this.db.dropCollection('locks');
     await this.db.dropCollection('migrations');
     await this.db.dropCollection('passwordResetRequests');
     await this.db.dropCollection('roomInvitations');
-    await this.db.dropCollection('roomLocks');
     await this.db.dropCollection('rooms');
     await this.db.dropCollection('sessions');
     await this.db.dropCollection('settings');
-    await this.db.dropCollection('taskLocks');
+    await this.db.dropCollection('storagePlans');
     await this.db.dropCollection('tasks');
     await this.db.dropCollection('users');
   }
