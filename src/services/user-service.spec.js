@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
@@ -22,6 +23,9 @@ describe('user-service', () => {
   let container;
   let executingUser;
 
+  const now = new Date();
+  const sandbox = sinon.createSandbox();
+
   beforeAll(async () => {
     container = await setupTestEnvironment();
 
@@ -34,6 +38,8 @@ describe('user-service', () => {
   });
 
   beforeEach(async () => {
+    sandbox.useFakeTimers(now);
+
     password = 'john-doe-12345$$$';
     user = await setupTestUser(container, { email: 'john-doe@test.com', password, displayName: 'John Doe' });
     executingUser = await setupTestUser(container, { email: 'emilia-watson@test.com', displayName: 'Emilia Watson' });
@@ -41,6 +47,7 @@ describe('user-service', () => {
 
   afterEach(async () => {
     await pruneTestEnvironment(container);
+    sandbox.restore();
   });
 
   describe('authenticateUser', () => {
@@ -244,8 +251,8 @@ describe('user-service', () => {
       let favoriteUser;
 
       beforeEach(async () => {
-        favoriteRoom = await createTestRoom(container, { name: 'Favorite room' });
-        favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document' });
+        favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
+        favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document', createdBy: user._id });
         favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
 
         const favorites = [
@@ -275,19 +282,25 @@ describe('user-service', () => {
             id: favoriteRoom._id,
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
-            name: 'Favorite room'
+            data: {
+              ...favoriteRoom
+            }
           },
           {
             id: favoriteDocument._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
-            name: 'Favorite document'
+            data: {
+              ...favoriteDocument
+            }
           },
           {
             id: favoriteUser._id,
             type: FAVORITE_TYPE.user,
             setOn: new Date('2022-03-09T10:05:00.000Z'),
-            name: 'Favorite user'
+            data: {
+              ...favoriteUser
+            }
           }
         ]);
       });
