@@ -393,7 +393,10 @@
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents, rooms and users that you have marked as favorite."
+      "info": "Here you can find all users, rooms and documents that you have marked as favorite.",
+      "favoriteUsers": "Favorite users",
+      "favoriteRooms": "Favorite rooms",
+      "favoriteDocuments": "Favorite documents"
     }
   },
   {
@@ -404,7 +407,10 @@
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie alle Benutzer, Räume und Dokumente, die Sie als Favorit markiert haben.",
+      "favoriteUsers": "Favorite Benutzer",
+      "favoriteRooms": "Favorite Räume",
+      "favoriteDocuments": "Favorite Dokumente"
     }
   },
   {

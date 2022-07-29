@@ -284,7 +284,9 @@ class UserController {
   async handleGetFavorites(req, res) {
     const { user } = req;
     const favorites = await this.userService.getFavorites({ user });
-    return res.send({ favorites: this.clientDataMappingService.mapUserFavorites(favorites) });
+
+    const mappedFavorites = await this.clientDataMappingService.mapUserFavorites(favorites, user);
+    return res.send({ favorites: mappedFavorites });
   }
 
   async handlePostFavorite(req, res) {

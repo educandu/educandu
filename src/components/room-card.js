@@ -13,19 +13,19 @@ import PrivateIcon from './icons/general/private-icon.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
-function RoomCard({ room, invitation }) {
+function RoomCard({ room, invitation, alwaysRenderOwner }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
 
   const userAsMember = room.members?.find(member => member.userId === user?._id);
-  const showOwner = !!(userAsMember || invitation);
+  const showOwner = !!(userAsMember || invitation || alwaysRenderOwner);
 
   const renderOwner = () => {
     return (
       <span className="RoomCard-owner">
         {`${t('common:owner')}: `}
-        <a href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
+        <a href={routes.getUserUrl(room.owner?._id)}>{room.owner?.displayName}</a>
       </span>
     );
   };
@@ -112,11 +112,13 @@ const roomProps = {
 };
 
 RoomCard.propTypes = {
+  alwaysRenderOwner: PropTypes.bool,
   invitation: invitationBasicShape,
   room: PropTypes.shape(roomProps).isRequired
 };
 
 RoomCard.defaultProps = {
+  alwaysRenderOwner: false,
   invitation: null
 };
 

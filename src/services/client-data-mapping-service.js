@@ -4,7 +4,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
-import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getAllUserPermissions } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
@@ -180,13 +180,42 @@ class ClientDataMappingService {
     return activities.map(activity => ({ ...activity, timestamp: activity.timestamp.toISOString() }));
   }
 
-  mapUserFavorites(favorites) {
-    return favorites.map(favorite => ({
-      id: favorite.id,
-      type: favorite.type,
-      setOn: favorite.setOn.toISOString(),
-      name: favorite.name || ''
-    }));
+  async mapUserFavorites(favorites, user) {
+    const mappedUserFavorites = [];
+
+    for (const favorite of favorites) {
+      // eslint-disable-next-line no-await-in-loop
+      mappedUserFavorites.push(await this._mapFavorite({ favorite, user }));
+    }
+
+    return mappedUserFavorites;
+  }
+
+  async _mapFavorite({ favorite, user }) {
+    const mappedFavorite = {
+      ...favorite,
+      setOn: favorite.setOn.toISOString()
+    };
+
+    switch (favorite.type) {
+      case FAVORITE_TYPE.user:
+        return {
+          ...mappedFavorite,
+          data: favorite.data ? await this.mapWebsitePublicUser({ viewedUser: favorite.data, viewingUser: user }) : null
+        };
+      case FAVORITE_TYPE.room:
+        return {
+          ...mappedFavorite,
+          data: favorite.data ? await this.mapRoom(favorite.data, user) : null
+        };
+      case FAVORITE_TYPE.document:
+        return {
+          ...mappedFavorite,
+          data: favorite.data ? await this.mapDocOrRevision(favorite.data, user) : null
+        };
+      default:
+        return mappedFavorite;
+    }
   }
 
   _mapUser({ user, grantedPermissions }) {

@@ -209,19 +209,16 @@ class UserService {
     ]);
 
     return user.favorites.map(f => {
-      if (f.type === FAVORITE_TYPE.document) {
-        const document = documents.find(d => d._id === f.id);
-        return { ...f, name: document?.title ?? null };
+      switch (f.type) {
+        case FAVORITE_TYPE.user:
+          return { ...f, data: users.find(u => u._id === f.id) };
+        case FAVORITE_TYPE.room:
+          return { ...f, data: rooms.find(r => r._id === f.id) };
+        case FAVORITE_TYPE.document:
+          return { ...f, data: documents.find(d => d._id === f.id) };
+        default:
+          return { ...f };
       }
-      if (f.type === FAVORITE_TYPE.room) {
-        const room = rooms.find(r => r._id === f.id);
-        return { ...f, name: room?.name ?? null };
-      }
-      if (f.type === FAVORITE_TYPE.user) {
-        const favoriteUser = users.find(u => u._id === f.id);
-        return { ...f, name: favoriteUser?.displayName ?? null };
-      }
-      return { ...f };
     });
   }
 
