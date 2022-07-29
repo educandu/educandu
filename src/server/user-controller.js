@@ -144,7 +144,7 @@ class UserController {
     const ownedPublicRooms = await this.roomService.getLatestPublicRoomsOwnedByUser(viewedUser._id);
     const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(viewedUser._id);
 
-    const mappedOwnedRooms = this.clientDataMappingService.mapRoomsMetadata(ownedPublicRooms);
+    const mappedOwnedRooms = await this.clientDataMappingService.mapRooms(ownedPublicRooms);
     const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 

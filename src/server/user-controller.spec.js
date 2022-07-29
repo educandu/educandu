@@ -51,8 +51,8 @@ describe('user-controller', () => {
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMappingService = {
+      mapRooms: sandbox.stub(),
       mapWebsiteUser: sandbox.stub(),
-      mapRoomsMetadata: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       mapWebsitePublicUser: sandbox.stub()
     };
@@ -135,7 +135,7 @@ describe('user-controller', () => {
         roomService.getLatestPublicRoomsOwnedByUser.withArgs(viewedUser._id).resolves(rooms);
         documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
 
-        clientDataMappingService.mapRoomsMetadata.withArgs(rooms).returns(mappedRooms);
+        clientDataMappingService.mapRooms.withArgs(rooms).resolves(mappedRooms);
         clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();

@@ -17,7 +17,7 @@ function RoomCard({ room, invitation }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
 
-  const userAsMember = room.members?.find(member => member.userId === user._id);
+  const userAsMember = room.members?.find(member => member.userId === user?._id);
 
   const renderOwner = () => {
     return (

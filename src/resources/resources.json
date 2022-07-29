@@ -606,32 +606,6 @@
     }
   },
   {
-    "namespace": "minimalRoomCard",
-    "language": "en",
-    "resources": {
-      "documentsMode": "Mode",
-      "button": "Enter room",
-      "updated": "Updated",
-      "joined": "Joined",
-      "invited": "Invited",
-      "members": "Members",
-      "acceptInvitation": "The invitation received by email is valid until **{date}**."
-    }
-  },
-  {
-    "namespace": "minimalRoomCard",
-    "language": "de",
-    "resources": {
-      "documentsMode": "Modus",
-      "button": "Raum betreten",
-      "updated": "Aktualisiert",
-      "joined": "Eingetreten",
-      "invited": "Eingeladen",
-      "members": "Mitglieder",
-      "acceptInvitation": "Die per E-Mail geschickte Einladung ist bis **{date}** gültig."
-    }
-  },
-  {
     "namespace": "newsTab",
     "language": "en",
     "resources": {

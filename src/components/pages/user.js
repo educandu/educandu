@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import React, { useState } from 'react';
+import RoomCard from '../room-card.js';
 import { useTranslation } from 'react-i18next';
 import FavoriteStar from '../favorite-star.js';
 import ProfileHeader from '../profile-header.js';
-import MinimalRoomCard from '../minimal-room-card.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import MinimalDocumentCard from '../minimal-document-card.js';
-import { documentMetadataShape, publicUserShape, roomMetadataShape } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, publicUserShape, roomShape } from '../../ui/default-prop-types.js';
 
 const CARD_BATCH_SIZE = 8;
 
@@ -43,7 +43,7 @@ export default function User({ PageTemplate, initialState }) {
     }
     return (
       <div key={room._id}>
-        <MinimalRoomCard room={room} />
+        <RoomCard room={room} />
       </div>
     );
   };
@@ -107,7 +107,7 @@ User.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     user: publicUserShape.isRequired,
-    rooms: PropTypes.arrayOf(roomMetadataShape).isRequired,
+    rooms: PropTypes.arrayOf(roomShape).isRequired,
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };
