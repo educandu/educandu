@@ -139,9 +139,9 @@ class DocumentService {
     return documentsMetadata;
   }
 
-  async createDocument({ data, user, fromLessonId }) {
+  async createDocument({ data, user }) {
     let lock;
-    const documentId = fromLessonId || uniqueId.create();
+    const documentId = uniqueId.create();
 
     await this.createUploadDirectoryMarkerForDocument(documentId);
 
