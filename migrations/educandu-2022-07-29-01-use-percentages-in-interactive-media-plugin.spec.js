@@ -1,6 +1,6 @@
-import MigrationScript from './educandu-2022-07-27-01-use-percentages-in-interactive-media-plugin.js';
+import MigrationScript from './educandu-2022-07-29-01-use-percentages-in-interactive-media-plugin.js';
 
-describe('educandu-2022-07-27-01-use-percentages-in-interactive-media-plugin', () => {
+describe('educandu-2022-07-29-01-use-percentages-in-interactive-media-plugin', () => {
   let sut;
 
   beforeEach(() => {

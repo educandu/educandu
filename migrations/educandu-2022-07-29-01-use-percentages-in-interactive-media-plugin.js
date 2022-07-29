@@ -2,7 +2,7 @@
 
 import by from 'thenby';
 
-export default class Educandu_2022_07_27_01_use_percentages_in_interactive_media_plugin {
+export default class Educandu_2022_07_29_01_use_percentages_in_interactive_media_plugin {
   constructor(db) {
     this.db = db;
   }
