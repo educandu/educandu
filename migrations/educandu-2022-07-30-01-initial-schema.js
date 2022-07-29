@@ -10,9 +10,9 @@ export default class Educandu_2022_07_30_01_initial_schema {
     const createCollectionWithIndexes = async (collectionName, indexes) => {
       if (!existingCollections.find(collection => collection.name === collectionName)) {
         await this.db.createCollection(collectionName);
-      }
-      if (indexes?.length) {
-        await this.db.collection(collectionName).createIndexes(indexes);
+        if (indexes?.length) {
+          await this.db.collection(collectionName).createIndexes(indexes);
+        }
       }
     };
 
