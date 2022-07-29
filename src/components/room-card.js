@@ -86,7 +86,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         <div>{formatDate(room.updatedOn)}</div>
       </div>
       )}
-      {!userAsMember && !!room?.members?.length && (
+      {!userAsMember && !!room?.members && (
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('members')}:</span>
         <div>{room.members.length}</div>
