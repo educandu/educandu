@@ -1,15 +1,12 @@
-set:
-  en: Added
-  de: Hinzugefügt
-setOn:
-  en: Added on
-  de: Hinzugefügt am
-sortedBySetOn:
-  en: Sorted by date of adding
-  de: Nach Hinzufügungsdatum sortiert
-targetDeletedMessage:
-  en: The target of this link has been deleted
-  de: Das Ziel dieses Links wurde gelöscht
 info:
-  en: Here you can find all documents, rooms and users that you have marked as favorite.
-  de: Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben.
+  en: Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.
+  de: Hier finden Sie Ihre persönlichen Favoriten. Durch Klick auf das Sternsymbol können Sie Favoriten entfernen.
+favoriteUsers:
+  en: Users you have added to favorites
+  de: Benutzer, die Sie zu den Favoriten hinzugefügt haben
+favoriteRooms:
+  en: Rooms you have added to favorites
+  de: Räume, die Sie zu den Favoriten hinzugefügt haben
+favoriteDocuments:
+  en: Documents you have added to favorites
+  de: Dokumente, die Sie zu den Favoriten hinzugefügt haben

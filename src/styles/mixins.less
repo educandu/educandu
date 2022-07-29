@@ -263,3 +263,16 @@
   .m-section-content;
   max-width: 600px;
 }
+
+.m-cards-section-content {
+  .m-section-content;
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+
+  @media @edu-media-phone {
+    gap: 15px;
+    flex-direction: column;
+    align-items: center;
+  }
+}

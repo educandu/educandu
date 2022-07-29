@@ -381,30 +381,28 @@
     "namespace": "favoriteStar",
     "language": "de",
     "resources": {
-      "removeFavorite": "Aus den Favoriten entfernen",
-      "addFavorite": "Als Favorit hinzufügen"
+      "removeFavorite": "Von den Favoriten entfernen",
+      "addFavorite": "Zu den Favoriten hinzufügen"
     }
   },
   {
     "namespace": "favoritesTab",
     "language": "en",
     "resources": {
-      "set": "Added",
-      "setOn": "Added on",
-      "sortedBySetOn": "Sorted by date of adding",
-      "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents, rooms and users that you have marked as favorite."
+      "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
+      "favoriteUsers": "Users you have added to favorites",
+      "favoriteRooms": "Rooms you have added to favorites",
+      "favoriteDocuments": "Documents you have added to favorites"
     }
   },
   {
     "namespace": "favoritesTab",
     "language": "de",
     "resources": {
-      "set": "Hinzugefügt",
-      "setOn": "Hinzugefügt am",
-      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
-      "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie Ihre persönlichen Favoriten. Durch Klick auf das Sternsymbol können Sie Favoriten entfernen.",
+      "favoriteUsers": "Benutzer, die Sie zu den Favoriten hinzugefügt haben",
+      "favoriteRooms": "Räume, die Sie zu den Favoriten hinzugefügt haben",
+      "favoriteDocuments": "Dokumente, die Sie zu den Favoriten hinzugefügt haben"
     }
   },
   {
@@ -2123,6 +2121,7 @@
       "question": "Question",
       "answer": "Answer",
       "deletedDocument": "Deleted document",
+      "targetDeletedMessage": "The target of this link has been deleted",
       "deletedRoom": "Deleted room",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
@@ -2268,6 +2267,7 @@
       "question": "Frage",
       "answer": "Antwort",
       "deletedDocument": "Gelöschtes Dokument",
+      "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
       "deletedRoom": "Gelöschter Raum",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",

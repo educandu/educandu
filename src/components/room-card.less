@@ -1,6 +1,5 @@
 @room-card-width: 250px;
 @room-card-padding: @edu-content-padding;
-@room-card-header-width: @room-card-width - 3 * @room-card-padding;
 
 .RoomCard {
   position: relative;
@@ -37,7 +36,6 @@
 
 .RoomCard-name {
   .m-line-clamp(1);
-  width: @room-card-header-width;
   align-self: center;
   text-align: center;
   font-size: 14px;
@@ -49,12 +47,16 @@
 
 .RoomCard-owner {
   .m-overflow-ellipsis;
-  width: @room-card-header-width;
+  width: 100%;
   align-self: center;
   text-align: center;
   font-size: 12px;
   padding-top: 3px;
   color: @edu-text-color-secondary;
+}
+
+.RoomCard-divider {
+  margin: 15px 0;
 }
 
 .RoomCard-infoRow {

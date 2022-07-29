@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import React, { useState } from 'react';
 import RoomCard from '../room-card.js';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';

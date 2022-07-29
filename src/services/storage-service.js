@@ -237,6 +237,10 @@ export default class StorageService {
       });
 
       const doc = await this.documentStore.getDocumentById(documentId);
+      if (!doc) {
+        return [];
+      }
+
       if (doc.roomId && doc.access === DOCUMENT_ACCESS.private) {
         const room = await this.roomStore.getRoomById(doc.roomId);
         const isRoomOwner = user._id === room.owner;

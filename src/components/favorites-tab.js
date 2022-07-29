@@ -1,187 +1,124 @@
 import by from 'thenby';
-import { Modal } from 'antd';
-import Table from './table.js';
-import routes from '../utils/routes.js';
+import { Avatar } from 'antd';
+import RoomCard from './room-card.js';
 import Logger from '../common/logger.js';
+import DocumentCard from './document-card.js';
+import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
-import SortingSelector from './sorting-selector.js';
-import { useDateFormat } from './locale-context.js';
-import { FAVORITE_TYPE } from '../domain/constants.js';
 import { handleApiError } from '../ui/error-helper.js';
-import DeleteIcon from './icons/general/delete-icon.js';
-import React, { useEffect, useMemo, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import ActionButton, { ACTION_BUTTON_INTENT } from './action-button.js';
+import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import routes from '../utils/routes.js';
 
 const logger = new Logger(import.meta.url);
 
-const getTranslatedType = (favorite, t) => {
-  switch (favorite.type) {
-    case FAVORITE_TYPE.document:
-      return t('common:document');
-    case FAVORITE_TYPE.room:
-      return t('common:room');
-    case FAVORITE_TYPE.user:
-      return t('common:user');
-    default:
-      return null;
-  }
-};
-
-const getDisplayName = (favorite, t) => {
-  if (favorite.name) {
-    return favorite.name;
-  }
-
-  switch (favorite.type) {
-    case FAVORITE_TYPE.document:
-      return `[${t('common:deletedDocument')}]`;
-    case FAVORITE_TYPE.room:
-      return `[${t('common:deletedRoom')}]`;
-    default:
-      return null;
-  }
-};
-
 function FavoritesTab() {
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation('favoritesTab');
-  const [favorites, setFavorites] = useState([]);
-  const [displayedRows, setDisplayedRows] = useState([]);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const [isInitiallyLoading, setIsInitiallyLoading] = useState(true);
-  const [sorting, setSorting] = useState({ value: 'setOn', direction: 'desc' });
 
-  const sortingOptions = useMemo(() => [
-    { label: t('setOn'), appliedLabel: t('sortedBySetOn'), value: 'setOn' },
-    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'displayName' },
-    { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'translatedType' }
-  ], [t]);
+  const [favoriteUsers, setFavoriteUsers] = useState([]);
+  const [favoriteRooms, setFavoriteRooms] = useState([]);
+  const [favoriteDocuments, setFavoriteDocuments] = useState([]);
 
-  const sorters = useMemo(() => ({
-    setOn: (rowsToSort, direction) => rowsToSort.sort(by(row => row.setOn, direction)),
-    displayName: (rowsToSort, direction) => rowsToSort.sort(by(row => row.displayName, { direction, ignoreCase: true }).thenBy(row => row.setOn, 'desc')),
-    translatedType: (rowsToSort, direction) => rowsToSort.sort(by(row => row.translatedType, direction).thenBy(row => row.setOn, 'desc'))
-  }), []);
-
-  useEffect(() => {
-    const rows = favorites.map(favorite => {
-      return {
-        id: favorite.id,
-        name: favorite.name,
-        displayName: getDisplayName(favorite, t),
-        setOn: favorite.setOn,
-        type: favorite.type,
-        translatedType: getTranslatedType(favorite, t)
-      };
-    });
-    const sorter = sorters[sorting.value];
-    setDisplayedRows(sorter?.(rows, sorting.direction) || rows);
-  }, [favorites, sorting, sorters, t]);
+  const updateFavorites = useCallback(async () => {
+    try {
+      const data = await userApiClient.getFavorites();
+      const sortedFavorites = data.favorites.sort(by(f => f.setOn, 'desc'));
+      setFavoriteUsers(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.user));
+      setFavoriteRooms(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.room));
+      setFavoriteDocuments(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.document));
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  }, [userApiClient, t]);
 
   useEffect(() => {
     (async () => {
-      try {
-        setIsInitiallyLoading(true);
-        const data = await userApiClient.getFavorites();
-        setFavorites(data.favorites);
-      } catch (error) {
-        handleApiError({ error, logger, t });
-      } finally {
-        setIsInitiallyLoading(false);
-      }
+      await updateFavorites();
     })();
-  }, [userApiClient, t]);
+  }, [updateFavorites]);
 
-  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
-
-  const handleDeleteClick = async favorite => {
-    try {
-      await userApiClient.removeFavorite({ type: favorite.type, id: favorite.id });
-      const data = await userApiClient.getFavorites();
-      setFavorites(data.favorites);
-    } catch (error) {
-      handleApiError({ error, logger, t });
-      throw error;
-    }
+  const handleFavoriteStarToggle = async () => {
+    await updateFavorites();
   };
 
-  const handleFavoriteClick = (event, favorite) => {
-    if (!favorite.name) {
-      event.preventDefault();
-      Modal.error({
-        title: t('common:error'),
-        content: t('targetDeletedMessage')
-      });
-    }
+  const handleFavoriteUserClick = favoriteUser => {
+    window.location = routes.getUserUrl(favoriteUser.id);
   };
 
-  const getFavoriteUrl = favorite => {
-    switch (favorite.type) {
-      case FAVORITE_TYPE.document:
-        return routes.getDocUrl({ id: favorite.id });
-      case FAVORITE_TYPE.room:
-        return routes.getRoomUrl(favorite.id);
-      case FAVORITE_TYPE.user:
-        return routes.getUserUrl(favorite.id);
-      default:
-        return null;
-    }
-  };
-
-  const renderDisplayName = (_, favorite) => {
+  const renderFavoriteUser = favoriteUser => {
     return (
-      <a className="InfoCell" href={getFavoriteUrl(favorite)} onClick={event => handleFavoriteClick(event, favorite)}>
-        <div className="InfoCell-mainText">{favorite.displayName}</div>
-        <div className="InfoCell-subtext">{`${t('set')}: ${formatDate(favorite.setOn)}`}</div>
-      </a>
-    );
-  };
-
-  const renderActions = (_, favorite) => {
-    return (
-      <div className="FavoritesTab-actions">
-        <ActionButton
-          title={t('common:delete')}
-          icon={<DeleteIcon />}
-          intent={ACTION_BUTTON_INTENT.error}
-          onClick={() => handleDeleteClick(favorite)}
-          />
+      <div className="FavoritesTab-cardWrapper" key={favoriteUser.id}>
+        <div className="FavoritesTab-userCard">
+          <div className="FavoritesTab-userCardAvatar">
+            <Avatar
+              className="Avatar"
+              shape="circle"
+              size={AVATAR_SIZE}
+              src={favoriteUser.data.avatarUrl}
+              alt={favoriteUser.data.displayName}
+              />
+          </div>
+          <div className="FavoritesTab-userCardTitle" onClick={() => handleFavoriteUserClick(favoriteUser)}>{favoriteUser.data.displayName}</div>
+        </div>
+        <div className="FavoritesTab-cardStar">
+          <FavoriteStar type={FAVORITE_TYPE.user} id={favoriteUser.id} onToggle={handleFavoriteStarToggle} />
+        </div>
       </div>
     );
   };
 
-  const columns = [
-    {
-      key: 'displayName',
-      title: t('common:name'),
-      dataIndex: 'displayName',
-      render: renderDisplayName
-    },
-    {
-      key: 'translatedType',
-      title: t('common:type'),
-      dataIndex: 'translatedType',
-      render: translatedType => translatedType,
-      responsive: ['sm'],
-      width: 200
-    },
-    {
-      key: 'actions',
-      title: t('common:actions'),
-      render: renderActions,
-      width: 100
-    }
-  ];
+  const renderFavoriteRoom = favoriteRoom => {
+    return (
+      <div className="FavoritesTab-cardWrapper" key={favoriteRoom.id}>
+        <RoomCard room={favoriteRoom.data} alwaysRenderOwner />
+        <div className="FavoritesTab-cardStar">
+          <FavoriteStar type={FAVORITE_TYPE.room} id={favoriteRoom.id} onToggle={handleFavoriteStarToggle} />
+        </div>
+      </div>
+    );
+  };
+
+  const renderFavoriteDocument = favoriteDocument => {
+    return (
+      <div className="FavoritesTab-cardWrapper" key={favoriteDocument.id}>
+        <DocumentCard doc={favoriteDocument.data} />
+        <div className="FavoritesTab-cardStar">
+          <FavoriteStar type={FAVORITE_TYPE.document} id={favoriteDocument.id} onToggle={handleFavoriteStarToggle} />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="FavoritesTab">
       <div className="FavoritesTab-info">{t('info')}</div>
-      <div className="FavoritesTab-sortingSelector">
-        <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
-      </div>
-      <Table dataSource={[...displayedRows]} columns={columns} rowKey="id" loading={isInitiallyLoading} pagination />
+      {!!favoriteUsers.length && (
+        <Fragment>
+          <div className="FavoriteTab-headline">{t('favoriteUsers')}</div>
+          <section className="FavoritesTab-cards">
+            {favoriteUsers.map(renderFavoriteUser)}
+          </section>
+        </Fragment>
+      )}
+      {!!favoriteRooms.length && (
+        <Fragment>
+          <div className="FavoriteTab-headline">{t('favoriteRooms')}</div>
+          <section className="FavoritesTab-cards">
+            {favoriteRooms.map(renderFavoriteRoom)}
+          </section>
+        </Fragment>
+      )}
+      {!!favoriteDocuments.length && (
+        <Fragment>
+          <div className="FavoriteTab-headline">{t('favoriteDocuments')}</div>
+          <section className="FavoritesTab-cards">
+            {favoriteDocuments.map(renderFavoriteDocument)}
+          </section>
+        </Fragment>
+      )}
     </div>
   );
 }

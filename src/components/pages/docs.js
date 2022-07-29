@@ -66,6 +66,7 @@ function Docs({ initialState, PageTemplate }) {
   const mapToRows = useCallback(docs => docs.map(doc => (
     {
       key: doc._id,
+      _id: doc._id,
       documentId: doc._id,
       title: doc.title,
       createdOn: doc.createdOn,
@@ -185,9 +186,12 @@ function Docs({ initialState, PageTemplate }) {
   const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
   const renderTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
-    const room = doc.roomId ? initialState.rooms.find(r => r._id === doc.roomId) : null;
+    if (!doc) {
+      return null;
+    }
 
-    return !!doc && <DocumentInfoCell doc={doc} room={room} />;
+    const room = doc.roomId ? initialState.rooms.find(r => r._id === doc.roomId) : null;
+    return <DocumentInfoCell doc={doc} room={room} />;
   };
 
   const renderCreatedBy = (_user, row) => {

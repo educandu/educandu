@@ -408,6 +408,9 @@ answer:
 deletedDocument:
   en: Deleted document
   de: Gelöschtes Dokument
+targetDeletedMessage:
+  en: The target of this link has been deleted
+  de: Das Ziel dieses Links wurde gelöscht
 deletedRoom:
   en: Deleted room
   de: Gelöschter Raum
@@ -425,3 +428,4 @@ youtubeCopyrightNotice:
 emailIsInvalid:
   en: The value you provided is not a valid email address
   de: Ihre Eingabe ist keine gültige E-Mail-Adresse
+
