@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-export default class Educandu_2022_07_28_01_drop_lessons_collection {
+export default class Educandu_2022_07_29_02_drop_lessons_collection {
   constructor(db) {
     this.db = db;
   }
