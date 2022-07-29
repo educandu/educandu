@@ -63,11 +63,10 @@ export default class Educandu_2022_07_29_01_use_percentages_in_interactive_media
   }
 
   async up() {
-    const lessonsCount = await this.processCollection('lessons');
     const documentsCount = await this.processCollection('documents');
     const documentRevisionsCount = await this.processCollection('documentRevisions');
 
-    console.log(`Updated ${lessonsCount} lessons, ${documentsCount} documents, ${documentRevisionsCount} documentRevisions`);
+    console.log(`Updated ${documentsCount} documents and ${documentRevisionsCount} documentRevisions`);
   }
 
   down() {

@@ -46,10 +46,14 @@ function MediaPlayerTrack({
   };
 
   const seekToStartIfNecessary = newSourceDuration => {
+    if (!newSourceDuration) {
+      return;
+    }
+
     const newTrackStartTimecode = playbackRange[0] * newSourceDuration;
     const newTrackStopTimecode = playbackRange[1] * newSourceDuration;
 
-    if (newSourceDuration && ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode))) {
+    if ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode)) {
       playerRef.current.seekTo(newTrackStartTimecode / newSourceDuration);
     }
   };
