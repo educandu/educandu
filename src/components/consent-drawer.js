@@ -12,7 +12,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 
 const generateCookieHash = consentTextInAllLanguages => {
-  return md5(JSON.stringify(consentTextInAllLanguages));
+  return consentTextInAllLanguages ? md5(JSON.stringify(consentTextInAllLanguages)) : '';
 };
 
 export default function ConsentDrawer() {
@@ -58,6 +58,10 @@ export default function ConsentDrawer() {
     lastActiveElementRef.current?.focus?.();
     lastActiveElementRef.current = null;
   };
+
+  if (!settings?.consentText) {
+    return null;
+  }
 
   return (
     <div className={classNames('ConsentDrawer', { 'is-enabled': isVisible })}>
