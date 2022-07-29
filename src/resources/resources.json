@@ -1255,7 +1255,6 @@
     "resources": {
       "documentsMode": "Mode",
       "button": "Enter room",
-      "updated": "Updated",
       "joined": "Joined",
       "invited": "Invited",
       "members": "Members",
@@ -1268,7 +1267,6 @@
     "resources": {
       "documentsMode": "Modus",
       "button": "Raum betreten",
-      "updated": "Aktualisiert",
       "joined": "Eingetreten",
       "invited": "Eingeladen",
       "members": "Mitglieder",
@@ -2039,6 +2037,7 @@
       "created": "Created",
       "createdOn": "Creation date",
       "completedOn": "Completion date",
+      "updated": "Updated",
       "updatedOn": "Update date",
       "startedOn": "Started on",
       "relevance": "Relevance",
@@ -2183,6 +2182,7 @@
       "created": "Erstellt",
       "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",
+      "updated": "Aktualisiert",
       "updatedOn": "Änderungsdatum",
       "startedOn": "Gestartet am",
       "relevance": "Relevanz",

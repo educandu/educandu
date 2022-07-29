@@ -63,7 +63,7 @@ function RoomCard({ room, invitation }) {
       )}
       {!!room.updatedOn && (
         <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('updated')}:</span>
+          <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
           <div>{formatDate(room.updatedOn)}</div>
         </div>
       )}

@@ -150,6 +150,9 @@ createdOn:
 completedOn:
   en: Completion date
   de: Abgeschlossen am
+updated:
+  en: Updated
+  de: Aktualisiert
 updatedOn:
   en: Update date
   de: Änderungsdatum
