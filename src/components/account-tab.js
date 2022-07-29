@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import EmailFormItem from './email-form-item.js';
 import { useDialogs } from './dialog-context.js';
-import UsernameFormItem from './username-form-item.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -25,19 +24,19 @@ function AccountTab() {
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const [state, setState] = useState({
-    forbiddenEmails: [],
-    forbiddenUsernames: []
+    email: null,
+    forbiddenEmails: []
   });
 
   useEffect(() => {
-    setState(prev => ({ ...prev, username: user.username, email: user.email }));
+    setState(prev => ({ ...prev, email: user.email }));
   }, [user]);
 
   const formRef = useRef();
 
-  const saveAccountData = async ({ username, email }) => {
+  const saveAccountData = async ({ email }) => {
     try {
-      const { result, user: updatedUser } = await userApiClient.saveUserAccount({ username, email });
+      const { result, user: updatedUser } = await userApiClient.saveUserAccount({ email });
 
       switch (result) {
         case SAVE_USER_RESULT.success:
@@ -48,10 +47,6 @@ function AccountTab() {
           setState(prevState => ({ ...prevState, forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
           formRef.current.validateFields(['email'], { force: true });
           break;
-        case SAVE_USER_RESULT.duplicateUsername:
-          setState(prevState => ({ ...prevState, forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
-          formRef.current.validateFields(['username'], { force: true });
-          break;
         default:
           throw new Error(`Unknown result: ${result}`);
       }
@@ -60,8 +55,8 @@ function AccountTab() {
     }
   };
 
-  const handleAccountFinish = ({ username, email }) => {
-    dialogs.confirmWithPassword(user.username, () => saveAccountData({ username: username.trim(), email }));
+  const handleAccountFinish = ({ email }) => {
+    dialogs.confirmWithPassword(user.email, () => saveAccountData({ email }));
   };
 
   const handleResetPasswordClick = async () => {
@@ -90,7 +85,6 @@ function AccountTab() {
       <div className="AccountTab-headline">{t('credentialsHeadline')}</div>
       <section className="AccountTab-section">
         <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError layout="vertical">
-          <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} />
           <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} />
           <FormItem>
             <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>

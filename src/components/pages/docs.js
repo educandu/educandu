@@ -1,8 +1,8 @@
 import by from 'thenby';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import Restricted from '../restricted.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { Input, Button, Switch } from 'antd';
@@ -102,7 +102,7 @@ function Docs({ initialState, PageTemplate }) {
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
     language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction)),
-    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.username, { direction: sorting.direction, ignoreCase: true })),
+    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.displayName, { direction: sorting.direction, ignoreCase: true })),
     origin: rowsToSort => rowsToSort.sort(by(row => row.origin, { direction: sorting.direction, ignoreCase: true })),
     archived: rowsToSort => rowsToSort.sort(by(row => row.archived, sorting.direction))
   }), [sorting.direction]);
@@ -113,7 +113,7 @@ function Docs({ initialState, PageTemplate }) {
 
     const filteredRows = filterText
       ? newRows.filter(row => row.title.toLowerCase().includes(filterText.toLowerCase())
-        || row.createdBy.username.toLowerCase().includes(filterText.toLowerCase()))
+        || row.createdBy.displayName.toLowerCase().includes(filterText.toLowerCase()))
       : newRows;
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
@@ -139,7 +139,7 @@ function Docs({ initialState, PageTemplate }) {
   const handleDocumentMetadataModalSave = (newDocument, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
 
-    window.location = urls.getDocUrl({
+    window.location = routes.getDocUrl({
       id: newDocument._id,
       slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
@@ -191,9 +191,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderCreatedBy = (_user, row) => {
-    return row.createdBy.email
-      ? <span>{row.createdBy.username} | <a href={`mailto:${row.createdBy.email}`}>{t('common:email')}</a></span>
-      : <span>{row.createdBy.username}</span>;
+    return <a href={routes.getUserUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
   };
 
   const renderActions = (_actions, row) => {

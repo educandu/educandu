@@ -1,5 +1,5 @@
-import urls from '../utils/routes.js';
 import createError from 'http-errors';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import requestUtils from '../utils/request-utils.js';
 import { ERROR_CODES } from '../domain/constants.js';
@@ -81,7 +81,7 @@ class ErrorController {
 
   tryRedirectToLogin(req, res, err) {
     if (err.status === 401 && !req.isAuthenticated()) {
-      const url = urls.getLoginUrl(req.originalUrl);
+      const url = routes.getLoginUrl(req.originalUrl);
       res.redirect(url);
       return true;
     }

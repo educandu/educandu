@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
@@ -10,11 +10,11 @@ import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
-import UsernameFormItem from '../username-form-item.js';
 import PasswordFormItem from '../password-form-item.js';
 import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
+import DisplayNameFormItem from '../displayName-form-item.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -29,11 +29,10 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const [user, setUser] = useState(null);
   const [forbiddenEmails, setForbiddenEmails] = useState([]);
-  const [forbiddenUsernames, setForbiddenUsernames] = useState([]);
 
-  const register = async ({ username, password, email }) => {
+  const register = async ({ email, password, displayName }) => {
     try {
-      const { result, user: registeredUser } = await userApiClient.register({ username, password, email });
+      const { result, user: registeredUser } = await userApiClient.register({ email, password, displayName });
       switch (result) {
         case SAVE_USER_RESULT.success:
           setUser(registeredUser);
@@ -41,10 +40,6 @@ function Register({ PageTemplate, SiteLogo }) {
         case SAVE_USER_RESULT.duplicateEmail:
           setForbiddenEmails(prevState => [...prevState, email.toLowerCase()]);
           formRef.current.validateFields(['email'], { force: true });
-          break;
-        case SAVE_USER_RESULT.duplicateUsername:
-          setForbiddenUsernames(prevState => [...prevState, username.toLowerCase()]);
-          formRef.current.validateFields(['username'], { force: true });
           break;
         default:
           throw new Error(`Unknown result: ${result}`);
@@ -55,16 +50,14 @@ function Register({ PageTemplate, SiteLogo }) {
   };
 
   const handleFinish = values => {
-    const { username, password, email } = values;
-    register({ username: username.trim(), password, email });
+    const { email, password, displayName } = values;
+    register({ email, password, displayName: displayName.trim() });
   };
 
   const agreementValidationRules = [
     {
       message: t('confirmTerms'),
-      validator: (_, value) => value
-        ? Promise.resolve()
-        : Promise.reject(new Error(t('confirmTerms')))
+      validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error(t('confirmTerms')))
     }
   ];
 
@@ -73,10 +66,10 @@ function Register({ PageTemplate, SiteLogo }) {
   const registrationForm = (
     <div className="RegisterPage-form">
       <Form ref={formRef} onFinish={handleFinish} scrollToFirstError layout="vertical">
-        <UsernameFormItem name="username" usernamesInUse={forbiddenUsernames} />
         <EmailFormItem name="email" emailsInUse={forbiddenEmails} />
         <PasswordFormItem name="password" />
         <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" />
+        <DisplayNameFormItem name="displayName" />
         <FormItem name="agreement" valuePropName="checked" rules={agreementValidationRules}>
           <Checkbox>
             <Trans
@@ -86,7 +79,7 @@ function Register({ PageTemplate, SiteLogo }) {
                 <a
                   key="terms-link"
                   title={termsPage?.linkTitle || null}
-                  href={termsPage?.documentId ? urls.getDocUrl({ id: termsPage.documentId }) : '#'}
+                  href={termsPage?.documentId ? routes.getDocUrl({ id: termsPage.documentId }) : '#'}
                   />
               ]}
               />
@@ -103,7 +96,7 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const registrationConfirmation = (
     <Markdown className="RegisterPage-confirmation">
-      {t('registrationConfirmationMessage', { loginPageUrl: urls.getLoginUrl() })}
+      {t('registrationConfirmationMessage', { loginPageUrl: routes.getLoginUrl() })}
     </Markdown>
   );
 

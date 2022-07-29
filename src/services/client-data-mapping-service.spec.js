@@ -1,6 +1,8 @@
 import sinon from 'sinon';
+import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import permissions from '../domain/permissions.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -18,12 +20,14 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
+
     sut = container.get(ClientDataMappingService);
   });
 
   beforeEach(async () => {
-    user1 = await setupTestUser(container, { username: 'user1', email: 'user1@test.com' });
-    user2 = await setupTestUser(container, { username: 'user2', email: 'user2@test.com' });
+    sandbox.stub(urlUtils, 'getGravatarUrl');
+    user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
+    user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
 
   afterEach(async () => {
@@ -35,6 +39,109 @@ describe('client-data-mapping-service', () => {
     await destroyTestEnvironment(container);
   });
 
+  describe('mapWebsitePublicUser', () => {
+    let viewedUser;
+    let viewingUser;
+
+    beforeEach(() => {
+      viewedUser = {
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        provider: 'educandu',
+        displayName: 'Test user',
+        passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
+        email: 'test@test.com',
+        roles: ['user', 'admin'],
+        expires: null,
+        verificationCode: null,
+        lockedOut: false,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
+        storage: {},
+        favorites: [],
+        accountClosedOn: null
+      };
+      urlUtils.getGravatarUrl.withArgs(viewedUser.email).returns('www://avatar.domain/12345');
+    });
+
+    describe('when the viewing user is annonymous', () => {
+      beforeEach(() => {
+        viewingUser = null;
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+
+    describe('when the viewing user has closed their account', () => {
+      const accountClosedOn = new Date();
+
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewedUser.accountClosedOn = accountClosedOn;
+
+        urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the remaining public user data excluding the avatar', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/placeholder',
+          accountClosedOn: accountClosedOn.toISOString()
+        });
+      });
+    });
+
+    describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data excluding the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+
+    describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
+      beforeEach(() => {
+        viewingUser = { permissions: [permissions.SEE_USER_EMAIL] };
+        result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
+      });
+
+      it('should map the public user data including the email', () => {
+        expect(result).toStrictEqual({
+          _id: 'k991UQneLdmDGrAgqR7s6q',
+          displayName: 'Test user',
+          email: 'test@test.com',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          avatarUrl: 'www://avatar.domain/12345',
+          accountClosedOn: null
+        });
+      });
+    });
+  });
+
   describe('mapWebsiteUser', () => {
     let dbUser;
     const favoriteSetOnDate = new Date();
@@ -43,14 +150,15 @@ describe('client-data-mapping-service', () => {
       dbUser = {
         _id: 'k991UQneLdmDGrAgqR7s6q',
         provider: 'educandu',
-        username: 'test',
+        displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
         roles: ['user', 'admin'],
         expires: null,
         verificationCode: null,
         lockedOut: false,
-        profile: null,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0,
@@ -76,10 +184,11 @@ describe('client-data-mapping-service', () => {
       expect(result).toStrictEqual({
         _id: 'k991UQneLdmDGrAgqR7s6q',
         provider: 'educandu',
-        username: 'test',
+        displayName: 'Test user',
         email: 'test@test.com',
         roles: ['user', 'admin'],
-        profile: null,
+        organization: 'Educandu',
+        introduction: 'Educandu test user',
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0
@@ -147,7 +256,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
           batchParams: {},
@@ -172,7 +281,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user2._id,
             key: user2._id,
-            username: user2.username
+            displayName: user2.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
           batchParams: {},
@@ -225,7 +334,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
           batchParams: {},
@@ -279,7 +388,7 @@ describe('client-data-mapping-service', () => {
           createdBy: {
             _id: user1._id,
             key: user1._id,
-            username: user1.username
+            displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
           batchParams: {},
@@ -305,18 +414,18 @@ describe('client-data-mapping-service', () => {
     const owner = {
       _id: 'owner',
       email: 'owner@owner',
-      username: 'owner',
+      displayName: 'Owner user',
       storage: { plan: 'basic', usedBytes: 20, reminders: [] }
     };
 
     const member1 = {
       _id: 'member1',
-      username: 'member1'
+      displayName: 'Member user 1'
     };
 
     const member2 = {
       _id: 'member2',
-      username: 'member2'
+      displayName: 'Member user 2'
     };
 
     const room = {
@@ -358,7 +467,7 @@ describe('client-data-mapping-service', () => {
         createdOn: room.createdOn.toISOString(),
         updatedOn: room.createdOn.toISOString(),
         owner: {
-          username: owner.username,
+          displayName: owner.displayName,
           email: owner.email,
           _id: owner._id,
           key: owner._id
@@ -366,12 +475,12 @@ describe('client-data-mapping-service', () => {
         members: [
           {
             userId: room.members[0].userId,
-            username: member1.username,
+            displayName: member1.displayName,
             joinedOn: room.members[0].joinedOn.toISOString()
           },
           {
             userId: room.members[1].userId,
-            username: member2.username,
+            displayName: member2.displayName,
             joinedOn: room.members[1].joinedOn.toISOString()
           }
         ]
@@ -419,7 +528,7 @@ describe('client-data-mapping-service', () => {
           access: room.access,
           documentsMode: room.documentsMode,
           owner: {
-            username: user1.username
+            displayName: user1.displayName
           }
         }
       });

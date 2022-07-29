@@ -49,6 +49,10 @@ class DocumentStore {
     return this.collection.findOne({ _id: id }, { projection: documentMetadataProjection, session });
   }
 
+  getDocumentsMetadataBySlug(slug, { session } = {}) {
+    return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
+  }
+
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }

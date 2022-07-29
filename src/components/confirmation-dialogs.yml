@@ -20,8 +20,8 @@ deleteRoomConfirmation:
   en: Do you really want to delete room "{roomName}"?
   de: Möchten Sie den Raum "{roomName}" wirklich löschen?
 deleteRoomMemberConfirmation:
-  en: Do you really want remove member "{memberUsername}" from the room?
-  de: Möchten Sie das Mitglied "{memberUsername}" wirklich vom Raum entfernen?
+  en: Do you really want remove member "{memberDisplayName}" from the room?
+  de: Möchten Sie das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
 deleteRoomInvitationConfirmation:
   en: Do you really want revoke room invitation send to "{invitationEmail}"?
   de: Möchten Sie die Raumeinladung für "{invitationEmail}" wirklich widerrufen?

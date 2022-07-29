@@ -8,7 +8,7 @@
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
       "passwordResetEmailSent": "The password reset link has been sent to {email}",
-      "closeAccountDetails": "All your public contributions (documents, public rooms, files uploaded to the public storage) will remain on the website and your username will still be displayed as author or contributor. All other data (personal information, private rooms and files uploaded to the private storage) will be removed. You will no longer be able to log into the website.",
+      "closeAccountDetails": "All your public contributions (documents, public rooms, files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, private rooms and files uploaded to the private storage) will be removed. You will no longer be able to log into the website.",
       "closeAccount": "Close account"
     }
   },
@@ -21,7 +21,7 @@
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "closeAccountDetails": "Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Benutzername wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.",
+      "closeAccountDetails": "Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
     }
   },
@@ -132,7 +132,7 @@
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
-      "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberUsername}\" from the room?",
+      "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberDisplayName}\" from the room?",
       "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
       "leaveRoomConfirmation": "Do you really want to leave room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
@@ -162,7 +162,7 @@
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
-      "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
+      "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberDisplayName}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
       "leaveRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich verlassen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
@@ -215,6 +215,24 @@
     "language": "de",
     "resources": {
       "messageTitle": "Dieser Inhalt wurde gelöscht"
+    }
+  },
+  {
+    "namespace": "displayNameFormItem",
+    "language": "en",
+    "resources": {
+      "enterDisplayName": "Please enter a display name",
+      "displayNameIsTooShort": "The display name must be at least {length} characters long",
+      "displayNameIsTooLong": "The display name must be at most {length} characters long"
+    }
+  },
+  {
+    "namespace": "displayNameFormItem",
+    "language": "de",
+    "resources": {
+      "enterDisplayName": "Bitte geben Sie einen Anzeigenamen an",
+      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
+      "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
     }
   },
   {
@@ -323,9 +341,7 @@
     "namespace": "emailFormItem",
     "language": "en",
     "resources": {
-      "email": "Email address",
       "enterEmail": "Please enter an email address",
-      "emailIsInvalid": "The value you provided is not a valid email address",
       "emailIsInUse": "The email address is already registered"
     }
   },
@@ -333,9 +349,7 @@
     "namespace": "emailFormItem",
     "language": "de",
     "resources": {
-      "email": "E-Mail-Adresse",
       "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
-      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
       "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
@@ -363,7 +377,7 @@
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all documents and rooms that you have marked as favorite."
+      "info": "Here you can find all documents, rooms and users that you have marked as favorite."
     }
   },
   {
@@ -374,7 +388,7 @@
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Dokumente und Räume, die Sie als Favorit markiert haben."
+      "info": "Hier finden Sie alle Dokumente, Räume und Benutzer, die Sie als Favorit markiert haben."
     }
   },
   {
@@ -465,20 +479,18 @@
     "namespace": "loginForm",
     "language": "en",
     "resources": {
-      "enterEmailOrUsername": "Please enter your email address or user name",
+      "enterEmail": "Please enter your email address",
       "enterPassword": "Please enter your password",
-      "loginFailed": "Login failed. Please check your input.",
-      "emailOrUsername": "Email address or user name"
+      "loginFailed": "Login failed. Please check your input."
     }
   },
   {
     "namespace": "loginForm",
     "language": "de",
     "resources": {
-      "enterEmailOrUsername": "Bitte geben Sie Ihre E-Mail-Adresse oder Ihren Benutzernamen an",
+      "enterEmail": "Bitte geben Sie Ihre E-Mail-Adresse an",
       "enterPassword": "Bitte geben Sie Ihr Kennwort an",
-      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.",
-      "emailOrUsername": "E-Mail-Adresse oder Benutzername"
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
     }
   },
   {
@@ -487,7 +499,7 @@
     "resources": {
       "login": "Login",
       "register": "Register",
-      "loginState": "You are logged on as <0>{username}</0>"
+      "loginState": "Hello <0>{displayName}</0>!"
     }
   },
   {
@@ -496,7 +508,7 @@
     "resources": {
       "login": "Anmelden",
       "register": "Registrieren",
-      "loginState": "Sie sind angemeldet als <0>{username}</0>"
+      "loginState": "Hallo <0>{displayName}</0>!"
     }
   },
   {
@@ -589,7 +601,8 @@
       "roomCreatedActivity": "New room created",
       "roomUpdatedActivity": "Room updated",
       "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Private room joined"
+      "roomJoinedActivity": "Private room joined",
+      "userMarkedFavoriteActivity": "User marked as favorite"
     }
   },
   {
@@ -604,7 +617,8 @@
       "roomCreatedActivity": "Neuen Raum erstellt",
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Privatem Raum beigetreten"
+      "roomJoinedActivity": "Privatem Raum beigetreten",
+      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
     }
   },
   {
@@ -871,14 +885,16 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "forgotPassword": "Forgot your password?"
+      "forgotPassword": "Forgot your password?",
+      "hintContent": "The username is no longer supported for logging in.\nIt continues to be shown as the name under which you author website content.\n"
     }
   },
   {
     "namespace": "login",
     "language": "de",
     "resources": {
-      "forgotPassword": "Kennwort vergessen?"
+      "forgotPassword": "Kennwort vergessen?",
+      "hintContent": "Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.\nEr bleibt als Autorenname für alle von Ihnen bearbeiteten Website-Inhalte bestehen.\n"
     }
   },
   {
@@ -907,7 +923,6 @@
     "resources": {
       "enterEmail": "Please enter an email address",
       "emailIsInvalid": "The value you provided is not a valid email address",
-      "email": "Email address",
       "requestReset": "Request reset",
       "resetInProgressConfirmation": "We have received your request.",
       "resetInProgressNextSteps": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
@@ -920,7 +935,6 @@
     "resources": {
       "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
       "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
-      "email": "E-Mail-Adresse",
       "requestReset": "Reset anfordern",
       "resetInProgressConfirmation": "Ihre Anfrage ist bei uns eingegangen.",
       "resetInProgressNextSteps": "Falls die von Ihnen angegebene E-Mail-Adresse bei uns registriert ist, werden Sie in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
@@ -979,7 +993,9 @@
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
       "revokeInvitation": "Revoke invitation",
-      "leaveRoom": "Leave room"
+      "leaveRoom": "Leave room",
+      "publicDocumentDeletionNotAllowed": "Public documents can not be deleted!",
+      "publicRoomDeletionNotAllowed": "Public rooms can not be deleted!"
     }
   },
   {
@@ -1006,7 +1022,9 @@
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
       "revokeInvitation": "Einladung widerrufen",
-      "leaveRoom": "Raum verlassen"
+      "leaveRoom": "Raum verlassen",
+      "publicDocumentDeletionNotAllowed": "Öffentliche Dokumente können nicht gelöscht werden!",
+      "publicRoomDeletionNotAllowed": "Öffentliche Räume können nicht gelöscht werden!"
     }
   },
   {
@@ -1032,6 +1050,20 @@
     }
   },
   {
+    "namespace": "user",
+    "language": "en",
+    "resources": {
+      "accountClosed": "This user account was closed."
+    }
+  },
+  {
+    "namespace": "user",
+    "language": "de",
+    "resources": {
+      "accountClosed": "Dieses Benutzerkonto wurde geschlossen."
+    }
+  },
+  {
     "namespace": "users",
     "language": "en",
     "resources": {
@@ -1045,7 +1077,6 @@
       "postalCode": "Postal code",
       "city": "City",
       "country": "Country",
-      "profile": "Profile",
       "importSource": "Import source",
       "internalUsers": "Internal users",
       "externalUsers": "External users",
@@ -1072,7 +1103,6 @@
       "postalCode": "Postleitzahl",
       "city": "Ort",
       "country": "Land",
-      "profile": "Profil",
       "importSource": "Import-Quelle",
       "internalUsers": "Interne Benutzer",
       "externalUsers": "Externe Benutzer",
@@ -1157,17 +1187,12 @@
     "namespace": "profileTab",
     "language": "en",
     "resources": {
-      "info": "Here you can provide additional information about yourself. This information is currently not publicly accessible.",
+      "info": "Here you can provide additional information about yourself. This information is publicly accessible through your <0>profile page</0>.",
       "personalInfoHeadline": "Personal info",
       "changePicture": "Change profile picture",
       "howToChangePicture": "How can I change my profile picture?",
-      "firstName": "First name(s)",
-      "lastName": "Last name",
-      "street": "Street",
-      "streetSupplement": "Street supplement",
-      "postalCode": "Postal code",
-      "city": "City",
-      "country": "Country",
+      "organization": "Organization",
+      "introduction": "Introduction",
       "updateSuccessMessage": "Your profile was updated successfully.",
       "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
     }
@@ -1176,17 +1201,12 @@
     "namespace": "profileTab",
     "language": "de",
     "resources": {
-      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.",
+      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihrer <0>Profilseite</0> öffentlich sichtbar.",
       "personalInfoHeadline": "Persönlichen Daten",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",
-      "firstName": "Vorname(n)",
-      "lastName": "Nachname",
-      "street": "Straße",
-      "streetSupplement": "Straße (Zusatz)",
-      "postalCode": "Postleitzahl",
-      "city": "Ort",
-      "country": "Land",
+      "organization": "Organisation",
+      "introduction": "Vorstellung",
       "updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
       "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
     }
@@ -1449,24 +1469,6 @@
     "resources": {
       "label": "Genutzter Speicherplatz",
       "storageSpaceExceeded": "Überschreitung"
-    }
-  },
-  {
-    "namespace": "usernameFormItem",
-    "language": "en",
-    "resources": {
-      "enterUsername": "Please enter a user name",
-      "usernameIsTooShort": "The user name must be at least {length} characters long",
-      "usernameIsInUse": "The user name is already registered"
-    }
-  },
-  {
-    "namespace": "usernameFormItem",
-    "language": "de",
-    "resources": {
-      "enterUsername": "Bitte geben Sie einen Benutzernamen an",
-      "usernameIsTooShort": "Der Benutzername muss mindestens {length} Zeichen lang sein",
-      "usernameIsInUse": "Der Benutzername ist bereits vergeben"
     }
   },
   {
@@ -2020,6 +2022,7 @@
       "relevance": "Relevance",
       "owner": "Owner",
       "email": "Email",
+      "emailAddress": "Email address",
       "name": "Name",
       "access": "Access",
       "type": "Type",
@@ -2036,7 +2039,7 @@
       "archived": "Archived",
       "id": "ID",
       "user": "User",
-      "username": "User name",
+      "displayName": "Display name",
       "password": "Password",
       "text": "Text",
       "update": "Update",
@@ -2102,7 +2105,8 @@
       "deletedRoom": "Deleted room",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
-      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
+      "emailIsInvalid": "The value you provided is not a valid email address"
     }
   },
   {
@@ -2162,6 +2166,7 @@
       "relevance": "Relevanz",
       "owner": "Eigentümer",
       "email": "E-Mail",
+      "emailAddress": "E-Mail-Adresse",
       "name": "Name",
       "access": "Zugang",
       "type": "Typ",
@@ -2178,7 +2183,7 @@
       "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
-      "username": "Benutzername",
+      "displayName": "Anzeigename",
       "password": "Kennwort",
       "text": "Text",
       "update": "Aktualisieren",
@@ -2244,7 +2249,8 @@
       "deletedRoom": "Gelöschter Raum",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
-      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
+      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse"
     }
   },
   {
@@ -2280,11 +2286,11 @@
     "language": "en",
     "resources": {
       "registrationVerificationEmail.subject": "Welcome to educandu!",
-      "registrationVerificationEmail.text": "Welcome!\n\nYou have registered with educandu as {username}.\nTo complete your registration, please confirm your email address through the following link: {verificationLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "registrationVerificationEmail.html": "<p>Welcome!<br/><br/>You have registered with educandu as {username}.<br/>To complete your registration, please confirm your email address through the following link: <a href=\"{verificationLink}\">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
+      "registrationVerificationEmail.text": "Welcome!\n\nYou have registered with educandu as {displayName}.\nTo complete your registration, please confirm your email address through the following link: {verificationLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
+      "registrationVerificationEmail.html": "<p>Welcome!<br/><br/>You have registered with educandu as {displayName}.<br/>To complete your registration, please confirm your email address through the following link: <a href=\"{verificationLink}\">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
       "passwordResetEmail.subject": "Your password for educandu",
-      "passwordResetEmail.text": "Hello {username}!\n\nYou have requested a password reset on educandu.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "passwordResetEmail.html": "<p>Hello {username}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href=\"{completionLink}\">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
+      "passwordResetEmail.text": "Hello {displayName}!\n\nYou have requested a password reset on educandu.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
+      "passwordResetEmail.html": "<p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href=\"{completionLink}\">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
       "roomInvitationEmail.subject": "You have been invited to a room",
       "roomInvitationEmail.text": "Hello!\n\nUser {ownerName} has invited you to the room {roomName}.\nTo accept the invitation, please follow this link: {invitationLink}\nThe link remains valid for {days, plural, =1 {one day} other {# days}}.\n",
       "roomInvitationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href=\"{invitationLink}\">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>\n",
@@ -2292,8 +2298,8 @@
       "roomDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has deleted the room {roomName}.\n",
       "roomDeletionNotificationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.",
       "roomMemberRemovalNotificationEmail.subject": "Your membership to a room has ended",
-      "roomMemberRemovalNotificationEmail.text": "Hello {username}!\n\nUser {ownerName} has ended your membership in room {roomName}.\n",
-      "roomMemberRemovalNotificationEmail.html": "<p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.",
+      "roomMemberRemovalNotificationEmail.text": "Hello {displayName}!\n\nUser {ownerName} has ended your membership in room {roomName}.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hello {displayName}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.",
       "roomInvitationDeletionNotificationEmail.subject": "Your membership invitation to a room has been revoked",
       "roomInvitationDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has revoked your membership invitation to room {roomName}.\n",
       "roomInvitationDeletionNotificationEmail.html": "<p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>."
@@ -2304,11 +2310,11 @@
     "language": "de",
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
-      "registrationVerificationEmail.text": "Willkommen!\n\nSie haben sich als {username} auf educandu registriert.\nZum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Sie haben sich als {username} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "registrationVerificationEmail.text": "Willkommen!\n\nSie haben sich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Sie haben sich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
       "passwordResetEmail.subject": "Ihr Kennwort auf educandu",
-      "passwordResetEmail.text": "Hallo {username}!\n\nSie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "passwordResetEmail.html": "<p>Hallo {username}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "passwordResetEmail.text": "Hallo {displayName}!\n\nSie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
       "roomInvitationEmail.subject": "Sie wurden in einen Raum eingeladen",
       "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Sie in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folgen Sie bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
       "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Sie in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folgen Sie bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
@@ -2316,8 +2322,8 @@
       "roomDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n",
       "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.",
       "roomMemberRemovalNotificationEmail.subject": "Ihre Mitgliedschaft in einem Raum wurde beendet",
-      "roomMemberRemovalNotificationEmail.text": "Hallo {username}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.\n",
-      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
+      "roomMemberRemovalNotificationEmail.text": "Hallo {displayName}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
       "roomInvitationDeletionNotificationEmail.subject": "Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen",
       "roomInvitationDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Ihre Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n",
       "roomInvitationDeletionNotificationEmail.html": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."

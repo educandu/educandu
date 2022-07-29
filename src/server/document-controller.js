@@ -11,7 +11,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { isRoomOwnerOrCollaborator, isRoomOwnerOrMember } from '../utils/room-utils.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../domain/constants.js';
+import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE, ROOM_ACCESS } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentIdParamsOrQuerySchema,
@@ -227,7 +227,7 @@ class DocumentController {
 
   async handleDeleteDoc(req, res) {
     const { user } = req;
-    const { documentId } = req.params;
+    const { documentId } = req.body;
 
     const document = await this.documentService.getDocumentById(documentId);
 
@@ -235,16 +235,19 @@ class DocumentController {
       throw new NotFound();
     }
 
-    let canDeleteRoomDocument = false;
-    const canDeleteExternalDocument = document.origin.startsWith(DOCUMENT_ORIGIN.external) && hasUserPermission(req.user, permissions.MANAGE_IMPORT);
-
-    if (document.roomId) {
-      const room = await this.roomService.getRoomById(document.roomId);
-      canDeleteRoomDocument = isRoomOwnerOrCollaborator({ room, userId: user._id });
+    if (document.origin.startsWith(DOCUMENT_ORIGIN.external) && !hasUserPermission(req.user, permissions.MANAGE_IMPORT)) {
+      throw new Forbidden('The user does not have permission to delete external documents');
     }
 
-    if (!canDeleteExternalDocument && !canDeleteRoomDocument) {
-      throw new Forbidden();
+    if (document.origin === DOCUMENT_ORIGIN.internal && document.access === DOCUMENT_ACCESS.public) {
+      throw new Forbidden('Public documents cannot be deleted');
+    }
+
+    if (document.origin === DOCUMENT_ORIGIN.internal && document.access === DOCUMENT_ACCESS.private) {
+      const room = await this.roomService.getRoomById(document.roomId);
+      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+        throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
+      }
     }
 
     await this.documentService.hardDeleteDocument(documentId);

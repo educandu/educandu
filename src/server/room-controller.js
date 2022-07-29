@@ -5,7 +5,6 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
 import requestUtils from '../utils/request-utils.js';
 import RoomService from '../services/room-service.js';
 import UserService from '../services/user-service.js';
@@ -16,6 +15,7 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { ROOM_ACCESS, NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
@@ -82,7 +82,7 @@ export default class RoomController {
     }
 
     if (room.owner !== user._id) {
-      throw new Forbidden();
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
     const updatedRoom = await this.roomService.updateRoom({ ...room, name, slug, documentsMode, description });
@@ -106,6 +106,8 @@ export default class RoomController {
       await this._deleteRoom({ room, roomOwner });
     }
 
+    await this.storageService.updateUserUsedBytes(ownerId);
+
     return res.send({});
   }
 
@@ -120,7 +122,11 @@ export default class RoomController {
     }
 
     if (room.owner !== user._id) {
-      throw new Forbidden();
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
+    }
+
+    if (room.access === ROOM_ACCESS.public) {
+      throw new Forbidden('Public rooms cannot be deleted');
     }
 
     await this._deleteRoom({ room, roomOwner: user });
@@ -140,13 +146,13 @@ export default class RoomController {
     }
 
     if (room.owner !== user._id && memberUserId !== user._id) {
-      throw new Forbidden();
+      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
     const updatedRoom = await this.roomService.removeRoomMember({ room, memberUserId });
     const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
     if (memberUserId !== user._id) {
-      await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.username, memberUser });
+      await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.displayName, memberUser });
     }
     return res.send({ room: mappedRoom });
   }
@@ -162,12 +168,12 @@ export default class RoomController {
 
     const room = await this.roomService.getRoomById(invitation.roomId);
     if (room.owner !== user._id) {
-      throw new Forbidden();
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
     const remainingRoomInvitations = await this.roomService.deleteRoomInvitation({ room, invitation });
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(remainingRoomInvitations);
-    await this.mailService.sendRoomInvitationDeletionNotificationEmail({ roomName: room.name, ownerName: user.username, email: invitation.email });
+    await this.mailService.sendRoomInvitationDeletionNotificationEmail({ roomName: room.name, ownerName: user.displayName, email: invitation.email });
 
     return res.send({ invitations: mappedInvitations });
   }
@@ -179,7 +185,7 @@ export default class RoomController {
 
     const { origin } = requestUtils.getHostInfo(req);
     const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
-    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
+    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.displayName, email, invitationLink });
 
     return res.status(201).send(invitation);
   }
@@ -217,7 +223,7 @@ export default class RoomController {
     if (isPrivateRoom) {
       const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
       if (!isRoomOwnerOrMember) {
-        throw new Forbidden();
+        throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
       }
     }
 
@@ -254,7 +260,7 @@ export default class RoomController {
     await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: roomOwner._id });
     await this.mailService.sendRoomDeletionNotificationEmails({
       roomName: room.name,
-      ownerName: roomOwner.username,
+      ownerName: roomOwner.displayName,
       roomMembers: room.members
     });
   }

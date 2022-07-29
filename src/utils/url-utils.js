@@ -1,4 +1,5 @@
-import { IMAGE_SOURCE_TYPE } from '../domain/constants.js';
+import gravatar from 'gravatar';
+import { AVATAR_SIZE, IMAGE_SOURCE_TYPE } from '../domain/constants.js';
 
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
@@ -46,7 +47,7 @@ function ensureIsFullyQualifiedUrl(pathOrUrl, fallbackBase) {
   return isFullyQualifiedUrl(pathOrUrl) ? pathOrUrl : new URL(pathOrUrl, fallbackBase).href;
 }
 
-export function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
+function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
   switch (sourceType) {
     case IMAGE_SOURCE_TYPE.external:
       return sourceUrl || null;
@@ -55,6 +56,11 @@ export function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
     default:
       return null;
   }
+}
+
+function getGravatarUrl(userEmail) {
+  return gravatar.url(userEmail, { s: AVATAR_SIZE, d: 'mp' });
+
 }
 
 export default {
@@ -66,5 +72,7 @@ export default {
   concatParts,
   createRedirectUrl,
   isFullyQualifiedUrl,
-  ensureIsFullyQualifiedUrl
+  ensureIsFullyQualifiedUrl,
+  getImageUrl,
+  getGravatarUrl
 };

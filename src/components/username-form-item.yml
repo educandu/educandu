@@ -1,9 +1,0 @@
-enterUsername:
-  en: Please enter a user name
-  de: Bitte geben Sie einen Benutzernamen an
-usernameIsTooShort:
-  en: The user name must be at least {length} characters long
-  de: Der Benutzername muss mindestens {length} Zeichen lang sein
-usernameIsInUse:
-  en: The user name is already registered
-  de: Der Benutzername ist bereits vergeben

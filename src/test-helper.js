@@ -139,21 +139,23 @@ export async function setupTestUser(container, userValues) {
   const userStore = container.get(UserStore);
   const userService = container.get(UserService);
 
-  const username = userValues?.username || 'test';
-  const password = userValues?.password || 'test';
   const email = userValues?.email || 'test@test@com';
+  const password = userValues?.password || 'test';
+  const displayName = userValues?.displayName || 'Testibus';
   const roles = userValues?.roles || [ROLE.user];
-  const profile = userValues?.profile || null;
+  const organization = userValues?.organization || null;
+  const introduction = userValues?.introduction || null;
   const lockedOut = userValues?.lockedOut || false;
 
-  const { result, user } = await userService.createUser({ username, password, email });
+  const { result, user } = await userService.createUser({ email, password, displayName });
   if (result !== SAVE_USER_RESULT.success) {
-    throw new Error(JSON.stringify({ result, username, password, email }));
+    throw new Error(JSON.stringify({ result, email, password, displayName }));
   }
   const verifiedUser = await userService.verifyUser(user.verificationCode);
   verifiedUser.roles = roles;
-  verifiedUser.profile = profile || null;
-  verifiedUser.lockedOut = lockedOut || false;
+  verifiedUser.organization = organization;
+  verifiedUser.introduction = introduction;
+  verifiedUser.lockedOut = lockedOut;
   verifiedUser.accountClosedOn = userValues?.accountClosedOn || null;
   verifiedUser.storage = userValues?.storage || { plan: null, usedBytes: 0, reminders: [] };
   await userStore.saveUser(verifiedUser);

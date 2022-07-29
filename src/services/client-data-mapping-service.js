@@ -1,4 +1,5 @@
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
@@ -16,6 +17,27 @@ class ClientDataMappingService {
     this.storagePlanStore = storagePlanStore;
   }
 
+  mapWebsitePublicUser({ viewedUser, viewingUser }) {
+    if (!viewedUser) {
+      return null;
+    }
+
+    const mappedViewedUser = {
+      _id: viewedUser._id,
+      displayName: viewedUser.displayName,
+      organization: viewedUser.organization,
+      introduction: viewedUser.introduction,
+      avatarUrl: urlUtils.getGravatarUrl(viewedUser.accountClosedOn ? null : viewedUser.email),
+      accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
+    };
+
+    if (getAllUserPermissions(viewingUser).includes(permissions.SEE_USER_EMAIL)) {
+      mappedViewedUser.email = viewedUser.email;
+    }
+
+    return mappedViewedUser;
+  }
+
   mapWebsiteUser(user) {
     if (!user) {
       return null;
@@ -24,10 +46,11 @@ class ClientDataMappingService {
     return {
       _id: user._id,
       provider: user.provider,
-      username: user.username,
+      displayName: user.displayName,
       email: user.email,
       roles: user.roles,
-      profile: user.profile,
+      organization: user.organization,
+      introduction: user.introduction,
       storage: {
         plan: user.storage.plan,
         usedBytes: user.storage.usedBytes
@@ -114,7 +137,7 @@ class ClientDataMappingService {
         access: room.access,
         documentsMode: room.documentsMode,
         owner: {
-          username: owner.username
+          displayName: owner.displayName
         }
       }
     };
@@ -134,7 +157,7 @@ class ClientDataMappingService {
       return {
         userId: member.userId,
         joinedOn: member.joinedOn && member.joinedOn.toISOString(),
-        username: memberDetails.username
+        displayName: memberDetails.displayName
       };
     });
 
@@ -158,7 +181,7 @@ class ClientDataMappingService {
       id: favorite.id,
       type: favorite.type,
       setOn: favorite.setOn.toISOString(),
-      title: favorite.title || ''
+      name: favorite.name || ''
     }));
   }
 
@@ -170,7 +193,7 @@ class ClientDataMappingService {
     const mappedUser = {
       _id: user._id,
       key: user._id,
-      username: user.username
+      displayName: user.displayName
     };
 
     if (grantedPermissions.includes(permissions.SEE_USER_EMAIL)) {

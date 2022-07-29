@@ -4,15 +4,19 @@ import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import UserController from './user-controller.js';
 import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
+import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 
 const { NotFound } = httpErrors;
 
 describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
+
   let passwordResetRequestService;
-  let storageService;
   let clientDataMappingService;
+  let storageService;
+  let pageRenderer;
   let userService;
   let mailService;
   let sut;
@@ -22,6 +26,7 @@ describe('user-controller', () => {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
+      getUserById: sandbox.stub(),
       getUserByEmailAddress: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
@@ -40,11 +45,15 @@ describe('user-controller', () => {
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMappingService = {
-      mapWebsiteUser: sandbox.stub()
+      mapWebsiteUser: sandbox.stub(),
+      mapWebsitePublicUser: sandbox.stub()
     };
+    pageRenderer = {
+      sendPage: sandbox.stub()
+    };
+    const roomService = {};
     const serverConfig = {};
     const database = {};
-    const pageRenderer = {};
 
     sut = new UserController(
       serverConfig,
@@ -54,12 +63,65 @@ describe('user-controller', () => {
       passwordResetRequestService,
       mailService,
       clientDataMappingService,
+      roomService,
       pageRenderer
     );
   });
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('handleGetUserPage', () => {
+    let req;
+    let res;
+
+    describe('when the viewed user does not exist', () => {
+      beforeEach(() => {
+        const userId = uniqueId.create();
+        req = { params: { userId } };
+        res = {};
+
+        userService.getUserById.withArgs(userId).resolves(null);
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleGetUserPage(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the viewed user exists', () => {
+      let mappedViewedUser;
+
+      beforeEach(() => {
+        const viewedUser = {
+          _id: uniqueId.create(),
+          email: 'educandu@test.com',
+          organization: 'Educandu',
+          introduction: 'Educandu test user',
+          accountClosedOn: new Date()
+        };
+        const viewingUser = { _id: uniqueId.create() };
+
+        req = {
+          user: viewingUser,
+          params: { userId: viewedUser._id }
+        };
+        res = {};
+
+        mappedViewedUser = cloneDeep(viewedUser);
+
+        userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
+        clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetUserPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', { user: mappedViewedUser });
+      });
+    });
   });
 
   describe('handlePostUser', () => {
@@ -72,7 +134,7 @@ describe('user-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          body: { username: 'test1234', email: 'test@test.com', password: 'abcd1234' }
+          body: { email: 'test@test.com', password: 'abcd1234', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -90,8 +152,8 @@ describe('user-controller', () => {
 
       it('should call sendRegistrationVerificationEmail', () => {
         sinon.assert.calledWith(mailService.sendRegistrationVerificationEmail, {
-          username: 'test1234',
           email: 'test@test.com',
+          displayName: 'Test 1234',
           verificationLink: 'https://localhost/complete-registration/verificationCode'
         });
       });
@@ -108,7 +170,7 @@ describe('user-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          body: { username: 'test1234', email: 'test@test.com', password: 'abcd1234' }
+          body: { email: 'test@test.com', password: 'abcd1234', displayName: 'Test 1234' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -151,7 +213,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234, provider: 'educandu' },
-          body: { username: 'test1234', email: 'test@test.com' }
+          body: { email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -164,7 +226,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserAccount', () => {
-        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', username: 'test1234', email: 'test@test.com' });
+        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com' });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -184,7 +246,7 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { username: 'test1234', email: 'test@test.com' }
+          body: { email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -215,28 +277,32 @@ describe('user-controller', () => {
   describe('handlePostUserProfile', () => {
     let req;
     let res;
+    let updatedUser;
 
     describe('with all data correctly provided', () => {
-      const profile = { firstName: 'john', lastName: 'doe' };
+      const displayName = 'John Doe';
+      const organization = 'Educandu';
+      const introduction = 'Educandu test user';
 
       beforeEach(() => new Promise((resolve, reject) => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { profile }
+          body: { displayName, organization, introduction }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
         res.on('end', resolve);
+        updatedUser = { ...updatedUser };
 
-        userService.updateUserProfile.resolves(profile);
+        userService.updateUserProfile.resolves(updatedUser);
 
         sut.handlePostUserProfile(req, res).catch(reject);
       }));
 
       it('should call userService.updateUserProfile', () => {
-        sinon.assert.calledWith(userService.updateUserProfile, 1234, profile);
+        sinon.assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, introduction });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -245,19 +311,19 @@ describe('user-controller', () => {
 
       it('should return the result object', () => {
         const response = res._getData();
-        expect(response).toEqual({ profile });
+        expect(response).toEqual({ user: updatedUser });
       });
     });
 
     describe('with invalid user id', () => {
-      const profile = { firstName: 'john', lastName: 'doe' };
+      const displayName = 'John Doe';
 
       beforeEach(() => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { profile }
+          body: { displayName }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
         userService.updateUserProfile.resolves(null);
@@ -275,7 +341,7 @@ describe('user-controller', () => {
 
     describe('with known email', () => {
       const user = {
-        username: 'johndoe',
+        displayName: 'johndoe',
         email: 'john.doe@gmail.com'
       };
 
@@ -301,8 +367,8 @@ describe('user-controller', () => {
       });
 
       it('should call mailService.sendPasswordResetEmail', () => {
-        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { username: user.username,
-          email: user.email,
+        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
+          displayName: user.displayName,
           completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
       });
 

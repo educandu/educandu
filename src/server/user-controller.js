@@ -128,6 +128,19 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
+  async handleGetUserPage(req, res) {
+    const { userId } = req.params;
+    const viewingUser = req.user;
+
+    const viewedUser = await this.userService.getUserById(userId);
+    if (!viewedUser) {
+      throw new NotFound();
+    }
+    const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
+  }
+
   async handleGetUsersPage(req, res) {
     const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
     const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
@@ -140,14 +153,14 @@ class UserController {
   }
 
   async handlePostUser(req, res) {
-    const { username, password, email } = req.body;
+    const { email, password, displayName } = req.body;
 
-    const { result, user } = await this.userService.createUser({ username, password, email });
+    const { result, user } = await this.userService.createUser({ email, password, displayName });
 
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestUtils.getHostInfo(req);
       const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
-      await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
+      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationLink });
     }
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
@@ -156,22 +169,23 @@ class UserController {
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
     const provider = req.user.provider;
-    const { username, email } = req.body;
+    const { email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email });
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
     const userId = req.user._id;
-    const { profile } = req.body;
-    const savedProfile = await this.userService.updateUserProfile(userId, profile);
-    if (!savedProfile) {
+    const { displayName, organization, introduction } = req.body;
+    const updatedUser = await this.userService.updateUserProfile({ userId, displayName, organization, introduction });
+
+    if (!updatedUser) {
       throw new NotFound();
     }
 
-    res.status(201).send({ profile: savedProfile });
+    res.status(201).send({ user: updatedUser });
   }
 
   handlePostUserLogin(req, res, next) {
@@ -202,7 +216,7 @@ class UserController {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestUtils.getHostInfo(req);
       const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
-      await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
+      await this.mailService.sendPasswordResetEmail({ email: user.email, displayName: user.displayName, completionLink });
     }
 
     res.status(201).send({});
@@ -342,10 +356,10 @@ class UserController {
     }));
 
     passport.use('local', new LocalStrategy({
-      usernameField: 'emailOrUsername',
+      usernameField: 'email',
       passwordField: 'password'
-    }, (emailOrUsername, password, cb) => {
-      this.userService.authenticateUser({ emailOrUsername, password })
+    }, (email, password, cb) => {
+      this.userService.authenticateUser({ email, password })
         .then(user => cb(null, user || false))
         .catch(err => cb(err));
     }));
@@ -379,6 +393,8 @@ class UserController {
   }
 
   registerPages(router) {
+    router.get('/users/:userId', (req, res) => this.handleGetUserPage(req, res));
+
     router.get('/register', (req, res) => this.handleGetRegisterPage(req, res));
 
     router.get('/reset-password', (req, res) => this.handleGetResetPasswordPage(req, res));

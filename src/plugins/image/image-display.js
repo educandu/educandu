@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { getImageUrl } from '../../utils/url-utils.js';
+import urlUtils from '../../utils/url-utils.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -20,7 +20,7 @@ function ImageDisplay({ content }) {
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
   const { copyrightNotice, sourceType, sourceUrl, effect, width } = content;
-  const src = getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
+  const src = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   useEffect(() => {
     const mainImage = mainImageRef.current;
@@ -48,7 +48,7 @@ function ImageDisplay({ content }) {
     canvas.height = mainImage.height;
 
     const hoverImage = new Image();
-    hoverImage.src = getImageUrl({
+    hoverImage.src = urlUtils.getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
       sourceType: effect.sourceType,
       sourceUrl: effect.sourceUrl
@@ -105,13 +105,13 @@ function ImageDisplay({ content }) {
       portrait={effect.orientation === ORIENTATION.vertical}
       className={`ImageDisplay-mainImage u-width-${width}`}
       itemOne={<ReactCompareSliderImage
-        src={getImageUrl({
+        src={urlUtils.getImageUrl({
           cdnRootUrl: clientConfig.cdnRootUrl,
           sourceType: effect.sourceType,
           sourceUrl: effect.sourceUrl
         })}
         />}
-      itemTwo={<ReactCompareSliderImage src={getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })} />}
+      itemTwo={<ReactCompareSliderImage src={urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })} />}
       />
   );
 
@@ -149,7 +149,7 @@ function ImageDisplay({ content }) {
           ref={mainImageRef}
           className={mainImageClasses}
           onMouseEnter={handleMainImageMouseEnter}
-          src={getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })}
+          src={urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })}
           />
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}

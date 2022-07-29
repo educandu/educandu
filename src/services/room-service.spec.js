@@ -43,8 +43,8 @@ describe('room-service', () => {
     sandbox.stub(lockStore, 'takeRoomLock');
     sandbox.stub(lockStore, 'releaseLock');
 
-    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
-    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
+    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
+    otherUser = await setupTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
   });
 
   afterEach(async () => {

@@ -28,9 +28,6 @@ city:
 country:
   en: Country
   de: Land
-profile:
-  en: Profile
-  de: Profil
 importSource:
   en: Import source
   de: Import-Quelle

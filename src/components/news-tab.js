@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
@@ -10,6 +10,7 @@ import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
 import DocumentCreatedIcon from './icons/user-activities/document-created-icon.js';
 import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
+import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
 function NewsTab({ activities }) {
@@ -60,7 +61,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentCreatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -72,7 +73,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -84,7 +85,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('documentMarkedFavoriteActivity'),
       title: activity.data.title,
-      href: urls.getDocUrl({ id: activity.data._id }),
+      href: routes.getDocUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -96,7 +97,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -108,7 +109,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -120,7 +121,7 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -132,7 +133,19 @@ function NewsTab({ activities }) {
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
       title: activity.data.name,
-      href: urls.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
+    });
+  };
+
+  const renderUserMarkedFavoriteActivity = activity => {
+    return renderActivity({
+      icon: <UserMarkedFavoriteIcon />,
+      type: activity.type,
+      timestamp: activity.timestamp,
+      description: t('userMarkedFavoriteActivity'),
+      title: activity.data.displayName,
+      href: routes.getUserUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -153,6 +166,8 @@ function NewsTab({ activities }) {
         return renderRoomMarkedFavoriteActivity(activity);
       case USER_ACTIVITY_TYPE.roomJoined:
         return renderRoomJoinedActivity(activity);
+      case USER_ACTIVITY_TYPE.userMarkedFavorite:
+        return renderUserMarkedFavoriteActivity(activity);
       default:
         return null;
     }

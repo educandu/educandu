@@ -31,8 +31,8 @@ describe('dashboard-service', () => {
   });
 
   beforeEach(async () => {
-    user = await setupTestUser(container, { username: 'user', email: 'user@test.com' });
-    otherUser = await setupTestUser(container, { username: 'other', email: 'other@test.com' });
+    user = await setupTestUser(container, { email: 'user@test.com', displayName: 'My user' });
+    otherUser = await setupTestUser(container, { email: 'other@test.com', displayName: 'Other user' });
   });
 
   afterEach(async () => {
@@ -54,6 +54,7 @@ describe('dashboard-service', () => {
       let joinedRoom;
       let createdRoom;
       let favoriteRoom;
+      let favoriteUser;
       let createdDocument;
       let updatedDocument;
       let favoriteDocument;
@@ -106,6 +107,7 @@ describe('dashboard-service', () => {
 
         favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', owner: otherUser._id, createdBy: otherUser._id });
         favoriteDocument = await createTestDocument(container, otherUser, { title: 'Created popular document [other]' });
+        favoriteUser = await setupTestUser(container, { displayName: 'Popular user', email: 'popular-user@test.com' });
         await db.users.updateOne({ _id: user._id }, {
           $set: {
             favorites: [
@@ -118,12 +120,26 @@ describe('dashboard-service', () => {
                 type: FAVORITE_TYPE.document,
                 setOn: new Date('2022-03-09T10:13:00.000Z'),
                 id: favoriteDocument._id
+              },
+              {
+                type: FAVORITE_TYPE.user,
+                setOn: new Date('2022-03-09T10:15:00.000Z'),
+                id: favoriteUser._id
               }
             ]
           }
         });
 
         allUserActivities = [
+          {
+            type: USER_ACTIVITY_TYPE.userMarkedFavorite,
+            timestamp: new Date('2022-03-09T10:15:00.000Z'),
+            isDeprecated: false,
+            data: {
+              _id: favoriteUser._id,
+              displayName: 'Popular user'
+            }
+          },
           {
             type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
             timestamp: new Date('2022-03-09T10:13:00.000Z'),

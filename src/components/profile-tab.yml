@@ -1,6 +1,6 @@
 info:
-  en: Here you can provide additional information about yourself. This information is currently not publicly accessible.
-  de: Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.
+  en: Here you can provide additional information about yourself. This information is publicly accessible through your <0>profile page</0>.
+  de: Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihrer <0>Profilseite</0> öffentlich sichtbar.
 personalInfoHeadline:
   en: Personal info
   de: Persönlichen Daten
@@ -10,27 +10,12 @@ changePicture:
 howToChangePicture:
   en: How can I change my profile picture?
   de: Wie ändere ich mein Profilbild?
-firstName:
-  en: First name(s)
-  de: Vorname(n)
-lastName:
-  en: Last name
-  de: Nachname
-street:
-  en: Street
-  de: Straße
-streetSupplement:
-  en: Street supplement
-  de: Straße (Zusatz)
-postalCode:
-  en: Postal code
-  de: Postleitzahl
-city:
-  en: City
-  de: Ort
-country:
-  en: Country
-  de: Land
+organization:
+  en: Organization
+  de: Organisation
+introduction:
+  en: Introduction
+  de: Vorstellung
 updateSuccessMessage:
   en: Your profile was updated successfully.
   de: Ihr Profil wurde erfolgreich aktualisiert.

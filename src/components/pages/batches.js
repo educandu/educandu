@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Table, List } from 'antd';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from '../import-type-icon.js';
@@ -98,7 +98,7 @@ function Batches({ initialState, PageTemplate }) {
   const renderDate = date => formatDate(date);
 
   const renderDocumentTitle = taskParams => {
-    const docUrl = urls.getImportedDocUrl({
+    const docUrl = routes.getImportedDocUrl({
       hostName: batch.batchParams.hostName,
       allowUnsecure: batch.batchParams.allowUnsecure,
       id: taskParams.documentId,
@@ -109,13 +109,13 @@ function Batches({ initialState, PageTemplate }) {
   };
 
   const renderDocumentRegenerationEntityId = taskParams => (
-    <a target="_blank" href={urls.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
+    <a target="_blank" href={routes.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
       {taskParams.documentId}
     </a>
   );
 
   const renderCdnResourcesConsolidationEntityId = taskParams => {
-    const url = urls.getDocUrl({ id: taskParams.documentId });
+    const url = routes.getDocUrl({ id: taskParams.documentId });
     const text = taskParams.documentId;
 
     return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
@@ -126,11 +126,11 @@ function Batches({ initialState, PageTemplate }) {
     let text;
     switch (taskParams.type) {
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
-        url = urls.getDocUrl({ id: taskParams.documentId });
+        url = routes.getDocUrl({ id: taskParams.documentId });
         text = taskParams.documentId;
         break;
       case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
-        url = urls.getRoomUrl({ id: taskParams.roomId });
+        url = routes.getRoomUrl({ id: taskParams.roomId });
         text = taskParams.roomId;
         break;
       default:
@@ -266,7 +266,7 @@ function Batches({ initialState, PageTemplate }) {
           <div>{t('common:status')}: {renderBatchStatus(batch.progress)}</div>
           <div>{t('common:createdOn')}: {renderDate(batch.createdOn)}</div>
           <div>{t('common:completedOn')}: {renderDate(batch.completedOn)}</div>
-          <div>{t('common:user')}: {batch.createdBy.username}</div>
+          <div>{t('common:user')}: {batch.createdBy.displayName}</div>
         </div>
         {!!batch.errors.length && (
           <List

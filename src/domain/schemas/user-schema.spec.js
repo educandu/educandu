@@ -1,4 +1,5 @@
 import { ROLE } from '../constants.js';
+import { maxDisplayNameLength, minDisplayNameLength } from '../validation-constants.js';
 import { validate } from '../validation.js';
 import {
   postUserBodySchema,
@@ -9,14 +10,28 @@ import {
   postUserProfileBodySchema
 } from './user-schemas.js';
 
-const username = 'joedoe';
+const displayName = 'John Doe';
 const password = 'joedoe78';
 const email = 'joedoe78@gmail.com';
 
-const invalidUsernameCases = [
+const invalidDisplayNameCases = [
   {
-    description: 'username is shorter than min length',
-    body: { username: 'joedo' }
+    description: 'displayName is shorter than min length',
+    body: { displayName: Array.from({ length: minDisplayNameLength - 1 }, () => 'x').join('') }
+  },
+  {
+    description: 'displayName is longer than max length',
+    body: { displayName: Array.from({ length: maxDisplayNameLength + 1 }, () => 'x').join('') }
+  }
+];
+const validDisplayNameCases = [
+  {
+    description: 'displayName is as long as min length',
+    body: { displayName: Array.from({ length: minDisplayNameLength }, () => 'x').join('') }
+  },
+  {
+    description: 'displayName is as long as max length',
+    body: { displayName: Array.from({ length: maxDisplayNameLength }, () => 'x').join('') }
   }
 ];
 
@@ -34,6 +49,12 @@ const invalidPasswordCases = [
     body: { password: '12345678' }
   }
 ];
+const validPasswordCases = [
+  {
+    description: 'password is longer than min length and contains digits',
+    body: { password }
+  }
+];
 
 const invalidEmailCases = [
   {
@@ -41,19 +62,23 @@ const invalidEmailCases = [
     body: { email: 'JoeDoe78@gmail.com' }
   }
 ];
+const validEmailCases = [
+  {
+    description: 'email is lowercased',
+    body: { email }
+  }
+];
 
 describe('postUserBodySchema', () => {
-  const validBody = { username, password, email };
-  const invalidTestCases = [...invalidUsernameCases, ...invalidPasswordCases, ...invalidEmailCases]
+  const validBody = { email, password, displayName };
+
+  const validTestCases = [...validDisplayNameCases, ...validPasswordCases, ...validEmailCases]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
-  describe('when body contains correct data', () => {
-    it('should pass validation', () => {
-      expect(() => validate(validBody, postUserBodySchema)).not.toThrow();
-    });
-  });
+  const invalidTestCases = [...invalidDisplayNameCases, ...invalidPasswordCases, ...invalidEmailCases]
+    .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
-  describe('when username is missing', () => {
+  describe('when displayName is missing', () => {
     it('should fail validation', () => {
       const body = { password, email };
       expect(() => validate(body, postUserBodySchema)).toThrow();
@@ -62,15 +87,21 @@ describe('postUserBodySchema', () => {
 
   describe('when password is missing', () => {
     it('should fail validation', () => {
-      const body = { username, email };
+      const body = { email, displayName };
       expect(() => validate(body, postUserBodySchema)).toThrow();
     });
   });
 
   describe('when email is missing', () => {
     it('should fail validation', () => {
-      const body = { username, password };
+      const body = { password, displayName };
       expect(() => validate(body, postUserBodySchema)).toThrow();
+    });
+  });
+
+  validTestCases.forEach(({ description, body }) => {
+    describe(description, () => {
+      it('should pass validation', () => expect(() => validate(body, postUserBodySchema)).not.toThrow());
     });
   });
 
@@ -82,8 +113,8 @@ describe('postUserBodySchema', () => {
 });
 
 describe('postUserAccountBodySchema', () => {
-  const validBody = { username, email };
-  const invalidTestCases = [...invalidUsernameCases, ...invalidEmailCases]
+  const validBody = { email };
+  const invalidTestCases = [...invalidEmailCases]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
   describe('when body contains correct data', () => {
@@ -92,16 +123,9 @@ describe('postUserAccountBodySchema', () => {
     });
   });
 
-  describe('when username is missing', () => {
-    it('should fail validation', () => {
-      const body = { password };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
-    });
-  });
-
   describe('when email is missing', () => {
     it('should fail validation', () => {
-      const body = { username };
+      const body = { };
       expect(() => validate(body, postUserBodySchema)).toThrow();
     });
   });
@@ -176,30 +200,28 @@ describe('postUserPasswordResetCompletionBodySchema', () => {
 });
 
 describe('postUserProfileBodySchema', () => {
-  describe('when body contains no profile', () => {
+  describe('when body contains no data', () => {
     it('should fail validation', () => {
       expect(() => validate({}, postUserProfileBodySchema)).toThrow();
     });
   });
 
-  describe('when body contains empty profile', () => {
+  describe('when body contains with empty data', () => {
     it('should pass validation', () => {
-      expect(() => validate({ profile: {} }, postUserProfileBodySchema)).not.toThrow();
+      expect(() => validate({
+        displayName: '',
+        organization: '',
+        introduction: ''
+      }, postUserProfileBodySchema)).toThrow();
     });
   });
 
-  describe('when body contains profile with empty data', () => {
+  describe('when body contains displayName', () => {
     it('should pass validation', () => {
       expect(() => validate({
-        profile: {
-          city: '',
-          country: '',
-          firstName: '',
-          lastName: '',
-          postalCode: '',
-          street: '',
-          streetSupplement: ''
-        }
+        displayName: 'Educandu User',
+        organization: '',
+        introduction: ''
       }, postUserProfileBodySchema)).not.toThrow();
     });
   });

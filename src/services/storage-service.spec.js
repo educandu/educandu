@@ -68,7 +68,7 @@ describe('storage-service', () => {
     storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10 * 1000 * 1000 };
     await db.storagePlans.insertOne(storagePlan);
 
-    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
+    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
   });
 
   afterEach(async () => {
@@ -882,12 +882,12 @@ describe('storage-service', () => {
       describe('and the user is room collaborator and the room owner does not have a storage plan', () => {
         beforeEach(async () => {
           const collaboratorUser = await setupTestUser(container, {
-            username: 'collaborator',
-            email: 'collaborator@test.com'
+            email: 'collaborator@test.com',
+            displayName: 'collaborator'
           });
           const ownerUser = await setupTestUser(container, {
-            username: 'owner',
-            email: 'owner@test.com'
+            email: 'owner@test.com',
+            displayName: 'Owner'
           });
 
           documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
@@ -918,12 +918,12 @@ describe('storage-service', () => {
 
         beforeEach(async () => {
           const collaboratorUser = await setupTestUser(container, {
-            username: 'collaborator',
-            email: 'collaborator@test.com'
+            email: 'collaborator@test.com',
+            displayName: 'Collaborator'
           });
           ownerUser = await setupTestUser(container, {
-            username: 'owner',
             email: 'owner@test.com',
+            displayName: 'Owner',
             storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
           });
 

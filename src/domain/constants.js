@@ -55,8 +55,7 @@ export const ROOM_DOCUMENTS_MODE = {
 
 export const SAVE_USER_RESULT = {
   success: 'success',
-  duplicateEmail: 'duplicate-email',
-  duplicateUsername: 'duplicate-username'
+  duplicateEmail: 'duplicate-email'
 };
 
 export const ERROR_CODES = {
@@ -71,7 +70,8 @@ export const DOC_VIEW_QUERY_PARAM = {
 
 export const FAVORITE_TYPE = {
   document: 'document',
-  room: 'room'
+  room: 'room',
+  user: 'user'
 };
 
 export const USER_ACTIVITY_TYPE = {
@@ -81,7 +81,8 @@ export const USER_ACTIVITY_TYPE = {
   roomCreated: 'room-created',
   roomUpdated: 'room-updated',
   roomMarkedFavorite: 'room-marked-favorite',
-  roomJoined: 'room-joined'
+  roomJoined: 'room-joined',
+  userMarkedFavorite: 'user-marked-favorite'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {
@@ -154,6 +155,8 @@ export const HORIZONTAL_ALIGNMENT = {
   right: 'right'
 };
 
+export const AVATAR_SIZE = 110;
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';
@@ -168,3 +171,7 @@ export const LIMIT_PER_STORAGE_UPLOAD_IN_BYTES = 250 * 1000 * 1000;
 export const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
 export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
+
+export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
+export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
+export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';

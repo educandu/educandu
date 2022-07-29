@@ -20,9 +20,9 @@ describe('room-store', () => {
   });
 
   beforeEach(async () => {
-    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
-    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
-    onlyJoiningUser = await setupTestUser(container, { username: 'Dagobert', email: 'dagobert@ducktown.com' });
+    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
+    otherUser = await setupTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
+    onlyJoiningUser = await setupTestUser(container, { email: 'dagobert@ducktown.com', displayName: 'Dagobert' });
   });
 
   afterEach(async () => {

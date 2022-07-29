@@ -18,12 +18,12 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
-import React, { useEffect, useRef, useState } from 'react';
 import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
@@ -37,7 +37,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortDocuments = documents => [...documents].sort(by(l => l.dueOn || l.createdOn));
+const sortDocuments = documents => [...documents].sort(by(d => !!d.dueOn).thenBy(d => d.dueOn || d.createdOn));
 
 function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
   return {
@@ -77,6 +77,8 @@ export default function Room({ PageTemplate, initialState }) {
   const isRoomOwner = user?._id === room.owner.key;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
+  const isRoomDeletionDisabled = room.access === ROOM_ACCESS.public;
+  const isDocumentDeletionDisabled = room.access === ROOM_ACCESS.public;
   const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
   useEffect(() => {
@@ -180,7 +182,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleDeleteRoomMemberClick = member => {
-    confirmRoomMemberDelete(t, member.username, async () => {
+    confirmRoomMemberDelete(t, member.displayName, async () => {
       const response = await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: member.userId });
       setRoom(response.room);
     });
@@ -211,7 +213,11 @@ export default function Room({ PageTemplate, initialState }) {
               <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewDocumentClick(doc)} />
             </Tooltip>
             <Tooltip title={t('common:delete')}>
-              <DeleteButton onClick={() => handleDeleteDocumentClick(doc)} />
+              <DeleteButton
+                disabled={isDocumentDeletionDisabled}
+                onClick={() => handleDeleteDocumentClick(doc)}
+                className={classNames('RoomPage-documentDeleteButton', { 'is-disabled': isDocumentDeletionDisabled })}
+                />
             </Tooltip>
           </div>
         )}
@@ -241,7 +247,7 @@ export default function Room({ PageTemplate, initialState }) {
                   <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
                 </Tooltip>
                 <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
-                <span>{member.username}</span>
+                <span>{member.displayName}</span>
               </Space>
             </List.Item>)}
           />
@@ -305,7 +311,19 @@ export default function Room({ PageTemplate, initialState }) {
       >
       {room.description && <Markdown className="RoomPage-description" renderMedia>{room.description}</Markdown>}
       {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
+
+      {isRoomOwnerOrCollaborator && isDocumentDeletionDisabled && (
+        <div className="RoomPage-deletionDisabledSubtext">{t('publicDocumentDeletionNotAllowed')}</div>
+      )}
     </Card>
+  );
+
+  const accessText = t(`${room.access}RoomSubtitle`);
+  const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
+  const renderOwnerLink = () => (
+    <Fragment>
+      {t('common:owner')}: <a href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
+    </Fragment>
   );
 
   return (
@@ -322,7 +340,7 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
             {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.documentsMode}DocumentsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+            <span>{accessText} | {documentsModeText} | {renderOwnerLink()}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
@@ -372,7 +390,20 @@ export default function Room({ PageTemplate, initialState }) {
                     <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
                     <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
                   </div>
-                  <Button className="RoomPage-cardDangerActionButton" type="primary" icon={<DeleteIcon />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
+                  <div className="RoomPage-cardDangerActionButtonContainer">
+                    <Button
+                      type="primary"
+                      icon={<DeleteIcon />}
+                      onClick={handleDeleteRoomClick}
+                      disabled={isRoomDeletionDisabled}
+                      className={classNames('RoomPage-cardDangerActionButton', { 'is-disabled': isRoomDeletionDisabled })}
+                      >
+                      {t('deleteRoomButton')}
+                    </Button>
+                    {isRoomDeletionDisabled && (
+                      <div className="RoomPage-deletionDisabledSubtext">{t('publicRoomDeletionNotAllowed')}</div>
+                    )}
+                  </div>
                 </div>
               </Card>
             </TabPane>

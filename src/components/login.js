@@ -1,7 +1,7 @@
 import React from 'react';
 import gravatar from 'gravatar';
-import urls from '../utils/routes.js';
 import { Avatar, Tooltip } from 'antd';
+import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { getCurrentUrl } from '../ui/browser-helper.js';
@@ -11,15 +11,15 @@ function Login() {
   const { t } = useTranslation('login');
 
   const handleAvatarClick = () => {
-    window.location = urls.getDashboardUrl();
+    window.location = routes.getDashboardUrl();
   };
 
   const handleLoginClick = () => {
-    window.location = urls.getLoginUrl(getCurrentUrl());
+    window.location = routes.getLoginUrl(getCurrentUrl());
   };
 
   const handleRegisterClick = () => {
-    window.location = urls.getRegisterUrl();
+    window.location = routes.getRegisterUrl();
   };
 
   const createAuthenticatedUserHeader = () => {
@@ -30,15 +30,15 @@ function Login() {
         <Trans
           t={t}
           i18nKey="loginState"
-          components={[<b key="username" />]}
-          values={{ username: user.username }}
+          components={[<b key="displayName" />]}
+          values={{ displayName: user.displayName }}
           />
       </span>
     );
 
     return (
       <Tooltip title={popoverTitle} placement="bottomRight">
-        <Avatar className="Avatar" src={gravatarUrl} alt={user.username} shape="circle" size="large" onClick={handleAvatarClick} />
+        <Avatar className="Avatar" src={gravatarUrl} alt={user.displayName} shape="circle" size="large" onClick={handleAvatarClick} />
       </Tooltip>
     );
   };

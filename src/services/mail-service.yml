@@ -5,41 +5,41 @@ registrationVerificationEmail.text:
   en: |
     Welcome!
 
-    You have registered with educandu as {username}.
+    You have registered with educandu as {displayName}.
     To complete your registration, please confirm your email address through the following link: {verificationLink}
     The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
   de: |
     Willkommen!
 
-    Sie haben sich als {username} auf educandu registriert.
+    Sie haben sich als {displayName} auf educandu registriert.
     Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: {verificationLink}
     Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
 registrationVerificationEmail.html:
   en: |
-    <p>Welcome!<br/><br/>You have registered with educandu as {username}.<br/>To complete your registration, please confirm your email address through the following link: <a href="{verificationLink}">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
+    <p>Welcome!<br/><br/>You have registered with educandu as {displayName}.<br/>To complete your registration, please confirm your email address through the following link: <a href="{verificationLink}">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
   de: |
-    <p>Willkommen!<br/><br/>Sie haben sich als {username} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href="{verificationLink}">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
+    <p>Willkommen!<br/><br/>Sie haben sich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href="{verificationLink}">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
 passwordResetEmail.subject:
   en: Your password for educandu
   de: Ihr Kennwort auf educandu
 passwordResetEmail.text:
   en: |
-    Hello {username}!
+    Hello {displayName}!
 
     You have requested a password reset on educandu.
     To assign a new password, please follow this link: {completionLink}
     The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
   de: |
-    Hallo {username}!
+    Hallo {displayName}!
 
     Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.
     Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: {completionLink}
     Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
 passwordResetEmail.html:
   en: |
-    <p>Hello {username}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href="{completionLink}">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
+    <p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href="{completionLink}">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
   de: |
-    <p>Hallo {username}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href="{completionLink}">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
+    <p>Hallo {displayName}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href="{completionLink}">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
 roomInvitationEmail.subject:
   en: You have been invited to a room
   de: Sie wurden in einen Raum eingeladen
@@ -81,16 +81,16 @@ roomMemberRemovalNotificationEmail.subject:
   de: Ihre Mitgliedschaft in einem Raum wurde beendet
 roomMemberRemovalNotificationEmail.text:
   en: |
-    Hello {username}!
+    Hello {displayName}!
 
     User {ownerName} has ended your membership in room {roomName}.
   de: |
-    Hallo {username}!
+    Hallo {displayName}!
 
     Der Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.
 roomMemberRemovalNotificationEmail.html:
-  en: <p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.
-  de: <p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.
+  en: <p>Hello {displayName}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.
+  de: <p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.
 roomInvitationDeletionNotificationEmail.subject:
   en: Your membership invitation to a room has been revoked
   de: Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen

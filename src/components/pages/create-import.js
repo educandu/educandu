@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
@@ -20,7 +20,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
 
   const importSource = clientConfig.importSources.find(source => source.hostName === initialState.importSourceHostName);
-  const importSourceBaseUrl = urls.getImportSourceBaseUrl(importSource);
+  const importSourceBaseUrl = routes.getImportSourceBaseUrl(importSource);
 
   const handleImportClick = async () => {
     setIsCreatingNewImportBatch(true);
@@ -29,7 +29,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
     try {
       const result = await importApiClient.postImport({ hostName: importSource.hostName, documentsToImport });
       setIsCreatingNewImportBatch(false);
-      window.location = urls.getBatchUrl(result.batch._id);
+      window.location = routes.getBatchUrl(result.batch._id);
     } catch (error) {
       handleApiError({ error, t });
     } finally {
@@ -69,7 +69,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
   return (
     <PageTemplate>
       <div className="CreateImportPage">
-        <div><a href={urls.getImportsUrl()}>{t('backToImports')}</a></div>
+        <div><a href={routes.getImportsUrl()}>{t('backToImports')}</a></div>
         <h1>{t('pageNames:createImport')}</h1>
         <h2> {t('common:source')}: {importSource?.name} </h2>
         {renderImportButton()}

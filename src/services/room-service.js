@@ -223,7 +223,7 @@ export default class RoomService {
 
         await this.roomInvitationStore.deleteRoomInvitationById(invitation._id, { session });
       } finally {
-        this.lockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     });
   }

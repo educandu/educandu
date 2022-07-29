@@ -36,7 +36,7 @@ class ExportService {
 
     const userIds = extractUserIdsFromDocsOrRevisions(revisionsToExport);
     const users = (await this.userStore.getUsersByIds(userIds))
-      .map(({ _id, username }) => ({ _id, username }));
+      .map(({ _id, displayName }) => ({ _id, displayName }));
 
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${users.length} users in document ${documentId} up to revision '${toRevision}', but found ${userIds.length}`);

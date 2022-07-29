@@ -33,7 +33,7 @@ The educandu framework
  | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
- | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | no |
+ | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | exportApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
  | importSources | The system from which data can be imported | `[{ name, hostName, allowUnsecure, apiKey }]` | no, if not specified then `allowUnsecure` defaults to `false` |
@@ -76,9 +76,9 @@ educandu({
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   initialUser: {
-    username: 'test',
+    email: 'test@test.com',
     password: 'test',
-    email: 'test@test.com'
+    displayName: 'Testibus'
   },
   exposeErrorDetails: true,
   exportApiKey: 'GSD54GDFgDGesdfs4'

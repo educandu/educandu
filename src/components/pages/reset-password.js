@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
-import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
 import React, { useState } from 'react';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import EmailFormItem from '../email-form-item.js';
 import errorHelper from '../../ui/error-helper.js';
@@ -54,7 +54,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
         seconds={15}
         isRunning={!!isRequestSent}
         onComplete={() => {
-          window.location = urls.getLoginUrl();
+          window.location = routes.getLoginUrl();
         }}
         >
         {seconds => (
@@ -62,7 +62,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
             t={t}
             i18nKey="redirectMessage"
             values={{ seconds }}
-            components={[<a key="login-link" href={urls.getLoginUrl()} />]}
+            components={[<a key="login-link" href={routes.getLoginUrl()} />]}
             />
         )}
       </Countdown>

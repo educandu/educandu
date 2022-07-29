@@ -27,7 +27,7 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
     },
     {
       type: 'email',
-      message: t('emailIsInvalid')
+      message: t('common:emailIsInvalid')
     },
     {
       validator: (_rule, value) => {
@@ -41,7 +41,7 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
   return (
     <FormItem
       name={name}
-      label={t('email')}
+      label={t('common:emailAddress')}
       rules={validationRules}
       normalize={normalizeEmail}
       {...formItemProps}

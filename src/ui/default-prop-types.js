@@ -122,16 +122,6 @@ export const storagePlanWithAssignedUserCountShape = PropTypes.shape({
   ...storagePlanWithAssignedUserCountProps
 });
 
-export const userProfileShape = PropTypes.shape({
-  city: PropTypes.string,
-  country: PropTypes.string,
-  firstName: PropTypes.string,
-  lastName: PropTypes.string,
-  postalCode: PropTypes.string,
-  street: PropTypes.string,
-  streetSupplement: PropTypes.string
-});
-
 export const userStorageShape = PropTypes.shape({
   plan: PropTypes.string,
   usedBytes: PropTypes.number,
@@ -150,14 +140,25 @@ export const userFavoriteShape = PropTypes.shape({
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
   email: PropTypes.string,
+  displayName: PropTypes.string.isRequired,
+  organization: PropTypes.string,
+  introduction: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,
-  profile: userProfileShape,
   storage: userStorageShape,
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
+});
+
+export const publicUserShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  email: PropTypes.string,
+  displayName: PropTypes.string.isRequired,
+  organization: PropTypes.string,
+  introduction: PropTypes.string,
+  avatarUrl: PropTypes.string,
+  accountClosedOn: PropTypes.string
 });
 
 export const userProps = {
@@ -170,8 +171,8 @@ export const pageNameProps = {
 
 const userInDocShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  email: PropTypes.string // This is only visible to super users
+  email: PropTypes.string, // This is only visible to super users
+  displayName: PropTypes.string.isRequired
 });
 
 export const sectionShape = PropTypes.shape({
@@ -358,14 +359,14 @@ export const cdnUploadDirectoryCreationBatchDetailsShape = PropTypes.shape({
 
 export const roomOwnerShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  email: PropTypes.string
+  email: PropTypes.string,
+  displayName: PropTypes.string.isRequired
 });
 
 export const roomMemberShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   joinedOn: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired
 });
 
 export const roomMetadataProps = {

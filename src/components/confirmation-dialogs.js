@@ -66,10 +66,10 @@ export function confirmRoomDelete(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
-export function confirmRoomMemberDelete(t, memberUsername, onOk, onCancel = () => {}) {
+export function confirmRoomMemberDelete(t, memberDisplayName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:deleteRoomMemberConfirmation', { memberUsername }),
+    content: t('confirmationDialogs:deleteRoomMemberConfirmation', { memberDisplayName }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -328,7 +328,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   dialog = modal.confirm(createDialogProps());
 }
 
-export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {}) {
+export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) {
   const formRef = createRef();
 
   let dialog = null;
@@ -364,7 +364,7 @@ export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {
       <p>{t('confirmationDialogs:confirmWithPasswordDescription')}</p>
       <LoginForm
         formRef={formRef}
-        fixedEmailOrUsername={username}
+        fixedEmail={email}
         name="session-expired-login-form"
         onLoginFailed={handleLoginFailed}
         onLoginStarted={handleLoginStarted}
