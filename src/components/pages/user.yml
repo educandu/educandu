@@ -1,3 +1,12 @@
 accountClosed:
   en: This user account was closed.
   de: Dieses Benutzerkonto wurde geschlossen.
+roomsHeadline:
+  en: Recently create public rooms
+  de: Letzte erstellte öffentliche Räume
+documentsHeadline:
+  en: Recently created documents
+  de: Letzte erstellte Dokumente
+loadMore:
+  en: more ...
+  de: mehr ...

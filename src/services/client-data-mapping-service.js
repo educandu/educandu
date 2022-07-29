@@ -168,6 +168,10 @@ class ClientDataMappingService {
     };
   }
 
+  mapRooms(rooms) {
+    return Promise.all(rooms.map(room => this.mapRoom(room)));
+  }
+
   mapRoomInvitations(invitations) {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
   }

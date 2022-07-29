@@ -18,6 +18,7 @@ import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
+import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import { ambMetadataUser, exportUser } from '../domain/built-in-users.js';
@@ -52,6 +53,7 @@ class UserController {
       Database,
       UserService,
       StorageService,
+      DocumentService,
       PasswordResetRequestService,
       MailService,
       ClientDataMappingService,
@@ -65,6 +67,7 @@ class UserController {
     database,
     userService,
     storageService,
+    documentService,
     passwordResetRequestService,
     mailService,
     clientDataMappingService,
@@ -78,6 +81,7 @@ class UserController {
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
+    this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
     this.passwordResetRequestService = passwordResetRequestService;
   }
@@ -136,9 +140,19 @@ class UserController {
     if (!viewedUser) {
       throw new NotFound();
     }
+
+    const ownedPublicRooms = await this.roomService.getLatestPublicRoomsOwnedByUser(viewedUser._id);
+    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(viewedUser._id);
+
+    const mappedOwnedRooms = await this.clientDataMappingService.mapRooms(ownedPublicRooms);
+    const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, {
+      user: mappedViewedUser,
+      rooms: mappedOwnedRooms,
+      documents: mappedCreatedDocuments
+    });
   }
 
   async handleGetUsersPage(req, res) {

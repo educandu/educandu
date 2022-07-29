@@ -29,8 +29,8 @@ import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../../domain/constants.js';
-import { roomShape, invitationShape, documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
@@ -428,6 +428,6 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape).isRequired,
-    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
   }).isRequired
 };

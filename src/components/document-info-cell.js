@@ -4,7 +4,7 @@ import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import RoomIcon from './icons/general/room-icon.js';
 import { useDateFormat } from './locale-context.js';
-import { documentMetadataShape, roomMinimalMetadataShape } from '../ui/default-prop-types.js';
+import { documentExtendedMetadataShape, roomMinimalMetadataShape } from '../ui/default-prop-types.js';
 
 function DocumentInfoCell({ doc, room }) {
   const { formatDate } = useDateFormat();
@@ -42,7 +42,7 @@ function DocumentInfoCell({ doc, room }) {
 }
 
 DocumentInfoCell.propTypes = {
-  doc: documentMetadataShape.isRequired,
+  doc: documentExtendedMetadataShape.isRequired,
   room: roomMinimalMetadataShape
 };
 

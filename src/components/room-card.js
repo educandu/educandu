@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
+import { ROOM_ACCESS } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
 import PrivateIcon from './icons/general/private-icon.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
+import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
 function RoomCard({ room, invitation }) {
@@ -16,7 +18,8 @@ function RoomCard({ room, invitation }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
 
-  const userAsMember = room.members?.find(member => member.userId === user._id);
+  const userAsMember = room.members?.find(member => member.userId === user?._id);
+  const showOwner = !!(userAsMember || invitation);
 
   const renderOwner = () => {
     return (
@@ -43,9 +46,11 @@ function RoomCard({ room, invitation }) {
 
   return (
     <div className="RoomCard">
-      <div className="RoomCard-name">{room.name}</div>
-      {!!(userAsMember || invitation) && renderOwner()}
-      <Divider />
+      <div className="RoomCard-header">
+        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{room.name}</div>
+        {showOwner && renderOwner()}
+      </div>
+      <Divider className="RoomCard-divider" />
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('common:access')}:</span>
         <div>{renderAccess()}</div>
@@ -62,7 +67,7 @@ function RoomCard({ room, invitation }) {
       )}
       {!!room.updatedOn && (
         <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('updated')}:</span>
+          <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
           <div>{formatDate(room.updatedOn)}</div>
         </div>
       )}
@@ -89,16 +94,15 @@ function RoomCard({ room, invitation }) {
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expires) })}</Markdown>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}>{t('button')}</Button>
+      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>
       {!!invitation && <div className="RoomCard-disablingOverlay" />}
     </div>
   );
 }
 
-const looseRoomProps = {
+const roomProps = {
   ...roomMetadataProps,
   _id: PropTypes.string,
-  createdOn: PropTypes.string,
   updatedOn: PropTypes.string,
   owner: PropTypes.shape({
     email: PropTypes.string,
@@ -109,7 +113,7 @@ const looseRoomProps = {
 
 RoomCard.propTypes = {
   invitation: invitationBasicShape,
-  room: PropTypes.shape(looseRoomProps).isRequired
+  room: PropTypes.shape(roomProps).isRequired
 };
 
 RoomCard.defaultProps = {

@@ -22,8 +22,8 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { documentMetadataShape, roomMinimalMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { documentExtendedMetadataShape, roomMinimalMetadataShape } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -317,7 +317,7 @@ function Docs({ initialState, PageTemplate }) {
 Docs.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
     rooms: PropTypes.arrayOf(roomMinimalMetadataShape)
   }).isRequired
 };

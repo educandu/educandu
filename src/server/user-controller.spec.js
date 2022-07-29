@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import sinon from 'sinon';
 import events from 'events';
 import httpErrors from 'http-errors';
@@ -15,10 +16,12 @@ describe('user-controller', () => {
 
   let passwordResetRequestService;
   let clientDataMappingService;
+  let documentService;
   let storageService;
   let pageRenderer;
   let userService;
   let mailService;
+  let roomService;
   let sut;
 
   beforeEach(() => {
@@ -37,6 +40,9 @@ describe('user-controller', () => {
     storageService = {
       getAllStoragePlans: sandbox.stub()
     };
+    documentService = {
+      getMetadataOfLatestPublicDocumentsCreatedByUser: sandbox.stub()
+    };
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
     };
@@ -45,13 +51,17 @@ describe('user-controller', () => {
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMappingService = {
+      mapRooms: sandbox.stub(),
       mapWebsiteUser: sandbox.stub(),
+      mapDocsOrRevisions: sandbox.stub(),
       mapWebsitePublicUser: sandbox.stub()
+    };
+    roomService = {
+      getLatestPublicRoomsOwnedByUser: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    const roomService = {};
     const serverConfig = {};
     const database = {};
 
@@ -60,6 +70,7 @@ describe('user-controller', () => {
       database,
       userService,
       storageService,
+      documentService,
       passwordResetRequestService,
       mailService,
       clientDataMappingService,
@@ -91,6 +102,10 @@ describe('user-controller', () => {
     });
 
     describe('when the viewed user exists', () => {
+      let rooms;
+      let documents;
+      let mappedRooms;
+      let mappedDocuments;
       let mappedViewedUser;
 
       beforeEach(() => {
@@ -103,6 +118,11 @@ describe('user-controller', () => {
         };
         const viewingUser = { _id: uniqueId.create() };
 
+        rooms = [{ _id: uniqueId.create() }];
+        documents = [{ _id: uniqueId.create() }];
+        mappedRooms = cloneDeep(rooms);
+        mappedDocuments = cloneDeep(documents);
+
         req = {
           user: viewingUser,
           params: { userId: viewedUser._id }
@@ -112,6 +132,11 @@ describe('user-controller', () => {
         mappedViewedUser = cloneDeep(viewedUser);
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
+        roomService.getLatestPublicRoomsOwnedByUser.withArgs(viewedUser._id).resolves(rooms);
+        documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
+
+        clientDataMappingService.mapRooms.withArgs(rooms).resolves(mappedRooms);
+        clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
 
@@ -119,7 +144,11 @@ describe('user-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', { user: mappedViewedUser });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
+          user: mappedViewedUser,
+          documents: mappedDocuments,
+          rooms: mappedRooms
+        });
       });
     });
   });
@@ -586,5 +615,4 @@ describe('user-controller', () => {
       expect(response).toBe(mappedUser);
     });
   });
-
 });

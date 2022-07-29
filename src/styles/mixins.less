@@ -157,6 +157,13 @@
   text-overflow: ellipsis;
 }
 
+.m-line-clamp(@count) {
+  display: -webkit-box;
+  -webkit-line-clamp: @count;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .m-box-shadow {
   border-radius: @edu-border-radius-base;
   box-shadow: 0px 0px 8px @edu-border-color-base;

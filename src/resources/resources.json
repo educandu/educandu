@@ -236,6 +236,22 @@
     }
   },
   {
+    "namespace": "documentCard",
+    "language": "en",
+    "resources": {
+      "coauthors": "Co-authors",
+      "toDocument": "To document"
+    }
+  },
+  {
+    "namespace": "documentCard",
+    "language": "de",
+    "resources": {
+      "coauthors": "Mitautoren",
+      "toDocument": "Zum Dokument"
+    }
+  },
+  {
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
@@ -1053,14 +1069,20 @@
     "namespace": "user",
     "language": "en",
     "resources": {
-      "accountClosed": "This user account was closed."
+      "accountClosed": "This user account was closed.",
+      "roomsHeadline": "Recently create public rooms",
+      "documentsHeadline": "Recently created documents",
+      "loadMore": "more ..."
     }
   },
   {
     "namespace": "user",
     "language": "de",
     "resources": {
-      "accountClosed": "Dieses Benutzerkonto wurde geschlossen."
+      "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
+      "roomsHeadline": "Letzte erstellte öffentliche Räume",
+      "documentsHeadline": "Letzte erstellte Dokumente",
+      "loadMore": "mehr ..."
     }
   },
   {
@@ -1233,7 +1255,6 @@
     "resources": {
       "documentsMode": "Mode",
       "button": "Enter room",
-      "updated": "Updated",
       "joined": "Joined",
       "invited": "Invited",
       "members": "Members",
@@ -1246,7 +1267,6 @@
     "resources": {
       "documentsMode": "Modus",
       "button": "Raum betreten",
-      "updated": "Aktualisiert",
       "joined": "Eingetreten",
       "invited": "Eingeladen",
       "members": "Mitglieder",
@@ -2017,6 +2037,7 @@
       "created": "Created",
       "createdOn": "Creation date",
       "completedOn": "Completion date",
+      "updated": "Updated",
       "updatedOn": "Update date",
       "startedOn": "Started on",
       "relevance": "Relevance",
@@ -2161,6 +2182,7 @@
       "created": "Erstellt",
       "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",
+      "updated": "Aktualisiert",
       "updatedOn": "Änderungsdatum",
       "startedOn": "Gestartet am",
       "relevance": "Relevanz",

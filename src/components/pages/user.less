@@ -16,12 +16,12 @@
 }
 
 .UserPage-introduction {
-  margin: 0 auto;
-  max-width: 600px;
-
-  @media @edu-media-phone {
-    max-width: none;
-  }
+  margin: 0 auto 60px auto;
+  max-width: 700px;
+  padding: 20px 30px;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-light;
+  border-right: 1px solid @edu-border-color-light;
 }
 
 .UserPage-accountClosed {
@@ -29,4 +29,32 @@
   font-weight: bold;
   display: flex;
   justify-content: center;
+}
+
+.UserPage-sectionHeadline {
+  .m-section-headline;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.UserPage-sectionCards {
+  .m-section-content;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media @edu-media-phone {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.UserPage-sectionLink {
+  .m-section-content;
+  display: block;
+  padding-top: 0;
+
+  @media @edu-media-phone {
+    padding-left: 20px;
+  }
 }
