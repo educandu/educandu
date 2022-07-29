@@ -381,36 +381,30 @@
     "namespace": "favoriteStar",
     "language": "de",
     "resources": {
-      "removeFavorite": "Aus den Favoriten entfernen",
-      "addFavorite": "Als Favorit hinzufügen"
+      "removeFavorite": "Von den Favoriten entfernen",
+      "addFavorite": "Zu den Favoriten hinzufügen"
     }
   },
   {
     "namespace": "favoritesTab",
     "language": "en",
     "resources": {
-      "set": "Added",
-      "setOn": "Added on",
-      "sortedBySetOn": "Sorted by date of adding",
       "targetDeletedMessage": "The target of this link has been deleted",
-      "info": "Here you can find all users, rooms and documents that you have marked as favorite.",
-      "favoriteUsers": "Users you have added to your favorites",
-      "favoriteRooms": "Rooms you have added to your favorites",
-      "favoriteDocuments": "Documents you have added to your favorites"
+      "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
+      "favoriteUsers": "Users you have added to favorites",
+      "favoriteRooms": "Rooms you have added to favorites",
+      "favoriteDocuments": "Documents you have added to favorites"
     }
   },
   {
     "namespace": "favoritesTab",
     "language": "de",
     "resources": {
-      "set": "Hinzugefügt",
-      "setOn": "Hinzugefügt am",
-      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
       "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
-      "info": "Hier finden Sie alle Benutzer, Räume und Dokumente, die Sie als Favorit markiert haben.",
-      "favoriteUsers": "Benutzer, die Sie als Favorit hinzugefügt haben",
-      "favoriteRooms": "Räume, die Sie als Favorit hinzugefügt haben",
-      "favoriteDocuments": "Dokumente, die Sie als Favorit hinzugefügt haben"
+      "info": "Hier finden Sie Ihre persönlichen Favoriten. Durch Klick auf das Sternsymbol können Sie Favoriten entfernen.",
+      "favoriteUsers": "Benutzer, die Sie zu den Favoriten hinzugefügt haben",
+      "favoriteRooms": "Räume, die Sie zu den Favoriten hinzugefügt haben",
+      "favoriteDocuments": "Dokumente, die Sie zu den Favoriten hinzugefügt haben"
     }
   },
   {
