@@ -16,7 +16,7 @@ import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlin
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, copyrightNotice, chapters } = content;
+  const { sourceType, aspectRatio, showVideo, width, playbackRange, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -29,7 +29,7 @@ function InteractiveMediaDisplay({ content }) {
   const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(chapters.map(() => -1));
 
   const parts = useMemo(() => chapters.map(chapter => ({
-    startTimecode: chapter.startTimecode
+    startPosition: chapter.startPosition
   })), [chapters]);
 
   const chapterCards = useMemo(() => chapters.map((chapter, index) => ({
@@ -157,8 +157,7 @@ function InteractiveMediaDisplay({ content }) {
             screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
             screenOverlay={renderInteractionOverlay()}
             aspectRatio={aspectRatio}
-            startTimecode={sourceStartTimecode}
-            stopTimecode={sourceStopTimecode}
+            playbackRange={playbackRange}
             onPartEndReached={handlePartEndReached}
             onPlayingPartIndexChange={setCurrentChapterIndex}
             onPlayStateChange={handlePlayStateChange}

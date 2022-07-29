@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useNumberFormat } from './locale-context.js';
 import { isTouchDevice } from '../ui/browser-helper.js';
-import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
 
 const TOOLTIP_WIDTH_IN_PX = 60;
 const MARK_TIMECODE_WIDTH_IN_PX = 40;
@@ -18,9 +19,10 @@ function MediaPlayerProgressBar({
   const progressBarRef = useRef(null);
   const isMediaLoaded = !!durationInMilliseconds;
 
-  const [msToPxRatio, setMsToPxRatio] = useState(0);
+  const { formatPercentage } = useNumberFormat();
   const [isDragging, setIsDragging] = useState(false);
   const [tooltipState, setTooltipState] = useState(null);
+  const [progressBarWidthInPx, setProgressBarWidthInPx] = useState(0);
 
   const stopDragging = () => {
     setTooltipState(null);
@@ -28,41 +30,38 @@ function MediaPlayerProgressBar({
     onSeekEnd();
   };
 
-  const updateMsToPxRatio = useCallback(() => {
-    setMsToPxRatio(progressBarRef.current && durationInMilliseconds
-      ? progressBarRef.current.clientWidth / durationInMilliseconds
-      : 0);
-  }, [progressBarRef, durationInMilliseconds]);
+  const captureProgressBarWidth = useCallback(() => {
+    setProgressBarWidthInPx(progressBarRef.current?.clientWidth || 0);
+  }, [progressBarRef]);
 
-  const convertClientXToTimecode = useCallback(clientX => {
+  const convertClientXToPosition = useCallback(clientX => {
     const barLeft = progressBarRef.current.getBoundingClientRect().left;
     const currentLeft = Math.max(clientX - barLeft, 0);
-    const timecode = Math.trunc(currentLeft ? currentLeft / msToPxRatio : 0);
-
-    return timecode > durationInMilliseconds ? durationInMilliseconds : timecode;
-  }, [durationInMilliseconds, msToPxRatio]);
+    const position = progressBarWidthInPx ? currentLeft / progressBarWidthInPx : 0;
+    return ensureValidMediaPosition(position);
+  }, [progressBarWidthInPx]);
 
   const seekToClientX = useCallback(clientX => {
-    const seekToTimecode = convertClientXToTimecode(clientX);
+    const position = convertClientXToPosition(clientX);
 
     setTooltipState({
-      title: formatMillisecondsAsDuration(seekToTimecode),
-      left: (seekToTimecode * msToPxRatio) - (TOOLTIP_WIDTH_IN_PX / 2)
+      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds }),
+      left: (position * progressBarWidthInPx) - (TOOLTIP_WIDTH_IN_PX / 2)
     });
 
-    onSeek(seekToTimecode);
-  }, [onSeek, msToPxRatio, convertClientXToTimecode]);
+    onSeek(position * durationInMilliseconds);
+  }, [convertClientXToPosition, formatPercentage, durationInMilliseconds, progressBarWidthInPx, onSeek]);
 
   const handleBarMouseHover = event => {
     if (!isMediaLoaded || isDragging || isTouchDevice()) {
       return;
     }
 
-    const mouseOverTimecode = convertClientXToTimecode(event.clientX);
+    const position = convertClientXToPosition(event.clientX);
 
     setTooltipState({
-      title: formatMillisecondsAsDuration(mouseOverTimecode),
-      left: (mouseOverTimecode * msToPxRatio) - (TOOLTIP_WIDTH_IN_PX / 2)
+      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds }),
+      left: (position * progressBarWidthInPx) - (TOOLTIP_WIDTH_IN_PX / 2)
     });
   };
 
@@ -105,17 +104,17 @@ function MediaPlayerProgressBar({
   const handleWindowMouseUp = stopDragging;
 
   useEffect(() => {
-    updateMsToPxRatio();
-    window.addEventListener('resize', updateMsToPxRatio);
+    captureProgressBarWidth();
+    window.addEventListener('resize', captureProgressBarWidth);
 
     return () => {
-      window.removeEventListener('resize', updateMsToPxRatio);
+      window.removeEventListener('resize', captureProgressBarWidth);
     };
-  }, [updateMsToPxRatio]);
+  }, [captureProgressBarWidth]);
 
   useEffect(() => {
     if (!isDragging) {
-      return () => { };
+      return () => {};
     }
 
     if (isTouchDevice()) {
@@ -138,27 +137,27 @@ function MediaPlayerProgressBar({
   }, [isDragging, handleWindowMouseMove, handleWindowMouseUp, handleWindowTouchMove, handleWindowTouchEnd]);
 
   const renderPartStart = part => {
-    if (part.startTimecode === 0) {
-      return <Fragment key={part.startTimecode} />;
+    if (part.startPosition === 0) {
+      return <Fragment key={part.startPosition} />;
     }
 
-    const leftPx = msToPxRatio * part.startTimecode;
+    const leftPx = progressBarWidthInPx * part.startPosition;
 
     return (
-      <Fragment key={part.startTimecode}>
+      <Fragment key={part.startPosition}>
         <div className="MediaPlayerProgressBar-mark" style={{ left: `${leftPx}px` }} />
         <div
           className="MediaPlayerProgressBar-markTimecode"
           style={{ width: `${MARK_TIMECODE_WIDTH_IN_PX}px`, left: `${leftPx - (MARK_TIMECODE_WIDTH_IN_PX / 2)}px` }}
           >
-          {formatMillisecondsAsDuration(part.startTimecode)}
+          {formatMediaPosition({ position: part.startPosition, duration: durationInMilliseconds, formatPercentage })}
         </div>
       </Fragment>
     );
   };
 
   const classes = classNames('MediaPlayerProgressBar', { 'is-enabled': isMediaLoaded });
-  const currentProgressInPx = playedMilliseconds * msToPxRatio;
+  const currentProgressInPx = (playedMilliseconds / durationInMilliseconds) * progressBarWidthInPx;
 
   return (
     <div className={classes} ref={progressBarRef}>
@@ -192,7 +191,7 @@ MediaPlayerProgressBar.propTypes = {
   onSeekEnd: PropTypes.func,
   onSeekStart: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
-    startTimecode: PropTypes.number.isRequired
+    startPosition: PropTypes.number.isRequired
   })),
   playedMilliseconds: PropTypes.number.isRequired
 };
@@ -200,7 +199,7 @@ MediaPlayerProgressBar.propTypes = {
 MediaPlayerProgressBar.defaultProps = {
   onSeekEnd: () => {},
   onSeekStart: () => {},
-  parts: [{ startTimecode: 0 }]
+  parts: [{ startPosition: 0 }]
 };
 
 export default MediaPlayerProgressBar;

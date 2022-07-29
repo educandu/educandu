@@ -3,21 +3,23 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FlagOutlined } from '@ant-design/icons';
 import CloseIcon from './icons/general/close-icon.js';
+import { useNumberFormat } from './locale-context.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { isTouchDevice } from '../ui/browser-helper.js';
-import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
 
 const MIN_PART_WIDTH_IN_PX = 35;
-const MIN_PART_DURATION_IN_MS = 1000;
+const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 
-function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartTimecodeChange }) {
+function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange }) {
   const timelineRef = useRef(null);
+  const { formatPercentage } = useNumberFormat();
 
   const [dragState, setDragState] = useState(null);
   const [newMarkerState, setNewMarkerState] = useState(null);
   const [newMarkerBounds, setNewMarkerBounds] = useState([]);
-  const [timelineState, setTimelineState] = useState({ markers: [], segments: [], msToPxRatio: 0 });
+  const [timelineState, setTimelineState] = useState({ markers: [], segments: [], currentTimelineWidth: 0 });
 
   const handleSegmentDelete = key => () => onPartDelete(key);
 
@@ -39,6 +41,10 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
   }, []);
 
   const handleWindowMouseMove = useCallback(event => {
+    if (!timelineState.currentTimelineWidth) {
+      return;
+    }
+
     // Disable selection of DOM elements (e.g. text, image)
     event.preventDefault();
     const timelineBounds = timelineRef.current.getBoundingClientRect();
@@ -58,19 +64,19 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
 
     setDragState(prev => ({ ...prev, marker }));
 
-    const newStartTimecode = Math.round(dragState.marker.left / timelineState.msToPxRatio);
-    onStartTimecodeChange(dragState.marker.key, newStartTimecode);
-  }, [dragState, timelineState, onStartTimecodeChange]);
+    const newStartPosition = ensureValidMediaPosition(dragState.marker.left / timelineState.currentTimelineWidth);
+    onStartPositionChange(dragState.marker.key, newStartPosition);
+  }, [dragState, timelineState, onStartPositionChange]);
 
   const handleSegmentsBarClick = () => {
-    if (isTouchDevice()) {
+    if (!timelineState.currentTimelineWidth || isTouchDevice()) {
       return;
     }
 
     if (newMarkerState?.isInBounds) {
-      const startTimecode = Math.round(newMarkerState.left / timelineState.msToPxRatio);
+      const startPosition = ensureValidMediaPosition(newMarkerState.left / timelineState.currentTimelineWidth);
       setNewMarkerState(null);
-      onPartAdd(startTimecode);
+      onPartAdd(startPosition);
     }
   };
 
@@ -101,9 +107,9 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
 
   const updateStates = useCallback(() => {
     const timelineBounds = timelineRef.current.getBoundingClientRect();
-    const msToPxRatio = timelineRef.current.clientWidth / length;
-    const minSegmentLength = MIN_PART_DURATION_IN_MS * msToPxRatio;
-    const markers = parts.slice(1).map(part => ({ key: part.key, left: part.startTimecode * msToPxRatio }));
+    const currentTimelineWidth = timelineRef.current.clientWidth;
+    const minSegmentWidth = Math.max(1, MIN_PART_FRACTION_IN_PERCENTAGE * currentTimelineWidth);
+    const markers = parts.slice(1).map(part => ({ key: part.key, left: part.startPosition * currentTimelineWidth }));
 
     const segments = parts.map((part, index) => {
       const segment = { key: part.key, title: part.title };
@@ -125,15 +131,15 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
     });
 
     const markerBounds = parts.map((part, index) => {
-      const nextPartStartTimecode = parts[index + 1]?.startTimecode || length;
-      const currentPartDuration = nextPartStartTimecode - part.startTimecode;
+      const nextPartStartPosition = parts[index + 1]?.startPosition || 1;
+      const currentPartFraction = nextPartStartPosition - part.startPosition;
 
-      if (currentPartDuration <= MIN_PART_DURATION_IN_MS) {
+      if (currentPartFraction <= MIN_PART_FRACTION_IN_PERCENTAGE) {
         return null;
       }
 
-      let leftMin = (part.startTimecode * msToPxRatio) + minSegmentLength;
-      let leftMax = (nextPartStartTimecode * msToPxRatio) - minSegmentLength;
+      let leftMin = (part.startPosition * currentTimelineWidth) + minSegmentWidth;
+      let leftMax = (nextPartStartPosition * currentTimelineWidth) - minSegmentWidth;
       const thereIsAlmostAPixelLeft = (leftMax - leftMin) <= 0;
 
       if (thereIsAlmostAPixelLeft) {
@@ -144,8 +150,8 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
     }).filter(bound => bound);
 
     setNewMarkerBounds(markerBounds);
-    setTimelineState({ markers, segments, msToPxRatio, minSegmentLength });
-  }, [parts, length]);
+    setTimelineState({ markers, segments, currentTimelineWidth, minSegmentLength: minSegmentWidth });
+  }, [parts]);
 
   useEffect(() => {
     if (timelineRef.current) {
@@ -162,7 +168,7 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
 
   useEffect(() => {
     if (!dragState || isTouchDevice()) {
-      return () => { };
+      return () => {};
     }
     window.addEventListener('mousemove', handleWindowMouseMove);
     window.addEventListener('mouseup', handleWindowMouseUp);
@@ -181,11 +187,18 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
   };
 
   const renderNewMarker = () => {
+    if (!timelineState.currentTimelineWidth) {
+      return null;
+    }
+
     const offset = newMarkerState.isInBounds ? 0 : -5;
+    const percentage = newMarkerState.left / timelineState.currentTimelineWidth;
+    const markerText = formatMediaPosition({ position: percentage, duration: durationInMilliseconds, formatPercentage });
+
     return (
       <div key="new-marker" className="Timeline-marker Timeline-marker--new" style={{ left: `${newMarkerState.left + offset}px` }}>
         <div className={`Timeline-markerTimecode ${newMarkerState.isInBounds ? 'Timeline-markerTimecode--valid' : 'Timeline-markerTimecode--invalid'}`}>
-          {formatMillisecondsAsDuration(Math.round(newMarkerState.left / timelineState.msToPxRatio))}
+          {markerText}
         </div>
         {newMarkerState.isInBounds && <FlagOutlined />}
         {!newMarkerState.isInBounds && <CloseIcon />}
@@ -239,22 +252,23 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
 }
 
 Timeline.propTypes = {
-  length: PropTypes.number.isRequired,
+  durationInMilliseconds: PropTypes.number,
   onPartAdd: PropTypes.func,
   onPartDelete: PropTypes.func,
-  onStartTimecodeChange: PropTypes.func,
+  onStartPositionChange: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    startTimecode: PropTypes.number.isRequired
+    startPosition: PropTypes.number.isRequired
   })).isRequired,
   selectedPartIndex: PropTypes.number
 };
 
 Timeline.defaultProps = {
+  durationInMilliseconds: 0,
   onPartAdd: () => { },
   onPartDelete: () => { },
-  onStartTimecodeChange: () => { },
+  onStartPositionChange: () => { },
   selectedPartIndex: -1
 };
 

@@ -36,7 +36,7 @@ class InteractiveMediaInfo {
   getDefaultChapter(t) {
     return {
       key: uniqueId.create(),
-      startTimecode: 0,
+      startPosition: 0,
       title: `[${t('interactiveMedia:chapter')}]`,
       text: `[${t('common:text')}]`,
       answers: [],
@@ -48,9 +48,7 @@ class InteractiveMediaInfo {
     return {
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
-      sourceDuration: 0,
-      startTimecode: null,
-      stopTimecode: null,
+      playbackRange: [0, 1],
       copyrightNotice: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,

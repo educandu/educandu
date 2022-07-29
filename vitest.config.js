@@ -7,7 +7,8 @@ export default defineConfig({
     exclude: []
   },
   test: {
-    include: ['src/**/*.spec.js'],
+    include: ['src/**/*.spec.js', 'migrations/**/*.spec.js'],
+    exclude: ['migrations/archived/**/*.spec.js'],
     setupFiles: ['src/test-setup.js'],
     globals: true,
     hookTimeout: 20000,

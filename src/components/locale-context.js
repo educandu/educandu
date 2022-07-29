@@ -115,11 +115,17 @@ export function useNumberFormat() {
   const { uiLocale } = useLocale();
 
   return useMemo(() => {
+    const percentageOptions = { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 };
+
     const numberFormatter = new Intl.NumberFormat(uiLocale);
+    const percentageFormatter = new Intl.NumberFormat(uiLocale, percentageOptions);
+
     const formatNumber = value => numberFormatter.format(value);
+    const formatPercentage = value => percentageFormatter.format(value);
 
     return {
-      formatNumber
+      formatNumber,
+      formatPercentage
     };
   }, [uiLocale]);
 }

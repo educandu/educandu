@@ -10,11 +10,9 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentMediaInfo, setCurrentMediaInfo] = useState(null);
   const [isRetrievingMediaInfo, setIsRetrievingMediaInfo] = useState(false);
-  const [currentRange, setCurrentRange] = useState({ startTimecode: range.startTimecode, stopTimecode: range.stopTimecode });
+  const [currentRange, setCurrentRange] = useState(range);
 
-  useEffect(() => {
-    setCurrentRange({ startTimecode: range.startTimecode, stopTimecode: range.stopTimecode });
-  }, [range.startTimecode, range.stopTimecode]);
+  useEffect(() => setCurrentRange(range), [range]);
 
   const handleSelectButtonClick = async () => {
     setIsModalVisible(true);
@@ -38,16 +36,17 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentMediaInfo(null);
-  };
-
-  const handleRangeChange = ([newStartTimecode, newStopTimecode]) => {
-    setCurrentRange({
-      startTimecode: newStartTimecode === 0 ? null : newStartTimecode,
-      stopTimecode: newStopTimecode === currentMediaInfo.duration ? null : newStopTimecode
-    });
+    setCurrentRange(range);
   };
 
   const modalRender = modal => <div onClick={event => event.stopPropagation()}>{modal}</div>;
+
+  const renderRangeText = () => {
+    return t('playbackRange', {
+      from: currentRange[0] !== 0 ? formatMillisecondsAsDuration(currentRange[0] * currentMediaInfo.duration) : 'start',
+      to: currentRange[1] !== 1 ? formatMillisecondsAsDuration(currentRange[1] * currentMediaInfo.duration) : 'end'
+    });
+  };
 
   return (
     <div className="MediaRangeSelector">
@@ -81,16 +80,14 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
             extraCustomContent={(
               <div className="MediaRangeSelector-rangeSelectorArea">
                 <div className="MediaRangeSelector-rangeDisplay">
-                  {t('playbackRange', {
-                    from: currentRange.startTimecode ? formatMillisecondsAsDuration(currentRange.startTimecode) : 'start',
-                    to: currentRange.stopTimecode ? formatMillisecondsAsDuration(currentRange.stopTimecode) : 'end'
-                  })}
+                  {renderRangeText()}
                 </div>
                 <Slider
                   min={0}
-                  max={currentMediaInfo.duration}
-                  value={[currentRange.startTimecode ?? 0, currentRange.stopTimecode ?? currentMediaInfo.duration]}
-                  onChange={handleRangeChange}
+                  max={1}
+                  value={currentRange}
+                  step={Number.EPSILON}
+                  onChange={setCurrentRange}
                   tooltipVisible={false}
                   range
                   />
@@ -105,20 +102,14 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
 
 MediaRangeSelector.propTypes = {
   onRangeChange: PropTypes.func,
-  range: PropTypes.shape({
-    startTimecode: PropTypes.number,
-    stopTimecode: PropTypes.number
-  }),
+  range: PropTypes.arrayOf(PropTypes.number),
   sourceUrl: PropTypes.string
 };
 
 MediaRangeSelector.defaultProps = {
   onRangeChange: () => {},
-  range: {
-    startTimecode: null,
-    stopTimecode: null
-  },
-  sourceUrl: null
+  range: [0, 1],
+  sourceUrl: ''
 };
 
 export default MediaRangeSelector;
