@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useNumberFormat } from './locale-context.js';
 import { isTouchDevice } from '../ui/browser-helper.js';
-import { formatMediaPosition } from '../utils/media-utils.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
 
 const TOOLTIP_WIDTH_IN_PX = 60;
 const MARK_TIMECODE_WIDTH_IN_PX = 40;
@@ -38,7 +38,7 @@ function MediaPlayerProgressBar({
     const barLeft = progressBarRef.current.getBoundingClientRect().left;
     const currentLeft = Math.max(clientX - barLeft, 0);
     const position = progressBarWidthInPx ? currentLeft / progressBarWidthInPx : 0;
-    return Math.max(0, Math.min(1, position));
+    return ensureValidMediaPosition(position);
   }, [progressBarWidthInPx]);
 
   const seekToClientX = useCallback(clientX => {

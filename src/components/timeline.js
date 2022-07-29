@@ -6,8 +6,8 @@ import CloseIcon from './icons/general/close-icon.js';
 import { useNumberFormat } from './locale-context.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { isTouchDevice } from '../ui/browser-helper.js';
-import { formatMediaPosition } from '../utils/media-utils.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
 
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
@@ -64,7 +64,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 
     setDragState(prev => ({ ...prev, marker }));
 
-    const newStartPosition = Math.max(0, Math.min(1, dragState.marker.left / timelineState.currentTimelineWidth));
+    const newStartPosition = ensureValidMediaPosition(dragState.marker.left / timelineState.currentTimelineWidth);
     onStartPositionChange(dragState.marker.key, newStartPosition);
   }, [dragState, timelineState, onStartPositionChange]);
 
@@ -74,7 +74,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     }
 
     if (newMarkerState?.isInBounds) {
-      const startPosition = Math.max(0, Math.min(1, newMarkerState.left / timelineState.currentTimelineWidth));
+      const startPosition = ensureValidMediaPosition(newMarkerState.left / timelineState.currentTimelineWidth);
       setNewMarkerState(null);
       onPartAdd(startPosition);
     }

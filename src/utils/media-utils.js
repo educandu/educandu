@@ -106,6 +106,10 @@ export function formatMillisecondsAsDuration(milliseconds) {
   return totalHours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
 }
 
+export function ensureValidMediaPosition(position) {
+  return Math.max(0, Math.min(1, Number(position)));
+}
+
 export function formatMediaPosition({ formatPercentage, position, duration = 0 }) {
   return duration
     ? formatMillisecondsAsDuration(position * duration)

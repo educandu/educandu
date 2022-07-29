@@ -24,8 +24,8 @@ import MediaRangeSelector from '../../components/media-range-selector.js';
 import { Button, Divider, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { analyzeMediaUrl, determineMediaDuration, formatMediaPosition } from '../../utils/media-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
+import { analyzeMediaUrl, determineMediaDuration, ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -93,8 +93,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
       const duration = await determineMediaDuration(completeUrl);
       const range = [
-        startTimecode ? Math.max(0, Math.min(1, startTimecode / duration)) : playbackRange[0],
-        stopTimecode ? Math.max(0, Math.min(1, stopTimecode / duration)) : playbackRange[1]
+        startTimecode ? ensureValidMediaPosition(startTimecode / duration) : playbackRange[0],
+        stopTimecode ? ensureValidMediaPosition(stopTimecode / duration) : playbackRange[1]
       ];
       return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
     } catch (error) {
