@@ -64,7 +64,7 @@ function MarkdownInput({ minRows, disabled, inline, renderMedia, value, onChange
 
   return (
     <div className="MarkdownInput">
-      {preview ? <InputAndPreview input={renderInput()} preview={renderPreview()} /> : renderInput()}
+      {preview ? <InputAndPreview input={renderInput()} preview={renderPreview()} inline /> : renderInput()}
     </div>
   );
 }
