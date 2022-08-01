@@ -14,9 +14,9 @@ import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -36,18 +36,6 @@ function Search({ PageTemplate }) {
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
-  const mapToRows = useCallback(docs => docs.map(doc => (
-    {
-      key: doc._id,
-      documentId: doc._id,
-      relevance: doc.tagMatchCount,
-      tags: doc.tags,
-      title: doc.title,
-      createdOn: doc.createdOn,
-      updatedOn: doc.updatedOn,
-      language: doc.language
-    })), []);
-
   const sortingOptions = [
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
@@ -57,11 +45,11 @@ function Search({ PageTemplate }) {
   ];
 
   const sorters = useMemo(() => ({
-    relevance: rowsToSort => rowsToSort.sort(by(row => row.relevance, sorting.direction).thenBy(row => row.updatedOn, 'desc')),
-    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
-    createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
-    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
-    language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction))
+    relevance: rowsToSort => rowsToSort.sort(by(row => row.document.tagMatchCount, sorting.direction).thenBy(row => row.document.updatedOn, 'desc')),
+    title: rowsToSort => rowsToSort.sort(by(row => row.document.title, { direction: sorting.direction, ignoreCase: true })),
+    createdOn: rowsToSort => rowsToSort.sort(by(row => row.document.createdOn, sorting.direction)),
+    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction)),
+    language: rowsToSort => rowsToSort.sort(by(row => row.document.language, sorting.direction))
   }), [sorting.direction]);
 
   useEffect(() => {
@@ -91,34 +79,39 @@ function Search({ PageTemplate }) {
   }, [allTags, selectedTags]);
 
   useEffect(() => {
-    const newRows = mapToRows(documents.slice());
+    const newRows = documents.map(doc => ({
+      key: doc._id,
+      document: doc,
+      room: doc.roomId ? rooms.find(r => r._id === doc.roomId) : null
+    }));
+
     const sorter = sorters[sorting.value];
 
-    const filteredDocuments = newRows.filter(row => selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag)));
-    const sortedDocuments = sorter ? sorter(filteredDocuments) : filteredDocuments;
+    const filteredRows = newRows.filter(row => selectedTags.every(selectedTag => row.document.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
-    setDisplayedRows(sortedDocuments);
-  }, [documents, selectedTags, sorting, sorters, mapToRows]);
+    setDisplayedRows(sortedRows);
+  }, [documents, rooms, selectedTags, sorting, sorters]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
-  const renderLanguage = lang => (<LanguageIcon language={lang} />);
-  const renderTitle = (_title, row) => {
-    const doc = documents.find(d => d._id === row.documentId);
-    const room = doc.roomId ? rooms.find(r => r._id === doc.roomId) : null;
+  const renderLanguage = (_, row) => (
+    <LanguageIcon language={row.document.language} />
+  );
 
-    return !!doc && <DocumentInfoCell doc={doc} room={room} />;
-  };
+  const renderTitle = (_, row) => (
+    <DocumentInfoCell doc={row.document} room={row.room} />
+  );
 
-  const renderCellTags = tags => (
+  const renderCellTags = (_, row) => (
     <div>
       <ItemsExpander
         className="SearchPage-cellTags"
         expandLinkClassName="SearchPage-cellTagsExpandLink"
-        items={tags}
+        items={row.document.tags}
         renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
         />
     </div>
@@ -139,20 +132,19 @@ function Search({ PageTemplate }) {
   const columns = [
     {
       title: t('common:title'),
-      dataIndex: 'title',
       key: 'title',
       render: renderTitle
     },
     {
       title: t('common:tags'),
-      dataIndex: 'tags',
+      key: 'tags',
       render: renderCellTags,
       responsive: ['md'],
       width: '45%'
     },
     {
       title: t('common:language'),
-      dataIndex: 'language',
+      key: 'language',
       render: renderLanguage
     }
   ];
