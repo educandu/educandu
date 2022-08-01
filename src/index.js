@@ -64,7 +64,7 @@ export default async function educandu(options) {
     }
 
     if (serverConfig.initialUser) {
-      const existingUser = await userService.getUserByEmailAddress(serverConfig.initialUser.email);
+      const existingUser = await userService.getActiveUserByEmailAddress(serverConfig.initialUser.email);
       if (existingUser) {
         logger.info('User with initial user email address already exists, skipping creation');
       } else {
