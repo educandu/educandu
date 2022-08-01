@@ -57,7 +57,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       </FormItem>
       <div>
         <FormItem label={t('common:access')} name="access" initialValue={room.access} tooltip={t('accessInfo')}>
-          <RadioGroup disabled={editMode}>
+          <RadioGroup disabled>
             <RadioButton value={ROOM_ACCESS.private}>{t('common:accessType_private')}</RadioButton>
             <RadioButton value={ROOM_ACCESS.public}>{t('common:accessType_public')}</RadioButton>
           </RadioGroup>

@@ -2,8 +2,8 @@ roomNameRequired:
   en: Please specify a room name
   de: Bitte geben Sie einen Raumnamen an
 accessInfo:
-  en: Public rooms are visible to all users, private rooms only to room members.
-  de: Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.
+  en: Public rooms are visible to all users, private rooms only to room members. Public rooms are currently not allowed.
+  de: Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind in der Moment nicht erlaubt.
 documentsModeInfo:
   en: In exclusive room documents can be managed only by the owner, in collaborative rooms by all room members.
   de: In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern.
