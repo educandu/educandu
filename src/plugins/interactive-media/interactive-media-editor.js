@@ -158,8 +158,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     }
   };
 
-  const handleSourceUrlChange = value => {
-    changeContent({ sourceUrl: value });
+  const handleSourceUrlChange = event => {
+    changeContent({ sourceUrl: event.target.value });
   };
 
   const handleSourceUrlBlur = event => {
