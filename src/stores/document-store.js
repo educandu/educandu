@@ -95,7 +95,7 @@ class DocumentStore {
 
   getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
     return this.collection.find(
-      { archived: false, origin, access: DOCUMENT_ACCESS.public },
+      { archived: false, origin, access: DOCUMENT_ACCESS.public, roomId: null },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }
