@@ -30,7 +30,7 @@ describe('user-controller', () => {
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
       getUserById: sandbox.stub(),
-      getUserByEmailAddress: sandbox.stub(),
+      getActiveUserByEmailAddress: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub(),
@@ -385,7 +385,7 @@ describe('user-controller', () => {
 
         res.on('end', resolve);
 
-        userService.getUserByEmailAddress.resolves(user);
+        userService.getActiveUserByEmailAddress.resolves(user);
         userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
@@ -424,7 +424,7 @@ describe('user-controller', () => {
 
         res.on('end', resolve);
 
-        userService.getUserByEmailAddress.resolves(null);
+        userService.getActiveUserByEmailAddress.resolves(null);
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
       }));

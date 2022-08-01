@@ -45,8 +45,8 @@ class UserStore {
       : Promise.resolve([]);
   }
 
-  getUserByEmailAddress(email, { session } = {}) {
-    return this.collection.findOne({ email }, { session });
+  getActiveUserByEmailAddress(email, { session } = {}) {
+    return this.collection.findOne({ email, accountClosedOn: null }, { session });
   }
 
   saveUser(user, { session } = {}) {

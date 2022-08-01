@@ -45,8 +45,8 @@ class UserService {
     return this.userStore.getUserById(id);
   }
 
-  getUserByEmailAddress(email) {
-    return email ? this.userStore.getUserByEmailAddress(email.toLowerCase()) : null;
+  getActiveUserByEmailAddress(email) {
+    return email ? this.userStore.getActiveUserByEmailAddress(email.toLowerCase()) : null;
   }
 
   async updateUserAccount({ userId, provider, email }) {
