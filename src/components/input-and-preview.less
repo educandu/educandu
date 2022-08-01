@@ -1,7 +1,7 @@
 .InputAndPreview {
   display: grid;
   gap: 5px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 50% 50%;
 
   @media @edu-media-phone {
     grid-template-columns: 1fr;
@@ -17,6 +17,6 @@
   background-color: @edu-background-color-light;
   padding: 4px 11px;
   display: grid;
-  min-height: @edu-control-height-base;
+  min-height: 2 * @edu-control-height-base;
   border-color: @edu-border-color-light;
 }
