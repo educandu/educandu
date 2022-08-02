@@ -1315,7 +1315,7 @@
     "language": "de",
     "resources": {
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
-      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind in der Moment nicht erlaubt.",
+      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind im Moment nicht erlaubt.",
       "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },
