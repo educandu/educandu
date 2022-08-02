@@ -155,6 +155,8 @@ export const HORIZONTAL_ALIGNMENT = {
   right: 'right'
 };
 
+export const CDN_URL_PREFIX = 'cdn://';
+
 export const AVATAR_SIZE = 110;
 
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';

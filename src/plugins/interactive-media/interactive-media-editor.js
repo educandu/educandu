@@ -24,8 +24,8 @@ import MediaRangeSelector from '../../components/media-range-selector.js';
 import { Button, Divider, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { analyzeMediaUrl, determineMediaDuration, ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
+import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -328,7 +328,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
               <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
+                addonBefore={CDN_URL_PREFIX}
                 value={sourceUrl}
                 onChange={handleSourceUrlChange}
                 onBlur={handleSourceUrlBlur}

@@ -1,9 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import { escapeHtml } from '../utils/string-utils.js';
-import { RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceType } from '../utils/resource-utils.js';
-
-const CDN_URL_PREFIX = 'cdn://';
+import { CDN_URL_PREFIX, RESOURCE_TYPE } from '../domain/constants.js';
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
 const imageInsideOfLinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
