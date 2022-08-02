@@ -38,35 +38,44 @@ function ItemPanel({
     }
   };
 
-  const items = [
-    {
+  const items = [];
+  if (onMoveUp) {
+    items.push({
       key: 'moveUp',
       label: t('common:moveUp'),
       icon: <MoveUpIcon className="u-dropdown-icon" />,
       disabled: index === 0
-    },
-    {
+    });
+  }
+  if (onMoveDown) {
+    items.push({
       key: 'moveDown',
       label: t('common:moveDown'),
       icon: <MoveDownIcon className="u-dropdown-icon" />,
       disabled: index === itemsCount - 1
-    },
-    {
+    });
+  }
+  if (onDelete) {
+    items.push({
       key: 'delete',
       label: t('common:delete'),
       icon: <DeleteIcon className="u-dropdown-icon" />,
       danger: true,
       disabled: itemsCount === 1
+    });
+  }
+
+  const renderMenu = () => {
+    if (!items.length) {
+      return null;
     }
-  ];
-
-  const menu = <Menu items={items} onClick={handleMenuClick} />;
-
-  const renderMenu = () => (
-    <Dropdown overlay={menu} placement="bottomRight" onClick={handleDropdownClick}>
-      <Button type="ghost" icon={<SettingsIcon />} size="small" />
-    </Dropdown>
-  );
+    const menu = <Menu items={items} onClick={handleMenuClick} />;
+    return (
+      <Dropdown overlay={menu} placement="bottomRight" onClick={handleDropdownClick}>
+        <Button type="ghost" icon={<SettingsIcon />} size="small" />
+      </Dropdown>
+    );
+  };
 
   return (
     <Collapse className="ItemPanel" defaultActiveKey="panel">
@@ -80,8 +89,8 @@ function ItemPanel({
 ItemPanel.propTypes = {
   children: PropTypes.node.isRequired,
   header: PropTypes.string,
-  index: PropTypes.number.isRequired,
-  itemsCount: PropTypes.number.isRequired,
+  index: PropTypes.number,
+  itemsCount: PropTypes.number,
   onDelete: PropTypes.func,
   onMoveDown: PropTypes.func,
   onMoveUp: PropTypes.func
@@ -89,9 +98,11 @@ ItemPanel.propTypes = {
 
 ItemPanel.defaultProps = {
   header: '',
-  onDelete: () => {},
-  onMoveDown: () => {},
-  onMoveUp: () => {}
+  index: 0,
+  itemsCount: 1,
+  onDelete: null,
+  onMoveDown: null,
+  onMoveUp: null
 };
 
 export default ItemPanel;

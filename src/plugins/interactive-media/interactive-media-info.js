@@ -7,7 +7,7 @@ import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
-class InteractiveMediaInfo {
+class MultitrackMediaInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
 
   static get typeName() { return 'interactive-media'; }
@@ -89,4 +89,4 @@ class InteractiveMediaInfo {
   }
 }
 
-export default InteractiveMediaInfo;
+export default MultitrackMediaInfo;

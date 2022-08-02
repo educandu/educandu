@@ -34,7 +34,7 @@ class MultitrackMediaInfo {
 
   getDefaultMainTrack(t) {
     return {
-      name: `[${t('multitrackMedia:mainTrackName')}]`,
+      name: `[${t('multitrackMedia:mainTrack')}]`,
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -47,7 +47,7 @@ class MultitrackMediaInfo {
 
   getDefaultSecondaryTrack(t, index) {
     return {
-      name: `[${t('multitrackMedia:secondaryTrackName', { number: index + 1 })}]`,
+      name: `[${t('multitrackMedia:secondaryTrack', { number: index + 1 })}]`,
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       copyrightNotice: '',

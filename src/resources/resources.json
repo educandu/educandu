@@ -1837,16 +1837,16 @@
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
-      "mainTrackName": "Hauptspur",
-      "secondaryTrackName": "Track {number}"
+      "mainTrack": "Main track",
+      "secondaryTrack": "Track {number}"
     }
   },
   {
     "namespace": "multitrackMedia",
     "language": "de",
     "resources": {
-      "mainTrackName": "Main track",
-      "secondaryTrackName": "Spur {number}"
+      "mainTrack": "Hauptspur",
+      "secondaryTrack": "Spur {number}"
     }
   },
   {
