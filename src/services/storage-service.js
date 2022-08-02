@@ -15,7 +15,7 @@ import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, DOCUMENT_ACCESS, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, CDN_URL_PREFIX, DOCUMENT_ACCESS, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -344,7 +344,7 @@ export default class StorageService {
       parentPath: currentDirectorySegments.length ? currentDirectorySegments.slice(0, -1).join('/') : null,
       path: currentDirectorySegments.join('/'),
       url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
-      portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
+      portableUrl: `${CDN_URL_PREFIX}${encodedCurrentDirectorySegments.join('/')}`,
       createdOn: null,
       type: CDN_OBJECT_TYPE.directory,
       size: null
@@ -360,7 +360,7 @@ export default class StorageService {
         parentPath: parentDirectorySegments.length ? parentDirectorySegments.slice(0, -1).join('/') : null,
         path: parentDirectorySegments.join('/'),
         url: [this.serverConfig.cdnRootUrl, ...encodedParentDirectorySegments].join('/'),
-        portableUrl: `cdn://${encodedParentDirectorySegments.join('/')}`,
+        portableUrl: `${CDN_URL_PREFIX}${encodedParentDirectorySegments.join('/')}`,
         createdOn: null,
         type: CDN_OBJECT_TYPE.directory,
         size: null
@@ -394,7 +394,7 @@ export default class StorageService {
             parentPath: objectSegments.slice(0, -1).join('/'),
             path: objectSegments.join('/'),
             url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
-            portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
+            portableUrl: `${CDN_URL_PREFIX}${encodedObjectSegments.join('/')}`,
             createdOn: isDirectory ? null : obj.lastModified,
             type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
             size: isDirectory ? null : obj.size
