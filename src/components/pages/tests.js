@@ -9,10 +9,12 @@ import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaRangeSelector from '../media-range-selector.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import MediaRangeSelector from '../media-range-selector.js';
+import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 
 const { TabPane } = Tabs;
 
@@ -81,6 +83,9 @@ function Tests({ PageTemplate }) {
   const [nstaValue4, setNstaValue4] = useState('Hello World');
   const [nstaValue5, setNstaValue5] = useState('Hello World');
   const [nstaValue6, setNstaValue6] = useState('Hello World');
+
+  // MultitrackMedia Plugin
+  const multitrackMediaContent = { width: 100 };
 
   return (
     <PageTemplate>
@@ -219,6 +224,18 @@ function Tests({ PageTemplate }) {
                 </Form.Item>
               </div>
             </Form>
+          </TabPane>
+          <TabPane tab="MultitrackMediaPlugin" key="MultitrackMediaPlugin">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+              <div>
+                <h4>Display</h4>
+                <MultitrackMediaDisplay content={multitrackMediaContent} />
+              </div>
+              <div>
+                <h4>Editor</h4>
+                <MultitrackMediaEditor content={multitrackMediaContent} />
+              </div>
+            </div>
           </TabPane>
         </Tabs>
       </div>
