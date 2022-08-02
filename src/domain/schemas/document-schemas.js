@@ -23,7 +23,7 @@ export const createDocumentDataBodySchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
   sections: joi.array().items(sectionSchema),
-  roomId: idOrKeySchema,
+  roomId: idOrKeySchema.allow(null),
   dueOn: joi.string().allow('')
 });
 
