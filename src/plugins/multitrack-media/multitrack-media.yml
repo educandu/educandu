@@ -1,0 +1,6 @@
+mainTrackName:
+  en: Hauptspur
+  de: Main track
+secondaryTrackName:
+  en: Track {number}
+  de: Spur {number}
