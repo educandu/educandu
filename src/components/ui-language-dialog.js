@@ -18,8 +18,11 @@ function UiLanguageDialog({ visible, onClose }) {
 
   const handleCancel = () => onClose?.();
 
-  const handleLanguageChange = language => {
+  const handleLanguageChange = (language, close) => {
     setSelectedLanguage(language);
+    if (close) {
+      handleOk();
+    }
   };
 
   return (
@@ -29,7 +32,8 @@ function UiLanguageDialog({ visible, onClose }) {
         {supportedUiLanguages.map(language => (
           <div
             key={language}
-            onClick={() => handleLanguageChange(language)}
+            onClick={() => handleLanguageChange(language, false)}
+            onDoubleClick={() => handleLanguageChange(language, true)}
             className={classNames('UiLanguageDialog-language', { 'is-selected': selectedLanguage === language })}
             >
             <LanguageFlagAndName language={language} stacked />
