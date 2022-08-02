@@ -3,6 +3,7 @@ import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
 import { getResourceExtension } from './resource-utils.js';
 import {
+  CDN_URL_PREFIX,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
@@ -141,7 +142,7 @@ export function urlToStorageLocationPath(url) {
 }
 
 export function storageLocationPathToUrl(path) {
-  return path ? `cdn://${path}` : '';
+  return path ? `${CDN_URL_PREFIX}${path}` : '';
 }
 
 export function componseUniqueFileName(fileName, parentPath = null) {

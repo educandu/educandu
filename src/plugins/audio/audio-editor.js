@@ -2,12 +2,10 @@ import React from 'react';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
-import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
@@ -16,7 +14,6 @@ const RadioButton = Radio.Button;
 
 function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
-  const clientConfig = useService(ClientConfig);
 
   const { sourceType, sourceUrl, copyrightNotice } = content;
 
@@ -73,7 +70,7 @@ function AudioEditor({ content, onContentChanged }) {
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
               <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
+                addonBefore={CDN_URL_PREFIX}
                 value={sourceUrl}
                 onChange={handleSourceUrlValueChange}
                 />
