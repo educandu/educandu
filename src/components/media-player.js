@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { useDedupedCallback } from '../ui/hooks.js';
 
 const SOURCE_TYPE = {
   none: 'none',
@@ -96,6 +97,9 @@ function MediaPlayer({
   const [sourceUrl, setSourceUrl] = useState(sourceType === SOURCE_TYPE.eager ? source : null);
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
+  const triggerReadyIfNeeded = useDedupedCallback(onReady);
+  const triggerPlayStateChangeIfNeeded = useDedupedCallback(onPlayStateChange);
+
   useEffect(() => {
     setSourceUrl(sourceType === SOURCE_TYPE.eager ? source : null);
   }, [source, sourceType]);
@@ -164,7 +168,7 @@ function MediaPlayer({
 
   const handlePlayStateChange = newPlayState => {
     setPlayState(newPlayState);
-    onPlayStateChange(newPlayState);
+    triggerPlayStateChangeIfNeeded(newPlayState);
   };
 
   const handleDownloadClick = async () => {
@@ -177,7 +181,7 @@ function MediaPlayer({
 
   const handleDuration = duration => {
     setDurationInMilliseconds(duration);
-    onReady();
+    triggerReadyIfNeeded();
     switch (lazyLoadCompletedAction) {
       case LAZY_LOAD_COMPLETED_ACTION.play:
         handleTogglePlay();

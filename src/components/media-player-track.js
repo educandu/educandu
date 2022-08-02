@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import React, { useRef, useState } from 'react';
 import AudioIcon from './icons/general/audio-icon.js';
+import React, { useEffect, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../utils/media-utils.js';
 
@@ -32,7 +32,20 @@ function MediaPlayerTrack({
   const [sourceDuration, setSourceDuration] = useState(0);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
+  const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+
+  useEffect(() => {
+    if (playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1]) {
+      setLastPlaybackRange(playbackRange);
+      onDuration(sourceDuration * (playbackRange[1] - playbackRange[0]));
+      setCurrentPlayState(MEDIA_PLAY_STATE.initializing);
+      onPlayStateChange?.(MEDIA_PLAY_STATE.initializing);
+      playerRef.current.seekTo(playbackRange[0]);
+      setLastProgressTimecode(0);
+      onProgress?.(0);
+    }
+  }, [playbackRange, lastPlaybackRange, sourceDuration, currentPlayState, onDuration, onProgress, onPlayStateChange]);
 
   const changePlayState = newPlayState => {
     setCurrentPlayState(newPlayState);
@@ -40,7 +53,7 @@ function MediaPlayerTrack({
   };
 
   const changeProgress = newSourceTimecode => {
-    const trackStartTimecode = playbackRange[0] * sourceDuration;
+    const trackStartTimecode = lastPlaybackRange[0] * sourceDuration;
     setLastProgressTimecode(newSourceTimecode);
     onProgress?.(newSourceTimecode - trackStartTimecode);
   };
@@ -50,8 +63,8 @@ function MediaPlayerTrack({
       return;
     }
 
-    const newTrackStartTimecode = playbackRange[0] * newSourceDuration;
-    const newTrackStopTimecode = playbackRange[1] * newSourceDuration;
+    const newTrackStartTimecode = lastPlaybackRange[0] * newSourceDuration;
+    const newTrackStopTimecode = lastPlaybackRange[1] * newSourceDuration;
 
     if ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode)) {
       playerRef.current.seekTo(newTrackStartTimecode / newSourceDuration);
@@ -86,8 +99,8 @@ function MediaPlayerTrack({
   trackRef.current = {
     seekToPosition(trackPosition) {
       setLastSeekTimestamp(Date.now());
-      const trackStartTimecode = playbackRange[0] * sourceDuration;
-      const sourcePosition = getSourcePositionFromTrackPosition(trackPosition, playbackRange);
+      const trackStartTimecode = lastPlaybackRange[0] * sourceDuration;
+      const sourcePosition = getSourcePositionFromTrackPosition(trackPosition, lastPlaybackRange);
       const sourceTimecode = sourcePosition * sourceDuration;
       const trackTimecode = sourceTimecode - trackStartTimecode;
       playerRef.current.seekTo(sourcePosition);
@@ -95,7 +108,7 @@ function MediaPlayerTrack({
       return { trackPosition, trackTimecode, sourcePosition, sourceTimecode };
     },
     seekToTimecode(trackTimecode) {
-      const trackDuration = getTrackDurationFromSourceDuration(sourceDuration, playbackRange);
+      const trackDuration = getTrackDurationFromSourceDuration(sourceDuration, lastPlaybackRange);
       return trackRef.current.seekToPosition(trackDuration ? trackTimecode / trackDuration : 0);
     },
     play() {
@@ -134,9 +147,9 @@ function MediaPlayerTrack({
 
   const handleProgress = progress => {
     const currentSourceTimestamp = progress.played * sourceDuration;
-    const trackStopTimecode = playbackRange[1] * sourceDuration;
+    const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
-    if (currentSourceTimestamp > trackStopTimecode) {
+    if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
       changeProgress(trackStopTimecode);
       handleEnded();
@@ -152,7 +165,7 @@ function MediaPlayerTrack({
 
   const handleDuration = sourceDurationInSeconds => {
     const newSourceDuration = sourceDurationInSeconds * 1000;
-    const newTrackDuration = (playbackRange[1] - playbackRange[0]) * newSourceDuration;
+    const newTrackDuration = (lastPlaybackRange[1] - lastPlaybackRange[0]) * newSourceDuration;
     setSourceDuration(newSourceDuration);
     onDuration(newTrackDuration);
     seekToStartIfNecessary(newSourceDuration);
