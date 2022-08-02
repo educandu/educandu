@@ -40,8 +40,8 @@ const formItemLayout = {
 
 const tailFormItemLayout = {
   wrapperCol: {
-    span: 14,
-    offset: 4
+    xs: { span: 18, offset: 0 },
+    sm: { span: 14, offset: 4 }
   }
 };
 
