@@ -28,9 +28,6 @@ startTimecode:
 duration:
   en: Duration
   de: Zeitdauer
-question:
-  en: Question
-  de: Frage
 answers:
   en: Answers
   de: Antworten

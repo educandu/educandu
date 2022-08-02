@@ -122,7 +122,7 @@ function InteractiveMediaDisplay({ content }) {
       <div className="InteractiveMediaDisplay-overlay">
         <div className="InteractiveMediaDisplay-overlayChapterTitle">{chapters[interactingChapterIndex].title}</div>
         <div className="InteractiveMediaDisplay-overlayChapterContent">
-          <Markdown>{chapters[interactingChapterIndex].question}</Markdown>
+          <Markdown>{chapters[interactingChapterIndex].text}</Markdown>
           <RadioGroup
             onChange={handleAnswerIndexChange}
             className="InteractiveMediaDisplay-overlayChapterAnswers"

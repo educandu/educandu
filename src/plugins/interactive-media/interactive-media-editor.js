@@ -221,10 +221,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterQuestionChange = event => {
+  const handleChapterTextChange = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], question: value };
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], text: value };
     changeContent({ chapters: newChapters });
   };
 
@@ -444,12 +444,12 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 value={chapters[selectedChapterIndex].title}
                 />
             </FormItem>
-            <FormItem label={t('question')} {...formItemLayout}>
+            <FormItem label={t('common:text')} {...formItemLayout}>
               <MarkdownInput
                 preview
                 disabled={!selectedChapterFraction}
-                onChange={handleChapterQuestionChange}
-                value={chapters?.[selectedChapterIndex].question || ''}
+                onChange={handleChapterTextChange}
+                value={chapters?.[selectedChapterIndex].text || ''}
                 />
             </FormItem>
             <FormItem {...tailFormItemLayout}>
