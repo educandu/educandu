@@ -4,12 +4,10 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { LINK_SOURCE_TYPE } from './constants.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
-import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
+import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
@@ -18,7 +16,6 @@ const FormItem = Form.Item;
 
 function ImageTileEditor({ index, image, description, link, onChange }) {
   const { t } = useTranslation('imageTiles');
-  const clientConfig = useService(ClientConfig);
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -85,7 +82,7 @@ function ImageTileEditor({ index, image, description, link, onChange }) {
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div className="u-input-and-button">
             <Input
-              addonBefore={`${clientConfig.cdnRootUrl}/`}
+              addonBefore={CDN_URL_PREFIX}
               value={image.sourceUrl}
               onChange={handleInternalImageUrlValueChanged}
               />

@@ -4,95 +4,96 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('interactive-media-info', () => {
   let sut;
+  let result;
+  let content;
+
+  const otherRoomId = '67890';
+  const currentRoomId = '12345';
+
   beforeEach(() => {
     sut = new InteractiveMediaInfo(new GithubFlavoredMarkdown());
   });
 
   describe('redactContent', () => {
     it('redacts the copyrightNotice', () => {
-      const input = {
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
-        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: `[Click me](cdn://rooms/${currentRoomId}/media/my-file.pdf)`
       };
-      const result = sut.redactContent(input, '67890');
+      result = sut.redactContent(content, otherRoomId);
       expect(result.copyrightNotice).toBe('[Click me]()');
     });
 
     it('redacts the media source url', () => {
-      const input = {
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
-        sourceUrl: 'rooms/12345/media/my-video.mp4',
+        sourceUrl: `rooms/${currentRoomId}/media/my-video.mp4`,
         copyrightNotice: ''
       };
-      const result = sut.redactContent(input, '67890');
-      expect(result.sourceUrl).toBe('');
-    });
-
-    it('redacts the media source url', () => {
-      const input = {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
-        sourceUrl: 'rooms/12345/media/my-video.mp4',
-        copyrightNotice: ''
-      };
-      const result = sut.redactContent(input, '67890');
+      result = sut.redactContent(content, otherRoomId);
       expect(result.sourceUrl).toBe('');
     });
 
     it('leaves accessible paths intact', () => {
-      const input = {
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
-        sourceUrl: 'rooms/12345/media/my-video.mp4',
-        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        sourceUrl: `rooms/${currentRoomId}/media/my-video.mp4`,
+        copyrightNotice: `[Click me](cdn://rooms/${currentRoomId}/media/my-file.pdf)`
       };
-      const result = sut.redactContent(input, '12345');
-      expect(result).toStrictEqual(input);
+      result = sut.redactContent(content, currentRoomId);
+      expect(result).toStrictEqual(content);
     });
   });
 
   describe('getCdnResources', () => {
     it('returns CDN resources from copyrightNotice', () => {
-      const result = sut.getCdnResources({
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
-      });
+      };
+      result = sut.getCdnResources(content);
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
 
     it('returns empty list for a YouTube resource', () => {
-      const result = sut.getCdnResources({
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: 'https://youtube.com/something',
         copyrightNotice: ''
-      });
+      };
+      result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
     });
 
     it('returns empty list for an external resource', () => {
-      const result = sut.getCdnResources({
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/video.mp4',
         copyrightNotice: ''
-      });
+      };
+      result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
     });
 
     it('returns empty list for an internal resource without url', () => {
-      const result = sut.getCdnResources({
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: null,
         copyrightNotice: ''
-      });
+      };
+      result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
     });
 
     it('returns a list with the url for an internal resource', () => {
-      const result = sut.getCdnResources({
+      content = {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'media/some-video.mp4',
         copyrightNotice: ''
-      });
+      };
+      result = sut.getCdnResources(content);
       expect(result).toEqual(['media/some-video.mp4']);
     });
   });
