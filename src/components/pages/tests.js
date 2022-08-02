@@ -9,19 +9,14 @@ import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaRangeSelector from '../media-range-selector.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import MediaRangeSelector from '../media-range-selector.js';
 
 const { TabPane } = Tabs;
 
-let timelineCounter = 0;
-const createTimelinePart = (startPosition = 0) => {
-  timelineCounter += 1;
-  const key = `Part ${timelineCounter}`;
-  return { key, title: key, startPosition };
-};
+const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
   // Page
@@ -35,22 +30,25 @@ function Tests({ PageTemplate }) {
 
   // Timeline
   const [timelineDuration, setTimelineDuration] = useState(5 * 60 * 1000);
-  const [timelineParts, setTimelineParts] = useState([createTimelinePart(0), createTimelinePart(0.25), createTimelinePart(0.5)]);
+  const [timelineParts, setTimelineParts] = useState([createTimelinePart(0, '1'), createTimelinePart(0.25, '2'), createTimelinePart(0.5, '3')]);
   const handleTimelinePartAdd = startPosition => {
-    setTimelineParts(oldParts => [...oldParts, createTimelinePart(startPosition)].sort(by(p => p.startTimecode)));
+    setTimelineParts(oldParts => [
+      ...oldParts,
+      createTimelinePart(startPosition, `${Math.max(...oldParts.map(p => Number(p.key))) + 1}`)
+    ].sort(by(p => p.startPosition)));
   };
   const handleTimelinePartDelete = key => {
     const partIndex = timelineParts.findIndex(p => p.key === key);
-    const deletedPartTimeCode = timelineParts[partIndex].startTimecode;
+    const deletedPartTimeCode = timelineParts[partIndex].startPosition;
     const newParts = removeItemAt(timelineParts, partIndex);
     const followingPart = newParts[partIndex];
     if (followingPart) {
-      followingPart.startTimecode = deletedPartTimeCode;
+      followingPart.startPosition = deletedPartTimeCode;
     }
-    setTimelineParts(newParts.sort(by(p => p.startTimecode)));
+    setTimelineParts(newParts.sort(by(p => p.startPosition)));
   };
-  const handleTimelineStartTimecodeChange = (key, newValue) => {
-    setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startTimecode: newValue } : p).sort(by(p => p.startTimecode)));
+  const handleTimelineStartPositionChange = (key, newValue) => {
+    setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startPosition: newValue } : p).sort(by(p => p.startTimecode)));
   };
 
   // MediaRangeSelector
@@ -100,7 +98,7 @@ function Tests({ PageTemplate }) {
               selectedPartIndex={-1}
               onPartAdd={handleTimelinePartAdd}
               onPartDelete={handleTimelinePartDelete}
-              onStartTimecodeChange={handleTimelineStartTimecodeChange}
+              onStartPositionChange={handleTimelineStartPositionChange}
               />
           </TabPane>
           <TabPane tab="MediaRangeSelector" key="MediaRangeSelector">
