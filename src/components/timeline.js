@@ -179,8 +179,14 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
 
   const renderExistingMarker = (marker, index) => {
+    const percentage = marker.left / timelineState.currentTimelineWidth;
+    const markerText = formatMediaPosition({ position: percentage, duration: durationInMilliseconds, formatPercentage });
+
     return (
       <div key={marker.key} className="Timeline-marker Timeline-marker--draggable" style={{ left: `${marker.left}px` }}>
+        {!!dragState && (
+          <div className="Timeline-markerTimecode">{markerText}</div>
+        )}
         <FlagOutlined onMouseDown={handleMarkerMouseDown(marker, index)} />
       </div>
     );
@@ -209,6 +215,11 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   const renderSegment = (segment, index) => {
     const classes = classNames('Timeline-segment', { 'is-selected': index === selectedPartIndex });
     return (
+    // <div key={segment.key} className="Timeline-marker">
+    //   <div className="Timeline-markerTimecode">
+    //     abc
+    //   </div>
+    // </div>
       <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>{segment.title}</div>
     );
   };
