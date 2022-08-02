@@ -1306,7 +1306,7 @@
     "language": "en",
     "resources": {
       "roomNameRequired": "Please specify a room name",
-      "accessInfo": "Public rooms are visible to all users, private rooms only to room members.",
+      "accessInfo": "Public rooms are visible to all users, private rooms only to room members. Public rooms are currently not allowed.",
       "documentsModeInfo": "In exclusive room documents can be managed only by the owner, in collaborative rooms by all room members."
     }
   },
@@ -1315,7 +1315,7 @@
     "language": "de",
     "resources": {
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
-      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
+      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind im Moment nicht erlaubt.",
       "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },
