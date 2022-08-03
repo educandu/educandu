@@ -2,12 +2,14 @@ import React from 'react';
 import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
+import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import MainTrackEditor from '../../components/main-track-editor.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
+import SecondaryTrackEditor from '../../components/secondary-track-editor.js';
 
 const FormItem = Form.Item;
 
@@ -30,6 +32,12 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleMainTrackNameChanged = event => {
     const { value } = event.target;
     changeContent({ mainTrack: { ...mainTrack, name: value } });
+  };
+
+  const handeSecondaryTrackContentChanged = (index, value) => {
+    const newSecondaryTracks = cloneDeep(secondaryTracks);
+    newSecondaryTracks[index] = value;
+    changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
   const handleMainTrackContentChanged = newMainTrackContent => {
@@ -78,7 +86,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             onMoveDown={handleMoveTrackDown}
             onDelete={handleDeleteTrack}
             >
-            {secondaryTrack.name}
+            <SecondaryTrackEditor content={secondaryTrack} onContentChanged={value => handeSecondaryTrackContentChanged(index, value)} />
           </ItemPanel>
         ))}
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
