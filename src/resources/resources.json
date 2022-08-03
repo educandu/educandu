@@ -1837,16 +1837,20 @@
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
-      "mainTrackName": "Hauptspur",
-      "secondaryTrackName": "Track {number}"
+      "mainTrack": "Main track",
+      "secondaryTrack": "Track {number}",
+      "addTrack": "Add track",
+      "trackMixer": "Track mixer"
     }
   },
   {
     "namespace": "multitrackMedia",
     "language": "de",
     "resources": {
-      "mainTrackName": "Main track",
-      "secondaryTrackName": "Spur {number}"
+      "mainTrack": "Hauptspur",
+      "secondaryTrack": "Spur {number}",
+      "addTrack": "Spur hinzufügen",
+      "trackMixer": "Spur-Mixer"
     }
   },
   {

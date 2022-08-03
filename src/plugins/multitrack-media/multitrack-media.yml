@@ -1,6 +1,12 @@
-mainTrackName:
-  en: Hauptspur
-  de: Main track
-secondaryTrackName:
+mainTrack:
+  en: Main track
+  de: Hauptspur
+secondaryTrack:
   en: Track {number}
   de: Spur {number}
+addTrack:
+  en: Add track
+  de: Spur hinzufügen
+trackMixer:
+  en: Track mixer
+  de: Spur-Mixer

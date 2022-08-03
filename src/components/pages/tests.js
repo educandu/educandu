@@ -4,14 +4,17 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import Timeline from '../timeline.js';
 import MediaPlayer from '../media-player.js';
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
+import { useService } from '../container-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaRangeSelector from '../media-range-selector.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
@@ -95,8 +98,11 @@ function Tests({ PageTemplate }) {
   const [nstaValue5, setNstaValue5] = useState('Hello World');
   const [nstaValue6, setNstaValue6] = useState('Hello World');
 
-  // MultitrackMedia Plugin
-  const multitrackMediaContent = { width: 100 };
+  // MultitrackMediaPlugin
+  const multitrackMediaInfo = useService(MultitrackMediaInfo);
+  const { t: multitrackTranslation } = useTranslation('multitrackMedia');
+  const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackMediaInfo.getDefaultContent(multitrackTranslation));
+  const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
 
   return (
     <PageTemplate>
@@ -255,7 +261,7 @@ function Tests({ PageTemplate }) {
               </div>
               <div>
                 <h4>Editor</h4>
-                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={() => {}} />
+                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
               </div>
             </div>
           </TabPane>

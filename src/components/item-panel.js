@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Menu, Button, Dropdown, Collapse } from 'antd';
 import DeleteIcon from '../components/icons/general/delete-icon.js';
@@ -18,13 +18,19 @@ function ItemPanel({
   itemsCount
 }) {
   const { t } = useTranslation();
+  const settingsButtonRef = useRef(null);
 
   const handleDropdownClick = event => {
     event.stopPropagation();
   };
 
+  const closeSettingsMenu = () => {
+    settingsButtonRef.current.click();
+  };
+
   const handleMenuClick = menuItem => {
     menuItem.domEvent.stopPropagation();
+    closeSettingsMenu();
 
     switch (menuItem.key) {
       case 'moveUp':
@@ -38,35 +44,45 @@ function ItemPanel({
     }
   };
 
-  const items = [
-    {
+  const items = [];
+  if (onMoveUp) {
+    items.push({
       key: 'moveUp',
       label: t('common:moveUp'),
       icon: <MoveUpIcon className="u-dropdown-icon" />,
       disabled: index === 0
-    },
-    {
+    });
+  }
+  if (onMoveDown) {
+    items.push({
       key: 'moveDown',
       label: t('common:moveDown'),
       icon: <MoveDownIcon className="u-dropdown-icon" />,
       disabled: index === itemsCount - 1
-    },
-    {
+    });
+  }
+  if (onDelete) {
+    const isDeleteDisabled = itemsCount <= 1;
+    items.push({
       key: 'delete',
       label: t('common:delete'),
       icon: <DeleteIcon className="u-dropdown-icon" />,
-      danger: true,
-      disabled: itemsCount === 1
+      danger: !isDeleteDisabled,
+      disabled: isDeleteDisabled
+    });
+  }
+
+  const renderMenu = () => {
+    if (!items.length) {
+      return null;
     }
-  ];
-
-  const menu = <Menu items={items} onClick={handleMenuClick} />;
-
-  const renderMenu = () => (
-    <Dropdown overlay={menu} placement="bottomRight" onClick={handleDropdownClick}>
-      <Button type="ghost" icon={<SettingsIcon />} size="small" />
-    </Dropdown>
-  );
+    const menu = <Menu items={items} onClick={handleMenuClick} />;
+    return (
+      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} onClick={handleDropdownClick}>
+        <Button ref={settingsButtonRef} type="ghost" icon={<SettingsIcon />} size="small" />
+      </Dropdown>
+    );
+  };
 
   return (
     <Collapse className="ItemPanel" defaultActiveKey="panel">
@@ -80,8 +96,8 @@ function ItemPanel({
 ItemPanel.propTypes = {
   children: PropTypes.node.isRequired,
   header: PropTypes.string,
-  index: PropTypes.number.isRequired,
-  itemsCount: PropTypes.number.isRequired,
+  index: PropTypes.number,
+  itemsCount: PropTypes.number,
   onDelete: PropTypes.func,
   onMoveDown: PropTypes.func,
   onMoveUp: PropTypes.func
@@ -89,9 +105,11 @@ ItemPanel.propTypes = {
 
 ItemPanel.defaultProps = {
   header: '',
-  onDelete: () => {},
-  onMoveDown: () => {},
-  onMoveUp: () => {}
+  index: 0,
+  itemsCount: 1,
+  onDelete: null,
+  onMoveDown: null,
+  onMoveUp: null
 };
 
 export default ItemPanel;
