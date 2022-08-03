@@ -1,10 +1,11 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MultitrackMediaIcon from './multitrack-media-icon.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { createDefaultContent } from './multitrack-media-utils.js';
 import MultitrackMediaDisplay from './multitrack-media-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class MultitrackMediaInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -32,36 +33,8 @@ class MultitrackMediaInfo {
     return (await import('./multitrack-media-editor.js')).default;
   }
 
-  getDefaultMainTrack(t) {
-    return {
-      name: `[${t('multitrackMedia:mainTrack')}]`,
-      sourceType: MEDIA_SOURCE_TYPE.internal,
-      sourceUrl: '',
-      aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-      showVideo: false,
-      copyrightNotice: '',
-      playbackRange: [0, 1],
-      volume: 1
-    };
-  }
-
-  getDefaultSecondaryTrack(t, index) {
-    return {
-      name: `[${t('multitrackMedia:secondaryTrack', { number: index + 1 })}]`,
-      sourceType: MEDIA_SOURCE_TYPE.internal,
-      sourceUrl: '',
-      copyrightNotice: '',
-      offsetTimecode: 0,
-      volume: 1
-    };
-  }
-
   getDefaultContent(t) {
-    return {
-      width: 100,
-      mainTrack: this.getDefaultMainTrack(t),
-      secondaryTracks: [this.getDefaultSecondaryTrack(t, 0)]
-    };
+    return createDefaultContent(t);
   }
 
   cloneContent(content) {

@@ -4,3 +4,6 @@ mainTrack:
 secondaryTrack:
   en: Track {number}
   de: Spur {number}
+addTrack:
+  en: Add track
+  de: Spur hinzufügen

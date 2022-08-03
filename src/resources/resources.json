@@ -1838,7 +1838,8 @@
     "language": "en",
     "resources": {
       "mainTrack": "Main track",
-      "secondaryTrack": "Track {number}"
+      "secondaryTrack": "Track {number}",
+      "addTrack": "Add track"
     }
   },
   {
@@ -1846,7 +1847,8 @@
     "language": "de",
     "resources": {
       "mainTrack": "Hauptspur",
-      "secondaryTrack": "Spur {number}"
+      "secondaryTrack": "Spur {number}",
+      "addTrack": "Spur hinzufügen"
     }
   },
   {

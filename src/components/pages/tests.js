@@ -101,7 +101,8 @@ function Tests({ PageTemplate }) {
   // MultitrackMediaPlugin
   const multitrackMediaInfo = useService(MultitrackMediaInfo);
   const { t: multitrackTranslation } = useTranslation('multitrackMedia');
-  const multitrackMediaContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
+  const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackMediaInfo.getDefaultContent(multitrackTranslation));
+  const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
 
   return (
     <PageTemplate>
@@ -260,7 +261,7 @@ function Tests({ PageTemplate }) {
               </div>
               <div>
                 <h4>Editor</h4>
-                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={() => {}} />
+                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
               </div>
             </div>
           </TabPane>
