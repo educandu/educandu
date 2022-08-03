@@ -212,7 +212,6 @@ MainTrackEditor.propTypes = {
     aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
     playbackRange: PropTypes.arrayOf(PropTypes.number),
     copyrightNotice: PropTypes.string
-
   }).isRequired,
   onContentChanged: PropTypes.func.isRequired,
   onDeterminingDuration: PropTypes.func,
