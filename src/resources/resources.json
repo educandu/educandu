@@ -526,6 +526,22 @@
     }
   },
   {
+    "namespace": "mainTrackEditor",
+    "language": "en",
+    "resources": {
+      "playbackRange": "Playback range",
+      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+    }
+  },
+  {
+    "namespace": "mainTrackEditor",
+    "language": "de",
+    "resources": {
+      "playbackRange": "Abspielbereich",
+      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+    }
+  },
+  {
     "namespace": "markdownHelp",
     "language": "en",
     "resources": {
@@ -1743,8 +1759,6 @@
       "editChapter": "Edit chapter",
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
-      "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
       "startTimecode": "Start time",
       "duration": "Duration",
       "answers": "Answers",
@@ -1769,8 +1783,6 @@
       "editChapter": "Kapitel bearbeiten",
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
-      "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "startTimecode": "Startzeit",
       "duration": "Zeitdauer",
       "answers": "Antworten",
