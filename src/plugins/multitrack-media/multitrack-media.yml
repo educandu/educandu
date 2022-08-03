@@ -7,3 +7,6 @@ secondaryTrack:
 addTrack:
   en: Add track
   de: Spur hinzufügen
+trackMixer:
+  en: Track mixer
+  de: Spur-Mixer

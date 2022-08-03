@@ -57,6 +57,9 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
       <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
         {t('addTrack')}
       </Button>
+      <ItemPanel header={t('trackMixer')}>
+        Track mixer
+      </ItemPanel>
     </div>
   );
 }

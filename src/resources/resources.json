@@ -1839,7 +1839,8 @@
     "resources": {
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
-      "addTrack": "Add track"
+      "addTrack": "Add track",
+      "trackMixer": "Track mixer"
     }
   },
   {
@@ -1848,7 +1849,8 @@
     "resources": {
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
-      "addTrack": "Spur hinzufügen"
+      "addTrack": "Spur hinzufügen",
+      "trackMixer": "Spur-Mixer"
     }
   },
   {
