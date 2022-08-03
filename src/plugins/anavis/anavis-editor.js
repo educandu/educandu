@@ -4,20 +4,18 @@ import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
-import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -28,7 +26,6 @@ const ButtonGroup = Button.Group;
 
 function AnavisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('anavis');
-  const clientConfig = useService(ClientConfig);
 
   const { width, parts, media } = content;
   const { kind, sourceType, sourceUrl, copyrightNotice, aspectRatio } = media;
@@ -320,7 +317,7 @@ function AnavisEditor({ content, onContentChanged }) {
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
               <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
+                addonBefore={CDN_URL_PREFIX}
                 value={sourceUrl}
                 onChange={handleInternalUrlValueChanged}
                 />

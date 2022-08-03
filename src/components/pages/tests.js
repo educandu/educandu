@@ -9,22 +9,19 @@ import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaRangeSelector from '../media-range-selector.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
+import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import MediaRangeSelector from '../media-range-selector.js';
 
 const { TabPane } = Tabs;
 
 const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
 const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
 
-let timelineCounter = 0;
-const createTimelinePart = (startPosition = 0) => {
-  timelineCounter += 1;
-  const key = `Part ${timelineCounter}`;
-  return { key, title: key, startPosition };
-};
+const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
   // Page
@@ -38,22 +35,25 @@ function Tests({ PageTemplate }) {
 
   // Timeline
   const [timelineDuration, setTimelineDuration] = useState(5 * 60 * 1000);
-  const [timelineParts, setTimelineParts] = useState([createTimelinePart(0), createTimelinePart(0.25), createTimelinePart(0.5)]);
+  const [timelineParts, setTimelineParts] = useState([createTimelinePart(0, '1'), createTimelinePart(0.25, '2'), createTimelinePart(0.5, '3')]);
   const handleTimelinePartAdd = startPosition => {
-    setTimelineParts(oldParts => [...oldParts, createTimelinePart(startPosition)].sort(by(p => p.startTimecode)));
+    setTimelineParts(oldParts => [
+      ...oldParts,
+      createTimelinePart(startPosition, `${Math.max(...oldParts.map(p => Number(p.key))) + 1}`)
+    ].sort(by(p => p.startPosition)));
   };
   const handleTimelinePartDelete = key => {
     const partIndex = timelineParts.findIndex(p => p.key === key);
-    const deletedPartTimeCode = timelineParts[partIndex].startTimecode;
+    const deletedPartTimeCode = timelineParts[partIndex].startPosition;
     const newParts = removeItemAt(timelineParts, partIndex);
     const followingPart = newParts[partIndex];
     if (followingPart) {
-      followingPart.startTimecode = deletedPartTimeCode;
+      followingPart.startPosition = deletedPartTimeCode;
     }
-    setTimelineParts(newParts.sort(by(p => p.startTimecode)));
+    setTimelineParts(newParts.sort(by(p => p.startPosition)));
   };
-  const handleTimelineStartTimecodeChange = (key, newValue) => {
-    setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startTimecode: newValue } : p).sort(by(p => p.startTimecode)));
+  const handleTimelineStartPositionChange = (key, newValue) => {
+    setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startPosition: newValue } : p).sort(by(p => p.startTimecode)));
   };
 
   // MediaRangeSelector
@@ -95,6 +95,9 @@ function Tests({ PageTemplate }) {
   const [nstaValue5, setNstaValue5] = useState('Hello World');
   const [nstaValue6, setNstaValue6] = useState('Hello World');
 
+  // MultitrackMedia Plugin
+  const multitrackMediaContent = { width: 100 };
+
   return (
     <PageTemplate>
       <div className="TestsPage">
@@ -113,7 +116,7 @@ function Tests({ PageTemplate }) {
               selectedPartIndex={-1}
               onPartAdd={handleTimelinePartAdd}
               onPartDelete={handleTimelinePartDelete}
-              onStartTimecodeChange={handleTimelineStartTimecodeChange}
+              onStartPositionChange={handleTimelineStartPositionChange}
               />
           </TabPane>
           <TabPane tab="MediaRangeSelector" key="MediaRangeSelector">
@@ -243,6 +246,18 @@ function Tests({ PageTemplate }) {
                 </Form.Item>
               </div>
             </Form>
+          </TabPane>
+          <TabPane tab="MultitrackMediaPlugin" key="MultitrackMediaPlugin">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+              <div>
+                <h4>Display</h4>
+                <MultitrackMediaDisplay content={multitrackMediaContent} />
+              </div>
+              <div>
+                <h4>Editor</h4>
+                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={() => {}} />
+              </div>
+            </div>
           </TabPane>
         </Tabs>
       </div>

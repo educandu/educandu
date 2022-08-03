@@ -2,11 +2,10 @@ import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import ClientConfig from '../../bootstrap/client-config.js';
+import { CDN_URL_PREFIX } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
-import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
@@ -20,7 +19,6 @@ const formItemLayout = {
 
 function PdfViewerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('pdfViewer');
-  const clientConfig = useService(ClientConfig);
 
   const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
 
@@ -58,7 +56,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div className="u-input-and-button">
             <Input
-              addonBefore={`${clientConfig.cdnRootUrl}/`}
+              addonBefore={CDN_URL_PREFIX}
               value={sourceUrl}
               onChange={handleSourceUrlChange}
               />

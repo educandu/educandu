@@ -50,7 +50,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     const timelineBounds = timelineRef.current.getBoundingClientRect();
 
     const currentLeft = event.clientX - timelineBounds.left;
-    const marker = timelineState.markers.find(m => m.key === dragState.marker.key);
+    const marker = { ...timelineState.markers.find(m => m.key === dragState.marker.key) };
 
     if (dragState.bounds.left > currentLeft && dragState.bounds.left !== marker.left) {
       marker.left = dragState.bounds.left;
@@ -63,6 +63,10 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     }
 
     setDragState(prev => ({ ...prev, marker }));
+    setTimelineState(prev => ({
+      ...prev,
+      markers: prev.markers.map(prevMarker => prevMarker.key === marker.key ? marker : prevMarker)
+    }));
 
     const newStartPosition = ensureValidMediaPosition(dragState.marker.left / timelineState.currentTimelineWidth);
     onStartPositionChange(dragState.marker.key, newStartPosition);
