@@ -5,7 +5,6 @@ import validation from '../../ui/validation.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import Timeline from '../../components/timeline.js';
 import { removeItemAt } from '../../utils/array-utils.js';
-import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
@@ -18,9 +17,9 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import MainTrackEditor from '../../components/main-track-editor.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
 const FormItem = Form.Item;
 
@@ -56,50 +55,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     setSelectedChapterFraction(nextChapterStartPosition - chapters[selectedChapterIndex].startPosition);
   }, [chapters, selectedChapterIndex, playbackDuration]);
 
-  const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
-    ? `${clientConfig.cdnRootUrl}/${url}`
-    : url || null;
-
-  const getMediaInformation = async url => {
-    const defaultResult = {
-      sanitizedUrl: url,
-      duration: 0,
-      range: [0, 1],
-      resourceType: RESOURCE_TYPE.unknown,
-      error: null
-    };
-
-    if (!url) {
-      return defaultResult;
-    }
-
-    try {
-      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
-      if (isInvalidSourceUrl) {
-        return defaultResult;
-      }
-
-      setIsDeterminingDuration(true);
-      const completeUrl = getFullSourceUrl(url);
-      const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
-      const duration = await determineMediaDuration(completeUrl);
-      const range = [
-        startTimecode ? ensureValidMediaPosition(startTimecode / duration) : playbackRange[0],
-        stopTimecode ? ensureValidMediaPosition(stopTimecode / duration) : playbackRange[1]
-      ];
-      return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
-    } catch (error) {
-      return { ...defaultResult, error };
-    } finally {
-      setIsDeterminingDuration(false);
-    }
-  };
-
-  useOnComponentMounted(async () => {
-    const { duration } = await getMediaInformation(sourceUrl);
-    setSourceDuration(duration);
-  });
-
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
 
@@ -108,6 +63,19 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
+  };
+
+  const handleMainTrackContentChange = changedContent => {
+    changeContent({ ...changedContent });
+  };
+
+  const handleDeterminingDuration = () => {
+    setIsDeterminingDuration(true);
+  };
+
+  const handleDurationDetermined = duration => {
+    setIsDeterminingDuration(false);
+    setSourceDuration(duration);
   };
 
   const handleChapterStartPositionChange = (key, newStartPosition) => {
@@ -208,10 +176,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleMainTrackContentChange = changedContent => {
-    changeContent({ ...changedContent });
-  };
-
   const renderAnswer = (answer, index) => (
     <div className="InteractiveMediaEditor-answer" key={index}>
       <MarkdownInput
@@ -241,6 +205,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       <Form layout="horizontal">
         <MainTrackEditor
           content={content}
+          onDeterminingDuration={handleDeterminingDuration}
+          onDurationDetermined={handleDurationDetermined}
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem label={t('common:width')} {...formItemLayout}>
@@ -250,7 +216,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>
 
         <MediaPlayer
-          source={getFullSourceUrl(sourceUrl)}
+          source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.preview : MEDIA_SCREEN_MODE.none}
           />
 

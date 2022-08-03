@@ -3,9 +3,9 @@ import Logger from '../common/logger.js';
 import validation from '../ui/validation.js';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
+import { Form, Input, Radio, Switch } from 'antd';
 import { handleError } from '../ui/error-helper.js';
 import { useOnComponentMounted } from '../ui/hooks.js';
-import { Form, Input, Radio, Spin, Switch } from 'antd';
 import ClientConfig from '../bootstrap/client-config.js';
 import MarkdownInput from '../components/markdown-input.js';
 import { getResourceType } from '../utils/resource-utils.js';
@@ -14,8 +14,8 @@ import { useService } from '../components/container-context.js';
 import { useNumberFormat } from '../components/locale-context.js';
 import MediaRangeSelector from '../components/media-range-selector.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../utils/storage-utils.js';
+import { formatMediaPosition, getFullSourceUrl, getMediaInformation } from '../utils/media-utils.js';
 import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -28,56 +28,31 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function MainTrackEditor({ content, onContentChanged }) {
+function MainTrackEditor({ content, onContentChanged, onDeterminingDuration, onDurationDetermined }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('interactiveMedia');
   const [sourceDuration, setSourceDuration] = useState(0);
-  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
 
-  const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
-    ? `${clientConfig.cdnRootUrl}/${url}`
-    : url || null;
+  const determineMediaInformationFromUrl = async url => {
+    onDeterminingDuration();
+    const result = await getMediaInformation({
+      t,
+      url,
+      sourceType,
+      playbackRange,
+      cdnRootUrl: clientConfig.cdnRootUrl
+    });
 
-  const getMediaInformation = async url => {
-    const defaultResult = {
-      sanitizedUrl: url,
-      duration: 0,
-      range: [0, 1],
-      resourceType: RESOURCE_TYPE.unknown,
-      error: null
-    };
+    setSourceDuration(result.duration);
+    onDurationDetermined(result.duration);
 
-    if (!url) {
-      return defaultResult;
-    }
-
-    try {
-      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
-      if (isInvalidSourceUrl) {
-        return defaultResult;
-      }
-
-      setIsDeterminingDuration(true);
-      const completeUrl = getFullSourceUrl(url);
-      const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
-      const duration = await determineMediaDuration(completeUrl);
-      const range = [
-        startTimecode ? ensureValidMediaPosition(startTimecode / duration) : playbackRange[0],
-        stopTimecode ? ensureValidMediaPosition(stopTimecode / duration) : playbackRange[1]
-      ];
-      return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
-    } catch (error) {
-      return { ...defaultResult, error };
-    } finally {
-      setIsDeterminingDuration(false);
-    }
+    return result;
   };
 
   useOnComponentMounted(async () => {
-    const { duration } = await getMediaInformation(sourceUrl);
-    setSourceDuration(duration);
+    await determineMediaInformationFromUrl(sourceUrl);
   });
 
   const changeContent = newContentValues => {
@@ -102,8 +77,7 @@ function MainTrackEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlChangeComplete = async value => {
-    const { sanitizedUrl, duration, range, resourceType, error } = await getMediaInformation(value);
-    setSourceDuration(duration);
+    const { sanitizedUrl, range, resourceType, error } = await determineMediaInformationFromUrl(value);
 
     const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: value })
@@ -158,7 +132,7 @@ function MainTrackEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div className="MainTrackEditor">
+    <Fragment>
       <FormItem label={t('common:source')} {...formItemLayout}>
         <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
           <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
@@ -217,23 +191,16 @@ function MainTrackEditor({ content, onContentChanged }) {
         <div className="u-input-and-button">
           <Input value={renderPlaybackRangeInfo()} readOnly />
           <MediaRangeSelector
-            sourceUrl={getFullSourceUrl(sourceUrl)}
             range={playbackRange}
             onRangeChange={handlePlaybackRangeChange}
+            sourceUrl={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
             />
         </div>
       </FormItem>
       <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
         <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
       </FormItem>
-
-      {isDeterminingDuration && (
-        <Fragment>
-          <div className="MainTrackEditor-overlay" />
-          <Spin className="MainTrackEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
-        </Fragment>
-      )}
-    </div>
+    </Fragment>
   );
 }
 
@@ -247,7 +214,14 @@ MainTrackEditor.propTypes = {
     copyrightNotice: PropTypes.string
 
   }).isRequired,
-  onContentChanged: PropTypes.func.isRequired
+  onContentChanged: PropTypes.func.isRequired,
+  onDeterminingDuration: PropTypes.func,
+  onDurationDetermined: PropTypes.func
+};
+
+MainTrackEditor.defaultProps = {
+  onDeterminingDuration: () => {},
+  onDurationDetermined: () => {}
 };
 
 export default MainTrackEditor;
