@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import MainTrackEditor from '../../components/main-track-editor.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
@@ -24,6 +25,15 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     const newContent = { ...content, ...newContentValues };
     const isInvalid = false;
     onContentChanged(newContent, isInvalid);
+  };
+
+  const handleMainTrackNameChanged = event => {
+    const { value } = event.target;
+    changeContent({ mainTrack: { ...mainTrack, name: value } });
+  };
+
+  const handleMainTrackContentChanged = newMainTrackContent => {
+    changeContent({ mainTrack: newMainTrackContent });
   };
 
   const handleWidthChanged = newValue => {
@@ -52,7 +62,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal">
         <ItemPanel header={t('mainTrack')}>
-          {mainTrack.name}
+          <FormItem label={t('common:name')} {...formItemLayout}>
+            <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
+          </FormItem>
+          <MainTrackEditor content={mainTrack} onContentChanged={handleMainTrackContentChanged} />
         </ItemPanel>
 
         {secondaryTracks.map((secondaryTrack, index) => (

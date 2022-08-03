@@ -1,0 +1,253 @@
+import PropTypes from 'prop-types';
+import Logger from '../common/logger.js';
+import validation from '../ui/validation.js';
+import { useTranslation } from 'react-i18next';
+import React, { Fragment, useState } from 'react';
+import { handleError } from '../ui/error-helper.js';
+import { useOnComponentMounted } from '../ui/hooks.js';
+import { Form, Input, Radio, Spin, Switch } from 'antd';
+import ClientConfig from '../bootstrap/client-config.js';
+import MarkdownInput from '../components/markdown-input.js';
+import { getResourceType } from '../utils/resource-utils.js';
+import ResourcePicker from '../components/resource-picker.js';
+import { useService } from '../components/container-context.js';
+import { useNumberFormat } from '../components/locale-context.js';
+import MediaRangeSelector from '../components/media-range-selector.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../utils/storage-utils.js';
+import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
+import { analyzeMediaUrl, determineMediaDuration, ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
+
+const logger = new Logger(import.meta.url);
+
+const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
+
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
+};
+
+function MainTrackEditor({ content, onContentChanged }) {
+  const clientConfig = useService(ClientConfig);
+  const { formatPercentage } = useNumberFormat();
+  const { t } = useTranslation('interactiveMedia');
+  const [sourceDuration, setSourceDuration] = useState(0);
+  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
+  const { sourceType, sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
+
+  const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
+    ? `${clientConfig.cdnRootUrl}/${url}`
+    : url || null;
+
+  const getMediaInformation = async url => {
+    const defaultResult = {
+      sanitizedUrl: url,
+      duration: 0,
+      range: [0, 1],
+      resourceType: RESOURCE_TYPE.unknown,
+      error: null
+    };
+
+    if (!url) {
+      return defaultResult;
+    }
+
+    try {
+      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+      if (isInvalidSourceUrl) {
+        return defaultResult;
+      }
+
+      setIsDeterminingDuration(true);
+      const completeUrl = getFullSourceUrl(url);
+      const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
+      const duration = await determineMediaDuration(completeUrl);
+      const range = [
+        startTimecode ? ensureValidMediaPosition(startTimecode / duration) : playbackRange[0],
+        stopTimecode ? ensureValidMediaPosition(stopTimecode / duration) : playbackRange[1]
+      ];
+      return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
+    } catch (error) {
+      return { ...defaultResult, error };
+    } finally {
+      setIsDeterminingDuration(false);
+    }
+  };
+
+  useOnComponentMounted(async () => {
+    const { duration } = await getMediaInformation(sourceUrl);
+    setSourceDuration(duration);
+  });
+
+  const changeContent = newContentValues => {
+    const newContent = { ...content, ...newContentValues };
+
+    const isInvalidSourceUrl
+      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
+      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+
+    onContentChanged(newContent, isInvalidSourceUrl);
+  };
+
+  const handleSourceTypeChange = event => {
+    const { value } = event.target;
+    changeContent({
+      sourceType: value,
+      sourceUrl: '',
+      range: [0, 1],
+      showVideo: false,
+      copyrightNotice: ''
+    });
+  };
+
+  const handleSourceUrlChangeComplete = async value => {
+    const { sanitizedUrl, duration, range, resourceType, error } = await getMediaInformation(value);
+    setSourceDuration(duration);
+
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
+    changeContent({
+      sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : value,
+      showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
+      playbackRange: range,
+      copyrightNotice: newCopyrightNotice
+    });
+
+    if (error) {
+      handleError({ error, logger, t });
+    }
+  };
+
+  const handleSourceUrlChange = event => {
+    changeContent({ sourceUrl: event.target.value });
+  };
+
+  const handleSourceUrlBlur = event => {
+    handleSourceUrlChangeComplete(event.target.value);
+  };
+
+  const handlePlaybackRangeChange = newRange => {
+    changeContent({ playbackRange: newRange });
+  };
+
+  const handleAspectRatioChanged = event => {
+    changeContent({ aspectRatio: event.target.value });
+  };
+
+  const handleShowVideoChanged = newShowVideo => {
+    changeContent({ showVideo: newShowVideo });
+  };
+
+  const handleCopyrightNoticeChanged = event => {
+    changeContent({ copyrightNotice: event.target.value });
+  };
+
+  const renderPlaybackRangeInfo = () => {
+    const from = playbackRange[0] !== 0
+      ? formatMediaPosition({ formatPercentage, position: playbackRange[0], duration: sourceDuration })
+      : 'start';
+
+    const to = playbackRange[1] !== 1
+      ? formatMediaPosition({ formatPercentage, position: playbackRange[1], duration: sourceDuration })
+      : 'end';
+
+    return t('playbackRangeInfo', { from, to });
+  };
+
+  return (
+    <div className="MainTrackEditor">
+      <FormItem label={t('common:source')} {...formItemLayout}>
+        <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
+          <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+          <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
+        </RadioGroup>
+      </FormItem>
+      {sourceType === MEDIA_SOURCE_TYPE.external && (
+      <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+      </FormItem>
+      )}
+      {sourceType === MEDIA_SOURCE_TYPE.internal && (
+      <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+        <div className="u-input-and-button">
+          <Input
+            addonBefore={CDN_URL_PREFIX}
+            value={sourceUrl}
+            onChange={handleSourceUrlChange}
+            onBlur={handleSourceUrlBlur}
+            />
+          <ResourcePicker
+            url={storageLocationPathToUrl(sourceUrl)}
+            onUrlChange={url => handleSourceUrlChangeComplete(urlToStorageLocationPath(url))}
+            />
+        </div>
+      </FormItem>
+      )}
+      {sourceType === MEDIA_SOURCE_TYPE.youtube && (
+      <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+      </FormItem>
+      )}
+      <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
+        <RadioGroup
+          size="small"
+          defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
+          value={aspectRatio}
+          onChange={handleAspectRatioChanged}
+          disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+          >
+          {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
+            <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+          ))}
+        </RadioGroup>
+      </FormItem>
+      <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
+        <Switch
+          size="small"
+          checked={showVideo}
+          onChange={handleShowVideoChanged}
+          disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+          />
+      </FormItem>
+      <FormItem label={t('playbackRange')} {...formItemLayout}>
+        <div className="u-input-and-button">
+          <Input value={renderPlaybackRangeInfo()} readOnly />
+          <MediaRangeSelector
+            sourceUrl={getFullSourceUrl(sourceUrl)}
+            range={playbackRange}
+            onRangeChange={handlePlaybackRangeChange}
+            />
+        </div>
+      </FormItem>
+      <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+        <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
+      </FormItem>
+
+      {isDeterminingDuration && (
+        <Fragment>
+          <div className="MainTrackEditor-overlay" />
+          <Spin className="MainTrackEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
+        </Fragment>
+      )}
+    </div>
+  );
+}
+
+MainTrackEditor.propTypes = {
+  content: PropTypes.shape({
+    sourceType: PropTypes.oneOf(Object.values(MEDIA_SOURCE_TYPE)),
+    sourceUrl: PropTypes.string,
+    showVideo: PropTypes.bool,
+    aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+    playbackRange: PropTypes.arrayOf(PropTypes.number),
+    copyrightNotice: PropTypes.string
+
+  }).isRequired,
+  onContentChanged: PropTypes.func.isRequired
+};
+
+export default MainTrackEditor;
