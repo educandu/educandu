@@ -18,6 +18,9 @@ import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICA
 
 const { TabPane } = Tabs;
 
+const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
+const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
+
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
@@ -60,15 +63,25 @@ function Tests({ PageTemplate }) {
   // MediaPlayer
   const mpPlayerRef = useRef();
   const mpEventLogRef = useRef();
-  const [mpSource, setMpSource] = useState('');
+  const [mpRange, setMpRange] = useState([0, 1]);
   const [mpEventLog, setMpEventLog] = useState('');
-  const [mpScreenMode, setMpScreenMode] = useState(MEDIA_SCREEN_MODE.none);
+  const [mpSource, setMpSource] = useState(EXTERNAL_VIDEO_URL);
+  const [mpScreenMode, setMpScreenMode] = useState(MEDIA_SCREEN_MODE.video);
   const handleMpEvent = (eventName, ...args) => {
-    setMpEventLog(currentLog => `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`);
+    setMpEventLog(currentLog => args.length
+      ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
+      : `${currentLog}${eventName}\n`);
     setTimeout(() => {
       const textarea = mpEventLogRef.current;
       textarea.scrollTop = textarea.scrollHeight;
     }, 0);
+  };
+  const handleRandomPlaybackRangeClick = () => {
+    let newRange = [0, 0];
+    while (newRange[1] - newRange[0] < 0.1) {
+      newRange = [Math.random(), Math.random()].sort();
+    }
+    setMpRange(newRange);
   };
 
   // ResourcePicker
@@ -113,8 +126,8 @@ function Tests({ PageTemplate }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <Button onClick={() => setMrsSource('')}>Reset</Button>
-              <Button onClick={() => setMrsSource('https://www.youtube.com/watch?v=H3hBitGg_NI')}>Set to YouTube</Button>
-              <Button onClick={() => setMrsSource('https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4')}>Set to External</Button>
+              <Button onClick={() => setMrsSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
+              <Button onClick={() => setMrsSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               Range: {JSON.stringify(mrsRange)}
@@ -130,6 +143,7 @@ function Tests({ PageTemplate }) {
               <div>
                 <MediaPlayer
                   source={mpSource}
+                  playbackRange={mpRange}
                   screenMode={mpScreenMode}
                   mediaPlayerRef={mpPlayerRef}
                   onPartEndReached={(...args) => handleMpEvent('onPartEndReached', ...args)}
@@ -143,11 +157,21 @@ function Tests({ PageTemplate }) {
               <div>
                 <h6>Source</h6>
                 <div>
-                  <Button onClick={() => setMpSource('https://www.youtube.com/watch?v=H3hBitGg_NI')}>Set to YouTube</Button>
-                  <Button onClick={() => setMpSource('https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4')}>Set to External</Button>
+                  <Button onClick={() => setMpSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
+                  <Button onClick={() => setMpSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
                 </div>
                 <div>{typeof mpSource === 'function' ? '<FUNC>' : String(mpSource)}</div>
-                <h6>Screen mode</h6>
+                <h6 style={{ marginTop: '15px' }}>Media Range</h6>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto) 1fr', gap: '25px', alignItems: 'center' }}>
+                  <Button onClick={handleRandomPlaybackRangeClick}>Set to random value</Button>
+                  <MediaRangeSelector
+                    range={mpRange}
+                    sourceUrl={mpSource}
+                    onRangeChange={setMpRange}
+                    />
+                  <div>{mpRange[0].toFixed(2)} &ndash; {mpRange[1].toFixed(2)}</div>
+                </div>
+                <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
                 <Radio.Group value={mpScreenMode} onChange={event => setMpScreenMode(event.target.value)}>
                   {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
                 </Radio.Group>

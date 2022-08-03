@@ -1,3 +1,4 @@
+import deepEqual from 'fast-deep-equal';
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -62,4 +63,16 @@ export function useOnComponentMounted(callback) {
       setIsCallbackCalled(true);
     }
   }, [callback, isCallbackCalled]);
+}
+
+export function useDedupedCallback(callback) {
+  const obj = useRef({});
+  obj.current.callback = callback;
+  obj.current.wrapper = obj.current.wrapper || ((...args) => {
+    if (!('lastValue' in obj.current) || !deepEqual(obj.current.lastValue, args)) {
+      obj.current.lastValue = args;
+      obj.current.callback(...args);
+    }
+  });
+  return obj.current.wrapper;
 }

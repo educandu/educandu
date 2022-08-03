@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useService } from './container-context.js';
+import { useDedupedCallback } from '../ui/hooks.js';
 import HttpClient from '../api-clients/http-client.js';
 import MediaPlayerTrack from './media-player-track.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -96,6 +97,9 @@ function MediaPlayer({
   const [sourceUrl, setSourceUrl] = useState(sourceType === SOURCE_TYPE.eager ? source : null);
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
+  const triggerReadyIfNeeded = useDedupedCallback(onReady);
+  const triggerPlayStateChangeIfNeeded = useDedupedCallback(onPlayStateChange);
+
   useEffect(() => {
     setSourceUrl(sourceType === SOURCE_TYPE.eager ? source : null);
   }, [source, sourceType]);
@@ -164,7 +168,7 @@ function MediaPlayer({
 
   const handlePlayStateChange = newPlayState => {
     setPlayState(newPlayState);
-    onPlayStateChange(newPlayState);
+    triggerPlayStateChangeIfNeeded(newPlayState);
   };
 
   const handleDownloadClick = async () => {
@@ -177,7 +181,7 @@ function MediaPlayer({
 
   const handleDuration = duration => {
     setDurationInMilliseconds(duration);
-    onReady();
+    triggerReadyIfNeeded();
     switch (lazyLoadCompletedAction) {
       case LAZY_LOAD_COMPLETED_ACTION.play:
         handleTogglePlay();
