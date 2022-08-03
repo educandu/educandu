@@ -31,7 +31,7 @@ const formItemLayout = {
 function MainTrackEditor({ content, onContentChanged, onDeterminingDuration, onDurationDetermined }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
-  const { t } = useTranslation('interactiveMedia');
+  const { t } = useTranslation('mainTrackEditor');
   const [sourceDuration, setSourceDuration] = useState(0);
   const { sourceType, sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
 
