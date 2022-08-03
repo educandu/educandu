@@ -18,7 +18,6 @@ function MediaPlayerTrack({
   playbackRange,
   progressIntervalInMilliseconds,
   volume,
-  isMuted,
   posterImageUrl,
   loadImmediately,
   trackRef,
@@ -204,7 +203,7 @@ function MediaPlayerTrack({
           height="100%"
           controls={false}
           volume={volume}
-          muted={isMuted}
+          muted={volume === 0}
           playbackRate={playbackRate}
           progressInterval={progressIntervalInMilliseconds}
           light={loadImmediately ? false : currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
@@ -237,7 +236,6 @@ function MediaPlayerTrack({
 
 MediaPlayerTrack.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  isMuted: PropTypes.bool,
   loadImmediately: PropTypes.bool,
   onDuration: PropTypes.func,
   onEndReached: PropTypes.func,
@@ -258,7 +256,6 @@ MediaPlayerTrack.propTypes = {
 
 MediaPlayerTrack.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  isMuted: false,
   loadImmediately: false,
   onDuration: () => {},
   onEndReached: () => {},

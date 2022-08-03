@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Menu, Button, Dropdown } from 'antd';
+import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
 import { useNumberFormat } from './locale-context.js';
-import { Menu, Button, Slider, Dropdown } from 'antd';
-import MuteIcon from './icons/media-player/mute-icon.js';
 import PlayIcon from './icons/media-player/play-icon.js';
 import PauseIcon from './icons/media-player/pause-icon.js';
 import DownloadIcon from './icons/general/download-icon.js';
-import VolumeIcon from './icons/media-player/volume-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
@@ -22,9 +21,7 @@ function MediaPlayerControls({
   playedMilliseconds,
   playState,
   volume,
-  isMuted,
   onTogglePlay,
-  onToggleMute,
   onVolumeChange,
   onPlaybackRateChange,
   screenMode,
@@ -89,16 +86,7 @@ function MediaPlayerControls({
       <div className="MediaPlayerControls-controlsGroup">
         <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
         <div className="MediaPlayerControls-volumeControls">
-          <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
-          <Slider
-            className="MediaPlayerControls-volumeSlider"
-            min={0}
-            max={100}
-            value={isMuted ? 0 : volume * 100}
-            tipFormatter={val => `${val}%`}
-            onChange={val => onVolumeChange(val / 100)}
-            disabled={isMuted}
-            />
+          <VolumeSlider value={volume} onChange={onVolumeChange} />
         </div>
         <div className="MediaPlayerControls-timeDisplay">
           {renderTimeDisplay()}
@@ -120,10 +108,8 @@ function MediaPlayerControls({
 
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
-  isMuted: PropTypes.bool.isRequired,
   onDownloadClick: PropTypes.func,
   onPlaybackRateChange: PropTypes.func,
-  onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
