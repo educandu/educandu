@@ -34,7 +34,8 @@ const SCREEN = {
   directory: 'directory',
   search: 'search',
   preview: 'preview',
-  uploadOverview: 'upload-overview'
+  uploadOverview: 'upload-overview',
+  fileEditor: 'file-editor'
 };
 
 function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
@@ -58,6 +59,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const [screenStack, setScreenStack] = useState([SCREEN.directory]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
+  const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
@@ -173,6 +175,11 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     await fetchStorageContent();
   };
 
+  const handleFileEditScreenBackClick = () => {
+    popScreen();
+    setCurrentEditedFileIndex(-1);
+  };
+
   const handleSearchTermChange = event => {
     setSearchTerm(event.target.value);
   };
@@ -196,6 +203,11 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     setSearchResult([]);
     setSearchTerm('');
     popScreen();
+  };
+
+  const handleFileEdit = fileIndex => {
+    setCurrentEditedFileIndex(fileIndex);
+    pushScreen(SCREEN.fileEditor);
   };
 
   const renderScreenBackButton = ({ text = t('common:back'), onClick, noMargin = false, disabled = false }) => {
@@ -368,7 +380,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           </div>
           <ReactDropzone
             ref={dropzoneRef}
-            onDrop={canAcceptFiles ? setUploadQueue : null}
+            onDrop={canAcceptFiles ? fs => setUploadQueue(fs.map(f => ({ file: f, isPristine: true }))) : null}
             noKeyboard
             noClick
             >
@@ -432,12 +444,28 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       <div className="StorageLocation-screen">
         {renderScreenBackButton({ onClick: handleUploadOverviewScreenBackClick, disabled: isUploading })}
         <FilesUploadOverview
-          files={uploadQueue}
+          uploadQueue={uploadQueue}
           directory={currentDirectory}
           storageLocation={storageLocation}
+          onFileEdit={handleFileEdit}
           onUploadFinish={handleUploadFinish}
           showPreviewAfterUpload={uploadQueue.length === 1}
           />
+        <DialogFooterButtons
+          allowOk={uploadQueue.length === 1}
+          onCancel={onCancel}
+          onOk={handleUploadSelectClick}
+          okButtonText={t('common:select')}
+          okDisabled={!lastUploadedFile || isUploading}
+          cancelDisabled={isUploading}
+          />
+      </div>
+      )}
+
+      {screen === SCREEN.fileEditor && (
+      <div className="StorageLocation-screen">
+        {renderScreenBackButton({ onClick: handleFileEditScreenBackClick, disabled: false })}
+        EDIT
         <DialogFooterButtons
           allowOk={uploadQueue.length === 1}
           onCancel={onCancel}

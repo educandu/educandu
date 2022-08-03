@@ -17,7 +17,9 @@ import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import FilesUploadOverview from '../files-upload-overview.js';
+import { useStorage } from '../storage-context.js';
 
 const { TabPane } = Tabs;
 
@@ -27,6 +29,8 @@ const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKV
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
+  const { locations } = useStorage();
+
   // Page
   const req = useRequest();
   const initialTab = req.query.tab || null;
@@ -264,6 +268,16 @@ function Tests({ PageTemplate }) {
                 <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
               </div>
             </div>
+          </TabPane>
+          <TabPane tab="FilesUploadOverview" key="FilesUploadOverview">
+            <FilesUploadOverview
+              uploadQueue={[
+                { file: { name: 'file-1.png' }, isPristine: true },
+                { file: { name: 'file-2.png' }, isPristine: false }
+              ]}
+              storageLocation={locations.find(l => l.type === STORAGE_LOCATION_TYPE.public)}
+              directory={{ type: CDN_OBJECT_TYPE.directory, path: 'media', displayName: 'media', url: 'cdn://media', portableUrl: 'cdn://media' }}
+              />
           </TabPane>
         </Tabs>
       </div>

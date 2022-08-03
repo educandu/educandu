@@ -37,11 +37,15 @@
 }
 
 .FilesUploadOverview-fileStatusIcon {
-  &.FilesUploadOverview-fileStatusIcon--green {
+  &.FilesUploadOverview-fileStatusIcon--processed {
+    color: @edu-secondary-color-dark;
+  }
+
+  &.FilesUploadOverview-fileStatusIcon--success {
     color: @edu-success-color;
   }
 
-  &.FilesUploadOverview-fileStatusIcon--red {
+  &.FilesUploadOverview-fileStatusIcon--error {
     color: @edu-error-color;
   }
 }

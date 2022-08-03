@@ -7,4 +7,6 @@ uploadLimitExceeded:
 insufficientPrivateStorge:
   en: Not enough storage space available for file
   de: Nicht genügend Speicherplatz für die Datei verfügbar
-
+startUpload:
+  en: Start upload
+  de: Upload starten

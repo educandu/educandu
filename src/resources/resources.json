@@ -425,7 +425,8 @@
     "resources": {
       "headline": "Files upload",
       "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "insufficientPrivateStorge": "Not enough storage space available for file"
+      "insufficientPrivateStorge": "Not enough storage space available for file",
+      "startUpload": "Start upload"
     }
   },
   {
@@ -434,7 +435,8 @@
     "resources": {
       "headline": "Datei-Upload",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar"
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
+      "startUpload": "Upload starten"
     }
   },
   {

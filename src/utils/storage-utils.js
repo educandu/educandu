@@ -12,7 +12,7 @@ import {
 
 const publicCdnPathPattern = /^media(\/.*)?$/;
 const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
-const scalableImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
+const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
@@ -60,9 +60,13 @@ const optimizeImage = file => {
   });
 };
 
+export function isEditableImageFile(file) {
+  return rasterImageFileTypes.includes(file.type);
+}
+
 export function processFilesBeforeUpload(files) {
   return Promise.all(files.map(file => {
-    return scalableImageFileTypes.includes(file.type)
+    return rasterImageFileTypes.includes(file.type)
       ? optimizeImage(file)
       : file;
   }));
