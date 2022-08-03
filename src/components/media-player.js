@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useService } from './container-context.js';
+import { useDedupedCallback } from '../ui/hooks.js';
 import HttpClient from '../api-clients/http-client.js';
 import MediaPlayerTrack from './media-player-track.js';
 import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
-import { useDedupedCallback } from '../ui/hooks.js';
 
 const SOURCE_TYPE = {
   none: 'none',
