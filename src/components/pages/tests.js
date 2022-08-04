@@ -20,7 +20,7 @@ import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -129,7 +129,10 @@ function Tests({ PageTemplate }) {
   // MultitrackMediaPlugin
   const multitrackMediaInfo = useService(MultitrackMediaInfo);
   const { t: multitrackTranslation } = useTranslation('multitrackMedia');
-  const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackMediaInfo.getDefaultContent(multitrackTranslation));
+  const multitrackContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
+  multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
+  multitrackContent.mainTrack.sourceUrl = 'https://cdn.openmusic.academy/media/cTfhXcxtkgqYLE3k1P6JAR/oma-explainer-vs1-0-pDjYtJexVC91WfrtWnu6hh.mp4';
+  const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackContent);
   const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
 
   return (

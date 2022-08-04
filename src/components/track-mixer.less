@@ -1,0 +1,70 @@
+@track-mixer-row-height: 30px;
+@track-mixer-column-padding: 10px 0;
+
+.TrackMixer {
+  display: flex;
+  gap: 10px;
+}
+
+.TrackMixer-namesColumn {
+  padding: @track-mixer-column-padding;
+}
+
+.TrackMixer-nameRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: @track-mixer-row-height;
+}
+
+.TrackMixer-name {
+  .m-overflow-ellipsis;
+  text-align: end;
+  width: 100px;
+}
+
+.TrackMixer-barsColumn {
+  width: 100%;
+  margin: 0 40px;
+  padding: @track-mixer-column-padding;
+  border-left: 1px dashed @edu-border-color-dark;
+  border-right: 1px dashed @edu-border-color-dark;
+}
+
+.TrackMixer-barRow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: @track-mixer-row-height;
+}
+
+.TrackMixer-barRowDuration {
+  position: absolute;
+  top: -6px;
+  width: 100%;
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+}
+
+.TrackMixer-bar {
+  height: 15px;
+  background-color: @edu-secondary-color-dark;
+
+  &.TrackMixer-bar--secondaryTrack {
+    background-color: @edu-primary-color-light;
+  }
+}
+
+.TrackMixer-barArrow {
+  position: absolute;
+
+  &.TrackMixer-barArrow--left {
+    left: -40px;
+  }
+
+  &.TrackMixer-barArrow--right {
+    right: -40px;
+  }
+}
