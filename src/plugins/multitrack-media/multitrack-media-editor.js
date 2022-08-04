@@ -39,6 +39,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handleMainTrackDurationDetermined = duration => {
+    // eslint-disable-next-line no-console
     console.log(duration);
     setSourceDurationMainTrack(duration);
   };
@@ -46,6 +47,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleSecondaryTrackDurationDetermined = (index, duration) => {
     const newDurations = cloneDeep(secondaryTracks);
     newDurations[index] = duration;
+    // eslint-disable-next-line no-console
     console.log(newDurations);
     setSourceDurationsSecondaryTracks(newDurations);
   };
@@ -94,6 +96,12 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
+  const handleSecondaryTrackOffsetTimecodeChange = (index, offsetTimecode) => {
+    const newSecondaryTracks = cloneDeep(secondaryTracks);
+    newSecondaryTracks[index].offsetTimecode = offsetTimecode;
+    changeContent({ secondaryTracks: newSecondaryTracks });
+  };
+
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal">
@@ -137,6 +145,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             onMainTrackVolumeChange={handleMainTrackVolumeChange}
             secondaryTracksDurations={sourceDurationsSecondaryTracks}
             onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
+            onSecondaryTrackOffsetTimecodeChange={handleSecondaryTrackOffsetTimecodeChange}
             />
         </ItemPanel>
 
