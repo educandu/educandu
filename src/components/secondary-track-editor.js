@@ -8,6 +8,7 @@ import MarkdownInput from './markdown-input.js';
 import ResourcePicker from './resource-picker.js';
 import { useService } from './container-context.js';
 import { handleError } from '../ui/error-helper.js';
+import { useOnComponentMounted } from '../ui/hooks.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { getMediaInformation } from '../utils/media-utils.js';
 import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
@@ -24,12 +25,14 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function SecondaryTrackEditor({ content, onContentChanged }) {
+function SecondaryTrackEditor({ content, onContentChanged, onDeterminingDuration, onDurationDetermined }) {
   const { t } = useTranslation('');
   const clientConfig = useService(ClientConfig);
   const { name, sourceType, sourceUrl, copyrightNotice } = content;
 
   const determineMediaInformationFromUrl = async url => {
+    onDeterminingDuration();
+
     const result = await getMediaInformation({
       t,
       url,
@@ -37,8 +40,15 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
       playbackRange: [0, 1],
       cdnRootUrl: clientConfig.cdnRootUrl
     });
+
+    onDurationDetermined(result.duration);
+
     return result;
   };
+
+  useOnComponentMounted(async () => {
+    await determineMediaInformationFromUrl(sourceUrl);
+  });
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -144,7 +154,14 @@ SecondaryTrackEditor.propTypes = {
     sourceUrl: PropTypes.string,
     copyrightNotice: PropTypes.string
   }).isRequired,
-  onContentChanged: PropTypes.func.isRequired
+  onContentChanged: PropTypes.func.isRequired,
+  onDeterminingDuration: PropTypes.func,
+  onDurationDetermined: PropTypes.func
+};
+
+SecondaryTrackEditor.defaultProps = {
+  onDeterminingDuration: () => { },
+  onDurationDetermined: () => { }
 };
 
 export default SecondaryTrackEditor;

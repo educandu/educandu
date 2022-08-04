@@ -5,7 +5,7 @@ import VolumeSlider from './volume-slider.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 
-function TrackMixer({ mainTrack, secondaryTracks, playbackDuration, onMainTrackVolumeChange, onSecondaryTrackVolumeChange }) {
+function TrackMixer({ mainTrack, secondaryTracks, playbackDuration, secondaryTracksDurations, onMainTrackVolumeChange, onSecondaryTrackVolumeChange }) {
 
   const handleSecondaryTrackBarLeftArrowClick = index => {
     console.log('left', index);
@@ -25,9 +25,14 @@ function TrackMixer({ mainTrack, secondaryTracks, playbackDuration, onMainTrackV
   };
 
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
+    const duration = secondaryTracksDurations[index];
+    const widthInPercentage = Math.round(playbackDuration ? duration * 100 / playbackDuration : 0);
+
     return (
       <div className="TrackMixer-barRow" key={index}>
-        <div className="TrackMixer-bar TrackMixer-bar--secondaryTrack" />
+        <div className={`TrackMixer-bar TrackMixer-bar--secondaryTrack u-width-${widthInPercentage}`} />
+        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
+        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
         <div className="TrackMixer-barArrow TrackMixer-barArrow--left">
           <Button type="link" size="small" icon={<CaretLeftOutlined />} onClick={() => handleSecondaryTrackBarLeftArrowClick(index)} />
         </div>
@@ -74,7 +79,8 @@ TrackMixer.propTypes = {
     name: PropTypes.string,
     offsetTimecode: PropTypes.number.isRequired,
     volume: PropTypes.number.isRequired
-  })).isRequired
+  })).isRequired,
+  secondaryTracksDurations: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
 export default TrackMixer;

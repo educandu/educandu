@@ -132,6 +132,8 @@ function Tests({ PageTemplate }) {
   const multitrackContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
   multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
   multitrackContent.mainTrack.sourceUrl = 'https://cdn.openmusic.academy/media/cTfhXcxtkgqYLE3k1P6JAR/oma-explainer-vs1-0-pDjYtJexVC91WfrtWnu6hh.mp4';
+  multitrackContent.secondaryTracks[0].sourceType = MEDIA_SOURCE_TYPE.external;
+  multitrackContent.secondaryTracks[0].sourceUrl = 'https://cdn.openmusic.academy/media/cTfhXcxtkgqYLE3k1P6JAR/2022-03-07-opener-cLsXYg2gyFNHKmY6S9CzX5.mp4';
   const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackContent);
   const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
 
