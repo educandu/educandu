@@ -6,7 +6,7 @@ editDocument:
   de: Dokument bearbeiten
 titleRequired:
   en: Please specify a document title
-  de: Bitte geben Sie einen Dokument-Titel an
+  de: Bitte gib einen Dokument-Titel an
 descriptionTooLong:
   en: The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}
   de: Die Beschreibung darf nicht länger als {maxChars} Zeichen sein
@@ -40,6 +40,6 @@ sequenceInfoBoxDescription:
     The date specified above is used as the first scheduling.
     A sequential number is appended to the title or URL path for each document.
   de: |
-    Hier können Sie mehrere Dokumente gleichzeitig anlegen.
+    Hier kannst du mehrere Dokumente gleichzeitig anlegen.
     Das oben angegebenen Datum wird dabei als erster Termin verwendet.
     An den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.

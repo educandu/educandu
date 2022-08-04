@@ -1,9 +1,9 @@
 enterEmail:
   en: Please enter your email address
-  de: Bitte geben Sie Ihre E-Mail-Adresse an
+  de: Bitte gib deine E-Mail-Adresse an
 enterPassword:
   en: Please enter your password
-  de: Bitte geben Sie Ihr Kennwort an
+  de: Bitte gib dein Kennwort an
 loginFailed:
   en: Login failed. Please check your input.
-  de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.
+  de: Die Anmeldung ist fehlgeschlagen. Bitte überprüf deine Eingabe.

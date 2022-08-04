@@ -3,46 +3,46 @@ attention:
   de: Achtung!
 areYouSure:
   en: Are you sure?
-  de: Sind Sie sicher?
+  de: Bist du sicher?
 discardUnsavedChanges:
   en: All unsaved changes will be lost.
   de: Alle nicht gespeicherten Änderungen werden verworfen.
 deleteSectionConfirmation:
   en: Do you really want to delete the section?
-  de: Möchten Sie den Abschnitt wirklich löschen?
+  de: Möchtest du den Abschnitt wirklich löschen?
 deleteDocumentConfirmation:
   en: Do you really want to delete document "{title}"?
-  de: Möchten Sie das Dokument "{title}" wirklich löschen?
+  de: Möchtest du das Dokument "{title}" wirklich löschen?
 deleteAllPrivateRoomsConfirmation:
   en: Do you really want to delete all private rooms owned by user "{ownerName}"?
-  de: Möchten Sie wirklich alle privaten Räume von Benutzer "{ownerName}" löschen?
+  de: Möchtest du wirklich alle privaten Räume von Benutzer "{ownerName}" löschen?
 deleteRoomConfirmation:
   en: Do you really want to delete room "{roomName}"?
-  de: Möchten Sie den Raum "{roomName}" wirklich löschen?
+  de: Möchtest du den Raum "{roomName}" wirklich löschen?
 deleteRoomMemberConfirmation:
   en: Do you really want remove member "{memberDisplayName}" from the room?
-  de: Möchten Sie das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
+  de: Möchtest du das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
 deleteRoomInvitationConfirmation:
   en: Do you really want revoke room invitation send to "{invitationEmail}"?
-  de: Möchten Sie die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
+  de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
 leaveRoomConfirmation:
   en: Do you really want to leave room "{roomName}"?
-  de: Möchten Sie den Raum "{roomName}" wirklich verlassen?
+  de: Möchtest du den Raum "{roomName}" wirklich verlassen?
 deleteCdnDocumentConfirmation:
   en: Do you really want to delete the CDN file "{fileName}"?
-  de: Möchten Sie die Datei "{fileName}" wirklich vom CDN löschen?
+  de: Möchtest du die Datei "{fileName}" wirklich vom CDN löschen?
 thisActionIsIrreversible:
   en: This action is irreversible!
   de: Diese Aktion ist unwiderrufbar!
 pleaseSpecifyAReason:
   en: Please specify a reason
-  de: Bitte geben Sie einen Grund an
+  de: Bitte gib einen Grund an
 deleteAllRevisions:
   en: Delete all existing revisions of this section
   de: Alle existierenden Revisionen dieses Abschnitts löschen
 restoreDocumentRevisionConfirmation:
   en: Do you really want to restore the content of revision {revisionId}?
-  de: Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?
+  de: Möchtest du den Inhalt der Revision {revisionId} wirklich wiederherstellen?
 confirmPassword:
   en: Password confirmation
   de: Kennwortbestätigung
@@ -51,22 +51,22 @@ confirmWithPasswordTitle:
   de: Bestätigung erforderlich
 confirmWithPasswordDescription:
   en: Please enter your password in order to continue this process.
-  de: Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.
+  de: Bitte gib dein Kennwort an, um diesen Vorgang fortzusetzen.
 sessionExpiredTitle:
   en: Your session has expired
-  de: Ihre Sitzung ist abgelaufen
+  de: Deine Sitzung ist abgelaufen
 sessionExpiredDescription:
   en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
-  de: Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.
+  de: Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte meld dich erneut an, um diesen Vorgang fortzusetzen.
 deleteItemConfirmation:
   en: Do you really want to delete "{name}"?
-  de: Möchten Sie "{name}" wirklich löschen?
+  de: Möchtest du "{name}" wirklich löschen?
 deleteStoragePlanConfirmation:
   en: Do you really want to delete storage plan "{storagePlanName}"?
-  de: Möchten Sie den Speicherplan "{storagePlanName}" wirklich löschen?
+  de: Möchtest du den Speicherplan "{storagePlanName}" wirklich löschen?
 confirmPublicUploadLiability:
   en: You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.
-  de: Sie sind dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachten Sie, dass Sie eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass Sie für alle Rechtsverstöße in Ihrer Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden können.
+  de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beacht, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden konntest.
 closeAccountConfirmation:
   en: Do you really want to close your account?
-  de: Möchten Sie wirklich Ihr Konto schließen?
+  de: Möchtest du wirklich dein Konto schließen?

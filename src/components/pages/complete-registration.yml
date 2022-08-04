@@ -1,6 +1,6 @@
 registrationSuccess:
   en: Congratulations! You are now successfully registered.
-  de: Gratulation! Sie haben Ihre Registrierung erfolgreich abgeschlossen.
+  de: Gratulation! Du hast deine Registrierung erfolgreich abgeschlossen.
 registrationFailure:
   en: The confirmation code is invalid or expired.
   de: Der Registrierungs-Code ist ungültig oder abgelaufen.
@@ -9,4 +9,4 @@ homeLink:
   de: Home
 redirectMessage:
   en: You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}.
-  de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.
+  de: Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.

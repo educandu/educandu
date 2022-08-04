@@ -87,8 +87,8 @@ proposedSectionsAlert:
     Apply or discard the proposed sections. Unapplied sections are
     only visible until you leave the current view.
   de: |
-    Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene
-    Abschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.
+    Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene
+    Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
 revision:
   en: Revision
   de: Revision
@@ -427,5 +427,5 @@ youtubeCopyrightNotice:
     Quelle: [Youtube]({link})
 emailIsInvalid:
   en: The value you provided is not a valid email address
-  de: Ihre Eingabe ist keine gültige E-Mail-Adresse
+  de: Deine Eingabe ist keine gültige E-Mail-Adresse
 
