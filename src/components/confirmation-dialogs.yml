@@ -57,7 +57,7 @@ sessionExpiredTitle:
   de: Deine Sitzung ist abgelaufen
 sessionExpiredDescription:
   en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
-  de: Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte meld dich erneut an, um diesen Vorgang fortzusetzen.
+  de: Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte melde dich erneut an, um diesen Vorgang fortzusetzen.
 deleteItemConfirmation:
   en: Do you really want to delete "{name}"?
   de: Möchtest du "{name}" wirklich löschen?
@@ -66,7 +66,7 @@ deleteStoragePlanConfirmation:
   de: Möchtest du den Speicherplan "{storagePlanName}" wirklich löschen?
 confirmPublicUploadLiability:
   en: You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.
-  de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beacht, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden konntest.
+  de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.
 closeAccountConfirmation:
   en: Do you really want to close your account?
   de: Möchtest du wirklich dein Konto schließen?

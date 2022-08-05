@@ -174,10 +174,10 @@
       "confirmWithPasswordTitle": "Bestätigung erforderlich",
       "confirmWithPasswordDescription": "Bitte gib dein Kennwort an, um diesen Vorgang fortzusetzen.",
       "sessionExpiredTitle": "Deine Sitzung ist abgelaufen",
-      "sessionExpiredDescription": "Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte meld dich erneut an, um diesen Vorgang fortzusetzen.",
+      "sessionExpiredDescription": "Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte melde dich erneut an, um diesen Vorgang fortzusetzen.",
       "deleteItemConfirmation": "Möchtest du \"{name}\" wirklich löschen?",
       "deleteStoragePlanConfirmation": "Möchtest du den Speicherplan \"{storagePlanName}\" wirklich löschen?",
-      "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beacht, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden konntest.",
+      "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
       "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?"
     }
   },
@@ -349,7 +349,7 @@
     "resources": {
       "statusIconTooltipSaved": "Keine ungespeicherten Änderungen",
       "statusIconTooltipDirty": "Änderungen nicht gespeichert",
-      "statusIconTooltipInvalid": "Bitte korrigier alle Fehler vor dem Speichern",
+      "statusIconTooltipInvalid": "Bitte korrigiere alle Fehler vor dem Speichern",
       "editMetadata": "Metadaten bearbeiten"
     }
   },
@@ -504,7 +504,7 @@
     "resources": {
       "enterEmail": "Bitte gib deine E-Mail-Adresse an",
       "enterPassword": "Bitte gib dein Kennwort an",
-      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüf deine Eingabe."
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe."
     }
   },
   {
@@ -563,8 +563,8 @@
       "blockHelpTableHeaderLeft": "Wie du es schreibst",
       "blockHelpTableHeaderRight": "Wie es dargestellt wird",
       "blockHelpTableHeaderAnnotation": "Als visuelle Hilfe sind Leerzeichen in dieser Spalte als <0>•</0> dargestellt.",
-      "blockHelpTableFoot": "Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.\nMarkdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.\nFür mehr Informationen und eine ausführliche Beschreibung besuch bitte <https://commonmark.org/>.\nWir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.\n",
-      "blockHelpMarkdown": "Dies ist ein einfacher Absatz. Wie du siehst, ungeachtet davon, wie viele                  Leerzeichen\noder\nZeilenumbrüche\ndu eingibst, werden diese stets in ein einzelnes Leerzeichen umgewandelt.\n\nUm einen tatsächlichen Zeilenumbruch herzustellen, \\\nbeend die Zeile mit mehreren Leerzeichen<space><space>\noder, genau wie hier \\\nmit einem Backslash.\n\nUm einen neuen Absatz zu beginnen, lass eine Zeile über dem entsprechenden Text leer.\n\nSetz Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu kannst du auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.\n\n# Dies ist eine Überschrift der ersten Ebene\n\n## Dies ist eine Überschrift der zweiten Ebene\n\n### Dies ist eine Überschrift der dritten Ebene\n\nEs gibt bis zu sechs Überschriftenebenen, jedoch ist es ratsam, auf Websites möglichst auf eine solch tiefe Hierarchie zu verzichten.\n\n1. Dies ist eine nummerierte Liste\n2. Du kannst\n    1. mehrere Ebenen verwenden,\n    2. indem du jede weitere Ebene durch vier Leerzeichen einrückst\n42. Wie du siehst, spielt die tatsächliche Zahl vor dem Listenpunkt keine Rolle, die Liste beginnt immer mit der Zahl vor dem ersten Punkt und wird dann hochgezählt.\n\n* Dies ist eine unnummerierte Liste\n* Du kannst auch Trennstriche statt der Sternchen verwenden:\n    - Verschachtelungen sind hier genauso möglich\n    - Genau wie bei der nummerierten Liste musst du die Unterpunkte lediglich um vier Leerzeichen einrücken\n\n> ### Dies ist ein Blockzitat\n>\n> Um es zu erzeugen, start die Zeile mit dem Zeihen **>**\n>\n> *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*\n\n***\n\nDieser Text befindet sich zwischen horizontalen Trennlinien. Diese entsteht durch die drei Sternchen über diesem Absatz.\n\n---\n\nAnstelle der Sternchen kannst du gleichermaßen Trennstriche (wie oben) bzw. Unterstriche (wie unten) verwenden.\n\n___\n\nUm einen Link einzufügen, musst du den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).\n\nDas Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:\n\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)\n\nBitte beacht, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.\n\nDarüberhinaus kannst du auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.\n\nWie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, musst du durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \\*dieser Text lediglich mit Sternchen umgeben\\*.\n"
+      "blockHelpTableFoot": "Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.\nMarkdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.\nFür mehr Informationen und eine ausführliche Beschreibung besuche bitte <https://commonmark.org/>.\nWir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.\n",
+      "blockHelpMarkdown": "Dies ist ein einfacher Absatz. Wie du siehst, ungeachtet davon, wie viele                  Leerzeichen\noder\nZeilenumbrüche\ndu eingibst, werden diese stets in ein einzelnes Leerzeichen umgewandelt.\n\nUm einen tatsächlichen Zeilenumbruch herzustellen, \\\nbeende die Zeile mit mehreren Leerzeichen<space><space>\noder, genau wie hier \\\nmit einem Backslash.\n\nUm einen neuen Absatz zu beginnen, lass eine Zeile über dem entsprechenden Text leer.\n\nSetze Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu kannst du auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.\n\n# Dies ist eine Überschrift der ersten Ebene\n\n## Dies ist eine Überschrift der zweiten Ebene\n\n### Dies ist eine Überschrift der dritten Ebene\n\nEs gibt bis zu sechs Überschriftenebenen, jedoch ist es ratsam, auf Websites möglichst auf eine solch tiefe Hierarchie zu verzichten.\n\n1. Dies ist eine nummerierte Liste\n2. Du kannst\n    1. mehrere Ebenen verwenden,\n    2. indem du jede weitere Ebene durch vier Leerzeichen einrückst\n42. Wie du siehst, spielt die tatsächliche Zahl vor dem Listenpunkt keine Rolle, die Liste beginnt immer mit der Zahl vor dem ersten Punkt und wird dann hochgezählt.\n\n* Dies ist eine unnummerierte Liste\n* Du kannst auch Trennstriche statt der Sternchen verwenden:\n    - Verschachtelungen sind hier genauso möglich\n    - Genau wie bei der nummerierten Liste musst du die Unterpunkte lediglich um vier Leerzeichen einrücken\n\n> ### Dies ist ein Blockzitat\n>\n> Um es zu erzeugen, starte die Zeichen mit dem Zeihen **>**\n>\n> *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*\n\n***\n\nDieser Text befindet sich zwischen horizontalen Trennlinien. Diese entsteht durch die drei Sternchen über diesem Absatz.\n\n---\n\nAnstelle der Sternchen kannst du gleichermaßen Trennstriche (wie oben) bzw. Unterstriche (wie unten) verwenden.\n\n___\n\nUm einen Link einzufügen, musst du den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).\n\nDas Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:\n\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)\n\nBitte beachte, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.\n\nDarüberhinaus kannst du auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.\n\nWie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, musst du durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \\*dieser Text lediglich mit Sternchen umgeben\\*.\n"
     }
   },
   {
@@ -748,7 +748,7 @@
     "language": "de",
     "resources": {
       "headerText": "Wir haben festgestellt, dass deine Browserversion von unserer Website nicht unterstützt wird",
-      "mainText": "Bitte lad einen modernen Browser deiner Wahl herunter, einige Beispiele unten"
+      "mainText": "Bitte lade einen modernen Browser deiner Wahl herunter, einige Beispiele unten"
     }
   },
   {
@@ -941,10 +941,10 @@
     "namespace": "register",
     "language": "de",
     "resources": {
-      "confirmTerms": "Bitte erklär dich mit den Nutzungsbedingungen einverstanden",
+      "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätig deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
+      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
     }
   },
   {
@@ -990,7 +990,7 @@
     "language": "de",
     "resources": {
       "confirmationSuccess": "Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.",
-      "invitationConfirmation": "Bitte klick auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
+      "invitationConfirmation": "Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
       "joinButton": "Raum beitreten",
       "invalidToken": "Der Einladungs-Code ist ungültig oder abgelaufen.",
       "invalidUser": "Der Einladung war an einen anderen Benutzer adressiert.",
@@ -1165,7 +1165,7 @@
     "language": "de",
     "resources": {
       "passwordConfirmation": "Kennwortbestätigung",
-      "confirmPassword": "Bitte bestätig dein Kennwort",
+      "confirmPassword": "Bitte bestätige dein Kennwort",
       "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
     }
   },
@@ -1244,7 +1244,7 @@
       "organization": "Organisation",
       "introduction": "Vorstellung",
       "updateSuccessMessage": "Dein Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeacht bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
+      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
@@ -1486,7 +1486,7 @@
     "language": "de",
     "resources": {
       "title": "Sprache auswählen",
-      "explanation": "Bitte wähl deine bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
+      "explanation": "Bitte wähle deine bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
     }
   },
   {
@@ -1745,7 +1745,7 @@
       "orientationLabel": "Richtung",
       "orientationOptionVertical": "Vertikal",
       "orientationOptionHorizontal": "Horizontal",
-      "clipEffectHint": "Bitte benutz das Markierungsrechteck, um einen Bildbereich auszuwählen",
+      "clipEffectHint": "Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen",
       "imageLoadingErrorMessage": "Das Bild konnte nicht geladen werden"
     }
   },
@@ -1884,7 +1884,7 @@
       "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
-      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beacht, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
+      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
     }
   },
   {
@@ -2362,14 +2362,14 @@
     "language": "de",
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
-      "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätig bitte deine E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Du hast dich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätig bitte deine E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Du hast dich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
       "passwordResetEmail.subject": "Dein Kennwort auf educandu",
-      "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folg bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folg bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
       "roomInvitationEmail.subject": "Du warst in einen Raum eingeladen.",
-      "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folg bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
-      "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folg bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
+      "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
+      "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folge bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
       "roomDeletionNotificationEmail.subject": "Ein Raum, in dem du Mitglied warst, wurde gelöscht",
       "roomDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n",
       "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.",

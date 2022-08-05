@@ -19,7 +19,7 @@ export default class Educandu_2022_08_04_01_update_consentText_in_settings {
         + 'By clicking on "accept" you will agree to these terms.',
             de: 'Diese Website verwendet technisch notwendige Cookies, um die Funktionalität der Website zu gewährleisten. '
         + 'Diese Cookies verfolgen weder deine Aktivitäten, noch liefern sie Dritten irgendwelche Informationen über deinen Besuch. '
-        + 'Indem du auf Akzeptieren klickst, bestätigst du dies und stimmen der Verwendung der Cookies ausdrücklich zu.\n\n'
+        + 'Indem du auf Akzeptieren klickst, bestätigst du dies und stimmst der Verwendung der Cookies ausdrücklich zu.\n\n'
         + 'Nutzer:innen dieser Seite können über Plugins externe Quellen wie z.B. einen YouTube-Videoplayer in Dokumente einbinden. '
         + 'Indem du auf Akzeptieren klickst, bestätigst du, gegen die Einbindung externer Quellen keine Einwände zu haben.\n\n'
         + 'Wenn du in Dokumenten Text speicherst und Dateien auf den Server hochlädst, werden diese – sofern in Dateien keine andere CC-Lizenz angegeben wird – unter der Standardlizenz dieser Plattform veröffentlicht: CC BY-SA 4.0 (any later version). '

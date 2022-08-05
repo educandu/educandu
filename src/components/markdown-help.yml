@@ -34,7 +34,7 @@ blockHelpTableFoot:
   de: |
     Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.
     Markdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.
-    Für mehr Informationen und eine ausführliche Beschreibung besuch bitte <https://commonmark.org/>.
+    Für mehr Informationen und eine ausführliche Beschreibung besuche bitte <https://commonmark.org/>.
     Wir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.
 blockHelpMarkdown:
   en: |
@@ -106,13 +106,13 @@ blockHelpMarkdown:
     du eingibst, werden diese stets in ein einzelnes Leerzeichen umgewandelt.
 
     Um einen tatsächlichen Zeilenumbruch herzustellen, \
-    beend die Zeile mit mehreren Leerzeichen<space><space>
+    beende die Zeile mit mehreren Leerzeichen<space><space>
     oder, genau wie hier \
     mit einem Backslash.
 
     Um einen neuen Absatz zu beginnen, lass eine Zeile über dem entsprechenden Text leer.
 
-    Setz Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu kannst du auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.
+    Setze Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu kannst du auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.
 
     # Dies ist eine Überschrift der ersten Ebene
 
@@ -135,7 +135,7 @@ blockHelpMarkdown:
 
     > ### Dies ist ein Blockzitat
     >
-    > Um es zu erzeugen, start die Zeile mit dem Zeihen **>**
+    > Um es zu erzeugen, starte die Zeichen mit dem Zeihen **>**
     >
     > *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*
 
@@ -156,7 +156,7 @@ blockHelpMarkdown:
     ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
     ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)
 
-    Bitte beacht, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.
+    Bitte beachte, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.
 
     Darüberhinaus kannst du auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
 

@@ -1,6 +1,6 @@
 confirmTerms:
   en: Please confirm your agreement with the terms and conditions
-  de: Bitte erklär dich mit den Nutzungsbedingungen einverstanden
+  de: Bitte erkläre dich mit den Nutzungsbedingungen einverstanden
 termsAndConditionsConfirmation:
   en: I have read the <0>terms and conditions</0> and agree to them.
   de: Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.
@@ -18,7 +18,7 @@ registrationConfirmationMessage:
   de: |
     # Ein Schritt fehlt noch ...
 
-    Bitte bestätig deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \
+    Bitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \
     Der Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.
 
     [Zur Anmeldeseite gehen]({loginPageUrl})

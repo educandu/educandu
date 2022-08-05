@@ -3,7 +3,7 @@ confirmationSuccess:
   de: Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.
 invitationConfirmation:
   en: Please click on the button in order to join room <0>{roomName}</0>.
-  de: Bitte klick auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
+  de: Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
 joinButton:
   en: Join room
   de: Raum beitreten
