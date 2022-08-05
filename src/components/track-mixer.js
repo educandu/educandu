@@ -1,11 +1,14 @@
-import React from 'react';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import VolumeSlider from './volume-slider.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 
 let trackBarInterval;
+
+const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 15;
 
 function TrackMixer({
   mainTrack,
@@ -15,6 +18,72 @@ function TrackMixer({
   onMainTrackChange,
   onSecondaryTrackChange
 }) {
+  const mainTrackBarRef = useRef(null);
+  const [secondaryTracksState, setSecondaryTracksState] = useState(secondaryTracks.map(() => ({
+    barWidth: 0,
+    marginLeft: 0,
+    isLeftArrowDisabled: true,
+    isRightArrowDisabled: true
+  })));
+
+  const updateStates = useCallback(() => {
+    const maxTrackBarWidth = mainTrackBarRef.current?.clientWidth;
+
+    if (!maxTrackBarWidth || !mainTrackDurationInMs) {
+      return;
+    }
+
+    setSecondaryTracksState(secondaryTracks.map((secondaryTrack, index) => {
+      const secondaryTrackDuration = secondaryTracksDurationsInMs[index];
+      const msInPx = maxTrackBarWidth / mainTrackDurationInMs;
+      const barWidth = secondaryTrackDuration * msInPx;
+      const marginLeft = secondaryTrack.offsetTimecode * msInPx;
+
+      const isLeftBoundReached = marginLeft <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      const isLeftArrowDisabled = secondaryTrackDuration <= -secondaryTrack.offsetTimecode;
+
+      const isRightBoundReached = (marginLeft + barWidth) >= maxTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      const isRightArrowDisabled = mainTrackDurationInMs <= secondaryTrack.offsetTimecode;
+
+      const newState = {
+        barWidth,
+        marginLeft,
+        isLeftArrowDisabled,
+        isRightArrowDisabled
+      };
+
+      if (isLeftArrowDisabled || isRightArrowDisabled) {
+        clearInterval(trackBarInterval);
+        trackBarInterval = null;
+      }
+
+      if (isLeftBoundReached) {
+        newState.marginLeft = -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+        newState.barWidth = barWidth + marginLeft + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      }
+
+      if (isRightBoundReached) {
+        newState.barWidth = maxTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeft;
+      }
+
+      // eslint-disable-next-line no-console
+      console.log('maxTrackBarWidth', maxTrackBarWidth, 'barWidth', newState.barWidth, 'marginLeft', newState.marginLeft);
+
+      return newState;
+    }));
+  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, secondaryTracksDurationsInMs]);
+
+  useEffect(() => {
+    updateStates();
+  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, updateStates]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateStates);
+    return () => {
+      window.removeEventListener('resize', updateStates);
+    };
+  }, [updateStates]);
+
   const handleTrackBarArrowMouseDown = (index, directionUnit) => {
     if (trackBarInterval) {
       clearInterval(trackBarInterval);
@@ -26,6 +95,7 @@ function TrackMixer({
     trackBarInterval = setInterval(() => {
       if (trackBarInterval) {
         offsetTimecode += 1000 * directionUnit;
+
         onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode });
       }
     }, 100);
@@ -53,31 +123,22 @@ function TrackMixer({
     );
   };
 
-  // eslint-disable-next-line no-console
-  console.log(secondaryTracks[0].offsetTimecode);
-
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
-    const duration = secondaryTracksDurationsInMs[index];
-    const widthInPercentage = Math.round(mainTrackDurationInMs ? duration * 100 / mainTrackDurationInMs : 0);
-    const offsetInPercentage = Math.round(mainTrackDurationInMs ? secondaryTrack.offsetTimecode * 100 / mainTrackDurationInMs : 0);
-
-    const marginLeftInPercentage = offsetInPercentage > 0 ? offsetInPercentage : 0;
-    const actualWidthInPercentage = (marginLeftInPercentage + widthInPercentage) <= 100
-      ? widthInPercentage
-      : widthInPercentage - marginLeftInPercentage;
+    const offsetTimecode = secondaryTracks[index].offsetTimecode;
+    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode));
+    const offsetText = offsetTimecode >= 0 ? `+ ${offsetAsDuration}` : `- ${offsetAsDuration}`;
 
     return (
       <div className="TrackMixer-barRow" key={index}>
+        <div className={classNames('TrackMixer-barRowOffset', { 'TrackMixer-barRowOffset--negative': offsetTimecode < 0 })}>
+          {offsetText}
+        </div>
         <div
           className="TrackMixer-bar TrackMixer-bar--secondaryTrack"
-          style={{ marginLeft: `${marginLeftInPercentage}%`, width: `${actualWidthInPercentage}%` }}
+          style={{ left: `${secondaryTracksState[index].marginLeft}px`, width: `${secondaryTracksState[index].barWidth}px` }}
           />
-        {offsetInPercentage < 0 && (
-          <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
-        )}
-        {(widthInPercentage > 100 || (offsetInPercentage + widthInPercentage) > 100) && (
-          <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
-        )}
+        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
+        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
         <div className="TrackMixer-barArrow TrackMixer-barArrow--left">
           <Button
             type="link"
@@ -85,6 +146,7 @@ function TrackMixer({
             icon={<CaretLeftOutlined />}
             onMouseDown={() => handleTrackBarArrowMouseDown(index, -1)}
             onMouseUp={() => handleTrackBarArrowMouseUp()}
+            disabled={!secondaryTracksState[index].barWidth || secondaryTracksState[index].isLeftArrowDisabled}
             />
         </div>
         <div className="TrackMixer-barArrow TrackMixer-barArrow--right">
@@ -94,6 +156,7 @@ function TrackMixer({
             icon={<CaretRightOutlined />}
             onMouseDown={() => handleTrackBarArrowMouseDown(index, 1)}
             onMouseUp={() => handleTrackBarArrowMouseUp()}
+            disabled={!secondaryTracksState[index].barWidth || secondaryTracksState[index].isRightArrowDisabled}
             />
         </div>
       </div>
@@ -116,7 +179,7 @@ function TrackMixer({
             <span>{formatMillisecondsAsDuration(0)}</span>
             <span>{formatMillisecondsAsDuration(mainTrackDurationInMs)}</span>
           </div>
-          <div className="TrackMixer-bar" />
+          <div className="TrackMixer-bar" ref={mainTrackBarRef} />
         </div>
         {secondaryTracks.map(renderSecondaryTrackBarRow)}
       </div>

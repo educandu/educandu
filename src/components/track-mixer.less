@@ -1,7 +1,9 @@
-@track-mixer-row-height: 30px;
+@track-mixer-row-height: 35px;
 @track-mixer-bar-height: 15px;
+@tracx-mixer-bar-duration-top: -4px;
+@tracx-mixer-bar-duration-left-right: 2px;
 @track-mixer-column-padding: 10px 0;
-@track-mixer-bar-overflow-width: 12px;
+@track-mixer-bar-overflow-width: 15px;
 
 .TrackMixer {
   display: flex;
@@ -43,20 +45,37 @@
 
 .TrackMixer-barRowDuration {
   position: absolute;
-  top: -7px;
-  left: 2px;
-  right: 2px;
+  top: @tracx-mixer-bar-duration-top;
+  left: @tracx-mixer-bar-duration-left-right;
+  right: @tracx-mixer-bar-duration-left-right;
   display: flex;
   font-size: 10px;
   justify-content: space-between;
 }
 
 .TrackMixer-bar {
+  position: relative;
+  min-width: 80px;
   height: @track-mixer-bar-height;
-  background-color: @edu-secondary-color-dark;
+  background-color: @edu-primary-color-light;
 
   &.TrackMixer-bar--secondaryTrack {
+    position: absolute;
+    min-width: unset;
     background-color: @edu-primary-color-light;
+  }
+}
+
+.TrackMixer-barRowOffset {
+  position: absolute;
+  top: @tracx-mixer-bar-duration-top;
+  left: @tracx-mixer-bar-duration-left-right;
+  width: 100%;
+  font-size: 10px;
+  color: @edu-success-color;
+
+  &.TrackMixer-barRowOffset--negative {
+    color: @edu-error-color;
   }
 }
 
@@ -67,12 +86,12 @@
 
   &.TrackMixer-barOverflow--left {
     left: -@track-mixer-bar-overflow-width;
-    background: linear-gradient(to left, @edu-primary-color-light 1px, @edu-white);
+    background: linear-gradient(to right, @edu-white, transparent);
   }
 
   &.TrackMixer-barOverflow--right {
     right: -@track-mixer-bar-overflow-width;
-    background: linear-gradient(to right, @edu-primary-color-light 1px, @edu-white);
+    background: linear-gradient(to left, @edu-white, transparent);
   }
 }
 

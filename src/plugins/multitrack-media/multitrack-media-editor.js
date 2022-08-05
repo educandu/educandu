@@ -39,8 +39,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handleMainTrackDurationDetermined = duration => {
-    // eslint-disable-next-line no-console
-    console.log(duration);
     setMainTrackDurationInMs(duration);
   };
 
