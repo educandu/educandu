@@ -5,36 +5,61 @@ import VolumeSlider from './volume-slider.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 
+let trackBarInterval;
+
 function TrackMixer({
   mainTrack,
   secondaryTracks,
-  playbackDuration,
-  secondaryTracksDurations,
-  onMainTrackVolumeChange,
-  onSecondaryTrackVolumeChange,
-  onSecondaryTrackOffsetTimecodeChange
+  mainTrackDurationInMs,
+  secondaryTracksDurationsInMs,
+  onMainTrackChange,
+  onSecondaryTrackChange
 }) {
-  const handleSecondaryTrackBarLeftArrowClick = index => {
-    onSecondaryTrackOffsetTimecodeChange(index, secondaryTracks[index].offsetTimecode - 1000);
+  const handleTrackBarArrowMouseDown = (index, directionUnit) => {
+    if (trackBarInterval) {
+      clearInterval(trackBarInterval);
+      trackBarInterval = null;
+    }
+
+    let offsetTimecode = secondaryTracks[index].offsetTimecode;
+
+    trackBarInterval = setInterval(() => {
+      if (trackBarInterval) {
+        offsetTimecode += 1000 * directionUnit;
+        onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode });
+      }
+    }, 100);
   };
 
-  const handleSecondaryTrackBarRightArrowClick = index => {
-    onSecondaryTrackOffsetTimecodeChange(index, secondaryTracks[index].offsetTimecode + 1000);
+  const handleTrackBarArrowMouseUp = () => {
+    clearInterval(trackBarInterval);
+    trackBarInterval = null;
+  };
+
+  const handleMainTrackVolumeChange = volume => {
+    onMainTrackChange({ ...mainTrack, volume });
+  };
+
+  const handleSecondaryTrackVolumeChange = (index, volume) => {
+    onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
   };
 
   const renderSecondaryTrackNameRow = (secondaryTrack, index) => {
     return (
       <div className="TrackMixer-nameRow" key={index}>
         <div className="TrackMixer-name">{secondaryTrack.name}</div>
-        <VolumeSlider value={secondaryTrack.volume} onChange={value => onSecondaryTrackVolumeChange(index, value)} />
+        <VolumeSlider value={secondaryTrack.volume} onChange={value => handleSecondaryTrackVolumeChange(index, value)} />
       </div>
     );
   };
 
+  // eslint-disable-next-line no-console
+  console.log(secondaryTracks[0].offsetTimecode);
+
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
-    const duration = secondaryTracksDurations[index];
-    const widthInPercentage = Math.round(playbackDuration ? duration * 100 / playbackDuration : 0);
-    const offsetInPercentage = Math.round(playbackDuration ? secondaryTrack.offsetTimecode * 100 / playbackDuration : 0);
+    const duration = secondaryTracksDurationsInMs[index];
+    const widthInPercentage = Math.round(mainTrackDurationInMs ? duration * 100 / mainTrackDurationInMs : 0);
+    const offsetInPercentage = Math.round(mainTrackDurationInMs ? secondaryTrack.offsetTimecode * 100 / mainTrackDurationInMs : 0);
 
     const marginLeftInPercentage = offsetInPercentage > 0 ? offsetInPercentage : 0;
     const actualWidthInPercentage = (marginLeftInPercentage + widthInPercentage) <= 100
@@ -54,10 +79,22 @@ function TrackMixer({
           <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
         )}
         <div className="TrackMixer-barArrow TrackMixer-barArrow--left">
-          <Button type="link" size="small" icon={<CaretLeftOutlined />} onClick={() => handleSecondaryTrackBarLeftArrowClick(index)} />
+          <Button
+            type="link"
+            size="small"
+            icon={<CaretLeftOutlined />}
+            onMouseDown={() => handleTrackBarArrowMouseDown(index, -1)}
+            onMouseUp={() => handleTrackBarArrowMouseUp()}
+            />
         </div>
         <div className="TrackMixer-barArrow TrackMixer-barArrow--right">
-          <Button type="link" size="small" icon={<CaretRightOutlined />} onClick={() => handleSecondaryTrackBarRightArrowClick(index)} />
+          <Button
+            type="link"
+            size="small"
+            icon={<CaretRightOutlined />}
+            onMouseDown={() => handleTrackBarArrowMouseDown(index, 1)}
+            onMouseUp={() => handleTrackBarArrowMouseUp()}
+            />
         </div>
       </div>
     );
@@ -68,7 +105,7 @@ function TrackMixer({
       <div className="TrackMixer-namesColumn">
         <div className="TrackMixer-nameRow">
           <div className="TrackMixer-name">{mainTrack.name}</div>
-          <VolumeSlider value={mainTrack.volume} onChange={onMainTrackVolumeChange} />
+          <VolumeSlider value={mainTrack.volume} onChange={handleMainTrackVolumeChange} />
         </div>
         {secondaryTracks.map(renderSecondaryTrackNameRow)}
       </div>
@@ -77,7 +114,7 @@ function TrackMixer({
         <div className="TrackMixer-barRow">
           <div className="TrackMixer-barRowDuration">
             <span>{formatMillisecondsAsDuration(0)}</span>
-            <span>{formatMillisecondsAsDuration(playbackDuration)}</span>
+            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs)}</span>
           </div>
           <div className="TrackMixer-bar" />
         </div>
@@ -92,16 +129,15 @@ TrackMixer.propTypes = {
     name: PropTypes.string,
     volume: PropTypes.number.isRequired
   }).isRequired,
-  onMainTrackVolumeChange: PropTypes.func.isRequired,
-  onSecondaryTrackOffsetTimecodeChange: PropTypes.func.isRequired,
-  onSecondaryTrackVolumeChange: PropTypes.func.isRequired,
-  playbackDuration: PropTypes.number.isRequired,
+  mainTrackDurationInMs: PropTypes.number.isRequired,
+  onMainTrackChange: PropTypes.func.isRequired,
+  onSecondaryTrackChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     offsetTimecode: PropTypes.number.isRequired,
     volume: PropTypes.number.isRequired
   })).isRequired,
-  secondaryTracksDurations: PropTypes.arrayOf(PropTypes.number).isRequired
+  secondaryTracksDurationsInMs: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
 export default TrackMixer;

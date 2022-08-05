@@ -21,11 +21,11 @@ const formItemLayout = {
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
   const { t } = useTranslation('multitrackMedia');
-  const [sourceDurationMainTrack, setSourceDurationMainTrack] = useState(0);
-  const [sourceDurationsSecondaryTracks, setSourceDurationsSecondaryTracks] = useState(content.secondaryTracks.map(() => 0));
+  const [mainTrackDurationInMs, setMainTrackDurationInMs] = useState(0);
+  const [secondaryTracksDurationsInMs, setSecondaryTracksDurationsInMs] = useState(content.secondaryTracks.map(() => 0));
 
   const { width, mainTrack, secondaryTracks } = content;
-  const playbackDuration = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * sourceDurationMainTrack;
+  const mainTrackPlaybackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDurationInMs;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -41,7 +41,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleMainTrackDurationDetermined = duration => {
     // eslint-disable-next-line no-console
     console.log(duration);
-    setSourceDurationMainTrack(duration);
+    setMainTrackDurationInMs(duration);
   };
 
   const handleSecondaryTrackDurationDetermined = (index, duration) => {
@@ -49,7 +49,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     newDurations[index] = duration;
     // eslint-disable-next-line no-console
     console.log(newDurations);
-    setSourceDurationsSecondaryTracks(newDurations);
+    setSecondaryTracksDurationsInMs(newDurations);
   };
 
   const handeSecondaryTrackContentChanged = (index, value) => {
@@ -84,21 +84,13 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
-  const handleMainTrackVolumeChange = volume => {
-    const newMainTrack = cloneDeep(mainTrack);
-    newMainTrack.volume = volume;
+  const handleMainTrackChange = newMainTrack => {
     changeContent({ mainTrack: newMainTrack });
   };
 
-  const handleSecondaryTrackVolumeChange = (index, volume) => {
+  const handleSecondaryTrackChange = (index, newSecondaryTrack) => {
     const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index].volume = volume;
-    changeContent({ secondaryTracks: newSecondaryTracks });
-  };
-
-  const handleSecondaryTrackOffsetTimecodeChange = (index, offsetTimecode) => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index].offsetTimecode = offsetTimecode;
+    newSecondaryTracks[index] = newSecondaryTrack;
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
@@ -141,11 +133,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           <TrackMixer
             mainTrack={mainTrack}
             secondaryTracks={secondaryTracks}
-            playbackDuration={playbackDuration}
-            onMainTrackVolumeChange={handleMainTrackVolumeChange}
-            secondaryTracksDurations={sourceDurationsSecondaryTracks}
-            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
-            onSecondaryTrackOffsetTimecodeChange={handleSecondaryTrackOffsetTimecodeChange}
+            mainTrackDurationInMs={mainTrackPlaybackDurationInMs}
+            secondaryTracksDurationsInMs={secondaryTracksDurationsInMs}
+            onMainTrackChange={handleMainTrackChange}
+            onSecondaryTrackChange={handleSecondaryTrackChange}
             />
         </ItemPanel>
 
