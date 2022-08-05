@@ -36,7 +36,7 @@ orientationOptionHorizontal:
   de: Horizontal
 clipEffectHint:
   en: Please use the selection rectangle to specify the displayed area
-  de: Bitte benutzen Sie das Markierungsrechteck, um einen Bildbereich auszuwählen
+  de: Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen
 imageLoadingErrorMessage:
   en: The image could not be loaded
   de: Das Bild konnte nicht geladen werden

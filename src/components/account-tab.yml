@@ -1,6 +1,6 @@
 info:
   en: Here you can change your account information as well as close your account.
-  de: Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.
+  de: Hier kannst du deine Konto-Informationen bearbeiten sowie dein Konto schließen.
 credentialsHeadline:
   en: Credentials
   de: Zugangsdaten
@@ -9,13 +9,13 @@ resetPassword:
   de: Kennwort wiederherstellen
 updateSuccessMessage:
   en: Your account was updated successfully.
-  de: Ihr Konto wurde erfolgreich aktualisiert.
+  de: Dein Konto wurde erfolgreich aktualisiert.
 passwordResetEmailSent:
   en: The password reset link has been sent to {email}
   de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet
 closeAccountDetails:
   en: All your public contributions (documents, public rooms, files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, private rooms and files uploaded to the private storage) will be removed. You will no longer be able to log into the website.
-  de: Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.
+  de: Alle deine öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.
 closeAccount:
   en: Close account
   de: Konto schließen
