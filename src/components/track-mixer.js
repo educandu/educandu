@@ -4,11 +4,13 @@ import classNames from 'classnames';
 import VolumeSlider from './volume-slider.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { BackwardOutlined, FastBackwardOutlined, FastForwardOutlined, ForwardOutlined } from '@ant-design/icons';
 
-let trackBarInterval;
-
-const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 15;
+const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
+const OFFSET_DIRECTION = {
+  left: -1,
+  right: 1
+};
 
 function TrackMixer({
   mainTrack,
@@ -20,54 +22,52 @@ function TrackMixer({
 }) {
   const mainTrackBarRef = useRef(null);
   const [secondaryTracksState, setSecondaryTracksState] = useState(secondaryTracks.map(() => ({
-    barWidth: 0,
-    marginLeft: 0,
-    isLeftArrowDisabled: true,
-    isRightArrowDisabled: true
+    barWidthInPx: 0,
+    marginLeftInPx: 0,
+    canBeNegativelyOffset: false,
+    canBePositivelyOffset: false
   })));
 
   const updateStates = useCallback(() => {
-    const maxTrackBarWidth = mainTrackBarRef.current?.clientWidth;
+    const maxTrackBarWidthInPx = mainTrackBarRef.current?.clientWidth;
 
-    if (!maxTrackBarWidth || !mainTrackDurationInMs) {
+    if (!maxTrackBarWidthInPx || !mainTrackDurationInMs) {
       return;
     }
 
+    const maxPositiveOffset = mainTrackDurationInMs;
+
     setSecondaryTracksState(secondaryTracks.map((secondaryTrack, index) => {
-      const secondaryTrackDuration = secondaryTracksDurationsInMs[index];
-      const msInPx = maxTrackBarWidth / mainTrackDurationInMs;
-      const barWidth = secondaryTrackDuration * msInPx;
-      const marginLeft = secondaryTrack.offsetTimecode * msInPx;
+      const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
 
-      const isLeftBoundReached = marginLeft <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      const isLeftArrowDisabled = secondaryTrackDuration <= -secondaryTrack.offsetTimecode;
+      const msInPx = maxTrackBarWidthInPx / mainTrackDurationInMs;
+      const barWidthInPx = secondaryTracksDurationsInMs[index] * msInPx;
+      const marginLeftInPx = secondaryTrack.offsetTimecode * msInPx;
 
-      const isRightBoundReached = (marginLeft + barWidth) >= maxTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      const isRightArrowDisabled = mainTrackDurationInMs <= secondaryTrack.offsetTimecode;
+      const isLeftBoundReached = marginLeftInPx <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      const canBeNegativelyOffset = secondaryTrack.offsetTimecode >= 0 || secondaryTrack.offsetTimecode > maxNegativeOffset;
+
+      const isRightBoundReached = (marginLeftInPx + barWidthInPx) >= maxTrackBarWidthInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      const canBePositivelyOffset = secondaryTrack.offsetTimecode <= 0 || secondaryTrack.offsetTimecode < maxPositiveOffset;
 
       const newState = {
-        barWidth,
-        marginLeft,
-        isLeftArrowDisabled,
-        isRightArrowDisabled
+        barWidthInPx,
+        marginLeftInPx,
+        canBeNegativelyOffset,
+        canBePositivelyOffset
       };
 
-      if (isLeftArrowDisabled || isRightArrowDisabled) {
-        clearInterval(trackBarInterval);
-        trackBarInterval = null;
-      }
-
       if (isLeftBoundReached) {
-        newState.marginLeft = -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-        newState.barWidth = barWidth + marginLeft + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+        newState.marginLeftInPx = -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+        newState.barWidthInPx = barWidthInPx + marginLeftInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
       }
 
       if (isRightBoundReached) {
-        newState.barWidth = maxTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeft;
+        newState.barWidthInPx = maxTrackBarWidthInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeftInPx;
       }
 
       // eslint-disable-next-line no-console
-      console.log('maxTrackBarWidth', maxTrackBarWidth, 'barWidth', newState.barWidth, 'marginLeft', newState.marginLeft);
+      console.log('maxTrackBarWidthInPx', maxTrackBarWidthInPx, 'barWidthInPx', newState.barWidthInPx, 'marginLeftInPx', newState.marginLeftInPx);
 
       return newState;
     }));
@@ -84,26 +84,20 @@ function TrackMixer({
     };
   }, [updateStates]);
 
-  const handleTrackBarArrowMouseDown = (index, directionUnit) => {
-    if (trackBarInterval) {
-      clearInterval(trackBarInterval);
-      trackBarInterval = null;
+  const handleTrackBarArrowClick = ({ index, stepInMs, direction }) => {
+    let newOffsetTimecode = secondaryTracks[index].offsetTimecode + (stepInMs * direction);
+
+    const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
+    const maxPositiveOffset = mainTrackDurationInMs;
+
+    if (direction === OFFSET_DIRECTION.left && newOffsetTimecode <= maxNegativeOffset) {
+      newOffsetTimecode = -secondaryTracksDurationsInMs[index];
+    }
+    if (direction === OFFSET_DIRECTION.right && newOffsetTimecode >= maxPositiveOffset) {
+      newOffsetTimecode = mainTrackDurationInMs;
     }
 
-    let offsetTimecode = secondaryTracks[index].offsetTimecode;
-
-    trackBarInterval = setInterval(() => {
-      if (trackBarInterval) {
-        offsetTimecode += 1000 * directionUnit;
-
-        onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode });
-      }
-    }, 100);
-  };
-
-  const handleTrackBarArrowMouseUp = () => {
-    clearInterval(trackBarInterval);
-    trackBarInterval = null;
+    onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode: newOffsetTimecode });
   };
 
   const handleMainTrackVolumeChange = volume => {
@@ -135,28 +129,40 @@ function TrackMixer({
         </div>
         <div
           className="TrackMixer-bar TrackMixer-bar--secondaryTrack"
-          style={{ left: `${secondaryTracksState[index].marginLeft}px`, width: `${secondaryTracksState[index].barWidth}px` }}
+          style={{ left: `${secondaryTracksState[index].marginLeftInPx}px`, width: `${secondaryTracksState[index].barWidthInPx}px` }}
           />
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
-        <div className="TrackMixer-barArrow TrackMixer-barArrow--left">
+        <div className="TrackMixer-barArrows TrackMixer-barArrows--left">
           <Button
             type="link"
             size="small"
-            icon={<CaretLeftOutlined />}
-            onMouseDown={() => handleTrackBarArrowMouseDown(index, -1)}
-            onMouseUp={() => handleTrackBarArrowMouseUp()}
-            disabled={!secondaryTracksState[index].barWidth || secondaryTracksState[index].isLeftArrowDisabled}
+            icon={<FastBackwardOutlined />}
+            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.left })}
+            disabled={!secondaryTracksState[index].canBeNegativelyOffset}
+            />
+          <Button
+            type="link"
+            size="small"
+            icon={<BackwardOutlined />}
+            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.left })}
+            disabled={!secondaryTracksState[index].canBeNegativelyOffset}
             />
         </div>
-        <div className="TrackMixer-barArrow TrackMixer-barArrow--right">
+        <div className="TrackMixer-barArrows TrackMixer-barArrows--right">
           <Button
             type="link"
             size="small"
-            icon={<CaretRightOutlined />}
-            onMouseDown={() => handleTrackBarArrowMouseDown(index, 1)}
-            onMouseUp={() => handleTrackBarArrowMouseUp()}
-            disabled={!secondaryTracksState[index].barWidth || secondaryTracksState[index].isRightArrowDisabled}
+            icon={<ForwardOutlined />}
+            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.right })}
+            disabled={!secondaryTracksState[index].canBePositivelyOffset}
+            />
+          <Button
+            type="link"
+            size="small"
+            icon={<FastForwardOutlined />}
+            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.right })}
+            disabled={!secondaryTracksState[index].canBePositivelyOffset}
             />
         </div>
       </div>

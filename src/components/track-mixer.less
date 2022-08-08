@@ -3,7 +3,7 @@
 @tracx-mixer-bar-duration-top: -4px;
 @tracx-mixer-bar-duration-left-right: 2px;
 @track-mixer-column-padding: 10px 0;
-@track-mixer-bar-overflow-width: 15px;
+@track-mixer-bar-overflow-width: 10px;
 
 .TrackMixer {
   display: flex;
@@ -29,7 +29,7 @@
 
 .TrackMixer-barsColumn {
   width: 100%;
-  margin: 0 40px;
+  margin: 0 50px;
   padding: @track-mixer-column-padding;
   border-left: 1px dashed @edu-border-color-dark;
   border-right: 1px dashed @edu-border-color-dark;
@@ -95,14 +95,21 @@
   }
 }
 
-.TrackMixer-barArrow {
+.TrackMixer-barArrows {
   position: absolute;
+  display: flex;
+  gap: 5px;
 
-  &.TrackMixer-barArrow--left {
-    left: -40px;
+  & .ant-btn {
+    width: 16px;
+    height: 16px;
   }
 
-  &.TrackMixer-barArrow--right {
-    right: -40px;
+  &.TrackMixer-barArrows--left {
+    left: -50px;
+  }
+
+  &.TrackMixer-barArrows--right {
+    right: -50px;
   }
 }

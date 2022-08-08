@@ -45,8 +45,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleSecondaryTrackDurationDetermined = (index, duration) => {
     const newDurations = cloneDeep(secondaryTracks);
     newDurations[index] = duration;
-    // eslint-disable-next-line no-console
-    console.log(newDurations);
     setSecondaryTracksDurationsInMs(newDurations);
   };
 
