@@ -43,7 +43,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handleSecondaryTrackDurationDetermined = (index, duration) => {
-    const newDurations = cloneDeep(secondaryTracks);
+    const newDurations = cloneDeep(secondaryTracksDurationsInMs);
     newDurations[index] = duration;
     setSecondaryTracksDurationsInMs(newDurations);
   };
