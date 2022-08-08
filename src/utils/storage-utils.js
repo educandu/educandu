@@ -5,6 +5,7 @@ import { getResourceExtension } from './resource-utils.js';
 import {
   CDN_URL_PREFIX,
   STORAGE_LOCATION_TYPE,
+  IMAGE_OPTIMIZATION_QUALITY,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
   IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
@@ -54,7 +55,7 @@ const optimizeImage = file => {
         canvas.toBlob(blob => {
           const processedFile = new File([blob], file.name);
           resolve(processedFile);
-        }, file.type, 0.5);
+        }, file.type, IMAGE_OPTIMIZATION_QUALITY);
       };
     };
   });

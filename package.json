@@ -39,6 +39,7 @@
     "classnames": "^2.3.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.5",
+    "cropperjs": "^1.5.12",
     "crypto-js": "^4.1.1",
     "debounce": "^1.2.1",
     "decompress": "^4.2.1",

@@ -10,3 +10,6 @@ insufficientPrivateStorge:
 startUpload:
   en: Start upload
   de: Upload starten
+preprocessed:
+  en: edited
+  de: bearbeitet

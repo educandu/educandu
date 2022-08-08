@@ -426,7 +426,8 @@
       "headline": "Files upload",
       "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
       "insufficientPrivateStorge": "Not enough storage space available for file",
-      "startUpload": "Start upload"
+      "startUpload": "Start upload",
+      "preprocessed": "edited"
     }
   },
   {
@@ -436,7 +437,8 @@
       "headline": "Datei-Upload",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
-      "startUpload": "Upload starten"
+      "startUpload": "Upload starten",
+      "preprocessed": "bearbeitet"
     }
   },
   {
@@ -455,6 +457,30 @@
       "restoredFrom": "Wiederhergestellt aus",
       "permalink": "Permalink",
       "restore": "Wiederherstellen"
+    }
+  },
+  {
+    "namespace": "imageEditor",
+    "language": "en",
+    "resources": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "rotateRight": "Rotate right",
+      "rotateLeft": "Rotate left",
+      "scaleX": "Flip horizontally",
+      "scaleY": "Flip vertically"
+    }
+  },
+  {
+    "namespace": "imageEditor",
+    "language": "de",
+    "resources": {
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "rotateRight": "Im Uhrzeigersinn drehen",
+      "rotateLeft": "Gegen den Uhrzeigersinn drehen",
+      "scaleX": "Horizontal spiegeln",
+      "scaleY": "Vertikal spiegeln"
     }
   },
   {

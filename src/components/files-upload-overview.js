@@ -1,6 +1,6 @@
-import { Button, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
+import { Button, Tooltip } from 'antd';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import { useTranslation } from 'react-i18next';
@@ -152,6 +152,9 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
             <CloseOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--error" />
           )}
           {item.file.name}
+          {item.status === ITEM_STATUS.preprocessed && (
+            <span className="FilesUploadOverview-fileStatusMessage">({t('preprocessed')})</span>
+          )}
         </div>
         {item.errorMessage && <div className="FilesUploadOverview-fileStatusError">{item.errorMessage}</div>}
         {item.status === ITEM_STATUS.succeeded && showPreviewAfterUpload && (
