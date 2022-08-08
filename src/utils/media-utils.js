@@ -91,20 +91,26 @@ export const determineMediaDuration = memoizee(url => {
   return Promise.race([playerPromise, timeoutPromise]);
 }, { promise: true });
 
-export function formatMillisecondsAsDuration(milliseconds) {
-  if (!Number.isFinite(milliseconds) || milliseconds < 1) {
-    return '00:00';
-  }
+export function formatMillisecondsAsDuration(milliseconds, { includeMilliseconds } = {}) {
+  const millisecondsToFormat = !Number.isFinite(milliseconds) || milliseconds < 1 ? 0 : milliseconds;
 
-  const totalSeconds = Math.round(milliseconds / 1000);
+  const totalSeconds = Math.round(millisecondsToFormat / 1000);
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);
 
+  const remainingMilliseconds = (millisecondsToFormat % 1000).toString().padStart(3, '0');
   const seconds = (totalSeconds % 60).toString().padStart(2, '0');
   const minutes = (totalMinutes % 60).toString().padStart(2, '0');
   const hours = totalHours.toString().padStart(2, '0');
 
-  return totalHours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+  const durationParts = [];
+  if (totalHours) {
+    durationParts.push(hours);
+  }
+  durationParts.push(minutes);
+  durationParts.push(seconds);
+
+  return includeMilliseconds ? `${durationParts.join(':')}.${remainingMilliseconds}` : durationParts.join(':');
 }
 
 export function ensureValidMediaPosition(position) {
