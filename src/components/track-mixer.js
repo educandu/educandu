@@ -29,9 +29,10 @@ function TrackMixer({
   })));
 
   const updateStates = useCallback(() => {
-    const maxTrackBarWidthInPx = mainTrackBarRef.current?.clientWidth;
+    const mainTrackBarWidth = mainTrackBarRef.current?.clientWidth;
+    const maxSecondaryTrackBarWidth = mainTrackBarWidth + (2 * ALLOWED_TRACK_BAR_OVERFLOW_IN_PX);
 
-    if (!maxTrackBarWidthInPx || !mainTrackDurationInMs) {
+    if (!mainTrackBarWidth || !mainTrackDurationInMs) {
       return;
     }
 
@@ -40,14 +41,14 @@ function TrackMixer({
     setSecondaryTracksState(secondaryTracks.map((secondaryTrack, index) => {
       const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
 
-      const msInPx = maxTrackBarWidthInPx / mainTrackDurationInMs;
+      const msInPx = mainTrackBarWidth / mainTrackDurationInMs;
       const barWidthInPx = secondaryTracksDurationsInMs[index] * msInPx;
       const marginLeftInPx = secondaryTrack.offsetTimecode * msInPx;
 
       const isLeftBoundReached = marginLeftInPx <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
       const canBeNegativelyOffset = secondaryTrack.offsetTimecode >= 0 || secondaryTrack.offsetTimecode > maxNegativeOffset;
 
-      const isRightBoundReached = (marginLeftInPx + barWidthInPx) >= maxTrackBarWidthInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      const isRightBoundReached = (marginLeftInPx + barWidthInPx) >= mainTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
       const canBePositivelyOffset = secondaryTrack.offsetTimecode <= 0 || secondaryTrack.offsetTimecode < maxPositiveOffset;
 
       const newState = {
@@ -63,11 +64,13 @@ function TrackMixer({
       }
 
       if (isRightBoundReached) {
-        newState.barWidthInPx = maxTrackBarWidthInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeftInPx;
+        newState.barWidthInPx = mainTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeftInPx;
       }
 
+      newState.barWidthInPx = Math.min(newState.barWidthInPx, maxSecondaryTrackBarWidth);
+
       // eslint-disable-next-line no-console
-      console.log('maxTrackBarWidthInPx', maxTrackBarWidthInPx, 'barWidthInPx', newState.barWidthInPx, 'marginLeftInPx', newState.marginLeftInPx);
+      console.log('mainTrackBarWidth', mainTrackBarWidth, 'barWidthInPx', newState.barWidthInPx, 'marginLeftInPx', newState.marginLeftInPx);
 
       return newState;
     }));
