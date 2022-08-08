@@ -119,17 +119,22 @@ function TrackMixer({
 
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
     const offsetTimecode = secondaryTracks[index].offsetTimecode;
-    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode));
+    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode), { includeMilliseconds: true });
     const offsetText = offsetTimecode >= 0 ? `+ ${offsetAsDuration}` : `- ${offsetAsDuration}`;
+
+    const barRowOffsetClasses = classNames(
+      'TrackMixer-barRowOffset',
+      { 'TrackMixer-barRowOffset--negative': offsetTimecode < 0 }
+    );
 
     return (
       <div className="TrackMixer-barRow" key={index}>
-        <div className={classNames('TrackMixer-barRowOffset', { 'TrackMixer-barRowOffset--negative': offsetTimecode < 0 })}>
+        <div className={barRowOffsetClasses}>
           {offsetText}
         </div>
         <div
           className="TrackMixer-bar TrackMixer-bar--secondaryTrack"
-          style={{ left: `${secondaryTracksState[index].marginLeftInPx}px`, width: `${secondaryTracksState[index].barWidthInPx}px` }}
+          style={{ left: `${secondaryTracksState[index]?.marginLeftInPx}px`, width: `${secondaryTracksState[index]?.barWidthInPx}px` }}
           />
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
@@ -139,14 +144,14 @@ function TrackMixer({
             size="small"
             icon={<FastBackwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.left })}
-            disabled={!secondaryTracksState[index].canBeNegativelyOffset}
+            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
           <Button
             type="link"
             size="small"
             icon={<BackwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.left })}
-            disabled={!secondaryTracksState[index].canBeNegativelyOffset}
+            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
         </div>
         <div className="TrackMixer-barArrows TrackMixer-barArrows--right">
@@ -155,14 +160,14 @@ function TrackMixer({
             size="small"
             icon={<ForwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.right })}
-            disabled={!secondaryTracksState[index].canBePositivelyOffset}
+            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
           <Button
             type="link"
             size="small"
             icon={<FastForwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.right })}
-            disabled={!secondaryTracksState[index].canBePositivelyOffset}
+            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
         </div>
       </div>
@@ -182,8 +187,8 @@ function TrackMixer({
       <div className="TrackMixer-barsColumn">
         <div className="TrackMixer-barRow">
           <div className="TrackMixer-barRowDuration">
-            <span>{formatMillisecondsAsDuration(0)}</span>
-            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs)}</span>
+            <span>{formatMillisecondsAsDuration(0, { includeMilliseconds: true })}</span>
+            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { includeMilliseconds: true })}</span>
           </div>
           <div className="TrackMixer-bar" ref={mainTrackBarRef} />
         </div>
