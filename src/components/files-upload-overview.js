@@ -30,7 +30,7 @@ const STAGE = {
   uploadFinished: 'uploadFinished'
 };
 
-function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPreviewAfterUpload, onFileEdit, onUploadFinish }) {
+function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPreviewAfterUpload, onFileEdit, onUploadStart, onUploadFinish }) {
   const { uiLocale } = useLocale();
   const setStorageLocation = useSetStorageLocation();
   const { t } = useTranslation('filesUploadOverview');
@@ -108,6 +108,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
+    onUploadStart();
     const result = await uploadFiles(uploadItems, storageLocation, directory);
     setCurrentStage(STAGE.uploadFinished);
     onUploadFinish(result);
@@ -120,7 +121,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
   const renderUploadMessage = () => {
     switch (currentStage) {
       case STAGE.uploadNotStarted:
-        return t('stage_uploadNotStarted');
+        return t('stage_uploadNotStarted', { fileCount: uploadItems.length });
       case STAGE.uploading:
         return t('stage_uploading');
       case STAGE.uploadFinished:
@@ -220,6 +221,7 @@ FilesUploadOverview.propTypes = {
   directory: cdnObjectShape.isRequired,
   onFileEdit: PropTypes.func,
   onUploadFinish: PropTypes.func,
+  onUploadStart: PropTypes.func,
   showPreviewAfterUpload: PropTypes.bool,
   storageLocation: storageLocationShape.isRequired,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
@@ -231,6 +233,7 @@ FilesUploadOverview.propTypes = {
 FilesUploadOverview.defaultProps = {
   onFileEdit: () => {},
   onUploadFinish: () => {},
+  onUploadStart: () => {},
   showPreviewAfterUpload: false
 };
 

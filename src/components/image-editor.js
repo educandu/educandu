@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import DimensionsProvider from './dimensions-provider.js';
+import { IMAGE_OPTIMIZATION_QUALITY } from '../domain/constants.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ColumnHeightOutlined,
@@ -26,7 +27,7 @@ function ImageEditor({ file, editorRef, onCrop }) {
   const [cropperModule, setCropperModule] = useState(null);
 
   editorRef.current = {
-    getCroppedFile: async (maxWidth = Infinity, quality = 0.5) => {
+    getCroppedFile: async (maxWidth = Infinity, quality = IMAGE_OPTIMIZATION_QUALITY) => {
       const canvas = cropperInstanceRef.current.getCroppedCanvas({
         maxWidth,
         imageSmoothingEnabled: true,
@@ -99,11 +100,11 @@ function ImageEditor({ file, editorRef, onCrop }) {
     }
   }, [cropperModule, file, cropperInstanceRef, cropperImageRef, onCropRef, cleanUp]);
 
-  const handleCropperAction = (method, ...args) => {
+  const handleCropperAction = (action, ...args) => {
     const cropper = cropperInstanceRef.current;
 
     let resetSelection = false;
-    switch (method) {
+    switch (action) {
       case 'zoom':
       case 'rotate':
         if (DEFAULT_CROPPER_OPTIONS.viewMode > 0) {
@@ -124,7 +125,7 @@ function ImageEditor({ file, editorRef, onCrop }) {
       cropper.clear();
     }
 
-    cropper[method](...args);
+    cropper[action](...args);
 
     if (resetSelection) {
       cropper.crop();

@@ -428,7 +428,7 @@
       "insufficientPrivateStorge": "Not enough storage space available for file",
       "startUpload": "Start upload",
       "preprocessed": "edited",
-      "stage_uploadNotStarted": "The following file will be uploaded. You can edit images before upload by clicking on the pen icon.",
+      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
       "stage_uploading": "Uploading ...",
       "stage_uploadFinished": "Upload finished"
     }
@@ -442,7 +442,7 @@
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
       "startUpload": "Upload starten",
       "preprocessed": "bearbeitet",
-      "stage_uploadNotStarted": "Die folgenden Dateien werden hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
+      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
       "stage_uploading": "Hochladen ...",
       "stage_uploadFinished": "Upload beendet"
     }
@@ -1430,9 +1430,6 @@
       "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "closeSearchResult": "Back to directory view",
       "uploadFiles": "Upload files",
-      "uploading": "Uploading {count, plural, =1 {file} other {files}}",
-      "successfullyUploaded": "Upload completed",
-      "optimizeImages": "Optimize images for web display",
       "cancelEditing": "Cancel image editing",
       "applyChanges": "Apply changes"
     }
@@ -1448,9 +1445,6 @@
       "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "closeSearchResult": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen",
-      "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
-      "successfullyUploaded": "Hochladen ist abgeschlossen",
-      "optimizeImages": "Bilder für Web optimieren",
       "cancelEditing": "Bildbearbeitung abbrechen",
       "applyChanges": "Änderungen übernehmen"
     }

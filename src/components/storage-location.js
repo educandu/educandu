@@ -151,10 +151,9 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     dropzoneRef.current.open();
   };
 
-  const handleUploadStart = useCallback(() => {
+  const handleUploadStart = () => {
     setIsUploading(true);
-    pushScreen(SCREEN.uploadOverview);
-  }, []);
+  };
 
   const handleUploadFinish = ({ uploadedFiles, failedFiles }) => {
     const uploadedFileValues = Object.values(uploadedFiles);
@@ -298,12 +297,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
         return;
       }
 
-      await handleUploadStart();
+      pushScreen(SCREEN.uploadOverview);
     };
 
     startUpload();
 
-  }, [uploadQueue, handleUploadStart, storageLocation.type, uploadLiabilityCookieName, t]);
+  }, [uploadQueue, storageLocation.type, uploadLiabilityCookieName, t]);
 
   useEffect(() => {
     if (!selectedFile) {
@@ -465,6 +464,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           directory={currentDirectory}
           storageLocation={storageLocation}
           onFileEdit={handleFileEdit}
+          onUploadStart={handleUploadStart}
           onUploadFinish={handleUploadFinish}
           showPreviewAfterUpload={uploadQueue.length === 1}
           />

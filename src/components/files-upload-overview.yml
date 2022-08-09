@@ -14,8 +14,8 @@ preprocessed:
   en: edited
   de: bearbeitet
 stage_uploadNotStarted:
-  en: The following file will be uploaded. You can edit images before upload by clicking on the pen icon.
-  de: Die folgenden Dateien werden hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.
+  en: "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon."
+  de: "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
 stage_uploading:
   en: Uploading ...
   de: Hochladen ...
