@@ -13,3 +13,12 @@ startUpload:
 preprocessed:
   en: edited
   de: bearbeitet
+stage_uploadNotStarted:
+  en: The following file will be uploaded. You can edit images before upload by clicking on the pen icon.
+  de: Die folgenden Dateien werden hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.
+stage_uploading:
+  en: Uploading ...
+  de: Hochladen ...
+stage_uploadFinished:
+  en: Upload finished
+  de: Upload beendet

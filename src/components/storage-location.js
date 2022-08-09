@@ -21,9 +21,9 @@ import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { DoubleLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
-import { CDN_OBJECT_TYPE, IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
+import { CDN_OBJECT_TYPE, IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -217,7 +217,11 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     setCurrentEditedFileIsDirty(isCropped);
   };
 
-  const handleApplayChangesToCurrentEditedFileClick = async () => {
+  const handleCancelEditingCurrentEditedFileClick = () => {
+    popScreen();
+  };
+
+  const handleApplyChangesToCurrentEditedFileClick = async () => {
     const newFile = await imageEditorRef.current.getCroppedFile(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, IMAGE_OPTIMIZATION_QUALITY);
     setUploadQueue(queue => queue.map((item, index) => index !== currentEditedFileIndex ? item : { file: newFile, isPristine: false }));
     popScreen();
@@ -478,21 +482,28 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.fileEditor && (
       <div className="StorageLocation-screen">
         {renderScreenBackButton({ onClick: handleFileEditScreenBackClick, disabled: false })}
-        <div className="StorageLocation-imageEditor">
-          <ImageEditor
-            editorRef={imageEditorRef}
-            file={uploadQueue[currentEditedFileIndex].file}
-            onCrop={handleImageEditorCrop}
-            />
-        </div>
-        <div>
-          <Button
-            type="primary"
-            disabled={!currentEditedFileIsDirty}
-            onClick={handleApplayChangesToCurrentEditedFileClick}
-            >
-            {t('common:apply')}
-          </Button>
+        <div className="StorageLocation-imageEditorContainer">
+          <div className="StorageLocation-imageEditor">
+            <ImageEditor
+              editorRef={imageEditorRef}
+              file={uploadQueue[currentEditedFileIndex].file}
+              onCrop={handleImageEditorCrop}
+              />
+          </div>
+          <div className="StorageLocation-imageEditorButtons">
+            <Button
+              onClick={handleCancelEditingCurrentEditedFileClick}
+              >
+              {t('cancelEditing')}
+            </Button>
+            <Button
+              type="primary"
+              disabled={!currentEditedFileIsDirty}
+              onClick={handleApplyChangesToCurrentEditedFileClick}
+              >
+              {t('applyChanges')}
+            </Button>
+          </div>
         </div>
         <DialogFooterButtons
           allowOk={false}

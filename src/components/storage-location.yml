@@ -28,3 +28,9 @@ successfullyUploaded:
 optimizeImages:
   en: Optimize images for web display
   de: Bilder für Web optimieren
+cancelEditing:
+  en: Cancel image editing
+  de: Bildbearbeitung abbrechen
+applyChanges:
+  en: Apply changes
+  de: Änderungen übernehmen

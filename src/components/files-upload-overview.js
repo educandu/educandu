@@ -117,6 +117,19 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
     onFileEdit(itemIndex);
   };
 
+  const renderUploadMessage = () => {
+    switch (currentStage) {
+      case STAGE.uploadNotStarted:
+        return t('stage_uploadNotStarted');
+      case STAGE.uploading:
+        return t('stage_uploading');
+      case STAGE.uploadFinished:
+        return t('stage_uploadFinished');
+      default:
+        throw new Error(`Invalid stage value: ${currentStage}`);
+    }
+  };
+
   const renderUploadItem = (item, itemIndex) => {
     const itemIsEditable = isEditableImageFile(item.file);
     return (
@@ -179,6 +192,9 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
           <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
         </div>
       )}
+      <div className="FilesUploadOverview-message" >
+        {renderUploadMessage()}
+      </div>
       <div className="FilesUploadOverview-fileStatusContainer">
         {uploadItems.map((item, index) => (
           <div key={index.toString()}>
@@ -186,14 +202,16 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
           </div>
         ))}
       </div>
-      <Button
-        type="primary"
-        onClick={handleStartUploadClick}
-        loading={currentStage === STAGE.uploading}
-        disabled={currentStage === STAGE.uploadFinished}
-        >
-        {t('startUpload')}
-      </Button>
+      <div className="FilesUploadOverview-button" >
+        <Button
+          type="primary"
+          onClick={handleStartUploadClick}
+          loading={currentStage === STAGE.uploading}
+          disabled={currentStage === STAGE.uploadFinished}
+          >
+          {t('startUpload')}
+        </Button>
+      </div>
     </div>
   );
 }
