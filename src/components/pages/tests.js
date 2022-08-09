@@ -4,23 +4,23 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import Timeline from '../timeline.js';
 import MediaPlayer from '../media-player.js';
+import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useRef, useState } from 'react';
 import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
+import { useStorage } from '../storage-context.js';
 import { useService } from '../container-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import React, { useEffect, useRef, useState } from 'react';
 import MediaRangeSelector from '../media-range-selector.js';
+import FilesUploadOverview from '../files-upload-overview.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import FilesUploadOverview from '../files-upload-overview.js';
-import { useStorage } from '../storage-context.js';
-import ImageEditor from '../image-editor.js';
 
 const { TabPane } = Tabs;
 
