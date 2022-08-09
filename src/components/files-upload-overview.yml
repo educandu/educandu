@@ -3,7 +3,7 @@ headline:
   de: Datei-Upload
 uploadLimitExceeded:
   en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
-  de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
+  de: Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.
 insufficientPrivateStorge:
   en: Not enough storage space available for file
   de: Nicht genügend Speicherplatz für die Datei verfügbar

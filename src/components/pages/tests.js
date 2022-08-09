@@ -298,7 +298,7 @@ function Tests({ PageTemplate }) {
             </Form>
           </TabPane>
           <TabPane tab="MultitrackMediaPlugin" key="MultitrackMediaPlugin">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '25px' }}>
               <div>
                 <h4>Display</h4>
                 <MultitrackMediaDisplay content={multitrackMediaContent} />

@@ -16,12 +16,12 @@
     "namespace": "accountTab",
     "language": "de",
     "resources": {
-      "info": "Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.",
+      "info": "Hier kannst du deine Konto-Informationen bearbeiten sowie dein Konto schließen.",
       "credentialsHeadline": "Zugangsdaten",
       "resetPassword": "Kennwort wiederherstellen",
-      "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
+      "updateSuccessMessage": "Dein Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "closeAccountDetails": "Alle Ihre öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die Sie in den öffentlichen Speicher hochgeladen haben), bleiben auf der Website. Ihr Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die Sie in den privaten Speicher hochgeladen haben), werden gelöscht. Sie können sich dann nicht mehr auf der Website anmelden.",
+      "closeAccountDetails": "Alle deine öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
     }
   },
@@ -156,29 +156,29 @@
     "language": "de",
     "resources": {
       "attention": "Achtung!",
-      "areYouSure": "Sind Sie sicher?",
+      "areYouSure": "Bist du sicher?",
       "discardUnsavedChanges": "Alle nicht gespeicherten Änderungen werden verworfen.",
-      "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
-      "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
-      "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
-      "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
-      "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberDisplayName}\" wirklich vom Raum entfernen?",
-      "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
-      "leaveRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich verlassen?",
-      "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
+      "deleteSectionConfirmation": "Möchtest du den Abschnitt wirklich löschen?",
+      "deleteDocumentConfirmation": "Möchtest du das Dokument \"{title}\" wirklich löschen?",
+      "deleteAllPrivateRoomsConfirmation": "Möchtest du wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
+      "deleteRoomConfirmation": "Möchtest du den Raum \"{roomName}\" wirklich löschen?",
+      "deleteRoomMemberConfirmation": "Möchtest du das Mitglied \"{memberDisplayName}\" wirklich vom Raum entfernen?",
+      "deleteRoomInvitationConfirmation": "Möchtest du die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
+      "leaveRoomConfirmation": "Möchtest du den Raum \"{roomName}\" wirklich verlassen?",
+      "deleteCdnDocumentConfirmation": "Möchtest du die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
-      "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
+      "pleaseSpecifyAReason": "Bitte gib einen Grund an",
       "deleteAllRevisions": "Alle existierenden Revisionen dieses Abschnitts löschen",
-      "restoreDocumentRevisionConfirmation": "Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?",
+      "restoreDocumentRevisionConfirmation": "Möchtest du den Inhalt der Revision {revisionId} wirklich wiederherstellen?",
       "confirmPassword": "Kennwortbestätigung",
       "confirmWithPasswordTitle": "Bestätigung erforderlich",
-      "confirmWithPasswordDescription": "Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.",
-      "sessionExpiredTitle": "Ihre Sitzung ist abgelaufen",
-      "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.",
-      "deleteItemConfirmation": "Möchten Sie \"{name}\" wirklich löschen?",
-      "deleteStoragePlanConfirmation": "Möchten Sie den Speicherplan \"{storagePlanName}\" wirklich löschen?",
-      "confirmPublicUploadLiability": "Sie sind dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachten Sie, dass Sie eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass Sie für alle Rechtsverstöße in Ihrer Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden können.",
-      "closeAccountConfirmation": "Möchten Sie wirklich Ihr Konto schließen?"
+      "confirmWithPasswordDescription": "Bitte gib dein Kennwort an, um diesen Vorgang fortzusetzen.",
+      "sessionExpiredTitle": "Deine Sitzung ist abgelaufen",
+      "sessionExpiredDescription": "Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte melde dich erneut an, um diesen Vorgang fortzusetzen.",
+      "deleteItemConfirmation": "Möchtest du \"{name}\" wirklich löschen?",
+      "deleteStoragePlanConfirmation": "Möchtest du den Speicherplan \"{storagePlanName}\" wirklich löschen?",
+      "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
+      "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?"
     }
   },
   {
@@ -230,7 +230,7 @@
     "namespace": "displayNameFormItem",
     "language": "de",
     "resources": {
-      "enterDisplayName": "Bitte geben Sie einen Anzeigenamen an",
+      "enterDisplayName": "Bitte gib einen Anzeigenamen an",
       "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
       "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
     }
@@ -306,7 +306,7 @@
     "resources": {
       "newDocument": "Neues Dokument",
       "editDocument": "Dokument bearbeiten",
-      "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
+      "titleRequired": "Bitte gib einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "tagsPlaceholder": "Stichwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
@@ -316,7 +316,7 @@
       "sequenceInterval": "Intervall",
       "sequenceCount": "Anzahl",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfoBoxDescription": "Hier können Sie mehrere Dokumente gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "sequenceInfoBoxDescription": "Hier kannst du mehrere Dokumente gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
     }
   },
   {
@@ -349,7 +349,7 @@
     "resources": {
       "statusIconTooltipSaved": "Keine ungespeicherten Änderungen",
       "statusIconTooltipDirty": "Änderungen nicht gespeichert",
-      "statusIconTooltipInvalid": "Bitte korrigieren Sie alle Fehler vor dem Speichern",
+      "statusIconTooltipInvalid": "Bitte korrigiere alle Fehler vor dem Speichern",
       "editMetadata": "Metadaten bearbeiten"
     }
   },
@@ -365,7 +365,7 @@
     "namespace": "emailFormItem",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
+      "enterEmail": "Bitte gib eine E-Mail-Adresse an",
       "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
@@ -399,10 +399,10 @@
     "namespace": "favoritesTab",
     "language": "de",
     "resources": {
-      "info": "Hier finden Sie Ihre persönlichen Favoriten. Durch Klick auf das Sternsymbol können Sie Favoriten entfernen.",
-      "favoriteUsers": "Benutzer, die Sie zu den Favoriten hinzugefügt haben",
-      "favoriteRooms": "Räume, die Sie zu den Favoriten hinzugefügt haben",
-      "favoriteDocuments": "Dokumente, die Sie zu den Favoriten hinzugefügt haben"
+      "info": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.",
+      "favoriteUsers": "Benutzer, die du zu den Favoriten hinzugefügt hast",
+      "favoriteRooms": "Räume, die du zu den Favoriten hinzugefügt hast",
+      "favoriteDocuments": "Dokumente, die du zu den Favoriten hinzugefügt hast"
     }
   },
   {
@@ -438,7 +438,7 @@
     "language": "de",
     "resources": {
       "headline": "Datei-Upload",
-      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.",
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
       "startUpload": "Upload starten",
       "preprocessed": "bearbeitet",
@@ -536,9 +536,9 @@
     "namespace": "loginForm",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte geben Sie Ihre E-Mail-Adresse an",
-      "enterPassword": "Bitte geben Sie Ihr Kennwort an",
-      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
+      "enterEmail": "Bitte gib deine E-Mail-Adresse an",
+      "enterPassword": "Bitte gib dein Kennwort an",
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe."
     }
   },
   {
@@ -560,6 +560,22 @@
     }
   },
   {
+    "namespace": "mainTrackEditor",
+    "language": "en",
+    "resources": {
+      "playbackRange": "Playback range",
+      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+    }
+  },
+  {
+    "namespace": "mainTrackEditor",
+    "language": "de",
+    "resources": {
+      "playbackRange": "Abspielbereich",
+      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+    }
+  },
+  {
     "namespace": "markdownHelp",
     "language": "en",
     "resources": {
@@ -576,13 +592,13 @@
     "namespace": "markdownHelp",
     "language": "de",
     "resources": {
-      "inlineTooltipHtml": "<div>\n  <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>\n  <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>\n  <p>Links können Sie in diesem Format eingeben:</p>\n  <p>[Link-Text](Link-Adresse)</p>\n</div>\n",
+      "inlineTooltipHtml": "<div>\n  <p>In diesem Feld kannst du die folgenden Formatierungsoptionen verwenden:</p>\n  <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>\n  <p>Links kannst du in diesem Format eingeben:</p>\n  <p>[Link-Text](Link-Adresse)</p>\n</div>\n",
       "blockTooltipText": "Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen",
-      "blockHelpTableHeaderLeft": "Wie Sie es schreiben",
+      "blockHelpTableHeaderLeft": "Wie du es schreibst",
       "blockHelpTableHeaderRight": "Wie es dargestellt wird",
       "blockHelpTableHeaderAnnotation": "Als visuelle Hilfe sind Leerzeichen in dieser Spalte als <0>•</0> dargestellt.",
-      "blockHelpTableFoot": "Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.\nMarkdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.\nFür mehr Informationen und eine ausführliche Beschreibung besuchen Sie bitte <https://commonmark.org/>.\nWir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.\n",
-      "blockHelpMarkdown": "Dies ist ein einfacher Absatz. Wie Sie sehen, ungeachtet davon, wie viele                  Leerzeichen\noder\nZeilenumbrüche\nSie eingeben, werden diese stets in ein einzelnes Leerzeichen umgewandelt.\n\nUm einen tatsächlichen Zeilenumbruch herzustellen, \\\nbeenden Sie die Zeile mit mehreren Leerzeichen<space><space>\noder, genau wie hier \\\nmit einem Backslash.\n\nUm einen neuen Absatz zu beginnen, lassen sie eine Zeile über dem entsprechenden Text leer.\n\nSetzen Sie Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu können Sie auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.\n\n# Dies ist eine Überschrift der ersten Ebene\n\n## Dies ist eine Überschrift der zweiten Ebene\n\n### Dies ist eine Überschrift der dritten Ebene\n\nEs gibt bis zu sechs Überschriftenebenen, jedoch ist es ratsam, auf Websites möglichst auf eine solch tiefe Hierarchie zu verzichten.\n\n1. Dies ist eine nummerierte Liste\n2. Sie können\n    1. mehrere Ebenen verwenden,\n    2. indem Sie jede weitere Ebene durch vier Leerzeichen einrücken\n42. Wie Sie sehen, spielt die tatsächliche Zahl vor dem Listenpunkt keine Rolle, die Liste beginnt immer mit der Zahl vor dem ersten Punkt und wird dann hochgezählt.\n\n* Dies ist eine unnummerierte Liste\n* Sie können auch Trennstriche statt der Sternchen verwenden:\n    - Verschachtelungen sind hier genauso möglich\n    - Genau wie bei der nummerierten Liste müssen Sie die Unterpunkte lediglich um vier Leerzeichen einrücken\n\n> ### Dies ist ein Blockzitat\n>\n> Um es zu erzeugen, starten Sie die Zeile mit dem Zeihen **>**\n>\n> *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*\n\n***\n\nDieser Text befindet sich zwischen horizontalen Trennlinien. Diese entsteht durch die drei Sternchen über diesem Absatz.\n\n---\n\nAnstelle der Sternchen können Sie gleichermaßen Trennstriche (wie oben) bzw. Unterstriche (wie unten) verwenden.\n\n___\n\nUm einen Link einzufügen, müssen Sie den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).\n\nDas Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:\n\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)\n\nBitte beachten Sie, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.\n\nDarüberhinaus können Sie auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.\n\nWie Sie sehen, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, müssen Sie durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \\*dieser Text lediglich mit Sternchen umgeben\\*.\n"
+      "blockHelpTableFoot": "Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.\nMarkdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.\nFür mehr Informationen und eine ausführliche Beschreibung besuche bitte <https://commonmark.org/>.\nWir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.\n",
+      "blockHelpMarkdown": "Dies ist ein einfacher Absatz. Wie du siehst, ungeachtet davon, wie viele                  Leerzeichen\noder\nZeilenumbrüche\ndu eingibst, werden diese stets in ein einzelnes Leerzeichen umgewandelt.\n\nUm einen tatsächlichen Zeilenumbruch herzustellen, \\\nbeende die Zeile mit mehreren Leerzeichen<space><space>\noder, genau wie hier \\\nmit einem Backslash.\n\nUm einen neuen Absatz zu beginnen, lass eine Zeile über dem entsprechenden Text leer.\n\nSetze Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu kannst du auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.\n\n# Dies ist eine Überschrift der ersten Ebene\n\n## Dies ist eine Überschrift der zweiten Ebene\n\n### Dies ist eine Überschrift der dritten Ebene\n\nEs gibt bis zu sechs Überschriftenebenen, jedoch ist es ratsam, auf Websites möglichst auf eine solch tiefe Hierarchie zu verzichten.\n\n1. Dies ist eine nummerierte Liste\n2. Du kannst\n    1. mehrere Ebenen verwenden,\n    2. indem du jede weitere Ebene durch vier Leerzeichen einrückst\n42. Wie du siehst, spielt die tatsächliche Zahl vor dem Listenpunkt keine Rolle, die Liste beginnt immer mit der Zahl vor dem ersten Punkt und wird dann hochgezählt.\n\n* Dies ist eine unnummerierte Liste\n* Du kannst auch Trennstriche statt der Sternchen verwenden:\n    - Verschachtelungen sind hier genauso möglich\n    - Genau wie bei der nummerierten Liste musst du die Unterpunkte lediglich um vier Leerzeichen einrücken\n\n> ### Dies ist ein Blockzitat\n>\n> Um es zu erzeugen, starte die Zeichen mit dem Zeihen **>**\n>\n> *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*\n\n***\n\nDieser Text befindet sich zwischen horizontalen Trennlinien. Diese entsteht durch die drei Sternchen über diesem Absatz.\n\n---\n\nAnstelle der Sternchen kannst du gleichermaßen Trennstriche (wie oben) bzw. Unterstriche (wie unten) verwenden.\n\n___\n\nUm einen Link einzufügen, musst du den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).\n\nDas Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:\n\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)\n![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)\n\nBitte beachte, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.\n\nDarüberhinaus kannst du auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.\n\nWie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, musst du durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \\*dieser Text lediglich mit Sternchen umgeben\\*.\n"
     }
   },
   {
@@ -657,8 +673,8 @@
     "namespace": "newsTab",
     "language": "de",
     "resources": {
-      "info": "Hier finden Sie Neuigkeiten über die Website und Ihre letzten Aktivitäten.",
-      "latestActivitiesHeader": "Ihre letzten Aktivitäten",
+      "info": "Hier findest du Neuigkeiten über die Website und deine letzten Aktivitäten.",
+      "latestActivitiesHeader": "Deine letzten Aktivitäten",
       "documentCreatedActivity": "Neues Dokument erstellt",
       "documentUpdatedActivity": "Dokument bearbeitet",
       "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
@@ -765,8 +781,8 @@
     "namespace": "browserNotSupported",
     "language": "de",
     "resources": {
-      "headerText": "Wir haben festgestellt, dass Ihre Browserversion von unserer Website nicht unterstützt wird",
-      "mainText": "Bitte laden Sie einen modernen Browser Ihrer Wahl herunter, einige Beispiele unten"
+      "headerText": "Wir haben festgestellt, dass deine Browserversion von unserer Website nicht unterstützt wird",
+      "mainText": "Bitte lade einen modernen Browser deiner Wahl herunter, einige Beispiele unten"
     }
   },
   {
@@ -785,8 +801,8 @@
     "language": "de",
     "resources": {
       "savePassword": "Kennwort speichern",
-      "passwordChangedSuccessfully": "Ihr Kennwort wurde erfolgreich geändert.",
-      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.",
+      "passwordChangedSuccessfully": "Dein Kennwort wurde erfolgreich geändert.",
+      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.",
       "passwordResetFailure": "Der Kennwortänderungs-Code ist ungültig oder abgelaufen.",
       "homeLink": "Home"
     }
@@ -805,10 +821,10 @@
     "namespace": "completeRegistration",
     "language": "de",
     "resources": {
-      "registrationSuccess": "Gratulation! Sie haben Ihre Registrierung erfolgreich abgeschlossen.",
+      "registrationSuccess": "Gratulation! Du hast deine Registrierung erfolgreich abgeschlossen.",
       "registrationFailure": "Der Registrierungs-Code ist ungültig oder abgelaufen.",
       "homeLink": "Home",
-      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
     }
   },
   {
@@ -850,9 +866,9 @@
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
-      "storageTabTitle": "Ihr Speicherplan",
-      "storageTabInfo": "Hier finden Sie Details über Ihren Speicherplan und Ihre aktuelle Speichernutzung.",
-      "noStoragePlan": "Mit Ihrem Konto ist kein Speicherplan verbunden."
+      "storageTabTitle": "Dein Speicherplan",
+      "storageTabInfo": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.",
+      "noStoragePlan": "Mit deinem Konto ist kein Speicherplan verbunden."
     }
   },
   {
@@ -959,10 +975,10 @@
     "namespace": "register",
     "language": "de",
     "resources": {
-      "confirmTerms": "Bitte erklären Sie sich mit den Nutzungsbedingungen einverstanden",
+      "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
+      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
     }
   },
   {
@@ -981,12 +997,12 @@
     "namespace": "resetPassword",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
-      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
+      "enterEmail": "Bitte gib eine E-Mail-Adresse an",
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
       "requestReset": "Reset anfordern",
-      "resetInProgressConfirmation": "Ihre Anfrage ist bei uns eingegangen.",
-      "resetInProgressNextSteps": "Falls die von Ihnen angegebene E-Mail-Adresse bei uns registriert ist, werden Sie in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
-      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+      "resetInProgressConfirmation": "Deine Anfrage ist bei uns eingegangen.",
+      "resetInProgressNextSteps": "Falls die von dir angegebene E-Mail-Adresse bei uns registriert ist, wirst du in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
+      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
     }
   },
   {
@@ -1007,14 +1023,14 @@
     "namespace": "roomMembershipConfirmation",
     "language": "de",
     "resources": {
-      "confirmationSuccess": "Gratulation! Sie sind nun ein Mitglied des Raumes <0>{roomName}</0>.",
-      "invitationConfirmation": "Bitte klicken Sie auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
+      "confirmationSuccess": "Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.",
+      "invitationConfirmation": "Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
       "joinButton": "Raum beitreten",
       "invalidToken": "Der Einladungs-Code ist ungültig oder abgelaufen.",
       "invalidUser": "Der Einladung war an einen anderen Benutzer adressiert.",
       "invalidRoom": "Der Raum existiert nicht mehr.",
       "homeLink": "Home",
-      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} in den Raum <0>{roomName}</0> weitergeleitet."
+      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} in den Raum <0>{roomName}</0> weitergeleitet."
     }
   },
   {
@@ -1183,7 +1199,7 @@
     "language": "de",
     "resources": {
       "passwordConfirmation": "Kennwortbestätigung",
-      "confirmPassword": "Bitte bestätigen Sie Ihr Kennwort",
+      "confirmPassword": "Bitte bestätige dein Kennwort",
       "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
     }
   },
@@ -1199,7 +1215,7 @@
     "namespace": "passwordFormItem",
     "language": "de",
     "resources": {
-      "enterPassword": "Bitte geben Sie ein Kennwort an",
+      "enterPassword": "Bitte gib ein Kennwort an",
       "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten"
     }
   },
@@ -1255,14 +1271,14 @@
     "namespace": "profileTab",
     "language": "de",
     "resources": {
-      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind auf Ihrer <0>Profilseite</0> öffentlich sichtbar.",
+      "info": "Hier kannst du zusätzliche Informationen zu deiner Person angeben. Die Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
       "personalInfoHeadline": "Persönlichen Daten",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",
       "organization": "Organisation",
       "introduction": "Vorstellung",
-      "updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
+      "updateSuccessMessage": "Dein Profil wurde erfolgreich aktualisiert.",
+      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
@@ -1332,7 +1348,7 @@
     "language": "de",
     "resources": {
       "newRoomInvitation": "Neue Einladung",
-      "emailRequired": "Bitte geben Sie eine E-Mail-Adresse an"
+      "emailRequired": "Bitte gib eine E-Mail-Adresse an"
     }
   },
   {
@@ -1348,7 +1364,7 @@
     "namespace": "roomMetadataForm",
     "language": "de",
     "resources": {
-      "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
+      "roomNameRequired": "Bitte gib einen Raumnamen an",
       "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind im Moment nicht erlaubt.",
       "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
@@ -1374,17 +1390,17 @@
     "namespace": "roomsTab",
     "language": "de",
     "resources": {
-      "info": "Hier finden Sie alle Räume, die Sie erstellt haben und in denen Sie Mitglied sind.",
+      "info": "Hier findest du alle Räume, die du erstellt hast und in denen du Mitglied bist.",
       "joined": "Eingetreten",
       "role": "Rolle",
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
       "sortedByRole": "Nach Rolle sortiert",
-      "ownedRoomsHeadline": "Räume, die Sie erstellt haben",
-      "memberRoomsHeadline": "Räume, in denen Sie Mitglied sind",
-      "noOwnedRooms": "Sie haben noch keine Räume erstellt.",
-      "noMemberRooms": "Sie sind zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, müssen Sie vom Raum-Eigentümer eingeladen werden."
+      "ownedRoomsHeadline": "Räume, die du erstellt hast",
+      "memberRoomsHeadline": "Räume, in denen du Mitglied bist",
+      "noOwnedRooms": "Du hast noch keine Räume erstellt.",
+      "noMemberRooms": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
     }
   },
   {
@@ -1429,7 +1445,7 @@
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
       "searchOngoing": "Suche …",
-      "searchResultInfo": "Sie sehen Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
+      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "closeSearchResult": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen",
       "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
@@ -1457,7 +1473,7 @@
       "newStoragePlan": "Neuer Speicherplan",
       "editStoragePlan": "Speicherplan bearbeiten",
       "storagePlanNameIsInUse": "Dieser Name ist bereits in Benutzung",
-      "nameRequired": "Bitte geben Sie einen Namen an",
+      "nameRequired": "Bitte gib einen Namen an",
       "numberTooSmallOrTooBig": "Der Wert liegt außerhalb des zulässigen Bereichs"
     }
   },
@@ -1508,7 +1524,7 @@
     "language": "de",
     "resources": {
       "title": "Sprache auswählen",
-      "explanation": "Bitte wählen Sie Ihre bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
+      "explanation": "Bitte wähle deine bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
     }
   },
   {
@@ -1767,7 +1783,7 @@
       "orientationLabel": "Richtung",
       "orientationOptionVertical": "Vertikal",
       "orientationOptionHorizontal": "Horizontal",
-      "clipEffectHint": "Bitte benutzen Sie das Markierungsrechteck, um einen Bildbereich auszuwählen",
+      "clipEffectHint": "Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen",
       "imageLoadingErrorMessage": "Das Bild konnte nicht geladen werden"
     }
   },
@@ -1781,8 +1797,6 @@
       "editChapter": "Edit chapter",
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
-      "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
       "startTimecode": "Start time",
       "duration": "Duration",
       "answers": "Answers",
@@ -1807,19 +1821,17 @@
       "editChapter": "Kapitel bearbeiten",
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
-      "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "startTimecode": "Startzeit",
       "duration": "Zeitdauer",
       "answers": "Antworten",
       "addAnswer": "Antwort hinzufügen",
-      "addAnswerInfo": "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, können Sie den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:",
+      "addAnswerInfo": "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, kannst du den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:",
       "markCorrectAnswer": "Als richtige Antwort markieren",
       "continue": "Fortfahren",
       "replay": "Wiederholen",
       "reset": "Zurücksetzen",
       "results": "Ergebnisse",
-      "currentProgress": "Ihr aktueller Fortschritt",
+      "currentProgress": "Dein aktueller Fortschritt",
       "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
     }
   },
@@ -1910,7 +1922,7 @@
       "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
-      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
+      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
     }
   },
   {
@@ -2217,7 +2229,7 @@
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n",
+      "proposedSectionsAlert": "Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n",
       "revision": "Revision",
       "document": "Dokument",
       "room": "Raum",
@@ -2328,7 +2340,7 @@
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
-      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse"
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
     }
   },
   {
@@ -2388,23 +2400,23 @@
     "language": "de",
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
-      "registrationVerificationEmail.text": "Willkommen!\n\nSie haben sich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Sie haben sich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
-      "passwordResetEmail.subject": "Ihr Kennwort auf educandu",
-      "passwordResetEmail.text": "Hallo {displayName}!\n\nSie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
-      "roomInvitationEmail.subject": "Sie wurden in einen Raum eingeladen",
-      "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Sie in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folgen Sie bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
-      "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Sie in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folgen Sie bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
-      "roomDeletionNotificationEmail.subject": "Ein Raum, in dem Sie Mitglied waren, wurde gelöscht",
+      "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Du hast dich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "passwordResetEmail.subject": "Dein Kennwort auf educandu",
+      "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "roomInvitationEmail.subject": "Du warst in einen Raum eingeladen.",
+      "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
+      "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folge bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
+      "roomDeletionNotificationEmail.subject": "Ein Raum, in dem du Mitglied warst, wurde gelöscht",
       "roomDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n",
       "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.",
-      "roomMemberRemovalNotificationEmail.subject": "Ihre Mitgliedschaft in einem Raum wurde beendet",
-      "roomMemberRemovalNotificationEmail.text": "Hallo {displayName}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.\n",
-      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
-      "roomInvitationDeletionNotificationEmail.subject": "Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen",
-      "roomInvitationDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Ihre Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n",
-      "roomInvitationDeletionNotificationEmail.html": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."
+      "roomMemberRemovalNotificationEmail.subject": "Deine Mitgliedschaft in einem Raum wurde beendet",
+      "roomMemberRemovalNotificationEmail.text": "Hallo {displayName}!\n\nDer Benutzer {ownerName} hat deine Mitgliedschaft im Raum {roomName} beendet.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
+      "roomInvitationDeletionNotificationEmail.subject": "Deine Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen",
+      "roomInvitationDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat deine Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n",
+      "roomInvitationDeletionNotificationEmail.html": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."
     }
   },
   {
@@ -2460,9 +2472,9 @@
     "namespace": "validation",
     "language": "de",
     "resources": {
-      "urlRequired": "Bitte geben Sie eine Adresse an",
-      "urlInvalid": "Bitte geben Sie eine Adresse im gültigen Format an",
-      "urlInvalidProtocol": "Bitte geben Sie eine Adresse an, die mit {allowedProtocols} beginnt",
+      "urlRequired": "Bitte gib eine Adresse an",
+      "urlInvalid": "Bitte gib eine Adresse im gültigen Format an",
+      "urlInvalidProtocol": "Bitte gib eine Adresse an, die mit {allowedProtocols} beginnt",
       "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
       "orListFirstItem": "»{item}«",
       "orListLastItem": " oder »{item}«",

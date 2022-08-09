@@ -1,9 +1,9 @@
 confirmationSuccess:
   en: Congratulations! You are now a member of room <0>{roomName}</0>.
-  de: Gratulation! Sie sind nun ein Mitglied des Raumes <0>{roomName}</0>.
+  de: Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.
 invitationConfirmation:
   en: Please click on the button in order to join room <0>{roomName}</0>.
-  de: Bitte klicken Sie auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
+  de: Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
 joinButton:
   en: Join room
   de: Raum beitreten
@@ -21,4 +21,4 @@ homeLink:
   de: Home
 redirectMessage:
   en: You will be redirected to room <0>{roomName}</0> in {seconds, plural, =1 {# second} other {# seconds}}.
-  de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} in den Raum <0>{roomName}</0> weitergeleitet.
+  de: Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} in den Raum <0>{roomName}</0> weitergeleitet.

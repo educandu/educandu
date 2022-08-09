@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import routes from '../utils/routes.js';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
@@ -181,15 +181,17 @@ function NewsTab({ activities }) {
 
   return (
     <div>
-      {!!activities.length && (
-        <section>
-          <div className="NewsTab-info">{t('info')}</div>
-          <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
-          <div className="NewsTab-activities">
-            {renderActivities()}
-          </div>
-        </section>
-      )}
+      <section>
+        <div className="NewsTab-info">{t('info')}</div>
+        {!!activities.length && (
+          <Fragment>
+            <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
+            <div className="NewsTab-activities">
+              {renderActivities()}
+            </div>
+          </Fragment>
+        )}
+      </section>
     </div>
   );
 }

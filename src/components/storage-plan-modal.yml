@@ -9,7 +9,7 @@ storagePlanNameIsInUse:
   de: Dieser Name ist bereits in Benutzung
 nameRequired:
   en: Please specify a name
-  de: Bitte geben Sie einen Namen an
+  de: Bitte gib einen Namen an
 numberTooSmallOrTooBig:
   en: The value is beyond the permissible range
   de: Der Wert liegt außerhalb des zulässigen Bereichs

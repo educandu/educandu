@@ -6,9 +6,14 @@ function MultitrackMediaDisplay({ content }) {
 
   return (
     <div className="MultitrackMediaDisplay">
+      <div>{JSON.stringify(mainTrack).replaceAll(',', ', ')}</div>
       <div>Width: {width}</div>
-      <div>{mainTrack.name}</div>
-      {secondaryTracks.map(secondaryTrack => <div key={secondaryTrack.name}>{secondaryTrack.name}</div>)}
+      {secondaryTracks.map(secondaryTrack => (
+        <div key={secondaryTrack.name}>
+          <hr />
+          <div>{JSON.stringify(secondaryTrack).replaceAll(',', ', ')}</div>
+        </div>
+      ))}
     </div>
   );
 }
