@@ -122,7 +122,7 @@ function TrackMixer({
 
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
     const offsetTimecode = secondaryTracks[index].offsetTimecode;
-    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode), { includeMilliseconds: true });
+    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode), { millisecondsLength: 1 });
     const offsetText = offsetTimecode >= 0 ? `+ ${offsetAsDuration}` : `- ${offsetAsDuration}`;
 
     const barRowOffsetClasses = classNames(
@@ -190,8 +190,8 @@ function TrackMixer({
       <div className="TrackMixer-barsColumn">
         <div className="TrackMixer-barRow">
           <div className="TrackMixer-barRowDuration">
-            <span>{formatMillisecondsAsDuration(0, { includeMilliseconds: true })}</span>
-            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { includeMilliseconds: true })}</span>
+            <span>{formatMillisecondsAsDuration(0, { millisecondsLength: 1 })}</span>
+            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { millisecondsLength: 1 })}</span>
           </div>
           <div className="TrackMixer-bar" ref={mainTrackBarRef} />
         </div>

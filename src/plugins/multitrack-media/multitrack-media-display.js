@@ -8,8 +8,9 @@ function MultitrackMediaDisplay({ content }) {
     <div className="MultitrackMediaDisplay">
       <div>{JSON.stringify(mainTrack).replaceAll(',', ', ')}</div>
       <div>Width: {width}</div>
-      {secondaryTracks.map(secondaryTrack => (
-        <div key={secondaryTrack.name}>
+      {secondaryTracks.map((secondaryTrack, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={index}>
           <hr />
           <div>{JSON.stringify(secondaryTrack).replaceAll(',', ', ')}</div>
         </div>
