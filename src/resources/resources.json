@@ -1506,6 +1506,20 @@
     }
   },
   {
+    "namespace": "trackMixer",
+    "language": "en",
+    "resources": {
+      "noTrack": "no track"
+    }
+  },
+  {
+    "namespace": "trackMixer",
+    "language": "de",
+    "resources": {
+      "noTrack": "keiner Spur"
+    }
+  },
+  {
     "namespace": "uiLanguageDialog",
     "language": "en",
     "resources": {

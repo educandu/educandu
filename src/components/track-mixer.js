@@ -2,6 +2,7 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import VolumeSlider from './volume-slider.js';
+import { useTranslation } from 'react-i18next';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BackwardOutlined, FastBackwardOutlined, FastForwardOutlined, ForwardOutlined } from '@ant-design/icons';
@@ -21,6 +22,8 @@ function TrackMixer({
   onSecondaryTrackChange
 }) {
   const mainTrackBarRef = useRef(null);
+  const { t } = useTranslation('trackMixer');
+
   const [secondaryTracksState, setSecondaryTracksState] = useState(secondaryTracks.map(() => ({
     barWidthInPx: 0,
     marginLeftInPx: 0,
@@ -121,7 +124,8 @@ function TrackMixer({
   };
 
   const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
-    const offsetTimecode = secondaryTracks[index].offsetTimecode;
+    const canShowBar = !!secondaryTracksState[index]?.barWidthInPx;
+    const offsetTimecode = secondaryTrack.offsetTimecode;
     const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode), { millisecondsLength: 1 });
     const offsetText = offsetTimecode >= 0 ? `+ ${offsetAsDuration}` : `- ${offsetAsDuration}`;
 
@@ -132,13 +136,16 @@ function TrackMixer({
 
     return (
       <div className="TrackMixer-barRow" key={index}>
-        <div className={barRowOffsetClasses}>
-          {offsetText}
-        </div>
+        {canShowBar && (
+          <div className={barRowOffsetClasses}>
+            {offsetText}
+          </div>
+        )}
         <div
           className="TrackMixer-bar TrackMixer-bar--secondaryTrack"
           style={{ left: `${secondaryTracksState[index]?.marginLeftInPx}px`, width: `${secondaryTracksState[index]?.barWidthInPx}px` }}
           />
+        {!canShowBar && <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>}
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
         <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
         <div className="TrackMixer-barArrows TrackMixer-barArrows--left">
@@ -147,14 +154,14 @@ function TrackMixer({
             size="small"
             icon={<FastBackwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.left })}
-            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBeNegativelyOffset}
+            disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
           <Button
             type="link"
             size="small"
             icon={<BackwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.left })}
-            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBeNegativelyOffset}
+            disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
         </div>
         <div className="TrackMixer-barArrows TrackMixer-barArrows--right">
@@ -163,14 +170,14 @@ function TrackMixer({
             size="small"
             icon={<ForwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.right })}
-            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBePositivelyOffset}
+            disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
           <Button
             type="link"
             size="small"
             icon={<FastForwardOutlined />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.right })}
-            disabled={!secondaryTracksState[index]?.barWidthInPx || !secondaryTracksState[index]?.canBePositivelyOffset}
+            disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
         </div>
       </div>
