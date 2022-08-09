@@ -95,7 +95,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal">
-        <ItemPanel header={t('mainTrack')} collapsed>
+        <ItemPanel header={t('mainTrack')}>
           <FormItem label={t('common:name')} {...formItemLayout}>
             <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
           </FormItem>

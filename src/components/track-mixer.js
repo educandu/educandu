@@ -43,13 +43,12 @@ function TrackMixer({
     }
 
     const maxPositiveOffset = mainTrackDurationInMs;
+    const msToPxRatio = mainTrackBarWidth / mainTrackDurationInMs;
 
     setSecondaryTracksState(secondaryTracks.map((secondaryTrack, index) => {
       const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
-
-      const msInPx = mainTrackBarWidth / mainTrackDurationInMs;
-      const barWidthInPx = secondaryTracksDurationsInMs[index] * msInPx;
-      const marginLeftInPx = secondaryTrack.offsetTimecode * msInPx;
+      const barWidthInPx = secondaryTracksDurationsInMs[index] * msToPxRatio;
+      const marginLeftInPx = secondaryTrack.offsetTimecode * msToPxRatio;
 
       const isLeftBoundReached = marginLeftInPx <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
       const canBeNegativelyOffset = secondaryTrack.offsetTimecode >= 0 || secondaryTrack.offsetTimecode > maxNegativeOffset;
