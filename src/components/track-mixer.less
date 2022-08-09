@@ -7,7 +7,7 @@
 
 .TrackMixer {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .TrackMixer-namesColumn {
@@ -16,7 +16,7 @@
 
 .TrackMixer-nameRow {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
   height: @track-mixer-row-height;
 }
@@ -45,6 +45,7 @@
 
 .TrackMixer-barRowDuration {
   position: absolute;
+  user-select: none;
   top: @tracx-mixer-bar-duration-top;
   left: @tracx-mixer-bar-duration-left-right;
   right: @tracx-mixer-bar-duration-left-right;
@@ -104,18 +105,19 @@
 .TrackMixer-barArrows {
   position: absolute;
   display: flex;
-  gap: 5px;
+  gap: 3px;
+  color: @edu-text-color-secondary;
 
   & .ant-btn {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
   }
 
   &.TrackMixer-barArrows--left {
-    left: -50px;
+    left: -45px;
   }
 
   &.TrackMixer-barArrows--right {
-    right: -50px;
+    right: -45px;
   }
 }

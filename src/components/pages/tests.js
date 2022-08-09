@@ -20,6 +20,7 @@ import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
+import { createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
@@ -131,9 +132,22 @@ function Tests({ PageTemplate }) {
   const { t: multitrackTranslation } = useTranslation('multitrackMedia');
   const multitrackContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
   multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
-  multitrackContent.mainTrack.sourceUrl = 'https://cdn.openmusic.academy/media/cTfhXcxtkgqYLE3k1P6JAR/oma-explainer-vs1-0-pDjYtJexVC91WfrtWnu6hh.mp4';
-  multitrackContent.secondaryTracks[0].sourceType = MEDIA_SOURCE_TYPE.external;
-  multitrackContent.secondaryTracks[0].sourceUrl = 'https://cdn.openmusic.academy/media/cTfhXcxtkgqYLE3k1P6JAR/2022-03-07-opener-cLsXYg2gyFNHKmY6S9CzX5.mp4';
+  multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
+  multitrackContent.secondaryTracks = [
+    {
+      ...createDefaultSecondaryTrack(0, multitrackTranslation),
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(1, multitrackTranslation),
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(2, multitrackTranslation),
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3'
+    }
+  ];
   const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackContent);
   const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
 

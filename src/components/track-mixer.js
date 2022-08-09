@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
+import ForwardIcon from './icons/media-player/forward-icon.js';
+import BackwardIcon from './icons/media-player/backward-icon.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import FastForwardIcon from './icons/media-player/fast-forward-icon.js';
+import FastBackwardIcon from './icons/media-player/fast-backward-icon.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { BackwardOutlined, FastBackwardOutlined, FastForwardOutlined, ForwardOutlined } from '@ant-design/icons';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 const OFFSET_DIRECTION = {
@@ -148,14 +151,14 @@ function TrackMixer({
           <Button
             type="link"
             size="small"
-            icon={<FastBackwardOutlined />}
+            icon={<FastBackwardIcon />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.left })}
             disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
           <Button
             type="link"
             size="small"
-            icon={<BackwardOutlined />}
+            icon={<BackwardIcon />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.left })}
             disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
             />
@@ -164,14 +167,14 @@ function TrackMixer({
           <Button
             type="link"
             size="small"
-            icon={<ForwardOutlined />}
+            icon={<ForwardIcon />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.right })}
             disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
           <Button
             type="link"
             size="small"
-            icon={<FastForwardOutlined />}
+            icon={<FastForwardIcon />}
             onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.right })}
             disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
             />
