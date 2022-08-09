@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { BackwardOutlined, FastBackwardOutlined, FastForwardOutlined, ForwardOutlined } from '@ant-design/icons';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
@@ -71,24 +71,17 @@ function TrackMixer({
       }
 
       newState.barWidthInPx = Math.min(newState.barWidthInPx, maxSecondaryTrackBarWidth);
-
-      // eslint-disable-next-line no-console
-      console.log('mainTrackBarWidth', mainTrackBarWidth, 'barWidthInPx', newState.barWidthInPx, 'marginLeftInPx', newState.marginLeftInPx);
-
       return newState;
     }));
   }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, secondaryTracksDurationsInMs]);
 
-  useEffect(() => {
-    updateStates();
-  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, updateStates]);
+  const handleMainTrackVolumeChange = volume => {
+    onMainTrackChange({ ...mainTrack, volume });
+  };
 
-  useEffect(() => {
-    window.addEventListener('resize', updateStates);
-    return () => {
-      window.removeEventListener('resize', updateStates);
-    };
-  }, [updateStates]);
+  const handleSecondaryTrackVolumeChange = (index, volume) => {
+    onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
+  };
 
   const handleTrackBarArrowClick = ({ index, stepInMs, direction }) => {
     let newOffsetTimecode = secondaryTracks[index].offsetTimecode + (stepInMs * direction);
@@ -106,13 +99,16 @@ function TrackMixer({
     onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode: newOffsetTimecode });
   };
 
-  const handleMainTrackVolumeChange = volume => {
-    onMainTrackChange({ ...mainTrack, volume });
-  };
+  useEffect(() => {
+    updateStates();
+  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, secondaryTracksDurationsInMs, updateStates]);
 
-  const handleSecondaryTrackVolumeChange = (index, volume) => {
-    onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
-  };
+  useEffect(() => {
+    window.addEventListener('resize', updateStates);
+    return () => {
+      window.removeEventListener('resize', updateStates);
+    };
+  }, [updateStates]);
 
   const renderSecondaryTrackNameRow = (secondaryTrack, index) => {
     return (
@@ -196,11 +192,16 @@ function TrackMixer({
 
       <div className="TrackMixer-barsColumn">
         <div className="TrackMixer-barRow">
-          <div className="TrackMixer-barRowDuration">
-            <span>{formatMillisecondsAsDuration(0, { millisecondsLength: 1 })}</span>
-            <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { millisecondsLength: 1 })}</span>
-          </div>
-          <div className="TrackMixer-bar" ref={mainTrackBarRef} />
+          {!!mainTrackDurationInMs && (
+            <Fragment>
+              <div className="TrackMixer-barRowDuration">
+                <span>{formatMillisecondsAsDuration(0, { millisecondsLength: 1 })}</span>
+                <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { millisecondsLength: 1 })}</span>
+              </div>
+              <div className="TrackMixer-bar" ref={mainTrackBarRef} />
+            </Fragment>
+          )}
+          {!mainTrackDurationInMs && <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>}
         </div>
         {secondaryTracks.map(renderSecondaryTrackBarRow)}
       </div>
