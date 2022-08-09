@@ -131,21 +131,68 @@ function Tests({ PageTemplate }) {
   const multitrackMediaInfo = useService(MultitrackMediaInfo);
   const { t: multitrackTranslation } = useTranslation('multitrackMedia');
   const multitrackContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
+  // ------ Setup option 1 -----
+  // multitrackContent.mainTrack.name = 'Generalbass';
+  // multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
+  // multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
+  // multitrackContent.secondaryTracks = [
+  //   {
+  //     ...createDefaultSecondaryTrack(0, multitrackTranslation),
+  //     name: 'Violine 1',
+  //     sourceType: MEDIA_SOURCE_TYPE.external,
+  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3'
+  //   }, {
+  //     ...createDefaultSecondaryTrack(1, multitrackTranslation),
+  //     name: 'Violine 2',
+  //     sourceType: MEDIA_SOURCE_TYPE.external,
+  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3'
+  //   }, {
+  //     ...createDefaultSecondaryTrack(2, multitrackTranslation),
+  //     name: 'Violoncello',
+  //     sourceType: MEDIA_SOURCE_TYPE.external,
+  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3'
+  //   }
+  // ];
+  // ------ Setup option 2 -----
+  multitrackContent.mainTrack.name = 'Dubstep';
   multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
-  multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
+  multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-9hqADKZtPHV7F7GVfye3DF.mp3';
   multitrackContent.secondaryTracks = [
     {
       ...createDefaultSecondaryTrack(0, multitrackTranslation),
+      name: 'Bass growls',
       sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3'
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-growls-c9Z4K6PSm7k7onNHh4eFLv.mp3'
     }, {
       ...createDefaultSecondaryTrack(1, multitrackTranslation),
+      name: 'Bass sub',
       sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3'
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-sub-xseNKq1gTc3sMrvYhp4Ryk.mp3'
     }, {
       ...createDefaultSecondaryTrack(2, multitrackTranslation),
+      name: 'Chords',
       sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3'
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-chords-p1z7vpBgGLQ75okxsd9ZiQ.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(3, multitrackTranslation),
+      name: 'Drums',
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-drums-bTRHpx9cta63Q3MQP52VG5.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(4, multitrackTranslation),
+      name: 'FX',
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-fx-2AEEYbQBiRXmRvNWCGhkzZ.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(5, multitrackTranslation),
+      name: 'Lead bell',
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-bell-rxF9rWsV5cwxzDwiM6CH5W.mp3'
+    }, {
+      ...createDefaultSecondaryTrack(6, multitrackTranslation),
+      name: 'Lead synth',
+      sourceType: MEDIA_SOURCE_TYPE.external,
+      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-synth-ghymhFnZ8fc3VVW65PHmB5.mp3'
     }
   ];
   const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackContent);
