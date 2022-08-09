@@ -52,7 +52,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
     <div>
       <Form>
         <FormItem label={t('common:title')} {...formItemLayout}>
-          <MarkdownInput value={title} onChange={handleTitleChange} />
+          <MarkdownInput value={title} onChange={handleTitleChange} inline />
         </FormItem>
         <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleTextChange} renderMedia={renderMedia} />
