@@ -50,6 +50,11 @@ class AnnotationInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.title = this.gfm.redactCdnResources(
+      redactedContent.title,
+      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+    );
+
     redactedContent.text = this.gfm.redactCdnResources(
       redactedContent.text,
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
@@ -59,7 +64,12 @@ class AnnotationInfo {
   }
 
   getCdnResources(content) {
-    return this.gfm.extractCdnResources(content.text);
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.title));
+    cdnResources.push(...this.gfm.extractCdnResources(content.text));
+
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
