@@ -46,11 +46,11 @@ export default function ConsentDrawer() {
 
   useEffect(() => {
     const consentCookie = getCookie(actualCookieName);
-    if (!consentCookie) {
+    if (!consentCookie && settings.consentText) {
       lastActiveElementRef.current = document.activeElement;
       setIsVisible(true);
     }
-  }, [actualCookieName]);
+  }, [actualCookieName, settings.consentText]);
 
   const handleAcceptButtonClick = () => {
     setLongLastingCookie(actualCookieName, 'true');
@@ -58,10 +58,6 @@ export default function ConsentDrawer() {
     lastActiveElementRef.current?.focus?.();
     lastActiveElementRef.current = null;
   };
-
-  if (!settings?.consentText) {
-    return null;
-  }
 
   return (
     <div className={classNames('ConsentDrawer', { 'is-enabled': isVisible })}>
@@ -71,7 +67,7 @@ export default function ConsentDrawer() {
           <CookieAlertIcon />
         </div>
         <div className="ConsentDrawer-consentText">
-          <Markdown>{settings.consentText[uiLanguage]}</Markdown>
+          <Markdown>{settings.consentText?.[uiLanguage] || ''}</Markdown>
         </div>
         <div className="ConsentDrawer-acceptButton">
           <Button onClick={handleAcceptButtonClick} type="primary">
