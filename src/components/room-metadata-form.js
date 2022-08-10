@@ -71,7 +71,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       </FormItem>
       {editMode && (
         <FormItem label={t('common:description')} name="description" initialValue={room.description}>
-          <MarkdownInput preview renderMedia />
+          <MarkdownInput preview />
         </FormItem>
       )}
     </Form>

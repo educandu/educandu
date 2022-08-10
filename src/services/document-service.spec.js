@@ -1289,8 +1289,7 @@ describe('document-service', () => {
         key: uniqueId.create(),
         type: 'markdown',
         content: {
-          ...markdownInfo.getDefaultContent(),
-          renderMedia: true
+          ...markdownInfo.getDefaultContent()
         }
       };
 

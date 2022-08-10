@@ -67,7 +67,7 @@ export default function User({ PageTemplate, initialState }) {
 
         {!!user.introduction && (
           <section className="UserPage-introduction">
-            <Markdown renderMedia>{user.introduction}</Markdown>
+            <Markdown>{user.introduction}</Markdown>
           </section>
         )}
 

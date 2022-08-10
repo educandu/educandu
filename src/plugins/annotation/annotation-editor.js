@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, Form, Radio } from 'antd';
+import { Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { BEHAVIOR, INTENT } from './constants.js';
@@ -13,7 +13,7 @@ const RadioButton = Radio.Button;
 
 export default function AnnotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('annotation');
-  const { title, text, renderMedia, behavior, intent, width } = content;
+  const { title, text, behavior, intent, width } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -25,10 +25,6 @@ export default function AnnotationEditor({ content, onContentChanged }) {
 
   const handleTextChange = event => {
     updateContent({ text: event.target.value });
-  };
-
-  const handleRenderMediaChange = event => {
-    updateContent({ renderMedia: event.target.checked });
   };
 
   const handleBehaviorChange = event => {
@@ -55,10 +51,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
           <MarkdownInput value={title} onChange={handleTitleChange} inline />
         </FormItem>
         <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleTextChange} renderMedia={renderMedia} />
-        </FormItem>
-        <FormItem label={t('common:renderMedia')} {...formItemLayout}>
-          <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />
+          <MarkdownInput value={text} onChange={handleTextChange} />
         </FormItem>
         <FormItem label={t('behavior')} {...formItemLayout}>
           <RadioGroup value={behavior} onChange={handleBehaviorChange}>

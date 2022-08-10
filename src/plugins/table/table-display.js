@@ -6,7 +6,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { calculateEvenColumnWidthsInPercent, CELL_TYPE, COLUMN_DISTRIBUTION, createTableCellsInRows } from './table-utils.js';
 
 function TableDisplay({ content }) {
-  const { rowCount, columnCount, cells, columnDistribution, width, renderMedia } = content;
+  const { rowCount, columnCount, cells, columnDistribution, width } = content;
 
   const rows = useMemo(() => {
     const fullCellMap = createTableCellsInRows(rowCount, columnCount, () => null);
@@ -50,7 +50,7 @@ function TableDisplay({ content }) {
     };
 
     const children = cell.text
-      ? <Markdown renderMedia={renderMedia}>{cell.text}</Markdown>
+      ? <Markdown>{cell.text}</Markdown>
       : <span>&nbsp;</span>;
 
     switch (cell.cellType) {

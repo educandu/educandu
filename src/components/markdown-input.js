@@ -9,7 +9,7 @@ import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 
-function MarkdownInput({ minRows, disabled, inline, renderMedia, value, onChange, preview, embeddable, ...rest }) {
+function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, embeddable, ...rest }) {
   const { t } = useTranslation('markdownInput');
 
   const renderInlineInput = () => (
@@ -50,9 +50,8 @@ function MarkdownInput({ minRows, disabled, inline, renderMedia, value, onChange
   const renderPreview = () => (
     <div className="MarkdownInput-previewContainer">
       <Markdown
-        className={classNames('MarkdownInput-preview', { 'MarkdownInput-preview--inline': inline })}
         inline={inline}
-        renderMedia={renderMedia}
+        className={classNames('MarkdownInput-preview', { 'MarkdownInput-preview--inline': inline })}
         >
         {value}
       </Markdown>
@@ -76,7 +75,6 @@ MarkdownInput.propTypes = {
   minRows: PropTypes.number,
   onChange: PropTypes.func,
   preview: PropTypes.bool,
-  renderMedia: PropTypes.bool,
   value: PropTypes.string
 };
 
@@ -87,7 +85,6 @@ MarkdownInput.defaultProps = {
   minRows: 3,
   onChange: () => '',
   preview: false,
-  renderMedia: false,
   value: ''
 };
 

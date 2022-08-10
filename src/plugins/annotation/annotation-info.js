@@ -36,7 +36,6 @@ class AnnotationInfo {
     return {
       title: `[${t('common:title')}]`,
       text: `[${t('common:text')}]`,
-      renderMedia: false,
       behavior: BEHAVIOR.expandable,
       intent: INTENT.neutral,
       width: 100

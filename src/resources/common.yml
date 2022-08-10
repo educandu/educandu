@@ -330,9 +330,6 @@ copySlugSuffix:
 roomsBreadcrumbPart:
   en: rooms
   de: Räume
-renderMedia:
-  en: Render media
-  de: Medien wiedergeben
 internalCdn:
   en: Internal CDN
   de: Internes CDN

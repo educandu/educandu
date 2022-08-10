@@ -150,7 +150,6 @@ function TableDesigner({ content, onContentChange }) {
           horizontalAlignment={designerCell.horizontalAlignment}
           value={designerCell.text}
           onChange={newText => handleDesignerCellTextChange(designerCell, newText)}
-          renderMedia={content.renderMedia}
           minRows={1}
           embeddable
           />
@@ -205,8 +204,7 @@ TableDesigner.propTypes = {
       text: PropTypes.string.isRequired
     })).isRequired,
     columnCount: PropTypes.number.isRequired,
-    rowCount: PropTypes.number.isRequired,
-    renderMedia: PropTypes.bool.isRequired
+    rowCount: PropTypes.number.isRequired
   }).isRequired,
   onContentChange: PropTypes.func.isRequired
 };

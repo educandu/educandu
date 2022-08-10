@@ -42,7 +42,7 @@ export default function AnnotationDisplay({ content }) {
       isCollapsible={behavior !== BEHAVIOR.static}
       isCollapsed={behavior === BEHAVIOR.expandable}
       >
-      <Markdown renderMedia={content.renderMedia}>{content.text}</Markdown>
+      <Markdown>{content.text}</Markdown>
     </Collapsible>
   );
 }

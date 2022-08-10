@@ -309,7 +309,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
       ]}
       >
-      {room.description && <Markdown className="RoomPage-description" renderMedia>{room.description}</Markdown>}
+      {room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
       {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
 
       {isRoomOwnerOrCollaborator && isDocumentDeletionDisabled && (
