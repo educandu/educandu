@@ -1,0 +1,18 @@
+zoomIn:
+  en: Zoom in
+  de: Vergrößern
+zoomOut:
+  en: Zoom out
+  de: Verkleinern
+rotateRight:
+  en: Rotate right
+  de: Im Uhrzeigersinn drehen
+rotateLeft:
+  en: Rotate left
+  de: Gegen den Uhrzeigersinn drehen
+scaleX:
+  en: Flip horizontally
+  de: Horizontal spiegeln
+scaleY:
+  en: Flip vertically
+  de: Vertikal spiegeln

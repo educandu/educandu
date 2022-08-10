@@ -4,29 +4,36 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import Timeline from '../timeline.js';
 import MediaPlayer from '../media-player.js';
+import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
 import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
+import { useStorage } from '../storage-context.js';
 import { useService } from '../container-context.js';
 import ResourceSelector from '../resource-selector.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import React, { useEffect, useRef, useState } from 'react';
 import MediaRangeSelector from '../media-range-selector.js';
+import FilesUploadOverview from '../files-upload-overview.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
+const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
+const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
 const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
 const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
 
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
+  const { locations } = useStorage();
+
   // Page
   const req = useRequest();
   const initialTab = req.query.tab || null;
@@ -34,6 +41,27 @@ function Tests({ PageTemplate }) {
     const url = new URL(window.document.location.href);
     url.searchParams.set('tab', newTab);
     window.history.replaceState(null, null, url.href);
+  };
+
+  // ImageEditor
+  const ieEditorRef = useRef(null);
+  const [ieFile, setIeFile] = useState(null);
+  const [ieIsDirty, setIeIsDirty] = useState(false);
+  const [ieFileUrl, setIeFileUrl] = useState(IMAGE_URL_JPG);
+  useEffect(() => {
+    const type = ieFileUrl.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    const extension = type === 'image/png' ? 'png' : 'jpg';
+    fetch(ieFileUrl)
+      .then(res => res.blob())
+      .then(blob => setIeFile(new File([blob], `my-image.${extension}`, { type })));
+  }, [ieFileUrl]);
+  const handleIeCrop = data => {
+    setIeIsDirty(data.isCropped);
+  };
+  const handleIeDownloadClick = async () => {
+    const newFile = await ieEditorRef.current.getCroppedFile();
+    const newUrl = URL.createObjectURL(newFile);
+    window.open(newUrl, '_blank');
   };
 
   // Timeline
@@ -108,6 +136,22 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="ImageEditor" key="ImageEditor">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
+              <Button onClick={() => setIeFileUrl(IMAGE_URL_JPG)}>Set to JPG</Button>
+              <Button onClick={handleIeDownloadClick}>Download</Button>
+              <div>DIRTY: {ieIsDirty.toString()}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              URL: {ieFileUrl}
+            </div>
+            {ieFile && (
+              <div style={{ height: '50vh' }}>
+                <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
+              </div>
+            )}
+          </TabPane>
           <TabPane tab="Timeline" key="Timeline">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               Duration in milliseconds:
@@ -264,6 +308,16 @@ function Tests({ PageTemplate }) {
                 <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
               </div>
             </div>
+          </TabPane>
+          <TabPane tab="FilesUploadOverview" key="FilesUploadOverview">
+            <FilesUploadOverview
+              uploadQueue={[
+                { file: { name: 'file-1.png' }, isPristine: true },
+                { file: { name: 'file-2.png' }, isPristine: false }
+              ]}
+              storageLocation={locations.find(l => l.type === STORAGE_LOCATION_TYPE.public)}
+              directory={{ type: CDN_OBJECT_TYPE.directory, path: 'media', displayName: 'media', url: 'cdn://media', portableUrl: 'cdn://media' }}
+              />
           </TabPane>
         </Tabs>
       </div>

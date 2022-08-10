@@ -5,6 +5,7 @@ import { getResourceExtension } from './resource-utils.js';
 import {
   CDN_URL_PREFIX,
   STORAGE_LOCATION_TYPE,
+  IMAGE_OPTIMIZATION_QUALITY,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
   IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
@@ -12,7 +13,7 @@ import {
 
 const publicCdnPathPattern = /^media(\/.*)?$/;
 const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
-const scalableImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
+const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
@@ -54,15 +55,19 @@ const optimizeImage = file => {
         canvas.toBlob(blob => {
           const processedFile = new File([blob], file.name);
           resolve(processedFile);
-        }, file.type, 0.5);
+        }, file.type, IMAGE_OPTIMIZATION_QUALITY);
       };
     };
   });
 };
 
+export function isEditableImageFile(file) {
+  return rasterImageFileTypes.includes(file.type);
+}
+
 export function processFilesBeforeUpload(files) {
   return Promise.all(files.map(file => {
-    return scalableImageFileTypes.includes(file.type)
+    return rasterImageFileTypes.includes(file.type)
       ? optimizeImage(file)
       : file;
   }));

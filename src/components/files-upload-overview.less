@@ -31,17 +31,31 @@
   margin-top: 25px;
 }
 
+.FilesUploadOverview-message {
+  margin-bottom: 25px;
+}
+
 .FilesUploadOverview-fileStatusContainer {
-  max-height: 70%;
+  max-height: 50vh;
   overflow: auto;
+  margin-bottom: 25px;
 }
 
 .FilesUploadOverview-fileStatusIcon {
-  &.FilesUploadOverview-fileStatusIcon--green {
+  &.FilesUploadOverview-fileStatusIcon--processed {
+    color: @edu-secondary-color-dark;
+  }
+
+  &.FilesUploadOverview-fileStatusIcon--success {
     color: @edu-success-color;
   }
 
-  &.FilesUploadOverview-fileStatusIcon--red {
+  &.FilesUploadOverview-fileStatusIcon--error {
     color: @edu-error-color;
   }
+}
+
+.FilesUploadOverview-fileStatusMessage {
+  font-style: italic;
+  color: @edu-secondary-color-dark;
 }

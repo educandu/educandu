@@ -7,4 +7,18 @@ uploadLimitExceeded:
 insufficientPrivateStorge:
   en: Not enough storage space available for file
   de: Nicht genügend Speicherplatz für die Datei verfügbar
-
+startUpload:
+  en: Start upload
+  de: Upload starten
+preprocessed:
+  en: edited
+  de: bearbeitet
+stage_uploadNotStarted:
+  en: "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon."
+  de: "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
+stage_uploading:
+  en: Uploading ...
+  de: Hochladen ...
+stage_uploadFinished:
+  en: Upload finished
+  de: Upload beendet
