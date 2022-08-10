@@ -1895,6 +1895,7 @@
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
+      "name": "Multitrack media",
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
@@ -1905,6 +1906,7 @@
     "namespace": "multitrackMedia",
     "language": "de",
     "resources": {
+      "name": "Mehrspur Medien",
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
