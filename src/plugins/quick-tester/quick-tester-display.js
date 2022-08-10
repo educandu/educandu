@@ -97,8 +97,8 @@ function QuickTesterDisplay({ content }) {
             </div>
           )}
           <div className="QuickTesterDisplay-test">
-            {!isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.question}</Markdown>}
-            {isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.answer}</Markdown>}
+            {!isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.question}</Markdown>}
+            {isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.answer}</Markdown>}
           </div>
           <RadioGroup className="QuickTesterDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
             <RadioButton className="QuickTesterDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>

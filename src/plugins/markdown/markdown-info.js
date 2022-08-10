@@ -33,8 +33,7 @@ class MarkdownInfo {
 
   getDefaultContent() {
     return {
-      text: '',
-      renderMedia: false
+      text: ''
     };
   }
 

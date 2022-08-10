@@ -1944,7 +1944,6 @@
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random",
-      "renderMediaInfo": "Will be applied to the question and answer text, not the link text and title",
       "testNumber": "Test {number}",
       "addTest": "Add test"
     }
@@ -1958,7 +1957,6 @@
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig",
-      "renderMediaInfo": "Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel",
       "testNumber": "Test {number}",
       "addTest": "Test hinzufügen"
     }
@@ -2173,7 +2171,6 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "roomsBreadcrumbPart": "rooms",
-      "renderMedia": "Render media",
       "internalCdn": "Internal CDN",
       "externalLink": "External link",
       "youtube": "Youtube",
@@ -2319,7 +2316,6 @@
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "roomsBreadcrumbPart": "Räume",
-      "renderMedia": "Medien wiedergeben",
       "internalCdn": "Internes CDN",
       "externalLink": "Externer Link",
       "youtube": "Youtube",

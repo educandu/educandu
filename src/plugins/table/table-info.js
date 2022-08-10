@@ -41,7 +41,6 @@ class TableInfo {
       columnCount: DEFAULT_TABLE_COLUMN_COUNT,
       cells: createTableCellsFlat(DEFAULT_TABLE_ROW_COUNT, DEFAULT_TABLE_COLUMN_COUNT, (rowIndex, columnIndex) => createEmptyCell(rowIndex, columnIndex)),
       columnDistribution: COLUMN_DISTRIBUTION.automatic,
-      renderMedia: false,
       width: 100
     };
   }

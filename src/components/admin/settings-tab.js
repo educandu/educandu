@@ -134,7 +134,6 @@ function SettingsTab({
         <Collapse.Panel header={t('homepageInfoHeader')} key="panel">
           <MarkdownInput
             preview
-            renderMedia
             value={settings.homepageInfo || ''}
             onChange={handleHomepageInfoChange}
             />

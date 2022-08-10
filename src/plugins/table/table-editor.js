@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Checkbox, Form } from 'antd';
+import { Radio, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import TableDesigner from './table-designer.js';
 import { COLUMN_DISTRIBUTION } from './table-utils.js';
@@ -9,7 +9,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 function TableEditor({ content, onContentChanged }) {
   const { t } = useTranslation('table');
 
-  const { columnDistribution, width, renderMedia } = content;
+  const { columnDistribution, width } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -21,10 +21,6 @@ function TableEditor({ content, onContentChanged }) {
 
   const handleWidthChange = newValue => {
     updateContent({ width: newValue });
-  };
-
-  const handleRenderMediaChange = event => {
-    updateContent({ renderMedia: event.target.checked });
   };
 
   const formItemLayout = {
@@ -43,9 +39,6 @@ function TableEditor({ content, onContentChanged }) {
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
-        <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
-          <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />
         </Form.Item>
       </Form>
       <div className="Panel">

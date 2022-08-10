@@ -42,8 +42,7 @@ class QuickTesterInfo {
           answer: `[${t('common:answer')}]`
         }
       ],
-      testsOrder: TESTS_ORDER.given,
-      renderMedia: false
+      testsOrder: TESTS_ORDER.given
     };
   }
 

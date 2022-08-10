@@ -1,11 +1,11 @@
 import React from 'react';
+import { Form, Button, Radio } from 'antd';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
-import { Form, Button, Radio, Checkbox, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 
 const FormItem = Form.Item;
@@ -70,10 +70,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ testsOrder: event.target.value });
   };
 
-  const handleRenderMediaChanged = event => {
-    changeContent({ renderMedia: event.target.checked });
-  };
-
   return (
     <div className="QuickTesterEditor">
       <Form layout="horizontal">
@@ -89,12 +85,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
-          <Checkbox checked={content.renderMedia} onChange={handleRenderMediaChanged} />
-          <Tooltip title={t('renderMediaInfo')}>
-            <InfoCircleOutlined className="QuickTesterEditor-infoIcon" />
-          </Tooltip>
-        </Form.Item>
       </Form>
       {tests.map((test, index) => (
         <ItemPanel
@@ -111,7 +101,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
               <span className="QuickTesterEditor-testContentLabel">{t('common:question')}</span>
               <MarkdownInput
                 preview
-                renderMedia={content.renderMedia}
                 value={test.question}
                 onChange={event => handleInputQuestionChanged(index, event.target.value)}
                 />
@@ -120,7 +109,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
               <span className="QuickTesterEditor-testContentLabel">{t('common:answer')}</span>
               <MarkdownInput
                 preview
-                renderMedia={content.renderMedia}
                 value={test.answer}
                 onChange={event => handleInputAnswerChanged(index, event.target.value)}
                 />

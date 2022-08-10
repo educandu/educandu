@@ -107,7 +107,7 @@ function ProfileTab() {
             label={t('introduction')}
             initialValue={user.introduction || ''}
             >
-            <MarkdownInput preview renderMedia minRows={5} />
+            <MarkdownInput preview minRows={5} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit">{t('common:save')}</Button>
