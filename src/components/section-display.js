@@ -48,18 +48,20 @@ function SectionDisplay({
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [isHelpModalVisible, setIsHelpModalVisible] = useState(false);
+
+  const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
+
   const sectionClasses = classNames({
     'SectionDisplay': true,
     'is-editable': canEdit,
+    'is-invalid': isInvalid,
     'is-hard-deletable': isHardDeleteEnabled,
     'is-dragged': isDragged,
     'is-other-section-dragged': isOtherSectionDragged
   });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isHelpModelVisible, setIsHelpModalVisible] = useState(false);
-
-  const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
 
   const composeShortcutText = parts => parts.map(part => t(`common:${part}`)).join(' + ');
 
@@ -154,6 +156,11 @@ function SectionDisplay({
     return <DeletedSection section={section} />;
   };
 
+  const handleContentChange = (content, newIsInvalid) => {
+    setIsInvalid(newIsInvalid);
+    onSectionContentChange(content, newIsInvalid);
+  };
+
   const renderEditorComponent = () => {
     if (!section.content) {
       throw new Error('Cannot edit a deleted section');
@@ -163,7 +170,7 @@ function SectionDisplay({
     return (
       <EditorComponent
         content={section.content}
-        onContentChanged={onSectionContentChange}
+        onContentChanged={handleContentChange}
         />
     );
   };
@@ -278,7 +285,7 @@ function SectionDisplay({
 
       <Modal
         footer={null}
-        visible={isHelpModelVisible}
+        visible={isHelpModalVisible}
         onCancel={() => setIsHelpModalVisible(false)}
         destroyOnClose
         >
