@@ -7,7 +7,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import { ReactCompareSlider, styleFitContainer } from 'react-compare-slider';
 
 function ImageDisplay({ content }) {
   const mainImageRef = useRef();
@@ -99,21 +99,20 @@ function ImageDisplay({ content }) {
       />
   );
 
-  const renderRevealEffect = () => (
-    <ReactCompareSlider
-      position={effect.startPosition}
-      portrait={effect.orientation === ORIENTATION.vertical}
-      className={`ImageDisplay-mainImage u-width-${width}`}
-      itemOne={<ReactCompareSliderImage
-        src={urlUtils.getImageUrl({
-          cdnRootUrl: clientConfig.cdnRootUrl,
-          sourceType: effect.sourceType,
-          sourceUrl: effect.sourceUrl
-        })}
-        />}
-      itemTwo={<ReactCompareSliderImage src={urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })} />}
-      />
-  );
+  const renderRevealEffect = () => {
+    const imageUrl = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
+    const effectImageUrl = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType: effect.sourceType, sourceUrl: effect.sourceUrl });
+
+    return (
+      <ReactCompareSlider
+        position={effect.startPosition}
+        portrait={effect.orientation === ORIENTATION.vertical}
+        className={`ImageDisplay-mainImage u-width-${width}`}
+        itemOne={isMainImageLoaded && <img src={effectImageUrl} style={styleFitContainer()} />}
+        itemTwo={<img src={imageUrl} ref={mainImageRef} style={styleFitContainer()} />}
+        />
+    );
+  };
 
   const renderClipEffect = () => (
     <Fragment>
