@@ -1,12 +1,10 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
+import iconNs, { QuestionOutlined } from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
 export function MultitrackMediaIconComponent() {
-  return (
-    <div>placeholder</div>
-  );
+  return <QuestionOutlined />;
 }
 
 function MultitrackMediaIcon() {

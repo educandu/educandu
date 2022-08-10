@@ -25,8 +25,9 @@ const plugins = [
   'abc-notation',
   'ear-training',
   'interval-trainer',
+  'table',
   'interactive-media',
-  'table'
+  'multitrack-media'
 ];
 
 const config = {
