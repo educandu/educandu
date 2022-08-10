@@ -118,13 +118,19 @@ describe('media-utils', () => {
       { milliseconds: Number.NaN, expectedResult: '00:00' },
       { milliseconds: Number.POSITIVE_INFINITY, expectedResult: '00:00' },
       { milliseconds: Number.NEGATIVE_INFINITY, expectedResult: '00:00' },
-      { milliseconds: null, expectedResult: '00:00' }
+      { milliseconds: null, expectedResult: '00:00' },
+      { milliseconds: null, millisecondsLength: 0, expectedResult: '00:00' },
+      { milliseconds: null, millisecondsLength: 1, expectedResult: '00:00.0' },
+      { milliseconds: 20547004, millisecondsLength: 1, expectedResult: '05:42:27.0' },
+      { milliseconds: 20547004, millisecondsLength: 2, expectedResult: '05:42:27.00' },
+      { milliseconds: 20547004, millisecondsLength: 3, expectedResult: '05:42:27.004' },
+      { milliseconds: 20547684, millisecondsLength: 3, expectedResult: '05:42:27.684' }
     ];
 
-    testCases.forEach(({ milliseconds, expectedResult }) => {
+    testCases.forEach(({ milliseconds, millisecondsLength, expectedResult }) => {
       describe(`when called with milliseconds = ${milliseconds}`, () => {
         it(`should return '${expectedResult}'`, () => {
-          expect(formatMillisecondsAsDuration(milliseconds)).toBe(expectedResult);
+          expect(formatMillisecondsAsDuration(milliseconds, { millisecondsLength })).toBe(expectedResult);
         });
       });
     });

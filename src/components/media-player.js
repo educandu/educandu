@@ -86,7 +86,6 @@ function MediaPlayer({
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
-  const [isMuted, setIsMuted] = useState(false);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
@@ -126,10 +125,6 @@ function MediaPlayer({
     setLastReachedPartEndIndex(-1);
     trackRef.current.seekToTimecode(milliseconds);
     onSeek(milliseconds);
-  };
-
-  const handleToggleMute = () => {
-    setIsMuted(oldValue => !oldValue);
   };
 
   const lazyLoadSource = async completedAction => {
@@ -229,7 +224,6 @@ function MediaPlayer({
         <MediaPlayerTrack
           trackRef={trackRef}
           volume={volume}
-          isMuted={isMuted}
           sourceUrl={sourceUrl}
           aspectRatio={aspectRatio}
           screenMode={screenMode}
@@ -255,14 +249,12 @@ function MediaPlayer({
         durationInMilliseconds={durationInMilliseconds}
         />
       <MediaPlayerControls
-        isMuted={isMuted}
         playState={playState}
         screenMode={screenMode}
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
         volume={volume}
         onPlaybackRateChange={handlePlaybackRateChange}
-        onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
