@@ -158,7 +158,7 @@ blockHelpMarkdown:
 
     Bitte beachte, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.
 
-    Darüberhinaus kannst du auf die gleiche Weise von Bildern auch Video- bzw. Audio-Dateien einbinden.
+    Darüberhinaus kannst du auf die gleiche Weise anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
 
     Wie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, musst du durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
 
