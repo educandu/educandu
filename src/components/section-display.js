@@ -50,7 +50,7 @@ function SectionDisplay({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
-  const [isHelpModelVisible, setIsHelpModalVisible] = useState(false);
+  const [isHelpModalVisible, setIsHelpModalVisible] = useState(false);
 
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
 
@@ -285,7 +285,7 @@ function SectionDisplay({
 
       <Modal
         footer={null}
-        visible={isHelpModelVisible}
+        visible={isHelpModalVisible}
         onCancel={() => setIsHelpModalVisible(false)}
         destroyOnClose
         >
