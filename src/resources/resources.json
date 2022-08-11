@@ -1663,7 +1663,6 @@
     "resources": {
       "name": "Ear training",
       "nextExercise": "Next exercise",
-      "solve": "Solve",
       "abcCode": "ABC code",
       "midi": "MIDI (auto)",
       "testsOrder": "Display order",
@@ -1685,7 +1684,6 @@
     "resources": {
       "name": "Gehörbildung",
       "nextExercise": "Nächste Übung",
-      "solve": "Auflösen",
       "abcCode": "ABC-Code",
       "midi": "MIDI (auto)",
       "testsOrder": "Anzeigereihenfolge",
@@ -1782,7 +1780,7 @@
       "name": "Bild",
       "noneOption": "Kein Effekt",
       "hoverOption": "Hover",
-      "revealOption": "Auflösung",
+      "revealOption": "Aufdecken",
       "clipOption": "Zuschneiden",
       "clippedWidth": "Resultierende Breite",
       "clippedHeight": "Resultierende Höhe",
