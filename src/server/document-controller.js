@@ -25,7 +25,7 @@ import {
   getDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
+const { NotFound, BadRequest, Forbidden } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -81,7 +81,7 @@ class DocumentController {
     const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
 
     if (!!room && !isRoomOwnerOrMember({ room, userId: user._id })) {
-      throw new Unauthorized();
+      throw new Forbidden();
     }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
@@ -103,7 +103,7 @@ class DocumentController {
       }
 
       if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
-        throw new Unauthorized();
+        throw new Forbidden();
       }
     }
 
@@ -232,7 +232,7 @@ class DocumentController {
     }
 
     if (document.origin.startsWith(DOCUMENT_ORIGIN.external) && !hasUserPermission(req.user, permissions.MANAGE_IMPORT)) {
-      throw new Unauthorized('The user does not have permission to delete external documents');
+      throw new Forbidden('The user does not have permission to delete external documents');
     }
 
     if (document.origin === DOCUMENT_ORIGIN.internal && !document.roomId) {
@@ -242,7 +242,7 @@ class DocumentController {
     if (document.origin === DOCUMENT_ORIGIN.internal && document.roomId) {
       const room = await this.roomService.getRoomById(document.roomId);
       if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
-        throw new Unauthorized(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
+        throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
       }
     }
 
@@ -272,7 +272,7 @@ class DocumentController {
       const room = await this.roomService.getRoomById(document.roomId);
 
       if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
-        throw new Unauthorized();
+        throw new Forbidden();
       }
     }
   }

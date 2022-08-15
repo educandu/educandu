@@ -9,7 +9,7 @@ import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
 import { DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
-const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -275,8 +275,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
       });
     });
 
@@ -465,8 +465,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -480,8 +480,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -606,8 +606,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -621,8 +621,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -744,8 +744,8 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -797,8 +797,8 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
       });
 
-      it('should throw Unauthorized', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Unauthorized);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
