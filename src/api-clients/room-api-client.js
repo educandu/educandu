@@ -47,7 +47,7 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  deleteAllPrivateRoomsForUser({ ownerId }) {
+  deleteAllRoomsForUser({ ownerId }) {
     return this.httpClient
       .delete(
         `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}`,

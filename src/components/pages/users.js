@@ -206,7 +206,7 @@ function Users({ initialState, PageTemplate }) {
 
       let finalStorage;
       try {
-        await roomApiClient.deleteAllPrivateRoomsForUser({ ownerId: user._id });
+        await roomApiClient.deleteAllRoomsForUser({ ownerId: user._id });
         finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
       } catch (error) {
         errorHelper.handleApiError({ error, logger, t });
