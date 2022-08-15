@@ -137,8 +137,10 @@ export default function Room({ PageTemplate, initialState }) {
         view: DOC_VIEW_QUERY_PARAM.edit,
         templateDocumentId: clonedOrTemplateDocumentId
       });
+    } else {
+      setDocuments(sortDocuments([...documents, ...createdDocuments]));
+      setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
     }
-    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleDocumentMetadataModalCancel = () => {
