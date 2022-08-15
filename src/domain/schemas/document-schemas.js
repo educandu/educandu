@@ -23,8 +23,7 @@ export const createDocumentDataBodySchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
   sections: joi.array().items(sectionSchema),
-  roomId: idOrKeySchema.allow(null),
-  dueOn: joi.string().allow('')
+  roomId: idOrKeySchema.allow(null)
 });
 
 export const documentMetadataBodySchema = joi.object({
@@ -33,8 +32,7 @@ export const documentMetadataBodySchema = joi.object({
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow(null).allow(''),
-  dueOn: joi.string().allow('')
+  review: joi.string().allow(null).allow('')
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -73,7 +71,6 @@ export const documentRevisionDBSchema = joi.object({
   order: joi.number().required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
-  dueOn: joi.date().allow(null),
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,
@@ -97,7 +94,6 @@ export const documentDBSchema = joi.object({
   createdBy: idOrKeySchema.required(),
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required(),
-  dueOn: joi.date().allow(null),
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,

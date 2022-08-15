@@ -19,27 +19,16 @@ useTemplateDocument:
 review:
   en: Review
   de: Review
-dueOn:
-  en: Due date
-  de: Termin
 createSequence:
   en: Create sequence
   de: Reihe anlegen
-sequenceInterval:
-  en: Interval
-  de: Intervall
-sequenceCount:
-  en: Number
-  de: Anzahl
 sequenceInfoBoxHeader:
   en: Document sequences
   de: Veranstaltungsreihen
-sequenceInfoBoxDescription:
+sequenceInfo:
   en: |
-    Here you can create multiple documents at once.
-    The date specified above is used as the first scheduling.
+    You can create multiple documents at once.
     A sequential number is appended to the title or URL path for each document.
   de: |
-    Hier kannst du mehrere Dokumente gleichzeitig anlegen.
-    Das oben angegebenen Datum wird dabei als erster Termin verwendet.
+    Du kannst mehrere Dokumente gleichzeitig anlegen.
     An den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.

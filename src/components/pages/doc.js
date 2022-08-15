@@ -157,8 +157,8 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = updatedDoc => {
-    setDoc(updatedDoc);
+  const handleDocumentMetadataModalSave = updatedDocuments => {
+    setDoc(updatedDocuments[0]);
     setIsDocumentMetadataModalVisible(false);
   };
 
@@ -488,6 +488,7 @@ function Doc({ initialState, PageTemplate }) {
       </Restricted>
 
       <DocumentMetadataModal
+        allowMultiple={false}
         initialDocumentMetadata={doc}
         isVisible={isDocumentMetadataModalVisible}
         mode={DOCUMENT_METADATA_MODAL_MODE.update}

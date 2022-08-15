@@ -191,8 +191,7 @@ const commonDocumentOrRevisionProps = {
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
-  roomId: PropTypes.string,
-  dueOn: PropTypes.string
+  roomId: PropTypes.string
 };
 
 export const documentMetadataShape = PropTypes.shape({
@@ -219,8 +218,7 @@ export const documentMetadataEditShape = PropTypes.shape({
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  review: PropTypes.string,
-  dueOn: PropTypes.string
+  review: PropTypes.string
 });
 
 export const documentShape = PropTypes.shape({

@@ -336,7 +336,6 @@ class ClientDataMappingService {
       switch (key) {
         case 'createdOn':
         case 'updatedOn':
-        case 'dueOn':
           result[key] = value ? value.toISOString() : value;
           break;
         case 'createdBy':

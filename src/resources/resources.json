@@ -292,12 +292,9 @@
       "tagsPlaceholder": "Enter keywords",
       "useTemplateDocument": "Use default template",
       "review": "Review",
-      "dueOn": "Due date",
       "createSequence": "Create sequence",
-      "sequenceInterval": "Interval",
-      "sequenceCount": "Number",
       "sequenceInfoBoxHeader": "Document sequences",
-      "sequenceInfoBoxDescription": "Here you can create multiple documents at once.\nThe date specified above is used as the first scheduling.\nA sequential number is appended to the title or URL path for each document.\n"
+      "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n"
     }
   },
   {
@@ -311,12 +308,9 @@
       "tagsPlaceholder": "Stichwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
       "review": "Review",
-      "dueOn": "Termin",
       "createSequence": "Reihe anlegen",
-      "sequenceInterval": "Intervall",
-      "sequenceCount": "Anzahl",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfoBoxDescription": "Hier kannst du mehrere Dokumente gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
     }
   },
   {

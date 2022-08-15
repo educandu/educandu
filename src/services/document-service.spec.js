@@ -342,7 +342,6 @@ describe('document-service', () => {
           language: 'en',
           createdOn: new Date().toISOString(),
           createdBy: userId1,
-          dueOn: new Date().toISOString(),
           sections: [
             {
               ...createDefaultSection(),
@@ -369,7 +368,6 @@ describe('document-service', () => {
           language: 'en',
           createdOn: new Date().toISOString(),
           createdBy: userId1,
-          dueOn: null,
           sections: [
             {
               ...createDefaultSection(),
@@ -411,7 +409,6 @@ describe('document-service', () => {
             ],
             order: 1,
             createdOn: new Date(revisions[0].createdOn),
-            dueOn: new Date(revisions[0].dueOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -448,7 +445,6 @@ describe('document-service', () => {
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
-          dueOn: null,
           updatedOn: now,
           updatedBy: revisions[1].createdBy,
           order: 2,
@@ -487,7 +483,6 @@ describe('document-service', () => {
             ],
             order: 1,
             createdOn: new Date(revisions[0].createdOn),
-            dueOn: new Date(revisions[0].dueOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -504,7 +499,6 @@ describe('document-service', () => {
             ],
             order: 2,
             createdOn: new Date(revisions[1].createdOn),
-            dueOn: null,
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',

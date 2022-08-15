@@ -16,7 +16,6 @@ import { useSettings } from '../settings-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -35,7 +34,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-const sortDocuments = documents => [...documents].sort(by(d => !!d.dueOn).thenBy(d => d.dueOn || d.createdOn));
+const sortDocuments = documents => [...documents].sort(by(d => d.createdOn));
 
 function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
   return {
@@ -57,11 +56,10 @@ function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
-  const now = new Date();
   const formRef = useRef(null);
   const settings = useSettings();
   const { t } = useTranslation('room');
-  const { formatDate, formatTimeTo } = useDateFormat();
+  const { formatDate } = useDateFormat();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -74,8 +72,6 @@ export default function Room({ PageTemplate, initialState }) {
 
   const isRoomOwner = user?._id === room.owner.key;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
-
-  const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
@@ -130,16 +126,18 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
-  const handleDocumentMetadataModalSave = (createdDocumentOrDocuments, templateDocumentId) => {
-    const documentToShow = documentMetadataModalState.cloneDocumentId ? createdDocumentOrDocuments : createdDocumentOrDocuments[0];
+  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
+    const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
+    const shouldNavigateToCreatedDocument = createdDocuments.length === 1 || clonedOrTemplateDocumentId;
 
-    window.location = routes.getDocUrl({
-      id: documentToShow._id,
-      slug: documentToShow.slug,
-      view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentId: documentMetadataModalState.cloneDocumentId || templateDocumentId
-    });
-
+    if (shouldNavigateToCreatedDocument) {
+      window.location = routes.getDocUrl({
+        id: createdDocuments[0]._id,
+        slug: createdDocuments[0].slug,
+        view: DOC_VIEW_QUERY_PARAM.edit,
+        templateDocumentId: clonedOrTemplateDocumentId
+      });
+    }
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
@@ -193,12 +191,10 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderDocument = doc => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
-    const dueDate = upcomingDueDocument?._id === doc._id ? formatTimeTo(doc.dueOn) : null;
 
     const containerClasses = classNames({
       'RoomPage-documentInfo': true,
-      'RoomPage-documentInfo--withIcons': isRoomOwnerOrCollaborator,
-      'RoomPage-documentInfo--withDueDate': !!dueDate
+      'RoomPage-documentInfo--withIcons': isRoomOwnerOrCollaborator
     });
 
     return (
@@ -217,14 +213,8 @@ export default function Room({ PageTemplate, initialState }) {
           </div>
         )}
         <div className="RoomPage-documentInfoItem">
-          {doc.dueOn && <span className="RoomPage-documentDueOnDate">{formatDate(doc.dueOn)}</span>}
           <a href={url}>{doc.title}</a>
         </div>
-        {dueDate && (
-          <div className="RoomPage-documentInfoItem">
-            {dueDate}
-          </div>
-        )}
       </div>
     );
   };
