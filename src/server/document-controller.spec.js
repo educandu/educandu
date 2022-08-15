@@ -7,9 +7,9 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
-import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -35,8 +35,7 @@ describe('document-controller', () => {
     };
 
     roomService = {
-      getRoomById: sandbox.stub(),
-      getRoomsMinimalMetadataByIds: sandbox.stub()
+      getRoomById: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -62,21 +61,18 @@ describe('document-controller', () => {
   });
 
   describe('handleGetDocsPage', () => {
-    let rooms;
     let documents;
     let mappedDocuments;
 
     beforeEach(() => {
-      rooms = [{ _id: 'R1' }];
       documents = [
-        { _id: 'D1', roomId: null },
-        { _id: 'D2', roomId: 'R1' },
-        { _id: 'D3', roomId: 'R1' }
+        { _id: 'D1' },
+        { _id: 'D2' },
+        { _id: 'D3' }
       ];
 
       mappedDocuments = cloneDeep(documents);
 
-      roomService.getRoomsMinimalMetadataByIds.resolves(rooms);
       documentService.getAllPublicDocumentsMetadata.resolves(documents);
       clientDataMappingService.mapDocsOrRevisions.resolves(mappedDocuments);
       pageRenderer.sendPage.resolves();
@@ -96,16 +92,12 @@ describe('document-controller', () => {
         sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: true });
       });
 
-      it('should call roomService.getRoomsMinimalMetadataByIds', () => {
-        sinon.assert.calledWith(roomService.getRoomsMinimalMetadataByIds, ['R1']);
-      });
-
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
         sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments, rooms });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
       });
     });
 
@@ -123,16 +115,12 @@ describe('document-controller', () => {
         sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: false });
       });
 
-      it('should call roomService.getRoomsMinimalMetadataByIds', () => {
-        sinon.assert.calledWith(roomService.getRoomsMinimalMetadataByIds, ['R1']);
-      });
-
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
         sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments, rooms });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
       });
     });
   });
@@ -266,7 +254,7 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document belongs to a public room', () => {
+    describe('when the document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
         req = {
@@ -278,55 +266,6 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        room.access = ROOM_ACCESS.public;
-
-        templateSections = [{}];
-        mappedRoom = { ...room };
-        mappedDocument = { ...doc };
-        mappedTemplateDocument = { ...templateDocument };
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
-
-        clientDataMappingService.mapRoom.resolves(mappedRoom);
-        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
-        clientDataMappingService.createProposedSections.returns(templateSections);
-        pageRenderer.sendPage.resolves();
-
-        return sut.handleGetDocPage(req, res);
-      });
-
-      it('should call clientDataMappingService.mapRoom', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, room, user);
-      });
-
-      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
-      });
-
-      it('should call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
-      });
-
-      it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
-      });
-    });
-
-    describe('when the document belongs to a private room and the user is not a room owner or member', () => {
-      beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
-        req = {
-          user,
-          params: { 0: '/doc-slug', documentId: doc._id },
-          query: { view: 'view', templateDocumentId: templateDocument._id }
-        };
-        res = {};
-
-        doc.slug = 'doc-slug';
-        doc.roomId = room._id;
-        room.access = ROOM_ACCESS.private;
         room.owner = uniqueId.create();
         room.members = [];
 
@@ -336,12 +275,12 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Unauthorized);
       });
     });
 
-    describe('when the document belongs to a private room and the user is the room owner', () => {
+    describe('when the document belongs to a room and the user is the room owner', () => {
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
         req = {
@@ -353,7 +292,6 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        room.access = ROOM_ACCESS.private;
         room.owner = user._id;
         room.members = [];
 
@@ -379,7 +317,7 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document belongs to a private room and the user is a room member', () => {
+    describe('when the document belongs to a room and the user is a room member', () => {
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create() };
         req = {
@@ -391,7 +329,6 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        room.access = ROOM_ACCESS.private;
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
 
@@ -528,8 +465,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -543,8 +480,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -669,8 +606,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -684,8 +621,8 @@ describe('document-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -807,8 +744,8 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -832,29 +769,11 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document is internal and public, and does not belong to a room', () => {
+    describe('when the document is internal and public (does not belong to a room)', () => {
       beforeEach(() => {
         req = { user, body: { documentId: doc._id } };
 
         doc.origin = DOCUMENT_ORIGIN.internal;
-        doc.access = DOCUMENT_ACCESS.public;
-        user.permissions = [permissions.MANAGE_IMPORT];
-
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the document is internal and public, and belongs to a room', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        doc.roomId = room._id;
-        doc.origin = DOCUMENT_ORIGIN.internal;
-        doc.access = DOCUMENT_ACCESS.public;
         user.permissions = [permissions.MANAGE_IMPORT];
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
@@ -871,7 +790,6 @@ describe('document-controller', () => {
 
         doc.roomId = room._id;
         doc.origin = DOCUMENT_ORIGIN.internal;
-        doc.access = DOCUMENT_ACCESS.private;
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
 
@@ -879,8 +797,8 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Unauthorized', async () => {
+        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 

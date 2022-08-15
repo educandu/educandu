@@ -5,7 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { INVALID_ROOM_INVITATION_REASON, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -59,7 +59,6 @@ describe('room-service', () => {
       createdRoom = await sut.createRoom({
         name: 'my room',
         slug: '  my-room  ',
-        access: ROOM_ACCESS.public,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
@@ -71,7 +70,6 @@ describe('room-service', () => {
         name: 'my room',
         slug: 'my-room',
         owner: myUser._id,
-        access: ROOM_ACCESS.public,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         description: '',
         createdOn: now,
@@ -95,13 +93,11 @@ describe('room-service', () => {
       [myPublicRoom, myPrivateRoom] = await Promise.all([
         await sut.createRoom({
           name: 'my public room',
-          access: ROOM_ACCESS.public,
           documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           user: myUser
         }),
         await sut.createRoom({
           name: 'my private room',
-          access: ROOM_ACCESS.private,
           documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           user: myUser
         })
@@ -153,7 +149,6 @@ describe('room-service', () => {
       testRoom = await sut.createRoom({
         name: 'room-name',
         slug: 'room-slug',
-        access: ROOM_ACCESS.private,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
@@ -192,7 +187,6 @@ describe('room-service', () => {
     beforeEach(async () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
-        access: ROOM_ACCESS.private,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
@@ -282,7 +276,6 @@ describe('room-service', () => {
     beforeEach(async () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
-        access: ROOM_ACCESS.private,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
@@ -305,7 +298,6 @@ describe('room-service', () => {
       await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
-        access: ROOM_ACCESS.private,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         owner: myUser._id,
         members: [

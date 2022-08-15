@@ -1,16 +1,13 @@
 import React from 'react';
-import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import RoomIcon from './icons/general/room-icon.js';
 import { useDateFormat } from './locale-context.js';
-import { documentExtendedMetadataShape, roomMinimalMetadataShape } from '../ui/default-prop-types.js';
+import { documentExtendedMetadataShape } from '../ui/default-prop-types.js';
 
-function DocumentInfoCell({ doc, room }) {
+function DocumentInfoCell({ doc }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInfoCell');
 
-  const showFrame = !!room;
   const dates = [
     `${t('common:created')}: ${formatDate(doc.createdOn)}`,
     `${t('updatedOn')}: ${formatDate(doc.updatedOn)}`
@@ -18,17 +15,10 @@ function DocumentInfoCell({ doc, room }) {
 
   return (
     <div className="DocumentInfoCell" >
-      {showFrame && (
-        <a href={routes.getRoomUrl(room._id, room.slug)} className="DocumentInfoCell-topFrame">
-          <RoomIcon />{room.name}
-        </a>
-      )}
-
       <div className="DocumentInfoCell-infoContainer">
-        {showFrame && <div className="DocumentInfoCell-leftFrame" />}
         <a
           href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
-          className={classNames('DocumentInfoCell-infoContent', { 'DocumentInfoCell-infoContent--framed': showFrame })}
+          className="DocumentInfoCell-infoContent"
           >
           <div>
             <div className="DocumentInfoCell-mainText">{doc.title}</div>
@@ -42,12 +32,7 @@ function DocumentInfoCell({ doc, room }) {
 }
 
 DocumentInfoCell.propTypes = {
-  doc: documentExtendedMetadataShape.isRequired,
-  room: roomMinimalMetadataShape
-};
-
-DocumentInfoCell.defaultProps = {
-  room: null
+  doc: documentExtendedMetadataShape.isRequired
 };
 
 export default DocumentInfoCell;

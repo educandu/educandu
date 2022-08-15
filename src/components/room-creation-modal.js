@@ -7,9 +7,9 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import RoomMetadataForm from './room-metadata-form.js';
 import React, { useState, useRef, useEffect } from 'react';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -23,7 +23,6 @@ function RoomCreationModal({ isVisible, onClose }) {
   const defaultRoom = {
     name: t('newRoom'),
     slug: '',
-    access: ROOM_ACCESS.private,
     documentsMode: ROOM_DOCUMENTS_MODE.exclusive
   };
 
@@ -39,10 +38,10 @@ function RoomCreationModal({ isVisible, onClose }) {
     }
   };
 
-  const handleFormSubmitted = async ({ name, slug, access, documentsMode }) => {
+  const handleFormSubmitted = async ({ name, slug, documentsMode }) => {
     try {
       setLoading(true);
-      const newRoom = await roomApiClient.addRoom({ name, slug, access, documentsMode });
+      const newRoom = await roomApiClient.addRoom({ name, slug, documentsMode });
       setLoading(false);
       onClose();
 

@@ -1037,8 +1037,6 @@
     "namespace": "room",
     "language": "en",
     "resources": {
-      "privateRoomSubtitle": "Private room",
-      "publicRoomSubtitle": "Public room",
       "exclusiveDocumentsSubtitle": "Exclusive documents",
       "collaborativeDocumentsSubtitle": "Collaborative documents",
       "expires": "Invitation expires on",
@@ -1057,17 +1055,13 @@
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
       "revokeInvitation": "Revoke invitation",
-      "leaveRoom": "Leave room",
-      "publicDocumentDeletionNotAllowed": "Public documents can not be deleted!",
-      "publicRoomDeletionNotAllowed": "Public rooms can not be deleted!"
+      "leaveRoom": "Leave room"
     }
   },
   {
     "namespace": "room",
     "language": "de",
     "resources": {
-      "privateRoomSubtitle": "privater Raum",
-      "publicRoomSubtitle": "öffentlicher Raum",
       "exclusiveDocumentsSubtitle": "exklusive Dokumente",
       "collaborativeDocumentsSubtitle": "kollaborative Dokumente",
       "expires": "Einladung läuft ab am",
@@ -1086,9 +1080,7 @@
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
       "revokeInvitation": "Einladung widerrufen",
-      "leaveRoom": "Raum verlassen",
-      "publicDocumentDeletionNotAllowed": "Öffentliche Dokumente können nicht gelöscht werden!",
-      "publicRoomDeletionNotAllowed": "Öffentliche Räume können nicht gelöscht werden!"
+      "leaveRoom": "Raum verlassen"
     }
   },
   {
@@ -1118,7 +1110,6 @@
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
-      "roomsHeadline": "Recently create public rooms",
       "documentsHeadline": "Recently created documents",
       "loadMore": "more ..."
     }
@@ -1128,7 +1119,6 @@
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
-      "roomsHeadline": "Letzte erstellte öffentliche Räume",
       "documentsHeadline": "Letzte erstellte Dokumente",
       "loadMore": "mehr ..."
     }
@@ -1356,7 +1346,6 @@
     "language": "en",
     "resources": {
       "roomNameRequired": "Please specify a room name",
-      "accessInfo": "Public rooms are visible to all users, private rooms only to room members. Public rooms are currently not allowed.",
       "documentsModeInfo": "In exclusive room documents can be managed only by the owner, in collaborative rooms by all room members."
     }
   },
@@ -1365,7 +1354,6 @@
     "language": "de",
     "resources": {
       "roomNameRequired": "Bitte gib einen Raumnamen an",
-      "accessInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder. Öffentliche Räume sind im Moment nicht erlaubt.",
       "documentsModeInfo": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },
@@ -1378,7 +1366,6 @@
       "role": "Role",
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
-      "sortedByAccess": "Sorted by access",
       "sortedByRole": "Sorted by role",
       "ownedRoomsHeadline": "Rooms that you created",
       "memberRoomsHeadline": "Rooms that you are a member of",
@@ -1395,7 +1382,6 @@
       "role": "Rolle",
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
-      "sortedByAccess": "Nach Zugang sortiert",
       "sortedByRole": "Nach Rolle sortiert",
       "ownedRoomsHeadline": "Räume, die du erstellt hast",
       "memberRoomsHeadline": "Räume, in denen du Mitglied bist",
@@ -2117,10 +2103,7 @@
       "email": "Email",
       "emailAddress": "Email address",
       "name": "Name",
-      "access": "Access",
       "type": "Type",
-      "accessType_public": "public",
-      "accessType_private": "private",
       "documentsMode": "Documents handling mode",
       "documentsMode_exclusive": "exclusive",
       "documentsMode_collaborative": "collaborative",
@@ -2262,10 +2245,7 @@
       "email": "E-Mail",
       "emailAddress": "E-Mail-Adresse",
       "name": "Name",
-      "access": "Zugang",
       "type": "Typ",
-      "accessType_public": "öffentlich",
-      "accessType_private": "privat",
       "documentsMode": "Dokumente-Bearbeitungsmodus",
       "documentsMode_exclusive": "exklusiv",
       "documentsMode_collaborative": "kollaborativ",

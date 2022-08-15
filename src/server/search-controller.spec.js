@@ -11,16 +11,12 @@ describe('search-controller', () => {
 
   let clientDataMappingService;
   let documentService;
-  let roomService;
   let user;
   let req;
   let res;
   let sut;
 
   beforeEach(() => {
-    roomService = {
-      getRoomsMinimalMetadataByIds: sandbox.stub()
-    };
     documentService = {
       getSearchableDocumentsMetadataByTags: sandbox.stub()
     };
@@ -29,7 +25,7 @@ describe('search-controller', () => {
     };
     user = { _id: uniqueId.create() };
 
-    sut = new SearchController(documentService, roomService, clientDataMappingService, {});
+    sut = new SearchController(documentService, clientDataMappingService, {});
   });
 
   afterEach(() => {
@@ -37,7 +33,6 @@ describe('search-controller', () => {
   });
 
   describe('handleGetSearchResult', () => {
-    let rooms;
     let documents;
     let mappedDocuments;
 
@@ -46,15 +41,13 @@ describe('search-controller', () => {
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', resolve);
 
-      rooms = [{ _id: 'R1' }];
       documents = [
-        { _id: 'D1', roomId: null },
-        { _id: 'D2', roomId: 'R1' },
-        { _id: 'D3', roomId: 'R1' }
+        { _id: 'D1' },
+        { _id: 'D2' },
+        { _id: 'D3' }
       ];
       mappedDocuments = cloneDeep(documents);
 
-      roomService.getRoomsMinimalMetadataByIds.resolves(rooms);
       clientDataMappingService.mapDocsOrRevisions.resolves(mappedDocuments);
       documentService.getSearchableDocumentsMetadataByTags.resolves(documents);
 
@@ -65,20 +58,12 @@ describe('search-controller', () => {
       sinon.assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
     });
 
-    it('should call roomService.getRoomsMinimalMetadataByIds', () => {
-      sinon.assert.calledWith(roomService.getRoomsMinimalMetadataByIds, ['R1']);
-    });
-
     it('should call clientDataMappingService.mapDocsOrRevisions', () => {
       sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
     });
 
     it('should return status 200', () => {
       expect(res.statusCode).toBe(200);
-    });
-
-    it('should return the documents and rooms', () => {
-      expect(res._getData()).toEqual({ documents: mappedDocuments, rooms });
     });
   });
 });

@@ -141,16 +141,13 @@ class UserController {
       throw new NotFound();
     }
 
-    const ownedPublicRooms = await this.roomService.getLatestPublicRoomsOwnedByUser(viewedUser._id);
     const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(viewedUser._id);
 
-    const mappedOwnedRooms = await this.clientDataMappingService.mapRooms(ownedPublicRooms);
     const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, {
       user: mappedViewedUser,
-      rooms: mappedOwnedRooms,
       documents: mappedCreatedDocuments
     });
   }
@@ -311,8 +308,8 @@ class UserController {
       throw new Forbidden();
     }
 
-    const userPrivateRooms = await this.roomService.getPrivateRoomsOwnedByUser(userId);
-    for (const room of userPrivateRooms) {
+    const userRooms = await this.roomService.getRoomsOwnedByUser(userId);
+    for (const room of userRooms) {
       // eslint-disable-next-line no-await-in-loop
       await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: userId });
     }

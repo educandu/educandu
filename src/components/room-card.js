@@ -7,9 +7,6 @@ import { useUser } from './user-context.js';
 import { Button, Divider, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
-import PublicIcon from './icons/general/public-icon.js';
-import PrivateIcon from './icons/general/private-icon.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
@@ -28,16 +25,6 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         {`${t('common:owner')}: `}
         <a href={routes.getUserUrl(room.owner?._id)}>{room.owner?.displayName}</a>
       </span>
-    );
-  };
-
-  const renderAccess = () => {
-    return (
-      <div className="RoomCard-accessCell">
-        {room.access === ROOM_ACCESS.private && <PrivateIcon />}
-        {room.access === ROOM_ACCESS.public && <PublicIcon />}
-        <span>{t(`common:accessType_${room.access}`)}</span>
-      </div>
     );
   };
 
@@ -62,12 +49,6 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         {showOwner && !isDeletedRoom && renderOwner()}
       </div>
       <Divider className="RoomCard-divider" />
-      {!!room?.access && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('common:access')}:</span>
-        <div>{renderAccess()}</div>
-      </div>
-      )}
       {!!room?.documentsMode && (
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>

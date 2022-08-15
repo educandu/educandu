@@ -1,5 +1,4 @@
 import HttpClient from './http-client.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
 
 class RoomApiClient {
   static inject() { return [HttpClient]; }
@@ -8,11 +7,11 @@ class RoomApiClient {
     this.httpClient = httpClient;
   }
 
-  addRoom({ name, slug, access, documentsMode }) {
+  addRoom({ name, slug, documentsMode }) {
     return this.httpClient
       .post(
         '/api/v1/rooms',
-        { name, slug, access, documentsMode },
+        { name, slug, documentsMode },
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -51,7 +50,7 @@ class RoomApiClient {
   deleteAllPrivateRoomsForUser({ ownerId }) {
     return this.httpClient
       .delete(
-        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}&access=${encodeURIComponent(ROOM_ACCESS.private)}`,
+        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

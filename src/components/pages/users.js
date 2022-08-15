@@ -256,7 +256,7 @@ function Users({ initialState, PageTemplate }) {
         {initialState.storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
             <div className="UsersPage-storagePlanOption">
-              <div className="UsersPage-storagePlanOptionName">{plan.name}</div>
+              <div>{plan.name}</div>
               <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
             </div>
           </Option>

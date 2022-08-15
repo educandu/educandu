@@ -1,4 +1,3 @@
-import by from 'thenby';
 import moment from 'moment';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
@@ -15,7 +14,6 @@ import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
   INVALID_ROOM_INVITATION_REASON,
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
-  ROOM_ACCESS,
   STORAGE_DIRECTORY_MARKER_NAME
 } from '../domain/constants.js';
 
@@ -41,25 +39,12 @@ export default class RoomService {
     return this.roomStore.getRoomById(roomId);
   }
 
-  getRoomsMinimalMetadataByIds(roomIds) {
-    return this.roomStore.getRoomsMinimalMetadataByIds(roomIds);
-  }
-
   getRoomInvitationById(roomInvitationId) {
     return this.roomInvitationStore.getRoomInvitationById(roomInvitationId);
   }
 
   getRoomsOwnedByUser(userId) {
     return this.roomStore.getRoomsByOwnerId(userId);
-  }
-
-  async getLatestPublicRoomsOwnedByUser(userId) {
-    const rooms = await this.roomStore.getPublicRoomsByOwnerId(userId);
-    return rooms.sort(by(room => room.createdOn, 'desc'));
-  }
-
-  getPrivateRoomsOwnedByUser(userId) {
-    return this.roomStore.getPrivateRoomsByOwnerId(userId);
   }
 
   getRoomsOwnedOrJoinedByUser(userId) {
@@ -75,18 +60,15 @@ export default class RoomService {
     return !!room;
   }
 
-  async createRoom({ name, slug, access, documentsMode, user }) {
+  async createRoom({ name, slug, documentsMode, user }) {
     const roomId = uniqueId.create();
 
-    if (access === ROOM_ACCESS.private) {
-      await this.createUploadDirectoryMarkerForRoom(roomId);
-    }
+    await this.createUploadDirectoryMarkerForRoom(roomId);
 
     const newRoom = {
       _id: roomId,
       name,
       slug: slug?.trim() || '',
-      access,
       documentsMode,
       description: '',
       owner: user._id,
@@ -99,9 +81,7 @@ export default class RoomService {
     try {
       await this.roomStore.saveRoom(newRoom);
     } catch (error) {
-      if (access === ROOM_ACCESS.private) {
-        await this.deleteUploadDirectoryMarkerForRoom(roomId);
-      }
+      await this.deleteUploadDirectoryMarkerForRoom(roomId);
       throw error;
     }
 

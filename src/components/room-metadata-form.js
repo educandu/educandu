@@ -4,8 +4,8 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
-import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -37,8 +37,8 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, access, documentsMode, description }) => {
-    await onSubmit({ name, slug, access, documentsMode, description });
+  const handleFinish = async ({ name, slug, documentsMode, description }) => {
+    await onSubmit({ name, slug, documentsMode, description });
   };
 
   const handleFieldsChange = async (...args) => {
@@ -55,14 +55,6 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug} {...formInputsLayouts}>
         <Input />
       </FormItem>
-      <div>
-        <FormItem label={t('common:access')} name="access" initialValue={room.access} tooltip={t('accessInfo')}>
-          <RadioGroup disabled>
-            <RadioButton value={ROOM_ACCESS.private}>{t('common:accessType_private')}</RadioButton>
-            <RadioButton value={ROOM_ACCESS.public}>{t('common:accessType_public')}</RadioButton>
-          </RadioGroup>
-        </FormItem>
-      </div>
       <FormItem label={t('common:documentsMode')} name="documentsMode" initialValue={room.documentsMode} tooltip={t('documentsModeInfo')}>
         <RadioGroup>
           <RadioButton value={ROOM_DOCUMENTS_MODE.exclusive}>{t('common:documentsMode_exclusive')}</RadioButton>

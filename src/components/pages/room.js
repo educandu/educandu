@@ -15,9 +15,7 @@ import { useDateFormat } from '../locale-context.js';
 import { useSettings } from '../settings-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import PrivateIcon from '../icons/general/private-icon.js';
 import documentsUtils from '../../utils/documents-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -27,8 +25,8 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
-import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_ACCESS } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
@@ -77,8 +75,6 @@ export default function Room({ PageTemplate, initialState }) {
   const isRoomOwner = user?._id === room.owner.key;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
-  const isRoomDeletionDisabled = room.access === ROOM_ACCESS.public;
-  const isDocumentDeletionDisabled = room.access === ROOM_ACCESS.public;
   const upcomingDueDocument = documentsUtils.determineUpcomingDueDocument(now, documents);
 
   useEffect(() => {
@@ -214,9 +210,8 @@ export default function Room({ PageTemplate, initialState }) {
             </Tooltip>
             <Tooltip title={t('common:delete')}>
               <DeleteButton
-                disabled={isDocumentDeletionDisabled}
                 onClick={() => handleDeleteDocumentClick(doc)}
-                className={classNames('RoomPage-documentDeleteButton', { 'is-disabled': isDocumentDeletionDisabled })}
+                className="RoomPage-documentDeleteButton"
                 />
             </Tooltip>
           </div>
@@ -311,14 +306,9 @@ export default function Room({ PageTemplate, initialState }) {
       >
       {room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
       {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
-
-      {isRoomOwnerOrCollaborator && isDocumentDeletionDisabled && (
-        <div className="RoomPage-deletionDisabledSubtext">{t('publicDocumentDeletionNotAllowed')}</div>
-      )}
     </Card>
   );
 
-  const accessText = t(`${room.access}RoomSubtitle`);
   const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
   const renderOwnerLink = () => (
     <Fragment>
@@ -339,8 +329,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
         <div className="RoomPage-subtitle">
           <div className="RoomPage-subtitleGroup">
-            {room.access === ROOM_ACCESS.private ? <PrivateIcon /> : <PublicIcon />}
-            <span>{accessText} | {documentsModeText} | {renderOwnerLink()}</span>
+            <span>{documentsModeText} | {renderOwnerLink()}</span>
           </div>
           {!isRoomOwner && (
             <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
@@ -395,14 +384,9 @@ export default function Room({ PageTemplate, initialState }) {
                       type="primary"
                       icon={<DeleteIcon />}
                       onClick={handleDeleteRoomClick}
-                      disabled={isRoomDeletionDisabled}
-                      className={classNames('RoomPage-cardDangerActionButton', { 'is-disabled': isRoomDeletionDisabled })}
                       >
                       {t('deleteRoomButton')}
                     </Button>
-                    {isRoomDeletionDisabled && (
-                      <div className="RoomPage-deletionDisabledSubtext">{t('publicRoomDeletionNotAllowed')}</div>
-                    )}
                   </div>
                 </div>
               </Card>

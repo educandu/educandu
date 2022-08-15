@@ -134,7 +134,6 @@ class ClientDataMappingService {
       expires: invitation.expires.toISOString(),
       room: {
         name: room.name,
-        access: room.access,
         documentsMode: room.documentsMode,
         owner: {
           displayName: owner.displayName

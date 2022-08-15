@@ -3,7 +3,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 class TestsController {
   static get inject() { return [PageRenderer, RoomService, StorageService]; }
@@ -30,19 +30,19 @@ class TestsController {
     ];
 
     const rooms = await this.roomService.getRoomsOwnedByUser(user?._id || 'hihi');
-    const privateRoom = rooms.find(r => r.access === ROOM_ACCESS.private);
+    const room = rooms[0];
 
-    if (privateRoom) {
-      const isRoomOwner = user._id === privateRoom.owner;
-      const isRoomCollaborator = privateRoom.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && privateRoom.members.some(m => m.userId === user._id);
+    if (room) {
+      const isRoomOwner = user._id === room.owner;
+      const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user._id);
 
-      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(privateRoom.owner);
+      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
       const roomOwnerStoragePlan = roomOwner.storage.plan ? await this.storageService.getStoragePlanById(roomOwner.storage.plan) : null;
 
       locations.push({
         type: STORAGE_LOCATION_TYPE.private,
-        rootPath: `rooms/${privateRoom._id}/media`,
-        homePath: `rooms/${privateRoom._id}/media`,
+        rootPath: `rooms/${room._id}/media`,
+        homePath: `rooms/${room._id}/media`,
         usedBytes: roomOwner.storage.usedBytes,
         maxBytes: roomOwnerStoragePlan?.maxBytes,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator

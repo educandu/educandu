@@ -15,7 +15,7 @@ import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, CDN_URL_PREFIX, DOCUMENT_ACCESS, ROOM_ACCESS, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -241,7 +241,7 @@ export default class StorageService {
         return [];
       }
 
-      if (doc.roomId && doc.access === DOCUMENT_ACCESS.private) {
+      if (doc.roomId) {
         const room = await this.roomStore.getRoomById(doc.roomId);
         const isRoomOwner = user._id === room.owner;
         const rootAndHomePath = getPathForPrivateRoom(room._id);
@@ -281,8 +281,8 @@ export default class StorageService {
   }
 
   async _calculateUserUsedBytes(userId) {
-    const privateRoomsIds = await this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS.private });
-    const storagePaths = privateRoomsIds.map(getPathForPrivateRoom);
+    const roomIds = await this.roomStore.getRoomIdsByOwnerId({ ownerId: userId });
+    const storagePaths = roomIds.map(getPathForPrivateRoom);
 
     let totalSize = 0;
     for (const storagePath of storagePaths) {

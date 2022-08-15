@@ -56,9 +56,6 @@ describe('user-controller', () => {
       mapDocsOrRevisions: sandbox.stub(),
       mapWebsitePublicUser: sandbox.stub()
     };
-    roomService = {
-      getLatestPublicRoomsOwnedByUser: sandbox.stub()
-    };
     pageRenderer = {
       sendPage: sandbox.stub()
     };
@@ -102,9 +99,7 @@ describe('user-controller', () => {
     });
 
     describe('when the viewed user exists', () => {
-      let rooms;
       let documents;
-      let mappedRooms;
       let mappedDocuments;
       let mappedViewedUser;
 
@@ -118,9 +113,7 @@ describe('user-controller', () => {
         };
         const viewingUser = { _id: uniqueId.create() };
 
-        rooms = [{ _id: uniqueId.create() }];
         documents = [{ _id: uniqueId.create() }];
-        mappedRooms = cloneDeep(rooms);
         mappedDocuments = cloneDeep(documents);
 
         req = {
@@ -132,10 +125,8 @@ describe('user-controller', () => {
         mappedViewedUser = cloneDeep(viewedUser);
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
-        roomService.getLatestPublicRoomsOwnedByUser.withArgs(viewedUser._id).resolves(rooms);
         documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
 
-        clientDataMappingService.mapRooms.withArgs(rooms).resolves(mappedRooms);
         clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
@@ -146,8 +137,7 @@ describe('user-controller', () => {
       it('should call pageRenderer.sendPage', () => {
         sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
           user: mappedViewedUser,
-          documents: mappedDocuments,
-          rooms: mappedRooms
+          documents: mappedDocuments
         });
       });
     });

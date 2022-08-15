@@ -1,6 +1,5 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { DOCUMENT_ACCESS } from '../domain/constants.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
@@ -54,7 +53,7 @@ class DocumentStore {
   }
 
   getPublicDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
-    return this.collection.find({ createdBy, access: DOCUMENT_ACCESS.public }, { projection: documentMetadataProjection, session }).toArray();
+    return this.collection.find({ createdBy, roomId: null }, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
@@ -84,7 +83,7 @@ class DocumentStore {
   getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({
       archived: false,
-      access: DOCUMENT_ACCESS.public,
+      roomId: null,
       $expr: { $gt: [{ $size: '$tags' }, 0] }
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
@@ -95,7 +94,7 @@ class DocumentStore {
 
   getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
     return this.collection.find(
-      { archived: false, origin, access: DOCUMENT_ACCESS.public, roomId: null },
+      { archived: false, origin, roomId: null },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }
