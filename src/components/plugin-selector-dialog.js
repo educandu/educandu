@@ -64,11 +64,13 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
 
   return (
     <Modal
-      className="PluginSelectorDialog"
+      centered
+      width="560px"
       visible={visible}
       title={t('title')}
       footer={renderFooter()}
       onCancel={onCancel}
+      className="PluginSelectorDialog"
       >
       <GridSelector
         items={pluginItems}
