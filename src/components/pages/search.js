@@ -26,7 +26,6 @@ function Search({ PageTemplate }) {
   const { t } = useTranslation('search');
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
-  const [rooms, setRooms] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
@@ -59,7 +58,6 @@ function Search({ PageTemplate }) {
         const trimmedSearchText = searchText.trim();
         history.replaceState(null, '', routes.getSearchUrl(trimmedSearchText));
         const result = await searchApiClient.search(trimmedSearchText);
-        setRooms(result.rooms);
         setDocuments(result.documents);
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -81,8 +79,7 @@ function Search({ PageTemplate }) {
   useEffect(() => {
     const newRows = documents.map(doc => ({
       key: doc._id,
-      document: doc,
-      room: doc.roomId ? rooms.find(r => r._id === doc.roomId) : null
+      document: doc
     }));
 
     const sorter = sorters[sorting.value];
@@ -91,7 +88,7 @@ function Search({ PageTemplate }) {
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
     setDisplayedRows(sortedRows);
-  }, [documents, rooms, selectedTags, sorting, sorters]);
+  }, [documents, selectedTags, sorting, sorters]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
@@ -103,7 +100,7 @@ function Search({ PageTemplate }) {
   );
 
   const renderTitle = (_, row) => (
-    <DocumentInfoCell doc={row.document} room={row.room} />
+    <DocumentInfoCell doc={row.document} />
   );
 
   const renderCellTags = (_, row) => (

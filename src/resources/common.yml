@@ -174,18 +174,9 @@ emailAddress:
 name:
   en: Name
   de: Name
-access:
-  en: Access
-  de: Zugang
 type:
   en: Type
   de: Typ
-accessType_public:
-  en: public
-  de: öffentlich
-accessType_private:
-  en: private
-  de: privat
 documentsMode:
   en: Documents handling mode
   de: Dokumente-Bearbeitungsmodus

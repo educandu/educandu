@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -90,7 +90,7 @@ describe('room-controller', () => {
 
         req = {
           user,
-          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS.public, documentsMode: ROOM_DOCUMENTS_MODE.exclusive }
+          body: { name: 'name', slug: 'slug', documentsMode: ROOM_DOCUMENTS_MODE.exclusive }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -121,7 +121,6 @@ describe('room-controller', () => {
           owner: user._id,
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS.public,
           documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
           description: 'description'
         };
@@ -181,7 +180,6 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS.public,
           documentsMode: ROOM_DOCUMENTS_MODE.exclusive
         };
 
@@ -296,18 +294,27 @@ describe('room-controller', () => {
   });
 
   describe('handleGetRoomPage', () => {
+    let room;
+    let request;
+    let mappedRoom;
+    let mappedDocuments;
+
+    beforeEach(() => {
+      room = {
+        _id: uniqueId.create(),
+        name: 'Mein schöner Raum',
+        slug: 'room-slug',
+        owner: 'owner',
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+      };
+      mappedRoom = { ...room };
+    });
 
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
-        const room = {
-          _id: uniqueId.create(),
-          slug: '',
-          access: ROOM_ACCESS.private,
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-        };
         roomService.getRoomById.resolves(room);
 
-        req = { params: { 0: '', roomId: room._id } };
+        req = { params: { 0: `/${room.slug}`, roomId: room._id } };
         res = {};
       });
 
@@ -316,260 +323,141 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the room is private', () => {
-      const room = {
-        _id: uniqueId.create(),
-        name: 'Mein schöner Raum',
-        slug: 'room-slug',
-        owner: 'owner',
-        access: ROOM_ACCESS.private,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-      };
-      const mappedRoom = { ...room };
+    describe('when the request is made by the room owner', () => {
+      let documents;
+      let invitations;
+      let mappedInvitations;
 
-      beforeEach(() => {
-        roomService.getRoomById.resolves(room);
-        clientDataMappingService.mapRoom.resolves(mappedRoom);
-      });
-
-      describe('and the request is made by the room owner', () => {
-        const request = {
+      beforeEach(async () => {
+        request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
           user: { _id: 'owner' }
         };
 
-        const documents = [];
-        const invitations = [{ email: 'test@test.com', sentOn: new Date() }];
+        documents = [];
+        invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
-        const mappedDocuments = [];
-        const mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
+        mappedDocuments = [];
+        mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
-        beforeEach(async () => {
-          roomService.isRoomOwnerOrMember.resolves(true);
+        roomService.getRoomById.resolves(room);
+        roomService.isRoomOwnerOrMember.resolves(true);
 
-          documentService.getDocumentsMetadataByRoomId.resolves(documents);
-          roomService.getRoomInvitations.resolves(invitations);
+        documentService.getDocumentsMetadataByRoomId.resolves(documents);
+        roomService.getRoomInvitations.resolves(invitations);
 
-          clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
-          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
+        clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
-          await sut.handleGetRoomPage(request, {});
-        });
-
-        it('should call getRoomById with roomId', () => {
-          sinon.assert.calledWith(roomService.getRoomById, room._id);
-        });
-
-        it('should call mapRoom with the room returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
-        });
-
-        it('should call getRoomInvitations', () => {
-          sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
-        });
-
-        it('should call mapRoomInvitations with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
-        });
-
-        it('should call getDocumentsMetadataByRoomId', () => {
-          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
-        });
-
-        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
-        });
-
-        it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(
-            pageRenderer.sendPage,
-            request,
-            {},
-            PAGE_NAME.room,
-            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
-          );
-        });
+        await sut.handleGetRoomPage(request, {});
       });
 
-      describe('and the request is made by a room member', () => {
-        const request = {
+      it('should call getRoomById with roomId', () => {
+        sinon.assert.calledWith(roomService.getRoomById, room._id);
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+      });
+
+      it('should call getRoomInvitations', () => {
+        sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
+      });
+
+      it('should call mapRoomInvitations with the invitations returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
+      });
+
+      it('should call getDocumentsMetadataByRoomId', () => {
+        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      });
+
+      it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
+      });
+
+      it('should call pageRenderer with the right parameters', () => {
+        sinon.assert.calledWith(
+          pageRenderer.sendPage,
+          request,
+          {},
+          PAGE_NAME.room,
+          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
+        );
+      });
+    });
+
+    describe('when the request is made by a room member', () => {
+      let documents;
+      let mappedInvitations;
+
+      beforeEach(async () => {
+        request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
           user: { _id: 'member' }
         };
 
-        const documents = [];
-        const mappedDocuments = [];
-        const mappedInvitations = [];
+        documents = [];
+        mappedDocuments = [];
+        mappedInvitations = [];
 
-        beforeEach(async () => {
-          roomService.isRoomOwnerOrMember.resolves(true);
-          documentService.getDocumentsMetadataByRoomId.resolves(documents);
-
-          clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
-          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
-
-          await sut.handleGetRoomPage(request, {});
-        });
-
-        it('should call getRoomById with roomId', () => {
-          sinon.assert.calledWith(roomService.getRoomById, room._id);
-        });
-
-        it('should call mapRoom with the room returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
-        });
-
-        it('should not call getRoomInvitations', () => {
-          sinon.assert.notCalled(roomService.getRoomInvitations);
-        });
-
-        it('should call getDocumentsMetadataByRoomId', () => {
-          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
-        });
-
-        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
-        });
-
-        it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(
-            pageRenderer.sendPage,
-            request,
-            {},
-            PAGE_NAME.room,
-            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
-          );
-        });
-      });
-
-      describe('and the request is mabe by an unauthorized user', () => {
-        const request = {
-          params: { 0: `/${room.slug}`, roomId: room._id },
-          user: { _id: 'randomGuy' }
-        };
-
-        beforeEach(() => {
-          roomService.isRoomOwnerOrMember.resolves(false);
-        });
-
-        it('should throw a forbidden exception', async () => {
-          await expect(() => sut.handleGetRoomPage(request, res)).rejects.toThrow(Forbidden);
-        });
-      });
-    });
-
-    describe('when room is public', () => {
-      const room = {
-        _id: uniqueId.create(),
-        name: 'Mein schöner Raum',
-        slug: 'room-slug',
-        owner: 'owner',
-        access: ROOM_ACCESS.public,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-      };
-
-      const mappedRoom = { ...room };
-
-      const documents = [];
-      const mappedDocuments = [];
-
-      beforeEach(() => {
         roomService.getRoomById.resolves(room);
+        roomService.isRoomOwnerOrMember.resolves(true);
         documentService.getDocumentsMetadataByRoomId.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
+        clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+
+        await sut.handleGetRoomPage(request, {});
       });
 
-      describe('and the request is made by a user who is not the owner', () => {
-        const request = {
+      it('should call getRoomById with roomId', () => {
+        sinon.assert.calledWith(roomService.getRoomById, room._id);
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+      });
+
+      it('should not call getRoomInvitations', () => {
+        sinon.assert.notCalled(roomService.getRoomInvitations);
+      });
+
+      it('should call getDocumentsMetadataByRoomId', () => {
+        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      });
+
+      it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
+      });
+
+      it('should call pageRenderer with the right parameters', () => {
+        sinon.assert.calledWith(
+          pageRenderer.sendPage,
+          request,
+          {},
+          PAGE_NAME.room,
+          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
+        );
+      });
+    });
+
+    describe('when the request is mabe by an unauthorized user', () => {
+      beforeEach(() => {
+        request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
-          user: { _id: 'someGuy' }
+          user: { _id: 'randomGuy' }
         };
 
-        beforeEach(async () => {
-          roomService.getRoomInvitations.resolves([]);
-          clientDataMappingService.mapRoomInvitations.returns([]);
-
-          documentService.getDocumentsMetadataByRoomId.resolves(documents);
-          await sut.handleGetRoomPage(request, {});
-        });
-
-        it('should call getRoomById with roomId', () => {
-          sinon.assert.calledWith(roomService.getRoomById, room._id);
-        });
-
-        it('should not check if the room caller is the owner or a member', () => {
-          sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
-        });
-
-        it('should call mapRoom with the room returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
-        });
-
-        it('should not call getRoomInvitations', () => {
-          sinon.assert.notCalled(roomService.getRoomInvitations);
-        });
-
-        it('should call mapRoomInvitations with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
-        });
-
-        it('should call getDocumentsMetadataByRoomId', () => {
-          sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
-        });
-
-        it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
-        });
-
-        it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(
-            pageRenderer.sendPage,
-            request,
-            {},
-            PAGE_NAME.room,
-            { room: mappedRoom, documents: mappedDocuments, invitations: [] }
-          );
-        });
+        roomService.getRoomById.resolves(room);
+        roomService.isRoomOwnerOrMember.resolves(false);
       });
 
-      describe('and the request is made by the room owner', () => {
-        const request = {
-          params: { 0: `/${room.slug}`, roomId: room._id },
-          user: { _id: 'owner' }
-        };
-
-        const invitations = [{ email: 'test@test.com', sentOn: new Date() }];
-        const mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
-
-        beforeEach(async () => {
-          roomService.getRoomInvitations.resolves(invitations);
-          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
-
-          documentService.getDocumentsMetadataByRoomId.resolves(documents);
-          await sut.handleGetRoomPage(request, {});
-        });
-
-        it('should call getRoomInvitations', () => {
-          sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
-        });
-
-        it('should call mapRoomInvitations with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
-        });
-
-        it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(
-            pageRenderer.sendPage,
-            request,
-            {},
-            PAGE_NAME.room,
-            { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
-          );
-        });
+      it('should throw a forbidden exception', async () => {
+        await expect(() => sut.handleGetRoomPage(request, res)).rejects.toThrow(Forbidden);
       });
-
     });
 
     describe('when the room does not exist', () => {
@@ -579,13 +467,13 @@ describe('room-controller', () => {
     });
 
     describe('when the room slug is different than the URL slug', () => {
-      const room = {
-        _id: uniqueId.create(),
-        name: 'Mein schöner Raum',
-        slug: 'room-slug'
-      };
-
       beforeEach(() => new Promise((resolve, reject) => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Mein schöner Raum',
+          slug: 'room-slug'
+        };
+
         req = { user, params: { 0: '/url-slug', roomId: room._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -685,17 +573,16 @@ describe('room-controller', () => {
       const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
       const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
       const userDrake = [{ _id: uniqueId.create(), email: 'drake@test.com' }];
-      const roomA = { _id: uniqueId.create(), name: 'Room A', access: ROOM_ACCESS.private, members: [{ userId: userJacky._id }, { userId: userClare._id }] };
-      const roomB = { _id: uniqueId.create(), name: 'Room B', access: ROOM_ACCESS.private, members: [{ userId: userClare._id }, { userId: userDrake._id }] };
-      const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
+      const roomA = { _id: uniqueId.create(), name: 'Room A', members: [{ userId: userJacky._id }, { userId: userClare._id }] };
+      const roomB = { _id: uniqueId.create(), name: 'Room B', members: [{ userId: userClare._id }, { userId: userDrake._id }] };
 
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, query: { ownerId: user._id, access: ROOM_ACCESS.private } };
+        req = { user, query: { ownerId: user._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
         userService.getUserById.withArgs(user._id).resolves(user);
-        roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB, roomC]);
+        roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB]);
         storageService.deleteRoomAndResources.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
         storageService.updateUserUsedBytes.resolves();
@@ -706,10 +593,6 @@ describe('room-controller', () => {
       it('should call storageService.deleteRoomAndResources for each room', () => {
         sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
         sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
-      });
-
-      it('should not call delete room for rooms with a different access level', () => {
-        sinon.assert.neverCalledWith(storageService.deleteRoomAndResources, { roomId: roomC._id, roomOwnerId: user._id });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
@@ -723,14 +606,6 @@ describe('room-controller', () => {
         );
       });
 
-      it('should not call mailService.sendRoomDeletionNotificationEmails for rooms with a different access level', () => {
-        sinon.assert.neverCalledWith(mailService.sendRoomDeletionNotificationEmails, {
-          roomName: roomC.name,
-          ownerName: user.displayName,
-          roomMembers: roomC.members
-        });
-      });
-
       it('should call storageService.updateUserUsedBytes', () => {
         sinon.assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
@@ -742,7 +617,7 @@ describe('room-controller', () => {
 
     describe('when user has no rooms', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, query: { ownerId: user._id, access: ROOM_ACCESS.private } };
+        req = { user, query: { ownerId: user._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 

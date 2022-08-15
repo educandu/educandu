@@ -8,8 +8,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
+import { ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -162,13 +162,12 @@ export async function setupTestUser(container, userValues) {
   return verifiedUser;
 }
 
-export async function createTestRoom(container, roomValues) {
+export async function createTestRoom(container, roomValues = {}) {
   const db = container.get(Database);
 
   const room = {
     _id: roomValues._id || uniqueId.create(),
     name: roomValues.name || 'my-room',
-    access: roomValues.access || ROOM_ACCESS.public,
     documentsMode: roomValues.documentsMode || ROOM_DOCUMENTS_MODE.exclusive,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),

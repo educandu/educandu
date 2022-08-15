@@ -206,7 +206,7 @@ function Users({ initialState, PageTemplate }) {
 
       let finalStorage;
       try {
-        await roomApiClient.deleteAllPrivateRoomsForUser({ ownerId: user._id });
+        await roomApiClient.deleteAllRoomsForUser({ ownerId: user._id });
         finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
       } catch (error) {
         errorHelper.handleApiError({ error, logger, t });
@@ -256,7 +256,7 @@ function Users({ initialState, PageTemplate }) {
         {initialState.storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
             <div className="UsersPage-storagePlanOption">
-              <div className="UsersPage-storagePlanOptionName">{plan.name}</div>
+              <div>{plan.name}</div>
               <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
             </div>
           </Option>

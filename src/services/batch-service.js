@@ -130,7 +130,7 @@ class BatchService {
 
     const [allDocumentIds, allRoomIds] = await Promise.all([
       this.documentStore.getAllDocumentIds(),
-      this.roomStore.getAllPrivateRoomIds()
+      this.roomStore.getAllRoomIds()
     ]);
 
     const tasksParams = [

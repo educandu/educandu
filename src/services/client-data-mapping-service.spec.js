@@ -4,7 +4,7 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
-import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
@@ -443,8 +443,7 @@ describe('client-data-mapping-service', () => {
           userId: 'member2',
           joinedOn: new Date()
         }
-      ],
-      access: ROOM_ACCESS.public
+      ]
     };
 
     beforeEach(async () => {
@@ -525,7 +524,6 @@ describe('client-data-mapping-service', () => {
         expires: invitation.expires.toISOString(),
         room: {
           name: room.name,
-          access: room.access,
           documentsMode: room.documentsMode,
           owner: {
             displayName: user1.displayName

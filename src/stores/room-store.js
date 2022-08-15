@@ -1,11 +1,4 @@
 import Database from './database.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
-
-const roomsMinimalMetadataProjection = {
-  _id: 1,
-  slug: 1,
-  name: 1
-};
 
 class RoomStore {
   static get inject() { return [Database]; }
@@ -22,12 +15,8 @@ class RoomStore {
     return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
   }
 
-  getRoomsMinimalMetadataByIds(roomIds, { session } = {}) {
-    return this.collection.find({ _id: { $in: roomIds } }, { projection: roomsMinimalMetadataProjection, session }).toArray();
-  }
-
-  getAllPrivateRoomIds({ session } = {}) {
-    return this.collection.distinct('_id', { access: ROOM_ACCESS.private }, { session });
+  getAllRoomIds({ session } = {}) {
+    return this.collection.distinct('_id', { session });
   }
 
   deleteRoomById(roomId, { session } = {}) {
@@ -35,7 +24,7 @@ class RoomStore {
   }
 
   deleteRoomsMemberById(userId, { session } = {}) {
-    return this.collection.updateMany({}, { $pull: { members: { userId: { $eq: userId } } } }, { session });
+    return this.collection.updateMany({}, { $pull: { members: { userId } } }, { session });
   }
 
   getRoomByIdAndOwnerId({ roomId, ownerId }, { session } = {}) {
@@ -46,16 +35,8 @@ class RoomStore {
     return this.collection.find({ owner: ownerId }, { session }).toArray();
   }
 
-  getPublicRoomsByOwnerId(ownerId, { session } = {}) {
-    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS.public }, { session }).toArray();
-  }
-
-  getPrivateRoomsByOwnerId(ownerId, { session } = {}) {
-    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS.private }, { session }).toArray();
-  }
-
-  async getRoomIdsByOwnerIdAndAccess({ ownerId, access }, { session } = {}) {
-    const roomsProjection = await this.collection.find({ owner: ownerId, access }, { session, projection: { _id: 1 } }).toArray();
+  async getRoomIdsByOwnerId({ ownerId }, { session } = {}) {
+    const roomsProjection = await this.collection.find({ owner: ownerId }, { session, projection: { _id: 1 } }).toArray();
     return roomsProjection.map(projection => projection._id);
   }
 

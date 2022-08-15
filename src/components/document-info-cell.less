@@ -1,35 +1,4 @@
-@document-info-cell-frame-border-radius: @edu-border-radius-base;
-@document-info-cell-frame-background-color: lighten(@edu-primary-color-light, 37%);
-@document-info-cell-frame-hover-background-color: lighten(@edu-primary-color-light, 32%);
-
 .DocumentInfoCell {}
-
-.DocumentInfoCell-topFrame {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  font-size: 12px;
-  font-style: italic;
-  padding: 5px 10px;
-  text-decoration: none;
-  background-color: @document-info-cell-frame-background-color;
-  border-top-left-radius: @document-info-cell-frame-border-radius;
-  border-top-right-radius: @document-info-cell-frame-border-radius;
-
-  &:hover {
-    background-color: @document-info-cell-frame-hover-background-color;
-
-    ~ .DocumentInfoCell-infoContainer > .DocumentInfoCell-leftFrame {
-      background-color: @document-info-cell-frame-hover-background-color;
-    }
-  }
-}
-
-.DocumentInfoCell-leftFrame {
-  width: 10px;
-  background-color: @document-info-cell-frame-background-color;
-  border-bottom-left-radius: @document-info-cell-frame-border-radius;
-}
 
 .DocumentInfoCell-infoContainer {
   display: flex;
@@ -39,10 +8,6 @@
   width: 100%;
   display: block;
   text-decoration: none;
-
-  &.DocumentInfoCell-infoContent--framed {
-    padding: 5px 0 0 10px;
-  }
 }
 
 .DocumentInfoCell-mainText {

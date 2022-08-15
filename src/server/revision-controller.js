@@ -1,7 +1,6 @@
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS } from '../domain/constants.js';
 import RoomService from '../services/room-service.js';
 import { isRoomOwnerOrMember } from '../utils/room-utils.js';
 import DocumentService from '../services/document-service.js';
@@ -29,7 +28,7 @@ class RevisionController {
 
     const room = revision.roomId ? await this.roomService.getRoomById(revision.roomId) : null;
 
-    if (room?.access === ROOM_ACCESS.private && !isRoomOwnerOrMember({ room, userId: user?._id })) {
+    if (room && !isRoomOwnerOrMember({ room, userId: user?._id })) {
       throw new Forbidden();
     }
 

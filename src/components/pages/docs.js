@@ -20,10 +20,10 @@ import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { documentExtendedMetadataShape, roomMinimalMetadataShape } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -190,8 +190,7 @@ function Docs({ initialState, PageTemplate }) {
       return null;
     }
 
-    const room = doc.roomId ? initialState.rooms.find(r => r._id === doc.roomId) : null;
-    return <DocumentInfoCell doc={doc} room={room} />;
+    return <DocumentInfoCell doc={doc} />;
   };
 
   const renderCreatedBy = (_user, row) => {
@@ -321,8 +320,7 @@ function Docs({ initialState, PageTemplate }) {
 Docs.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
-    rooms: PropTypes.arrayOf(roomMinimalMetadataShape)
+    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
   }).isRequired
 };
 

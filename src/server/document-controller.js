@@ -5,14 +5,13 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import { ensureIsUnique } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { isRoomOwnerOrCollaborator, isRoomOwnerOrMember } from '../utils/room-utils.js';
-import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE, ROOM_ACCESS } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   documentIdParamsOrQuerySchema,
   documentMetadataBodySchema,
@@ -45,12 +44,9 @@ class DocumentController {
     const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
     const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
 
-    const roomIds = ensureIsUnique(documents.map(doc => doc.roomId).filter(roomId => roomId));
-    const rooms = await this.roomService.getRoomsMinimalMetadataByIds(roomIds);
-
     const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents: mappedDocuments, rooms });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents: mappedDocuments });
   }
 
   async handleGetDocPage(req, res) {
@@ -84,7 +80,7 @@ class DocumentController {
 
     const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
 
-    if (room?.access === ROOM_ACCESS.private && !isRoomOwnerOrMember({ room, userId: user._id })) {
+    if (!!room && !isRoomOwnerOrMember({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
@@ -239,11 +235,11 @@ class DocumentController {
       throw new Forbidden('The user does not have permission to delete external documents');
     }
 
-    if (document.origin === DOCUMENT_ORIGIN.internal && document.access === DOCUMENT_ACCESS.public) {
-      throw new Forbidden('Public documents cannot be deleted');
+    if (document.origin === DOCUMENT_ORIGIN.internal && !document.roomId) {
+      throw new Forbidden('Public documents can not be deleted');
     }
 
-    if (document.origin === DOCUMENT_ORIGIN.internal && document.access === DOCUMENT_ACCESS.private) {
+    if (document.origin === DOCUMENT_ORIGIN.internal && document.roomId) {
       const room = await this.roomService.getRoomById(document.roomId);
       if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
         throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);

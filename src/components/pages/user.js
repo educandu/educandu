@@ -1,29 +1,23 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import RoomCard from '../room-card.js';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';
 import ProfileHeader from '../profile-header.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
-import { documentMetadataShape, publicUserShape, roomShape } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, publicUserShape } from '../../ui/default-prop-types.js';
 
 const CARD_BATCH_SIZE = 8;
 
 export default function User({ PageTemplate, initialState }) {
   const { t } = useTranslation('user');
-  const { user, documents, rooms } = initialState;
+  const { user, documents } = initialState;
 
-  const [visibleRoomsCount, setVisibleRoomsCount] = useState(CARD_BATCH_SIZE);
   const [visibleDocumentsCount, setVisibleDocumentsCount] = useState(CARD_BATCH_SIZE);
 
   const handleMoreDocumentsClick = () => {
     setVisibleDocumentsCount(visibleDocumentsCount + CARD_BATCH_SIZE);
-  };
-
-  const handleMoreRoomsClick = () => {
-    setVisibleRoomsCount(visibleRoomsCount + CARD_BATCH_SIZE);
   };
 
   const renderDocumentCard = (doc, index) => {
@@ -33,17 +27,6 @@ export default function User({ PageTemplate, initialState }) {
     return (
       <div key={doc._id}>
         <DocumentCard doc={doc} />
-      </div>
-    );
-  };
-
-  const renderRoomCard = (room, index) => {
-    if (index >= visibleRoomsCount) {
-      return null;
-    }
-    return (
-      <div key={room._id}>
-        <RoomCard room={room} />
       </div>
     );
   };
@@ -75,18 +58,6 @@ export default function User({ PageTemplate, initialState }) {
           <div className="UserPage-accountClosed">{t('accountClosed')}</div>
         )}
 
-        {!!rooms.length && (
-          <section>
-            <div className="UserPage-sectionHeadline">{t('roomsHeadline')}</div>
-            <div className="UserPage-sectionCards">
-              {rooms.map(renderRoomCard)}
-            </div>
-            {visibleRoomsCount < rooms.length && (
-              <a className="UserPage-sectionLink" onClick={handleMoreRoomsClick}>{t('loadMore')}</a>
-            )}
-          </section>
-        )}
-
         {!!documents.length && (
           <section>
             <div className="UserPage-sectionHeadline">{t('documentsHeadline')}</div>
@@ -107,7 +78,6 @@ User.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     user: publicUserShape.isRequired,
-    rooms: PropTypes.arrayOf(roomShape).isRequired,
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };

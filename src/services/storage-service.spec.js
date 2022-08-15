@@ -10,8 +10,8 @@ import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { CDN_OBJECT_TYPE, ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
-import { CDN_OBJECT_TYPE, DOCUMENT_ACCESS, ROLE, ROOM_ACCESS, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
@@ -61,7 +61,7 @@ describe('storage-service', () => {
     sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId');
     sandbox.stub(roomStore, 'getRoomById');
     sandbox.stub(roomStore, 'deleteRoomById');
-    sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
+    sandbox.stub(roomStore, 'getRoomIdsByOwnerId');
     sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId');
 
     roomId = uniqueId.create();
@@ -476,7 +476,7 @@ describe('storage-service', () => {
         myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
-        roomStore.getRoomIdsByOwnerIdAndAccess.resolves([roomId, otherRoomId]);
+        roomStore.getRoomIdsByOwnerId.resolves([roomId, otherRoomId]);
         cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesInRoomAfterUpload);
         cdn.listObjects.withArgs({ prefix: `rooms/${otherRoomId}/media/`, recursive: true }).resolves(filesInOtherRoom);
         cdn.listObjects.resolves([]);
@@ -592,7 +592,7 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         cdn.deleteObjects.resolves();
-        roomStore.getRoomIdsByOwnerIdAndAccess.resolves([]);
+        roomStore.getRoomIdsByOwnerId.resolves([]);
 
         await sut.deleteObject({ path, storageClaimingUserId: myUser._id });
       });
@@ -605,8 +605,8 @@ describe('storage-service', () => {
         sinon.assert.calledWith(cdn.deleteObjects, [path]);
       });
 
-      it('should not call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
-        sinon.assert.notCalled(roomStore.getRoomIdsByOwnerIdAndAccess);
+      it('should not call roomStore.getRoomIdsByOwnerId', () => {
+        sinon.assert.notCalled(roomStore.getRoomIdsByOwnerId);
       });
 
       it('should not call cdn.listObjects', () => {
@@ -641,7 +641,7 @@ describe('storage-service', () => {
         myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
-        roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
+        roomStore.getRoomIdsByOwnerId.resolves(allOwnedPrivateRoomIds);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([files[0]]);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([files[1]]);
 
@@ -701,7 +701,7 @@ describe('storage-service', () => {
       cdn.listObjects.resolves([]);
       cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
       cdn.deleteObjects.resolves();
-      roomStore.getRoomIdsByOwnerIdAndAccess.resolves([remainingPrivateRoom._id]);
+      roomStore.getRoomIdsByOwnerId.resolves([remainingPrivateRoom._id]);
       cdn.listObjects.withArgs({ prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
 
       await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
@@ -735,8 +735,8 @@ describe('storage-service', () => {
       sinon.assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
     });
 
-    it('should call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
-      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerIdAndAccess, { ownerId: myUser._id, access: ROOM_ACCESS.private });
+    it('should call roomStore.getRoomIdsByOwnerId', () => {
+      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerId, { ownerId: myUser._id });
     });
 
     it('should call cdn.listObjects for the remaining private room', () => {
@@ -806,30 +806,9 @@ describe('storage-service', () => {
     });
 
     describe('when documentId of a document in a room is provided', () => {
-      describe(`and the room/document access is '${DOCUMENT_ACCESS.public}'`, () => {
-        beforeEach(async () => {
-          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.public });
-          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
-
-          myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
-
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
-        });
-
-        it('should return the public storage location', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
-              isDeletionEnabled: false
-            }
-          ]);
-        });
-      });
       describe('and the user is room owner and does not have a storage plan', () => {
         beforeEach(async () => {
-          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
@@ -851,7 +830,7 @@ describe('storage-service', () => {
 
       describe('and the user is room owner and has a storage plan', () => {
         beforeEach(async () => {
-          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
           myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
@@ -890,7 +869,7 @@ describe('storage-service', () => {
             displayName: 'Owner'
           });
 
-          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,
@@ -927,7 +906,7 @@ describe('storage-service', () => {
             storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
           });
 
-          documentStore.getDocumentById.resolves({ roomId: 'room', access: DOCUMENT_ACCESS.private });
+          documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({
             _id: 'room',
             owner: ownerUser._id,

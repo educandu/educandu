@@ -91,17 +91,17 @@ class StorageController {
     let storageClaimingUserId;
     if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
       const roomId = getRoomIdFromPrivateStoragePath(path);
-      const privateRoom = await this.roomService.getRoomById(roomId);
+      const room = await this.roomService.getRoomById(roomId);
 
-      if (!privateRoom) {
+      if (!room) {
         throw new BadRequest(`Unknown room id '${roomId}'`);
       }
 
-      if (!isRoomOwnerOrCollaborator({ room: privateRoom, userId: user._id })) {
+      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
         throw new Unauthorized(`User is not authorized to access room '${roomId}'`);
       }
 
-      storageClaimingUserId = privateRoom.owner;
+      storageClaimingUserId = room.owner;
     } else {
       storageClaimingUserId = user._id;
     }

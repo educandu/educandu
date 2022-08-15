@@ -1,29 +1,15 @@
 import { validate } from '../validation.js';
-import { ROOM_ACCESS, ROOM_DOCUMENTS_MODE } from '../constants.js';
+import { ROOM_DOCUMENTS_MODE } from '../constants.js';
 import { postRoomBodySchema, patchRoomBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
-  describe('when the body contains the required data and the access is public', () => {
+  describe('when the body contains the required data', () => {
     it('should pass validation', () => {
       const body = {
         name: 'my room',
         slug: '',
-        access: ROOM_ACCESS.public,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
-      expect(() => validate(body, postRoomBodySchema)).not.toThrow();
-    });
-  });
-
-  describe('when the body contains the required data and the access is private', () => {
-    it('should pass validation', () => {
-      const body = {
-        name: 'my room',
-        slug: '',
-        access: ROOM_ACCESS.private,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-      };
-
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
     });
   });
@@ -32,7 +18,6 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        access: ROOM_ACCESS.public,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
@@ -44,7 +29,6 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        access: ROOM_ACCESS.public,
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
@@ -57,32 +41,6 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null,
-        access: ROOM_ACCESS.public,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-      };
-
-      expect(() => validate(body, postRoomBodySchema)).toThrow();
-    });
-  });
-
-  describe('when the body does not contain the access', () => {
-    it('should throw', () => {
-      const body = {
-        name: 'my room',
-        slug: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
-      };
-
-      expect(() => validate(body, postRoomBodySchema)).toThrow();
-    });
-  });
-
-  describe('when the body contains an unknown access', () => {
-    it('should throw', () => {
-      const body = {
-        name: 'def',
-        slug: '',
-        access: 'unknown access',
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 

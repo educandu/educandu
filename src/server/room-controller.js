@@ -15,7 +15,7 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { ROOM_ACCESS, NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE } from '../domain/constants.js';
+import { NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
@@ -64,8 +64,8 @@ export default class RoomController {
 
   async handlePostRoom(req, res) {
     const { user } = req;
-    const { name, slug, access, documentsMode } = req.body;
-    const newRoom = await this.roomService.createRoom({ name, slug, access, documentsMode, user });
+    const { name, slug, documentsMode } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, slug, documentsMode, user });
 
     return res.status(201).send(newRoom);
   }
@@ -90,7 +90,7 @@ export default class RoomController {
   }
 
   async handleDeleteRoomsForUser(req, res) {
-    const { ownerId, access } = req.query;
+    const { ownerId } = req.query;
 
     const roomOwner = await this.userService.getUserById(ownerId);
 
@@ -99,9 +99,8 @@ export default class RoomController {
     }
 
     const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
-    const roomsToDelete = rooms.filter(room => !access || room.access === access);
 
-    for (const room of roomsToDelete) {
+    for (const room of rooms) {
       // eslint-disable-next-line no-await-in-loop
       await this._deleteRoom({ room, roomOwner });
     }
@@ -123,10 +122,6 @@ export default class RoomController {
 
     if (room.owner !== user._id) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
-    }
-
-    if (room.access === ROOM_ACCESS.public) {
-      throw new Forbidden('Public rooms cannot be deleted');
     }
 
     await this._deleteRoom({ room, roomOwner: user });
@@ -213,18 +208,15 @@ export default class RoomController {
       return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
-    const isPrivateRoom = room.access === ROOM_ACCESS.private;
-    if (isPrivateRoom && !userId) {
+    if (!userId) {
       throw new Unauthorized();
     }
 
     let invitations = [];
 
-    if (isPrivateRoom) {
-      const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
-      if (!isRoomOwnerOrMember) {
-        throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
-      }
+    const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
+    if (!isRoomOwnerOrMember) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
     if (room.owner === userId) {

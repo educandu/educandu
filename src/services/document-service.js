@@ -12,14 +12,13 @@ import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import documentsUtils from '../utils/documents-utils.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
-import { DOCUMENT_ACCESS, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -56,7 +55,7 @@ class DocumentService {
   }
 
   async getAllPublicDocumentsMetadata({ includeArchived } = {}) {
-    const conditions = [{ access: DOCUMENT_ACCESS.public }];
+    const conditions = [{ roomId: null }];
     if (includeArchived === false) {
       conditions.push({ archived: false });
     }
@@ -94,7 +93,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
-      { access: DOCUMENT_ACCESS.public },
+      { roomId: null },
       { tags: { $regex: `.*(${[...positiveTokens].join('|')}).*`, $options: 'i' } }
     ];
 
@@ -135,7 +134,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
-      { access: DOCUMENT_ACCESS.public },
+      { roomId: null },
       { title: { $regex: sanitizedQuery, $options: 'i' } }
     ];
 
@@ -161,14 +160,12 @@ class DocumentService {
         }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
-        const room = data.roomId ? await this.roomStore.getRoomById(data.roomId) : null;
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
           documentId,
           createdBy: user._id,
-          order: nextOrder,
-          access: documentsUtils.determineDocumentAccessFromRoom(room)
+          order: nextOrder
         });
 
         newDocument = this._buildDocumentFromRevisions([newRevision]);
@@ -502,7 +499,6 @@ class DocumentService {
       documentId: data.documentId || uniqueId.create(),
       roomId: data.roomId || null,
       order: data.order || 0,
-      access: data.access || DOCUMENT_ACCESS.public,
       restoredFrom: data.restoredFrom || '',
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
@@ -541,7 +537,6 @@ class DocumentService {
     return {
       _id: lastRevision.documentId,
       roomId: lastRevision.roomId,
-      access: lastRevision.access,
       order: lastRevision.order,
       revision: lastRevision._id,
       createdOn: firstRevision.createdOn,

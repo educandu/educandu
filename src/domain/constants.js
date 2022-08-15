@@ -9,11 +9,6 @@ export const DOCUMENT_ORIGIN = {
   external: 'external'
 };
 
-export const DOCUMENT_ACCESS = {
-  public: 'public',
-  private: 'private'
-};
-
 export const DOCUMENT_IMPORT_TYPE = {
   add: 'add',
   update: 'update',
@@ -41,11 +36,6 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
 
 export const FEATURE_TOGGLES = {
   import: 'import'
-};
-
-export const ROOM_ACCESS = {
-  public: 'public',
-  private: 'private'
 };
 
 export const ROOM_DOCUMENTS_MODE = {

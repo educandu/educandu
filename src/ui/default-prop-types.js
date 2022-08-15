@@ -4,9 +4,7 @@ import {
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
-  DOCUMENT_ACCESS,
   DOCUMENT_IMPORT_TYPE,
-  ROOM_ACCESS,
   ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
@@ -193,7 +191,6 @@ const commonDocumentOrRevisionProps = {
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
-  access: PropTypes.oneOf(Object.values(DOCUMENT_ACCESS)),
   roomId: PropTypes.string,
   dueOn: PropTypes.string
 };
@@ -384,7 +381,6 @@ export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
   createdOn: PropTypes.string,
-  access: PropTypes.oneOf(Object.values(ROOM_ACCESS)).isRequired,
   documentsMode: PropTypes.oneOf(Object.values(ROOM_DOCUMENTS_MODE)).isRequired,
   description: PropTypes.string
 };
