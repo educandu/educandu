@@ -1,6 +1,5 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -194,13 +193,8 @@ export default function Room({ PageTemplate, initialState }) {
   const renderDocument = doc => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
 
-    const containerClasses = classNames({
-      'RoomPage-documentInfo': true,
-      'RoomPage-documentInfo--withIcons': isRoomOwnerOrCollaborator
-    });
-
     return (
-      <div key={doc._id} className={containerClasses}>
+      <div key={doc._id} className="RoomPage-documentInfo">
         {isRoomOwnerOrCollaborator && (
           <div className="RoomPage-documentInfoItem RoomPage-documentInfoItem--icons">
             <Tooltip title={t('common:clone')}>

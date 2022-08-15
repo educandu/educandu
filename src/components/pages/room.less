@@ -22,30 +22,12 @@
 }
 
 .RoomPage-documentInfo {
-  gap: 20px;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr;
-
-  &.RoomPage-documentInfo--withIcons {
-    grid-template-columns: auto 1fr;
-  }
-
-  &.RoomPage-documentInfo--withDueDate {
-    grid-template-columns: 1fr auto;
-    border: 1px solid fade(@edu-primary-color-light, 10%);
-    background-color: fade(@edu-primary-color-light, 5%);
-    border-left: none;
-    border-right: none;
-  }
-
-  &.RoomPage-documentInfo--withIcons.RoomPage-documentInfo--withDueDate {
-    grid-template-columns: auto 1fr auto;
-  }
+  display: flex;
+  gap: 10px;
 }
 
 .RoomPage-documentInfoItem {
-  padding: 10px;
+  padding: 10px 0;
 
   &.RoomPage-documentInfoItem--icons {
     white-space: nowrap;
