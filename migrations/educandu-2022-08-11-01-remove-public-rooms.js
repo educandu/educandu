@@ -23,7 +23,7 @@ export default class Educandu_2022_08_11_01_remove_public_rooms {
     await this.db.collection('documents').dropIndex('_idx_access_');
     await this.db.collection('documents').dropIndex('_idx_access_archived_');
 
-    await this.db.collection('room').updateMany({}, { $unset: { access: null } });
+    await this.db.collection('rooms').updateMany({}, { $unset: { access: null } });
     await this.db.collection('documentRevisions').updateMany({}, { $unset: { access: null } });
     await this.db.collection('documents').updateMany({}, { $unset: { access: null } });
   }
