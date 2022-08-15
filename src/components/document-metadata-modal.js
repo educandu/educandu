@@ -1,45 +1,29 @@
-import moment from 'moment';
-import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from './locale-context.js';
 import inputValidators from '../utils/input-validators.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { useDateFormat, useLocale } from './locale-context.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
-import { Form, Input, Modal, Checkbox, Select, DatePicker, Collapse, InputNumber } from 'antd';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
   update: 'update'
-};
-
-const DOCUMENT_SEQUENCE_INTERVAL = {
-  daily: 'daily',
-  weekly: 'weekly',
-  monthly: 'monthly',
-  yearly: 'yearly'
-};
-
-const MOMENT_INTERVAL_UNITS = {
-  daily: 'day',
-  weekly: 'week',
-  monthly: 'month',
-  yearly: 'year'
 };
 
 function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
@@ -66,13 +50,10 @@ function DocumentMetadataModal({
   const user = useUser();
   const formRef = useRef(null);
   const { uiLanguage } = useLocale();
-  const { dateTimeFormat } = useDateFormat();
   const { t } = useTranslation('documentMetadataModal');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
-  const [hasDueDate, setHasDueDate] = useState(false);
-  const [isSequenceExpanded, setIsSequenceExpanded] = useState(false);
   const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
 
   const initialValues = {
@@ -81,10 +62,7 @@ function DocumentMetadataModal({
     slug: initialDocumentMetadata.slug || '',
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    dueOn: initialDocumentMetadata.dueOn ? moment(initialDocumentMetadata.dueOn) : '',
-    enableSequence: false,
-    sequenceInterval: DOCUMENT_SEQUENCE_INTERVAL.weekly,
-    sequenceCount: 3
+    sequenceCount: 1
   };
 
   const titleValidationRules = [
@@ -124,8 +102,6 @@ function DocumentMetadataModal({
 
   useEffect(() => {
     if (isVisible && formRef.current) {
-      setHasDueDate(false);
-      setIsSequenceExpanded(false);
       formRef.current.resetFields();
     }
   }, [isVisible]);
@@ -151,19 +127,12 @@ function DocumentMetadataModal({
 
   const handleCancel = () => onClose();
 
-  const handleValuesChange = (_, { dueOn }) => {
-    setHasDueDate(!!dueOn);
-  };
-
   const handleFinish = async ({
     title,
     description,
     slug,
     language,
     tags,
-    dueOn,
-    enableSequence,
-    sequenceInterval,
     sequenceCount,
     review,
     useTemplateDocument
@@ -177,20 +146,18 @@ function DocumentMetadataModal({
         description: (description || '').trim(),
         language,
         tags,
-        dueOn: dueOn ? dueOn.toISOString() : '',
         review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review
       };
 
       if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
         const savedDocuments = [];
-        const documentsToSave = enableSequence && sequenceCount > 1 && dueOn
+        const documentsToSave = sequenceCount > 1
           ? Array.from({ length: sequenceCount }, (_, index) => ({
             ...cloneDeep(mappedDocument),
             roomId: initialDocumentMetadata.roomId,
             title: `${mappedDocument.title} (${index + 1})`,
             slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '',
             tags: mappedDocument.tags,
-            dueOn: moment(dueOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString(),
             review: mappedDocument.review
           }))
           : [
@@ -205,10 +172,10 @@ function DocumentMetadataModal({
           savedDocuments.push(await documentApiClient.createDocument(documentToSave));
         }
 
-        onSave(allowMultiple ? savedDocuments : savedDocuments[0], useTemplateDocument ? templateDocumentId : null);
+        onSave(savedDocuments, useTemplateDocument ? templateDocumentId : null);
       } else {
         const savedDocument = await documentApiClient.updateDocumentMetadata({ documentId: initialDocumentMetadata._id, metadata: mappedDocument });
-        onSave(savedDocument);
+        onSave([savedDocument]);
       }
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
@@ -216,27 +183,6 @@ function DocumentMetadataModal({
       setLoading(false);
     }
   };
-
-  const disabledMorningHours = [...Array(7).keys()];
-  const disabledEveningHours = [...Array(24).keys()].splice(21);
-  const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
-  const firstEnabledHour = disabledMorningHours[disabledMorningHours.length - 1] + 1;
-
-  const disabledTime = () => {
-    return {
-      disabledHours: () => [...disabledMorningHours, ...disabledEveningHours],
-      disabledMinutes: () => disabledMinutes
-    };
-  };
-
-  const handleSequenceCollapseChange = ([value]) => {
-    setIsSequenceExpanded(value === 'sequence');
-    formRef.current?.setFieldsValue({ enableSequence: value === 'sequence' });
-  };
-
-  const documentSequenceIntervalOptions = useMemo(() => {
-    return Object.values(DOCUMENT_SEQUENCE_INTERVAL).map(value => ({ value, label: t(`common:${value}`) }));
-  }, [t]);
 
   return (
     <Modal
@@ -248,7 +194,7 @@ function DocumentMetadataModal({
       okButtonProps={{ loading }}
       okText={t('common:save')}
       >
-      <Form onFinish={handleFinish} ref={formRef} onValuesChange={handleValuesChange} name="document-metadata-form" layout="vertical" initialValues={initialValues}>
+      <Form onFinish={handleFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialValues}>
         <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
           <Input />
         </FormItem>
@@ -272,32 +218,21 @@ function DocumentMetadataModal({
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        {initialDocumentMetadata?.roomId && (
-          <FormItem label={t('dueOn')} name="dueOn">
-            <DatePicker
-              inputReadOnly
-              style={{ width: '100%' }}
-              format={dateTimeFormat}
-              disabledTime={disabledTime}
-              showTime={{ defaultValue: moment(`${firstEnabledHour}:00`, 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
-              />
-          </FormItem>
-        )}
-        <FormItem name="enableSequence" valuePropName="checked" hidden>
-          <Checkbox />
-        </FormItem>
         {mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple && (
-          <Collapse className="DocumentMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleSequenceCollapseChange} ghost>
-            <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
-              <Alert className="DocumentMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} />
-              <FormItem label={t('sequenceInterval')} name="sequenceInterval">
-                <Select options={documentSequenceIntervalOptions} disabled={!hasDueDate} />
-              </FormItem>
-              <FormItem label={t('sequenceCount')} name="sequenceCount" rules={[{ type: 'integer', min: 1, max: 100 }]}>
-                <InputNumber style={{ width: '100%' }} disabled={!hasDueDate} min={1} max={100} />
-              </FormItem>
-            </CollapsePanel>
-          </Collapse>
+          <FormItem
+            name="sequenceCount"
+            rules={[{ type: 'integer', min: 1, max: 100 }]}
+            label={
+              <Fragment>
+                <span>{t('createSequence')}</span>
+                <Tooltip title={t('sequenceInfo')}>
+                  <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                </Tooltip>
+              </Fragment>
+            }
+            >
+            <InputNumber className="DocumentMetadataModal-sequenceInput" min={1} max={100} />
+          </FormItem>
         )}
         {templateDocumentId && (
           <FormItem name="useTemplateDocument" valuePropName="checked">

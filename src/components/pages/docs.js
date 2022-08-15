@@ -137,12 +137,12 @@ function Docs({ initialState, PageTemplate }) {
     setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ documentToClone, settings, t }), isVisible: true });
   };
 
-  const handleDocumentMetadataModalSave = (newDocument, templateDocumentId) => {
+  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
 
     window.location = routes.getDocUrl({
-      id: newDocument._id,
-      slug: newDocument.slug,
+      id: createdDocuments[0]._id,
+      slug: createdDocuments[0].slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
       templateDocumentId: documentMetadataModalState.cloneDocumentId || templateDocumentId
     });
@@ -305,6 +305,7 @@ function Docs({ initialState, PageTemplate }) {
           </Restricted>
         </aside>
         <DocumentMetadataModal
+          allowMultiple={false}
           mode={DOCUMENT_METADATA_MODAL_MODE.create}
           isVisible={documentMetadataModalState.isVisible}
           templateDocumentId={documentMetadataModalState.templateDocumentId}

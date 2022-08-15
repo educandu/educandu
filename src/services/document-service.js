@@ -234,8 +234,8 @@ class DocumentService {
   }
 
   updateDocumentMetadata({ documentId, metadata, user }) {
-    const { title, description, slug, language, tags, dueOn, review } = metadata;
-    const data = { title, description, slug, language, tags, dueOn, review };
+    const { title, description, slug, language, tags, review } = metadata;
+    const data = { title, description, slug, language, tags, review };
     return this.updateDocument({ documentId, data, user });
   }
 
@@ -502,7 +502,6 @@ class DocumentService {
       restoredFrom: data.restoredFrom || '',
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
-      dueOn: data.dueOn ? new Date(data.dueOn) : null,
       title: data.title || '',
       description: data.description || '',
       slug: data.slug?.trim() || '',
@@ -543,7 +542,6 @@ class DocumentService {
       createdBy: firstRevision.createdBy,
       updatedOn: lastRevision.createdOn,
       updatedBy: lastRevision.createdBy,
-      dueOn: lastRevision.dueOn,
       title: lastRevision.title,
       description: lastRevision.description,
       slug: lastRevision.slug,
