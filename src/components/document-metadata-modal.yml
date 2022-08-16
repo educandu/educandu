@@ -37,6 +37,6 @@ sequenceInfo:
     An den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.
 verifiedInfo:
   en:
-    As a content maintainer, you can vouche for the quality of this document. Verified documents have higher relevance in the search results.
+    As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
   de:
-    Als Inhalt-Maintainer kannst du die Qualität <something something>. Überprüfte Dokumente haben eine höchere Relevanz auf der Suchseite.
+    Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
