@@ -296,7 +296,7 @@
       "createSequence": "Create sequence",
       "sequenceInfoBoxHeader": "Document sequences",
       "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
-      "verifiedInfo": "As a content maintainer, you can vouche for the quality of this document. Verified documents have higher relevance in the search results."
+      "verifiedInfo": "As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results."
     }
   },
   {
@@ -314,7 +314,7 @@
       "createSequence": "Reihe anlegen",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
       "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
-      "verifiedInfo": "Als Inhalt-Maintainer kannst du die Qualität <something something>. Überprüfte Dokumente haben eine höchere Relevanz auf der Suchseite."
+      "verifiedInfo": "Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite."
     }
   },
   {
