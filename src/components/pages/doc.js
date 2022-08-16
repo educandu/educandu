@@ -1,8 +1,8 @@
-import { Breadcrumb, message } from 'antd';
 import PropTypes from 'prop-types';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
+import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -160,6 +160,7 @@ function Doc({ initialState, PageTemplate }) {
   const handleDocumentMetadataModalSave = updatedDocuments => {
     setDoc(updatedDocuments[0]);
     setIsDocumentMetadataModalVisible(false);
+    message.success(t('documentMetadataUpdated'));
   };
 
   const handleDocumentMetadataModalClose = () => {
@@ -480,9 +481,6 @@ function Doc({ initialState, PageTemplate }) {
             onSave={handleEditSave}
             onClose={handleEditClose}
             status={controlStatus}
-            metadata={(
-              <span className="DocPage-editControlPanelItem">{doc.title}</span>
-            )}
             />
         )}
       </Restricted>

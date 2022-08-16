@@ -4,6 +4,7 @@ import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import inputValidators from '../utils/input-validators.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -14,8 +15,7 @@ import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -56,13 +56,17 @@ function DocumentMetadataModal({
   const [loading, setLoading] = useState(false);
   const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
 
+  const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
+  const canVerify = hasUserPermission(user, permissions.VERIFY_DOC);
+
   const initialValues = {
     title: initialDocumentMetadata.title || t('newDocument'),
     description: initialDocumentMetadata.description || '',
     slug: initialDocumentMetadata.slug || '',
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    sequenceCount: 1
+    sequenceCount: 1,
+    verified: initialDocumentMetadata.verified
   };
 
   const titleValidationRules = [
@@ -135,6 +139,7 @@ function DocumentMetadataModal({
     tags,
     sequenceCount,
     review,
+    verified,
     useTemplateDocument
   }) => {
     try {
@@ -146,7 +151,8 @@ function DocumentMetadataModal({
         description: (description || '').trim(),
         language,
         tags,
-        review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review
+        review: canReview ? (review || '').trim() : initialDocumentMetadata.review,
+        verified: !!(canVerify ? verified : initialDocumentMetadata.verified)
       };
 
       if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
@@ -158,7 +164,8 @@ function DocumentMetadataModal({
             title: `${mappedDocument.title} (${index + 1})`,
             slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '',
             tags: mappedDocument.tags,
-            review: mappedDocument.review
+            review: mappedDocument.review,
+            verified: mappedDocument.verified
           }))
           : [
             {
@@ -239,10 +246,25 @@ function DocumentMetadataModal({
             <Checkbox>{t('useTemplateDocument')}</Checkbox>
           </FormItem>
         )}
-        {hasUserPermission(user, permissions.REVIEW_DOC) && (
-          <FormItem name="review" label={t('review')}>
-            <NeverScrollingTextArea />
-          </FormItem>
+        {(canReview || canVerify) && (
+          <Fragment>
+            <Divider className="DocumentMetadataModal-divider" />
+            {canReview && (
+              <FormItem name="review" label={t('review')}>
+                <NeverScrollingTextArea />
+              </FormItem>
+            )}
+            {canVerify && (
+              <FormItem name="verified" valuePropName="checked">
+                <Checkbox>
+                  {t('verified')}
+                  <Tooltip title={t('verifiedInfo')}>
+                    <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                  </Tooltip>
+                </Checkbox>
+              </FormItem>
+            )}
+          </Fragment>
         )}
       </Form>
     </Modal>

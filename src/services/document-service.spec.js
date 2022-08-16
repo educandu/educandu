@@ -356,7 +356,8 @@ describe('document-service', () => {
             }
           ],
           tags: ['tag-1'],
-          review: 'review'
+          review: 'review',
+          verified: true
         },
         {
           _id: uniqueId.create(),
@@ -381,7 +382,8 @@ describe('document-service', () => {
             }
           ],
           tags: ['tag-2'],
-          review: 'review'
+          review: 'review',
+          verified: true
         }
       ];
     });

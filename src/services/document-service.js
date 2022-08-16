@@ -234,9 +234,7 @@ class DocumentService {
   }
 
   updateDocumentMetadata({ documentId, metadata, user }) {
-    const { title, description, slug, language, tags, review } = metadata;
-    const data = { title, description, slug, language, tags, review };
-    return this.updateDocument({ documentId, data, user });
+    return this.updateDocument({ documentId, data: metadata, user });
   }
 
   updateDocumentSections({ documentId, sections, user }) {
@@ -509,6 +507,7 @@ class DocumentService {
       sections: mappedSections,
       tags: data.tags || [],
       review: data.review || '',
+      verified: data.verified || false,
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',
@@ -550,6 +549,7 @@ class DocumentService {
       contributors,
       tags: lastRevision.tags,
       review: lastRevision.review,
+      verified: lastRevision.verified,
       archived: lastRevision.archived,
       origin: lastRevision.origin,
       originUrl: lastRevision.originUrl,
