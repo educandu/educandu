@@ -1,13 +1,13 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
-import ForwardIcon from './icons/media-player/forward-icon.js';
-import BackwardIcon from './icons/media-player/backward-icon.js';
-import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
-import FastForwardIcon from './icons/media-player/fast-forward-icon.js';
-import FastBackwardIcon from './icons/media-player/fast-backward-icon.js';
+import MediaVolumeSlider from './media-volume-slider.js';
+import ForwardIcon from '../icons/media-player/forward-icon.js';
+import BackwardIcon from '../icons/media-player/backward-icon.js';
+import FastForwardIcon from '../icons/media-player/fast-forward-icon.js';
+import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+import FastBackwardIcon from '../icons/media-player/fast-backward-icon.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
@@ -116,7 +116,7 @@ function TrackMixer({
     return (
       <div className="TrackMixer-nameRow" key={index}>
         <div className="TrackMixer-name">{secondaryTrack.name}</div>
-        <VolumeSlider value={secondaryTrack.volume} onChange={value => handleSecondaryTrackVolumeChange(index, value)} />
+        <MediaVolumeSlider value={secondaryTrack.volume} onChange={value => handleSecondaryTrackVolumeChange(index, value)} />
       </div>
     );
   };
@@ -187,7 +187,7 @@ function TrackMixer({
       <div className="TrackMixer-namesColumn">
         <div className="TrackMixer-nameRow">
           <div className="TrackMixer-name">{mainTrack.name}</div>
-          <VolumeSlider value={mainTrack.volume} onChange={handleMainTrackVolumeChange} />
+          <MediaVolumeSlider value={mainTrack.volume} onChange={handleMainTrackVolumeChange} />
         </div>
         {secondaryTracks.map(renderSecondaryTrackNameRow)}
       </div>

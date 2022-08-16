@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useService } from './container-context.js';
-import { useDedupedCallback } from '../ui/hooks.js';
-import HttpClient from '../api-clients/http-client.js';
+import { useService } from '../container-context.js';
+import { useDedupedCallback } from '../../ui/hooks.js';
+import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import { multitrackMediaSourcesShape } from '../ui/default-prop-types.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../domain/constants.js';
+import { multitrackMediaSourcesShape } from '../../ui/default-prop-types.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const SOURCE_TYPE = {
   none: 'none',

@@ -1,15 +1,10 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import AudioIcon from './icons/general/audio-icon.js';
+import AudioIcon from '../icons/general/audio-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
-import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../utils/media-utils.js';
-import {
-  MEDIA_ASPECT_RATIO,
-  MEDIA_PLAY_STATE,
-  MEDIA_SCREEN_MODE,
-  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS
-} from '../domain/constants.js';
+import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../../utils/media-utils.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 

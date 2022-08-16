@@ -554,22 +554,6 @@
     }
   },
   {
-    "namespace": "mainTrackEditor",
-    "language": "en",
-    "resources": {
-      "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
-    }
-  },
-  {
-    "namespace": "mainTrackEditor",
-    "language": "de",
-    "resources": {
-      "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
-    }
-  },
-  {
     "namespace": "markdownHelp",
     "language": "en",
     "resources": {
@@ -610,6 +594,22 @@
     }
   },
   {
+    "namespace": "mainTrackEditor",
+    "language": "en",
+    "resources": {
+      "playbackRange": "Playback range",
+      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+    }
+  },
+  {
+    "namespace": "mainTrackEditor",
+    "language": "de",
+    "resources": {
+      "playbackRange": "Abspielbereich",
+      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+    }
+  },
+  {
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {
@@ -645,6 +645,20 @@
       "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
       "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
+    }
+  },
+  {
+    "namespace": "trackMixer",
+    "language": "en",
+    "resources": {
+      "noTrack": "no track"
+    }
+  },
+  {
+    "namespace": "trackMixer",
+    "language": "de",
+    "resources": {
+      "noTrack": "keine Spur"
     }
   },
   {
@@ -1483,20 +1497,6 @@
       "linkTextSelectMore": "+ Mehr",
       "linkTextSelectFirst": "+ Tag-Filter hinzufügen",
       "searchPlaceholder": "Suchen"
-    }
-  },
-  {
-    "namespace": "trackMixer",
-    "language": "en",
-    "resources": {
-      "noTrack": "no track"
-    }
-  },
-  {
-    "namespace": "trackMixer",
-    "language": "de",
-    "resources": {
-      "noTrack": "keine Spur"
     }
   },
   {

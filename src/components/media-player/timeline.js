@@ -2,12 +2,12 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FlagOutlined } from '@ant-design/icons';
-import CloseIcon from './icons/general/close-icon.js';
-import { useNumberFormat } from './locale-context.js';
-import DeleteIcon from './icons/general/delete-icon.js';
-import { isTouchDevice } from '../ui/browser-helper.js';
+import CloseIcon from '../icons/general/close-icon.js';
+import { useNumberFormat } from '../locale-context.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
+import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;

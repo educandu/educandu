@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Menu, Button, Dropdown } from 'antd';
-import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
-import { useNumberFormat } from './locale-context.js';
-import PlayIcon from './icons/media-player/play-icon.js';
-import PauseIcon from './icons/media-player/pause-icon.js';
-import DownloadIcon from './icons/general/download-icon.js';
-import SettingsIcon from './icons/main-menu/settings-icon.js';
-import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import { useNumberFormat } from '../locale-context.js';
+import MediaVolumeSlider from './media-volume-slider.js';
+import PlayIcon from '../icons/media-player/play-icon.js';
+import PauseIcon from '../icons/media-player/pause-icon.js';
+import DownloadIcon from '../icons/general/download-icon.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const NORMAL_PLAYBACK_RATE = 1;
 const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -86,7 +86,7 @@ function MediaPlayerControls({
       <div className="MediaPlayerControls-controlsGroup">
         <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
         <div className="MediaPlayerControls-volumeControls">
-          <VolumeSlider value={volume} onChange={onVolumeChange} />
+          <MediaVolumeSlider value={volume} onChange={onVolumeChange} />
         </div>
         <div className="MediaPlayerControls-timeDisplay">
           {renderTimeDisplay()}

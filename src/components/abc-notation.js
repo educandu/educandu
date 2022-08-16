@@ -1,7 +1,7 @@
 import abcjs from 'abcjs';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import MediaPlayer from './media-player.js';
+import MediaPlayer from './media-player/media-player.js';
 import { MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 

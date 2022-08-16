@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useNumberFormat } from './locale-context.js';
-import { isTouchDevice } from '../ui/browser-helper.js';
+import { useNumberFormat } from '../locale-context.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { ensureValidMediaPosition, formatMediaPosition } from '../utils/media-utils.js';
+import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
 const TOOLTIP_WIDTH_IN_PX = 60;
 const MARK_TIMECODE_WIDTH_IN_PX = 40;

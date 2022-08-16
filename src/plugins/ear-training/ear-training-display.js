@@ -5,7 +5,6 @@ import urlUtils from '../../utils/url-utils.js';
 import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
 import { shuffleItems } from '../../utils/array-utils.js';
-import MediaPlayer from '../../components/media-player.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
@@ -15,6 +14,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import MediaPlayer from '../../components/media-player/media-player.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 
 const RadioButton = Radio.Button;

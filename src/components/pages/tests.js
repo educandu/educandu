@@ -2,22 +2,22 @@
 
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import Timeline from '../timeline.js';
-import MediaPlayer from '../media-player.js';
 import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
+import Timeline from '../media-player/timeline.js';
 import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
 import { useStorage } from '../storage-context.js';
 import { useService } from '../container-context.js';
 import ResourceSelector from '../resource-selector.js';
+import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
-import MediaRangeSelector from '../media-range-selector.js';
 import FilesUploadOverview from '../files-upload-overview.js';
-import MultitrackMediaPlayer from '../multitrack-media-player.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import MediaRangeSelector from '../media-player/media-range-selector.js';
+import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';

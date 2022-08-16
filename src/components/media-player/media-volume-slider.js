@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Slider } from 'antd';
-import MuteIcon from './icons/media-player/mute-icon.js';
-import VolumeIcon from './icons/media-player/volume-icon.js';
+import React, { useState } from 'react';
+import MuteIcon from '../icons/media-player/mute-icon.js';
+import VolumeIcon from '../icons/media-player/volume-icon.js';
 
-function VolumeSlider({ value, onChange }) {
+function MediaVolumeSlider({ value, onChange }) {
   const [isMuted, setIsMuted] = useState(value === 0);
   const [valueBeforeMuted, setValueBeforeMuted] = useState(value);
 
@@ -24,24 +24,24 @@ function VolumeSlider({ value, onChange }) {
   };
 
   return (
-    <div className="VolumeSlider">
+    <div className="MediaVolumeSlider">
       <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={handleVolumeButtonClick} />
       <Slider
-        className="VolumeSlider-slider"
+        className="MediaVolumeSlider-slider"
         min={0}
         max={100}
         disabled={isMuted}
         onChange={handleSliderChange}
-        tipFormatter={val => `${val}%`}
+        tipFormatter={isMuted ? null : val => `${val}%`}
         value={isMuted ? 0 : value * 100}
         />
     </div>
   );
 }
 
-VolumeSlider.propTypes = {
+MediaVolumeSlider.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.number.isRequired
 };
 
-export default VolumeSlider;
+export default MediaVolumeSlider;

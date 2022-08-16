@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import MediaPlayerTrack from './media-player-track.js';
-import { multitrackMediaSourcesShape } from '../ui/default-prop-types.js';
+import { multitrackMediaSourcesShape } from '../../ui/default-prop-types.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const createInitialTrackStates = sources => ({
   mainTrack: {
