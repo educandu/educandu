@@ -3,7 +3,7 @@ import { Modal, Button } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ResourceSelector from './resource-selector.js';
-import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 // This can later be made configurable by individual plugins
 // (when we have more locations than just from the public/private CDN).

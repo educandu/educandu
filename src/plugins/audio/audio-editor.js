@@ -3,9 +3,9 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import ResourcePicker from '../../components/resource-picker.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;

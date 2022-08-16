@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { LINK_SOURCE_TYPE } from './constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import ResourcePicker from '../../components/resource-picker.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
