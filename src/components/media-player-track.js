@@ -3,8 +3,13 @@ import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import AudioIcon from './icons/general/audio-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../utils/media-utils.js';
+import {
+  MEDIA_ASPECT_RATIO,
+  MEDIA_PLAY_STATE,
+  MEDIA_SCREEN_MODE,
+  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS
+} from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -16,7 +21,6 @@ function MediaPlayerTrack({
   screenMode,
   screenOverlay,
   playbackRange,
-  progressIntervalInMilliseconds,
   volume,
   posterImageUrl,
   loadImmediately,
@@ -116,6 +120,10 @@ function MediaPlayerTrack({
     pause() {
       changePlayState(MEDIA_PLAY_STATE.pausing);
     },
+    stop() {
+      changePlayState(MEDIA_PLAY_STATE.stopped);
+      trackRef.current.seekToPosition(0);
+    },
     togglePlay() {
       let newPlayState;
       switch (currentPlayState) {
@@ -205,7 +213,7 @@ function MediaPlayerTrack({
           volume={volume}
           muted={volume === 0}
           playbackRate={playbackRate}
-          progressInterval={progressIntervalInMilliseconds}
+          progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
           light={loadImmediately ? false : currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
           playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
           onReady={handleReady}
@@ -244,7 +252,6 @@ MediaPlayerTrack.propTypes = {
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   posterImageUrl: PropTypes.string,
-  progressIntervalInMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
   sourceUrl: PropTypes.string.isRequired,

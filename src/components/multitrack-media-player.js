@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
+import { multitrackMediaSourcesShape } from '../ui/default-prop-types.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../domain/constants.js';
 
 const SOURCE_TYPE = {
@@ -21,15 +22,16 @@ const LAZY_LOAD_COMPLETED_ACTION = {
   download: 'download'
 };
 
-const getSourceType = source => {
-  switch (typeof source) {
-    case 'string':
-      return SOURCE_TYPE.eager;
-    case 'function':
-      return SOURCE_TYPE.lazy;
-    default:
-      return SOURCE_TYPE.none;
+const getSourceType = sources => {
+  if (!sources) {
+    return SOURCE_TYPE.none;
   }
+
+  if (typeof sources === 'function') {
+    return SOURCE_TYPE.lazy;
+  }
+
+  return SOURCE_TYPE.eager;
 };
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
@@ -60,9 +62,8 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
   return info;
 };
 
-function MediaPlayer({
-  source,
-  playbackRange,
+function MultitrackMediaPlayer({
+  sources,
   aspectRatio,
   screenMode,
   screenOverlay,
@@ -79,27 +80,39 @@ function MediaPlayer({
   parts,
   mediaPlayerRef
 }) {
-  const sourceType = getSourceType(source);
+  const sourceType = getSourceType(sources);
 
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [loadedSources, setLoadedSources] = useState(sources);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
-  const [sourceUrl, setSourceUrl] = useState(sourceType === SOURCE_TYPE.eager ? source : null);
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
   const triggerReadyIfNeeded = useDedupedCallback(onReady);
   const triggerPlayStateChangeIfNeeded = useDedupedCallback(onPlayStateChange);
 
   useEffect(() => {
-    setSourceUrl(sourceType === SOURCE_TYPE.eager ? source : null);
-  }, [source, sourceType]);
+    switch (sourceType) {
+      case SOURCE_TYPE.eager:
+        setLoadedSources(sources);
+        break;
+      case SOURCE_TYPE.lazy:
+        // The loaded sources will be set after lazy loading below
+        break;
+      case SOURCE_TYPE.none:
+        setLoadedSources(null);
+        break;
+      default:
+        throw new Error(`Invalid source type '${sourceType}'`);
+    }
+  }, [sources, sourceType]);
 
   useEffect(() => {
     if (isSeeking) {
@@ -127,13 +140,13 @@ function MediaPlayer({
 
   const lazyLoadSource = async completedAction => {
     setLazyLoadCompletedAction(completedAction);
-    const newSourceUrl = await source();
-    setSourceUrl(newSourceUrl);
+    const newSources = await sources();
+    setLoadedSources(newSources);
   };
 
   const handleTogglePlay = async () => {
     setLastReachedPartEndIndex(-1);
-    if (!sourceUrl && sourceType === SOURCE_TYPE.lazy) {
+    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.play);
     } else {
       trackRef.current.togglePlay();
@@ -166,10 +179,10 @@ function MediaPlayer({
   };
 
   const handleDownloadClick = async () => {
-    if (!sourceUrl && sourceType === SOURCE_TYPE.lazy) {
+    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
-      httpClient.download(sourceUrl, downloadFileName);
+      httpClient.download(loadedSources, downloadFileName);
     }
   };
 
@@ -214,24 +227,16 @@ function MediaPlayer({
   };
 
   if (sourceType === SOURCE_TYPE.none) {
-    return <div className="MediaPlayer" />;
+    return <div className="MultitrackMediaPlayer" />;
   }
 
   return (
-    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      {sourceUrl && (
+    <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
+      {loadedSources && (
         <MediaPlayerTrackGroup
+          sources={loadedSources}
           trackRef={trackRef}
           volume={volume}
-          sources={{
-            mainTrack: {
-              name: '',
-              sourceUrl,
-              volume: 1,
-              playbackRange
-            },
-            secondaryTracks: []
-          }}
           aspectRatio={aspectRatio}
           screenMode={screenMode}
           screenOverlay={screenOverlay}
@@ -241,7 +246,7 @@ function MediaPlayer({
           onProgress={setPlayedMilliseconds}
           onPlayStateChange={handlePlayStateChange}
           posterImageUrl={posterImageUrl}
-          loadImmediately={sourceType === SOURCE_TYPE.lazy}
+          loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
           />
       )}
       {extraCustomContent && (<div>{extraCustomContent}</div>)}
@@ -268,7 +273,7 @@ function MediaPlayer({
   );
 }
 
-MediaPlayer.propTypes = {
+MultitrackMediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   canDownload: PropTypes.bool,
   downloadFileName: PropTypes.string,
@@ -285,14 +290,13 @@ MediaPlayer.propTypes = {
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
   })),
-  playbackRange: PropTypes.arrayOf(PropTypes.number),
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
-  source: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
+  sources: PropTypes.oneOfType([multitrackMediaSourcesShape, PropTypes.func])
 };
 
-MediaPlayer.defaultProps = {
+MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   canDownload: false,
   downloadFileName: null,
@@ -307,11 +311,10 @@ MediaPlayer.defaultProps = {
   onReady: () => {},
   onSeek: () => {},
   parts: [{ startPosition: 0 }],
-  playbackRange: [0, 1],
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
-  source: null
+  sources: null
 };
 
-export default MediaPlayer;
+export default MultitrackMediaPlayer;
