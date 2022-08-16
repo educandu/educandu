@@ -428,7 +428,8 @@
       "preprocessed": "edited",
       "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
       "stage_uploading": "Uploading ...",
-      "stage_uploadFinished": "Upload finished"
+      "stage_uploadFinished": "Upload finished",
+      "optimizeImages": "Optimize images for web display"
     }
   },
   {
@@ -442,7 +443,8 @@
       "preprocessed": "bearbeitet",
       "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
       "stage_uploading": "Hochladen ...",
-      "stage_uploadFinished": "Upload beendet"
+      "stage_uploadFinished": "Upload beendet",
+      "optimizeImages": "Bilder für Web optimieren"
     }
   },
   {

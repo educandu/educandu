@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import { Button, Tooltip } from 'antd';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { useLocale } from './locale-context.js';
+import { Button, Checkbox, Tooltip } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { replaceItemAt } from '../utils/array-utils.js';
 import { useSetStorageLocation } from './storage-context.js';
@@ -36,6 +36,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
   const { t } = useTranslation('filesUploadOverview');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
+  const [optimizeImages, setOptimizeImages] = useState(true);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(uploadQueue.map(({ file, isPristine }) => ({
     file,
@@ -68,7 +69,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
       failedFiles: {}
     };
 
-    const processedFiles = await processFilesBeforeUpload(itemsToUpload.map(item => item.file));
+    const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
 
     for (let i = 0; i < processedFiles.length; i += 1) {
       const file = processedFiles[i];
@@ -104,7 +105,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
 
     return result;
 
-  }, [storageApiClient, ensureCanUpload, setStorageLocation]);
+  }, [storageApiClient, ensureCanUpload, setStorageLocation, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
@@ -116,6 +117,11 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
 
   const handleItemEditClick = itemIndex => {
     onFileEdit(itemIndex);
+  };
+
+  const handleImageOptimizationChange = event => {
+    const { checked } = event.target;
+    setOptimizeImages(checked);
   };
 
   const renderUploadMessage = () => {
@@ -138,7 +144,7 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
         <div className="FilesUploadOverview-fileStatusRow">
           {item.status === ITEM_STATUS.pristine && itemIsEditable && (
             <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)}>
+              <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
                 <EditOutlined className="FilesUploadOverview-fileStatusIcon" />
               </a>
             </Tooltip>
@@ -203,16 +209,22 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
           </div>
         ))}
       </div>
-      <div className="FilesUploadOverview-button" >
-        <Button
-          type="primary"
-          onClick={handleStartUploadClick}
-          loading={currentStage === STAGE.uploading}
-          disabled={currentStage === STAGE.uploadFinished}
-          >
-          {t('startUpload')}
-        </Button>
-      </div>
+      <Button
+        type="primary"
+        onClick={handleStartUploadClick}
+        loading={currentStage === STAGE.uploading}
+        disabled={currentStage === STAGE.uploadFinished}
+        >
+        {t('startUpload')}
+      </Button>
+      <Checkbox
+        checked={optimizeImages}
+        onChange={handleImageOptimizationChange}
+        disabled={currentStage !== STAGE.uploadNotStarted}
+        className="FilesUploadOverview-imageOptimizationCheckbox"
+        >
+        {t('optimizeImages')}
+      </Checkbox>
     </div>
   );
 }

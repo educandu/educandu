@@ -22,3 +22,6 @@ stage_uploading:
 stage_uploadFinished:
   en: Upload finished
   de: Upload beendet
+optimizeImages:
+  en: Optimize images for web display
+  de: Bilder für Web optimieren
