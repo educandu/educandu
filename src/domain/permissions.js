@@ -4,6 +4,7 @@ const ADMIN = 'admin';
 const EDIT_DOC = 'edit-doc';
 const VIEW_DOCS = 'view-docs';
 const REVIEW_DOC = 'review-doc';
+const VERIFY_DOC = 'verify-doc';
 const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
 const DELETE_OWN_FILES = 'delete-own-files';
@@ -46,7 +47,8 @@ const maintainerPermissions = [
     SEE_USER_EMAIL,
     RESTORE_DOC_REVISIONS,
     MANAGE_ARCHIVED_DOCS,
-    REVIEW_DOC
+    REVIEW_DOC,
+    VERIFY_DOC
   ])
 ];
 
@@ -89,6 +91,7 @@ export default {
   EDIT_DOC,
   VIEW_DOCS,
   REVIEW_DOC,
+  VERIFY_DOC,
   EDIT_FILE,
   VIEW_FILES,
   DELETE_OWN_FILES,

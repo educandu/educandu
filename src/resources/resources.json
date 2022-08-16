@@ -292,9 +292,11 @@
       "tagsPlaceholder": "Enter keywords",
       "useTemplateDocument": "Use default template",
       "review": "Review",
+      "verified": "Verified document",
       "createSequence": "Create sequence",
       "sequenceInfoBoxHeader": "Document sequences",
-      "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n"
+      "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
+      "verifiedInfo": "As a content maintainer, you can vouche for the quality of this document. Verified documents have higher relevance in the search results."
     }
   },
   {
@@ -308,9 +310,11 @@
       "tagsPlaceholder": "Stichwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
       "review": "Review",
+      "verified": "Überprüftes Dokument",
       "createSequence": "Reihe anlegen",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
+      "verifiedInfo": "Als Inhalt-Maintainer kannst du die Qualität <something something>. Überprüfte Dokumente haben eine höchere Relevanz auf der Suchseite."
     }
   },
   {
