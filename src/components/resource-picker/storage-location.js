@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import UsedStorage from '../used-storage.js';
-import FilePreview from '../file-preview.js';
 import ImageEditor from '../image-editor.js';
 import reactDropzoneNs from 'react-dropzone';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
+import FilePreviewScreen from './file-preview-screen.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DialogFooterButtons from '../dialog-footer-buttons.js';
 import FilesUploadOverview from '../files-upload-overview.js';
@@ -34,9 +34,10 @@ const MIN_SEARCH_TERM_LENGTH = 3;
 const SCREEN = {
   directory: 'directory',
   search: 'search',
-  preview: 'preview',
-  uploadOverview: 'upload-overview',
-  fileEditor: 'file-editor'
+  fileEditor: 'file-editor',
+  filePreview: 'file-preview',
+  beforeUpload: 'before-upload',
+  afterUpload: 'after-upload'
 };
 
 function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
@@ -144,7 +145,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   };
 
   const handlePreviewClick = () => {
-    pushScreen(SCREEN.preview);
+    pushScreen(SCREEN.filePreview);
   };
 
   const handleUploadButtonClick = () => {
@@ -297,7 +298,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
         return;
       }
 
-      pushScreen(SCREEN.uploadOverview);
+      pushScreen(SCREEN.beforeUpload);
     };
 
     startUpload();
@@ -440,23 +441,16 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
         </Fragment>
       )}
 
-      {screen === SCREEN.preview && (
-      <div className="StorageLocation-screen">
-        {renderScreenBackButton({ onClick: handlePreviewScreenBackClick })}
-        <FilePreview
-          url={selectedFile.url}
-          size={selectedFile.size}
-          createdOn={selectedFile.createdOn}
-          />
-        <DialogFooterButtons
+      {screen === SCREEN.filePreview && (
+        <FilePreviewScreen
+          file={selectedFile}
           onCancel={onCancel}
-          onOk={handleSelectClick}
-          okButtonText={t('common:select')}
+          onSelect={handleSelectClick}
+          onBack={handlePreviewScreenBackClick}
           />
-      </div>
       )}
 
-      {screen === SCREEN.uploadOverview && (
+      {screen === SCREEN.beforeUpload && (
       <div className="StorageLocation-screen">
         {renderScreenBackButton({ onClick: handleUploadOverviewScreenBackClick, disabled: isUploading })}
         <FilesUploadOverview
