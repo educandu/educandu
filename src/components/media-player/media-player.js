@@ -191,6 +191,7 @@ function MediaPlayer({
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
+    stop: trackRef.current?.stop,
     togglePlay: trackRef.current?.togglePlay,
     seekToPosition: position => {
       setLastReachedPartEndIndex(-1);
