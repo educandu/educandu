@@ -2,8 +2,8 @@ newDocument:
   en: New document
   de: Neues Dokument
 editDocument:
-  en: Edit document
-  de: Dokument bearbeiten
+  en: Edit document metadata
+  de: Dokument-Metadaten bearbeiten
 titleRequired:
   en: Please specify a document title
   de: Bitte gib einen Dokument-Titel an

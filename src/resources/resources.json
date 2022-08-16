@@ -286,7 +286,7 @@
     "language": "en",
     "resources": {
       "newDocument": "New document",
-      "editDocument": "Edit document",
+      "editDocument": "Edit document metadata",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "tagsPlaceholder": "Enter keywords",
@@ -304,7 +304,7 @@
     "language": "de",
     "resources": {
       "newDocument": "Neues Dokument",
-      "editDocument": "Dokument bearbeiten",
+      "editDocument": "Dokument-Metadaten bearbeiten",
       "titleRequired": "Bitte gib einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "tagsPlaceholder": "Stichwörter angeben",
@@ -874,7 +874,8 @@
     "language": "en",
     "resources": {
       "permalinkCopied": "The permalink was copied to the clipboard",
-      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard"
+      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
+      "documentMetadataUpdated": "Document updated successfully"
     }
   },
   {
@@ -882,7 +883,8 @@
     "language": "de",
     "resources": {
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
-      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
+      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
+      "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert"
     }
   },
   {
