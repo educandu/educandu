@@ -9,6 +9,7 @@ import FileEditorScreen from './file-editor-screen.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import FilePreviewScreen from './file-preview-screen.js';
 import FilesUploadScreen from './files-upload-screen.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -107,19 +108,21 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   }, [currentDirectoryPath, storageLocation.homePath, storageLocation.rootPath, storageApiClient, isMounted]);
 
   const handleFileClick = newFile => {
-    setShowInitialFileHighlighting(false);
-    if (newFile.type === CDN_OBJECT_TYPE.directory) {
-      setCurrentDirectoryPath(newFile.path);
-    } else {
+    if (newFile.type === CDN_OBJECT_TYPE.file) {
+      setShowInitialFileHighlighting(false);
       setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
+    }
+    if (newFile.type === CDN_OBJECT_TYPE.directory && isTouchDevice()) {
+      setCurrentDirectoryPath(newFile.path);
     }
   };
 
   const handleFileDoubleClick = newFile => {
+    if (newFile.type === CDN_OBJECT_TYPE.file) {
+      onSelect(newFile.portableUrl);
+    }
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
       setCurrentDirectoryPath(newFile.path);
-    } else {
-      onSelect(newFile.portableUrl);
     }
   };
 
@@ -148,13 +151,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   const handleScreenBackClick = () => {
     popScreen();
-    setCurrentEditedFileIndex(-1); // Here?
+    setUploadQueue([]);
+    setCurrentEditedFileIndex(-1);
   };
 
-  // Maybe merge with above
   const handleFilesUploadScreenBackClick = async () => {
-    popScreen();
-    setUploadQueue([]);
+    handleScreenBackClick();
     await fetchStorageContent();
   };
 
@@ -379,7 +381,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
                   selectedFileUrl={highlightedFile?.portableUrl}
                   onDeleteFileClick={handleDeleteFileClick}
                   onPreviewFileClick={handlePreviewFileClick}
-                  onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
+                  onNavigateToParent={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
                   canNavigateToParent={screen === SCREEN.directory && currentDirectory?.path?.length > storageLocation.rootPath.length}
                   canDelete={storageLocation.isDeletionEnabled}
                   isLoading={isLoading}

@@ -6,6 +6,7 @@ import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
 import DeleteIcon from './icons/general/delete-icon.js';
+import { isTouchDevice } from '../ui/browser-helper.js';
 import { CDN_OBJECT_TYPE } from '../domain/constants.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import DimensionsProvider from './dimensions-provider.js';
@@ -27,7 +28,7 @@ function FilesListViewer({
   onFileDoubleClick,
   onDeleteFileClick,
   onPreviewFileClick,
-  onNavigateToParentClick
+  onNavigateToParent
 }) {
   const { uiLocale } = useLocale();
   const { t } = useTranslation('');
@@ -36,8 +37,14 @@ function FilesListViewer({
   const getFile = row => row ? files.find(file => file.portableUrl === row.key) : null;
 
   const handleHeaderRowClick = rowIndex => {
+    if (rowIndex === 1 && isTouchDevice()) {
+      onNavigateToParent();
+    }
+  };
+
+  const handleHeaderRowDoubleClick = rowIndex => {
     if (rowIndex === 1) {
-      onNavigateToParentClick();
+      onNavigateToParent();
     }
   };
 
@@ -49,18 +56,18 @@ function FilesListViewer({
     onFileDoubleClick(getFile(row));
   };
 
-  const handlePreviewClick = (event, row) => {
+  const handlePreviewFileClick = (event, row) => {
     event.stopPropagation();
     onPreviewFileClick(getFile(row));
   };
 
-  const handleDeleteFile = row => {
+  const handleDeleteFileConfirmed = row => {
     onDeleteFileClick(getFile(row));
   };
 
-  const handleDeleteClick = (event, row) => {
+  const handleDeleteFileClick = (event, row) => {
     event.stopPropagation();
-    confirmCdnFileDelete(t, row.name, () => handleDeleteFile(row));
+    confirmCdnFileDelete(t, row.name, () => handleDeleteFileConfirmed(row));
   };
 
   const renderName = (name, row) => {
@@ -85,7 +92,7 @@ function FilesListViewer({
         <Tooltip title={t('common:preview')}>
           <a
             className="FilesListViewer-action FilesListViewer-action--preview"
-            onClick={event => handlePreviewClick(event, row)}
+            onClick={event => handlePreviewFileClick(event, row)}
             >
             <PreviewIcon />
           </a>
@@ -94,7 +101,7 @@ function FilesListViewer({
           <Tooltip title={t('common:delete')}>
             <a
               className="FilesListViewer-action FilesListViewer-action--delete"
-              onClick={event => handleDeleteClick(event, row)}
+              onClick={event => handleDeleteFileClick(event, row)}
               >
               <DeleteIcon />
             </a>
@@ -105,9 +112,7 @@ function FilesListViewer({
   };
 
   const renderNavigateToParentButton = () => (
-    <div
-      className="FilesListViewer-fileNameCell FilesListViewer-fileNameCell--parentLink"
-      >
+    <div className="FilesListViewer-fileNameCell FilesListViewer-fileNameCell--parentLink">
       <FolderNavigateIcon />
       <div className="FilesListViewer-fileName">{parentDirectory?.displayName || '..'}</div>
     </div>
@@ -198,7 +203,8 @@ function FilesListViewer({
                 onDoubleClick: () => handleRowDoubleClick(row)
               })}
               onHeaderRow={(_columns, rowIndex) => ({
-                onClick: () => handleHeaderRowClick(rowIndex)
+                onClick: () => handleHeaderRowClick(rowIndex),
+                onDoubleClick: () => handleHeaderRowDoubleClick(rowIndex)
               })}
               scroll={{ y: scrollY }}
               />
@@ -216,7 +222,7 @@ FilesListViewer.propTypes = {
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onNavigateToParentClick: PropTypes.func,
+  onNavigateToParent: PropTypes.func,
   onPreviewFileClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
@@ -228,7 +234,7 @@ FilesListViewer.defaultProps = {
   onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onNavigateToParentClick: () => {},
+  onNavigateToParent: () => {},
   onPreviewFileClick: () => {},
   parentDirectory: null,
   selectedFileUrl: null

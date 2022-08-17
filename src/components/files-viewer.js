@@ -22,7 +22,7 @@ function FilesViewer({
   onFileDoubleClick,
   onDeleteFileClick,
   onPreviewFileClick,
-  onNavigateToParentClick,
+  onNavigateToParent,
   isLoading
 }) {
   const ViewerComponent = display === FILES_VIEWER_DISPLAY.grid
@@ -41,7 +41,7 @@ function FilesViewer({
         onFileDoubleClick={onFileDoubleClick}
         onDeleteFileClick={onDeleteFileClick}
         onPreviewFileClick={onPreviewFileClick}
-        onNavigateToParentClick={onNavigateToParentClick}
+        onNavigateToParent={onNavigateToParent}
         />
       <div className={classNames('FilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
         <Spin size="large" />
@@ -59,7 +59,7 @@ FilesViewer.propTypes = {
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onNavigateToParentClick: PropTypes.func,
+  onNavigateToParent: PropTypes.func,
   onPreviewFileClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
@@ -74,7 +74,7 @@ FilesViewer.defaultProps = {
   onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onNavigateToParentClick: () => {},
+  onNavigateToParent: () => {},
   onPreviewFileClick: () => {},
   parentDirectory: null,
   selectedFileUrl: null
