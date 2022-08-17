@@ -70,3 +70,6 @@ confirmPublicUploadLiability:
 closeAccountConfirmation:
   en: Do you really want to close your account?
   de: Möchtest du wirklich dein Konto schließen?
+exitFileEditor:
+  en: Do you really want to exit the editor? Your current changes will be lost.
+  de: Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.

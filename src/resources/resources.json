@@ -148,7 +148,8 @@
       "deleteItemConfirmation": "Do you really want to delete \"{name}\"?",
       "deleteStoragePlanConfirmation": "Do you really want to delete storage plan \"{storagePlanName}\"?",
       "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.",
-      "closeAccountConfirmation": "Do you really want to close your account?"
+      "closeAccountConfirmation": "Do you really want to close your account?",
+      "exitFileEditor": "Do you really want to exit the editor? Your current changes will be lost."
     }
   },
   {
@@ -178,7 +179,8 @@
       "deleteItemConfirmation": "Möchtest du \"{name}\" wirklich löschen?",
       "deleteStoragePlanConfirmation": "Möchtest du den Speicherplan \"{storagePlanName}\" wirklich löschen?",
       "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
-      "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?"
+      "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?",
+      "exitFileEditor": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren."
     }
   },
   {
@@ -1300,7 +1302,6 @@
       "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "closeSearchResult": "Back to directory view",
       "uploadFiles": "Upload files",
-      "cancelEditing": "Cancel image editing",
       "applyChanges": "Apply changes"
     }
   },
@@ -1315,7 +1316,6 @@
       "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "closeSearchResult": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen",
-      "cancelEditing": "Bildbearbeitung abbrechen",
       "applyChanges": "Änderungen übernehmen"
     }
   },

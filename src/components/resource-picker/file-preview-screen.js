@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 function FilePreviewScreen({ file, onBack, onCancel, onSelect }) {
-  const { t } = useTranslation('');
+  const { t } = useTranslation('storageLocation');
 
   return (
     <div className="StorageLocation-screen">

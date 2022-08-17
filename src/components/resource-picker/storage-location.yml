@@ -19,9 +19,6 @@ closeSearchResult:
 uploadFiles:
   en: Upload files
   de: Dateien hochladen
-cancelEditing:
-  en: Cancel image editing
-  de: Bildbearbeitung abbrechen
 applyChanges:
   en: Apply changes
   de: Änderungen übernehmen

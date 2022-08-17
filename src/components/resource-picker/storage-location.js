@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import UsedStorage from '../used-storage.js';
-import ImageEditor from '../image-editor.js';
 import reactDropzoneNs from 'react-dropzone';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import FileEditorScreen from './file-editor-screen.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import FilePreviewScreen from './file-preview-screen.js';
+import { Alert, Input, message, Modal, Select } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DialogFooterButtons from '../dialog-footer-buttons.js';
 import FilesUploadOverview from '../files-upload-overview.js';
@@ -17,13 +18,12 @@ import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from '../files-viewer.js';
 import { DoubleLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../../utils/storage-utils.js';
-import { CDN_OBJECT_TYPE, IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -41,7 +41,6 @@ const SCREEN = {
 };
 
 function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
-  const imageEditorRef = useRef(null);
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
@@ -64,7 +63,6 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
-  const [currentEditedFileIsDirty, setCurrentEditedFileIsDirty] = useState(false);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
@@ -129,7 +127,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     }
   };
 
-  const handleSelectClick = () => {
+  const handleSelectFileClick = () => {
     onSelect(selectedFile.portableUrl);
   };
 
@@ -167,8 +165,9 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     setIsUploading(false);
   };
 
-  const handlePreviewScreenBackClick = () => {
+  const handleScreenBackClick = () => {
     popScreen();
+    setCurrentEditedFileIndex(-1); // Here?
   };
 
   const handleUploadOverviewScreenBackClick = async () => {
@@ -176,11 +175,6 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     setUploadQueue([]);
     setLastUploadedFile(null);
     await fetchStorageContent();
-  };
-
-  const handleFileEditScreenBackClick = () => {
-    popScreen();
-    setCurrentEditedFileIndex(-1);
   };
 
   const handleSearchTermChange = event => {
@@ -213,16 +207,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     pushScreen(SCREEN.fileEditor);
   };
 
-  const handleImageEditorCrop = ({ isCropped }) => {
-    setCurrentEditedFileIsDirty(isCropped);
-  };
-
-  const handleCancelEditingCurrentEditedFileClick = () => {
-    popScreen();
-  };
-
-  const handleApplyChangesToCurrentEditedFileClick = async () => {
-    const newFile = await imageEditorRef.current.getCroppedFile(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, IMAGE_OPTIMIZATION_QUALITY);
+  const handleFileEditorApplyClick = newFile => {
     setUploadQueue(queue => queue.map((item, index) => index !== currentEditedFileIndex ? item : { file: newFile, isPristine: false }));
     popScreen();
   };
@@ -426,7 +411,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           </div>
           <DialogFooterButtons
             onCancel={onCancel}
-            onOk={handleSelectClick}
+            onOk={handleSelectFileClick}
             okButtonText={t('common:select')}
             okDisabled={!selectedFile || isLoading}
             extraButtons={[
@@ -445,8 +430,8 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
         <FilePreviewScreen
           file={selectedFile}
           onCancel={onCancel}
-          onSelect={handleSelectClick}
-          onBack={handlePreviewScreenBackClick}
+          onSelect={handleSelectFileClick}
+          onBack={handleScreenBackClick}
           />
       )}
 
@@ -474,40 +459,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       )}
 
       {screen === SCREEN.fileEditor && (
-      <div className="StorageLocation-screen">
-        {renderScreenBackButton({ onClick: handleFileEditScreenBackClick, disabled: false })}
-        <div className="StorageLocation-imageEditorContainer">
-          <div className="StorageLocation-imageEditor">
-            <ImageEditor
-              editorRef={imageEditorRef}
-              file={uploadQueue[currentEditedFileIndex].file}
-              onCrop={handleImageEditorCrop}
-              />
-          </div>
-          <div className="StorageLocation-imageEditorButtons">
-            <Button
-              onClick={handleCancelEditingCurrentEditedFileClick}
-              >
-              {t('cancelEditing')}
-            </Button>
-            <Button
-              type="primary"
-              disabled={!currentEditedFileIsDirty}
-              onClick={handleApplyChangesToCurrentEditedFileClick}
-              >
-              {t('applyChanges')}
-            </Button>
-          </div>
-        </div>
-        <DialogFooterButtons
-          allowOk={false}
+        <FileEditorScreen
+          file={uploadQueue[currentEditedFileIndex].file}
           onCancel={onCancel}
-          onOk={null}
-          okButtonText={t('common:select')}
-          okDisabled={!lastUploadedFile || isUploading}
-          cancelDisabled={isUploading}
+          onBack={handleScreenBackClick}
+          onApply={handleFileEditorApplyClick}
           />
-      </div>
       )}
     </div>
   );
