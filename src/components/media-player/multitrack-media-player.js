@@ -138,7 +138,7 @@ function MultitrackMediaPlayer({
     onSeek(milliseconds);
   };
 
-  const lazyLoadSource = async completedAction => {
+  const lazyLoadSources = async completedAction => {
     setLazyLoadCompletedAction(completedAction);
     const newSources = await sources();
     setLoadedSources(newSources);
@@ -147,7 +147,7 @@ function MultitrackMediaPlayer({
   const handleTogglePlay = async () => {
     setLastReachedPartEndIndex(-1);
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.play);
+      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.play);
     } else {
       trackRef.current.togglePlay();
     }
@@ -180,7 +180,7 @@ function MultitrackMediaPlayer({
 
   const handleDownloadClick = async () => {
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.download);
+      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
       httpClient.download(loadedSources, downloadFileName);
     }
@@ -218,12 +218,14 @@ function MultitrackMediaPlayer({
     },
     seekToPart: partIndex => {
       setLastReachedPartEndIndex(partIndex - 1);
-      trackRef.current.seekToPosition(parts[partIndex]?.startPosition || 0);
+      const { trackPosition } = trackRef.current?.seekToPosition(parts[partIndex]?.startPosition || 0) || { trackPosition: 0 };
+      onSeek(trackPosition);
     },
     reset: () => {
       setLastReachedPartEndIndex(-1);
-      trackRef.current.pause();
-      trackRef.current.seekToPosition(0);
+      trackRef.current?.stop();
+      trackRef.current?.seekToPosition(0);
+      onSeek(0);
     }
   };
 

@@ -205,12 +205,14 @@ function MediaPlayer({
     },
     seekToPart: partIndex => {
       setLastReachedPartEndIndex(partIndex - 1);
-      trackRef.current.seekToPosition(parts[partIndex]?.startPosition || 0);
+      const { trackPosition } = trackRef.current?.seekToPosition(parts[partIndex]?.startPosition || 0) || { trackPosition: 0 };
+      onSeek(trackPosition);
     },
     reset: () => {
       setLastReachedPartEndIndex(-1);
-      trackRef.current.pause();
-      trackRef.current.seekToPosition(0);
+      trackRef.current?.stop();
+      trackRef.current?.seekToPosition(0);
+      onSeek(0);
     }
   };
 

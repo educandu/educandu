@@ -32,6 +32,7 @@ function MediaPlayerTrack({
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+  const [lastPlayStateBeforeBuffering, setLastPlayStateBeforeBuffering] = useState(MEDIA_PLAY_STATE.initializing);
 
   useEffect(() => {
     if (playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1]) {
@@ -46,6 +47,7 @@ function MediaPlayerTrack({
   }, [playbackRange, lastPlaybackRange, sourceDuration, currentPlayState, onDuration, onProgress, onPlayStateChange]);
 
   const changePlayState = newPlayState => {
+    setLastPlayStateBeforeBuffering(prev => newPlayState !== MEDIA_PLAY_STATE.buffering ? newPlayState : prev);
     setCurrentPlayState(newPlayState);
     onPlayStateChange?.(newPlayState);
   };
@@ -78,7 +80,7 @@ function MediaPlayerTrack({
   };
 
   const handleBufferEnd = () => {
-    changePlayState(MEDIA_PLAY_STATE.playing);
+    changePlayState(lastPlayStateBeforeBuffering);
   };
 
   const handlePlay = () => {
@@ -152,6 +154,7 @@ function MediaPlayerTrack({
     const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
     if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
+      setLastPlayStateBeforeBuffering(MEDIA_PLAY_STATE.stopped);
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
       changeProgress(trackStopTimecode);
       handleEnded();
