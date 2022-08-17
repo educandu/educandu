@@ -18,7 +18,7 @@ const createInitialTrackStates = sources => ({
   secondaryTracks: sources.secondaryTracks.map(track => ({
     name: track.name,
     sourceUrl: track.sourceUrl,
-    offset: track.offset,
+    offsetTimecode: track.offsetTimecode,
     volume: track.volume,
     duration: 0,
     currentTimecode: 0,
@@ -106,7 +106,7 @@ function MediaPlayerTrackGroup({
       || sources.mainTrack.playbackRange.join() !== trackStates.mainTrack.playbackRange.join()
       || sources.secondaryTracks.length !== trackStates.secondaryTracks.length
       || sources.secondaryTracks.map(track => track.sourceUrl).join() !== trackStates.secondaryTracks.map(track => track.sourceUrl).join()
-      || sources.secondaryTracks.map(track => track.offset).join() !== trackStates.secondaryTracks.map(track => track.offset).join()
+      || sources.secondaryTracks.map(track => track.offsetTimecode).join() !== trackStates.secondaryTracks.map(track => track.offsetTimecode).join()
     ) {
       reinitialize(sources);
       return;

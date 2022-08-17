@@ -1,6 +1,6 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Slider } from 'antd';
-import React, { useState } from 'react';
 import MuteIcon from '../icons/media-player/mute-icon.js';
 import VolumeIcon from '../icons/media-player/volume-icon.js';
 
@@ -10,18 +10,8 @@ export const MEDIA_VOLUME_SLIDER_ORIENTATION = {
 };
 
 function MediaVolumeSlider({ value, onChange, orientation }) {
-  const [isMuted, setIsMuted] = useState(value === 0);
-  const [valueBeforeMuted, setValueBeforeMuted] = useState(value);
-
   const handleVolumeButtonClick = () => {
-    if (isMuted) {
-      onChange(valueBeforeMuted);
-      setIsMuted(false);
-    } else {
-      setValueBeforeMuted(value);
-      onChange(0);
-      setIsMuted(true);
-    }
+    onChange(value ? 0 : 1);
   };
 
   const handleSliderChange = newValue => {
@@ -30,15 +20,18 @@ function MediaVolumeSlider({ value, onChange, orientation }) {
 
   return (
     <div className={`MediaVolumeSlider MediaVolumeSlider--${orientation}`}>
-      <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={handleVolumeButtonClick} />
+      <Button
+        type="link"
+        icon={value === 0 ? <MuteIcon /> : <VolumeIcon />}
+        onClick={handleVolumeButtonClick}
+        />
       <Slider
         className={`MediaVolumeSlider-slider MediaVolumeSlider-slider--${orientation}`}
         min={0}
         max={100}
-        disabled={isMuted}
+        value={value * 100}
         onChange={handleSliderChange}
-        tipFormatter={isMuted ? null : val => `${val}%`}
-        value={isMuted ? 0 : value * 100}
+        tipFormatter={val => `${val}%`}
         vertical={orientation === MEDIA_VOLUME_SLIDER_ORIENTATION.vertical}
         />
     </div>

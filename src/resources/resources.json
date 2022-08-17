@@ -1891,7 +1891,8 @@
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
-      "trackMixer": "Track mixer"
+      "trackMixer": "Track mixer",
+      "missingSourcesMessage": "Cannot play because of missing media sources"
     }
   },
   {
@@ -1902,7 +1903,8 @@
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
-      "trackMixer": "Spur-Mixer"
+      "trackMixer": "Spur-Mixer",
+      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
     }
   },
   {

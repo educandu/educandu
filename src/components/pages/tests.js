@@ -142,9 +142,9 @@ function Tests({ PageTemplate }) {
       sources: {
         mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
         secondaryTracks: [
-          { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1, offset: 0 },
-          { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1, offset: 0 },
-          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1, offset: 0 }
+          { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1, offsetTimecode: 0 },
+          { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1, offsetTimecode: 0 },
+          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1, offsetTimecode: 0 }
         ]
       }
     },
@@ -153,13 +153,13 @@ function Tests({ PageTemplate }) {
       sources: {
         mainTrack: { name: 'Dubstep', sourceUrl: MULTITRACK_GROOVE_URL_0, volume: 1, playbackRange: [0, 1] },
         secondaryTracks: [
-          { name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1, volume: 1, offset: 0 },
-          { name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2, volume: 1, offset: 0 },
-          { name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3, volume: 1, offset: 0 },
-          { name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4, volume: 1, offset: 0 },
-          { name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5, volume: 1, offset: 0 },
-          { name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6, volume: 1, offset: 0 },
-          { name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7, volume: 1, offset: 0 }
+          { name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1, volume: 1, offsetTimecode: 0 },
+          { name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2, volume: 1, offsetTimecode: 0 },
+          { name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3, volume: 1, offsetTimecode: 0 },
+          { name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4, volume: 1, offsetTimecode: 0 },
+          { name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5, volume: 1, offsetTimecode: 0 },
+          { name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6, volume: 1, offsetTimecode: 0 },
+          { name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7, volume: 1, offsetTimecode: 0 }
         ]
       }
     }

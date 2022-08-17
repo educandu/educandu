@@ -422,7 +422,7 @@ export const userActivitiesShape = PropTypes.shape({
 });
 
 export const multitrackMediaSourcesBasicTrackProps = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   sourceUrl: PropTypes.string.isRequired,
   volume: PropTypes.number.isRequired
 };
@@ -434,6 +434,6 @@ export const multitrackMediaSourcesShape = PropTypes.shape({
   }),
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     ...multitrackMediaSourcesBasicTrackProps,
-    offset: PropTypes.number.isRequired
+    offsetTimecode: PropTypes.number.isRequired
   }))
 });
