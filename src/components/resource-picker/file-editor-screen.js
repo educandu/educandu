@@ -8,7 +8,7 @@ import { confirmExitFileEditor } from '../confirmation-dialogs.js';
 import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 
 function FileEditorScreen({ file, onBack, onCancel, onApply }) {
-  const { t } = useTranslation('storageLocation');
+  const { t } = useTranslation('');
   const imageEditorRef = useRef(null);
   const [fileIsDirty, setFileIsDirty] = useState(false);
 
@@ -30,10 +30,10 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
   };
 
   return (
-    <div className="StorageLocation-screen">
-      <div className="StorageLocation-screenContent">
-        <div className="StorageLocation-imageEditorContainer">
-          <div className="StorageLocation-imageEditor">
+    <div className="ResourcePicker-screen">
+      <div className="ResourcePicker-screenContent">
+        <div className="ResourcePicker-fileEditorImageContainer">
+          <div className="ResourcePicker-fileEditorImage">
             <ImageEditor
               file={file}
               editorRef={imageEditorRef}
@@ -42,11 +42,11 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
           </div>
         </div>
       </div>
-      <div className="StorageLocation-screenFooter">
+      <div className="ResourcePicker-screenFooter">
         <Button onClick={handleBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="StorageLocation-screenFooterButtons">
+        <div className="ResourcePicker-screenFooterButtons">
           <Button onClick={onCancel}>{t('common:cancel')}</Button>
-          <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('applyChanges')}</Button>
+          <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('common:applyChanges')}</Button>
         </div>
       </div>
     </div>

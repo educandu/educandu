@@ -1301,8 +1301,7 @@
       "searchOngoing": "Searching …",
       "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "closeSearchResult": "Back to directory view",
-      "uploadFiles": "Upload files",
-      "applyChanges": "Apply changes"
+      "uploadFiles": "Upload files"
     }
   },
   {
@@ -1315,8 +1314,7 @@
       "searchOngoing": "Suche …",
       "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "closeSearchResult": "Zurück zur Verzeichnisansicht",
-      "uploadFiles": "Dateien hochladen",
-      "applyChanges": "Änderungen übernehmen"
+      "uploadFiles": "Dateien hochladen"
     }
   },
   {
@@ -2060,6 +2058,7 @@
       "preview": "Preview",
       "edit": "Edit",
       "apply": "Apply",
+      "applyChanges": "Apply changes",
       "discard": "Discard",
       "duplicate": "Duplicate",
       "copyToClipboard": "Copy to clipboard",
@@ -2202,6 +2201,7 @@
       "preview": "Vorschau",
       "edit": "Bearbeiten",
       "apply": "Übernehmen",
+      "applyChanges": "Änderungen übernehmen",
       "discard": "Verwerfen",
       "duplicate": "Duplizieren",
       "copyToClipboard": "In die Zwischenablage kopieren",

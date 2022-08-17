@@ -6,20 +6,20 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 function FilePreviewScreen({ file, onBack, onCancel, onSelect }) {
-  const { t } = useTranslation('storageLocation');
+  const { t } = useTranslation('');
 
   return (
-    <div className="StorageLocation-screen">
-      <div className="StorageLocation-screenContent">
+    <div className="ResourcePicker-screen">
+      <div className="ResourcePicker-screenContent">
         <FilePreview
           url={file.url}
           size={file.size}
           createdOn={file.createdOn}
           />
       </div>
-      <div className="StorageLocation-screenFooter">
+      <div className="ResourcePicker-screenFooter">
         <Button onClick={onBack} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="StorageLocation-screenFooterButtons">
+        <div className="ResourcePicker-screenFooterButtons">
           <Button onClick={onCancel}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={onSelect}>{t('common:select')}</Button>
         </div>
