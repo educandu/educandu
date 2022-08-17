@@ -4,6 +4,7 @@ import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { fileShape } from '../../ui/default-prop-types.js';
 import { confirmExitFileEditor } from '../confirmation-dialogs.js';
 import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 
@@ -30,10 +31,10 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
   };
 
   return (
-    <div className="ResourcePicker-screen">
-      <div className="ResourcePicker-screenContent">
-        <div className="ResourcePicker-fileEditorImageContainer">
-          <div className="ResourcePicker-fileEditorImage">
+    <div className="ResourcePickerScreen">
+      <div className="ResourcePickerScreen-content">
+        <div className="FileEditorScreen">
+          <div className="FileEditorScreen-image">
             <ImageEditor
               file={file}
               editorRef={imageEditorRef}
@@ -42,9 +43,9 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
           </div>
         </div>
       </div>
-      <div className="ResourcePicker-screenFooter">
+      <div className="ResourcePickerScreen-footer">
         <Button onClick={handleBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="ResourcePicker-screenFooterButtons">
+        <div className="ResourcePickerScreen-footerButtons">
           <Button onClick={onCancel}>{t('common:cancel')}</Button>
           <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('common:applyChanges')}</Button>
         </div>
@@ -54,11 +55,7 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
 }
 
 FileEditorScreen.propTypes = {
-  file: PropTypes.shape({
-    url: PropTypes.string,
-    size: PropTypes.string,
-    createdOn: PropTypes.string
-  }).isRequired,
+  file: fileShape.isRequired,
   onApply: PropTypes.func.isRequired,
   onBack: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired
