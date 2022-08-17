@@ -34,12 +34,10 @@ function FilesUploadScreen({
   uploadQueue,
   directory,
   storageLocation,
-  showPreviewAfterUpload,
-  onBack,
-  onCancel,
-  onFileEdit,
-  onUploadStart,
-  onUploadFinish
+  onBackClick,
+  onCancelClick,
+  onEditFileClick,
+  onSelectFileClick
 }) {
   const { uiLocale } = useLocale();
   const { t } = useTranslation('filesUploadScreen');
@@ -119,19 +117,21 @@ function FilesUploadScreen({
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    onUploadStart();
-    const result = await uploadFiles(uploadItems, storageLocation, directory);
+    await uploadFiles(uploadItems, storageLocation, directory);
     setCurrentStage(STAGE.uploadFinished);
-    onUploadFinish(result);
   };
 
   const handleItemEditClick = itemIndex => {
-    onFileEdit(itemIndex);
+    onEditFileClick(itemIndex);
   };
 
   const handleImageOptimizationChange = event => {
     const { checked } = event.target;
     setOptimizeImages(checked);
+  };
+
+  const handleSelectSingleUploadedFileClick = () => {
+    onSelectFileClick(uploadItems[0].uploadedFile);
   };
 
   const renderUploadMessage = () => {
@@ -187,7 +187,7 @@ function FilesUploadScreen({
           )}
         </div>
         {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
-        {item.status === ITEM_STATUS.succeeded && showPreviewAfterUpload && (
+        {item.status === ITEM_STATUS.succeeded && (
         <div className="FilesUploadScreen-fileStatusPreview">
           <FilePreview
             url={item.uploadedFile.url}
@@ -200,6 +200,9 @@ function FilesUploadScreen({
       </div>
     );
   };
+
+  const multipleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length > 1;
+  const singleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded;
 
   return (
     <div className="ResourcePickerScreen">
@@ -223,26 +226,26 @@ function FilesUploadScreen({
           </div>
         </div>
       </div>
-      <Checkbox
-        checked={optimizeImages}
-        onChange={handleImageOptimizationChange}
-        disabled={currentStage !== STAGE.uploadNotStarted}
-        className="FilesUploadScreen-imageOptimizationCheckbox"
-        >
-        {t('optimizeImages')}
-      </Checkbox>
+      {currentStage !== STAGE.uploadFinished && (
+        <Checkbox
+          checked={optimizeImages}
+          onChange={handleImageOptimizationChange}
+          disabled={currentStage === STAGE.uploading}
+          className="FilesUploadScreen-imageOptimizationCheckbox"
+          >
+          {t('optimizeImages')}
+        </Checkbox>
+      )}
       <div className="ResourcePickerScreen-footer">
-        <Button onClick={onBack} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
+        <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
         <div className="ResourcePickerScreen-footerButtons">
-          <Button onClick={onCancel}>{t('common:cancel')}</Button>
-          <Button
-            type="primary"
-            onClick={handleStartUploadClick}
-            loading={currentStage === STAGE.uploading}
-            disabled={currentStage === STAGE.uploadFinished}
-            >
-            {t('startUpload')}
-          </Button>
+          <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
+          {!singleFileUploadFinished && (
+            <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading} disabled={multipleFileUploadFinished}>{t('startUpload')}</Button>
+          )}
+          {singleFileUploadFinished && (
+            <Button type="primary" onClick={handleSelectSingleUploadedFileClick}>{t('common:select')}</Button>
+          )}
         </div>
       </div>
     </div>
@@ -251,12 +254,10 @@ function FilesUploadScreen({
 
 FilesUploadScreen.propTypes = {
   directory: cdnObjectShape.isRequired,
-  onBack: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onFileEdit: PropTypes.func.isRequired,
-  onUploadFinish: PropTypes.func,
-  onUploadStart: PropTypes.func.isRequired,
-  showPreviewAfterUpload: PropTypes.bool,
+  onBackClick: PropTypes.func,
+  onCancelClick: PropTypes.func,
+  onEditFileClick: PropTypes.func,
+  onSelectFileClick: PropTypes.func,
   storageLocation: storageLocationShape.isRequired,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
@@ -265,8 +266,10 @@ FilesUploadScreen.propTypes = {
 };
 
 FilesUploadScreen.defaultProps = {
-  onUploadFinish: () => {},
-  showPreviewAfterUpload: false
+  onBackClick: () => {},
+  onCancelClick: () => {},
+  onEditFileClick: () => {},
+  onSelectFileClick: () => {}
 };
 
 export default FilesUploadScreen;

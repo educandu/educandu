@@ -8,7 +8,7 @@ import { fileShape } from '../../ui/default-prop-types.js';
 import { confirmExitFileEditor } from '../confirmation-dialogs.js';
 import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 
-function FileEditorScreen({ file, onBack, onCancel, onApply }) {
+function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   const { t } = useTranslation('fileEditorScreen');
   const imageEditorRef = useRef(null);
   const [fileIsDirty, setFileIsDirty] = useState(false);
@@ -19,14 +19,14 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
 
   const handleApplyChanges = async () => {
     const newFile = await imageEditorRef.current.getCroppedFile(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, IMAGE_OPTIMIZATION_QUALITY);
-    onApply(newFile);
+    onApplyClick(newFile);
   };
 
   const handleBackClick = () => {
     if (fileIsDirty) {
-      confirmExitFileEditor(t, onBack);
+      confirmExitFileEditor(t, onBackClick);
     } else {
-      onBack();
+      onBackClick();
     }
   };
 
@@ -45,7 +45,7 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
       <div className="ResourcePickerScreen-footer">
         <Button onClick={handleBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
         <div className="ResourcePickerScreen-footerButtons">
-          <Button onClick={onCancel}>{t('common:cancel')}</Button>
+          <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('applyChanges')}</Button>
         </div>
       </div>
@@ -55,9 +55,9 @@ function FileEditorScreen({ file, onBack, onCancel, onApply }) {
 
 FileEditorScreen.propTypes = {
   file: fileShape.isRequired,
-  onApply: PropTypes.func.isRequired,
-  onBack: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onApplyClick: PropTypes.func.isRequired,
+  onBackClick: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired
 };
 
 export default FileEditorScreen;

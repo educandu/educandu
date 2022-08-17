@@ -1276,7 +1276,7 @@
     }
   },
   {
-    "namespace": "filesUploadPreparationScreen",
+    "namespace": "filesUploadScreen",
     "language": "en",
     "resources": {
       "headline": "Files upload",
@@ -1291,7 +1291,7 @@
     }
   },
   {
-    "namespace": "filesUploadPreparationScreen",
+    "namespace": "filesUploadScreen",
     "language": "de",
     "resources": {
       "headline": "Datei-Upload",

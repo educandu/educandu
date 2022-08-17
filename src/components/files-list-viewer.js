@@ -23,10 +23,10 @@ function FilesListViewer({
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
-  onDeleteClick,
   onFileClick,
   onFileDoubleClick,
-  onPreviewClick,
+  onDeleteFileClick,
+  onPreviewFileClick,
   onNavigateToParentClick
 }) {
   const { uiLocale } = useLocale();
@@ -51,11 +51,11 @@ function FilesListViewer({
 
   const handlePreviewClick = (event, row) => {
     event.stopPropagation();
-    onPreviewClick(getFile(row));
+    onPreviewFileClick(getFile(row));
   };
 
   const handleDeleteFile = row => {
-    onDeleteClick(getFile(row));
+    onDeleteFileClick(getFile(row));
   };
 
   const handleDeleteClick = (event, row) => {
@@ -213,11 +213,11 @@ FilesListViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  onDeleteClick: PropTypes.func,
+  onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
-  onPreviewClick: PropTypes.func,
+  onPreviewFileClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
@@ -225,11 +225,11 @@ FilesListViewer.propTypes = {
 FilesListViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  onDeleteClick: () => {},
+  onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
   onNavigateToParentClick: () => {},
-  onPreviewClick: () => {},
+  onPreviewFileClick: () => {},
   parentDirectory: null,
   selectedFileUrl: null
 };

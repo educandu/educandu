@@ -9,11 +9,10 @@ import FileEditorScreen from './file-editor-screen.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import FilePreviewScreen from './file-preview-screen.js';
 import FilesUploadScreen from './files-upload-screen.js';
-import { Alert, Input, message, Modal, Select } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
-import DialogFooterButtons from '../dialog-footer-buttons.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import { storageLocationShape } from '../../ui/default-prop-types.js';
@@ -52,16 +51,14 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [highlightedFile, setHighlightedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
-  const [lastUploadedFile, setLastUploadedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.directory]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
-  const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
+  const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
@@ -110,11 +107,11 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   }, [currentDirectoryPath, storageLocation.homePath, storageLocation.rootPath, storageApiClient, isMounted]);
 
   const handleFileClick = newFile => {
-    setShowInitialFileSelection(false);
+    setShowInitialFileHighlighting(false);
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
       setCurrentDirectoryPath(newFile.path);
     } else {
-      setSelectedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
+      setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
     }
   };
 
@@ -126,23 +123,22 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     }
   };
 
-  const handleSelectFileClick = () => {
-    onSelect(selectedFile.portableUrl);
+  const handleSelectHighlightedFileClick = () => {
+    onSelect(highlightedFile.portableUrl);
   };
 
-  // Case of selecting single upload
-  // const handleUploadSelectClick = () => {
-  //   onSelect(lastUploadedFile.portableUrl);
-  // };
+  const handleSelectUploadedFileClick = file => {
+    onSelect(file.portableUrl);
+  };
 
-  const handleDeleteClick = async file => {
+  const handleDeleteFileClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
     setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
     setSearchResult(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
     setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
   };
 
-  const handlePreviewClick = () => {
+  const handlePreviewFileClick = () => {
     pushScreen(SCREEN.filePreview);
   };
 
@@ -150,30 +146,15 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     dropzoneRef.current.open();
   };
 
-  const handleUploadStart = () => {
-    setIsUploading(true);
-  };
-
-  const handleUploadFinish = ({ uploadedFiles, failedFiles }) => {
-    const uploadedFileValues = Object.values(uploadedFiles);
-    const failedFileValues = Object.values(failedFiles);
-
-    if (!failedFileValues.length && uploadedFileValues.length === 1) {
-      setLastUploadedFile(uploadedFileValues[0]);
-    }
-
-    setIsUploading(false);
-  };
-
   const handleScreenBackClick = () => {
     popScreen();
     setCurrentEditedFileIndex(-1); // Here?
   };
 
-  const handleUploadOverviewScreenBackClick = async () => {
+  // Maybe merge with above
+  const handleFilesUploadScreenBackClick = async () => {
     popScreen();
     setUploadQueue([]);
-    setLastUploadedFile(null);
     await fetchStorageContent();
   };
 
@@ -202,12 +183,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     popScreen();
   };
 
-  const handleFileEdit = fileIndex => {
+  const handleEditFileClick = fileIndex => {
     setCurrentEditedFileIndex(fileIndex);
     pushScreen(SCREEN.fileEditor);
   };
 
-  const handleFileEditorApplyClick = newFile => {
+  const handleFileEditorScreenApplyClick = newFile => {
     setUploadQueue(queue => queue.map((item, index) => index !== currentEditedFileIndex ? item : { file: newFile, isPristine: false }));
     popScreen();
   };
@@ -291,7 +272,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
   }, [uploadQueue, storageLocation.type, uploadLiabilityCookieName, t]);
 
   useEffect(() => {
-    if (!selectedFile) {
+    if (!highlightedFile) {
       return;
     }
 
@@ -312,14 +293,14 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       return;
     }
 
-    const previouslySelectedFileStillExists = collectionToUse.some(file => file.portableUrl === selectedFile.portableUrl);
-    if (!previouslySelectedFileStillExists) {
-      setSelectedFile(null);
+    const previouslyHighlightedFileStillExists = collectionToUse.some(file => file.portableUrl === highlightedFile.portableUrl);
+    if (!previouslyHighlightedFileStillExists) {
+      setHighlightedFile(null);
     }
-  }, [screen, selectedFile, files, searchResult]);
+  }, [screen, highlightedFile, files, searchResult]);
 
   useEffect(() => {
-    if (!files.length || !showInitialFileSelection) {
+    if (!files.length || !showInitialFileHighlighting) {
       return;
     }
 
@@ -327,9 +308,9 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
     if (initialResourceName) {
       const preSelectedFile = files.find(file => file.displayName === initialResourceName);
-      setSelectedFile(preSelectedFile);
+      setHighlightedFile(preSelectedFile);
     }
-  }, [initialUrl, showInitialFileSelection, files]);
+  }, [initialUrl, showInitialFileHighlighting, files]);
 
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
@@ -395,10 +376,10 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
                   display={filesViewerDisplay}
                   onFileClick={handleFileClick}
                   onFileDoubleClick={handleFileDoubleClick}
-                  selectedFileUrl={selectedFile?.portableUrl}
-                  onDeleteClick={handleDeleteClick}
+                  selectedFileUrl={highlightedFile?.portableUrl}
+                  onDeleteFileClick={handleDeleteFileClick}
+                  onPreviewFileClick={handlePreviewFileClick}
                   onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
-                  onPreviewClick={handlePreviewClick}
                   canNavigateToParent={screen === SCREEN.directory && currentDirectory?.path?.length > storageLocation.rootPath.length}
                   canDelete={storageLocation.isDeletionEnabled}
                   isLoading={isLoading}
@@ -409,29 +390,22 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           <div className="StorageLocation-locationInfo">
             {screen === SCREEN.search ? renderSearchInfo() : renderStorageInfo()}
           </div>
-          <DialogFooterButtons
-            onCancel={onCancel}
-            onOk={handleSelectFileClick}
-            okButtonText={t('common:select')}
-            okDisabled={!selectedFile || isLoading}
-            extraButtons={[
-              {
-                icon: <UploadIcon />,
-                text: t('uploadFiles'),
-                disabled: !canAcceptFiles,
-                onClick: handleUploadButtonClick
-              }
-            ]}
-            />
+          <div className="ResourcePickerScreen-footer">
+            <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
+            <div className="ResourcePickerScreen-footerButtons">
+              <Button onClick={onCancel}>{t('common:cancel')}</Button>
+              <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>{t('common:select')}</Button>
+            </div>
+          </div>
         </Fragment>
       )}
 
       {screen === SCREEN.filePreview && (
         <FilePreviewScreen
-          file={selectedFile}
+          file={highlightedFile}
           onCancel={onCancel}
-          onSelect={handleSelectFileClick}
-          onBack={handleScreenBackClick}
+          onBackClick={handleScreenBackClick}
+          onSelectClick={handleSelectHighlightedFileClick}
           />
       )}
 
@@ -440,21 +414,19 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           uploadQueue={uploadQueue}
           directory={currentDirectory}
           storageLocation={storageLocation}
-          onFileEdit={handleFileEdit}
-          onBack={handleUploadOverviewScreenBackClick}
-          onCancel={onCancel}
-          onUploadStart={handleUploadStart}
-          onUploadFinish={handleUploadFinish}
-          showPreviewAfterUpload={uploadQueue.length === 1}
+          onCancelClick={onCancel}
+          onEditFileClick={handleEditFileClick}
+          onBackClick={handleFilesUploadScreenBackClick}
+          onSelectFileClick={handleSelectUploadedFileClick}
           />
       )}
 
       {screen === SCREEN.fileEditor && (
         <FileEditorScreen
           file={uploadQueue[currentEditedFileIndex].file}
-          onCancel={onCancel}
-          onBack={handleScreenBackClick}
-          onApply={handleFileEditorApplyClick}
+          onCancelClick={onCancel}
+          onBackClick={handleScreenBackClick}
+          onApplyClick={handleFileEditorScreenApplyClick}
           />
       )}
     </div>

@@ -18,22 +18,22 @@ function FilesGridViewer({
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
-  onDeleteClick,
   onFileClick,
   onFileDoubleClick,
-  onPreviewClick,
+  onDeleteFileClick,
+  onPreviewFileClick,
   onNavigateToParentClick
 }) {
   const { t } = useTranslation('filesGridViewer');
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
-    onPreviewClick(file);
+    onPreviewFileClick(file);
   };
 
   const handleDeleteClick = (event, file) => {
     event.stopPropagation();
-    confirmCdnFileDelete(t, file.displayName, () => onDeleteClick(file));
+    confirmCdnFileDelete(t, file.displayName, () => onDeleteFileClick(file));
   };
 
   const renderFile = file => {
@@ -104,11 +104,11 @@ FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  onDeleteClick: PropTypes.func,
+  onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
-  onPreviewClick: PropTypes.func,
+  onPreviewFileClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
@@ -116,11 +116,11 @@ FilesGridViewer.propTypes = {
 FilesGridViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  onDeleteClick: () => {},
+  onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
   onNavigateToParentClick: () => {},
-  onPreviewClick: () => {},
+  onPreviewFileClick: () => {},
   parentDirectory: null,
   selectedFileUrl: null
 };
