@@ -17,9 +17,9 @@ import { Alert, Button, Input, message, Modal, Select } from 'antd';
 import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import { storageLocationShape } from '../../ui/default-prop-types.js';
+import { ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from '../files-viewer.js';
-import { DoubleLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
@@ -178,7 +178,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     await fetchStorageContent(searchTerm);
   };
 
-  const handleCloseSearchClick = () => {
+  const handleBackToDirectoryScreenClick = () => {
     setLastExecutedSearchTerm('');
     setSearchResult([]);
     setSearchTerm('');
@@ -195,17 +195,6 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     popScreen();
   };
 
-  const renderScreenBackButton = ({ text = t('common:back'), onClick, noMargin = false, disabled = false }) => {
-    const classes = classNames({
-      'StorageLocation-screenBack': true,
-      'StorageLocation-screenBack--noMargin': noMargin,
-      'is-disabled': disabled
-    });
-
-    const content = <div className={classes}><DoubleLeftOutlined />{text}</div>;
-    return disabled ? content : <a onClick={onClick}>{content}</a>;
-  };
-
   const renderSearchInfo = () => {
     const searchMessage = isLoading
       ? t('searchOngoing')
@@ -218,14 +207,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           />
       );
 
-    const searchAction = renderScreenBackButton({
-      text: t('closeSearchResult'),
-      onClick: handleCloseSearchClick,
-      disabled: isLoading,
-      noMargin: true
-    });
-
-    return <Alert type="info" message={searchMessage} action={searchAction} showIcon />;
+    return <Alert type="info" message={searchMessage} showIcon />;
   };
 
   const renderStorageInfo = () => {
@@ -373,6 +355,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
               <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
                 <input {...getInputProps()} hidden />
                 <FilesViewer
+                  isLoading={isLoading}
                   files={screen === SCREEN.search ? searchResult : files}
                   parentDirectory={screen === SCREEN.search ? null : parentDirectory}
                   display={filesViewerDisplay}
@@ -384,7 +367,6 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
                   onNavigateToParent={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
                   canNavigateToParent={screen === SCREEN.directory && currentDirectory?.path?.length > storageLocation.rootPath.length}
                   canDelete={storageLocation.isDeletionEnabled}
-                  isLoading={isLoading}
                   />
               </div>
             )}
@@ -393,7 +375,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
             {screen === SCREEN.search ? renderSearchInfo() : renderStorageInfo()}
           </div>
           <div className="ResourcePickerScreen-footer">
-            <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
+            {screen === SCREEN.directory && (
+              <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
+            )}
+            {screen === SCREEN.search && (
+              <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
+            )}
             <div className="ResourcePickerScreen-footerButtons">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>
               <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>{t('common:select')}</Button>
@@ -405,7 +392,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.filePreview && (
         <FilePreviewScreen
           file={highlightedFile}
-          onCancel={onCancel}
+          onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
           onSelectClick={handleSelectHighlightedFileClick}
           />

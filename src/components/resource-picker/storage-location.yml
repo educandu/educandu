@@ -13,7 +13,7 @@ searchOngoing:
 searchResultInfo:
   en: You are seeing results for the search term <0>{searchTerm}</0>
   de: Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>
-closeSearchResult:
+backToDirectoryView:
   en: Back to directory view
   de: Zurück zur Verzeichnisansicht
 uploadFiles:

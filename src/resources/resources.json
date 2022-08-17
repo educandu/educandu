@@ -1330,7 +1330,7 @@
       "publicStorageWarning": "This directory is publicly accessible",
       "searchOngoing": "Searching …",
       "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
-      "closeSearchResult": "Back to directory view",
+      "backToDirectoryView": "Back to directory view",
       "uploadFiles": "Upload files"
     }
   },
@@ -1343,7 +1343,7 @@
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
       "searchOngoing": "Suche …",
       "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
-      "closeSearchResult": "Zurück zur Verzeichnisansicht",
+      "backToDirectoryView": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen"
     }
   },
