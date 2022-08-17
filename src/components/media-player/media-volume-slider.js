@@ -4,7 +4,12 @@ import React, { useState } from 'react';
 import MuteIcon from '../icons/media-player/mute-icon.js';
 import VolumeIcon from '../icons/media-player/volume-icon.js';
 
-function MediaVolumeSlider({ value, onChange }) {
+export const MEDIA_VOLUME_SLIDER_ORIENTATION = {
+  horizontal: 'horizontal',
+  vertical: 'vertical'
+};
+
+function MediaVolumeSlider({ value, onChange, orientation }) {
   const [isMuted, setIsMuted] = useState(value === 0);
   const [valueBeforeMuted, setValueBeforeMuted] = useState(value);
 
@@ -24,16 +29,17 @@ function MediaVolumeSlider({ value, onChange }) {
   };
 
   return (
-    <div className="MediaVolumeSlider">
+    <div className={`MediaVolumeSlider MediaVolumeSlider--${orientation}`}>
       <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={handleVolumeButtonClick} />
       <Slider
-        className="MediaVolumeSlider-slider"
+        className={`MediaVolumeSlider-slider MediaVolumeSlider-slider--${orientation}`}
         min={0}
         max={100}
         disabled={isMuted}
         onChange={handleSliderChange}
         tipFormatter={isMuted ? null : val => `${val}%`}
         value={isMuted ? 0 : value * 100}
+        vertical={orientation === MEDIA_VOLUME_SLIDER_ORIENTATION.vertical}
         />
     </div>
   );
@@ -41,7 +47,12 @@ function MediaVolumeSlider({ value, onChange }) {
 
 MediaVolumeSlider.propTypes = {
   onChange: PropTypes.func.isRequired,
+  orientation: PropTypes.oneOf(Object.values(MEDIA_VOLUME_SLIDER_ORIENTATION)),
   value: PropTypes.number.isRequired
+};
+
+MediaVolumeSlider.defaultProps = {
+  orientation: MEDIA_VOLUME_SLIDER_ORIENTATION.horizontal
 };
 
 export default MediaVolumeSlider;

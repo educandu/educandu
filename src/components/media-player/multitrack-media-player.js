@@ -6,6 +6,7 @@ import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
+import MediaPlayerTrackMixer from './media-player-track-mixer.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { multitrackMediaSourcesShape } from '../../ui/default-prop-types.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
@@ -67,6 +68,7 @@ function MultitrackMediaPlayer({
   aspectRatio,
   screenMode,
   screenOverlay,
+  showTrackMixer,
   canDownload,
   downloadFileName,
   posterImageUrl,
@@ -201,6 +203,25 @@ function MultitrackMediaPlayer({
     }
   };
 
+  const handleMainTrackVolumeChange = newValue => {
+    setLoadedSources(oldValue => ({
+      ...oldValue,
+      mainTrack: {
+        ...oldValue.mainTrack,
+        volume: newValue
+      }
+    }));
+  };
+
+  const handleSecondaryTrackVolumeChange = (newValue, secondaryTrackIndex) => {
+    setLoadedSources(oldValue => ({
+      ...oldValue,
+      secondaryTracks: oldValue.secondaryTracks.map((track, index) => {
+        return index === secondaryTrackIndex ? { ...track, volume: newValue } : track;
+      })
+    }));
+  };
+
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
@@ -272,6 +293,16 @@ function MultitrackMediaPlayer({
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />
+      {loadedSources && showTrackMixer && (
+        <div className="MultitrackMediaPlayer-trackMixer">
+          <MediaPlayerTrackMixer
+            mainTrack={loadedSources.mainTrack}
+            secondaryTracks={loadedSources.secondaryTracks}
+            onMainTrackVolumeChange={handleMainTrackVolumeChange}
+            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
+            />
+        </div>
+      )}
     </div>
   );
 }
@@ -296,6 +327,7 @@ MultitrackMediaPlayer.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
+  showTrackMixer: PropTypes.bool,
   sources: PropTypes.oneOfType([multitrackMediaSourcesShape, PropTypes.func])
 };
 
@@ -317,6 +349,7 @@ MultitrackMediaPlayer.defaultProps = {
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
+  showTrackMixer: false,
   sources: null
 };
 

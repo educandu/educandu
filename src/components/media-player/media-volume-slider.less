@@ -1,8 +1,23 @@
 .MediaVolumeSlider {
   display: flex;
   align-items: center;
+
+  &.MediaVolumeSlider--horizontal {
+    flex-direction: row;
+  }
+
+  &.MediaVolumeSlider--vertical {
+    flex-direction: column-reverse;
+  }
 }
 
 .MediaVolumeSlider-slider {
-  width: 60px;
+
+  &.MediaVolumeSlider-slider--horizontal {
+    width: 60px;
+  }
+
+  &.MediaVolumeSlider-slider--vertical {
+    height: 60px;
+  }
 }

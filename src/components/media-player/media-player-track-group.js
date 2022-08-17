@@ -98,7 +98,7 @@ function MediaPlayerTrackGroup({
     trackRefs.current.mainTrack.current.stop();
     trackRefs.current.secondaryTracks.forEach(track => track.current.stop());
     setTrackStates(createInitialTrackStates(newSources));
-  }, [setTrackStates]);
+  }, [trackRefs, setTrackStates]);
 
   useEffect(() => {
     if (

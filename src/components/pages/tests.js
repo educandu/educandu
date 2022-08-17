@@ -383,6 +383,7 @@ function Tests({ PageTemplate }) {
                   onPlayingPartIndexChange={(...args) => handleMmpEvent('onPlayingPartIndexChange', ...args)}
                   onReady={(...args) => handleMmpEvent('onReady', ...args)}
                   onSeek={(...args) => handleMmpEvent('onSeek', ...args)}
+                  showTrackMixer
                   />
               </div>
               <div>
@@ -403,7 +404,7 @@ function Tests({ PageTemplate }) {
                   <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
                   <Button onClick={() => mmpPlayerRef.current.togglePlay()}>togglePlay</Button>
                   <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
-                  <Button onClick={() => console.log('HÄ') || mmpPlayerRef.current.reset()}>reset</Button>
+                  <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
                 </div>
                 <h6 style={{ marginTop: '15px' }}>Event Log</h6>
                 <div ref={mmpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>

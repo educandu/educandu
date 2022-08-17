@@ -628,6 +628,20 @@
     }
   },
   {
+    "namespace": "mediaPlayerTrackMixer",
+    "language": "en",
+    "resources": {
+      "trackNumberLabel": "Track {trackNumber}"
+    }
+  },
+  {
+    "namespace": "mediaPlayerTrackMixer",
+    "language": "de",
+    "resources": {
+      "trackNumberLabel": "Spur {trackNumber}"
+    }
+  },
+  {
     "namespace": "mediaRangeSelector",
     "language": "en",
     "resources": {
