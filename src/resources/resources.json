@@ -420,36 +420,6 @@
     }
   },
   {
-    "namespace": "filesUploadOverview",
-    "language": "en",
-    "resources": {
-      "headline": "Files upload",
-      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "insufficientPrivateStorge": "Not enough storage space available for file",
-      "startUpload": "Start upload",
-      "preprocessed": "edited",
-      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
-      "stage_uploading": "Uploading ...",
-      "stage_uploadFinished": "Upload finished",
-      "optimizeImages": "Optimize images for web display"
-    }
-  },
-  {
-    "namespace": "filesUploadOverview",
-    "language": "de",
-    "resources": {
-      "headline": "Datei-Upload",
-      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
-      "startUpload": "Upload starten",
-      "preprocessed": "bearbeitet",
-      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
-      "stage_uploading": "Hochladen ...",
-      "stage_uploadFinished": "Upload beendet",
-      "optimizeImages": "Bilder für Web optimieren"
-    }
-  },
-  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {
@@ -1276,6 +1246,66 @@
     }
   },
   {
+    "namespace": "fileEditorScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File editor",
+      "applyChanges": "Apply changes"
+    }
+  },
+  {
+    "namespace": "fileEditorScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Editor",
+      "applyChanges": "Änderungen übernehmen"
+    }
+  },
+  {
+    "namespace": "filePreviewScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File preview"
+    }
+  },
+  {
+    "namespace": "filePreviewScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Vorschau"
+    }
+  },
+  {
+    "namespace": "filesUploadPreparationScreen",
+    "language": "en",
+    "resources": {
+      "headline": "Files upload",
+      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
+      "insufficientPrivateStorge": "Not enough storage space available for file",
+      "startUpload": "Start upload",
+      "preprocessed": "edited",
+      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
+      "stage_uploading": "Uploading ...",
+      "stage_uploadFinished": "Upload finished",
+      "optimizeImages": "Optimize images for web display"
+    }
+  },
+  {
+    "namespace": "filesUploadPreparationScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Upload",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
+      "startUpload": "Upload starten",
+      "preprocessed": "bearbeitet",
+      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
+      "stage_uploading": "Hochladen ...",
+      "stage_uploadFinished": "Upload beendet",
+      "optimizeImages": "Bilder für Web optimieren"
+    }
+  },
+  {
     "namespace": "resourceSelector",
     "language": "en",
     "resources": {
@@ -2058,7 +2088,6 @@
       "preview": "Preview",
       "edit": "Edit",
       "apply": "Apply",
-      "applyChanges": "Apply changes",
       "discard": "Discard",
       "duplicate": "Duplicate",
       "copyToClipboard": "Copy to clipboard",
@@ -2201,7 +2230,6 @@
       "preview": "Vorschau",
       "edit": "Bearbeiten",
       "apply": "Übernehmen",
-      "applyChanges": "Änderungen übernehmen",
       "discard": "Verwerfen",
       "duplicate": "Duplizieren",
       "copyToClipboard": "In die Zwischenablage kopieren",

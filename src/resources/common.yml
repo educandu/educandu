@@ -31,9 +31,6 @@ edit:
 apply:
   en: Apply
   de: Übernehmen
-applyChanges:
-  en: Apply changes
-  de: Änderungen übernehmen
 discard:
   en: Discard
   de: Verwerfen

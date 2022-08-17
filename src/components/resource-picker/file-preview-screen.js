@@ -7,10 +7,11 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { fileShape } from '../../ui/default-prop-types.js';
 
 function FilePreviewScreen({ file, onBack, onCancel, onSelect }) {
-  const { t } = useTranslation('');
+  const { t } = useTranslation('filePreviewScreen');
 
   return (
     <div className="ResourcePickerScreen">
+      <h3>{t('headline')}</h3>
       <div className="ResourcePickerScreen-content">
         <FilePreview
           url={file.url}

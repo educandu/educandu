@@ -16,10 +16,10 @@ import ResourcePicker from '../resource-picker/resource-picker.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
+import FilesUploadScreen from '../resource-picker/files-upload-screen.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import FilesUploadPreparationScreen from '../resource-picker/files-upload-preparation-screen.js';
 import { createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
@@ -375,8 +375,8 @@ function Tests({ PageTemplate }) {
               </div>
             </div>
           </TabPane>
-          <TabPane tab="FilesUploadPreparationScreen" key="FilesUploadPreparationScreen">
-            <FilesUploadPreparationScreen
+          <TabPane tab="FilesUploadScreen" key="FilesUploadScreen">
+            <FilesUploadScreen
               uploadQueue={[
                 { file: { name: 'file-1.png' }, isPristine: true },
                 { file: { name: 'file-2.png' }, isPristine: false }

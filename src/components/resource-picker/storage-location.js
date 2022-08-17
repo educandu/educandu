@@ -8,10 +8,10 @@ import { Trans, useTranslation } from 'react-i18next';
 import FileEditorScreen from './file-editor-screen.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import FilePreviewScreen from './file-preview-screen.js';
+import FilesUploadScreen from './files-upload-screen.js';
 import { Alert, Input, message, Modal, Select } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DialogFooterButtons from '../dialog-footer-buttons.js';
-import FilesUploadOverview from '../files-upload-overview.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';
@@ -36,8 +36,7 @@ const SCREEN = {
   search: 'search',
   fileEditor: 'file-editor',
   filePreview: 'file-preview',
-  beforeUpload: 'before-upload',
-  afterUpload: 'after-upload'
+  filesUpload: 'files-upload'
 };
 
 function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
@@ -131,9 +130,10 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
     onSelect(selectedFile.portableUrl);
   };
 
-  const handleUploadSelectClick = () => {
-    onSelect(lastUploadedFile.portableUrl);
-  };
+  // Case of selecting single upload
+  // const handleUploadSelectClick = () => {
+  //   onSelect(lastUploadedFile.portableUrl);
+  // };
 
   const handleDeleteClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
@@ -283,7 +283,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
         return;
       }
 
-      pushScreen(SCREEN.beforeUpload);
+      pushScreen(SCREEN.filesUpload);
     };
 
     startUpload();
@@ -435,27 +435,18 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
           />
       )}
 
-      {screen === SCREEN.beforeUpload && (
-      <div className="StorageLocation-screen">
-        {renderScreenBackButton({ onClick: handleUploadOverviewScreenBackClick, disabled: isUploading })}
-        <FilesUploadOverview
+      {screen === SCREEN.filesUpload && (
+        <FilesUploadScreen
           uploadQueue={uploadQueue}
           directory={currentDirectory}
           storageLocation={storageLocation}
           onFileEdit={handleFileEdit}
+          onBack={handleUploadOverviewScreenBackClick}
+          onCancel={onCancel}
           onUploadStart={handleUploadStart}
           onUploadFinish={handleUploadFinish}
           showPreviewAfterUpload={uploadQueue.length === 1}
           />
-        <DialogFooterButtons
-          allowOk={uploadQueue.length === 1}
-          onCancel={onCancel}
-          onOk={handleUploadSelectClick}
-          okButtonText={t('common:select')}
-          okDisabled={!lastUploadedFile || isUploading}
-          cancelDisabled={isUploading}
-          />
-      </div>
       )}
 
       {screen === SCREEN.fileEditor && (

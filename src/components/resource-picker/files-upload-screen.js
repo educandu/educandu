@@ -1,20 +1,20 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import UsedStorage from './used-storage.js';
-import FilePreview from './file-preview.js';
+import UsedStorage from '../used-storage.js';
+import FilePreview from '../file-preview.js';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../utils/clone-deep.js';
-import { useLocale } from './locale-context.js';
+import cloneDeep from '../../utils/clone-deep.js';
+import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
 import React, { useCallback, useState } from 'react';
-import { replaceItemAt } from '../utils/array-utils.js';
-import { useSetStorageLocation } from './storage-context.js';
-import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import StorageApiClient from '../api-clients/storage-api-client.js';
-import { cdnObjectShape, storageLocationShape } from '../ui/default-prop-types.js';
-import { isEditableImageFile, processFilesBeforeUpload } from '../utils/storage-utils.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { CheckOutlined, CloseOutlined, EditOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
+import { replaceItemAt } from '../../utils/array-utils.js';
+import { useSetStorageLocation } from '../storage-context.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import StorageApiClient from '../../api-clients/storage-api-client.js';
+import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
+import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, EditOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const ITEM_STATUS = {
   pristine: 'pristine',
@@ -30,10 +30,20 @@ const STAGE = {
   uploadFinished: 'uploadFinished'
 };
 
-function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPreviewAfterUpload, onFileEdit, onUploadStart, onUploadFinish }) {
+function FilesUploadScreen({
+  uploadQueue,
+  directory,
+  storageLocation,
+  showPreviewAfterUpload,
+  onBack,
+  onCancel,
+  onFileEdit,
+  onUploadStart,
+  onUploadFinish
+}) {
   const { uiLocale } = useLocale();
+  const { t } = useTranslation('filesUploadScreen');
   const setStorageLocation = useSetStorageLocation();
-  const { t } = useTranslation('filesUploadOverview');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [optimizeImages, setOptimizeImages] = useState(true);
@@ -140,100 +150,112 @@ function FilesUploadOverview({ uploadQueue, directory, storageLocation, showPrev
   const renderUploadItem = (item, itemIndex) => {
     const itemIsEditable = isEditableImageFile(item.file);
     return (
-      <div className="FilesUploadOverview-fileStatus">
-        <div className="FilesUploadOverview-fileStatusRow">
+      <div className="FilesUploadScreen-fileStatus">
+        <div className="FilesUploadScreen-fileStatusRow">
           {item.status === ITEM_STATUS.pristine && itemIsEditable && (
-            <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
-                <EditOutlined className="FilesUploadOverview-fileStatusIcon" />
-              </a>
-            </Tooltip>
+          <Tooltip title={t('common:edit')}>
+            <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
+              <EditOutlined className="FilesUploadScreen-fileStatusIcon" />
+            </a>
+          </Tooltip>
           )}
           {item.status === ITEM_STATUS.pristine && !itemIsEditable && (
-            <FileOutlined className="FilesUploadOverview-fileStatusIcon" />
+          <FileOutlined className="FilesUploadScreen-fileStatusIcon" />
           )}
           {item.status === ITEM_STATUS.preprocessed && itemIsEditable && (
-            <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)}>
-                <EditOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--processed" />
-              </a>
-            </Tooltip>
+          <Tooltip title={t('common:edit')}>
+            <a onClick={() => handleItemEditClick(itemIndex)}>
+              <EditOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
+            </a>
+          </Tooltip>
           )}
           {item.status === ITEM_STATUS.preprocessed && !itemIsEditable && (
-            <FileOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--processed" />
+          <FileOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
           )}
           {item.status === ITEM_STATUS.uploading && (
-            <LoadingOutlined className="FilesUploadOverview-fileStatusIcon" />
+          <LoadingOutlined className="FilesUploadScreen-fileStatusIcon" />
           )}
           {item.status === ITEM_STATUS.succeeded && (
-            <CheckOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--success" />
+          <CheckOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--success" />
           )}
           {item.status === ITEM_STATUS.failed && (
-            <CloseOutlined className="FilesUploadOverview-fileStatusIcon FilesUploadOverview-fileStatusIcon--error" />
+          <CloseOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--error" />
           )}
           {item.file.name}
           {item.status === ITEM_STATUS.preprocessed && (
-            <span className="FilesUploadOverview-fileStatusMessage">({t('preprocessed')})</span>
+          <span className="FilesUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
           )}
         </div>
-        {item.errorMessage && <div className="FilesUploadOverview-fileStatusError">{item.errorMessage}</div>}
+        {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {item.status === ITEM_STATUS.succeeded && showPreviewAfterUpload && (
-          <div className="FilesUploadOverview-fileStatusPreview">
-            <FilePreview
-              url={item.uploadedFile.url}
-              size={item.uploadedFile.size}
-              createdOn={item.uploadedFile.createdOn}
-              compact
-              />
-          </div>
+        <div className="FilesUploadScreen-fileStatusPreview">
+          <FilePreview
+            url={item.uploadedFile.url}
+            size={item.uploadedFile.size}
+            createdOn={item.uploadedFile.createdOn}
+            compact
+            />
+        </div>
         )}
       </div>
     );
   };
 
   return (
-    <div className="FilesUploadOverview">
-      <h3 className="FilesUploadOverview-headline">{t('headline')}</h3>
-      {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
-        <div className="FilesUploadOverview-usedStorage" >
-          <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
-        </div>
-      )}
-      <div className="FilesUploadOverview-message" >
-        {renderUploadMessage()}
-      </div>
-      <div className="FilesUploadOverview-fileStatusContainer">
-        {uploadItems.map((item, index) => (
-          <div key={index.toString()}>
-            {renderUploadItem(item, index)}
+    <div className="ResourcePickerScreen">
+      <h3>{t('headline')}</h3>
+      <div className="ResourcePickerScreen-content">
+        <div className="FilesUploadScreen">
+          {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
+            <div className="FilesUploadScreen-usedStorage" >
+              <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+            </div>
+          )}
+          <div className="FilesUploadScreen-message" >
+            {renderUploadMessage()}
           </div>
-        ))}
+          <div className="FilesUploadScreen-fileStatusContainer">
+            {uploadItems.map((item, index) => (
+              <div key={index.toString()}>
+                {renderUploadItem(item, index)}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <Button
-        type="primary"
-        onClick={handleStartUploadClick}
-        loading={currentStage === STAGE.uploading}
-        disabled={currentStage === STAGE.uploadFinished}
-        >
-        {t('startUpload')}
-      </Button>
       <Checkbox
         checked={optimizeImages}
         onChange={handleImageOptimizationChange}
         disabled={currentStage !== STAGE.uploadNotStarted}
-        className="FilesUploadOverview-imageOptimizationCheckbox"
+        className="FilesUploadScreen-imageOptimizationCheckbox"
         >
         {t('optimizeImages')}
       </Checkbox>
+      <div className="ResourcePickerScreen-footer">
+        <Button onClick={onBack} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
+        <div className="ResourcePickerScreen-footerButtons">
+          <Button onClick={onCancel}>{t('common:cancel')}</Button>
+          <Button
+            type="primary"
+            onClick={handleStartUploadClick}
+            loading={currentStage === STAGE.uploading}
+            disabled={currentStage === STAGE.uploadFinished}
+            >
+            {t('startUpload')}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
 
-FilesUploadOverview.propTypes = {
+FilesUploadScreen.propTypes = {
   directory: cdnObjectShape.isRequired,
-  onFileEdit: PropTypes.func,
+  onBack: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onFileEdit: PropTypes.func.isRequired,
   onUploadFinish: PropTypes.func,
-  onUploadStart: PropTypes.func,
+  onUploadStart: PropTypes.func.isRequired,
   showPreviewAfterUpload: PropTypes.bool,
   storageLocation: storageLocationShape.isRequired,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
@@ -242,11 +264,9 @@ FilesUploadOverview.propTypes = {
   })).isRequired
 };
 
-FilesUploadOverview.defaultProps = {
-  onFileEdit: () => {},
+FilesUploadScreen.defaultProps = {
   onUploadFinish: () => {},
-  onUploadStart: () => {},
   showPreviewAfterUpload: false
 };
 
-export default FilesUploadOverview;
+export default FilesUploadScreen;
