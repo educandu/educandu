@@ -7,7 +7,6 @@ import MediaPlayer from '../media-player.js';
 import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import { useStorage } from '../storage-context.js';
 import { useService } from '../container-context.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,12 +15,11 @@ import ResourcePicker from '../resource-picker/resource-picker.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
-import FilesUploadScreen from '../resource-picker/files-upload-screen.js';
 import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
-import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -33,8 +31,6 @@ const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKV
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
-  const { locations } = useStorage();
-
   // Page
   const req = useRequest();
   const initialTab = req.query.tab || null;
@@ -374,16 +370,6 @@ function Tests({ PageTemplate }) {
                 <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
               </div>
             </div>
-          </TabPane>
-          <TabPane tab="FilesUploadScreen" key="FilesUploadScreen">
-            <FilesUploadScreen
-              uploadQueue={[
-                { file: { name: 'file-1.png' }, isPristine: true },
-                { file: { name: 'file-2.png' }, isPristine: false }
-              ]}
-              storageLocation={locations.find(l => l.type === STORAGE_LOCATION_TYPE.public)}
-              directory={{ type: CDN_OBJECT_TYPE.directory, path: 'media', displayName: 'media', url: 'cdn://media', portableUrl: 'cdn://media' }}
-              />
           </TabPane>
         </Tabs>
       </div>
