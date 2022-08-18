@@ -205,9 +205,9 @@ function FilesUploadScreen({
   };
 
   return (
-    <div className="ResourcePickerScreen">
+    <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
-      <div className="ResourcePickerScreen-content">
+      <div className="u-resource-picker-screen-content">
         <div className="FilesUploadScreen">
           {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
             <div className="FilesUploadScreen-usedStorage" >
@@ -236,9 +236,9 @@ function FilesUploadScreen({
           {t('optimizeImages')}
         </Checkbox>
       )}
-      <div className="ResourcePickerScreen-footer">
+      <div className="u-resource-picker-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
-        <div className="ResourcePickerScreen-footerButtons">
+        <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
           {!singleFileUploadFinished && (
             <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading} disabled={multipleFileUploadFinished}>{t('startUpload')}</Button>

@@ -10,14 +10,14 @@ function FilePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) 
   const { t } = useTranslation('filePreviewScreen');
 
   return (
-    <div className="ResourcePickerScreen">
+    <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
-      <div className="ResourcePickerScreen-content ResourcePickerScreen-content--centered ResourcePickerScreen-content--scrollable">
+      <div className="u-resource-picker-screen-content u-resource-picker-screen-content-centered u-resource-picker-screen-content-scrollable">
         <FilePreview url={file.url} size={file.size} createdOn={file.createdOn} />
       </div>
-      <div className="ResourcePickerScreen-footer">
+      <div className="u-resource-picker-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="ResourcePickerScreen-footerButtons">
+        <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={onSelectClick}>{t('common:select')}</Button>
         </div>

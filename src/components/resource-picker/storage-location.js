@@ -182,14 +182,14 @@ function StorageLocation({
       <div className="StorageLocation-locationInfo">
         {isInSearchMode ? renderSearchInfo() : renderStorageInfo()}
       </div>
-      <div className="ResourcePickerScreen-footer">
+      <div className="u-resource-picker-screen-footer">
         {!isInSearchMode && (
           <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
         )}
         {isInSearchMode && (
           <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
         )}
-        <div className="ResourcePickerScreen-footerButtons">
+        <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>{t('common:select')}</Button>
         </div>

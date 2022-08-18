@@ -31,9 +31,9 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   };
 
   return (
-    <div className="ResourcePickerScreen">
+    <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
-      <div className="ResourcePickerScreen-content">
+      <div className="u-resource-picker-screen-content">
         <div className="FileEditorScreen">
           <ImageEditor
             file={file}
@@ -42,9 +42,9 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
             />
         </div>
       </div>
-      <div className="ResourcePickerScreen-footer">
+      <div className="u-resource-picker-screen-footer">
         <Button onClick={handleBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="ResourcePickerScreen-footerButtons">
+        <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('applyChanges')}</Button>
         </div>
