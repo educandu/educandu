@@ -8,7 +8,6 @@ import ItemPanel from '../../components/item-panel.js';
 import AbcNotation from '../../components/abc-notation.js';
 import { Form, Input, Button, Radio, Divider } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
-import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -16,6 +15,7 @@ import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 

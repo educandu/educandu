@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { CDN_URL_PREFIX } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import ResourcePicker from '../../components/resource-picker.js';
 import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;

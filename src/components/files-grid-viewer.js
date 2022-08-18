@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import DeleteIcon from './icons/general/delete-icon.js';
+import { isTouchDevice } from '../ui/browser-helper.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
@@ -18,22 +19,32 @@ function FilesGridViewer({
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
-  onDeleteClick,
   onFileClick,
   onFileDoubleClick,
-  onPreviewClick,
-  onNavigateToParentClick
+  onDeleteFileClick,
+  onPreviewFileClick,
+  onNavigateToParent
 }) {
   const { t } = useTranslation('filesGridViewer');
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
-    onPreviewClick(file);
+    onPreviewFileClick(file);
   };
 
   const handleDeleteClick = (event, file) => {
     event.stopPropagation();
-    confirmCdnFileDelete(t, file.displayName, () => onDeleteClick(file));
+    confirmCdnFileDelete(t, file.displayName, () => onDeleteFileClick(file));
+  };
+
+  const handleParentLinkClick = () => {
+    if (isTouchDevice()) {
+      onNavigateToParent();
+    }
+  };
+
+  const handleParentLinkDoubleClick = () => {
+    onNavigateToParent();
   };
 
   const renderFile = file => {
@@ -86,7 +97,7 @@ function FilesGridViewer({
       {canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
           <div className="FilesGridViewer-fileContainer">
-            <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={onNavigateToParentClick}>
+            <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={handleParentLinkClick} onDoubleClick={handleParentLinkDoubleClick} >
               <div className="FilesGridViewer-fileDisplay">
                 <FolderFilledNavigateIcon />
               </div>
@@ -104,11 +115,11 @@ FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  onDeleteClick: PropTypes.func,
+  onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onNavigateToParentClick: PropTypes.func,
-  onPreviewClick: PropTypes.func,
+  onNavigateToParent: PropTypes.func,
+  onPreviewFileClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
@@ -116,11 +127,11 @@ FilesGridViewer.propTypes = {
 FilesGridViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  onDeleteClick: () => {},
+  onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onNavigateToParentClick: () => {},
-  onPreviewClick: () => {},
+  onNavigateToParent: () => {},
+  onPreviewFileClick: () => {},
   parentDirectory: null,
   selectedFileUrl: null
 };

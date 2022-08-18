@@ -84,6 +84,10 @@ export function getStorageLocationTypeForPath(path) {
 }
 
 export function canUploadToPath(path) {
+  if (!path) {
+    return false;
+  }
+
   const publicPathMatch = path.match(publicCdnPathPattern);
   const privatePathMatch = path.match(privateCdnPathPattern);
 

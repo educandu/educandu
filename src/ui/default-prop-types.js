@@ -422,3 +422,9 @@ export const userActivitiesShape = PropTypes.shape({
   }).isRequired,
   isDeprecated: PropTypes.bool.isRequired
 });
+
+export const fileShape = PropTypes.shape({
+  url: PropTypes.string,
+  size: PropTypes.number,
+  createdOn: PropTypes.string
+});

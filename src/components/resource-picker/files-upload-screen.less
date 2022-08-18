@@ -1,0 +1,67 @@
+.FilesUploadScreen {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto auto 1fr;
+}
+
+.FilesUploadScreen-headline {
+  margin-bottom: 30px;
+}
+
+.FilesUploadScreen-usedStorage {
+  margin-bottom: 20px;
+}
+
+.FilesUploadScreen-fileStatus {
+  margin: 10px;
+}
+
+.FilesUploadScreen-fileStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.FilesUploadScreen-fileStatusError {
+  padding-left: 25px;
+  font-size: 12px;
+  color: @edu-error-color;
+}
+
+.FilesUploadScreen-fileStatusPreview {
+  margin-top: 25px;
+}
+
+.FilesUploadScreen-message {
+  margin-bottom: 15px;
+}
+
+.FilesUploadScreen-fileStatusContainer {
+  overflow: auto;
+}
+
+.FilesUploadScreen-fileStatusIcon {
+  &.FilesUploadScreen-fileStatusIcon--processed {
+    color: @edu-secondary-color-dark;
+  }
+
+  &.FilesUploadScreen-fileStatusIcon--success {
+    color: @edu-success-color;
+  }
+
+  &.FilesUploadScreen-fileStatusIcon--error {
+    color: @edu-error-color;
+  }
+}
+
+.FilesUploadScreen-fileStatusMessage {
+  font-style: italic;
+  color: @edu-secondary-color-dark;
+}
+
+.FilesUploadScreen-imageOptimizationCheckbox {
+  font-size: 13px;
+  margin-left: auto;
+  margin-right: 0;
+}

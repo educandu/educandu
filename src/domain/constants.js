@@ -145,6 +145,11 @@ export const HORIZONTAL_ALIGNMENT = {
   right: 'right'
 };
 
+export const FILES_VIEWER_DISPLAY = {
+  grid: 'grid',
+  list: 'list'
+};
+
 export const CDN_URL_PREFIX = 'cdn://';
 
 export const AVATAR_SIZE = 110;

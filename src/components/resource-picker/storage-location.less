@@ -1,0 +1,37 @@
+.StorageLocation {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: 100%;
+}
+
+.StorageLocation-filesViewer {
+  margin: 20px 0;
+  border: 1px solid @edu-border-color-base;
+  overflow: auto;
+
+  & .ant-table-placeholder .ant-table-cell {
+    border: none;
+  }
+}
+
+.StorageLocation-buttonsLine {
+  display: flex;
+  gap: @edu-controls-group-gap;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.StorageLocation-selectContainer {
+  min-width: 100px;
+}
+
+.StorageLocation-select {
+  width: 100%;
+}
+
+.StorageLocation-locationInfo {
+  min-height: 40px;
+  margin-bottom: 20px;
+}
