@@ -53,6 +53,9 @@ function FilesUploadScreen({
     errorMessage: null
   })));
 
+  const multipleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length > 1;
+  const singleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded;
+
   const ensureCanUpload = useCallback((file, locationToUpload) => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
       throw new Error(t('uploadLimitExceeded', {
@@ -187,7 +190,7 @@ function FilesUploadScreen({
           )}
         </div>
         {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
-        {item.status === ITEM_STATUS.succeeded && (
+        {singleFileUploadFinished && (
         <div className="FilesUploadScreen-fileStatusPreview">
           <FilePreview
             url={item.uploadedFile.url}
@@ -200,9 +203,6 @@ function FilesUploadScreen({
       </div>
     );
   };
-
-  const multipleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length > 1;
-  const singleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded;
 
   return (
     <div className="ResourcePickerScreen">
