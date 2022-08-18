@@ -113,6 +113,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
     }
     if (newFile.type === CDN_OBJECT_TYPE.directory && isTouchDevice()) {
+      setIsLoading(true);
       setCurrentDirectoryPath(newFile.path);
     }
   };
@@ -122,6 +123,7 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
       onSelect(newFile.portableUrl);
     }
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
+      setIsLoading(true);
       setCurrentDirectoryPath(newFile.path);
     }
   };
