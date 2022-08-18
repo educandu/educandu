@@ -251,7 +251,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
           highlightedFile={highlightedFile}
           storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
-          onSelectFileClick={handleSelectHighlightedFileClick}
+          onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
           onFileClick={handleFileClick}
           onCancelClick={onCancel}
           onDeleteFileClick={handleDeleteFileClick}

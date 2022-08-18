@@ -12,7 +12,7 @@ function FilePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) 
   return (
     <div className="ResourcePickerScreen">
       <h3>{t('headline')}</h3>
-      <div className="ResourcePickerScreen-content ResourcePickerScreen-content--centered">
+      <div className="ResourcePickerScreen-content ResourcePickerScreen-content--centered ResourcePickerScreen-content--scrollable">
         <FilePreview url={file.url} size={file.size} createdOn={file.createdOn} />
       </div>
       <div className="ResourcePickerScreen-footer">

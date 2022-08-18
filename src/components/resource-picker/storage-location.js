@@ -29,8 +29,9 @@ function StorageLocation({
   highlightedFile,
   storageLocation,
   filesViewerDisplay,
-  onSelectFileClick,
+  onSelectHighlightedFileClick,
   onFileClick,
+  onFileDoubleClick,
   onCancelClick,
   onDeleteFileClick,
   onPreviewFileClick,
@@ -63,7 +64,7 @@ function StorageLocation({
 
   const handleFileDoubleClick = file => {
     if (file.type === CDN_OBJECT_TYPE.file) {
-      onSelectFileClick(file.portableUrl);
+      onFileDoubleClick(file);
     }
     if (file.type === CDN_OBJECT_TYPE.directory) {
       onDirectoryClick(file);
@@ -71,7 +72,7 @@ function StorageLocation({
   };
 
   const handleSelectHighlightedFileClick = () => {
-    onSelectFileClick(highlightedFile.portableUrl);
+    onSelectHighlightedFileClick(highlightedFile.portableUrl);
   };
 
   const handleUploadButtonClick = () => {
@@ -209,12 +210,13 @@ StorageLocation.propTypes = {
   onDeleteFileClick: PropTypes.func.isRequired,
   onDirectoryClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
+  onFileDoubleClick: PropTypes.func.isRequired,
   onFilesDropped: PropTypes.func.isRequired,
   onFilesViewerDisplayChange: PropTypes.func.isRequired,
   onNavigateToParent: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchTermChange: PropTypes.func.isRequired,
-  onSelectFileClick: PropTypes.func.isRequired,
+  onSelectHighlightedFileClick: PropTypes.func.isRequired,
   parentDirectory: cdnObjectShape,
   searchTerm: PropTypes.string,
   storageLocation: storageLocationShape.isRequired
