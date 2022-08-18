@@ -31,7 +31,7 @@ function ResourcePicker({ url, onUrlChange }) {
   const modalRender = modal => <div onClick={event => event.stopPropagation()}>{modal}</div>;
 
   return (
-    <div className="ResourcePicker">
+    <div>
       <Button
         type="primary"
         onClick={handleSelectButtonClick}
