@@ -151,12 +151,12 @@ function StorageLocation({ storageLocation, initialUrl, onSelect, onCancel }) {
 
   const handleScreenBackClick = () => {
     popScreen();
-    setUploadQueue([]);
-    setCurrentEditedFileIndex(-1);
   };
 
   const handleFilesUploadScreenBackClick = async () => {
-    handleScreenBackClick();
+    popScreen();
+    setUploadQueue([]);
+    setCurrentEditedFileIndex(-1);
     await fetchStorageContent();
   };
 
