@@ -5,7 +5,7 @@ import FilesViewer from '../files-viewer.js';
 import reactDropzoneNs from 'react-dropzone';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isTouchDevice } from '../../ui/browser-helper.js';
 import { Alert, Button, Input, Modal, Select } from 'antd';
 import { canUploadToPath } from '../../utils/storage-utils.js';
@@ -45,8 +45,10 @@ function StorageLocation({
 
   const dropzoneRef = useRef();
   const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchTerm);
-  // Figure out
-  const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
+
+  useEffect(() => {
+    setTypedInSearchTerm(searchTerm);
+  }, [searchTerm]);
 
   const isInSearchMode = !!searchTerm;
   const canAcceptFiles = !isInSearchMode && canUploadToPath(currentDirectoryPath) && !isLoading;
@@ -65,7 +67,7 @@ function StorageLocation({
       onSelectFileClick(file.portableUrl);
     }
     if (file.type === CDN_OBJECT_TYPE.directory) {
-      onDirectoryClick(file.path);
+      onDirectoryClick(file);
     }
   };
 
@@ -96,7 +98,6 @@ function StorageLocation({
   };
 
   const handleBackToDirectoryScreenClick = async () => {
-    setLastExecutedSearchTerm('');
     await onSearchTermChange('');
   };
 
@@ -107,7 +108,7 @@ function StorageLocation({
         <Trans
           t={t}
           i18nKey="searchResultInfo"
-          values={{ searchTerm: lastExecutedSearchTerm }}
+          values={{ searchTerm }}
           components={[<i key="0" />]}
           />
       );
@@ -139,7 +140,7 @@ function StorageLocation({
         <div>
           <Search
             placeholder={t('common:search')}
-            value={searchTerm}
+            value={typedInSearchTerm}
             onSearch={handleSearchClick}
             onChange={handleSearchTermChange}
             enterButton={<SearchOutlined />}

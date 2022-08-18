@@ -43,7 +43,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
-  const [lastExecutedSearchTerm, setLastExecutedSearchTerm] = useState('');
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
@@ -61,7 +60,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
       setIsLoading(true);
       const result = await storageApiClient.getCdnObjects({
         parentPath: searchText ? storageLocation.rootPath : currentDirectoryPath,
-        searchTerm: searchText ?? null,
+        searchTerm: searchText || null,
         recursive: !!searchText
       });
 
@@ -71,7 +70,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
 
       if (searchText) {
         setSearchResult(result.objects);
-        setLastExecutedSearchTerm(searchText);
       } else {
         setParentDirectory(result.parentDirectory);
         setCurrentDirectory(result.currentDirectory);
