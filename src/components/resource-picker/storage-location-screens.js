@@ -26,7 +26,7 @@ const SCREEN = {
   filesUpload: 'files-upload'
 };
 
-function StorageLocationScreensManager({ storageLocation, initialUrl, onSelect, onCancel }) {
+function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
@@ -324,17 +324,17 @@ function StorageLocationScreensManager({ storageLocation, initialUrl, onSelect, 
   );
 }
 
-StorageLocationScreensManager.propTypes = {
+StorageLocationScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
   storageLocation: storageLocationShape.isRequired
 };
 
-StorageLocationScreensManager.defaultProps = {
+StorageLocationScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default StorageLocationScreensManager;
+export default StorageLocationScreens;

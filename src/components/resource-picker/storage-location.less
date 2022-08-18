@@ -1,14 +1,14 @@
 .StorageLocation {
-  display: flex;
-  min-height: 70vh;
-  flex-direction: column;
-  justify-content: space-between;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: 100%;
 }
 
 .StorageLocation-filesViewer {
-  height: 50vh;
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
+  overflow: auto;
 
   & .ant-table-placeholder .ant-table-cell {
     border: none;

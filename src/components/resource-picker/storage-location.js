@@ -134,70 +134,68 @@ function StorageLocation({
   });
 
   return (
-    <Fragment>
-      <div className="StorageLocation">
-        <div className="StorageLocation-buttonsLine">
-          <div>
-            <Search
-              placeholder={t('common:search')}
-              value={searchTerm}
-              onSearch={handleSearchClick}
-              onChange={handleSearchTermChange}
-              enterButton={<SearchOutlined />}
+    <div className="StorageLocation">
+      <div className="StorageLocation-buttonsLine">
+        <div>
+          <Search
+            placeholder={t('common:search')}
+            value={searchTerm}
+            onSearch={handleSearchClick}
+            onChange={handleSearchTermChange}
+            enterButton={<SearchOutlined />}
+            />
+        </div>
+        <div className="StorageLocation-selectContainer">
+          <Select
+            value={filesViewerDisplay}
+            onChange={onFilesViewerDisplayChange}
+            className="StorageLocation-select"
+            options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
+            />
+        </div>
+      </div>
+      <ReactDropzone
+        ref={dropzoneRef}
+        onDrop={canAcceptFiles ? fs => onFilesDropped(fs) : null}
+        noKeyboard
+        noClick
+        >
+        {({ getRootProps, getInputProps, isDragActive }) => (
+          <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+            <input {...getInputProps()} hidden />
+            <FilesViewer
+              isLoading={isLoading}
+              files={files}
+              parentDirectory={isInSearchMode ? null : parentDirectory}
+              display={filesViewerDisplay}
+              onFileClick={handleFileClick}
+              onFileDoubleClick={handleFileDoubleClick}
+              selectedFileUrl={highlightedFile?.portableUrl}
+              onDeleteFileClick={onDeleteFileClick}
+              onPreviewFileClick={onPreviewFileClick}
+              onNavigateToParent={onNavigateToParent}
+              canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
+              canDelete={storageLocation.isDeletionEnabled}
               />
           </div>
-          <div className="StorageLocation-selectContainer">
-            <Select
-              value={filesViewerDisplay}
-              onChange={onFilesViewerDisplayChange}
-              className="StorageLocation-select"
-              options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
-              />
-          </div>
-        </div>
-        <ReactDropzone
-          ref={dropzoneRef}
-          onDrop={canAcceptFiles ? fs => onFilesDropped(fs) : null}
-          noKeyboard
-          noClick
-          >
-          {({ getRootProps, getInputProps, isDragActive }) => (
-            <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
-              <input {...getInputProps()} hidden />
-              <FilesViewer
-                isLoading={isLoading}
-                files={files}
-                parentDirectory={isInSearchMode ? null : parentDirectory}
-                display={filesViewerDisplay}
-                onFileClick={handleFileClick}
-                onFileDoubleClick={handleFileDoubleClick}
-                selectedFileUrl={highlightedFile?.portableUrl}
-                onDeleteFileClick={onDeleteFileClick}
-                onPreviewFileClick={onPreviewFileClick}
-                onNavigateToParent={onNavigateToParent}
-                canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
-                canDelete={storageLocation.isDeletionEnabled}
-                />
-            </div>
-          )}
-        </ReactDropzone>
-        <div className="StorageLocation-locationInfo">
-          {isInSearchMode ? renderSearchInfo() : renderStorageInfo()}
-        </div>
+        )}
+      </ReactDropzone>
+      <div className="StorageLocation-locationInfo">
+        {isInSearchMode ? renderSearchInfo() : renderStorageInfo()}
       </div>
       <div className="ResourcePickerScreen-footer">
         {!isInSearchMode && (
-        <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
+          <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
         )}
         {isInSearchMode && (
-        <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
+          <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
         )}
         <div className="ResourcePickerScreen-footerButtons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>{t('common:select')}</Button>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }
 
