@@ -147,7 +147,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
 
   const handleSearchTermChange = async newSearchTerm => {
     setSearchTerm(newSearchTerm);
-    // Figure out how to switch collections of files fetched
     await fetchStorageContent(newSearchTerm);
   };
 
@@ -159,10 +158,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const handleFileEditorScreenApplyClick = newFile => {
     setUploadQueue(queue => queue.map((item, index) => index !== currentEditedFileIndex ? item : { file: newFile, isPristine: false }));
     popScreen();
-  };
-
-  const handleUpload = () => {
-
   };
 
   useEffect(() => {
@@ -198,34 +193,17 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
 
   }, [uploadQueue, storageLocation.type, uploadLiabilityCookieName, t]);
 
-  // To reconsider
   useEffect(() => {
-    if (!highlightedFile) {
+    if (!highlightedFile || screen !== SCREEN.default) {
       return;
     }
 
-    let collectionToUse;
-    switch (screen) {
-      case SCREEN.default:
-        collectionToUse = files;
-        break;
-      case SCREEN.search:
-        collectionToUse = searchResult;
-        break;
-      default:
-        collectionToUse = null;
-        break;
-    }
-
-    if (!collectionToUse) {
-      return;
-    }
-
+    const collectionToUse = searchTerm ? searchResult : files;
     const previouslyHighlightedFileStillExists = collectionToUse.some(file => file.portableUrl === highlightedFile.portableUrl);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
-  }, [screen, highlightedFile, files, searchResult]);
+  }, [screen, searchTerm, highlightedFile, files, searchResult]);
 
   useEffect(() => {
     if (!files.length || !showInitialFileHighlighting) {
@@ -263,7 +241,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   return (
     <Fragment>
       {screen === SCREEN.default && (
-        // Figure out which can be dropped
         <StorageLocation
           files={searchTerm ? searchResult : files}
           isLoading={isLoading}
@@ -277,7 +254,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
           onSelectFileClick={handleSelectHighlightedFileClick}
           onFileClick={handleFileClick}
           onCancelClick={onCancel}
-          onUploadClick={handleUpload}
           onDeleteFileClick={handleDeleteFileClick}
           onPreviewFileClick={handlePreviewFileClick}
           onSearchTermChange={handleSearchTermChange}

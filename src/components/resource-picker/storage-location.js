@@ -32,7 +32,6 @@ function StorageLocation({
   onSelectFileClick,
   onFileClick,
   onCancelClick,
-  onUploadClick,
   onDeleteFileClick,
   onPreviewFileClick,
   onSearchTermChange,
@@ -77,7 +76,6 @@ function StorageLocation({
 
   const handleUploadButtonClick = () => {
     dropzoneRef.current.open();
-    onUploadClick();
   };
 
   const handleSearchTermChange = event => {
@@ -206,18 +204,17 @@ StorageLocation.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
-  isLoading: PropTypes.bool,
-  onCancelClick: PropTypes.func,
-  onDeleteFileClick: PropTypes.func,
-  onDirectoryClick: PropTypes.func,
-  onFileClick: PropTypes.func,
-  onFilesDropped: PropTypes.func,
-  onFilesViewerDisplayChange: PropTypes.func,
-  onNavigateToParent: PropTypes.func,
-  onPreviewFileClick: PropTypes.func,
-  onSearchTermChange: PropTypes.func,
-  onSelectFileClick: PropTypes.func,
-  onUploadClick: PropTypes.func,
+  isLoading: PropTypes.bool.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
+  onDeleteFileClick: PropTypes.func.isRequired,
+  onDirectoryClick: PropTypes.func.isRequired,
+  onFileClick: PropTypes.func.isRequired,
+  onFilesDropped: PropTypes.func.isRequired,
+  onFilesViewerDisplayChange: PropTypes.func.isRequired,
+  onNavigateToParent: PropTypes.func.isRequired,
+  onPreviewFileClick: PropTypes.func.isRequired,
+  onSearchTermChange: PropTypes.func.isRequired,
+  onSelectFileClick: PropTypes.func.isRequired,
   parentDirectory: cdnObjectShape,
   searchTerm: PropTypes.string,
   storageLocation: storageLocationShape.isRequired
@@ -227,18 +224,6 @@ StorageLocation.defaultProps = {
   currentDirectory: null,
   currentDirectoryPath: null,
   highlightedFile: null,
-  isLoading: false,
-  onCancelClick: () => { },
-  onDeleteFileClick: () => { },
-  onDirectoryClick: () => { },
-  onFileClick: () => { },
-  onFilesDropped: () => { },
-  onFilesViewerDisplayChange: () => { },
-  onNavigateToParent: () => { },
-  onPreviewFileClick: () => { },
-  onSearchTermChange: () => { },
-  onSelectFileClick: () => { },
-  onUploadClick: () => { },
   parentDirectory: null,
   searchTerm: null
 };
