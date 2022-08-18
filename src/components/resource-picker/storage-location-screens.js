@@ -246,7 +246,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
           isLoading={isLoading}
           searchTerm={searchTerm}
           currentDirectory={currentDirectory}
-          currentDirectoryPath={currentDirectoryPath}
           parentDirectory={searchTerm ? null : parentDirectory}
           highlightedFile={highlightedFile}
           storageLocation={storageLocation}

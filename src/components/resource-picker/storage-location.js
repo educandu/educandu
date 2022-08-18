@@ -24,7 +24,6 @@ function StorageLocation({
   isLoading,
   searchTerm,
   currentDirectory,
-  currentDirectoryPath,
   parentDirectory,
   highlightedFile,
   storageLocation,
@@ -51,7 +50,7 @@ function StorageLocation({
   }, [searchTerm]);
 
   const isInSearchMode = !!searchTerm;
-  const canAcceptFiles = !isInSearchMode && canUploadToPath(currentDirectoryPath) && !isLoading;
+  const canAcceptFiles = !isInSearchMode && canUploadToPath(currentDirectory?.path) && !isLoading;
 
   const handleFileClick = file => {
     if (file.type === CDN_OBJECT_TYPE.file) {
@@ -201,7 +200,6 @@ function StorageLocation({
 
 StorageLocation.propTypes = {
   currentDirectory: cdnObjectShape,
-  currentDirectoryPath: PropTypes.string,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
@@ -224,7 +222,6 @@ StorageLocation.propTypes = {
 
 StorageLocation.defaultProps = {
   currentDirectory: null,
-  currentDirectoryPath: null,
   highlightedFile: null,
   parentDirectory: null,
   searchTerm: null
