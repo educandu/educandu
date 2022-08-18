@@ -60,10 +60,6 @@ function MultitrackMediaDisplay({ content }) {
           <div className="MultitrackMediaDisplay-errorMessage">{t('missingSourcesMessage')}</div>
         )}
       </div>
-      <hr />
-      <pre style={{ fontSize: '50%' }}>
-        {JSON.stringify(content, null, 2)}
-      </pre>
     </div>
   );
 }
