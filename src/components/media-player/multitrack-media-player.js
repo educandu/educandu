@@ -146,13 +146,18 @@ function MultitrackMediaPlayer({
     setLoadedSources(newSources);
   };
 
-  const handleTogglePlay = async () => {
+  const handlePlayClick = async () => {
     setLastReachedPartEndIndex(-1);
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.play);
-    } else {
-      trackRef.current.togglePlay();
+      return;
     }
+
+    trackRef.current.play();
+  };
+
+  const handlePauseClick = () => {
+    trackRef.current.pause();
   };
 
   const handleEndReached = () => {
@@ -193,7 +198,7 @@ function MultitrackMediaPlayer({
     triggerReadyIfNeeded();
     switch (lazyLoadCompletedAction) {
       case LAZY_LOAD_COMPLETED_ACTION.play:
-        handleTogglePlay();
+        handlePlayClick();
         break;
       case LAZY_LOAD_COMPLETED_ACTION.download:
         handleDownloadClick();
@@ -226,7 +231,6 @@ function MultitrackMediaPlayer({
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
     stop: trackRef.current?.stop,
-    togglePlay: trackRef.current?.togglePlay,
     seekToPosition: position => {
       setLastReachedPartEndIndex(-1);
       const { trackPosition } = trackRef.current?.seekToPosition(position) || { trackPosition: 0 };
@@ -288,8 +292,9 @@ function MultitrackMediaPlayer({
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
         volume={volume}
+        onPlayClick={handlePlayClick}
+        onPauseClick={handlePauseClick}
         onPlaybackRateChange={handlePlaybackRateChange}
-        onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />

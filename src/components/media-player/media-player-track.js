@@ -112,6 +112,7 @@ function MediaPlayerTrack({
       return trackRef.current.seekToPosition(trackDuration ? trackTimecode / trackDuration : 0);
     },
     play() {
+      seekToStartIfNecessary(sourceDuration);
       changePlayState(MEDIA_PLAY_STATE.playing);
     },
     pause() {
@@ -120,32 +121,6 @@ function MediaPlayerTrack({
     stop() {
       changePlayState(MEDIA_PLAY_STATE.stopped);
       trackRef.current.seekToPosition(0);
-    },
-    togglePlay() {
-      let newPlayState;
-      switch (currentPlayState) {
-        case MEDIA_PLAY_STATE.initializing:
-          newPlayState = MEDIA_PLAY_STATE.playing;
-          break;
-        case MEDIA_PLAY_STATE.buffering:
-          newPlayState = MEDIA_PLAY_STATE.buffering;
-          break;
-        case MEDIA_PLAY_STATE.playing:
-          newPlayState = MEDIA_PLAY_STATE.pausing;
-          break;
-        case MEDIA_PLAY_STATE.pausing:
-        case MEDIA_PLAY_STATE.stopped:
-          newPlayState = MEDIA_PLAY_STATE.playing;
-          break;
-        default:
-          throw new Error(`Invalid play state: ${currentPlayState}`);
-      }
-
-      if (newPlayState === MEDIA_PLAY_STATE.playing) {
-        seekToStartIfNecessary(sourceDuration);
-      }
-
-      changePlayState(newPlayState);
     }
   };
 

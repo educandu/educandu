@@ -131,13 +131,18 @@ function MediaPlayer({
     setSourceUrl(newSourceUrl);
   };
 
-  const handleTogglePlay = async () => {
+  const handlePlayClick = async () => {
     setLastReachedPartEndIndex(-1);
     if (!sourceUrl && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.play);
-    } else {
-      trackRef.current.togglePlay();
+      return;
     }
+
+    trackRef.current.play();
+  };
+
+  const handlePauseClick = () => {
+    trackRef.current.pause();
   };
 
   const handleEndReached = () => {
@@ -178,7 +183,7 @@ function MediaPlayer({
     triggerReadyIfNeeded();
     switch (lazyLoadCompletedAction) {
       case LAZY_LOAD_COMPLETED_ACTION.play:
-        handleTogglePlay();
+        handlePlayClick();
         break;
       case LAZY_LOAD_COMPLETED_ACTION.download:
         handleDownloadClick();
@@ -192,7 +197,6 @@ function MediaPlayer({
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
     stop: trackRef.current?.stop,
-    togglePlay: trackRef.current?.togglePlay,
     seekToPosition: position => {
       setLastReachedPartEndIndex(-1);
       const { trackPosition } = trackRef.current?.seekToPosition(position) || { trackPosition: 0 };
@@ -262,8 +266,9 @@ function MediaPlayer({
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
         volume={volume}
+        onPlayClick={handlePlayClick}
+        onPauseClick={handlePauseClick}
         onPlaybackRateChange={handlePlaybackRateChange}
-        onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />

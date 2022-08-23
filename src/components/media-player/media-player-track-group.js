@@ -85,11 +85,6 @@ function MediaPlayerTrackGroup({
       const result = trackRefs.current.mainTrack.current.stop();
       trackRefs.current.secondaryTracks.forEach(track => track.current.stop());
       return result;
-    },
-    togglePlay() {
-      const result = trackRefs.current.mainTrack.current.togglePlay();
-      trackRefs.current.secondaryTracks.forEach(track => track.current.togglePlay());
-      return result;
     }
   };
 

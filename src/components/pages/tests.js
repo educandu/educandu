@@ -31,7 +31,9 @@ const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKV
 
 const MULTITRACK_CORELLI_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
 const MULTITRACK_CORELLI_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3';
+const MULTITRACK_CORELLI_URL_1_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-short-6QL7EZNXZ2AQB1odeY9tiH.mp3';
 const MULTITRACK_CORELLI_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3';
+const MULTITRACK_CORELLI_URL_2_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-short-vTWJD95XQx9G4FNKMHit6H.mp3';
 const MULTITRACK_CORELLI_URL_3 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3';
 
 const MULTITRACK_GROOVE_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-9hqADKZtPHV7F7GVfye3DF.mp3';
@@ -142,6 +144,17 @@ function Tests({ PageTemplate }) {
         secondaryTracks: [
           { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1 },
           { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1 },
+          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
+        ]
+      }
+    },
+    {
+      title: 'Corelli (Violins shortened)',
+      sources: {
+        mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
+        secondaryTracks: [
+          { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
+          { name: 'Vl 2 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
           { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
         ]
       }
@@ -320,7 +333,6 @@ function Tests({ PageTemplate }) {
                 <div>
                   <Button onClick={() => mpPlayerRef.current.play()}>play</Button>
                   <Button onClick={() => mpPlayerRef.current.pause()}>pause</Button>
-                  <Button onClick={() => mpPlayerRef.current.togglePlay()}>togglePlay</Button>
                   <Button onClick={() => mpPlayerRef.current.stop()}>stop</Button>
                   <Button onClick={() => mpPlayerRef.current.reset()}>reset</Button>
                 </div>
@@ -363,7 +375,6 @@ function Tests({ PageTemplate }) {
                 <div>
                   <Button onClick={() => mmpPlayerRef.current.play()}>play</Button>
                   <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
-                  <Button onClick={() => mmpPlayerRef.current.togglePlay()}>togglePlay</Button>
                   <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
                   <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
                 </div>

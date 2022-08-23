@@ -21,7 +21,8 @@ function MediaPlayerControls({
   playedMilliseconds,
   playState,
   volume,
-  onTogglePlay,
+  onPauseClick,
+  onPlayClick,
   onVolumeChange,
   onPlaybackRateChange,
   screenMode,
@@ -32,7 +33,7 @@ function MediaPlayerControls({
 
   const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
 
-  const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
+  const isPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
 
   const handleSettingsMenuItemClick = ({ key }) => {
     if (key === 'download') {
@@ -84,7 +85,8 @@ function MediaPlayerControls({
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <div className="MediaPlayerControls-controlsGroup">
-        <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
+        {isPlaying && <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />}
+        {!isPlaying && <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />}
         <div className="MediaPlayerControls-volumeControls">
           <MediaVolumeSlider value={volume} onChange={onVolumeChange} />
         </div>
@@ -109,8 +111,9 @@ function MediaPlayerControls({
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
   onDownloadClick: PropTypes.func,
+  onPauseClick: PropTypes.func.isRequired,
+  onPlayClick: PropTypes.func.isRequired,
   onPlaybackRateChange: PropTypes.func,
-  onTogglePlay: PropTypes.func.isRequired,
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
