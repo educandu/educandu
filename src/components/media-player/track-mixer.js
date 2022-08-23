@@ -1,20 +1,11 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import MediaVolumeSlider from './media-volume-slider.js';
-import ForwardIcon from '../icons/media-player/forward-icon.js';
-import BackwardIcon from '../icons/media-player/backward-icon.js';
-import FastForwardIcon from '../icons/media-player/fast-forward-icon.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import FastBackwardIcon from '../icons/media-player/fast-backward-icon.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
-const OFFSET_DIRECTION = {
-  left: -1,
-  right: 1
-};
 
 function TrackMixer({
   mainTrack,
@@ -24,188 +15,91 @@ function TrackMixer({
   onMainTrackChange,
   onSecondaryTrackChange
 }) {
-  const mainTrackBarRef = useRef(null);
+  const barsColumnRef = useRef(null);
   const { t } = useTranslation('trackMixer');
 
-  const [secondaryTracksState, setSecondaryTracksState] = useState(secondaryTracks.map(() => ({
-    barWidthInPx: 0,
-    marginLeftInPx: 0,
-    canBeNegativelyOffset: false,
-    canBePositivelyOffset: false
-  })));
+  const [trackInfos, setTrackInfos] = useState([]);
 
-  const updateStates = useCallback(() => {
-    const mainTrackBarWidth = mainTrackBarRef.current?.clientWidth;
-    const maxSecondaryTrackBarWidth = mainTrackBarWidth + (2 * ALLOWED_TRACK_BAR_OVERFLOW_IN_PX);
+  const updateTrackInfos = useCallback(() => {
+    const barsColumnWidth = barsColumnRef.current?.clientWidth || 0;
 
-    if (!mainTrackBarWidth || !mainTrackDurationInMs) {
-      return;
+    let getBarWidthForTrack;
+    if (barsColumnWidth && mainTrackDurationInMs) {
+      const msToPxRatio = barsColumnWidth / mainTrackDurationInMs;
+      const maxBarWidth = barsColumnWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+      getBarWidthForTrack = trackDuration => Math.min(maxBarWidth, trackDuration * msToPxRatio);
+    } else {
+      getBarWidthForTrack = () => 0;
     }
 
-    const maxPositiveOffset = mainTrackDurationInMs;
-    const msToPxRatio = mainTrackBarWidth / mainTrackDurationInMs;
-
-    setSecondaryTracksState(secondaryTracks.map((secondaryTrack, index) => {
-      const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
-      const barWidthInPx = secondaryTracksDurationsInMs[index] * msToPxRatio;
-      const marginLeftInPx = secondaryTrack.offsetTimecode * msToPxRatio;
-
-      const isLeftBoundReached = marginLeftInPx <= -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      const canBeNegativelyOffset = secondaryTrack.offsetTimecode >= 0 || secondaryTrack.offsetTimecode > maxNegativeOffset;
-
-      const isRightBoundReached = (marginLeftInPx + barWidthInPx) >= mainTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      const canBePositivelyOffset = secondaryTrack.offsetTimecode <= 0 || secondaryTrack.offsetTimecode < maxPositiveOffset;
-
-      const newState = {
-        barWidthInPx,
-        marginLeftInPx,
-        canBeNegativelyOffset,
-        canBePositivelyOffset
-      };
-
-      if (isLeftBoundReached) {
-        newState.marginLeftInPx = -ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-        newState.barWidthInPx = barWidthInPx + marginLeftInPx + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      }
-
-      if (isRightBoundReached) {
-        newState.barWidthInPx = mainTrackBarWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX - marginLeftInPx;
-      }
-
-      newState.barWidthInPx = Math.min(newState.barWidthInPx, maxSecondaryTrackBarWidth);
-      return newState;
-    }));
-  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, secondaryTracksDurationsInMs]);
-
-  const handleMainTrackVolumeChange = volume => {
-    onMainTrackChange({ ...mainTrack, volume });
-  };
-
-  const handleSecondaryTrackVolumeChange = (index, volume) => {
-    onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
-  };
-
-  const handleTrackBarArrowClick = ({ index, stepInMs, direction }) => {
-    let newOffsetTimecode = secondaryTracks[index].offsetTimecode + (stepInMs * direction);
-
-    const maxNegativeOffset = -secondaryTracksDurationsInMs[index];
-    const maxPositiveOffset = mainTrackDurationInMs;
-
-    if (direction === OFFSET_DIRECTION.left && newOffsetTimecode <= maxNegativeOffset) {
-      newOffsetTimecode = -secondaryTracksDurationsInMs[index];
-    }
-    if (direction === OFFSET_DIRECTION.right && newOffsetTimecode >= maxPositiveOffset) {
-      newOffsetTimecode = mainTrackDurationInMs;
-    }
-
-    onSecondaryTrackChange(index, { ...secondaryTracks[index], offsetTimecode: newOffsetTimecode });
-  };
+    setTrackInfos([
+      {
+        name: mainTrack.name,
+        volume: mainTrack.volume,
+        secondaryTrackIndex: -1,
+        trackDurationInMs: mainTrackDurationInMs,
+        barWidth: getBarWidthForTrack(mainTrackDurationInMs)
+      },
+      ...secondaryTracks.map((secondaryTrack, index) => ({
+        name: secondaryTrack.name,
+        volume: secondaryTrack.volume,
+        secondaryTrackIndex: index,
+        trackDurationInMs: secondaryTracksDurationsInMs[index],
+        barWidth: getBarWidthForTrack(secondaryTracksDurationsInMs[index])
+      }))
+    ]);
+  }, [barsColumnRef, mainTrack, secondaryTracks, mainTrackDurationInMs, secondaryTracksDurationsInMs]);
 
   useEffect(() => {
-    updateStates();
-  }, [mainTrackBarRef, mainTrackDurationInMs, secondaryTracks, secondaryTracksDurationsInMs, updateStates]);
+    updateTrackInfos();
+  }, [updateTrackInfos]);
 
   useEffect(() => {
-    window.addEventListener('resize', updateStates);
+    window.addEventListener('resize', updateTrackInfos);
     return () => {
-      window.removeEventListener('resize', updateStates);
+      window.removeEventListener('resize', updateTrackInfos);
     };
-  }, [updateStates]);
+  }, [updateTrackInfos]);
 
-  const renderSecondaryTrackNameRow = (secondaryTrack, index) => {
-    return (
-      <div className="TrackMixer-nameRow" key={index}>
-        <div className="TrackMixer-name">{secondaryTrack.name}</div>
-        <MediaVolumeSlider value={secondaryTrack.volume} onChange={value => handleSecondaryTrackVolumeChange(index, value)} />
-      </div>
-    );
-  };
-
-  const renderSecondaryTrackBarRow = (secondaryTrack, index) => {
-    const canShowBar = !!secondaryTracksState[index]?.barWidthInPx;
-    const offsetTimecode = secondaryTrack.offsetTimecode;
-    const offsetAsDuration = formatMillisecondsAsDuration(Math.abs(offsetTimecode), { millisecondsLength: 1 });
-    const offsetText = offsetTimecode >= 0 ? `+ ${offsetAsDuration}` : `- ${offsetAsDuration}`;
-
-    const barRowOffsetClasses = classNames(
-      'TrackMixer-barRowOffset',
-      { 'TrackMixer-barRowOffset--negative': offsetTimecode < 0 }
-    );
-
-    return (
-      <div className="TrackMixer-barRow" key={index}>
-        {canShowBar && (
-          <div className={barRowOffsetClasses}>
-            {offsetText}
-          </div>
-        )}
-        <div
-          className="TrackMixer-bar TrackMixer-bar--secondaryTrack"
-          style={{ left: `${secondaryTracksState[index]?.marginLeftInPx}px`, width: `${secondaryTracksState[index]?.barWidthInPx}px` }}
-          />
-        {!canShowBar && <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>}
-        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--left" />
-        <div className="TrackMixer-barOverflow TrackMixer-barOverflow--right" />
-        <div className="TrackMixer-barArrows TrackMixer-barArrows--left">
-          <Button
-            type="link"
-            size="small"
-            icon={<FastBackwardIcon />}
-            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.left })}
-            disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
-            />
-          <Button
-            type="link"
-            size="small"
-            icon={<BackwardIcon />}
-            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.left })}
-            disabled={!canShowBar || !secondaryTracksState[index]?.canBeNegativelyOffset}
-            />
-        </div>
-        <div className="TrackMixer-barArrows TrackMixer-barArrows--right">
-          <Button
-            type="link"
-            size="small"
-            icon={<ForwardIcon />}
-            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 100, direction: OFFSET_DIRECTION.right })}
-            disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
-            />
-          <Button
-            type="link"
-            size="small"
-            icon={<FastForwardIcon />}
-            onClick={() => handleTrackBarArrowClick({ index, stepInMs: 1000, direction: OFFSET_DIRECTION.right })}
-            disabled={!canShowBar || !secondaryTracksState[index]?.canBePositivelyOffset}
-            />
-        </div>
-      </div>
-    );
+  const handleTrackVolumeChange = (trackInfo, volume) => {
+    const index = trackInfo.secondaryTrackIndex;
+    if (index === -1) {
+      onMainTrackChange({ ...mainTrack, volume });
+    } else {
+      onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
+    }
   };
 
   return (
     <div className="TrackMixer">
       <div className="TrackMixer-namesColumn">
-        <div className="TrackMixer-nameRow">
-          <div className="TrackMixer-name">{mainTrack.name}</div>
-          <MediaVolumeSlider value={mainTrack.volume} onChange={handleMainTrackVolumeChange} />
-        </div>
-        {secondaryTracks.map(renderSecondaryTrackNameRow)}
+        {trackInfos.map(trackInfo => (
+          <div className="TrackMixer-nameRow" key={trackInfo.secondaryTrackIndex}>
+            <div className="TrackMixer-name">{trackInfo.name}</div>
+            <MediaVolumeSlider value={trackInfo.volume} onChange={value => handleTrackVolumeChange(trackInfo, value)} />
+          </div>
+        ))}
       </div>
-
-      <div className="TrackMixer-barsColumn">
-        <div className="TrackMixer-barRow">
-          {!!mainTrackDurationInMs && (
-            <Fragment>
-              <div className="TrackMixer-barRowDuration">
-                <span>{formatMillisecondsAsDuration(0, { millisecondsLength: 1 })}</span>
-                <span>{formatMillisecondsAsDuration(mainTrackDurationInMs, { millisecondsLength: 1 })}</span>
+      <div className="TrackMixer-barsColumn" ref={barsColumnRef}>
+        {trackInfos.map(trackInfo => (
+          <div className="TrackMixer-barRow" key={trackInfo.secondaryTrackIndex}>
+            {!!trackInfo.trackDurationInMs && (
+              <div
+                className={classNames({
+                  'TrackMixer-bar': true,
+                  'TrackMixer-bar--secondaryTrack': trackInfo.secondaryTrackIndex !== -1
+                })}
+                style={{ width: `${trackInfo.barWidth}px` }}
+                >
+                {formatMillisecondsAsDuration(trackInfo.trackDurationInMs, { millisecondsLength: 1 })}
               </div>
-              <div className="TrackMixer-bar" ref={mainTrackBarRef} />
-            </Fragment>
-          )}
-          {!mainTrackDurationInMs && <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>}
-        </div>
-        {secondaryTracks.map(renderSecondaryTrackBarRow)}
+            )}
+            {!trackInfo.trackDurationInMs && (
+              <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>
+            )}
+            <div className="TrackMixer-barOverflow" />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -221,7 +115,6 @@ TrackMixer.propTypes = {
   onSecondaryTrackChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    offsetTimecode: PropTypes.number.isRequired,
     volume: PropTypes.number.isRequired
   })).isRequired,
   secondaryTracksDurationsInMs: PropTypes.arrayOf(PropTypes.number).isRequired

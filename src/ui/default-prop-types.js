@@ -433,7 +433,6 @@ export const multitrackMediaSourcesShape = PropTypes.shape({
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
   }),
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
-    ...multitrackMediaSourcesBasicTrackProps,
-    offsetTimecode: PropTypes.number.isRequired
+    ...multitrackMediaSourcesBasicTrackProps
   }))
 });

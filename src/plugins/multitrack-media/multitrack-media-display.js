@@ -33,8 +33,7 @@ function MultitrackMediaDisplay({ content }) {
         sourceType: track.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
-      volume: track.volume,
-      offsetTimecode: track.offsetTimecode
+      volume: track.volume
     }))
   };
 

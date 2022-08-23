@@ -1,5 +1,5 @@
 @track-mixer-row-height: 35px;
-@track-mixer-bar-height: 15px;
+@track-mixer-bar-height: 18px;
 @tracx-mixer-bar-duration-top: -4px;
 @tracx-mixer-bar-duration-left-right: 2px;
 @track-mixer-column-padding: 10px 0;
@@ -29,7 +29,7 @@
 
 .TrackMixer-barsColumn {
   width: 100%;
-  margin: 0 50px;
+  margin: 0 10px 0 0;
   padding: @track-mixer-column-padding;
   border-left: 1px dashed @edu-border-color-dark;
   border-right: 1px dashed @edu-border-color-dark;
@@ -43,26 +43,18 @@
   height: @track-mixer-row-height;
 }
 
-.TrackMixer-barRowDuration {
-  position: absolute;
-  user-select: none;
-  top: @tracx-mixer-bar-duration-top;
-  left: @tracx-mixer-bar-duration-left-right;
-  right: @tracx-mixer-bar-duration-left-right;
-  display: flex;
-  font-size: 10px;
-  justify-content: space-between;
-}
-
 .TrackMixer-bar {
-  position: relative;
-  min-width: 80px;
+  position: absolute;
+  left: 0;
   height: @track-mixer-bar-height;
   background-color: @edu-secondary-color-dark;
+  color: @edu-white;
+  font-size: (0.6 * @track-mixer-bar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
 
   &.TrackMixer-bar--secondaryTrack {
-    position: absolute;
-    min-width: unset;
     background-color: @edu-primary-color-light;
   }
 }
@@ -73,52 +65,10 @@
   color: @edu-text-color-secondary;
 }
 
-.TrackMixer-barRowOffset {
-  position: absolute;
-  user-select: none;
-  top: @tracx-mixer-bar-duration-top;
-  left: @tracx-mixer-bar-duration-left-right;
-  width: 100%;
-  font-size: 10px;
-  color: @edu-success-color;
-
-  &.TrackMixer-barRowOffset--negative {
-    color: @edu-error-color;
-  }
-}
-
 .TrackMixer-barOverflow {
   position: absolute;
+  right: -@track-mixer-bar-overflow-width;
   width: @track-mixer-bar-overflow-width;
   height: @track-mixer-bar-height;
-
-  &.TrackMixer-barOverflow--left {
-    left: -@track-mixer-bar-overflow-width;
-    background: linear-gradient(to right, @edu-white, transparent);
-  }
-
-  &.TrackMixer-barOverflow--right {
-    right: -@track-mixer-bar-overflow-width;
-    background: linear-gradient(to left, @edu-white, transparent);
-  }
-}
-
-.TrackMixer-barArrows {
-  position: absolute;
-  display: flex;
-  gap: 3px;
-  color: @edu-text-color-secondary;
-
-  & .ant-btn {
-    width: 13px;
-    height: 13px;
-  }
-
-  &.TrackMixer-barArrows--left {
-    left: -45px;
-  }
-
-  &.TrackMixer-barArrows--right {
-    right: -45px;
-  }
+  background: linear-gradient(to left, @edu-white, transparent);
 }
