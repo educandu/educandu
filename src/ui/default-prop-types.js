@@ -420,19 +420,3 @@ export const userActivitiesShape = PropTypes.shape({
   }).isRequired,
   isDeprecated: PropTypes.bool.isRequired
 });
-
-export const multitrackMediaSourcesBasicTrackProps = {
-  name: PropTypes.string,
-  sourceUrl: PropTypes.string.isRequired,
-  volume: PropTypes.number.isRequired
-};
-
-export const multitrackMediaSourcesShape = PropTypes.shape({
-  mainTrack: PropTypes.shape({
-    ...multitrackMediaSourcesBasicTrackProps,
-    playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
-  }),
-  secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
-    ...multitrackMediaSourcesBasicTrackProps
-  }))
-});

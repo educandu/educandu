@@ -30,6 +30,7 @@ const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
 const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
 
 const MULTITRACK_CORELLI_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
+const MULTITRACK_CORELLI_URL_0_EXTENDED = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-extended-wGQi1xK4jA1eDuKEV14t8c.mp3';
 const MULTITRACK_CORELLI_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3';
 const MULTITRACK_CORELLI_URL_1_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-short-6QL7EZNXZ2AQB1odeY9tiH.mp3';
 const MULTITRACK_CORELLI_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3';
@@ -138,23 +139,23 @@ function Tests({ PageTemplate }) {
   // MultitrackMediaPlayer
   const mmpSourceOptions = [
     {
+      title: 'Corelli (manipulated)',
+      sources: {
+        mainTrack: { name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, volume: 1, playbackRange: [0.14, 0.82] },
+        secondaryTracks: [
+          { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
+          { name: 'Vl 2 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
+          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
+        ]
+      }
+    },
+    {
       title: 'Corelli',
       sources: {
         mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
         secondaryTracks: [
           { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1 },
           { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1 },
-          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
-        ]
-      }
-    },
-    {
-      title: 'Corelli (Violins shortened)',
-      sources: {
-        mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
-        secondaryTracks: [
-          { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
-          { name: 'Vl 2 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
           { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
         ]
       }

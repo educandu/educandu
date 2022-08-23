@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import MediaPlayerTrack from './media-player-track.js';
-import { multitrackMediaSourcesShape } from '../../ui/default-prop-types.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
@@ -25,14 +24,35 @@ const createInitialTrackStates = sources => ({
   }))
 });
 
-const updateTrackNamesAndVolumes = (previousTrackStates, newSources) => ({
-  ...previousTrackStates,
+const haveMediaTracksChanged = (currentTrackStates, newSources) => {
+  if (
+    newSources.mainTrack.sourceUrl !== currentTrackStates.mainTrack.sourceUrl
+    || newSources.mainTrack.playbackRange[0] !== currentTrackStates.mainTrack.playbackRange[0]
+    || newSources.mainTrack.playbackRange[1] !== currentTrackStates.mainTrack.playbackRange[1]
+    || newSources.secondaryTracks.length !== currentTrackStates.secondaryTracks.length
+  ) {
+    return true;
+  }
+
+  for (let i = 0; i < currentTrackStates.secondaryTracks.length; i += 1) {
+    const newSourceSecondaryTrack = newSources.secondaryTracks[i];
+    const currentSecondaryTrackState = currentTrackStates.secondaryTracks[i];
+    if (newSourceSecondaryTrack.sourceUrl !== currentSecondaryTrackState.sourceUrl) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const updateTrackNamesAndVolumes = (currentTrackStates, newSources) => ({
+  ...currentTrackStates,
   mainTrack: {
-    ...previousTrackStates.mainTrack,
+    ...currentTrackStates.mainTrack,
     name: newSources.mainTrack.name,
     volume: newSources.mainTrack.volume
   },
-  secondaryTracks: previousTrackStates.secondaryTracks.map((track, index) => ({
+  secondaryTracks: currentTrackStates.secondaryTracks.map((track, index) => ({
     ...track,
     name: newSources.secondaryTracks[index].name,
     volume: newSources.secondaryTracks[index].volume
@@ -60,25 +80,47 @@ function MediaPlayerTrackGroup({
     secondaryTracks: sources.secondaryTracks.map(() => ({ current: null }))
   });
 
+  const syncSecondaryTracks = (targetTimecode, shouldPlayIfPossible) => {
+    for (let i = 0; i < trackStates.secondaryTracks.length; i += 1) {
+      const secondaryTrackState = trackStates.secondaryTracks[i];
+      const secondaryTrackRef = trackRefs.current.secondaryTracks[i];
+      const canPlayAtTargetTimecode = secondaryTrackState.duration > targetTimecode;
+      if (canPlayAtTargetTimecode) {
+        secondaryTrackRef.current.seekToTimecode(targetTimecode);
+        if (shouldPlayIfPossible) {
+          secondaryTrackRef.current.play();
+        } else {
+          secondaryTrackRef.current.pause();
+        }
+      } else {
+        secondaryTrackRef.current.stop();
+      }
+    }
+  };
+
   trackRef.current = {
     seekToPosition(trackPosition) {
+      const isPlaying = trackStates.mainTrack.currentPlayState === MEDIA_PLAY_STATE.playing;
       const result = trackRefs.current.mainTrack.current.seekToPosition(trackPosition);
-      trackRefs.current.secondaryTracks.forEach(track => track.current.seekToPosition(trackPosition));
+      syncSecondaryTracks(result.trackTimecode, isPlaying);
       return result;
     },
     seekToTimecode(trackTimecode) {
+      const isPlaying = trackStates.mainTrack.currentPlayState === MEDIA_PLAY_STATE.playing;
       const result = trackRefs.current.mainTrack.current.seekToTimecode(trackTimecode);
-      trackRefs.current.secondaryTracks.forEach(track => track.current.seekToTimecode(trackTimecode));
+      syncSecondaryTracks(result.trackTimecode, isPlaying);
       return result;
     },
     play() {
+      const currentMainTimecode = trackStates.mainTrack.currentTimecode;
       const result = trackRefs.current.mainTrack.current.play();
-      trackRefs.current.secondaryTracks.forEach(track => track.current.play());
+      syncSecondaryTracks(result.hasRestarted ? 0 : currentMainTimecode, true);
       return result;
     },
     pause() {
+      const currentMainTimecode = trackStates.mainTrack.currentTimecode;
       const result = trackRefs.current.mainTrack.current.pause();
-      trackRefs.current.secondaryTracks.forEach(track => track.current.pause());
+      syncSecondaryTracks(currentMainTimecode, false);
       return result;
     },
     stop() {
@@ -91,16 +133,15 @@ function MediaPlayerTrackGroup({
   const reinitialize = useCallback(newSources => {
     trackRefs.current.mainTrack.current.stop();
     trackRefs.current.secondaryTracks.forEach(track => track.current.stop());
+    trackRefs.current = {
+      mainTrack: { current: null },
+      secondaryTracks: newSources.secondaryTracks.map(() => ({ current: null }))
+    };
     setTrackStates(createInitialTrackStates(newSources));
   }, [trackRefs, setTrackStates]);
 
   useEffect(() => {
-    if (
-      sources.mainTrack.sourceUrl !== trackStates.mainTrack.sourceUrl
-      || sources.mainTrack.playbackRange.join() !== trackStates.mainTrack.playbackRange.join()
-      || sources.secondaryTracks.length !== trackStates.secondaryTracks.length
-      || sources.secondaryTracks.map(track => track.sourceUrl).join() !== trackStates.secondaryTracks.map(track => track.sourceUrl).join()
-    ) {
+    if (haveMediaTracksChanged(trackStates, sources)) {
       reinitialize(sources);
       return;
     }
@@ -236,7 +277,19 @@ MediaPlayerTrackGroup.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
-  sources: multitrackMediaSourcesShape.isRequired,
+  sources: PropTypes.shape({
+    mainTrack: PropTypes.shape({
+      name: PropTypes.string,
+      sourceUrl: PropTypes.string.isRequired,
+      volume: PropTypes.number.isRequired,
+      playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
+    }),
+    secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      sourceUrl: PropTypes.string.isRequired,
+      volume: PropTypes.number.isRequired
+    }))
+  }).isRequired,
   trackRef: PropTypes.shape({
     current: PropTypes.any
   }),

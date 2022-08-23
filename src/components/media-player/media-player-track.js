@@ -60,7 +60,7 @@ function MediaPlayerTrack({
 
   const seekToStartIfNecessary = newSourceDuration => {
     if (!newSourceDuration) {
-      return;
+      return false;
     }
 
     const newTrackStartTimecode = lastPlaybackRange[0] * newSourceDuration;
@@ -68,7 +68,10 @@ function MediaPlayerTrack({
 
     if ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode)) {
       playerRef.current.seekTo(newTrackStartTimecode / newSourceDuration);
+      return true;
     }
+
+    return false;
   };
 
   const handleReady = () => {
@@ -112,8 +115,9 @@ function MediaPlayerTrack({
       return trackRef.current.seekToPosition(trackDuration ? trackTimecode / trackDuration : 0);
     },
     play() {
-      seekToStartIfNecessary(sourceDuration);
+      const hasRestarted = seekToStartIfNecessary(sourceDuration);
       changePlayState(MEDIA_PLAY_STATE.playing);
+      return { hasRestarted };
     },
     pause() {
       changePlayState(MEDIA_PLAY_STATE.pausing);

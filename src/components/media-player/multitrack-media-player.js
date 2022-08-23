@@ -8,7 +8,6 @@ import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
 import MediaPlayerTrackMixer from './media-player-track-mixer.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import { multitrackMediaSourcesShape } from '../../ui/default-prop-types.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const SOURCE_TYPE = {
@@ -333,7 +332,22 @@ MultitrackMediaPlayer.propTypes = {
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
   showTrackMixer: PropTypes.bool,
-  sources: PropTypes.oneOfType([multitrackMediaSourcesShape, PropTypes.func])
+  sources: PropTypes.oneOfType([
+    PropTypes.shape({
+      mainTrack: PropTypes.shape({
+        name: PropTypes.string,
+        sourceUrl: PropTypes.string.isRequired,
+        volume: PropTypes.number.isRequired,
+        playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
+      }),
+      secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string,
+        sourceUrl: PropTypes.string.isRequired,
+        volume: PropTypes.number.isRequired
+      }))
+    }),
+    PropTypes.func
+  ])
 };
 
 MultitrackMediaPlayer.defaultProps = {
