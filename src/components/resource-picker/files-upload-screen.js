@@ -160,10 +160,7 @@ function FilesUploadScreen({
 
   const renderUploadItemName = (item, itemIndex) => {
     if (item.status === ITEM_STATUS.succeeded && uploadItems.length > 1) {
-      return <a className="FilesUploadScreen-fileStatusName" onClick={() => handleUploadItemClick(itemIndex)}>{item.file.name}</a>;
-    }
-    if (item.status === ITEM_STATUS.failed) {
-      return <a className="FilesUploadScreen-fileStatusName is-disabled">{item.file.name}</a>;
+      return <a onClick={() => handleUploadItemClick(itemIndex)}>{item.file.name}</a>;
     }
     return item.file.name;
   };
