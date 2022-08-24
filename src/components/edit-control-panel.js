@@ -22,7 +22,8 @@ function EditControlPanel({
   onMetadataOpen,
   onSave,
   onClose,
-  status
+  status,
+  canEditMetadata
 }) {
   const { t } = useTranslation('editControlPanel');
 
@@ -110,13 +111,14 @@ function EditControlPanel({
       openIconPositionFromRight={1}
       onOpen={handleOpen}
       onClose={handleClose}
-      leftSideContent={renderEditMetadataButton()}
+      leftSideContent={canEditMetadata ? renderEditMetadataButton() : null}
       contentAfterClose={renderButtons()}
       />
   );
 }
 
 EditControlPanel.propTypes = {
+  canEditMetadata: PropTypes.bool,
   onClose: PropTypes.func,
   onMetadataOpen: PropTypes.func,
   onOpen: PropTypes.func,
@@ -126,6 +128,7 @@ EditControlPanel.propTypes = {
 };
 
 EditControlPanel.defaultProps = {
+  canEditMetadata: false,
   onClose: () => Promise.resolve(true),
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),

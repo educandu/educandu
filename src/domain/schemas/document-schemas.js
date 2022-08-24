@@ -1,7 +1,7 @@
 import joi from 'joi';
-import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../constants.js';
 
 export const getDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().required()
@@ -23,6 +23,7 @@ export const createDocumentDataBodySchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
   verified: joi.boolean(),
+  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)),
   sections: joi.array().items(sectionSchema),
   roomId: idOrKeySchema.allow(null)
 });
@@ -34,7 +35,8 @@ export const documentMetadataBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
-  verified: joi.boolean()
+  verified: joi.boolean(),
+  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION))
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -82,6 +84,7 @@ export const documentRevisionDBSchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
   verified: joi.boolean(),
+  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)),
   archived: joi.boolean().required(),
   origin: joi.string().required(),
   originUrl: joi.string().allow(null).allow(''),
@@ -106,6 +109,7 @@ export const documentDBSchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   review: joi.string().allow(null).allow(''),
   verified: joi.boolean(),
+  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)),
   archived: joi.boolean().required(),
   origin: joi.string().required(),
   originUrl: joi.string().allow(null).allow(''),
