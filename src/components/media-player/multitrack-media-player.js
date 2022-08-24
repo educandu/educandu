@@ -188,7 +188,7 @@ function MultitrackMediaPlayer({
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
-      httpClient.download(loadedSources, downloadFileName);
+      httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName);
     }
   };
 
