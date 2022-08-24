@@ -18,7 +18,6 @@ export const EDIT_CONTROL_PANEL_STATUS = {
 
 function EditControlPanel({
   startOpen,
-  metadata,
   onOpen,
   onMetadataOpen,
   onSave,
@@ -76,14 +75,13 @@ function EditControlPanel({
     }
   };
 
-  const renderMetadata = () => metadata && (
+  const renderEditMetadataButton = () => (
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
-        <Tooltip title={t('editMetadata')} placement="topLeft">
-          <Button size="small" icon={<EditIcon />} onClick={onMetadataOpen} ghost />
-        </Tooltip>
+        <Button className="EditControlPanel-editButton" size="small" icon={<EditIcon />} onClick={onMetadataOpen} ghost>
+          {t('editMetadata')}
+        </Button>
       </span>
-      {metadata}
     </span>
   );
 
@@ -112,14 +110,13 @@ function EditControlPanel({
       openIconPositionFromRight={1}
       onOpen={handleOpen}
       onClose={handleClose}
-      leftSideContent={renderMetadata()}
+      leftSideContent={renderEditMetadataButton()}
       contentAfterClose={renderButtons()}
       />
   );
 }
 
 EditControlPanel.propTypes = {
-  metadata: PropTypes.node,
   onClose: PropTypes.func,
   onMetadataOpen: PropTypes.func,
   onOpen: PropTypes.func,
@@ -129,7 +126,6 @@ EditControlPanel.propTypes = {
 };
 
 EditControlPanel.defaultProps = {
-  metadata: null,
   onClose: () => Promise.resolve(true),
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),

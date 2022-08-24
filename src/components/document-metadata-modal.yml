@@ -2,8 +2,8 @@ newDocument:
   en: New document
   de: Neues Dokument
 editDocument:
-  en: Edit document
-  de: Dokument bearbeiten
+  en: Edit document metadata
+  de: Dokument-Metadaten bearbeiten
 titleRequired:
   en: Please specify a document title
   de: Bitte gib einen Dokument-Titel an
@@ -19,6 +19,9 @@ useTemplateDocument:
 review:
   en: Review
   de: Review
+verified:
+  en: Verified document
+  de: Überprüftes Dokument
 createSequence:
   en: Create sequence
   de: Reihe anlegen
@@ -32,3 +35,8 @@ sequenceInfo:
   de: |
     Du kannst mehrere Dokumente gleichzeitig anlegen.
     An den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.
+verifiedInfo:
+  en:
+    As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
+  de:
+    Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.

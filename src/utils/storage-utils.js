@@ -24,14 +24,14 @@ const getScaledDownDimensions = img => {
   return { width: IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, height: Math.round(((img.naturalHeight / ratio) + Number.EPSILON) * 100) / 100 };
 };
 
-const shouldOptimizeImage = ({ naturalSize, naturalWidth }) => {
+const imageCanBeOptimized = ({ naturalSize, naturalWidth }) => {
   const widthIsTooBig = naturalWidth > IMAGE_OPTIMIZATION_THRESHOLD_WIDTH && naturalSize > IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES;
   const sizeIsTooBig = naturalSize > IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES;
 
   return widthIsTooBig || sizeIsTooBig;
 };
 
-const optimizeImage = file => {
+const convertImageToBlob = ({ file, optimize }) => {
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -40,7 +40,7 @@ const optimizeImage = file => {
       const img = new Image();
       img.src = reader.result;
       img.onload = () => {
-        if (!shouldOptimizeImage({ naturalSize: file.size, naturalWidth: img.naturalWidth })) {
+        if (!optimize || !imageCanBeOptimized({ naturalSize: file.size, naturalWidth: img.naturalWidth })) {
           resolve(file);
           return;
         }
@@ -65,10 +65,10 @@ export function isEditableImageFile(file) {
   return rasterImageFileTypes.includes(file.type);
 }
 
-export function processFilesBeforeUpload(files) {
+export function processFilesBeforeUpload({ files, optimizeImages }) {
   return Promise.all(files.map(file => {
     return rasterImageFileTypes.includes(file.type)
-      ? optimizeImage(file)
+      ? convertImageToBlob({ file, optimize: optimizeImages })
       : file;
   }));
 }
@@ -84,6 +84,10 @@ export function getStorageLocationTypeForPath(path) {
 }
 
 export function canUploadToPath(path) {
+  if (!path) {
+    return false;
+  }
+
   const publicPathMatch = path.match(publicCdnPathPattern);
   const privatePathMatch = path.match(privateCdnPathPattern);
 

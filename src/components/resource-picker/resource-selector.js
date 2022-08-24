@@ -1,11 +1,11 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { useStorage } from './storage-context.js';
+import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
-import StorageLocation from './storage-location.js';
-import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getStorageLocationTypeForUrl } from '../utils/storage-utils.js';
+import StorageLocation from './storage-location-screens.js';
+import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { getStorageLocationTypeForUrl } from '../../utils/storage-utils.js';
 
 const { TabPane } = Tabs;
 

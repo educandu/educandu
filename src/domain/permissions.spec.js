@@ -96,7 +96,8 @@ describe('permissions', () => {
           permissions.SEE_USER_EMAIL,
           permissions.RESTORE_DOC_REVISIONS,
           permissions.MANAGE_ARCHIVED_DOCS,
-          permissions.REVIEW_DOC
+          permissions.REVIEW_DOC,
+          permissions.VERIFY_DOC
         ]);
       });
     });
@@ -125,6 +126,7 @@ describe('permissions', () => {
           permissions.RESTORE_DOC_REVISIONS,
           permissions.MANAGE_ARCHIVED_DOCS,
           permissions.REVIEW_DOC,
+          permissions.VERIFY_DOC,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,

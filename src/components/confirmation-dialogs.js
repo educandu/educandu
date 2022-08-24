@@ -423,3 +423,15 @@ export function confirmCloseAccount(t, onOk, onCancel = () => { }) {
     onCancel
   });
 }
+
+export function confirmExitFileEditor(t, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:exitFileEditor'),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}

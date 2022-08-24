@@ -218,7 +218,8 @@ export const documentMetadataEditShape = PropTypes.shape({
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  review: PropTypes.string
+  review: PropTypes.string,
+  verified: PropTypes.bool
 });
 
 export const documentShape = PropTypes.shape({
@@ -239,6 +240,7 @@ export const documentRevisionShape = PropTypes.shape({
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   review: PropTypes.string,
+  verified: PropTypes.bool,
   archived: PropTypes.bool.isRequired,
   origin: PropTypes.string.isRequired,
   originUrl: PropTypes.string.isRequred
@@ -419,4 +421,10 @@ export const userActivitiesShape = PropTypes.shape({
     name: PropTypes.string
   }).isRequired,
   isDeprecated: PropTypes.bool.isRequired
+});
+
+export const fileShape = PropTypes.shape({
+  url: PropTypes.string,
+  size: PropTypes.number,
+  createdOn: PropTypes.string
 });

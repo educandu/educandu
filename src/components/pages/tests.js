@@ -5,22 +5,20 @@ import PropTypes from 'prop-types';
 import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
 import Timeline from '../media-player/timeline.js';
-import ResourcePicker from '../resource-picker.js';
 import { useRequest } from '../request-context.js';
-import { useStorage } from '../storage-context.js';
-import ResourceSelector from '../resource-selector.js';
 import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
-import FilesUploadOverview from '../files-upload-overview.js';
+import ResourcePicker from '../resource-picker/resource-picker.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import ResourceSelector from '../resource-picker/resource-selector.js';
 import MediaRangeSelector from '../media-player/media-range-selector.js';
 import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
-import { CDN_OBJECT_TYPE, HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -49,8 +47,6 @@ const MULTITRACK_GROOVE_URL_7 = 'https://cdn.staging.openmusic.academy/media/toE
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
 function Tests({ PageTemplate }) {
-  const { locations } = useStorage();
-
   // Page
   const req = useRequest();
   const initialTab = req.query.tab || null;
@@ -467,16 +463,6 @@ function Tests({ PageTemplate }) {
             <MultitrackMediaDisplay content={mmpContent} />
             <h4 style={{ marginTop: '15px' }}>Editor</h4>
             <MultitrackMediaEditor content={mmpContent} onContentChanged={content => setMmpContent(content)} />
-          </TabPane>
-          <TabPane tab="FilesUploadOverview" key="FilesUploadOverview">
-            <FilesUploadOverview
-              uploadQueue={[
-                { file: { name: 'file-1.png' }, isPristine: true },
-                { file: { name: 'file-2.png' }, isPristine: false }
-              ]}
-              storageLocation={locations.find(l => l.type === STORAGE_LOCATION_TYPE.public)}
-              directory={{ type: CDN_OBJECT_TYPE.directory, path: 'media', displayName: 'media', url: 'cdn://media', portableUrl: 'cdn://media' }}
-              />
           </TabPane>
         </Tabs>
       </div>

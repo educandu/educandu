@@ -5,12 +5,12 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import MarkdownInput from '../markdown-input.js';
-import ResourcePicker from '../resource-picker.js';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import { useOnComponentMounted } from '../../ui/hooks.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getMediaInformation } from '../../utils/media-utils.js';
+import ResourcePicker from '../resource-picker/resource-picker.js';
 import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 

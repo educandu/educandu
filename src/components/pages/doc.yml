@@ -4,3 +4,6 @@ permalinkCopied:
 permalinkCouldNotBeCopied:
   en: The permalink could not be copied to the clipboard
   de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+documentMetadataUpdated:
+  en: Document updated successfully
+  de: Das Dokument wurde erfolgreich aktualisiert

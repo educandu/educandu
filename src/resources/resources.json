@@ -148,7 +148,8 @@
       "deleteItemConfirmation": "Do you really want to delete \"{name}\"?",
       "deleteStoragePlanConfirmation": "Do you really want to delete storage plan \"{storagePlanName}\"?",
       "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.",
-      "closeAccountConfirmation": "Do you really want to close your account?"
+      "closeAccountConfirmation": "Do you really want to close your account?",
+      "exitFileEditor": "Do you really want to exit the editor? Your current changes will be lost."
     }
   },
   {
@@ -178,7 +179,8 @@
       "deleteItemConfirmation": "Möchtest du \"{name}\" wirklich löschen?",
       "deleteStoragePlanConfirmation": "Möchtest du den Speicherplan \"{storagePlanName}\" wirklich löschen?",
       "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
-      "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?"
+      "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?",
+      "exitFileEditor": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren."
     }
   },
   {
@@ -286,15 +288,17 @@
     "language": "en",
     "resources": {
       "newDocument": "New document",
-      "editDocument": "Edit document",
+      "editDocument": "Edit document metadata",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "tagsPlaceholder": "Enter keywords",
       "useTemplateDocument": "Use default template",
       "review": "Review",
+      "verified": "Verified document",
       "createSequence": "Create sequence",
       "sequenceInfoBoxHeader": "Document sequences",
-      "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n"
+      "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
+      "verifiedInfo": "As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results."
     }
   },
   {
@@ -302,15 +306,17 @@
     "language": "de",
     "resources": {
       "newDocument": "Neues Dokument",
-      "editDocument": "Dokument bearbeiten",
+      "editDocument": "Dokument-Metadaten bearbeiten",
       "titleRequired": "Bitte gib einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "tagsPlaceholder": "Stichwörter angeben",
       "useTemplateDocument": "Standardvorlage benutzen",
       "review": "Review",
+      "verified": "Überprüftes Dokument",
       "createSequence": "Reihe anlegen",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
+      "verifiedInfo": "Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite."
     }
   },
   {
@@ -411,34 +417,6 @@
     "language": "de",
     "resources": {
       "navigateToParent": "Zum übergeordneten Verzeichnis navigieren"
-    }
-  },
-  {
-    "namespace": "filesUploadOverview",
-    "language": "en",
-    "resources": {
-      "headline": "Files upload",
-      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "insufficientPrivateStorge": "Not enough storage space available for file",
-      "startUpload": "Start upload",
-      "preprocessed": "edited",
-      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
-      "stage_uploading": "Uploading ...",
-      "stage_uploadFinished": "Upload finished"
-    }
-  },
-  {
-    "namespace": "filesUploadOverview",
-    "language": "de",
-    "resources": {
-      "headline": "Datei-Upload",
-      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
-      "startUpload": "Upload starten",
-      "preprocessed": "bearbeitet",
-      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
-      "stage_uploading": "Hochladen ...",
-      "stage_uploadFinished": "Upload beendet"
     }
   },
   {
@@ -898,7 +876,8 @@
     "language": "en",
     "resources": {
       "permalinkCopied": "The permalink was copied to the clipboard",
-      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard"
+      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
+      "documentMetadataUpdated": "Document updated successfully"
     }
   },
   {
@@ -906,7 +885,8 @@
     "language": "de",
     "resources": {
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
-      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
+      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
+      "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert"
     }
   },
   {
@@ -1294,6 +1274,66 @@
     }
   },
   {
+    "namespace": "fileEditorScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File editor",
+      "applyChanges": "Apply changes"
+    }
+  },
+  {
+    "namespace": "fileEditorScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Editor",
+      "applyChanges": "Änderungen übernehmen"
+    }
+  },
+  {
+    "namespace": "filePreviewScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File preview"
+    }
+  },
+  {
+    "namespace": "filePreviewScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Vorschau"
+    }
+  },
+  {
+    "namespace": "filesUploadScreen",
+    "language": "en",
+    "resources": {
+      "headline": "Files upload",
+      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
+      "insufficientPrivateStorge": "Not enough storage space available for file",
+      "startUpload": "Start upload",
+      "preprocessed": "edited",
+      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
+      "stage_uploading": "Uploading ...",
+      "stage_uploadFinished": "Upload finished",
+      "optimizeImages": "Optimize images for web display"
+    }
+  },
+  {
+    "namespace": "filesUploadScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Upload",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}.",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
+      "startUpload": "Upload starten",
+      "preprocessed": "bearbeitet",
+      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
+      "stage_uploading": "Hochladen ...",
+      "stage_uploadFinished": "Upload beendet",
+      "optimizeImages": "Bilder für Web optimieren"
+    }
+  },
+  {
     "namespace": "resourceSelector",
     "language": "en",
     "resources": {
@@ -1307,6 +1347,32 @@
     "resources": {
       "storage_public": "Öffentlicher Speicher",
       "storage_private": "Privater Speicher"
+    }
+  },
+  {
+    "namespace": "storageLocation",
+    "language": "en",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "This directory is publicly accessible",
+      "searchOngoing": "Searching …",
+      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
+      "backToDirectoryView": "Back to directory view",
+      "uploadFiles": "Upload files"
+    }
+  },
+  {
+    "namespace": "storageLocation",
+    "language": "de",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "searchOngoing": "Suche …",
+      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
+      "backToDirectoryView": "Zurück zur Verzeichnisansicht",
+      "uploadFiles": "Dateien hochladen"
     }
   },
   {
@@ -1425,36 +1491,6 @@
     "resources": {
       "changeSortingValue": "Sortierung ändern",
       "changeSortingDirection": "Sortierungsrichtung ändern"
-    }
-  },
-  {
-    "namespace": "storageLocation",
-    "language": "en",
-    "resources": {
-      "filesView_list": "List",
-      "filesView_grid": "Grid",
-      "publicStorageWarning": "This directory is publicly accessible",
-      "searchOngoing": "Searching …",
-      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
-      "closeSearchResult": "Back to directory view",
-      "uploadFiles": "Upload files",
-      "cancelEditing": "Cancel image editing",
-      "applyChanges": "Apply changes"
-    }
-  },
-  {
-    "namespace": "storageLocation",
-    "language": "de",
-    "resources": {
-      "filesView_list": "List",
-      "filesView_grid": "Grid",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "searchOngoing": "Suche …",
-      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
-      "closeSearchResult": "Zurück zur Verzeichnisansicht",
-      "uploadFiles": "Dateien hochladen",
-      "cancelEditing": "Bildbearbeitung abbrechen",
-      "applyChanges": "Änderungen übernehmen"
     }
   },
   {
