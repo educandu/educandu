@@ -1,7 +1,7 @@
 import abcjs from 'abcjs';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import MediaPlayer from './media-player.js';
+import MediaPlayer from './media-player/media-player.js';
 import { MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -17,12 +17,36 @@ const abcOptions = {
 function AbcNotation({ abcCode, displayMidi, hideNotes }) {
   const abcContainerRef = useRef(null);
   const [renderResult, setRenderResult] = useState(null);
+  const [audioUrlGenerator, setAudioUrlGenerator] = useState(null);
   const [generatedAudioUrl, setGeneratedAudioUrl] = useState(null);
 
   useEffect(() => {
     const renderTarget = hideNotes ? '*' : abcContainerRef.current;
     const visualObj = abcjs.renderAbc(renderTarget, abcCode, abcOptions);
-    setRenderResult(visualObj[0]);
+    const newRenderResult = visualObj[0];
+    setRenderResult(newRenderResult);
+    setGeneratedAudioUrl(null);
+    setAudioUrlGenerator({
+      generate: async () => {
+        const midiBuffer = new abcjs.synth.CreateSynth();
+
+        await midiBuffer.init({
+          visualObj: newRenderResult,
+          millisecondsPerMeasure: newRenderResult.millisecondsPerMeasure()
+        });
+
+        await midiBuffer.prime();
+
+        // This is necessary to make the audio file download work!
+        midiBuffer.start();
+        midiBuffer.stop();
+
+        const soundUrl = midiBuffer.download();
+
+        setGeneratedAudioUrl(soundUrl);
+        return soundUrl;
+      }
+    });
   }, [abcContainerRef, abcCode, displayMidi, hideNotes]);
 
   useEffect(() => {
@@ -33,37 +57,13 @@ function AbcNotation({ abcCode, displayMidi, hideNotes }) {
     };
   }, [generatedAudioUrl]);
 
-  const createSourceUrl = async () => {
-    if (generatedAudioUrl) {
-      return generatedAudioUrl;
-    }
-
-    const midiBuffer = new abcjs.synth.CreateSynth();
-
-    await midiBuffer.init({
-      visualObj: renderResult,
-      millisecondsPerMeasure: renderResult.millisecondsPerMeasure()
-    });
-
-    await midiBuffer.prime();
-
-    // This is necessary to make the audio file download work!
-    midiBuffer.start();
-    midiBuffer.stop();
-
-    const soundUrl = midiBuffer.download();
-
-    setGeneratedAudioUrl(soundUrl);
-    return soundUrl;
-  };
-
   return (
     <div className="AbcNotation">
       {!hideNotes && <div className="AbcNotation-notes" ref={abcContainerRef} />}
       {displayMidi && renderResult && (
         <div className={classNames('AbcNotation-audio', { 'AbcNotation-audio--audioOnly': hideNotes })}>
           <MediaPlayer
-            source={createSourceUrl}
+            source={audioUrlGenerator?.generate || null}
             screenMode={MEDIA_SCREEN_MODE.none}
             downloadFileName="download.wav"
             canDownload

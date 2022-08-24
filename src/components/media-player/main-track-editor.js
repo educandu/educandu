@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
-import Logger from '../common/logger.js';
-import validation from '../ui/validation.js';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import validation from '../../ui/validation.js';
+import MarkdownInput from '../markdown-input.js';
 import React, { Fragment, useState } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
-import { handleError } from '../ui/error-helper.js';
-import { useOnComponentMounted } from '../ui/hooks.js';
-import ClientConfig from '../bootstrap/client-config.js';
-import MarkdownInput from '../components/markdown-input.js';
-import { getResourceType } from '../utils/resource-utils.js';
-import { useService } from '../components/container-context.js';
-import ResourcePicker from './resource-picker/resource-picker.js';
-import { useNumberFormat } from '../components/locale-context.js';
-import MediaRangeSelector from '../components/media-range-selector.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../utils/storage-utils.js';
-import { formatMediaPosition, getFullSourceUrl, getMediaInformation } from '../utils/media-utils.js';
-import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
+import { useService } from '../container-context.js';
+import { handleError } from '../../ui/error-helper.js';
+import { useNumberFormat } from '../locale-context.js';
+import { useOnComponentMounted } from '../../ui/hooks.js';
+import MediaRangeSelector from './media-range-selector.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getResourceType } from '../../utils/resource-utils.js';
+import ResourcePicker from '../resource-picker/resource-picker.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { formatMediaPosition, getFullSourceUrl, getMediaInformation } from '../../utils/media-utils.js';
+import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 

@@ -542,22 +542,6 @@
     }
   },
   {
-    "namespace": "mainTrackEditor",
-    "language": "en",
-    "resources": {
-      "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
-    }
-  },
-  {
-    "namespace": "mainTrackEditor",
-    "language": "de",
-    "resources": {
-      "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
-    }
-  },
-  {
     "namespace": "markdownHelp",
     "language": "en",
     "resources": {
@@ -598,6 +582,22 @@
     }
   },
   {
+    "namespace": "mainTrackEditor",
+    "language": "en",
+    "resources": {
+      "playbackRange": "Playback range",
+      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+    }
+  },
+  {
+    "namespace": "mainTrackEditor",
+    "language": "de",
+    "resources": {
+      "playbackRange": "Abspielbereich",
+      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+    }
+  },
+  {
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {
@@ -613,6 +613,20 @@
       "download": "Herunterladen",
       "playbackRate": "Geschwindigkeit",
       "normal": "Normal"
+    }
+  },
+  {
+    "namespace": "mediaPlayerTrackMixer",
+    "language": "en",
+    "resources": {
+      "trackNumberLabel": "Track {trackNumber}"
+    }
+  },
+  {
+    "namespace": "mediaPlayerTrackMixer",
+    "language": "de",
+    "resources": {
+      "trackNumberLabel": "Spur {trackNumber}"
     }
   },
   {
@@ -633,6 +647,20 @@
       "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
       "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
+    }
+  },
+  {
+    "namespace": "trackMixer",
+    "language": "en",
+    "resources": {
+      "noTrack": "no track"
+    }
+  },
+  {
+    "namespace": "trackMixer",
+    "language": "de",
+    "resources": {
+      "noTrack": "keine Spur"
     }
   },
   {
@@ -1532,20 +1560,6 @@
     }
   },
   {
-    "namespace": "trackMixer",
-    "language": "en",
-    "resources": {
-      "noTrack": "no track"
-    }
-  },
-  {
-    "namespace": "trackMixer",
-    "language": "de",
-    "resources": {
-      "noTrack": "keine Spur"
-    }
-  },
-  {
     "namespace": "uiLanguageDialog",
     "language": "en",
     "resources": {
@@ -1923,7 +1937,8 @@
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
-      "trackMixer": "Track mixer"
+      "trackMixer": "Track mixer",
+      "missingSourcesMessage": "Cannot play because of missing media sources"
     }
   },
   {
@@ -1934,7 +1949,8 @@
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
-      "trackMixer": "Spur-Mixer"
+      "trackMixer": "Spur-Mixer",
+      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
     }
   },
   {

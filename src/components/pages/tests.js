@@ -1,25 +1,24 @@
-/* eslint-disable no-console, max-len */
+/* eslint-disable no-console, max-len, max-lines */
 
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import Timeline from '../timeline.js';
-import MediaPlayer from '../media-player.js';
 import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
+import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
-import { useService } from '../container-context.js';
+import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
-import MediaRangeSelector from '../media-range-selector.js';
 import ResourcePicker from '../resource-picker/resource-picker.js';
 import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
-import MultitrackMediaInfo from '../../plugins/multitrack-media/multitrack-media-info.js';
+import MediaRangeSelector from '../media-player/media-range-selector.js';
+import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import { createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 
 const { TabPane } = Tabs;
 
@@ -27,6 +26,23 @@ const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media/4WqqhJRDsogBFGVbZrfua
 const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
 const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
 const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
+
+const MULTITRACK_CORELLI_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
+const MULTITRACK_CORELLI_URL_0_EXTENDED = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-extended-wGQi1xK4jA1eDuKEV14t8c.mp3';
+const MULTITRACK_CORELLI_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3';
+const MULTITRACK_CORELLI_URL_1_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-short-6QL7EZNXZ2AQB1odeY9tiH.mp3';
+const MULTITRACK_CORELLI_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3';
+const MULTITRACK_CORELLI_URL_2_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-short-vTWJD95XQx9G4FNKMHit6H.mp3';
+const MULTITRACK_CORELLI_URL_3 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3';
+
+const MULTITRACK_GROOVE_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-9hqADKZtPHV7F7GVfye3DF.mp3';
+const MULTITRACK_GROOVE_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-growls-c9Z4K6PSm7k7onNHh4eFLv.mp3';
+const MULTITRACK_GROOVE_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-sub-xseNKq1gTc3sMrvYhp4Ryk.mp3';
+const MULTITRACK_GROOVE_URL_3 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-chords-p1z7vpBgGLQ75okxsd9ZiQ.mp3';
+const MULTITRACK_GROOVE_URL_4 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-drums-bTRHpx9cta63Q3MQP52VG5.mp3';
+const MULTITRACK_GROOVE_URL_5 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-fx-2AEEYbQBiRXmRvNWCGhkzZ.mp3';
+const MULTITRACK_GROOVE_URL_6 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-bell-rxF9rWsV5cwxzDwiM6CH5W.mp3';
+const MULTITRACK_GROOVE_URL_7 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-synth-ghymhFnZ8fc3VVW65PHmB5.mp3';
 
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
@@ -89,11 +105,15 @@ function Tests({ PageTemplate }) {
   const [mrsRange, setMrsRange] = useState([0, 1]);
 
   // MediaPlayer
+  const mpSources = [
+    { title: 'Youtube video', url: YOUTUBE_VIDEO_URL },
+    { title: 'external video', url: EXTERNAL_VIDEO_URL }
+  ];
   const mpPlayerRef = useRef();
   const mpEventLogRef = useRef();
   const [mpRange, setMpRange] = useState([0, 1]);
   const [mpEventLog, setMpEventLog] = useState('');
-  const [mpSource, setMpSource] = useState(EXTERNAL_VIDEO_URL);
+  const [mpSourceUrl, setMpSourceUrl] = useState(mpSources[0].url);
   const [mpScreenMode, setMpScreenMode] = useState(MEDIA_SCREEN_MODE.video);
   const handleMpEvent = (eventName, ...args) => {
     setMpEventLog(currentLog => args.length
@@ -112,6 +132,61 @@ function Tests({ PageTemplate }) {
     setMpRange(newRange);
   };
 
+  // MultitrackMediaPlayer
+  const mmpSourceOptions = [
+    {
+      title: 'Corelli (manipulated)',
+      sources: {
+        mainTrack: { name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, volume: 1, playbackRange: [0.14, 0.82] },
+        secondaryTracks: [
+          { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
+          { name: 'Vl 2 (29 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
+          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
+        ]
+      }
+    },
+    {
+      title: 'Corelli',
+      sources: {
+        mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
+        secondaryTracks: [
+          { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1 },
+          { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1 },
+          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
+        ]
+      }
+    },
+    {
+      title: 'Groove',
+      sources: {
+        mainTrack: { name: 'Dubstep', sourceUrl: MULTITRACK_GROOVE_URL_0, volume: 1, playbackRange: [0, 1] },
+        secondaryTracks: [
+          { name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1, volume: 1 },
+          { name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2, volume: 1 },
+          { name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3, volume: 1 },
+          { name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4, volume: 1 },
+          { name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5, volume: 1 },
+          { name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6, volume: 1 },
+          { name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7, volume: 1 }
+        ]
+      }
+    }
+  ];
+  const mmpPlayerRef = useRef();
+  const mmpEventLogRef = useRef();
+  const [mmpEventLog, setMmpEventLog] = useState('');
+  const [mmpScreenMode, setMmpScreenMode] = useState(MEDIA_SCREEN_MODE.none);
+  const [mmpSourceOption, setMmpSourceOption] = useState(mmpSourceOptions[0]);
+  const handleMmpEvent = (eventName, ...args) => {
+    setMmpEventLog(currentLog => args.length
+      ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
+      : `${currentLog}${eventName}\n`);
+    setTimeout(() => {
+      const textarea = mmpEventLogRef.current;
+      textarea.scrollTop = textarea.scrollHeight;
+    }, 0);
+  };
+
   // ResourcePicker
   const [rsResourceUrl, setRsResourceUrl] = useState('');
 
@@ -124,75 +199,50 @@ function Tests({ PageTemplate }) {
   const [nstaValue6, setNstaValue6] = useState('Hello World');
 
   // MultitrackMediaPlugin
-  const multitrackMediaInfo = useService(MultitrackMediaInfo);
-  const { t: multitrackTranslation } = useTranslation('multitrackMedia');
-  const multitrackContent = multitrackMediaInfo.getDefaultContent(multitrackTranslation);
-  // ------ Setup option 1 -----
-  // multitrackContent.mainTrack.name = 'Generalbass';
-  // multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
-  // multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
-  // multitrackContent.secondaryTracks = [
-  //   {
-  //     ...createDefaultSecondaryTrack(0, multitrackTranslation),
-  //     name: 'Violine 1',
-  //     sourceType: MEDIA_SOURCE_TYPE.external,
-  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3'
-  //   }, {
-  //     ...createDefaultSecondaryTrack(1, multitrackTranslation),
-  //     name: 'Violine 2',
-  //     sourceType: MEDIA_SOURCE_TYPE.external,
-  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3'
-  //   }, {
-  //     ...createDefaultSecondaryTrack(2, multitrackTranslation),
-  //     name: 'Violoncello',
-  //     sourceType: MEDIA_SOURCE_TYPE.external,
-  //     sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3'
-  //   }
-  // ];
-  // ------ Setup option 2 -----
-  multitrackContent.mainTrack.name = 'Dubstep';
-  multitrackContent.mainTrack.sourceType = MEDIA_SOURCE_TYPE.external;
-  multitrackContent.mainTrack.sourceUrl = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-9hqADKZtPHV7F7GVfye3DF.mp3';
-  multitrackContent.secondaryTracks = [
+  const { t: mmpTranslation } = useTranslation('multitrackMedia');
+  const mmpPresets = [
     {
-      ...createDefaultSecondaryTrack(0, multitrackTranslation),
-      name: 'Bass growls',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-growls-c9Z4K6PSm7k7onNHh4eFLv.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(1, multitrackTranslation),
-      name: 'Bass sub',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-sub-xseNKq1gTc3sMrvYhp4Ryk.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(2, multitrackTranslation),
-      name: 'Chords',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-chords-p1z7vpBgGLQ75okxsd9ZiQ.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(3, multitrackTranslation),
-      name: 'Drums',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-drums-bTRHpx9cta63Q3MQP52VG5.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(4, multitrackTranslation),
-      name: 'FX',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-fx-2AEEYbQBiRXmRvNWCGhkzZ.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(5, multitrackTranslation),
-      name: 'Lead bell',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-bell-rxF9rWsV5cwxzDwiM6CH5W.mp3'
-    }, {
-      ...createDefaultSecondaryTrack(6, multitrackTranslation),
-      name: 'Lead synth',
-      sourceType: MEDIA_SOURCE_TYPE.external,
-      sourceUrl: 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-synth-ghymhFnZ8fc3VVW65PHmB5.mp3'
+      title: 'Corelli (manipulated)',
+      content: {
+        ...createDefaultContent(mmpTranslation),
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Gb (ext)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, playbackRange: [0.14, 0.82] },
+        secondaryTracks: [
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
+        ]
+      }
+    },
+    {
+      title: 'Corelli',
+      content: {
+        ...createDefaultContent(mmpTranslation),
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Generalbass', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0 },
+        secondaryTracks: [
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Violine 1', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1 },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Violine 2', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2 },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
+        ]
+      }
+    },
+    {
+      title: 'Groove',
+      content: {
+        ...createDefaultContent(mmpTranslation),
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Dubstep', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_0 },
+        secondaryTracks: [
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Bass growls', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_1 },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Bass sub', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_2 },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Chords', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_3 },
+          { ...createDefaultSecondaryTrack(3, mmpTranslation), name: 'Drums', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_4 },
+          { ...createDefaultSecondaryTrack(4, mmpTranslation), name: 'FX', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_5 },
+          { ...createDefaultSecondaryTrack(5, mmpTranslation), name: 'Lead bell', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_6 },
+          { ...createDefaultSecondaryTrack(6, mmpTranslation), name: 'Lead synth', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_7 }
+        ]
+      }
     }
   ];
-  const [multitrackMediaContent, setMultitrackMediaContent] = useState(multitrackContent);
-  const handleMultitrackMediaEditorContentChange = content => setMultitrackMediaContent(content);
+  const [mmpContent, setMmpContent] = useState(mmpPresets[0].content);
 
   return (
     <PageTemplate>
@@ -254,7 +304,7 @@ function Tests({ PageTemplate }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
               <div>
                 <MediaPlayer
-                  source={mpSource}
+                  source={mpSourceUrl}
                   playbackRange={mpRange}
                   screenMode={mpScreenMode}
                   mediaPlayerRef={mpPlayerRef}
@@ -269,16 +319,17 @@ function Tests({ PageTemplate }) {
               <div>
                 <h6>Source</h6>
                 <div>
-                  <Button onClick={() => setMpSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
-                  <Button onClick={() => setMpSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
+                  {mpSources.map((source, index) => (
+                    <Button key={index.toString()} onClick={() => setMpSourceUrl(source.url)}>Set to {source.title}</Button>
+                  ))}
                 </div>
-                <div>{typeof mpSource === 'function' ? '<FUNC>' : String(mpSource)}</div>
+                <div>{mpSourceUrl}</div>
                 <h6 style={{ marginTop: '15px' }}>Media Range</h6>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto) 1fr', gap: '25px', alignItems: 'center' }}>
                   <Button onClick={handleRandomPlaybackRangeClick}>Set to random value</Button>
                   <MediaRangeSelector
                     range={mpRange}
-                    sourceUrl={mpSource}
+                    sourceUrl={mpSourceUrl}
                     onRangeChange={setMpRange}
                     />
                   <div>{mpRange[0].toFixed(2)} &ndash; {mpRange[1].toFixed(2)}</div>
@@ -291,12 +342,54 @@ function Tests({ PageTemplate }) {
                 <div>
                   <Button onClick={() => mpPlayerRef.current.play()}>play</Button>
                   <Button onClick={() => mpPlayerRef.current.pause()}>pause</Button>
-                  <Button onClick={() => mpPlayerRef.current.togglePlay()}>togglePlay</Button>
+                  <Button onClick={() => mpPlayerRef.current.stop()}>stop</Button>
                   <Button onClick={() => mpPlayerRef.current.reset()}>reset</Button>
                 </div>
                 <h6 style={{ marginTop: '15px' }}>Event Log</h6>
                 <div ref={mpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
                   <pre>{mpEventLog}</pre>
+                </div>
+              </div>
+            </div>
+          </TabPane>
+          <TabPane tab="MultitrackMediaPlayer" key="MultitrackMediaPlayer">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+              <div>
+                <MultitrackMediaPlayer
+                  sources={mmpSourceOption.sources}
+                  screenMode={mmpScreenMode}
+                  mediaPlayerRef={mmpPlayerRef}
+                  onPartEndReached={(...args) => handleMmpEvent('onPartEndReached', ...args)}
+                  onEndReached={(...args) => handleMmpEvent('onEndReached', ...args)}
+                  onPlayStateChange={(...args) => handleMmpEvent('onPlayStateChange', ...args)}
+                  onPlayingPartIndexChange={(...args) => handleMmpEvent('onPlayingPartIndexChange', ...args)}
+                  onReady={(...args) => handleMmpEvent('onReady', ...args)}
+                  onSeek={(...args) => handleMmpEvent('onSeek', ...args)}
+                  showTrackMixer
+                  />
+              </div>
+              <div>
+                <h6>Source</h6>
+                <div>
+                  {mmpSourceOptions.map((source, index) => (
+                    <Button key={index.toString()} onClick={() => setMmpSourceOption(source)}>Set to {source.title}</Button>
+                  ))}
+                </div>
+                <div>{mmpSourceOption.title} - {mmpSourceOption.sources.secondaryTracks.length + 1} tracks</div>
+                <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
+                <Radio.Group value={mmpScreenMode} onChange={event => setMmpScreenMode(event.target.value)}>
+                  {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
+                </Radio.Group>
+                <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
+                <div>
+                  <Button onClick={() => mmpPlayerRef.current.play()}>play</Button>
+                  <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
+                  <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
+                  <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
+                </div>
+                <h6 style={{ marginTop: '15px' }}>Event Log</h6>
+                <div ref={mmpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
+                  <pre>{mmpEventLog}</pre>
                 </div>
               </div>
             </div>
@@ -360,16 +453,16 @@ function Tests({ PageTemplate }) {
             </Form>
           </TabPane>
           <TabPane tab="MultitrackMediaPlugin" key="MultitrackMediaPlugin">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '25px' }}>
-              <div>
-                <h4>Display</h4>
-                <MultitrackMediaDisplay content={multitrackMediaContent} />
-              </div>
-              <div>
-                <h4>Editor</h4>
-                <MultitrackMediaEditor content={multitrackMediaContent} onContentChanged={handleMultitrackMediaEditorContentChange} />
-              </div>
+            <h4>Source</h4>
+            <div>
+              {mmpPresets.map((preset, index) => (
+                <Button key={index.toString()} onClick={() => setMmpContent(preset.content)}>Set to {preset.title}</Button>
+              ))}
             </div>
+            <h4 style={{ marginTop: '15px' }}>Display</h4>
+            <MultitrackMediaDisplay content={mmpContent} />
+            <h4 style={{ marginTop: '15px' }}>Editor</h4>
+            <MultitrackMediaEditor content={mmpContent} onContentChanged={content => setMmpContent(content)} />
           </TabPane>
         </Tabs>
       </div>

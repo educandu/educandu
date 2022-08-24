@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
-import TrackMixer from '../../components/track-mixer.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MainTrackEditor from '../../components/main-track-editor.js';
+import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
-import SecondaryTrackEditor from '../../components/secondary-track-editor.js';
+import MainTrackEditor from '../../components/media-player/main-track-editor.js';
+import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 
 const FormItem = Form.Item;
 

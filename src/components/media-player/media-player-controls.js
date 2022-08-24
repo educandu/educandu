@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Menu, Button, Dropdown } from 'antd';
-import VolumeSlider from './volume-slider.js';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
-import { useNumberFormat } from './locale-context.js';
-import PlayIcon from './icons/media-player/play-icon.js';
-import PauseIcon from './icons/media-player/pause-icon.js';
-import DownloadIcon from './icons/general/download-icon.js';
-import SettingsIcon from './icons/main-menu/settings-icon.js';
-import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import { useNumberFormat } from '../locale-context.js';
+import MediaVolumeSlider from './media-volume-slider.js';
+import PlayIcon from '../icons/media-player/play-icon.js';
+import PauseIcon from '../icons/media-player/pause-icon.js';
+import DownloadIcon from '../icons/general/download-icon.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const NORMAL_PLAYBACK_RATE = 1;
 const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -21,7 +21,8 @@ function MediaPlayerControls({
   playedMilliseconds,
   playState,
   volume,
-  onTogglePlay,
+  onPauseClick,
+  onPlayClick,
   onVolumeChange,
   onPlaybackRateChange,
   screenMode,
@@ -32,7 +33,7 @@ function MediaPlayerControls({
 
   const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
 
-  const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
+  const isPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
 
   const handleSettingsMenuItemClick = ({ key }) => {
     if (key === 'download') {
@@ -84,9 +85,10 @@ function MediaPlayerControls({
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <div className="MediaPlayerControls-controlsGroup">
-        <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
+        {isPlaying && <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />}
+        {!isPlaying && <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />}
         <div className="MediaPlayerControls-volumeControls">
-          <VolumeSlider value={volume} onChange={onVolumeChange} />
+          <MediaVolumeSlider value={volume} onChange={onVolumeChange} />
         </div>
         <div className="MediaPlayerControls-timeDisplay">
           {renderTimeDisplay()}
@@ -109,8 +111,9 @@ function MediaPlayerControls({
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
   onDownloadClick: PropTypes.func,
+  onPauseClick: PropTypes.func.isRequired,
+  onPlayClick: PropTypes.func.isRequired,
   onPlaybackRateChange: PropTypes.func,
-  onTogglePlay: PropTypes.func.isRequired,
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,

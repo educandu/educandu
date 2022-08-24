@@ -3,7 +3,7 @@ import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Spin, Slider } from 'antd';
-import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const { t } = useTranslation('mediaRangeSelector');

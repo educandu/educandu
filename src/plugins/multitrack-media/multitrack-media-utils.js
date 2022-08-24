@@ -6,7 +6,6 @@ export function createDefaultSecondaryTrack(index, t) {
     sourceType: MEDIA_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: '',
-    offsetTimecode: 0,
     volume: 1
   };
 }

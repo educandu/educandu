@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import AudioIcon from './icons/general/audio-icon.js';
+import AudioIcon from '../icons/general/audio-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
-import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../utils/media-utils.js';
+import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../../utils/media-utils.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -16,7 +16,6 @@ function MediaPlayerTrack({
   screenMode,
   screenOverlay,
   playbackRange,
-  progressIntervalInMilliseconds,
   volume,
   posterImageUrl,
   loadImmediately,
@@ -33,6 +32,7 @@ function MediaPlayerTrack({
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+  const [lastPlayStateBeforeBuffering, setLastPlayStateBeforeBuffering] = useState(MEDIA_PLAY_STATE.initializing);
 
   useEffect(() => {
     if (playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1]) {
@@ -47,6 +47,7 @@ function MediaPlayerTrack({
   }, [playbackRange, lastPlaybackRange, sourceDuration, currentPlayState, onDuration, onProgress, onPlayStateChange]);
 
   const changePlayState = newPlayState => {
+    setLastPlayStateBeforeBuffering(prev => newPlayState !== MEDIA_PLAY_STATE.buffering ? newPlayState : prev);
     setCurrentPlayState(newPlayState);
     onPlayStateChange?.(newPlayState);
   };
@@ -59,7 +60,7 @@ function MediaPlayerTrack({
 
   const seekToStartIfNecessary = newSourceDuration => {
     if (!newSourceDuration) {
-      return;
+      return false;
     }
 
     const newTrackStartTimecode = lastPlaybackRange[0] * newSourceDuration;
@@ -67,7 +68,10 @@ function MediaPlayerTrack({
 
     if ((lastProgressTimecode < newTrackStartTimecode) || (lastProgressTimecode >= newTrackStopTimecode)) {
       playerRef.current.seekTo(newTrackStartTimecode / newSourceDuration);
+      return true;
     }
+
+    return false;
   };
 
   const handleReady = () => {
@@ -79,7 +83,7 @@ function MediaPlayerTrack({
   };
 
   const handleBufferEnd = () => {
-    changePlayState(MEDIA_PLAY_STATE.playing);
+    changePlayState(lastPlayStateBeforeBuffering);
   };
 
   const handlePlay = () => {
@@ -111,36 +115,16 @@ function MediaPlayerTrack({
       return trackRef.current.seekToPosition(trackDuration ? trackTimecode / trackDuration : 0);
     },
     play() {
+      const hasRestarted = seekToStartIfNecessary(sourceDuration);
       changePlayState(MEDIA_PLAY_STATE.playing);
+      return { hasRestarted };
     },
     pause() {
       changePlayState(MEDIA_PLAY_STATE.pausing);
     },
-    togglePlay() {
-      let newPlayState;
-      switch (currentPlayState) {
-        case MEDIA_PLAY_STATE.initializing:
-          newPlayState = MEDIA_PLAY_STATE.playing;
-          break;
-        case MEDIA_PLAY_STATE.buffering:
-          newPlayState = MEDIA_PLAY_STATE.buffering;
-          break;
-        case MEDIA_PLAY_STATE.playing:
-          newPlayState = MEDIA_PLAY_STATE.pausing;
-          break;
-        case MEDIA_PLAY_STATE.pausing:
-        case MEDIA_PLAY_STATE.stopped:
-          newPlayState = MEDIA_PLAY_STATE.playing;
-          break;
-        default:
-          throw new Error(`Invalid play state: ${currentPlayState}`);
-      }
-
-      if (newPlayState === MEDIA_PLAY_STATE.playing) {
-        seekToStartIfNecessary(sourceDuration);
-      }
-
-      changePlayState(newPlayState);
+    stop() {
+      changePlayState(MEDIA_PLAY_STATE.stopped);
+      trackRef.current.seekToPosition(0);
     }
   };
 
@@ -149,6 +133,7 @@ function MediaPlayerTrack({
     const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
     if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
+      setLastPlayStateBeforeBuffering(MEDIA_PLAY_STATE.stopped);
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
       changeProgress(trackStopTimecode);
       handleEnded();
@@ -205,7 +190,7 @@ function MediaPlayerTrack({
           volume={volume}
           muted={volume === 0}
           playbackRate={playbackRate}
-          progressInterval={progressIntervalInMilliseconds}
+          progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
           light={loadImmediately ? false : currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
           playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
           onReady={handleReady}
@@ -244,7 +229,6 @@ MediaPlayerTrack.propTypes = {
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   posterImageUrl: PropTypes.string,
-  progressIntervalInMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
   sourceUrl: PropTypes.string.isRequired,

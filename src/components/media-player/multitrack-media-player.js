@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useService } from './container-context.js';
-import { useDedupedCallback } from '../ui/hooks.js';
-import HttpClient from '../api-clients/http-client.js';
-import MediaPlayerTrack from './media-player-track.js';
+import { useService } from '../container-context.js';
+import { useDedupedCallback } from '../../ui/hooks.js';
+import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
+import MediaPlayerTrackGroup from './media-player-track-group.js';
+import MediaPlayerTrackMixer from './media-player-track-mixer.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const SOURCE_TYPE = {
   none: 'none',
@@ -21,18 +22,17 @@ const LAZY_LOAD_COMPLETED_ACTION = {
   download: 'download'
 };
 
-const getSourceType = source => {
-  switch (typeof source) {
-    case 'string':
-      return SOURCE_TYPE.eager;
-    case 'function':
-      return SOURCE_TYPE.lazy;
-    default:
-      return SOURCE_TYPE.none;
+const getSourceType = sources => {
+  if (!sources) {
+    return SOURCE_TYPE.none;
   }
-};
 
-const PROGRESS_INTERVAL_IN_MILLISECONDS = 100;
+  if (typeof sources === 'function') {
+    return SOURCE_TYPE.lazy;
+  }
+
+  return SOURCE_TYPE.eager;
+};
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
   const info = { currentPartIndex: -1, isPartEndReached: false };
@@ -46,7 +46,7 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
     const millisecondsBeforeOrAfterEnd = Math.abs(endTimecode - playedMilliseconds);
 
     // The part end event for the last part will be triggered by `handleEndReached`, so we exclude it here:
-    if (!isLastPart && millisecondsBeforeOrAfterEnd <= PROGRESS_INTERVAL_IN_MILLISECONDS) {
+    if (!isLastPart && millisecondsBeforeOrAfterEnd <= MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS) {
       info.currentPartIndex = partIndex;
       info.isPartEndReached = true;
       shouldContinueSearching = false;
@@ -62,12 +62,12 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
   return info;
 };
 
-function MediaPlayer({
-  source,
-  playbackRange,
+function MultitrackMediaPlayer({
+  sources,
   aspectRatio,
   screenMode,
   screenOverlay,
+  showTrackMixer,
   canDownload,
   downloadFileName,
   posterImageUrl,
@@ -81,27 +81,39 @@ function MediaPlayer({
   parts,
   mediaPlayerRef
 }) {
-  const sourceType = getSourceType(source);
+  const sourceType = getSourceType(sources);
 
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [loadedSources, setLoadedSources] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
-  const [sourceUrl, setSourceUrl] = useState(sourceType === SOURCE_TYPE.eager ? source : null);
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
   const triggerReadyIfNeeded = useDedupedCallback(onReady);
   const triggerPlayStateChangeIfNeeded = useDedupedCallback(onPlayStateChange);
 
   useEffect(() => {
-    setSourceUrl(sourceType === SOURCE_TYPE.eager ? source : null);
-  }, [source, sourceType]);
+    switch (sourceType) {
+      case SOURCE_TYPE.eager:
+        setLoadedSources(sources);
+        break;
+      case SOURCE_TYPE.lazy:
+        // The loaded sources will be set after lazy loading below
+        break;
+      case SOURCE_TYPE.none:
+        setLoadedSources(null);
+        break;
+      default:
+        throw new Error(`Invalid source type '${sourceType}'`);
+    }
+  }, [sources, sourceType]);
 
   useEffect(() => {
     if (isSeeking) {
@@ -127,18 +139,24 @@ function MediaPlayer({
     onSeek(milliseconds);
   };
 
-  const lazyLoadSource = async completedAction => {
+  const lazyLoadSources = async completedAction => {
     setLazyLoadCompletedAction(completedAction);
-    setSourceUrl(await source());
+    const newSources = await sources();
+    setLoadedSources(newSources);
   };
 
-  const handleTogglePlay = async () => {
+  const handlePlayClick = async () => {
     setLastReachedPartEndIndex(-1);
-    if (!sourceUrl && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.play);
-    } else {
-      trackRef.current.togglePlay();
+    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
+      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.play);
+      return;
     }
+
+    trackRef.current.play();
+  };
+
+  const handlePauseClick = () => {
+    trackRef.current.pause();
   };
 
   const handleEndReached = () => {
@@ -167,10 +185,10 @@ function MediaPlayer({
   };
 
   const handleDownloadClick = async () => {
-    if (!sourceUrl && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSource(LAZY_LOAD_COMPLETED_ACTION.download);
+    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
+      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
-      httpClient.download(sourceUrl, downloadFileName);
+      httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName);
     }
   };
 
@@ -179,7 +197,7 @@ function MediaPlayer({
     triggerReadyIfNeeded();
     switch (lazyLoadCompletedAction) {
       case LAZY_LOAD_COMPLETED_ACTION.play:
-        handleTogglePlay();
+        handlePlayClick();
         break;
       case LAZY_LOAD_COMPLETED_ACTION.download:
         handleDownloadClick();
@@ -189,10 +207,29 @@ function MediaPlayer({
     }
   };
 
+  const handleMainTrackVolumeChange = newValue => {
+    setLoadedSources(oldValue => ({
+      ...oldValue,
+      mainTrack: {
+        ...oldValue.mainTrack,
+        volume: newValue
+      }
+    }));
+  };
+
+  const handleSecondaryTrackVolumeChange = (newValue, secondaryTrackIndex) => {
+    setLoadedSources(oldValue => ({
+      ...oldValue,
+      secondaryTracks: oldValue.secondaryTracks.map((track, index) => {
+        return index === secondaryTrackIndex ? { ...track, volume: newValue } : track;
+      })
+    }));
+  };
+
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
-    togglePlay: trackRef.current?.togglePlay,
+    stop: trackRef.current?.stop,
     seekToPosition: position => {
       setLastReachedPartEndIndex(-1);
       const { trackPosition } = trackRef.current?.seekToPosition(position) || { trackPosition: 0 };
@@ -205,38 +242,38 @@ function MediaPlayer({
     },
     seekToPart: partIndex => {
       setLastReachedPartEndIndex(partIndex - 1);
-      trackRef.current.seekToPosition(parts[partIndex]?.startPosition || 0);
+      const { trackPosition } = trackRef.current?.seekToPosition(parts[partIndex]?.startPosition || 0) || { trackPosition: 0 };
+      onSeek(trackPosition);
     },
     reset: () => {
       setLastReachedPartEndIndex(-1);
-      trackRef.current.pause();
-      trackRef.current.seekToPosition(0);
+      trackRef.current?.stop();
+      trackRef.current?.seekToPosition(0);
+      onSeek(0);
     }
   };
 
   if (sourceType === SOURCE_TYPE.none) {
-    return <div className="MediaPlayer" />;
+    return <div className="MultitrackMediaPlayer" />;
   }
 
   return (
-    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      {sourceUrl && (
-        <MediaPlayerTrack
+    <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
+      {loadedSources && (
+        <MediaPlayerTrackGroup
+          sources={loadedSources}
           trackRef={trackRef}
           volume={volume}
-          sourceUrl={sourceUrl}
           aspectRatio={aspectRatio}
           screenMode={screenMode}
           screenOverlay={screenOverlay}
-          playbackRange={playbackRange}
           playbackRate={playbackRate}
-          progressIntervalInMilliseconds={PROGRESS_INTERVAL_IN_MILLISECONDS}
           onDuration={handleDuration}
           onEndReached={handleEndReached}
           onProgress={setPlayedMilliseconds}
           onPlayStateChange={handlePlayStateChange}
           posterImageUrl={posterImageUrl}
-          loadImmediately={sourceType === SOURCE_TYPE.lazy}
+          loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
           />
       )}
       {extraCustomContent && (<div>{extraCustomContent}</div>)}
@@ -254,16 +291,27 @@ function MediaPlayer({
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
         volume={volume}
+        onPlayClick={handlePlayClick}
+        onPauseClick={handlePauseClick}
         onPlaybackRateChange={handlePlaybackRateChange}
-        onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />
+      {loadedSources && showTrackMixer && (
+        <div className="MultitrackMediaPlayer-trackMixer">
+          <MediaPlayerTrackMixer
+            mainTrack={loadedSources.mainTrack}
+            secondaryTracks={loadedSources.secondaryTracks}
+            onMainTrackVolumeChange={handleMainTrackVolumeChange}
+            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
+            />
+        </div>
+      )}
     </div>
   );
 }
 
-MediaPlayer.propTypes = {
+MultitrackMediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   canDownload: PropTypes.bool,
   downloadFileName: PropTypes.string,
@@ -280,14 +328,29 @@ MediaPlayer.propTypes = {
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
   })),
-  playbackRange: PropTypes.arrayOf(PropTypes.number),
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
-  source: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
+  showTrackMixer: PropTypes.bool,
+  sources: PropTypes.oneOfType([
+    PropTypes.shape({
+      mainTrack: PropTypes.shape({
+        name: PropTypes.string,
+        sourceUrl: PropTypes.string.isRequired,
+        volume: PropTypes.number.isRequired,
+        playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
+      }),
+      secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string,
+        sourceUrl: PropTypes.string.isRequired,
+        volume: PropTypes.number.isRequired
+      }))
+    }),
+    PropTypes.func
+  ])
 };
 
-MediaPlayer.defaultProps = {
+MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   canDownload: false,
   downloadFileName: null,
@@ -302,11 +365,11 @@ MediaPlayer.defaultProps = {
   onReady: () => {},
   onSeek: () => {},
   parts: [{ startPosition: 0 }],
-  playbackRange: [0, 1],
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
-  source: null
+  showTrackMixer: false,
+  sources: null
 };
 
-export default MediaPlayer;
+export default MultitrackMediaPlayer;
