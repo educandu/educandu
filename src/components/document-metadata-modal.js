@@ -16,8 +16,10 @@ import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider } from 'antd';
+import { ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 const logger = new Logger(import.meta.url);
 
@@ -58,6 +60,7 @@ function DocumentMetadataModal({
 
   const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
   const canVerify = hasUserPermission(user, permissions.VERIFY_DOC);
+  const canRestrictOpenContribution = hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION);
 
   const initialValues = {
     title: initialDocumentMetadata.title || t('newDocument'),
@@ -66,7 +69,8 @@ function DocumentMetadataModal({
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
     sequenceCount: 1,
-    verified: initialDocumentMetadata.verified
+    verified: initialDocumentMetadata.verified,
+    allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution
   };
 
   const titleValidationRules = [
@@ -139,6 +143,7 @@ function DocumentMetadataModal({
     tags,
     sequenceCount,
     review,
+    allowedOpenContribution,
     verified,
     useTemplateDocument
   }) => {
@@ -152,7 +157,8 @@ function DocumentMetadataModal({
         language,
         tags,
         review: canReview ? (review || '').trim() : initialDocumentMetadata.review,
-        verified: !!(canVerify ? verified : initialDocumentMetadata.verified)
+        verified: !!(canVerify ? verified : initialDocumentMetadata.verified),
+        allowedOpenContribution: canRestrictOpenContribution ? allowedOpenContribution : initialDocumentMetadata.allowedOpenContribution
       };
 
       if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
@@ -165,7 +171,8 @@ function DocumentMetadataModal({
             slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '',
             tags: mappedDocument.tags,
             review: mappedDocument.review,
-            verified: mappedDocument.verified
+            verified: mappedDocument.verified,
+            allowedOpenContribution: mappedDocument.allowedOpenContribution
           }))
           : [
             {
@@ -190,6 +197,9 @@ function DocumentMetadataModal({
       setLoading(false);
     }
   };
+
+  const allowedOpenContributionOptions = Object.values(ALLOWED_OPEN_CONTRIBUTION)
+    .map(optionKey => ({ key: optionKey, value: t(`allowedOpenContribution_${optionKey}`) }));
 
   return (
     <Modal
@@ -252,6 +262,23 @@ function DocumentMetadataModal({
             {canReview && (
               <FormItem name="review" label={t('review')}>
                 <NeverScrollingTextArea />
+              </FormItem>
+            )}
+            {canRestrictOpenContribution && (
+              <FormItem
+                name="allowedOpenContribution"
+                label={
+                  <Fragment>
+                    {t('allowedOpenContribution')}
+                    <Tooltip title={t('allowedOpenContributionInfo')}>
+                      <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                    </Tooltip>
+                  </Fragment>
+                }
+                >
+                <Select>
+                  {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
+                </Select>
               </FormItem>
             )}
             {canVerify && (

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
+  ALLOWED_OPEN_CONTRIBUTION,
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
@@ -219,7 +220,8 @@ export const documentMetadataEditShape = PropTypes.shape({
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   review: PropTypes.string,
-  verified: PropTypes.bool
+  verified: PropTypes.bool,
+  allowedOpenContribution: PropTypes.oneOf(Object.values(ALLOWED_OPEN_CONTRIBUTION)).isRequired
 });
 
 export const documentShape = PropTypes.shape({
@@ -241,6 +243,7 @@ export const documentRevisionShape = PropTypes.shape({
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   review: PropTypes.string,
   verified: PropTypes.bool,
+  allowedOpenContribution: PropTypes.oneOf(Object.values(ALLOWED_OPEN_CONTRIBUTION)).isRequired,
   archived: PropTypes.bool.isRequired,
   origin: PropTypes.string.isRequired,
   originUrl: PropTypes.string.isRequred

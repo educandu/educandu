@@ -28,6 +28,18 @@ createSequence:
 sequenceInfoBoxHeader:
   en: Document sequences
   de: Veranstaltungsreihen
+allowedOpenContribution:
+  en: Allowed open contribution
+  de: Erlaubte offene Beiträge
+allowedOpenContribution_metadataAndContent:
+  en: Metadata and content
+  de: Metadaten und Inhalt
+allowedOpenContribution_content:
+  en: Content only
+  de: Nur Inhalt
+allowedOpenContribution_none:
+  en: None
+  de: Keine
 sequenceInfo:
   en: |
     You can create multiple documents at once.
@@ -40,3 +52,6 @@ verifiedInfo:
     As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
   de:
     Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
+allowedOpenContributionInfo:
+  en: You can restrict the contribution that the open community can bring to this document.
+  de: You can restrict the contribution that the open community can bring to this document.

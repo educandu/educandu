@@ -97,7 +97,8 @@ describe('permissions', () => {
           permissions.RESTORE_DOC_REVISIONS,
           permissions.MANAGE_ARCHIVED_DOCS,
           permissions.REVIEW_DOC,
-          permissions.VERIFY_DOC
+          permissions.VERIFY_DOC,
+          permissions.RESTRICT_OPEN_CONTRIBUTION
         ]);
       });
     });
@@ -127,6 +128,7 @@ describe('permissions', () => {
           permissions.MANAGE_ARCHIVED_DOCS,
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
+          permissions.RESTRICT_OPEN_CONTRIBUTION,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
