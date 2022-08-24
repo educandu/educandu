@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
-import React, { useCallback, useState } from 'react';
 import { replaceItemAt } from '../../utils/array-utils.js';
 import { useSetStorageLocation } from '../storage-context.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
@@ -45,6 +45,7 @@ function FilesUploadScreen({
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [optimizeImages, setOptimizeImages] = useState(true);
+  const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(uploadQueue.map(({ file, isPristine }) => ({
     file,
@@ -53,8 +54,11 @@ function FilesUploadScreen({
     errorMessage: null
   })));
 
-  const multipleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length > 1;
-  const singleFileUploadFinished = currentStage === STAGE.uploadFinished && uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded;
+  useEffect(() => {
+    if (uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded) {
+      setPreviewedFileIndex(0);
+    }
+  }, [uploadItems]);
 
   const ensureCanUpload = useCallback((file, locationToUpload) => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
@@ -133,8 +137,12 @@ function FilesUploadScreen({
     setOptimizeImages(checked);
   };
 
-  const handleSelectSingleUploadedFileClick = () => {
-    onSelectFileClick(uploadItems[0].uploadedFile);
+  const handleSelectPreviewedFileClick = () => {
+    onSelectFileClick(uploadItems[previewedFileIndex].uploadedFile);
+  };
+
+  const handleUploadItemClick = itemIndex => {
+    setPreviewedFileIndex(itemIndex === previewedFileIndex ? -1 : itemIndex);
   };
 
   const renderUploadMessage = () => {
@@ -148,6 +156,13 @@ function FilesUploadScreen({
       default:
         throw new Error(`Invalid stage value: ${currentStage}`);
     }
+  };
+
+  const renderUploadItemName = (item, itemIndex) => {
+    if (item.status === ITEM_STATUS.succeeded && uploadItems.length > 1) {
+      return <a onClick={() => handleUploadItemClick(itemIndex)}>{item.file.name}</a>;
+    }
+    return item.file.name;
   };
 
   const renderUploadItem = (item, itemIndex) => {
@@ -184,13 +199,13 @@ function FilesUploadScreen({
           {item.status === ITEM_STATUS.failed && (
           <CloseOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--error" />
           )}
-          {item.file.name}
+          {renderUploadItemName(item, itemIndex)}
           {item.status === ITEM_STATUS.preprocessed && (
           <span className="FilesUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
           )}
         </div>
         {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
-        {singleFileUploadFinished && (
+        {previewedFileIndex === itemIndex && (
         <div className="FilesUploadScreen-fileStatusPreview">
           <FilePreview
             url={item.uploadedFile.url}
@@ -240,11 +255,11 @@ function FilesUploadScreen({
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
         <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
-          {!singleFileUploadFinished && (
-            <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading} disabled={multipleFileUploadFinished}>{t('startUpload')}</Button>
+          {(currentStage === STAGE.uploadNotStarted || currentStage === STAGE.uploading) && (
+            <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading}>{t('startUpload')}</Button>
           )}
-          {singleFileUploadFinished && (
-            <Button type="primary" onClick={handleSelectSingleUploadedFileClick}>{t('common:select')}</Button>
+          {currentStage === STAGE.uploadFinished && (
+            <Button type="primary" onClick={handleSelectPreviewedFileClick} disabled={previewedFileIndex === -1}>{t('common:select')}</Button>
           )}
         </div>
       </div>
