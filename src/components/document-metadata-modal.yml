@@ -53,5 +53,5 @@ verifiedInfo:
   de:
     Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
 allowedOpenContributionInfo:
-  en: You can restrict the contribution that the open community can bring to this document.
-  de: You can restrict the contribution that the open community can bring to this document.
+  en: You can restrict the parts of the document the open community can contribute to.
+  de: Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.

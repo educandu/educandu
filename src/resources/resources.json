@@ -303,7 +303,7 @@
       "allowedOpenContribution_none": "None",
       "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
       "verifiedInfo": "As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
-      "allowedOpenContributionInfo": "You can restrict the contribution that the open community can bring to this document."
+      "allowedOpenContributionInfo": "You can restrict the parts of the document the open community can contribute to."
     }
   },
   {
@@ -326,7 +326,7 @@
       "allowedOpenContribution_none": "Keine",
       "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
       "verifiedInfo": "Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.",
-      "allowedOpenContributionInfo": "You can restrict the contribution that the open community can bring to this document."
+      "allowedOpenContributionInfo": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann."
     }
   },
   {
