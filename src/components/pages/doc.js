@@ -23,10 +23,11 @@ import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -84,14 +85,12 @@ function Doc({ initialState, PageTemplate }) {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const { room } = initialState;
-  const isRoomOwner = user?._id === room?.owner.key;
-  const isRoomCollaborator = room?.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room?.members.some(m => m.userId === user?._id);
 
-  const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
-  const isEditViewAllowed = room ? isRoomOwner || isRoomCollaborator : !isExternalDocument && !initialState.doc.archived;
-  const isHardDeletionAllowed = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
+  const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
+  const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
+  const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
@@ -446,7 +445,7 @@ function Doc({ initialState, PageTemplate }) {
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
             canEdit={view === VIEW.edit}
-            canHardDelete={isHardDeletionAllowed && view === VIEW.history}
+            canHardDelete={userCanHardDelete && view === VIEW.history}
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
@@ -468,13 +467,14 @@ function Doc({ initialState, PageTemplate }) {
           startOpen={initialView === VIEW.history}
           onOpen={handleHistoryOpen}
           onClose={handleHistoryClose}
-          canRestoreRevisions={!isExternalDocument}
+          canRestoreRevisions={userCanEditDocContent}
           onPermalinkRequest={handlePermalinkRequest}
           onSelectedRevisionChange={handleSelectedRevisionChange}
           onRestoreRevision={handleRestoreRevision}
           />
-        {isEditViewAllowed && (
+        {userCanEditDocContent && (
           <EditControlPanel
+            canEditMetadata={userCanEditDocMetadata}
             startOpen={initialView === VIEW.edit}
             onOpen={handleEditOpen}
             onMetadataOpen={handleEditMetadataOpen}
