@@ -18,7 +18,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -79,13 +79,13 @@ class DocumentService {
     const positiveTokens = new Set(tokens
       .filter(token => !token.startsWith('-'))
       .filter(token => token.length > 2)
-      .map(token => escapeStringRegexp(token.toLowerCase())));
+      .map(token => token.toLowerCase()));
 
     const negativeTokens = new Set(tokens
       .filter(token => token.startsWith('-'))
       .map(token => token.substr(1))
       .filter(token => token.length > 2)
-      .map(token => escapeStringRegexp(token.toLowerCase())));
+      .map(token => token.toLowerCase()));
 
     if (!positiveTokens.size) {
       return [];
@@ -94,19 +94,21 @@ class DocumentService {
     const queryConditions = [
       { archived: false },
       { roomId: null },
-      { tags: { $regex: `.*(${[...positiveTokens].join('|')}).*`, $options: 'i' } }
+      { tags: { $regex: `.*(${[...positiveTokens].map(escapeStringRegexp).join('|')}).*`, $options: 'i' } }
     ];
 
     if (negativeTokens.size) {
-      queryConditions.push({ tags: { $not: { $regex: `^(${[...negativeTokens].join('|')})$`, $options: 'i' } } });
+      queryConditions.push({ tags: { $not: { $regex: `^(${[...negativeTokens].map(escapeStringRegexp).join('|')})$`, $options: 'i' } } });
     }
 
     const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
 
-    return documents.map(document => ({
-      ...document,
-      tagMatchCount: document.tags.filter(tag => positiveTokens.has(tag.toLowerCase())).length
-    }));
+    return documents.map(document => {
+      const tagMatchCount = document.tags.filter(tag => positiveTokens.has(tag.toLowerCase())).length;
+      const verifiedPoints = document.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
+      const relevance = tagMatchCount + verifiedPoints;
+      return { ...document, relevance };
+    });
   }
 
   getDocumentById(documentId) {

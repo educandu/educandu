@@ -44,7 +44,7 @@ function Search({ PageTemplate }) {
   ];
 
   const sorters = useMemo(() => ({
-    relevance: rowsToSort => rowsToSort.sort(by(row => row.document.tagMatchCount, sorting.direction).thenBy(row => row.document.updatedOn, 'desc')),
+    relevance: rowsToSort => rowsToSort.sort(by(row => row.document.relevance, sorting.direction).thenBy(row => row.document.updatedOn, 'desc')),
     title: rowsToSort => rowsToSort.sort(by(row => row.document.title, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.document.createdOn, sorting.direction)),
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction)),
