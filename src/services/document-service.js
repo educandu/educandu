@@ -18,7 +18,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
-import { ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -508,7 +508,7 @@ class DocumentService {
       tags: data.tags || [],
       review: data.review || '',
       verified: data.verified || false,
-      allowedOpenContribution: data.allowedOpenContribution || ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
+      allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',

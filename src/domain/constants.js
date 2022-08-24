@@ -150,7 +150,7 @@ export const FILES_VIEWER_DISPLAY = {
   list: 'list'
 };
 
-export const ALLOWED_OPEN_CONTRIBUTION = {
+export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
   metadataAndContent: 'metadataAndContent',
   content: 'content',
   none: 'none'

@@ -6,7 +6,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -358,7 +358,7 @@ describe('document-service', () => {
           tags: ['tag-1'],
           review: 'review',
           verified: true,
-          allowedOpenContribution: ALLOWED_OPEN_CONTRIBUTION.content
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
         },
         {
           _id: uniqueId.create(),
@@ -385,7 +385,7 @@ describe('document-service', () => {
           tags: ['tag-2'],
           review: 'review',
           verified: true,
-          allowedOpenContribution: ALLOWED_OPEN_CONTRIBUTION.content
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
         }
       ];
     });

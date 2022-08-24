@@ -14,9 +14,9 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider } from 'antd';
-import { ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -198,7 +198,7 @@ function DocumentMetadataModal({
     }
   };
 
-  const allowedOpenContributionOptions = Object.values(ALLOWED_OPEN_CONTRIBUTION)
+  const allowedOpenContributionOptions = Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)
     .map(optionKey => ({ key: optionKey, value: t(`allowedOpenContribution_${optionKey}`) }));
 
   return (

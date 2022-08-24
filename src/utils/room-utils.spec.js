@@ -1,5 +1,5 @@
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import sut from './room-utils.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 describe('room-utils', () => {
 
