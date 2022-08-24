@@ -28,7 +28,7 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function MainTrackEditor({ content, onContentChanged, onDeterminingDuration, onDurationDetermined }) {
+function MainTrackEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mainTrackEditor');
@@ -36,7 +36,6 @@ function MainTrackEditor({ content, onContentChanged, onDeterminingDuration, onD
   const { sourceType, sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
 
   const determineMediaInformationFromUrl = async url => {
-    onDeterminingDuration();
     const result = await getMediaInformation({
       t,
       url,
@@ -46,7 +45,6 @@ function MainTrackEditor({ content, onContentChanged, onDeterminingDuration, onD
     });
 
     setSourceDuration(result.duration);
-    onDurationDetermined(result.duration);
 
     return result;
   };
@@ -213,14 +211,7 @@ MainTrackEditor.propTypes = {
     playbackRange: PropTypes.arrayOf(PropTypes.number),
     copyrightNotice: PropTypes.string
   }).isRequired,
-  onContentChanged: PropTypes.func.isRequired,
-  onDeterminingDuration: PropTypes.func,
-  onDurationDetermined: PropTypes.func
-};
-
-MainTrackEditor.defaultProps = {
-  onDeterminingDuration: () => {},
-  onDurationDetermined: () => {}
+  onContentChanged: PropTypes.func.isRequired
 };
 
 export default MainTrackEditor;

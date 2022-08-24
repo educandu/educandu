@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useMediaDuration } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
@@ -10,8 +11,6 @@ const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 function TrackMixer({
   mainTrack,
   secondaryTracks,
-  mainTrackDurationInMs,
-  secondaryTracksDurationsInMs,
   onMainTrackChange,
   onSecondaryTrackChange
 }) {
@@ -19,9 +18,12 @@ function TrackMixer({
   const { t } = useTranslation('trackMixer');
 
   const [trackInfos, setTrackInfos] = useState([]);
+  const mainTrackDuration = useMediaDuration(mainTrack.sourceUrl);
+  const secondaryTrackDurations = useMediaDuration(secondaryTracks.map(track => track.sourceUrl));
 
   const updateTrackInfos = useCallback(() => {
     const barsColumnWidth = barsColumnRef.current?.clientWidth || 0;
+    const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * (mainTrackDuration.duration || 0);
 
     let getBarWidthForTrack;
     if (barsColumnWidth && mainTrackDurationInMs) {
@@ -37,18 +39,18 @@ function TrackMixer({
         name: mainTrack.name,
         volume: mainTrack.volume,
         secondaryTrackIndex: -1,
-        trackDurationInMs: mainTrackDurationInMs,
-        barWidth: getBarWidthForTrack(mainTrackDurationInMs)
+        trackDurationInMs: mainTrackDurationInMs || 0,
+        barWidth: getBarWidthForTrack(mainTrackDurationInMs || 0)
       },
       ...secondaryTracks.map((secondaryTrack, index) => ({
         name: secondaryTrack.name,
         volume: secondaryTrack.volume,
         secondaryTrackIndex: index,
-        trackDurationInMs: secondaryTracksDurationsInMs[index],
-        barWidth: getBarWidthForTrack(secondaryTracksDurationsInMs[index])
+        trackDurationInMs: secondaryTrackDurations[index].duration || 0,
+        barWidth: getBarWidthForTrack(secondaryTrackDurations[index].duration || 0)
       }))
     ]);
-  }, [barsColumnRef, mainTrack, secondaryTracks, mainTrackDurationInMs, secondaryTracksDurationsInMs]);
+  }, [barsColumnRef, mainTrack, secondaryTracks, mainTrackDuration, secondaryTrackDurations]);
 
   useEffect(() => {
     updateTrackInfos();
@@ -108,16 +110,17 @@ function TrackMixer({
 TrackMixer.propTypes = {
   mainTrack: PropTypes.shape({
     name: PropTypes.string,
+    sourceUrl: PropTypes.string.isRequired,
+    playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired,
     volume: PropTypes.number.isRequired
   }).isRequired,
-  mainTrackDurationInMs: PropTypes.number.isRequired,
   onMainTrackChange: PropTypes.func.isRequired,
   onSecondaryTrackChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
+    sourceUrl: PropTypes.string.isRequired,
     volume: PropTypes.number.isRequired
-  })).isRequired,
-  secondaryTracksDurationsInMs: PropTypes.arrayOf(PropTypes.number).isRequired
+  })).isRequired
 };
 
 export default TrackMixer;

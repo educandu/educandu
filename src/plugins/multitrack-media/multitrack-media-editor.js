@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
@@ -11,6 +11,9 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
+import { getFullSourceUrl } from '../../utils/media-utils.js';
+import { useService } from '../../components/container-context.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 
 const FormItem = Form.Item;
 
@@ -20,12 +23,31 @@ const formItemLayout = {
 };
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('multitrackMedia');
-  const [mainTrackDurationInMs, setMainTrackDurationInMs] = useState(0);
-  const [secondaryTracksDurationsInMs, setSecondaryTracksDurationsInMs] = useState(content.secondaryTracks.map(() => 0));
 
   const { width, mainTrack, secondaryTracks } = content;
-  const mainTrackPlaybackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDurationInMs;
+  const sources = {
+    mainTrack: {
+      name: mainTrack.name,
+      sourceUrl: getFullSourceUrl({
+        url: mainTrack.sourceUrl,
+        sourceType: mainTrack.sourceType,
+        cdnRootUrl: clientConfig.cdnRootUrl
+      }),
+      volume: mainTrack.volume,
+      playbackRange: mainTrack.playbackRange
+    },
+    secondaryTracks: secondaryTracks.map(track => ({
+      name: track.name,
+      sourceUrl: getFullSourceUrl({
+        url: track.sourceUrl,
+        sourceType: track.sourceType,
+        cdnRootUrl: clientConfig.cdnRootUrl
+      }),
+      volume: track.volume
+    }))
+  };
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -36,18 +58,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleMainTrackNameChanged = event => {
     const { value } = event.target;
     changeContent({ mainTrack: { ...mainTrack, name: value } });
-  };
-
-  const handleMainTrackDurationDetermined = duration => {
-    setMainTrackDurationInMs(duration);
-  };
-
-  const handleSecondaryTrackDurationDetermined = (index, duration) => {
-    setSecondaryTracksDurationsInMs(previousDurations => {
-      const newDurations = cloneDeep(previousDurations);
-      newDurations[index] = duration;
-      return newDurations;
-    });
   };
 
   const handeSecondaryTrackContentChanged = (index, value) => {
@@ -102,7 +112,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           <MainTrackEditor
             content={mainTrack}
             onContentChanged={handleMainTrackContentChanged}
-            onDurationDetermined={handleMainTrackDurationDetermined}
             />
         </ItemPanel>
 
@@ -119,7 +128,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             >
             <SecondaryTrackEditor
               content={secondaryTrack}
-              onDurationDetermined={duration => handleSecondaryTrackDurationDetermined(index, duration)}
               onContentChanged={value => handeSecondaryTrackContentChanged(index, value)}
               />
           </ItemPanel>
@@ -129,10 +137,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         </Button>
         <ItemPanel header={t('trackMixer')}>
           <TrackMixer
-            mainTrack={mainTrack}
-            secondaryTracks={secondaryTracks}
-            mainTrackDurationInMs={mainTrackPlaybackDurationInMs}
-            secondaryTracksDurationsInMs={secondaryTracksDurationsInMs}
+            mainTrack={sources.mainTrack}
+            secondaryTracks={sources.secondaryTracks}
             onMainTrackChange={handleMainTrackChange}
             onSecondaryTrackChange={handleSecondaryTrackChange}
             />
