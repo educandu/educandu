@@ -88,7 +88,7 @@ function MultitrackMediaPlayer({
   const httpClient = useService(HttpClient);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [loadedSources, setLoadedSources] = useState(sources);
+  const [loadedSources, setLoadedSources] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);

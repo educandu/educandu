@@ -144,7 +144,7 @@ function Tests({ PageTemplate }) {
         mainTrack: { name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, volume: 1, playbackRange: [0.14, 0.82] },
         secondaryTracks: [
           { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
-          { name: 'Vl 2 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
+          { name: 'Vl 2 (29 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
           { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
         ]
       }
@@ -205,6 +205,18 @@ function Tests({ PageTemplate }) {
   // MultitrackMediaPlugin
   const { t: mmpTranslation } = useTranslation('multitrackMedia');
   const mmpPresets = [
+    {
+      title: 'Corelli (manipulated)',
+      content: {
+        ...createDefaultContent(mmpTranslation),
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Gb (ext)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, playbackRange: [0.14, 0.82] },
+        secondaryTracks: [
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
+        ]
+      }
+    },
     {
       title: 'Corelli',
       content: {
