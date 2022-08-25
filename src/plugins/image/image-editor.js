@@ -2,10 +2,11 @@ import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
-import { Form, Input, Radio, InputNumber } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { Form, Input, Radio, InputNumber, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -338,7 +339,14 @@ function ImageEditor({ content, onContentChanged }) {
 
         <Form.Item
           className="ImageEditor-widthInput"
-          label={t('common:width')}
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
           {...formItemLayout}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
