@@ -18,6 +18,7 @@ import EarTrainingInfo from './ear-training/ear-training-info.js';
 import IntervalTrainerInfo from './interval-trainer/interval-trainer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
+import TestInfo from './test/test-info.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -38,7 +39,8 @@ const allPossibleInfoTypes = [
   EarTrainingInfo,
   IntervalTrainerInfo,
   InteractiveMediaInfo,
-  MultitrackMediaInfo
+  MultitrackMediaInfo,
+  TestInfo
 ];
 
 class RegisteredPlugin {

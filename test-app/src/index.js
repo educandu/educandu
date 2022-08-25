@@ -27,7 +27,8 @@ const plugins = [
   'interval-trainer',
   'table',
   'interactive-media',
-  'multitrack-media'
+  'multitrack-media',
+  'test'
 ];
 
 const config = {

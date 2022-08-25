@@ -2086,6 +2086,20 @@
     }
   },
   {
+    "namespace": "test",
+    "language": "en",
+    "resources": {
+      "name": "Test"
+    }
+  },
+  {
+    "namespace": "test",
+    "language": "de",
+    "resources": {
+      "name": "Test"
+    }
+  },
+  {
     "namespace": "video",
     "language": "en",
     "resources": {
