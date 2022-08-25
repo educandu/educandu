@@ -345,6 +345,9 @@ aspectRatio:
 width:
   en: Width
   de: Breite
+widthInfo:
+  en: Is applied to all screen sizes except for mobile phones
+  de: Trifft auf alle Bildschirmgrößen zu, außer auf Mobilgeräte
 copyrightNotice:
   en: Copyright notice
   de: Urheberschutzvermerk

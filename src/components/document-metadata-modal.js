@@ -241,10 +241,10 @@ function DocumentMetadataModal({
             rules={[{ type: 'integer', min: 1, max: 100 }]}
             label={
               <Fragment>
-                <span>{t('createSequence')}</span>
                 <Tooltip title={t('sequenceInfo')}>
-                  <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                  <InfoCircleOutlined className="u-info-icon" />
                 </Tooltip>
+                <span>{t('createSequence')}</span>
               </Fragment>
             }
             >
@@ -271,7 +271,7 @@ function DocumentMetadataModal({
                   <Fragment>
                     {t('allowedOpenContribution')}
                     <Tooltip title={t('allowedOpenContributionInfo')}>
-                      <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                      <InfoCircleOutlined className="u-info-icon" />
                     </Tooltip>
                   </Fragment>
                 }
@@ -286,7 +286,7 @@ function DocumentMetadataModal({
                 <Checkbox>
                   {t('verified')}
                   <Tooltip title={t('verifiedInfo')}>
-                    <InfoCircleOutlined className="DocumentMetadataModal-infoIcon" />
+                    <InfoCircleOutlined className="u-info-icon" />
                   </Tooltip>
                 </Checkbox>
               </FormItem>

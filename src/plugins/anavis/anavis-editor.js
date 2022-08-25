@@ -1,19 +1,19 @@
-import React from 'react';
 import classNames from 'classnames';
+import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
 import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber, Tooltip } from 'antd';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
@@ -343,7 +343,17 @@ function AnavisEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
           <Switch size="small" defaultChecked checked={kind === MEDIA_KIND.video} onChange={handleShowVideoChanged} />
         </Form.Item>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>

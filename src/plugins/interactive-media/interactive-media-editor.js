@@ -19,7 +19,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
-import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
+import { CheckOutlined, InfoCircleOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
@@ -209,7 +209,17 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           onDurationDetermined={handleDurationDetermined}
           onContentChanged={handleMainTrackContentChange}
           />
-        <FormItem label={t('common:width')} {...formItemLayout}>
+        <FormItem
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
 
