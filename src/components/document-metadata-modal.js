@@ -56,6 +56,7 @@ function DocumentMetadataModal({
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
+  const [generateSequence, setGenerateSequence] = useState(false);
   const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
 
   const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
@@ -68,7 +69,7 @@ function DocumentMetadataModal({
     slug: initialDocumentMetadata.slug || '',
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    sequenceCount: 1,
+    sequenceCount: 2,
     verified: initialDocumentMetadata.verified,
     allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution
   };
@@ -111,6 +112,7 @@ function DocumentMetadataModal({
   useEffect(() => {
     if (isVisible && formRef.current) {
       formRef.current.resetFields();
+      setGenerateSequence(false);
     }
   }, [isVisible]);
 
@@ -125,6 +127,10 @@ function DocumentMetadataModal({
     } catch (error) {
       handleApiError({ error, t });
     }
+  };
+
+  const handleGenerateSequenceChange = event => {
+    setGenerateSequence(event.target.checked);
   };
 
   const handleOk = () => {
@@ -163,7 +169,7 @@ function DocumentMetadataModal({
 
       if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
         const savedDocuments = [];
-        const documentsToSave = sequenceCount > 1
+        const documentsToSave = generateSequence
           ? Array.from({ length: sequenceCount }, (_, index) => ({
             ...cloneDeep(mappedDocument),
             roomId: initialDocumentMetadata.roomId,
@@ -236,20 +242,26 @@ function DocumentMetadataModal({
             />
         </FormItem>
         {mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple && (
-          <FormItem
-            name="sequenceCount"
-            rules={[{ type: 'integer', min: 1, max: 100 }]}
-            label={
-              <Fragment>
-                <Tooltip title={t('sequenceInfo')}>
-                  <InfoCircleOutlined className="u-info-icon" />
-                </Tooltip>
-                <span>{t('createSequence')}</span>
-              </Fragment>
-            }
-            >
-            <InputNumber className="DocumentMetadataModal-sequenceInput" min={1} max={100} />
-          </FormItem>
+          <Fragment>
+            <FormItem name="generateSequence" valuePropName="checked">
+              <Checkbox onChange={handleGenerateSequenceChange}>
+                <Fragment>
+                  <span>{t('generateSequence')}</span>
+                  <Tooltip title={t('sequenceInfo')}>
+                    <InfoCircleOutlined className="u-info-icon" />
+                  </Tooltip>
+                </Fragment>
+              </Checkbox>
+            </FormItem>
+            {generateSequence && (
+              <div>
+                <span>{generateSequence}</span>
+                <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
+                  <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
+                </FormItem>
+              </div>
+            )}
+          </Fragment>
         )}
         {templateDocumentId && (
           <FormItem name="useTemplateDocument" valuePropName="checked">

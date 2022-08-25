@@ -22,9 +22,12 @@ review:
 verified:
   en: Verified document
   de: Überprüftes Dokument
-createSequence:
-  en: Create sequence
-  de: Reihe anlegen
+generateSequence:
+  en: Create sequence of documents
+  de: Dokument-Reihe anlegen
+sequenceCount:
+  en: Number of documents
+  de: Anzahl der Dokumente
 sequenceInfoBoxHeader:
   en: Document sequences
   de: Veranstaltungsreihen
