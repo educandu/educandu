@@ -1099,6 +1099,7 @@ describe('document-service', () => {
         slug: 'doc-1',
         sections: [],
         tags: ['music', 'instructor', 'Dj.D', 'Cretu'],
+        verified: false,
         archived: false,
         language: 'en'
       });
@@ -1109,6 +1110,7 @@ describe('document-service', () => {
         slug: 'doc-2',
         sections: [],
         tags: ['Music', 'Instructor', 'Goga'],
+        verified: false,
         archived: false,
         language: 'en'
       });
@@ -1119,6 +1121,7 @@ describe('document-service', () => {
         slug: 'doc-3',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        verified: true,
         archived: false,
         language: 'en'
       });
@@ -1129,6 +1132,7 @@ describe('document-service', () => {
         slug: 'doc-4',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        verified: false,
         archived: true,
         language: 'en'
       });
@@ -1141,6 +1145,7 @@ describe('document-service', () => {
         slug: 'doc-5',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        verified: false,
         archived: false,
         language: 'en'
       });
@@ -1186,7 +1191,7 @@ describe('document-service', () => {
         expect(result.slug).toEqual(doc3.slug);
         expect(result.tags).toEqual(doc3.tags);
         expect(result.language).toEqual(doc3.language);
-        expect(result.tagMatchCount).toEqual(4);
+        expect(result.relevance).toEqual(7);
         expect(result.updatedOn).not.toBeNull();
         expect(result.sections).toBeUndefined();
       });
@@ -1198,7 +1203,7 @@ describe('document-service', () => {
         expect(results.map(result => result.title)).not.toContain('Doc 4');
       });
 
-      it('contains all documents with the correct tag match count', async () => {
+      it('contains all documents with the correct relevance', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('music instructor goga');
 
         expect(results).toHaveLength(3);
@@ -1208,9 +1213,9 @@ describe('document-service', () => {
           return acc;
         }, {});
 
-        expect(resultMap[doc1.title].tagMatchCount).toEqual(2);
-        expect(resultMap[doc2.title].tagMatchCount).toEqual(3);
-        expect(resultMap[doc3.title].tagMatchCount).toEqual(1);
+        expect(resultMap[doc1.title].relevance).toEqual(2);
+        expect(resultMap[doc2.title].relevance).toEqual(3);
+        expect(resultMap[doc3.title].relevance).toEqual(4);
       });
     });
 

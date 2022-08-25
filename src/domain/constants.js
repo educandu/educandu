@@ -156,6 +156,8 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
   none: 'none'
 };
 
+export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
+
 export const CDN_URL_PREFIX = 'cdn://';
 
 export const AVATAR_SIZE = 110;
