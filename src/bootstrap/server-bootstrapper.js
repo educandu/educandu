@@ -1,3 +1,4 @@
+import url from 'url';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
@@ -44,7 +45,8 @@ export async function createContainer(configValues = {}) {
   container.registerInstance(Cdn, cdn);
 
   logger.info('Loading resources');
-  const additionalResources = await Promise.all(serverConfig.resources.map(async moduleUrl => {
+  const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
+    const moduleUrl = url.pathToFileURL(modulePath);
     const module = await import(moduleUrl);
     return module.default;
   }));
