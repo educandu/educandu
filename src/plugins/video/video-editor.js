@@ -109,36 +109,31 @@ function VideoEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
         {sourceType === MEDIA_SOURCE_TYPE.external && (
-          <Fragment>
-            <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-              <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
-            </FormItem>
-            {renderPosterImageFormItem()}
-          </Fragment>
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+          <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
+        </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
-          <Fragment>
-            <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-              <div className="u-input-and-button">
-                <Input
-                  addonBefore={CDN_URL_PREFIX}
-                  value={sourceUrl}
-                  onChange={handleSourceUrlValueChange}
-                  />
-                <ResourcePicker
-                  url={storageLocationPathToUrl(sourceUrl)}
-                  onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
-                  />
-              </div>
-            </FormItem>
-            {renderPosterImageFormItem()}
-          </Fragment>
+        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+          <div className="u-input-and-button">
+            <Input
+              addonBefore={CDN_URL_PREFIX}
+              value={sourceUrl}
+              onChange={handleSourceUrlValueChange}
+              />
+            <ResourcePicker
+              url={storageLocationPathToUrl(sourceUrl)}
+              onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
+              />
+          </div>
+        </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
           </FormItem>
         )}
+        {renderPosterImageFormItem()}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
