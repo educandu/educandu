@@ -1,10 +1,17 @@
 @iterations: 0;
-.u-width-loop (@i) when (@i <= 100) {
+
+.u-width-loop (@i) when (@i <=100) {
   .u-width-@{i} {
-    width: ~"@{i}%" !important;
+    width: ~ "@{i}%" !important;
+
+    @media @edu-media-phone {
+      width: 100% !important;
+    }
   }
+
   .u-width-loop(@i + 1);
 }
+
 .u-width-loop (@iterations);
 
 .u-img-color-flip {
