@@ -53,22 +53,22 @@ class QuickTesterInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    redactedContent.title = this.gfm.extractCdnResources(
+    redactedContent.title = this.gfm.redactCdnResources(
       redactedContent.title,
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    redactedContent.teaser = this.gfm.extractCdnResources(
+    redactedContent.teaser = this.gfm.redactCdnResources(
       redactedContent.teaser,
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
     for (const test of redactedContent.tests) {
-      test.question = this.gfm.extractCdnResources(
+      test.question = this.gfm.redactCdnResources(
         test.question,
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );
-      test.answer = this.gfm.extractCdnResources(
+      test.answer = this.gfm.redactCdnResources(
         test.answer,
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );
