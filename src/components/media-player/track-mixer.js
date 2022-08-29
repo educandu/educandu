@@ -1,107 +1,82 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useMediaDurations } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import DimensionsProvider from '../dimensions-provider.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 
-function TrackMixer({
-  mainTrack,
-  secondaryTracks,
-  onMainTrackChange,
-  onSecondaryTrackChange
-}) {
-  const barsColumnRef = useRef(null);
+function TrackMixer({ mainTrack, secondaryTracks, onMainTrackChange, onSecondaryTrackChange }) {
   const { t } = useTranslation('trackMixer');
-
-  const [trackInfos, setTrackInfos] = useState([]);
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
-  const updateTrackInfos = useCallback(() => {
-    const barsColumnWidth = barsColumnRef.current?.clientWidth || 0;
-    const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * (mainTrackDuration.duration || 0);
+  const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * (mainTrackDuration.duration || 0);
 
-    let getBarWidthForTrack;
-    if (barsColumnWidth && mainTrackDurationInMs) {
-      const msToPxRatio = barsColumnWidth / mainTrackDurationInMs;
-      const maxBarWidth = barsColumnWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
-      getBarWidthForTrack = trackDuration => Math.min(maxBarWidth, trackDuration * msToPxRatio);
-    } else {
-      getBarWidthForTrack = () => 0;
+  const calculateBarWidth = (containerWidth, trackDuration) => {
+    if (!containerWidth || !trackDuration || !mainTrackDurationInMs) {
+      return 0;
     }
 
-    setTrackInfos([
-      {
-        name: mainTrack.name,
-        volume: mainTrack.volume,
-        secondaryTrackIndex: -1,
-        trackDurationInMs: mainTrackDurationInMs || 0,
-        barWidth: getBarWidthForTrack(mainTrackDurationInMs || 0)
-      },
-      ...secondaryTracks.map((secondaryTrack, index) => ({
-        name: secondaryTrack.name,
-        volume: secondaryTrack.volume,
-        secondaryTrackIndex: index,
-        trackDurationInMs: secondaryTrackDurations[index].duration || 0,
-        barWidth: getBarWidthForTrack(secondaryTrackDurations[index].duration || 0)
-      }))
-    ]);
-  }, [barsColumnRef, mainTrack, secondaryTracks, mainTrackDuration, secondaryTrackDurations]);
-
-  useEffect(() => {
-    updateTrackInfos();
-  }, [updateTrackInfos]);
-
-  useEffect(() => {
-    window.addEventListener('resize', updateTrackInfos);
-    return () => {
-      window.removeEventListener('resize', updateTrackInfos);
-    };
-  }, [updateTrackInfos]);
-
-  const handleTrackVolumeChange = (trackInfo, volume) => {
-    const index = trackInfo.secondaryTrackIndex;
-    if (index === -1) {
-      onMainTrackChange({ ...mainTrack, volume });
-    } else {
-      onSecondaryTrackChange(index, { ...secondaryTracks[index], volume });
-    }
+    const msToPxRatio = containerWidth / mainTrackDurationInMs;
+    const maxBarWidth = containerWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+    return Math.min(maxBarWidth, trackDuration * msToPxRatio);
   };
+
+  const tracks = [
+    {
+      name: mainTrack.name,
+      volume: mainTrack.volume,
+      secondaryTrackIndex: -1,
+      trackDurationInMs: mainTrackDurationInMs || 0,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs || 0),
+      handleVolumeChange: volume => onMainTrackChange({ ...mainTrack, volume })
+    },
+    ...secondaryTracks.map((secondaryTrack, index) => ({
+      name: secondaryTrack.name,
+      volume: secondaryTrack.volume,
+      secondaryTrackIndex: index,
+      trackDurationInMs: secondaryTrackDurations[index].duration || 0,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration || 0),
+      handleVolumeChange: volume => onSecondaryTrackChange(index, { ...secondaryTracks[index], volume })
+    }))
+  ];
 
   return (
     <div className="TrackMixer">
       <div className="TrackMixer-namesColumn">
-        {trackInfos.map(trackInfo => (
+        {tracks.map(trackInfo => (
           <div className="TrackMixer-nameRow" key={trackInfo.secondaryTrackIndex}>
             <div className="TrackMixer-name">{trackInfo.name}</div>
-            <MediaVolumeSlider value={trackInfo.volume} onChange={value => handleTrackVolumeChange(trackInfo, value)} />
+            <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} />
           </div>
         ))}
       </div>
-      <div className="TrackMixer-barsColumn" ref={barsColumnRef}>
-        {trackInfos.map(trackInfo => (
-          <div className="TrackMixer-barRow" key={trackInfo.secondaryTrackIndex}>
-            {!!trackInfo.trackDurationInMs && (
-              <div
-                className={classNames({
-                  'TrackMixer-bar': true,
-                  'TrackMixer-bar--secondaryTrack': trackInfo.secondaryTrackIndex !== -1
-                })}
-                style={{ width: `${trackInfo.barWidth}px` }}
-                >
-                {formatMillisecondsAsDuration(trackInfo.trackDurationInMs, { millisecondsLength: 1 })}
-              </div>
-            )}
-            {!trackInfo.trackDurationInMs && (
-              <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>
-            )}
-            <div className="TrackMixer-barOverflow" />
-          </div>
-        ))}
+      <div className="TrackMixer-barsColumn">
+        <DimensionsProvider>
+          {({ containerWidth }) => tracks.map(trackInfo => (
+            <div className="TrackMixer-barRow" key={trackInfo.secondaryTrackIndex}>
+              {!!trackInfo.trackDurationInMs && (
+                <div
+                  className={classNames({
+                    'TrackMixer-bar': true,
+                    'TrackMixer-bar--secondaryTrack': trackInfo.secondaryTrackIndex !== -1
+                  })}
+                  style={{ width: `${trackInfo.getBarWidth(containerWidth)}px` }}
+                  >
+                  {formatMillisecondsAsDuration(trackInfo.trackDurationInMs, { millisecondsLength: 1 })}
+                </div>
+              )}
+              {!trackInfo.trackDurationInMs && (
+                <span className="TrackMixer-barPlaceholderText">{t('noTrack')}</span>
+              )}
+              <div className="TrackMixer-barOverflow" />
+            </div>
+          ))}
+        </DimensionsProvider>
       </div>
     </div>
   );
