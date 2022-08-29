@@ -1,6 +1,5 @@
 import express from 'express';
 import httpErrors from 'http-errors';
-import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import CommentService from '../services/comment-service.js';
 import DocumentService from '../services/document-service.js';
@@ -14,10 +13,9 @@ const jsonParser = express.json();
 const { BadRequest, NotFound } = httpErrors;
 
 class CommentController {
-  static get inject() { return [CommentService, DocumentService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [CommentService, DocumentService, ClientDataMappingService]; }
 
-  constructor(commentService, documentService, clientDataMappingService, pageRenderer) {
-    this.pageRenderer = pageRenderer;
+  constructor(commentService, documentService, clientDataMappingService) {
     this.commentService = commentService;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
