@@ -1,5 +1,7 @@
 export const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
 
+export const minTagLength = 3;
+export const maxTagLength = 30;
 export const tagValidationPattern = /^\S{3,30}$/;
 
 export const minDisplayNameLength = 6;

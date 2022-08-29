@@ -10,6 +10,9 @@ titleRequired:
 descriptionTooLong:
   en: The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}
   de: Die Beschreibung darf nicht länger als {maxChars} Zeichen sein
+invalidTags:
+  en: Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}
+  de: Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein
 tagsPlaceholder:
   en: Enter keywords
   de: Stichwörter angeben
