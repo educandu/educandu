@@ -110,7 +110,7 @@ function TrackMixer({
 TrackMixer.propTypes = {
   mainTrack: PropTypes.shape({
     name: PropTypes.string,
-    sourceUrl: PropTypes.string.isRequired,
+    sourceUrl: PropTypes.string,
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired,
     volume: PropTypes.number.isRequired
   }).isRequired,
@@ -118,7 +118,7 @@ TrackMixer.propTypes = {
   onSecondaryTrackChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    sourceUrl: PropTypes.string.isRequired,
+    sourceUrl: PropTypes.string,
     volume: PropTypes.number.isRequired
   })).isRequired
 };

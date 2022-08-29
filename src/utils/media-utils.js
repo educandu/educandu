@@ -62,6 +62,8 @@ export const determineMediaDuration = memoizee(async url => {
     }
   };
 
+  // This function should never throw synchronously,
+  // so we have to await for a little moment here!
   await Promise.resolve();
 
   const playerPromise = new Promise((resolve, reject) => {
