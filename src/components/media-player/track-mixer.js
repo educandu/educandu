@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { useMediaDuration } from './media-hooks.js';
+import { useMediaDurations } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
@@ -18,8 +18,8 @@ function TrackMixer({
   const { t } = useTranslation('trackMixer');
 
   const [trackInfos, setTrackInfos] = useState([]);
-  const mainTrackDuration = useMediaDuration(mainTrack.sourceUrl);
-  const secondaryTrackDurations = useMediaDuration(secondaryTracks.map(track => track.sourceUrl));
+  const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
+  const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
   const updateTrackInfos = useCallback(() => {
     const barsColumnWidth = barsColumnRef.current?.clientWidth || 0;

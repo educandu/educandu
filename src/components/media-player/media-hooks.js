@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import MediaDurationCache from './media-duration-cache.js';
 
-export function useMediaDuration(urlOrUrls) {
-  const cache = useService(MediaDurationCache);
+export function useMediaDurations(urls) {
   const [, setSemaphore] = useState(0);
+  const cache = useService(MediaDurationCache);
   const [lastReturnedValue, setLastReturnedValue] = useState(null);
 
   useEffect(() => {
@@ -14,9 +14,7 @@ export function useMediaDuration(urlOrUrls) {
     return () => cache.unsubscribe(callback);
   }, [cache, setSemaphore]);
 
-  const currentValue = Array.isArray(urlOrUrls)
-    ? cache.getEntries(urlOrUrls)
-    : cache.getEntry(urlOrUrls);
+  const currentValue = cache.getEntries(urls);
 
   if (deepEqual(currentValue, lastReturnedValue)) {
     return lastReturnedValue;
