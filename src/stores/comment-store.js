@@ -25,6 +25,10 @@ class CommentStore {
     validate(comment, commentDBSchema);
     return this.collection.replaceOne({ _id: comment._id }, comment, { session, upsert: true });
   }
+
+  deleteCommentsByDocumentIds(documentIds, { session } = {}) {
+    return this.collection.deleteMany({ documentId: { $in: documentIds } }, { session });
+  }
 }
 
 export default CommentStore;
