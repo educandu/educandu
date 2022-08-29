@@ -13,6 +13,7 @@ import roomsSpec from './collection-specs/rooms.js';
 import locksSpec from './collection-specs/locks.js';
 import batchesSpec from './collection-specs/batches.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import commentsSpec from './collection-specs/comments.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
@@ -32,16 +33,17 @@ const collectionSpecs = [
   usersSpec,
   tasksSpec,
   locksSpec,
+  roomsSpec,
   batchesSpec,
+  commentsSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
   storagePlansSpec,
   documentOrdersSpec,
-  documentRevisionsSpec,
-  passwordResetRequestsSpec,
   roomInvitationsSpec,
-  roomsSpec
+  documentRevisionsSpec,
+  passwordResetRequestsSpec
 ];
 
 class Database {
