@@ -11,6 +11,11 @@ export default class Educandu_2022_08_29_01_create_comments_collection {
       {
         name: '_idx_documentId_',
         key: { documentId: 1 }
+      },
+      {
+        name: '_idx_documentId_deletedOn_',
+        key: { documentId: 1, deletedOn: 1 },
+        partialFilterExpression: { $and: [{ documentId: { $type: 'string' } }, { deletedOn: null }] }
       }
     ]);
   }

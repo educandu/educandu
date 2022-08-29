@@ -13,6 +13,7 @@ import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
 import StorageController from './storage-controller.js';
+import CommentController from './comment-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
@@ -39,7 +40,8 @@ const controllerTypes = [
   RevisionController,
   PdfJsApiController,
   AdminController,
-  AmbController
+  AmbController,
+  CommentController
 ];
 
 class ControllerFactory {

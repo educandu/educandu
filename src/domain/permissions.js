@@ -9,6 +9,7 @@ const REVIEW_DOC = 'review-doc';
 const VERIFY_DOC = 'verify-doc';
 const VIEW_FILES = 'view-files';
 const EDIT_USERS = 'edit-users';
+const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
 const MIGRATE_DATA = 'migrate-data';
 const VIEW_BATCHES = 'view-batches';
@@ -16,13 +17,14 @@ const MANAGE_IMPORT = 'manage-import';
 const SEE_USER_EMAIL = 'see-user-email';
 const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
-const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 const HARD_DELETE_SECTION = 'hard-delete-section';
 const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
 const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const DELETE_ANY_STORAGE_FILE = 'delete-storage-file';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
+const CREATE_DOCUMENT_COMMENT = 'create-document-comment';
+const MANAGE_DOCUMENT_COMMENT = 'manage-document-comment';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const RESTRICT_OPEN_CONTRIBUTION = 'restrict-open-contribution';
 const MANAGE_EXPORT_WITH_BUILT_IN_USER = 'manage-export-with-built-in-user';
@@ -37,7 +39,8 @@ const userPermissions = [
   CREATE_FILE,
   OWN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
-  JOIN_PRIVATE_ROOMS
+  JOIN_ROOMS,
+  CREATE_DOCUMENT_COMMENT
 ];
 
 const maintainerPermissions = [
@@ -50,7 +53,8 @@ const maintainerPermissions = [
     MANAGE_ARCHIVED_DOCS,
     REVIEW_DOC,
     VERIFY_DOC,
-    RESTRICT_OPEN_CONTRIBUTION
+    RESTRICT_OPEN_CONTRIBUTION,
+    MANAGE_DOCUMENT_COMMENT
   ])
 ];
 
@@ -115,5 +119,7 @@ export default {
   OWN_ROOMS,
   DELETE_FOREIGN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
-  JOIN_PRIVATE_ROOMS
+  JOIN_ROOMS,
+  CREATE_DOCUMENT_COMMENT,
+  MANAGE_DOCUMENT_COMMENT
 };

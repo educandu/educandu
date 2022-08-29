@@ -190,6 +190,20 @@ class ClientDataMappingService {
     return mappedUserFavorites;
   }
 
+  mapComment(comment) {
+    const mappedComment = cloneDeep(comment);
+
+    return {
+      ...mappedComment,
+      createdOn: mappedComment.createdOn.toISOString(),
+      deletedOn: mappedComment.deletedOn && mappedComment.deletedOn.toISOString()
+    };
+  }
+
+  mapComments(comments) {
+    return comments.map(this.mapComment);
+  }
+
   async _mapFavorite({ favorite, user }) {
     const mappedFavorite = {
       ...favorite,

@@ -68,7 +68,8 @@ describe('permissions', () => {
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_PRIVATE_ROOMS
+          permissions.JOIN_ROOMS,
+          permissions.CREATE_DOCUMENT_COMMENT
         ]);
       });
     });
@@ -90,7 +91,8 @@ describe('permissions', () => {
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_PRIVATE_ROOMS,
+          permissions.JOIN_ROOMS,
+          permissions.CREATE_DOCUMENT_COMMENT,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
@@ -98,7 +100,8 @@ describe('permissions', () => {
           permissions.MANAGE_ARCHIVED_DOCS,
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
-          permissions.RESTRICT_OPEN_CONTRIBUTION
+          permissions.RESTRICT_OPEN_CONTRIBUTION,
+          permissions.MANAGE_DOCUMENT_COMMENT
         ]);
       });
     });
@@ -120,7 +123,8 @@ describe('permissions', () => {
           permissions.CREATE_FILE,
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_PRIVATE_ROOMS,
+          permissions.JOIN_ROOMS,
+          permissions.CREATE_DOCUMENT_COMMENT,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
@@ -129,6 +133,7 @@ describe('permissions', () => {
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
+          permissions.MANAGE_DOCUMENT_COMMENT,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
