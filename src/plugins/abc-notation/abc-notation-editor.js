@@ -1,6 +1,7 @@
-import React from 'react';
-import { Form, Switch } from 'antd';
+import React, { Fragment } from 'react';
+import { Form, Switch, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import InputAndPreview from '../../components/input-and-preview.js';
@@ -56,7 +57,17 @@ function AbcNotationEditor({ content, onContentChanged }) {
         <Form.Item label={t('midiSound')} {...formItemLayout}>
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
         </Form.Item>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>

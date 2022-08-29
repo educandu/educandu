@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
-import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import { Form, Input, Radio, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -108,36 +109,31 @@ function VideoEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
         {sourceType === MEDIA_SOURCE_TYPE.external && (
-          <Fragment>
-            <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-              <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
-            </FormItem>
-            {renderPosterImageFormItem()}
-          </Fragment>
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+          <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
+        </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
-          <Fragment>
-            <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-              <div className="u-input-and-button">
-                <Input
-                  addonBefore={CDN_URL_PREFIX}
-                  value={sourceUrl}
-                  onChange={handleSourceUrlValueChange}
-                  />
-                <ResourcePicker
-                  url={storageLocationPathToUrl(sourceUrl)}
-                  onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
-                  />
-              </div>
-            </FormItem>
-            {renderPosterImageFormItem()}
-          </Fragment>
+        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+          <div className="u-input-and-button">
+            <Input
+              addonBefore={CDN_URL_PREFIX}
+              value={sourceUrl}
+              onChange={handleSourceUrlValueChange}
+              />
+            <ResourcePicker
+              url={storageLocationPathToUrl(sourceUrl)}
+              onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
+              />
+          </div>
+        </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
           </FormItem>
         )}
+        {renderPosterImageFormItem()}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
@@ -145,7 +141,17 @@ function VideoEditor({ content, onContentChanged }) {
             ))}
           </RadioGroup>
         </Form.Item>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>

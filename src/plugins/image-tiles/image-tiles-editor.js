@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
-import { Form, Radio, Slider, Button } from 'antd';
 import ImageTileEditor from './image-tile-editor.js';
 import ItemPanel from '../../components/item-panel.js';
+import { Form, Radio, Slider, Button, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW } from './constants.js';
@@ -78,7 +78,17 @@ function ImageTilesEditor({ content, onContentChanged }) {
   return (
     <div className="ImageTilesEditor">
       <Form layout="horizontal">
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
         <Form.Item label={t('tilesPerRow')} {...formItemLayout}>

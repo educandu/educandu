@@ -1,16 +1,16 @@
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingInfo from './ear-training-info.js';
 import ItemPanel from '../../components/item-panel.js';
 import AbcNotation from '../../components/abc-notation.js';
-import { Form, Input, Button, Radio, Divider } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { Form, Input, Button, Radio, Divider, Tooltip } from 'antd';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
@@ -246,7 +246,17 @@ function EarTrainingEditor({ content, onContentChanged }) {
         <FormItem label={t('common:title')} {...formItemLayout}>
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
         </Form.Item>
         <FormItem label={t('testsOrder')} {...formItemLayout}>

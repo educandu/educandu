@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -69,13 +69,30 @@ function PdfViewerEditor({ content, onContentChanged }) {
         <Form.Item label={t('initialPageNumber')} {...formItemLayout}>
           <InputNumber min={1} step={1} value={initialPageNumber} onChange={handleInitialPageNumberChange} />
         </Form.Item>
-        <Form.Item label={t('showTextOverlay')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('showTextOverlayInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('showTextOverlay')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <Switch size="small" checked={showTextOverlay} onChange={handleShowTextOverlayChange} />
-          <Tooltip title={t('showTextOverlayInfo')}>
-            <InfoCircleOutlined className="PdfViewerEditor-infoIcon" />
-          </Tooltip>
         </Form.Item>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        <Form.Item
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('caption')} {...formItemLayout}>

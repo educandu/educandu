@@ -1,8 +1,9 @@
-import React from 'react';
-import { Form, Radio } from 'antd';
+import React, { Fragment } from 'react';
+import { Form, Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { BEHAVIOR, INTENT } from './constants.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -69,7 +70,17 @@ export default function AnnotationEditor({ content, onContentChanged }) {
             <RadioButton value={INTENT.discourage}>{t('intent_discourage')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        <FormItem label={t('common:width')} {...formItemLayout}>
+        <FormItem
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...formItemLayout}
+          >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
       </Form>
