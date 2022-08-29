@@ -115,7 +115,7 @@ export function extractCdnResources(sections, pluginRegistry) {
 
 function _clipboardEncode(clipboardObject, encryptionKey) {
   const jsonText = JSON.stringify(clipboardObject || null);
-  return AES.encrypt(jsonText, encryptionKey);
+  return AES.encrypt(jsonText, encryptionKey).toString();
 }
 
 function _clipboardDecode(clipboardText, encryptionKey) {
