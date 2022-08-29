@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getFullSourceUrl } from '../../utils/media-utils.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
@@ -11,9 +15,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
-import { getFullSourceUrl } from '../../utils/media-utils.js';
-import { useService } from '../../components/container-context.js';
-import ClientConfig from '../../bootstrap/client-config.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 const FormItem = Form.Item;
 
@@ -23,6 +25,7 @@ const formItemLayout = {
 };
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
+  const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('multitrackMedia');
 
@@ -136,6 +139,14 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           {t('addTrack')}
         </Button>
         <ItemPanel header={t('trackMixer')}>
+          <div className="MultitrackMediaEditor-trackMixerPreview">
+            <MultitrackMediaPlayer
+              sources={sources}
+              aspectRatio={mainTrack.aspectRatio}
+              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+              mediaPlayerRef={playerRef}
+              />
+          </div>
           <TrackMixer
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
