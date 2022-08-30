@@ -470,35 +470,33 @@ function Doc({ initialState, PageTemplate }) {
           </section>
         </div>
       </PageTemplate>
-      <Restricted to={permissions.EDIT_DOC}>
-        <HistoryControlPanel
-          revisions={historyRevisions}
-          selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-          startOpen={initialView === VIEW.history}
-          onOpen={handleHistoryOpen}
-          onClose={handleHistoryClose}
-          canRestoreRevisions={userCanEditDocContent}
-          onPermalinkRequest={handlePermalinkRequest}
-          onSelectedRevisionChange={handleSelectedRevisionChange}
-          onRestoreRevision={handleRestoreRevision}
-          />
-      </Restricted>
-
-      {!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments) && doc.origin === DOCUMENT_ORIGIN.internal && (
+      <div className="DocPage-controlPanels">
+        <Restricted to={permissions.EDIT_DOC}>
+          <HistoryControlPanel
+            revisions={historyRevisions}
+            selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+            startOpen={initialView === VIEW.history}
+            onOpen={handleHistoryOpen}
+            onClose={handleHistoryClose}
+            canRestoreRevisions={userCanEditDocContent}
+            onPermalinkRequest={handlePermalinkRequest}
+            onSelectedRevisionChange={handleSelectedRevisionChange}
+            onRestoreRevision={handleRestoreRevision}
+            />
+        </Restricted>
+        {!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments) && doc.origin === DOCUMENT_ORIGIN.internal && (
         <ControlPanel
           startOpen={initialView === VIEW.comments}
           openIcon={<CommentOutlined />}
-          openIconPositionFromRight={2}
           onOpen={handleCommentsOpen}
           onClose={handleCommentsClose}
           leftSideContent={
             <div>{t('commentsPanelTitle')}</div>
           }
           />
-      )}
-
-      <Restricted to={permissions.EDIT_DOC}>
-        {userCanEditDocContent && (
+        )}
+        <Restricted to={permissions.EDIT_DOC}>
+          {userCanEditDocContent && (
           <EditControlPanel
             canEditMetadata={userCanEditDocMetadata}
             startOpen={initialView === VIEW.edit}
@@ -508,8 +506,9 @@ function Doc({ initialState, PageTemplate }) {
             onClose={handleEditClose}
             status={controlStatus}
             />
-        )}
-      </Restricted>
+          )}
+        </Restricted>
+      </div>
 
       <DocumentMetadataModal
         allowMultiple={false}

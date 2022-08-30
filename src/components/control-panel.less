@@ -1,36 +1,21 @@
-@control-panel-gap: 4px;
-@control-panel-padding: @edu-content-padding;
-@control-panel-content-height: @edu-control-height-sm;
-@control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
+@control-panel-height: @edu-control-height-sm + (2 * @edu-content-padding);
 
 .ControlPanel {
   .m-inverted-button;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  top: %(~"calc(100% - %s)", @control-panel-height);
-  bottom: 0;
   height: @control-panel-height;
   width: @control-panel-height;
   background-color: @edu-primary-color-light;
   transition: width 500ms ease;
   z-index: @edu-z-index-overlay-layer;
 
-  &.ControlPanel--position1 {
-    left: %(~"calc(100% - %s)", @control-panel-height * 2);
-  }
-
-  &.ControlPanel--position2 {
-    left: %(~"calc(100% - %s)", @control-panel-height * 3 + @control-panel-gap);
-  }
-
-  &.ControlPanel--position3 {
-    left: %(~"calc(100% - %s)", @control-panel-height * 4 + 2 * @control-panel-gap);
-  }
-
   &.is-open {
-    width: 100%;
+    width: 100vw;
+    position: sticky;
+    left: 0;
+    right: 0;
     z-index: @edu-z-index-sticky-content-layer;
   }
 }
