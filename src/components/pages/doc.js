@@ -6,12 +6,14 @@ import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
+import ControlPanel from '../control-panel.js';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
+import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
@@ -42,7 +44,8 @@ const logger = new Logger(import.meta.url);
 const VIEW = {
   display: 'display',
   edit: DOC_VIEW_QUERY_PARAM.edit,
-  history: DOC_VIEW_QUERY_PARAM.history
+  history: DOC_VIEW_QUERY_PARAM.history,
+  comments: DOC_VIEW_QUERY_PARAM.comments
 };
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
@@ -135,21 +138,15 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
+
+    if (initialView === VIEW.comments) {
+      // Load comments
+    }
   }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
-    switch (view) {
-      case VIEW.edit:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.edit }));
-        break;
-      case VIEW.history:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.history }));
-        break;
-      case VIEW.display:
-      default:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug }));
-        break;
-    }
+    const viewQueryValue = view === VIEW.display ? null : view;
+    history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
@@ -224,6 +221,17 @@ function Doc({ initialState, PageTemplate }) {
         exitEditMode();
       }
     });
+  };
+
+  const handleCommentsOpen = () => {
+    setView(VIEW.comments);
+    // And scroll to comments start
+  };
+
+  const handleCommentsClose = () => {
+    setView(VIEW.display);
+    // And scroll to top
+    return true;
   };
 
   const handleSectionContentChange = (index, newContent, isInvalid) => {
@@ -483,6 +491,17 @@ function Doc({ initialState, PageTemplate }) {
             status={controlStatus}
             />
         )}
+        <ControlPanel
+          className="EditControlPanel"
+          startOpen={initialView === VIEW.history}
+          openIcon={<CommentOutlined />}
+          openIconPositionFromRight={1}
+          onOpen={handleCommentsOpen}
+          onClose={handleCommentsClose}
+          leftSideContent={
+            <div>Displaying comments</div>
+          }
+          />
       </Restricted>
 
       <DocumentMetadataModal

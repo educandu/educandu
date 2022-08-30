@@ -55,7 +55,8 @@ export const ERROR_CODES = {
 
 export const DOC_VIEW_QUERY_PARAM = {
   edit: 'edit',
-  history: 'history'
+  history: 'history',
+  comments: 'comments'
 };
 
 export const FAVORITE_TYPE = {
