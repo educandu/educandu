@@ -67,7 +67,7 @@ class CommentController {
 
   async handleDeleteComment(req, res) {
     const { user } = req;
-    const { commentId } = req.body;
+    const { commentId } = req.params;
 
     const comment = await this.commentService.getCommentById(commentId);
 
@@ -102,8 +102,8 @@ class CommentController {
     );
 
     router.delete(
-      '/api/v1/comments',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(commentIdParamsOrQuerySchema)],
+      '/api/v1/comments/:commentId',
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateParams(commentIdParamsOrQuerySchema)],
       (req, res) => this.handleDeleteComment(req, res)
     );
 

@@ -138,10 +138,6 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
-
-    if (initialView === VIEW.comments) {
-      // Load comments
-    }
   }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
