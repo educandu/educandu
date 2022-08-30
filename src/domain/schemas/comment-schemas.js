@@ -24,5 +24,5 @@ export const commentDBSchema = joi.object({
   deletedOn: joi.date().allow(null),
   deletedBy: idOrKeySchema.allow(null),
   topic: joi.string().max(maxCommentTopicLength).required(),
-  text: joi.string().max(maxCommentTextLength).allow(null)
+  text: joi.string().max(maxCommentTextLength).allow('')
 });
