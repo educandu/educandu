@@ -49,7 +49,7 @@ export function analyzeMediaUrl(url) {
   };
 }
 
-export const determineMediaDuration = memoizee(url => {
+export const determineMediaDuration = memoizee(async url => {
   const div = window.document.createElement('div');
   div.style.display = 'none';
   window.document.body.appendChild(div);
@@ -61,10 +61,16 @@ export const determineMediaDuration = memoizee(url => {
       cleanedUp = true;
     }
   };
+
+  // This function should never throw synchronously,
+  // so we have to await for a little moment here!
+  await Promise.resolve();
+
   const playerPromise = new Promise((resolve, reject) => {
     try {
+      const validUrl = new URL(url).href;
       const element = React.createElement(ReactPlayer, {
-        url,
+        url: validUrl,
         light: false,
         playing: false,
         onDuration: durationInSeconds => {
