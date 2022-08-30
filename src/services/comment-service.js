@@ -58,7 +58,7 @@ class CommentService {
       ...comment,
       deletedOn: new Date(),
       deletedBy: user._id,
-      text: null
+      text: ''
     });
   }
 

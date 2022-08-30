@@ -126,7 +126,7 @@ describe('comment-service', () => {
         ...comment,
         deletedOn: now,
         deletedBy: user._id,
-        text: null
+        text: ''
       });
     });
   });
