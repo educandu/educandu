@@ -8,9 +8,10 @@ import ClientDataMappingService from '../services/client-data-mapping-service.js
 import { documentIdParamsOrQuerySchema } from '../domain/schemas/document-schemas.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { commentIdParamsOrQuerySchema, postCommentBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 
 const jsonParser = express.json();
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 class CommentController {
   static get inject() { return [CommentService, DocumentService, ClientDataMappingService]; }
@@ -38,6 +39,10 @@ class CommentController {
 
     if (!document) {
       throw new BadRequest(`Unknown document id '${data.documentId}'`);
+    }
+
+    if (document.origin !== DOCUMENT_ORIGIN.internal) {
+      throw new Forbidden('Comments on external documents can not be edited.');
     }
 
     const comment = await this.commentService.createComment({ data, user });
