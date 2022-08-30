@@ -108,7 +108,6 @@ function EditControlPanel({
       className="EditControlPanel"
       startOpen={startOpen}
       openIcon={<EditDocIcon />}
-      openIconPositionFromRight={1}
       onOpen={handleOpen}
       onClose={handleClose}
       leftSideContent={canEditMetadata ? renderEditMetadataButton() : null}

@@ -6,28 +6,31 @@ import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
+import ControlPanel from '../control-panel.js';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
+import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
-import React, { Fragment, useEffect, useState } from 'react';
+import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -42,13 +45,14 @@ const logger = new Logger(import.meta.url);
 const VIEW = {
   display: 'display',
   edit: DOC_VIEW_QUERY_PARAM.edit,
-  history: DOC_VIEW_QUERY_PARAM.history
+  history: DOC_VIEW_QUERY_PARAM.history,
+  comments: DOC_VIEW_QUERY_PARAM.comments
 };
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
-  const archived = docRevision ? docRevision.archived : doc.archived;
   const review = docRevision ? docRevision.review : doc.review;
+  const archived = docRevision ? docRevision.archived : doc.archived;
 
   if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
@@ -81,6 +85,7 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
+  const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -88,6 +93,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
+  const clientConfig = useService(ClientConfig);
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
@@ -138,19 +144,15 @@ function Doc({ initialState, PageTemplate }) {
   }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
-    switch (view) {
-      case VIEW.edit:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.edit }));
-        break;
-      case VIEW.history:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: VIEW.history }));
-        break;
-      case VIEW.display:
-      default:
-        history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug }));
-        break;
-    }
+    const viewQueryValue = view === VIEW.display ? null : view;
+    history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
+
+  useEffect(() => {
+    if (view === VIEW.comments) {
+      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [view]);
 
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);
@@ -224,6 +226,16 @@ function Doc({ initialState, PageTemplate }) {
         exitEditMode();
       }
     });
+  };
+
+  const handleCommentsOpen = () => {
+    setView(VIEW.comments);
+  };
+
+  const handleCommentsClose = () => {
+    setView(VIEW.display);
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    return true;
   };
 
   const handleSectionContentChange = (index, newContent, isInvalid) => {
@@ -458,21 +470,43 @@ function Doc({ initialState, PageTemplate }) {
             onSectionHardDelete={handleSectionHardDelete}
             />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+
+          {view === VIEW.comments && (
+            <section ref={commentsSectionRef} className="DocPage-commentsSection">
+              <hr />
+              {'>>>Comments come here<<<'}
+              <hr />
+            </section>
+          )}
         </div>
       </PageTemplate>
-      <Restricted to={permissions.EDIT_DOC}>
-        <HistoryControlPanel
-          revisions={historyRevisions}
-          selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-          startOpen={initialView === VIEW.history}
-          onOpen={handleHistoryOpen}
-          onClose={handleHistoryClose}
-          canRestoreRevisions={userCanEditDocContent}
-          onPermalinkRequest={handlePermalinkRequest}
-          onSelectedRevisionChange={handleSelectedRevisionChange}
-          onRestoreRevision={handleRestoreRevision}
+      <div className="DocPage-controlPanels">
+        <Restricted to={permissions.EDIT_DOC}>
+          <HistoryControlPanel
+            revisions={historyRevisions}
+            selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+            startOpen={initialView === VIEW.history}
+            onOpen={handleHistoryOpen}
+            onClose={handleHistoryClose}
+            canRestoreRevisions={userCanEditDocContent}
+            onPermalinkRequest={handlePermalinkRequest}
+            onSelectedRevisionChange={handleSelectedRevisionChange}
+            onRestoreRevision={handleRestoreRevision}
+            />
+        </Restricted>
+        {!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments) && doc.origin === DOCUMENT_ORIGIN.internal && (
+        <ControlPanel
+          startOpen={initialView === VIEW.comments}
+          openIcon={<CommentOutlined />}
+          onOpen={handleCommentsOpen}
+          onClose={handleCommentsClose}
+          leftSideContent={
+            <div>{t('commentsPanelTitle')}</div>
+          }
           />
-        {userCanEditDocContent && (
+        )}
+        <Restricted to={permissions.EDIT_DOC}>
+          {userCanEditDocContent && (
           <EditControlPanel
             canEditMetadata={userCanEditDocMetadata}
             startOpen={initialView === VIEW.edit}
@@ -482,8 +516,9 @@ function Doc({ initialState, PageTemplate }) {
             onClose={handleEditClose}
             status={controlStatus}
             />
-        )}
-      </Restricted>
+          )}
+        </Restricted>
+      </div>
 
       <DocumentMetadataModal
         allowMultiple={false}

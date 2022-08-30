@@ -248,7 +248,7 @@ describe('comment-controller', () => {
         const commentId = uniqueId.create();
         commentService.getCommentById.withArgs(commentId).resolves(null);
 
-        req = { user, body: { commentId } };
+        req = { user, params: { commentId } };
         res = {};
       });
 
@@ -262,7 +262,7 @@ describe('comment-controller', () => {
         const commentId = uniqueId.create();
         commentService.getCommentById.withArgs(commentId).resolves({ deletedOn: new Date() });
 
-        req = { user, body: { commentId } };
+        req = { user, params: { commentId } };
         res = {};
       });
 
@@ -278,7 +278,7 @@ describe('comment-controller', () => {
         commentId = uniqueId.create();
         commentService.getCommentById.withArgs(commentId).resolves({});
 
-        req = { user, body: { commentId } };
+        req = { user, params: { commentId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 

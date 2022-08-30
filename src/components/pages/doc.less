@@ -1,0 +1,17 @@
+@doc-page-control-panels-column-width: @edu-control-height-sm + (2 * @edu-content-padding);
+
+.DocPage {}
+
+.DocPage-controlPanels {
+  position: sticky;
+  bottom: 0;
+  margin-right: 50px;
+  display: grid;
+  gap: 5px;
+  justify-content: end;
+  grid-template-columns: repeat(3, @doc-page-control-panels-column-width);
+}
+
+.DocPage-commentsSection {
+  margin: 40px 0;
+}

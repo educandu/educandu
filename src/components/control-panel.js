@@ -8,7 +8,6 @@ import CloseIcon from './icons/general/close-icon.js';
 function ControlPanel({
   startOpen,
   openIcon,
-  openIconPositionFromRight,
   onOpen,
   onClose,
   leftSideContent,
@@ -73,7 +72,7 @@ function ControlPanel({
   };
 
   return (
-    <div className={classNames('ControlPanel', `ControlPanel--position${openIconPositionFromRight}`, { 'is-open': isOpen })}>
+    <div className={classNames('ControlPanel', { 'is-open': isOpen })}>
       {isOpen && isContentVisible && renderContent()}
       {!isOpen && renderOpenButton()}
     </div>
@@ -87,7 +86,6 @@ ControlPanel.propTypes = {
   onClose: PropTypes.func,
   onOpen: PropTypes.func,
   openIcon: PropTypes.node.isRequired,
-  openIconPositionFromRight: PropTypes.oneOf([1, 2]),
   startOpen: PropTypes.bool
 };
 
@@ -97,7 +95,6 @@ ControlPanel.defaultProps = {
   leftSideContent: null,
   onClose: () => Promise.resolve(true),
   onOpen: () => Promise.resolve(),
-  openIconPositionFromRight: 1,
   startOpen: false
 };
 

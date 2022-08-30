@@ -35,7 +35,8 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  import: 'import'
+  import: 'import',
+  comments: 'comments'
 };
 
 export const ROOM_DOCUMENTS_MODE = {
@@ -55,7 +56,8 @@ export const ERROR_CODES = {
 
 export const DOC_VIEW_QUERY_PARAM = {
   edit: 'edit',
-  history: 'history'
+  history: 'history',
+  comments: 'comments'
 };
 
 export const FAVORITE_TYPE = {

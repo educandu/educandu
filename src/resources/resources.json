@@ -891,7 +891,8 @@
     "resources": {
       "permalinkCopied": "The permalink was copied to the clipboard",
       "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
-      "documentMetadataUpdated": "Document updated successfully"
+      "documentMetadataUpdated": "Document updated successfully",
+      "commentsPanelTitle": "You are viewing the document page in \"comments\" mode"
     }
   },
   {
@@ -900,7 +901,8 @@
     "resources": {
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
       "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
-      "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert"
+      "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert",
+      "commentsPanelTitle": "Du befindest dich im Kommentar-Modus"
     }
   },
   {
