@@ -85,20 +85,20 @@ class CommentController {
     router.put(
       '/api/v1/comments',
       jsonParser,
-      needsPermission(permissions.CREATE_DOCUMENT_COMMENT),
+      needsPermission(permissions.CREATE_DOCUMENT_COMMENTS),
       validateBody(putCommentBodySchema),
       (req, res) => this.handlePutComment(req, res)
     );
 
     router.post(
       '/api/v1/comments/:commentId',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENT), jsonParser, validateBody(postCommentBodySchema)],
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(postCommentBodySchema)],
       (req, res) => this.handlePostComment(req, res)
     );
 
     router.delete(
       '/api/v1/comments',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENT), jsonParser, validateBody(deleteCommentBodySchema)],
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(deleteCommentBodySchema)],
       (req, res) => this.handleDeleteComment(req, res)
     );
 

@@ -23,8 +23,8 @@ const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const DELETE_ANY_STORAGE_FILE = 'delete-storage-file';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
-const CREATE_DOCUMENT_COMMENT = 'create-document-comment';
-const MANAGE_DOCUMENT_COMMENT = 'manage-document-comment';
+const CREATE_DOCUMENT_COMMENTS = 'create-document-comments';
+const MANAGE_DOCUMENT_COMMENTS = 'manage-document-comments';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const RESTRICT_OPEN_CONTRIBUTION = 'restrict-open-contribution';
 const MANAGE_EXPORT_WITH_BUILT_IN_USER = 'manage-export-with-built-in-user';
@@ -40,7 +40,7 @@ const userPermissions = [
   OWN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_ROOMS,
-  CREATE_DOCUMENT_COMMENT
+  CREATE_DOCUMENT_COMMENTS
 ];
 
 const maintainerPermissions = [
@@ -54,7 +54,7 @@ const maintainerPermissions = [
     REVIEW_DOC,
     VERIFY_DOC,
     RESTRICT_OPEN_CONTRIBUTION,
-    MANAGE_DOCUMENT_COMMENT
+    MANAGE_DOCUMENT_COMMENTS
   ])
 ];
 
@@ -120,6 +120,6 @@ export default {
   DELETE_FOREIGN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_ROOMS,
-  CREATE_DOCUMENT_COMMENT,
-  MANAGE_DOCUMENT_COMMENT
+  CREATE_DOCUMENT_COMMENTS,
+  MANAGE_DOCUMENT_COMMENTS
 };

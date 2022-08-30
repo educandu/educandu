@@ -69,7 +69,7 @@ describe('permissions', () => {
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENT
+          permissions.CREATE_DOCUMENT_COMMENTS
         ]);
       });
     });
@@ -92,7 +92,7 @@ describe('permissions', () => {
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENT,
+          permissions.CREATE_DOCUMENT_COMMENTS,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
@@ -101,7 +101,7 @@ describe('permissions', () => {
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
-          permissions.MANAGE_DOCUMENT_COMMENT
+          permissions.MANAGE_DOCUMENT_COMMENTS
         ]);
       });
     });
@@ -124,7 +124,7 @@ describe('permissions', () => {
           permissions.OWN_ROOMS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENT,
+          permissions.CREATE_DOCUMENT_COMMENTS,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
@@ -133,7 +133,7 @@ describe('permissions', () => {
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
-          permissions.MANAGE_DOCUMENT_COMMENT,
+          permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
