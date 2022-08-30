@@ -25,6 +25,10 @@
     left: %(~"calc(100% - %s)", @control-panel-height * 3 + @control-panel-gap);
   }
 
+  &.ControlPanel--position3 {
+    left: %(~"calc(100% - %s)", @control-panel-height * 4 + 2 * @control-panel-gap);
+  }
+
   &.is-open {
     width: 100%;
     z-index: @edu-z-index-sticky-content-layer;

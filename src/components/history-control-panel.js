@@ -111,7 +111,7 @@ function HistoryControlPanel({
       className="HistoryControlPanel"
       startOpen={startOpen}
       openIcon={<ViewHistoryIcon />}
-      openIconPositionFromRight={2}
+      openIconPositionFromRight={3}
       onOpen={handleOpen}
       onClose={handleClose}
       leftSideContent={renderSlider()}

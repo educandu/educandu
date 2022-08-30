@@ -476,6 +476,22 @@ function Doc({ initialState, PageTemplate }) {
           onSelectedRevisionChange={handleSelectedRevisionChange}
           onRestoreRevision={handleRestoreRevision}
           />
+      </Restricted>
+
+      {doc.origin === DOCUMENT_ORIGIN.internal && (
+        <ControlPanel
+          startOpen={initialView === VIEW.comments}
+          openIcon={<CommentOutlined />}
+          openIconPositionFromRight={2}
+          onOpen={handleCommentsOpen}
+          onClose={handleCommentsClose}
+          leftSideContent={
+            <div>{t('commentsPanelTitle')}</div>
+          }
+          />
+      )}
+
+      <Restricted to={permissions.EDIT_DOC}>
         {userCanEditDocContent && (
           <EditControlPanel
             canEditMetadata={userCanEditDocMetadata}
@@ -487,17 +503,6 @@ function Doc({ initialState, PageTemplate }) {
             status={controlStatus}
             />
         )}
-        <ControlPanel
-          className="EditControlPanel"
-          startOpen={initialView === VIEW.history}
-          openIcon={<CommentOutlined />}
-          openIconPositionFromRight={1}
-          onOpen={handleCommentsOpen}
-          onClose={handleCommentsClose}
-          leftSideContent={
-            <div>Displaying comments</div>
-          }
-          />
       </Restricted>
 
       <DocumentMetadataModal

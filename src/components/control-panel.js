@@ -87,7 +87,7 @@ ControlPanel.propTypes = {
   onClose: PropTypes.func,
   onOpen: PropTypes.func,
   openIcon: PropTypes.node.isRequired,
-  openIconPositionFromRight: PropTypes.oneOf([1, 2]),
+  openIconPositionFromRight: PropTypes.oneOf([1, 2, 3]),
   startOpen: PropTypes.bool
 };
 
