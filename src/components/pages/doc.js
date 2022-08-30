@@ -148,6 +148,12 @@ function Doc({ initialState, PageTemplate }) {
     history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
 
+  useEffect(() => {
+    if (view === VIEW.comments) {
+      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [view]);
+
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);
   };
@@ -224,7 +230,6 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsOpen = () => {
     setView(VIEW.comments);
-    commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleCommentsClose = () => {
@@ -465,9 +470,14 @@ function Doc({ initialState, PageTemplate }) {
             onSectionHardDelete={handleSectionHardDelete}
             />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
-          <section ref={commentsSectionRef} className="DocPage-commentsSection">
-            {'>>>Comments come here<<<'}
-          </section>
+
+          {view === VIEW.comments && (
+            <section ref={commentsSectionRef} className="DocPage-commentsSection">
+              <hr />
+              {'>>>Comments come here<<<'}
+              <hr />
+            </section>
+          )}
         </div>
       </PageTemplate>
       <div className="DocPage-controlPanels">
