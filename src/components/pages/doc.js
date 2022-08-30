@@ -18,11 +18,11 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -51,8 +51,8 @@ const VIEW = {
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
-  const archived = docRevision ? docRevision.archived : doc.archived;
   const review = docRevision ? docRevision.review : doc.review;
+  const archived = docRevision ? docRevision.archived : doc.archived;
 
   if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
@@ -85,6 +85,7 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
+  const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -223,12 +224,12 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsOpen = () => {
     setView(VIEW.comments);
-    // And scroll to comments start
+    commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleCommentsClose = () => {
     setView(VIEW.display);
-    // And scroll to top
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
 
@@ -464,6 +465,9 @@ function Doc({ initialState, PageTemplate }) {
             onSectionHardDelete={handleSectionHardDelete}
             />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+          <section ref={commentsSectionRef} className="DocPage-commentsSection">
+            {'>>>Comments come here<<<'}
+          </section>
         </div>
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
