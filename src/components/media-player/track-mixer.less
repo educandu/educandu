@@ -6,7 +6,8 @@
 @track-mixer-bar-overflow-width: 10px;
 
 .TrackMixer {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   gap: 15px;
 }
 
@@ -15,9 +16,7 @@
 }
 
 .TrackMixer-nameRow {
-  display: flex;
-  gap: 5px;
-  align-items: center;
+  .m-control-group;
   height: @track-mixer-row-height;
 }
 
@@ -28,7 +27,6 @@
 }
 
 .TrackMixer-barsColumn {
-  width: 100%;
   margin: 0 10px 0 0;
   padding: @track-mixer-column-padding;
   border-left: 1px dashed @edu-border-color-dark;

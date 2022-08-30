@@ -50,8 +50,10 @@
 }
 
 .ImageEditor-clipEffectRegion {
-  display: flex;
   gap: 20px;
-  flex-wrap: wrap;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
   padding-top: @edu-content-padding;
 }

@@ -73,7 +73,7 @@ function QuickTesterDisplay({ content }) {
           <Markdown inline>{content.title}</Markdown>
           {testCards.length > 1 && (
             <div className="QuickTesterDisplay-controlPanel">
-              <div>
+              <div className="QuickTesterDisplay-cards">
                 <CardSelector
                   cards={testCards}
                   selectedCardIndex={currentTestIndex}

@@ -314,11 +314,9 @@ export default function Room({ PageTemplate, initialState }) {
           extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
           />
         <div className="RoomPage-subtitle">
-          <div className="RoomPage-subtitleGroup">
-            <span>{documentsModeText} | {renderOwnerLink()}</span>
-          </div>
-          {!isRoomOwner && (
-            <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
+          <div>{documentsModeText} | {renderOwnerLink()}</div>
+          {isRoomOwner && (
+            <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
           )}
         </div>
 

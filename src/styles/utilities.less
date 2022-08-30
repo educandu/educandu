@@ -1,5 +1,3 @@
-@iterations: 0;
-
 .u-width-loop (@i) when (@i <=100) {
   .u-width-@{i} {
     width: ~ "@{i}%" !important;
@@ -12,7 +10,7 @@
   .u-width-loop(@i + 1);
 }
 
-.u-width-loop (@iterations);
+.u-width-loop (0);
 
 .u-img-color-flip {
   filter: grayscale(100%);
@@ -40,7 +38,7 @@
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr auto;
-  gap: @edu-button-spacing;
+  gap: @edu-control-spacing-base;
 }
 
 .u-can-drop {
@@ -57,5 +55,5 @@
 
 .u-info-icon {
   color: @edu-secondary-color-dark;
-  margin: 0 @edu-button-spacing;
+  margin: 0 @edu-control-spacing-base;
 }

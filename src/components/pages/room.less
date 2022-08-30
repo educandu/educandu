@@ -5,16 +5,14 @@
 .RoomPage-subtitle {
   display: flex;
   font-size: 12px;
-  gap: @edu-controls-group-gap;
   justify-content: space-between;
-  padding: 0 @edu-content-padding;
   color: @edu-text-color-secondary;
+  padding: 0 @edu-content-padding;
 }
 
-.RoomPage-subtitleGroup {
-  display: flex;
-  gap: 7px;
-  align-items: center;
+.RoomPage-leaveRoomLink {
+  .m-control-group;
+  padding-left: @edu-control-spacing-wide;
 }
 
 .RoomPage-description {
@@ -22,8 +20,7 @@
 }
 
 .RoomPage-documentInfo {
-  display: flex;
-  gap: 10px;
+  .m-control-group-wide;
 }
 
 .RoomPage-documentInfoItem {
