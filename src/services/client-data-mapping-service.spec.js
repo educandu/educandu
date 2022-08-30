@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import sinon from 'sinon';
 import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
@@ -529,6 +530,27 @@ describe('client-data-mapping-service', () => {
             displayName: user1.displayName
           }
         }
+      });
+    });
+  });
+
+  describe('mapComment', () => {
+    let comment;
+
+    beforeEach(() => {
+      comment = {
+        documentId: uniqueId.create(),
+        createdOn: new Date(),
+        deletedOn: new Date()
+      };
+      result = sut.mapComment(comment);
+    });
+
+    it('should map comment data', () => {
+      expect(result).toEqual({
+        ...comment,
+        createdOn: comment.createdOn.toISOString(),
+        deletedOn: comment.deletedOn.toISOString()
       });
     });
   });

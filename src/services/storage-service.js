@@ -6,6 +6,7 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
+import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { ensureIsUnique } from '../utils/array-utils.js';
@@ -23,7 +24,19 @@ const { BadRequest, NotFound } = httpErrors;
 
 export default class StorageService {
   static get inject() {
-    return [ServerConfig, Cdn, RoomStore, RoomInvitationStore, DocumentStore, DocumentRevisionStore, StoragePlanStore, UserStore, LockStore, TransactionRunner];
+    return [
+      ServerConfig,
+      Cdn,
+      RoomStore,
+      RoomInvitationStore,
+      DocumentStore,
+      DocumentRevisionStore,
+      StoragePlanStore,
+      UserStore,
+      CommentStore,
+      LockStore,
+      TransactionRunner
+    ];
   }
 
   // eslint-disable-next-line max-params
@@ -36,6 +49,7 @@ export default class StorageService {
     documentRevisionStore,
     storagePlanStore,
     userStore,
+    commentStore,
     lockStore,
     transactionRunner
   ) {
@@ -44,6 +58,7 @@ export default class StorageService {
     this.roomStore = roomStore;
     this.userStore = userStore;
     this.serverConfig = serverConfig;
+    this.commentStore = commentStore;
     this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
@@ -197,6 +212,10 @@ export default class StorageService {
       logger.info(`Deleting room with ID ${roomId}`);
 
       await this.transactionRunner.run(async session => {
+        const documents = await this.documentStore.getDocumentsMetadataByRoomId(roomId, { session });
+        const documentIds = documents.map(doc => doc._id);
+
+        await this.commentStore.deleteCommentsByDocumentIds(documentIds, { session });
         await this.documentRevisionStore.deleteDocumentsByRoomId(roomId, { session });
         await this.documentStore.deleteDocumentsByRoomId(roomId, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });

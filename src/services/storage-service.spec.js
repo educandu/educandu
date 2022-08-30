@@ -6,6 +6,7 @@ import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
+import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -18,8 +19,9 @@ describe('storage-service', () => {
 
   let documentRevisionStore;
   let roomInvitationStore;
-  let serverConfig;
   let documentStore;
+  let commentStore;
+  let serverConfig;
   let storagePlan;
   let roomStore;
   let lockStore;
@@ -37,6 +39,7 @@ describe('storage-service', () => {
     cdn = container.get(Cdn);
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
+    commentStore = container.get(CommentStore);
     serverConfig = container.get(ServerConfig);
     documentStore = container.get(DocumentStore);
     roomInvitationStore = container.get(RoomInvitationStore);
@@ -58,11 +61,13 @@ describe('storage-service', () => {
     sandbox.stub(lockStore, 'takeUserLock');
     sandbox.stub(documentStore, 'deleteDocumentsByRoomId');
     sandbox.stub(documentStore, 'getDocumentById');
+    sandbox.stub(documentStore, 'getDocumentsMetadataByRoomId');
     sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId');
     sandbox.stub(roomStore, 'getRoomById');
     sandbox.stub(roomStore, 'deleteRoomById');
     sandbox.stub(roomStore, 'getRoomIdsByOwnerId');
     sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId');
+    sandbox.stub(commentStore, 'deleteCommentsByDocumentIds');
 
     roomId = uniqueId.create();
     storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10 * 1000 * 1000 };
@@ -676,6 +681,7 @@ describe('storage-service', () => {
 
   describe('deleteRoomAndResources', () => {
     let lock;
+    let roomDocuments;
     let remainingPrivateRoom;
     let filesFromRemainingPrivateRoom;
 
@@ -684,10 +690,14 @@ describe('storage-service', () => {
       lockStore.takeUserLock.resolves(lock);
       lockStore.releaseLock.resolves();
 
+      roomDocuments = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
+      documentStore.getDocumentsMetadataByRoomId.resolves(roomDocuments);
+
       documentStore.deleteDocumentsByRoomId.resolves();
       documentRevisionStore.deleteDocumentsByRoomId.resolves();
       roomInvitationStore.deleteRoomInvitationsByRoomId.resolves();
       roomStore.deleteRoomById.resolves();
+      commentStore.deleteCommentsByDocumentIds.resolves();
 
       remainingPrivateRoom = { _id: uniqueId.create() };
 
@@ -709,6 +719,14 @@ describe('storage-service', () => {
 
     it('should take the lock on the user record', () => {
       sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+    });
+
+    it('should call documentStore.getDocumentsMetadataByRoomId', () => {
+      sinon.assert.calledWith(documentStore.getDocumentsMetadataByRoomId, roomId, { session: sinon.match.object });
+    });
+
+    it('should call commentStore.deleteCommentsByDocumentIds', () => {
+      sinon.assert.calledWith(commentStore.deleteCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: sinon.match.object });
     });
 
     it('should call documentStore.deleteDocumentsByRoomId', () => {

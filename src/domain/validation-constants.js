@@ -13,3 +13,6 @@ export const passwordValidationPattern = /^(?=.*[A-Za-z])(?=.*\d).*$/;
 export const minPasswordLength = 8;
 
 export const maxDocumentDescriptionLength = 1000;
+
+export const maxCommentTopicLength = 200;
+export const maxCommentTextLength = 2000;

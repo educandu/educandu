@@ -330,7 +330,7 @@ export default class RoomController {
 
     router.get(
       '/room-membership-confirmation/:token',
-      [needsPermission(permissions.JOIN_PRIVATE_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
+      [needsPermission(permissions.JOIN_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
       (req, res) => this.handleGetRoomMembershipConfirmationPage(req, res)
     );
   }
