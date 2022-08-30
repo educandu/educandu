@@ -4,10 +4,10 @@ import permissions from '../domain/permissions.js';
 import CommentService from '../services/comment-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { validateBody, validateQuery } from '../domain/validation-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { documentIdParamsOrQuerySchema } from '../domain/schemas/document-schemas.js';
-import { deleteCommentBodySchema, postCommentBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { commentIdParamsOrQuerySchema, postCommentBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
 
 const jsonParser = express.json();
 const { BadRequest, NotFound } = httpErrors;
@@ -92,13 +92,13 @@ class CommentController {
 
     router.post(
       '/api/v1/comments/:commentId',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(postCommentBodySchema)],
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateParams(commentIdParamsOrQuerySchema), validateBody(postCommentBodySchema)],
       (req, res) => this.handlePostComment(req, res)
     );
 
     router.delete(
       '/api/v1/comments',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(deleteCommentBodySchema)],
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(commentIdParamsOrQuerySchema)],
       (req, res) => this.handleDeleteComment(req, res)
     );
 

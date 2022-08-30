@@ -12,7 +12,7 @@ export const postCommentBodySchema = joi.object({
   topic: joi.string().required()
 });
 
-export const deleteCommentBodySchema = joi.object({
+export const commentIdParamsOrQuerySchema = joi.object({
   commentId: idOrKeySchema.required()
 });
 
