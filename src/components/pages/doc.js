@@ -17,6 +17,7 @@ import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
+import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
@@ -28,8 +29,8 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -91,6 +92,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
+  const clientConfig = useService(ClientConfig);
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
@@ -478,7 +480,7 @@ function Doc({ initialState, PageTemplate }) {
           />
       </Restricted>
 
-      {doc.origin === DOCUMENT_ORIGIN.internal && (
+      {!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments) && doc.origin === DOCUMENT_ORIGIN.internal && (
         <ControlPanel
           startOpen={initialView === VIEW.comments}
           openIcon={<CommentOutlined />}
