@@ -168,9 +168,9 @@ export const pageNameProps = {
   pageName: PropTypes.oneOf(Object.values(PAGE_NAME)).isRequired
 };
 
-const userInDocShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  email: PropTypes.string, // This is only visible to super users
+const otherUserShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  email: PropTypes.string, // This is only visible to admins
   displayName: PropTypes.string.isRequired
 });
 
@@ -178,7 +178,7 @@ export const sectionShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   revision: PropTypes.string, // Not required because it's null for newly created sections
   deletedOn: PropTypes.string,
-  deletedBy: userInDocShape,
+  deletedBy: otherUserShape,
   deletedBecause: PropTypes.string,
   type: PropTypes.string.isRequired,
   content: PropTypes.object
@@ -191,7 +191,7 @@ const commonDocumentOrRevisionProps = {
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
+  createdBy: otherUserShape.isRequired,
   roomId: PropTypes.string
 };
 
@@ -210,7 +210,7 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  updatedBy: userInDocShape.isRequired
+  updatedBy: otherUserShape.isRequired
 });
 
 export const documentMetadataEditShape = PropTypes.shape({
@@ -229,9 +229,9 @@ export const documentShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  updatedBy: userInDocShape.isRequired,
+  updatedBy: otherUserShape.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired,
-  contributors: PropTypes.arrayOf(userInDocShape).isRequired
+  contributors: PropTypes.arrayOf(otherUserShape).isRequired
 });
 
 export const documentRevisionShape = PropTypes.shape({
@@ -329,7 +329,7 @@ export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
 
 export const commonBatchProps = {
   _id: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
+  createdBy: otherUserShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
   batchType: PropTypes.oneOf(Object.values(BATCH_TYPE)).isRequired,

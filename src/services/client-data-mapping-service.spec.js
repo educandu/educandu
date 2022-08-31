@@ -256,7 +256,6 @@ describe('client-data-mapping-service', () => {
           completedOn: batches[0].completedOn.toISOString(),
           createdBy: {
             _id: user1._id,
-            key: user1._id,
             displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
@@ -281,7 +280,6 @@ describe('client-data-mapping-service', () => {
           completedOn: batches[1].completedOn.toISOString(),
           createdBy: {
             _id: user2._id,
-            key: user2._id,
             displayName: user2.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
@@ -334,7 +332,6 @@ describe('client-data-mapping-service', () => {
           completedOn: batch.completedOn.toISOString(),
           createdBy: {
             _id: user1._id,
-            key: user1._id,
             displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentImport,
@@ -388,7 +385,6 @@ describe('client-data-mapping-service', () => {
           completedOn: batch.completedOn.toISOString(),
           createdBy: {
             _id: user1._id,
-            key: user1._id,
             displayName: user1.displayName
           },
           batchType: BATCH_TYPE.documentRegeneration,
@@ -469,8 +465,7 @@ describe('client-data-mapping-service', () => {
         owner: {
           displayName: owner.displayName,
           email: owner.email,
-          _id: owner._id,
-          key: owner._id
+          _id: owner._id
         },
         members: [
           {

@@ -69,7 +69,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ room, settings, t }));
 
-  const isRoomOwner = user?._id === room.owner.key;
+  const isRoomOwner = user?._id === room.owner._id;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
   useEffect(() => {

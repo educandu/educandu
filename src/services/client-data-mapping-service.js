@@ -147,7 +147,7 @@ class ClientDataMappingService {
     const grantedPermissions = getAllUserPermissions(user);
 
     const owner = await this.userStore.getUserById(room.owner);
-    mappedRoom.owner = this._mapUser({ user: owner, grantedPermissions });
+    mappedRoom.owner = this._mapOtherUser({ user: owner, grantedPermissions });
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
@@ -231,14 +231,13 @@ class ClientDataMappingService {
     }
   }
 
-  _mapUser({ user, grantedPermissions }) {
+  _mapOtherUser({ user, grantedPermissions }) {
     if (!user) {
       return null;
     }
 
     const mappedUser = {
       _id: user._id,
-      key: user._id,
       displayName: user.displayName
     };
 
@@ -306,7 +305,7 @@ class ClientDataMappingService {
   _mapBatch(rawBatch, rawUser, grantedPermissions) {
     const createdOn = rawBatch.createdOn && rawBatch.createdOn.toISOString();
     const completedOn = rawBatch.completedOn && rawBatch.completedOn.toISOString();
-    const createdBy = this._mapUser({ user: rawUser, grantedPermissions });
+    const createdBy = this._mapOtherUser({ user: rawUser, grantedPermissions });
     const batchParams = this._mapBatchParams(rawBatch.batchParams, rawBatch.batchType);
     const tasks = rawBatch.tasks && rawBatch.tasks.map(task => this._mapTask(task));
 
@@ -335,7 +334,7 @@ class ClientDataMappingService {
     return {
       ...section,
       deletedOn: section.deletedOn ? section.deletedOn.toISOString() : section.deletedOn,
-      deletedBy: section.deletedBy ? this._mapUser({ user: userMap.get(section.deletedBy), grantedPermissions }) : section.deletedBy
+      deletedBy: section.deletedBy ? this._mapOtherUser({ user: userMap.get(section.deletedBy), grantedPermissions }) : section.deletedBy
     };
   }
 
@@ -354,10 +353,10 @@ class ClientDataMappingService {
           break;
         case 'createdBy':
         case 'updatedBy':
-          result[key] = value ? this._mapUser({ user: userMap.get(value), grantedPermissions }) : value;
+          result[key] = value ? this._mapOtherUser({ user: userMap.get(value), grantedPermissions }) : value;
           break;
         case 'contributors':
-          result[key] = value.map(c => this._mapUser({ user: userMap.get(c), grantedPermissions }));
+          result[key] = value.map(c => this._mapOtherUser({ user: userMap.get(c), grantedPermissions }));
           break;
         case 'sections':
           result[key] = value.map(s => this._mapDocumentSection(s, userMap, grantedPermissions));
