@@ -315,7 +315,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
         <div className="RoomPage-subtitle">
           <div>{documentsModeText} | {renderOwnerLink()}</div>
-          {isRoomOwner && (
+          {!isRoomOwner && (
             <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
           )}
         </div>
