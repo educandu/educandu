@@ -1,4 +1,6 @@
+/* eslint-disable complexity */
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
@@ -438,6 +440,11 @@ function Doc({ initialState, PageTemplate }) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
   }
 
+  const showHistoryPanel = view === VIEW.display || view === VIEW.history;
+  const showCommentsPanel = !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments)
+    && doc.origin === DOCUMENT_ORIGIN.internal && (view === VIEW.display || view === VIEW.comments);
+  const showEditPanel = userCanEditDocContent && (view === VIEW.display || view === VIEW.edit);
+
   return (
     <Fragment>
       <PageTemplate alerts={alerts}>
@@ -480,44 +487,52 @@ function Doc({ initialState, PageTemplate }) {
           )}
         </div>
       </PageTemplate>
-      <div className="DocPage-controlPanels">
-        <Restricted to={permissions.EDIT_DOC}>
-          <HistoryControlPanel
-            revisions={historyRevisions}
-            selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-            startOpen={initialView === VIEW.history}
-            onOpen={handleHistoryOpen}
-            onClose={handleHistoryClose}
-            canRestoreRevisions={userCanEditDocContent}
-            onPermalinkRequest={handlePermalinkRequest}
-            onSelectedRevisionChange={handleSelectedRevisionChange}
-            onRestoreRevision={handleRestoreRevision}
-            />
-        </Restricted>
-        {!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments) && doc.origin === DOCUMENT_ORIGIN.internal && (
-        <ControlPanel
-          startOpen={initialView === VIEW.comments}
-          openIcon={<CommentOutlined />}
-          onOpen={handleCommentsOpen}
-          onClose={handleCommentsClose}
-          leftSideContent={
-            <div>{t('commentsPanelTitle')}</div>
-          }
-          />
+      <div className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}>
+        {showHistoryPanel && (
+          <Restricted to={permissions.EDIT_DOC}>
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
+              <HistoryControlPanel
+                revisions={historyRevisions}
+                selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+                startOpen={initialView === VIEW.history}
+                onOpen={handleHistoryOpen}
+                onClose={handleHistoryClose}
+                canRestoreRevisions={userCanEditDocContent}
+                onPermalinkRequest={handlePermalinkRequest}
+                onSelectedRevisionChange={handleSelectedRevisionChange}
+                onRestoreRevision={handleRestoreRevision}
+                />
+            </div>
+          </Restricted>
         )}
-        <Restricted to={permissions.EDIT_DOC}>
-          {userCanEditDocContent && (
-          <EditControlPanel
-            canEditMetadata={userCanEditDocMetadata}
-            startOpen={initialView === VIEW.edit}
-            onOpen={handleEditOpen}
-            onMetadataOpen={handleEditMetadataOpen}
-            onSave={handleEditSave}
-            onClose={handleEditClose}
-            status={controlStatus}
-            />
-          )}
-        </Restricted>
+        {showCommentsPanel && (
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
+            <ControlPanel
+              startOpen={initialView === VIEW.comments}
+              openIcon={<CommentOutlined />}
+              onOpen={handleCommentsOpen}
+              onClose={handleCommentsClose}
+              leftSideContent={
+                <div>{t('commentsPanelTitle')}</div>
+              }
+              />
+          </div>
+        )}
+        {showEditPanel && (
+          <Restricted to={permissions.EDIT_DOC}>
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
+              <EditControlPanel
+                canEditMetadata={userCanEditDocMetadata}
+                startOpen={initialView === VIEW.edit}
+                onOpen={handleEditOpen}
+                onMetadataOpen={handleEditMetadataOpen}
+                onSave={handleEditSave}
+                onClose={handleEditClose}
+                status={controlStatus}
+                />
+            </div>
+          </Restricted>
+        )}
       </div>
 
       <DocumentMetadataModal
