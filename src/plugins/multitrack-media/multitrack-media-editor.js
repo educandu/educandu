@@ -52,8 +52,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     }))
   };
 
-  const allSourcesSet = sources.mainTrack.sourceUrl && sources.secondaryTracks.every(track => track.sourceUrl);
-
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     const isInvalid = false;
@@ -142,17 +140,12 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         </Button>
         <ItemPanel header={t('trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
-            {allSourcesSet && (
-              <MultitrackMediaPlayer
-                sources={sources}
-                aspectRatio={mainTrack.aspectRatio}
-                screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-                mediaPlayerRef={playerRef}
-                />
-            )}
-            {!allSourcesSet && (
-              <div className="MultitrackMediaEditor-errorMessage">{t('missingSourcesMessage')}</div>
-            )}
+            <MultitrackMediaPlayer
+              sources={sources}
+              aspectRatio={mainTrack.aspectRatio}
+              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+              mediaPlayerRef={playerRef}
+              />
           </div>
           <TrackMixer
             mainTrack={sources.mainTrack}

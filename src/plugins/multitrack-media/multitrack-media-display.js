@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-import React, { Fragment, useRef } from 'react';
+import React, { useRef } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getFullSourceUrl } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
@@ -11,7 +10,6 @@ import MultitrackMediaPlayer from '../../components/media-player/multitrack-medi
 function MultitrackMediaDisplay({ content }) {
   const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
-  const { t } = useTranslation('multitrackMedia');
 
   const { width, mainTrack, secondaryTracks } = content;
 
@@ -37,27 +35,19 @@ function MultitrackMediaDisplay({ content }) {
     }))
   };
 
-  const allSourcesSet = sources.mainTrack.sourceUrl && sources.secondaryTracks.every(track => track.sourceUrl);
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)].filter(text => !!text).join('\n\n');
 
   return (
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
-        {allSourcesSet && (
-          <Fragment>
-            <MultitrackMediaPlayer
-              sources={sources}
-              aspectRatio={mainTrack.aspectRatio}
-              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-              mediaPlayerRef={playerRef}
-              showTrackMixer
-              />
-            <CopyrightNotice value={combinedCopyrightNotice} />
-          </Fragment>
-        )}
-        {!allSourcesSet && (
-          <div className="MultitrackMediaDisplay-errorMessage">{t('missingSourcesMessage')}</div>
-        )}
+        <MultitrackMediaPlayer
+          sources={sources}
+          aspectRatio={mainTrack.aspectRatio}
+          screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+          mediaPlayerRef={playerRef}
+          showTrackMixer
+          />
+        <CopyrightNotice value={combinedCopyrightNotice} />
       </div>
     </div>
   );

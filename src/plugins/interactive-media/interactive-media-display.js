@@ -148,23 +148,23 @@ function InteractiveMediaDisplay({ content }) {
 
   return (
     <div className="InteractiveMediaDisplay">
-      {sourceUrl && (
-        <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
-          <MediaPlayer
-            mediaPlayerRef={mediaPlayerRef}
-            parts={parts}
-            source={sourceUrl}
-            screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-            screenOverlay={renderInteractionOverlay()}
-            aspectRatio={aspectRatio}
-            playbackRange={playbackRange}
-            onPartEndReached={handlePartEndReached}
-            onPlayingPartIndexChange={setCurrentChapterIndex}
-            onPlayStateChange={handlePlayStateChange}
-            onReady={handleMediaReady}
-            onSeek={handleSeek}
-            canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
-            />
+      <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
+        <MediaPlayer
+          mediaPlayerRef={mediaPlayerRef}
+          parts={parts}
+          source={sourceUrl}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+          screenOverlay={renderInteractionOverlay()}
+          aspectRatio={aspectRatio}
+          playbackRange={playbackRange}
+          onPartEndReached={handlePartEndReached}
+          onPlayingPartIndexChange={setCurrentChapterIndex}
+          onPlayStateChange={handlePlayStateChange}
+          onReady={handleMediaReady}
+          onSeek={handleSeek}
+          canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
+          />
+        {sourceUrl && (
           <div className="InteractiveMediaDisplay-progressBar">
             <div className="InteractiveMediaDisplay-progressBarCards">
               <div>
@@ -188,9 +188,9 @@ function InteractiveMediaDisplay({ content }) {
               alwaysAllowPreviousClick
               />
           </div>
-          <CopyrightNotice value={copyrightNotice} />
-        </div>
-      )}
+        )}
+        <CopyrightNotice value={copyrightNotice} />
+      </div>
     </div>
   );
 }
