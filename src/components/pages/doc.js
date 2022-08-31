@@ -1,6 +1,7 @@
 /* eslint-disable complexity, max-lines */
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Markdown from '../markdown.js';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
@@ -17,6 +18,7 @@ import { useRequest } from '../request-context.js';
 import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import { useDateFormat } from '../locale-context.js';
 import { Breadcrumb, Collapse, message } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -90,6 +92,7 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
+  const { formatDate } = useDateFormat();
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
@@ -104,9 +107,9 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
-  const [commentGroups, setCommentGroups] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
+  const [commentGroups, setCommentGroups] = useState([]);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
@@ -456,16 +459,23 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const renderComment = comment => {
+    const userUrl = routes.getUserUrl(comment.createdBy._id);
     return (
-      <div key={comment._id}>
-        {comment.text}
+      <div className="DocPage-comment" key={comment._id}>
+        <div className="DocPage-commentMetadata">
+          <a className="DocPage-commentAuthor" href={userUrl}>{comment.createdBy.displayName}</a>
+          <div>{formatDate(comment.createdOn)}</div>
+        </div>
+        <div className="DocPage-commentText">
+          <Markdown>{comment.text}</Markdown>
+        </div>
       </div>
     );
   };
 
   const renderTopicPanel = (topic, index) => {
     return (
-      <Panel header={topic} key={index}>
+      <Panel header={<Markdown inline>{topic}</Markdown>} key={index}>
         {commentGroups[topic].map(renderComment)}
       </Panel>
     );
