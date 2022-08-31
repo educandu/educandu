@@ -13,7 +13,11 @@
 }
 
 .Collapsible-header {
-  .m-control-group-wide;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: auto 1fr auto;
   overflow-x: hidden;
   text-decoration: none;
   color: @edu-text-color;
