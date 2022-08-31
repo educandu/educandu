@@ -205,7 +205,7 @@ class ClientDataMappingService {
   }
 
   mapComments(comments) {
-    return comments.map(this.mapComment);
+    return Promise.all(comments.map(c => this.mapComment(c)));
   }
 
   async _mapFavorite({ favorite, user }) {
