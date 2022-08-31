@@ -654,6 +654,20 @@
     }
   },
   {
+    "namespace": "multitrackMediaPlayer",
+    "language": "en",
+    "resources": {
+      "missingSourcesMessage": "Cannot play because of missing media sources"
+    }
+  },
+  {
+    "namespace": "multitrackMediaPlayer",
+    "language": "de",
+    "resources": {
+      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+    }
+  },
+  {
     "namespace": "trackMixer",
     "language": "en",
     "resources": {
@@ -1943,8 +1957,7 @@
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
-      "trackMixer": "Track mixer",
-      "missingSourcesMessage": "Cannot play because of missing media sources"
+      "trackMixer": "Track mixer"
     }
   },
   {
@@ -1955,8 +1968,7 @@
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
-      "trackMixer": "Spur-Mixer",
-      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+      "trackMixer": "Spur-Mixer"
     }
   },
   {

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useDedupedCallback } from '../../ui/hooks.js';
 import HttpClient from '../../api-clients/http-client.js';
@@ -88,12 +89,13 @@ function MultitrackMediaPlayer({
   const httpClient = useService(HttpClient);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [loadedSources, setLoadedSources] = useState(null);
+  const { t } = useTranslation('multitrackMediaPlayer');
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
+  const [loadedSources, setLoadedSources] = useState(sourceType === SOURCE_TYPE.eager ? sources : null);
   const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
 
   const triggerReadyIfNeeded = useDedupedCallback(onReady);
@@ -257,6 +259,27 @@ function MultitrackMediaPlayer({
     return <div className="MultitrackMediaPlayer" />;
   }
 
+  let sourcesAvailable;
+  switch (sourceType) {
+    case SOURCE_TYPE.lazy:
+      sourcesAvailable = true;
+      break;
+    case SOURCE_TYPE.eager:
+      sourcesAvailable = loadedSources?.mainTrack.sourceUrl && loadedSources?.secondaryTracks.every(track => track.sourceUrl);
+      break;
+    case SOURCE_TYPE.none:
+    default:
+      sourcesAvailable = false;
+  }
+
+  if (!sourcesAvailable) {
+    return (
+      <div className="MultitrackMediaPlayer">
+        <div className="MultitrackMediaPlayer-errorMessage">{t('missingSourcesMessage')}</div>
+      </div>
+    );
+  }
+
   return (
     <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       {loadedSources && (
@@ -336,13 +359,13 @@ MultitrackMediaPlayer.propTypes = {
     PropTypes.shape({
       mainTrack: PropTypes.shape({
         name: PropTypes.string,
-        sourceUrl: PropTypes.string.isRequired,
+        sourceUrl: PropTypes.string,
         volume: PropTypes.number.isRequired,
         playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
       }),
       secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string,
-        sourceUrl: PropTypes.string.isRequired,
+        sourceUrl: PropTypes.string,
         volume: PropTypes.number.isRequired
       }))
     }),
