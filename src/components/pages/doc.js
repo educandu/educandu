@@ -24,7 +24,7 @@ import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -120,6 +120,15 @@ function Doc({ initialState, PageTemplate }) {
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
 
+  const fetchComments = useCallback(async () => {
+    try {
+      const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setComments(docComments);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  }, [doc, commentApiClient, t]);
+
   useEffect(() => {
     setAlerts(createPageAlerts({
       t,
@@ -149,15 +158,10 @@ function Doc({ initialState, PageTemplate }) {
 
     if (initialView === VIEW.comments) {
       (async () => {
-        try {
-          const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-          setComments(docComments);
-        } catch (error) {
-          handleApiError({ error, t, logger });
-        }
+        await fetchComments();
       })();
     }
-  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient, commentApiClient]);
+  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -245,13 +249,8 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleCommentsOpen = async () => {
-    try {
-      const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setComments(docComments);
-      setView(VIEW.comments);
-    } catch (error) {
-      handleApiError({ error, t, logger });
-    }
+    await fetchComments();
+    setView(VIEW.comments);
   };
 
   const handleCommentsClose = () => {
