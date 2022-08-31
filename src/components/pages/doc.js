@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
-import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -18,21 +17,22 @@ import { useRequest } from '../request-context.js';
 import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import { Breadcrumb, Collapse, message } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { canEditDocContent, canEditDocMetadata, groupCommentsByTopic } from '../../utils/doc-utils.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -44,6 +44,8 @@ import {
 } from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
+
+const { Panel } = Collapse;
 
 const VIEW = {
   display: 'display',
@@ -102,7 +104,7 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
-  const [comments, setComments] = useState([]);
+  const [commentGroups, setCommentGroups] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [historyRevisions, setHistoryRevisions] = useState([]);
@@ -122,8 +124,10 @@ function Doc({ initialState, PageTemplate }) {
 
   const fetchComments = useCallback(async () => {
     try {
-      const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setComments(docComments);
+      const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+      const newCommentGroups = groupCommentsByTopic(response.comments);
+
+      setCommentGroups(newCommentGroups);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -255,7 +259,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsClose = () => {
     setView(VIEW.display);
-    setComments([]);
+    setCommentGroups([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
@@ -451,6 +455,32 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
+  const renderComment = comment => {
+    return (
+      <div key={comment._id}>
+        {comment.text}
+      </div>
+    );
+  };
+
+  const renderTopicPanel = (topic, index) => {
+    return (
+      <Panel header={topic} key={index}>
+        {commentGroups[topic].map(renderComment)}
+      </Panel>
+    );
+  };
+
+  const renderCommentTopics = () => {
+    const topics = Object.keys(commentGroups);
+
+    return (
+      <Collapse accordion>
+        {topics.map(renderTopicPanel)}
+      </Collapse>
+    );
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -500,10 +530,8 @@ function Doc({ initialState, PageTemplate }) {
 
           {view === VIEW.comments && (
             <section ref={commentsSectionRef} className="DocPage-commentsSection">
-              <hr />
-              {'>>>Comments come here<<<'}
-              {comments.map(c => c.text)}
-              <hr />
+              <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
+              {renderCommentTopics()}
             </section>
           )}
         </div>

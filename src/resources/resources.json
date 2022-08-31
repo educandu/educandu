@@ -906,7 +906,8 @@
       "permalinkCopied": "The permalink was copied to the clipboard",
       "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
       "documentMetadataUpdated": "Document updated successfully",
-      "commentsPanelTitle": "You are viewing the document page in \"comments\" mode"
+      "commentsPanelTitle": "You are viewing the document page in \"comments\" mode",
+      "commentsHeader": "Discussions about the document"
     }
   },
   {
@@ -916,7 +917,8 @@
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
       "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
       "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert",
-      "commentsPanelTitle": "Du befindest dich im Kommentar-Modus"
+      "commentsPanelTitle": "Du befindest dich im Kommentar-Modus",
+      "commentsHeader": "Debatten über das Dokument"
     }
   },
   {
