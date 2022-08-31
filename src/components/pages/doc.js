@@ -464,7 +464,7 @@ function Doc({ initialState, PageTemplate }) {
       <div className="DocPage-comment" key={comment._id}>
         <div className="DocPage-commentMetadata">
           <a className="DocPage-commentAuthor" href={userUrl}>{comment.createdBy.displayName}</a>
-          <div>{formatDate(comment.createdOn)}</div>
+          <div className="DocPage-commentDate">{formatDate(comment.createdOn)}</div>
         </div>
         <div className="DocPage-commentText">
           <Markdown>{comment.text}</Markdown>
