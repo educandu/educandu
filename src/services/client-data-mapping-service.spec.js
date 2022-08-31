@@ -532,18 +532,24 @@ describe('client-data-mapping-service', () => {
   describe('mapComment', () => {
     let comment;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       comment = {
         documentId: uniqueId.create(),
+        createdBy: user1._id,
         createdOn: new Date(),
         deletedOn: new Date()
       };
-      result = sut.mapComment(comment);
+      result = await sut.mapComment(comment);
     });
 
     it('should map comment data', () => {
       expect(result).toEqual({
         ...comment,
+        createdBy: {
+          _id: user1._id,
+          key: user1._id,
+          displayName: user1.displayName
+        },
         createdOn: comment.createdOn.toISOString(),
         deletedOn: comment.deletedOn.toISOString()
       });

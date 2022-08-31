@@ -190,11 +190,15 @@ class ClientDataMappingService {
     return mappedUserFavorites;
   }
 
-  mapComment(comment) {
+  async mapComment(comment) {
     const mappedComment = cloneDeep(comment);
+    const rawUser = await this.userStore.getUserById(comment.createdBy);
+    const grantedPermissions = getAllUserPermissions(rawUser);
+    const createdBy = this._mapUser({ user: rawUser, grantedPermissions });
 
     return {
       ...mappedComment,
+      createdBy,
       createdOn: mappedComment.createdOn.toISOString(),
       deletedOn: mappedComment.deletedOn && mappedComment.deletedOn.toISOString()
     };

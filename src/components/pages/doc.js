@@ -1,4 +1,4 @@
-/* eslint-disable complexity */
+/* eslint-disable complexity, max-lines */
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
@@ -25,6 +25,7 @@ import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -89,6 +90,7 @@ function Doc({ initialState, PageTemplate }) {
   const { t } = useTranslation('doc');
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
+  const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const { room } = initialState;
@@ -100,6 +102,7 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
+  const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [historyRevisions, setHistoryRevisions] = useState([]);
@@ -143,7 +146,18 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
-  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient]);
+
+    if (initialView === VIEW.comments) {
+      (async () => {
+        try {
+          const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+          setComments(docComments);
+        } catch (error) {
+          handleApiError({ error, t, logger });
+        }
+      })();
+    }
+  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient, commentApiClient]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -230,12 +244,19 @@ function Doc({ initialState, PageTemplate }) {
     });
   };
 
-  const handleCommentsOpen = () => {
-    setView(VIEW.comments);
+  const handleCommentsOpen = async () => {
+    try {
+      const { comments: docComments } = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setComments(docComments);
+      setView(VIEW.comments);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
   };
 
   const handleCommentsClose = () => {
     setView(VIEW.display);
+    setComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
@@ -482,6 +503,7 @@ function Doc({ initialState, PageTemplate }) {
             <section ref={commentsSectionRef} className="DocPage-commentsSection">
               <hr />
               {'>>>Comments come here<<<'}
+              {comments.map(c => c.text)}
               <hr />
             </section>
           )}
