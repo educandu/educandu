@@ -12,22 +12,22 @@ const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
 
 const plugins = [
   'markdown',
-  'quick-tester',
   'audio',
   'video',
   'image',
-  'pdf-viewer',
-  'iframe',
-  'anavis',
   'image-tiles',
-  'diagram-net',
   'annotation',
+  'table',
+  'pdf-viewer',
+  'diagram-net',
+  'iframe',
   'abc-notation',
+  'quick-tester',
   'ear-training',
   'interval-trainer',
-  'table',
   'interactive-media',
-  'multitrack-media'
+  'multitrack-media',
+  'anavis'
 ];
 
 const config = {
