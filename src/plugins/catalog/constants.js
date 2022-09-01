@@ -1,9 +1,14 @@
+export const DISPLAY_MODE = {
+  linkList: 'link-list',
+  imageTiles: 'image-tiles'
+};
+
 export const LINK_SOURCE_TYPE = {
   external: 'external',
   document: 'document'
 };
 
-export const HOVER_EFFECT = {
+export const TILES_HOVER_EFFECT = {
   none: 'none',
   colorizeZoom: 'colorize-zoom'
 };

@@ -15,7 +15,7 @@ const plugins = [
   'audio',
   'video',
   'image',
-  'image-tiles',
+  'catalog',
   'annotation',
   'table',
   'pdf-viewer',

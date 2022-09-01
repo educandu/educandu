@@ -6,11 +6,11 @@ import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import AnavisInfo from './anavis/anavis-info.js';
+import CatalogInfo from './catalog/catalog-info.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
-import ImageTilesInfo from './image-tiles/image-tiles-info.js';
 import DiagramNetInfo from './diagram-net/diagram-net-info.js';
 import QuickTesterInfo from './quick-tester/quick-tester-info.js';
 import AbcNotationInfo from './abc-notation/abc-notation-info.js';
@@ -28,10 +28,10 @@ const allPossibleInfoTypes = [
   TableInfo,
   IframeInfo,
   AnavisInfo,
+  CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,
   AnnotationInfo,
-  ImageTilesInfo,
   DiagramNetInfo,
   QuickTesterInfo,
   AbcNotationInfo,
