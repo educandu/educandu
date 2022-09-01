@@ -17,16 +17,26 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   const { t } = useTranslation('pdfDocument');
   const [viewerStyle, setViewerStyle] = useState({});
   const [actualPageNumber, setActualPageNumber] = useState(pageNumber);
+  const isMounted = useRef(false);
 
-  const releaseViewerStyle = () => setTimeout(() => setViewerStyle({}), 0);
+  const releaseViewerStyle = () => setTimeout(() => {
+    if (isMounted.current) {
+      setViewerStyle({});
+    }
+  }, 0);
 
   useEffect(() => {
+    isMounted.current = true;
     // In order to not have flickering on the page while the new page renders we keep the dimensions
     // of the old page fixed until `handlePageRenderSuccess` has been called by the next page,
     // or any of the error components are rendered.
     const boundingClientRect = viewerRef.current.getBoundingClientRect();
     setViewerStyle({ height: boundingClientRect.height, width: boundingClientRect.width });
     setActualPageNumber(pageNumber);
+
+    return () => {
+      isMounted.current = false;
+    };
   }, [pageNumber]);
 
   const handlePageRenderSuccess = () => {
