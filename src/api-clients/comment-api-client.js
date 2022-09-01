@@ -39,7 +39,7 @@ class CommentApiClient {
   getAllDocumentComments({ documentId }) {
     return this.httpClient
       .get(
-        `/api/v1/comments?query=${encodeURIComponent(documentId)}`,
+        `/api/v1/comments?documentId=${encodeURIComponent(documentId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

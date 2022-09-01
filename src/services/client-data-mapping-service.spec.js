@@ -532,20 +532,30 @@ describe('client-data-mapping-service', () => {
   describe('mapComment', () => {
     let comment;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       comment = {
         documentId: uniqueId.create(),
+        createdBy: user1._id,
         createdOn: new Date(),
-        deletedOn: new Date()
+        deletedOn: new Date(),
+        deletedBy: user2._id
       };
-      result = sut.mapComment(comment);
+      result = await sut.mapComment(comment);
     });
 
     it('should map comment data', () => {
       expect(result).toEqual({
         ...comment,
+        createdBy: {
+          _id: user1._id,
+          displayName: user1.displayName
+        },
         createdOn: comment.createdOn.toISOString(),
-        deletedOn: comment.deletedOn.toISOString()
+        deletedOn: comment.deletedOn.toISOString(),
+        deletedBy: {
+          _id: user2._id,
+          displayName: user2.displayName
+        }
       });
     });
   });

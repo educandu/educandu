@@ -17,7 +17,7 @@ class CommentService {
 
   async getAllDocumentComments(documentId) {
     const comments = await this.commentStore.getAllCommentsByDocumentId(documentId);
-    return comments.sort(by(doc => doc.createdOn, 'desc'));
+    return comments.sort(by(comment => comment.createdOn, 'desc'));
   }
 
   async createComment({ data, user }) {
