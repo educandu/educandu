@@ -83,7 +83,7 @@ export async function setupTestEnvironment() {
       'pdf-viewer',
       'iframe',
       'anavis',
-      'image-tiles',
+      'catalog',
       'diagram-net',
       'annotation',
       'abc-notation',

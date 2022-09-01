@@ -1,6 +1,6 @@
 name:
-  en: Image tiles
-  de: Bildkacheln
+  en: Catalog
+  de: Katalog
 tilesPerRow:
   en: Tiles per row
   de: Kacheln pro Zeile
@@ -13,12 +13,12 @@ hoverEffect_none:
 hoverEffect_colorizeZoom:
   en: Color and zoom
   de: Färben und Zoomen
-tileNumber:
-  en: Tile {number}
-  de: Kachel {number}
-addTile:
-  en: Add tile
-  de: Kachel hinzufügen
+itemNumber:
+  en: Item {number}
+  de: Eintrag {number}
+addItem:
+  en: Add item
+  de: Eintrag hinzufügen
 imageSource:
   en: Image source
   de: Bild-Quelle
@@ -31,6 +31,3 @@ documentLink:
 documentTitle:
   en: Document title
   de: Dokument-Titel
-imageDescription:
-  en: Image description
-  de: Bildunterschrift
