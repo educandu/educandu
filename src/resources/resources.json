@@ -122,6 +122,20 @@
     }
   },
   {
+    "namespace": "commentsPanel",
+    "language": "en",
+    "resources": {
+      "addCommentButtonText": "Write comment"
+    }
+  },
+  {
+    "namespace": "commentsPanel",
+    "language": "de",
+    "resources": {
+      "addCommentButtonText": "Kommentar schreiben"
+    }
+  },
+  {
     "namespace": "confirmationDialogs",
     "language": "en",
     "resources": {
