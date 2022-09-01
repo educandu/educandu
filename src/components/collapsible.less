@@ -13,12 +13,14 @@
 }
 
 .Collapsible-header {
-  display: flex;
+  display: grid;
   align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: auto 1fr auto;
   overflow-x: hidden;
   text-decoration: none;
   color: @edu-text-color;
-  gap: @edu-content-padding;
   padding: 12px @collapsible-padding;
   border-radius: @edu-border-radius-base;
   border: 1px solid @edu-border-color-light;
@@ -85,9 +87,6 @@
   border-top: none;
 
   &.Collapsible-content--standalone {
-    display: flex;
-    align-items: center;
-    gap: 20px;
     border-radius: @edu-border-radius-base;
     border: 1px solid @edu-border-color-light;
 

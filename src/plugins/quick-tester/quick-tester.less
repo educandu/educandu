@@ -9,7 +9,6 @@
 
 .QuickTesterDisplay-content {
   display: flex;
-  gap: 15px;
   align-items: center;
   flex-direction: column;
 }
@@ -19,12 +18,17 @@
   padding: 5px;
   display: flex;
   flex-wrap: wrap;
+  margin-top: 15px;
   align-items: center;
-  gap: @edu-controls-group-gap;
   justify-content: space-between;
 }
 
+.QuickTesterDisplay-cards {
+  margin-right: @edu-control-spacing-wide;
+}
+
 .QuickTesterDisplay-radioGroup {
+  margin-top: 15px;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
@@ -37,6 +41,7 @@
 
 .QuickTesterDisplay-test {
   min-height: 200px;
+  margin-top: 15px;
   padding: 10px;
   width: 100%;
   display: flex;
@@ -55,8 +60,8 @@
 .QuickTesterEditor {}
 
 .QuickTesterEditor-testContent {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-auto-flow: row;
   gap: 10px;
 }
 

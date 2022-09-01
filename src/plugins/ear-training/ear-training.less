@@ -5,12 +5,12 @@
   max-width: 100%;
   text-align: center;
   display: flex;
-  gap: 15px;
   flex-direction: column;
 }
 
 .EarTrainingDisplay-controlPanel {
   .m-horizontally-centered;
+  margin-top: 15px;
   width: 50%;
   display: flex;
   justify-content: space-between;
@@ -27,6 +27,7 @@
 
 .EarTrainingDisplay-radioGroup {
   .m-horizontally-centered;
+  margin-top: 15px;
   display: grid;
   max-width: fit-content;
   grid-template-columns: 1fr 1fr;
@@ -39,6 +40,7 @@
 }
 
 .EarTrainingDisplay-test {
+  margin-top: 15px;
   padding: 10px;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
@@ -68,11 +70,4 @@
   .m-horizontally-centered;
   max-width: @edu-breakpoint-sm;
   margin-top: 20px;
-}
-
-.EarTrainingDisplay-buttons {
-  margin-top: 20px;
-  display: flex;
-  gap: @edu-controls-group-gap;
-  justify-content: center;
 }
