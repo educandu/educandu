@@ -8,6 +8,7 @@ import MarkdownInput from './markdown-input.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
+import { maxCommentTextLength } from '../domain/validation-constants.js';
 
 const { Panel } = Collapse;
 
@@ -65,7 +66,11 @@ function CommentsPanel({ comments, onCommentPosted }) {
 
   const renderTopicPanel = (topic, index) => {
     return (
-      <Panel header={<Markdown inline>{topic}</Markdown>} key={index} className="CommentsPanel-topicPanel">
+      <Panel
+        key={index}
+        className="CommentsPanel-topicPanel"
+        header={<Markdown inline>{topic}</Markdown>}
+        >
         {commentGroups[topic].map(renderComment)}
         {mode === MODE.read && (
           <Button
@@ -78,7 +83,12 @@ function CommentsPanel({ comments, onCommentPosted }) {
         )}
         {mode === MODE.writeComment && (
           <div className="CommentsPanel-comment">
-            <MarkdownInput preview value={currentComment} onChange={handleCurrentCommentChange} />
+            <MarkdownInput
+              preview
+              value={currentComment}
+              maxLength={maxCommentTextLength}
+              onChange={handleCurrentCommentChange}
+              />
             <Button
               type="primary"
               className="CommentsPanel-addButton"
