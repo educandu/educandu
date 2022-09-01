@@ -81,10 +81,10 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
 }
 
 MarkdownInput.propTypes = {
-  maxLength: PropTypes.number,
   disabled: PropTypes.bool,
   embeddable: PropTypes.bool,
   inline: PropTypes.bool,
+  maxLength: PropTypes.number,
   minRows: PropTypes.number,
   onChange: PropTypes.func,
   preview: PropTypes.bool,
@@ -92,10 +92,10 @@ MarkdownInput.propTypes = {
 };
 
 MarkdownInput.defaultProps = {
-  maxLength: 0,
   disabled: false,
   embeddable: false,
   inline: false,
+  maxLength: 0,
   minRows: 3,
   onChange: () => '',
   preview: false,

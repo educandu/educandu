@@ -4,3 +4,6 @@ addCommentButtonText:
 postCommentButtonText:
   en: Post comment
   de: Kommentar aufgeben
+newTopicPlaceholder:
+  en: New topic
+  de: Neues Thema

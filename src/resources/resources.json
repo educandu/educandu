@@ -126,7 +126,8 @@
     "language": "en",
     "resources": {
       "addCommentButtonText": "Write comment",
-      "postCommentButtonText": "Post comment"
+      "postCommentButtonText": "Post comment",
+      "newTopicPlaceholder": "New topic"
     }
   },
   {
@@ -134,7 +135,8 @@
     "language": "de",
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
-      "postCommentButtonText": "Kommentar aufgeben"
+      "postCommentButtonText": "Kommentar aufgeben",
+      "newTopicPlaceholder": "Neues Thema"
     }
   },
   {

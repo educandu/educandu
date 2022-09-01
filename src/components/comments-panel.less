@@ -2,6 +2,21 @@
 
 .CommentsPanel-topicPanel {
   position: relative;
+
+  &.CommentsPanel-topicPanel--newTopic {
+    .ant-collapse-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-collapse-header-text {
+      width: 100%;
+    }
+  }
+}
+
+.CommentsPanel-newTopicInput {
+  padding: 5px 0;
 }
 
 .CommentsPanel-comment {
