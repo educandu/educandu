@@ -537,7 +537,8 @@ describe('client-data-mapping-service', () => {
         documentId: uniqueId.create(),
         createdBy: user1._id,
         createdOn: new Date(),
-        deletedOn: new Date()
+        deletedOn: new Date(),
+        deletedBy: user2._id
       };
       result = await sut.mapComment(comment);
     });
@@ -547,11 +548,14 @@ describe('client-data-mapping-service', () => {
         ...comment,
         createdBy: {
           _id: user1._id,
-          key: user1._id,
           displayName: user1.displayName
         },
         createdOn: comment.createdOn.toISOString(),
-        deletedOn: comment.deletedOn.toISOString()
+        deletedOn: comment.deletedOn.toISOString(),
+        deletedBy: {
+          _id: user2._id,
+          displayName: user2.displayName
+        }
       });
     });
   });

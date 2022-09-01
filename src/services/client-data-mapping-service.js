@@ -191,21 +191,13 @@ class ClientDataMappingService {
   }
 
   async mapComment(comment) {
-    const mappedComment = cloneDeep(comment);
-    const rawUser = await this.userStore.getUserById(comment.createdBy);
-    const grantedPermissions = getAllUserPermissions(rawUser);
-    const createdBy = this._mapUser({ user: rawUser, grantedPermissions });
-
-    return {
-      ...mappedComment,
-      createdBy,
-      createdOn: mappedComment.createdOn.toISOString(),
-      deletedOn: mappedComment.deletedOn && mappedComment.deletedOn.toISOString()
-    };
+    const userMap = await this._getUserMapForComments([comment]);
+    return this._mapComment(comment, userMap);
   }
 
-  mapComments(comments) {
-    return Promise.all(comments.map(c => this.mapComment(c)));
+  async mapComments(comments) {
+    const userMap = await this._getUserMapForComments(comments);
+    return comments.map(comment => this._mapComment(comment, userMap));
   }
 
   async _mapFavorite({ favorite, user }) {
@@ -235,7 +227,21 @@ class ClientDataMappingService {
     }
   }
 
-  _mapOtherUser({ user, grantedPermissions }) {
+  _mapComment(comment, userMap) {
+    const mappedComment = cloneDeep(comment);
+    const createdBy = this._mapOtherUser({ user: userMap.get(comment.createdBy) });
+    const deletedBy = this._mapOtherUser({ user: userMap.get(comment.deletedBy) });
+
+    return {
+      ...mappedComment,
+      createdBy,
+      deletedBy,
+      createdOn: mappedComment.createdOn.toISOString(),
+      deletedOn: mappedComment.deletedOn && mappedComment.deletedOn.toISOString()
+    };
+  }
+
+  _mapOtherUser({ user, grantedPermissions = [] }) {
     if (!user) {
       return null;
     }
@@ -386,6 +392,20 @@ class ClientDataMappingService {
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
     const userIds = extractUserIdsFromDocsOrRevisions(docsOrRevisions);
     const users = await this.userStore.getUsersByIds(userIds);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
+    }
+
+    return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getUserMapForComments(comments) {
+    const createdByUserIds = comments.map(comment => comment.createdBy).filter(comment => comment);
+    const deletedByUserIds = comments.map(comment => comment.deletedBy).filter(comment => comment);
+
+    const userIds = [...new Set([...createdByUserIds, ...deletedByUserIds])];
+    const users = await this.userStore.getUsersByIds(userIds);
+
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
     }
