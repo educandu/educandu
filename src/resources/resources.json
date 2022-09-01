@@ -135,7 +135,7 @@
     "language": "de",
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
-      "postCommentButtonText": "Kommentar aufgeben",
+      "postCommentButtonText": "Kommentar abschicken",
       "newTopicPlaceholder": "Neues Thema"
     }
   },

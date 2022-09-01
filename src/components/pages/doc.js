@@ -11,6 +11,7 @@ import FavoriteStar from '../favorite-star.js';
 import ControlPanel from '../control-panel.js';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
+import CommentsPanel from '../comments-panel.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -42,7 +43,6 @@ import {
   confirmSectionDelete,
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
-import CommentsPanel from '../comments-panel.js';
 
 const logger = new Logger(import.meta.url);
 
