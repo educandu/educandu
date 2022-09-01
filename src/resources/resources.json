@@ -125,14 +125,16 @@
     "namespace": "commentsPanel",
     "language": "en",
     "resources": {
-      "addCommentButtonText": "Write comment"
+      "addCommentButtonText": "Write comment",
+      "postCommentButtonText": "Post comment"
     }
   },
   {
     "namespace": "commentsPanel",
     "language": "de",
     "resources": {
-      "addCommentButtonText": "Kommentar schreiben"
+      "addCommentButtonText": "Kommentar schreiben",
+      "postCommentButtonText": "Kommentar aufgeben"
     }
   },
   {
