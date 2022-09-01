@@ -3,8 +3,10 @@ import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
 import { Button, Collapse } from 'antd';
 import React, { useState } from 'react';
+import Restricted from './restricted.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import permissions from '../domain/permissions.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
@@ -84,7 +86,9 @@ function CommentsPanel({ comments, onCommentPosted }) {
         header={<Markdown inline>{topic}</Markdown>}
         >
         {commentGroups[topic].map(renderComment)}
-        {mode === MODE.read && (
+
+        <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
+          {mode === MODE.read && (
           <Button
             type="primary"
             className="CommentsPanel-addButton"
@@ -92,8 +96,8 @@ function CommentsPanel({ comments, onCommentPosted }) {
             >
             {t('addCommentButtonText')}
           </Button>
-        )}
-        {mode === MODE.write && (
+          )}
+          {mode === MODE.write && (
           <div className="CommentsPanel-comment">
             <MarkdownInput
               preview
@@ -110,7 +114,8 @@ function CommentsPanel({ comments, onCommentPosted }) {
               {t('postCommentButtonText')}
             </Button>
           </div>
-        )}
+          )}
+        </Restricted>
       </Panel>
     );
   };
@@ -120,36 +125,38 @@ function CommentsPanel({ comments, onCommentPosted }) {
   return (
     <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel">
       {topics.map(renderTopicPanel)}
-      <Panel
-        key="newTopic"
-        className="CommentsPanel-topicPanel CommentsPanel-topicPanel--newTopic"
-        header={
-          <div className="CommentsPanel-newTopicInput" onClick={handleNewTopicInputClick}>
-            <MarkdownInput
-              inline
-              value={newTopic}
-              onChange={handleNewTopicChange}
-              maxLength={maxCommentTopicLength}
-              placeholder={t('newTopicPlaceholder')}
-              />
-          </div>
-        }
-        >
-        <MarkdownInput
-          preview
-          value={currentComment}
-          maxLength={maxCommentTextLength}
-          onChange={handleCurrentCommentChange}
-          />
-        <Button
-          type="primary"
-          className="CommentsPanel-addButton"
-          onClick={handlePostCommentClick}
-          disabled={currentComment.trim().length === 0 || newTopic.trim().length === 0}
+      <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
+        <Panel
+          key="newTopic"
+          className="CommentsPanel-topicPanel CommentsPanel-topicPanel--newTopic"
+          header={
+            <div className="CommentsPanel-newTopicInput" onClick={handleNewTopicInputClick}>
+              <MarkdownInput
+                inline
+                value={newTopic}
+                onChange={handleNewTopicChange}
+                maxLength={maxCommentTopicLength}
+                placeholder={t('newTopicPlaceholder')}
+                />
+            </div>
+          }
           >
-          {t('postCommentButtonText')}
-        </Button>
-      </Panel>
+          <MarkdownInput
+            preview
+            value={currentComment}
+            maxLength={maxCommentTextLength}
+            onChange={handleCurrentCommentChange}
+            />
+          <Button
+            type="primary"
+            className="CommentsPanel-addButton"
+            onClick={handlePostCommentClick}
+            disabled={currentComment.trim().length === 0 || newTopic.trim().length === 0}
+            >
+            {t('postCommentButtonText')}
+          </Button>
+        </Panel>
+      </Restricted>
     </Collapse>
   );
 }
