@@ -70,7 +70,7 @@ function QuickTesterDisplay({ content }) {
         icon={<QuickTesterIcon />}
         >
         <div className="QuickTesterDisplay-content">
-          <Markdown inline>{content.title}</Markdown>
+          <Markdown tag="div" inline>{content.title}</Markdown>
           {testCards.length > 1 && (
             <div className="QuickTesterDisplay-controlPanel">
               <div className="QuickTesterDisplay-cards">

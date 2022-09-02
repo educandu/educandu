@@ -1730,6 +1730,10 @@
     "language": "en",
     "resources": {
       "name": "Catalog",
+      "noTitle": "No title",
+      "displayMode": "Display mode",
+      "displayMode_linkList": "Link list",
+      "displayMode_imageTiles": "Image tiles",
       "tilesPerRow": "Tiles per row",
       "hoverEffect": "Hover effect",
       "hoverEffect_none": "No effect",
@@ -1739,7 +1743,7 @@
       "imageSource": "Image source",
       "linkSource": "Link source",
       "documentLink": "Document link",
-      "documentTitle": "Document title"
+      "adoptDocumentTitle": "Adopt as title"
     }
   },
   {
@@ -1747,6 +1751,10 @@
     "language": "de",
     "resources": {
       "name": "Katalog",
+      "noTitle": "Kein Titel",
+      "displayMode": "Anzeigemodus",
+      "displayMode_linkList": "Link-Liste",
+      "displayMode_imageTiles": "Bildkacheln",
       "tilesPerRow": "Kacheln pro Zeile",
       "hoverEffect": "Hover-Effekt",
       "hoverEffect_none": "Kein Effekt",
@@ -1756,7 +1764,7 @@
       "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
       "documentLink": "Dokument-Link",
-      "documentTitle": "Dokument-Titel"
+      "adoptDocumentTitle": "Als Titel übernehmen"
     }
   },
   {

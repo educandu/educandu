@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next';
 import ItemPanel from '../../components/item-panel.js';
 import CatalogItemEditor from './catalog-item-editor.js';
 import { Form, Radio, Slider, Button, Tooltip } from 'antd';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { createDefaultItem, isContentInvalid } from './catalog-utils.js';
-import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW } from './constants.js';
 import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
+import { createDefaultItem, consolidateForDisplayMode, isContentInvalid } from './catalog-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+const FormItem = Form.Item;
 
 const maxTilesPerRowPossibleValues = Array.from({ length: MAX_ALLOWED_TILES_PER_ROW }, (_, index) => index + 1);
 const maxTilesPerRowMinValue = maxTilesPerRowPossibleValues[0];
@@ -30,16 +32,24 @@ const formItemLayout = {
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
 
-  const { width, items, imageTilesConfig } = content;
+  const { title, displayMode, width, items, imageTilesConfig } = content;
 
   const triggerChange = newContentValues => {
-    const newContent = { ...content, ...newContentValues };
+    const newContent = consolidateForDisplayMode({ ...content, ...newContentValues });
     const isInvalid = isContentInvalid(newContent, t);
     onContentChanged(newContent, isInvalid);
   };
 
+  const handleTitleChange = event => {
+    triggerChange({ title: event.target.value });
+  };
+
   const handleWidthChange = value => {
     triggerChange({ width: value });
+  };
+
+  const handleDisplayModeChange = event => {
+    triggerChange({ displayMode: event.target.value });
   };
 
   const handleMaxTilesPerRowChange = value => {
@@ -73,7 +83,10 @@ function CatalogEditor({ content, onContentChanged }) {
   return (
     <div className="CatalogEditor">
       <Form layout="horizontal">
-        <Form.Item
+        <FormItem label={t('common:title')} {...formItemLayout}>
+          <MarkdownInput inline value={title} onChange={handleTitleChange} />
+        </FormItem>
+        <FormItem
           label={
             <Fragment>
               <Tooltip title={t('common:widthInfo')}>
@@ -85,24 +98,34 @@ function CatalogEditor({ content, onContentChanged }) {
           {...formItemLayout}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
-        <Form.Item label={t('tilesPerRow')} {...formItemLayout}>
-          <Slider
-            step={null}
-            marks={maxTilesPerRowSliderMarks}
-            min={maxTilesPerRowMinValue}
-            max={maxTilesPerRowMaxValue}
-            value={imageTilesConfig.maxTilesPerRow}
-            tipFormatter={maxTilesPerRowSliderTipFormatter}
-            onChange={handleMaxTilesPerRowChange}
-            />
-        </Form.Item>
-        <Form.Item label={t('hoverEffect')} {...formItemLayout}>
-          <RadioGroup value={imageTilesConfig.hoverEffect} onChange={handleHoverEffectChange}>
-            <RadioButton value={TILES_HOVER_EFFECT.none}>{t('hoverEffect_none')}</RadioButton>
-            <RadioButton value={TILES_HOVER_EFFECT.colorizeZoom}>{t('hoverEffect_colorizeZoom')}</RadioButton>
+        </FormItem>
+        <FormItem label={t('displayMode')} {...formItemLayout}>
+          <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
+            <RadioButton value={DISPLAY_MODE.linkList}>{t('displayMode_linkList')}</RadioButton>
+            <RadioButton value={DISPLAY_MODE.imageTiles}>{t('displayMode_imageTiles')}</RadioButton>
           </RadioGroup>
-        </Form.Item>
+        </FormItem>
+        {displayMode === DISPLAY_MODE.imageTiles && (
+          <Fragment>
+            <FormItem label={t('tilesPerRow')} {...formItemLayout}>
+              <Slider
+                step={null}
+                marks={maxTilesPerRowSliderMarks}
+                min={maxTilesPerRowMinValue}
+                max={maxTilesPerRowMaxValue}
+                value={imageTilesConfig.maxTilesPerRow}
+                tipFormatter={maxTilesPerRowSliderTipFormatter}
+                onChange={handleMaxTilesPerRowChange}
+                />
+            </FormItem>
+            <FormItem label={t('hoverEffect')} {...formItemLayout}>
+              <RadioGroup value={imageTilesConfig.hoverEffect} onChange={handleHoverEffectChange}>
+                <RadioButton value={TILES_HOVER_EFFECT.none}>{t('hoverEffect_none')}</RadioButton>
+                <RadioButton value={TILES_HOVER_EFFECT.colorizeZoom}>{t('hoverEffect_colorizeZoom')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+          </Fragment>
+        )}
         {items.map((item, index) => (
           <ItemPanel
             index={index}
@@ -115,6 +138,7 @@ function CatalogEditor({ content, onContentChanged }) {
             >
             <CatalogItemEditor
               item={item}
+              enableImageEditing={displayMode === DISPLAY_MODE.imageTiles}
               onChange={newItem => handleItemChange(index, newItem)}
               />
           </ItemPanel>

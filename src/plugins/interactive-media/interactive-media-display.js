@@ -103,7 +103,7 @@ function InteractiveMediaDisplay({ content }) {
     return (
       <Radio value={index} key={index}>
         <div className="InteractiveMediaDisplay-overlayChapterAnswer">
-          <Markdown inline>{answer}</Markdown>
+          <Markdown tag="div" inline>{answer}</Markdown>
           <div className="InteractiveMediaDisplay-answerMark">
             {isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
             {isIncorrectAnswerSelected && <div className="InteractiveMediaDisplay-incorrectAnswerMark"><CloseOutlined /></div>}

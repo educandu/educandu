@@ -8,17 +8,27 @@ import DocumentApiClient from '../api-clients/document-api-client.js';
 
 const { Option } = Select;
 
-function DocumentSelector({ documentId, onChange }) {
+function DocumentSelector({ documentId, onChange, onTitleChange }) {
   const { t } = useTranslation('documentSelector');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
+  const [lastTitle, setLastTitle] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
 
   const updateOptions = documents => setOptions(documents
     .sort(by(d => d.title, { ignoreCase: true }))
     .map(doc => ({ key: doc._id, value: doc.title })));
+
+  const currentTitle = selectedOption?.value || '';
+
+  useEffect(() => {
+    if (currentTitle !== lastTitle) {
+      setLastTitle(currentTitle);
+      onTitleChange(currentTitle);
+    }
+  }, [lastTitle, currentTitle, onTitleChange]);
 
   useEffect(() => {
     if (!documentId) {
@@ -85,11 +95,13 @@ function DocumentSelector({ documentId, onChange }) {
 
 DocumentSelector.propTypes = {
   documentId: PropTypes.string,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  onTitleChange: PropTypes.func
 };
 
 DocumentSelector.defaultProps = {
-  documentId: null
+  documentId: null,
+  onTitleChange: () => {}
 };
 
 export default DocumentSelector;

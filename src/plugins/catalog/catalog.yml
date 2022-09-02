@@ -1,6 +1,18 @@
 name:
   en: Catalog
   de: Katalog
+noTitle:
+  en: No title
+  de: Kein Titel
+displayMode:
+  en: Display mode
+  de: Anzeigemodus
+displayMode_linkList:
+  en: Link list
+  de: Link-Liste
+displayMode_imageTiles:
+  en: Image tiles
+  de: Bildkacheln
 tilesPerRow:
   en: Tiles per row
   de: Kacheln pro Zeile
@@ -28,6 +40,6 @@ linkSource:
 documentLink:
   en: Document link
   de: Dokument-Link
-documentTitle:
-  en: Document title
-  de: Dokument-Titel
+adoptDocumentTitle:
+  en: Adopt as title
+  de: Als Titel übernehmen

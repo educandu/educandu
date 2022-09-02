@@ -1,30 +1,48 @@
 .CatalogDisplay {}
 
-.CatalogDisplay-grid {
+.CatalogDisplay-container {
+  margin: 0 auto;
+}
+
+.CatalogDisplay-title {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: @edu-content-padding;
+}
+
+.CatalogDisplay-linkList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.CatalogDisplay-imageTiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: grid;
   align-items: start;
   gap: 20px;
-  margin-left: auto;
-  margin-right: auto;
 
   @media @edu-media-phone {
     grid-template-columns: 1fr !important;
   }
 }
 
-.CatalogDisplay-item {
+.CatalogDisplay-imageTile {
   text-align: center;
   overflow-x: hidden;
 
-  &.CatalogDisplay-item--noLink {
+  &.CatalogDisplay-imageTile--noLink {
     cursor: not-allowed;
   }
 }
 
-.CatalogDisplay-image {
+.CatalogDisplay-imageTileImage {
   max-width: 100%;
 }
 
-.CatalogDisplay-title {
+.CatalogDisplay-imageTileTitle {
+  display: block;
   color: inherit;
 }

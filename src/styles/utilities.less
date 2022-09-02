@@ -39,6 +39,11 @@
   grid-auto-flow: column;
   grid-template-columns: 1fr auto;
   gap: @edu-control-spacing-base;
+
+  .ant-select-in-form-item {
+    // Prevent dropdowns taking 100% of the space:
+    overflow-x: hidden;
+  }
 }
 
 .u-can-drop {
