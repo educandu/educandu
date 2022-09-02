@@ -127,7 +127,8 @@
     "resources": {
       "addCommentButtonText": "Write comment",
       "postCommentButtonText": "Post comment",
-      "newTopicPlaceholder": "New topic"
+      "newTopicPlaceholder": "New topic",
+      "commentDeleted": "The content of this comment was deleted by maintainers."
     }
   },
   {
@@ -136,7 +137,8 @@
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
       "postCommentButtonText": "Kommentar abschicken",
-      "newTopicPlaceholder": "Neues Thema"
+      "newTopicPlaceholder": "Neues Thema",
+      "commentDeleted": "Der Inhalt dieses Komment war von Maintainers gelöscht."
     }
   },
   {

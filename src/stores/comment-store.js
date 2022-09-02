@@ -14,7 +14,7 @@ class CommentStore {
   }
 
   getAllCommentsByDocumentId(documentId, { session } = {}) {
-    return this.collection.find({ $and: [{ documentId }, { deletedOn: null }] }, { session }).toArray();
+    return this.collection.find({ $and: [{ documentId }] }, { session }).toArray();
   }
 
   deleteCommentById(commentId, { session } = {}) {

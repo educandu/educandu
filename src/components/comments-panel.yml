@@ -7,3 +7,6 @@ postCommentButtonText:
 newTopicPlaceholder:
   en: New topic
   de: Neues Thema
+commentDeleted:
+  en: The content of this comment was deleted by maintainers.
+  de: Der Inhalt dieses Komment war von Maintainers gelöscht.

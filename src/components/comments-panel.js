@@ -107,12 +107,19 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
           <a className="CommentsPanel-author" href={userUrl}>{comment.createdBy.displayName}</a>
           <div className="CommentsPanel-date">{formatDate(comment.createdOn)}</div>
         </div>
-        <div className="CommentsPanel-text">
-          <Markdown>{comment.text}</Markdown>
-        </div>
+        {!comment.deletedOn && (
+          <div className="CommentsPanel-text">
+            <Markdown>{comment.text}</Markdown>
+          </div>
+        )}
+        {!!comment.deletedOn && (
+          <div className="CommentsPanel-text CommentsPanel-text--deleted">
+            {t('commentDeleted')}
+          </div>
+        )}
         <Restricted to={permissions.MANAGE_DOCUMENT_COMMENTS}>
           <div className="CommentsPanel-commentDeleteButton">
-            <DeleteButton onClick={() => handleDeleteCommentClick(comment)} />
+            <DeleteButton onClick={() => handleDeleteCommentClick(comment)} disabled={comment.deletedOn} />
           </div>
         </Restricted>
       </div>
