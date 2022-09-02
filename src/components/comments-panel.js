@@ -8,10 +8,10 @@ import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
-import { SaveOutlined } from '@ant-design/icons';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { confirmCommentDelete } from './confirmation-dialogs.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -82,6 +82,12 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
     setEditedTopicNewText(value);
   };
 
+  const handleCancelEditedTopicClick = event => {
+    event.stopPropagation();
+    setEditedTopic('');
+    setEditedTopicNewText('');
+  };
+
   const handleSaveEditedTopicClick = event => {
     event.stopPropagation();
     const newTopicText = editedTopicNewText.trim();
@@ -147,18 +153,31 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
       return null;
     }
 
-    return topic === editedTopic
-      ? <Button
-          type="primary"
-          icon={<SaveOutlined />}
-          onClick={handleSaveEditedTopicClick}
-          disabled={editedTopicNewText.trim().length === 0}
-          />
-      : <Button
-          type="link"
-          icon={<EditIcon />}
-          onClick={event => handleEditTopicClick(event, topic)}
-          />;
+    if (topic === editedTopic) {
+      return (
+        <div className="CommentsPanel-editTopicButtonsGroup">
+          <Button
+            type="default"
+            icon={<CloseOutlined />}
+            onClick={handleCancelEditedTopicClick}
+            />
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={handleSaveEditedTopicClick}
+            disabled={editedTopicNewText.trim().length === 0}
+            />
+        </div>
+      );
+    }
+
+    return (
+      <Button
+        type="link"
+        icon={<EditIcon />}
+        onClick={event => handleEditTopicClick(event, topic)}
+        />
+    );
   };
 
   const renderTopicPanel = (topic, index) => {
