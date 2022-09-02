@@ -39,16 +39,8 @@ class CommentService {
     return newComment;
   }
 
-  async updateComment({ commentId, topic }) {
-    const comment = await this.commentStore.getCommentById(commentId);
-    const updatedComment = {
-      ...comment,
-      topic
-    };
-
-    await this.commentStore.saveComment(updatedComment);
-
-    return updatedComment;
+  async updateCommentsTopic({ oldTopic, newTopic }) {
+    await this.commentStore.updateCommentsTopic({ oldTopic, newTopic });
   }
 
   async deleteComment({ commentId, user }) {

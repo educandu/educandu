@@ -435,3 +435,15 @@ export function confirmExitFileEditor(t, onOk, onCancel = () => { }) {
     onCancel
   });
 }
+
+export function confirmCommentDelete(t, author, timestamp, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteCommentConfirmation', { author, timestamp }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}

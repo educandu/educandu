@@ -1,14 +1,14 @@
 import express from 'express';
 import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import CommentService from '../services/comment-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { documentIdParamsOrQuerySchema } from '../domain/schemas/document-schemas.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { commentIdParamsOrQuerySchema, postCommentBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import { commentIdParamsOrQuerySchema, postCommentsTopicBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
 
 const jsonParser = express.json();
 const { BadRequest, NotFound, Forbidden } = httpErrors;
@@ -50,19 +50,11 @@ class CommentController {
     return res.status(201).send(mappedComment);
   }
 
-  async handlePostComment(req, res) {
-    const { topic } = req.body;
-    const { commentId } = req.params;
+  async handlePostCommentsTopic(req, res) {
+    const { oldTopic, newTopic } = req.body;
 
-    const comment = await this.commentService.getCommentById(commentId);
-
-    if (!comment || comment.deletedOn) {
-      throw new NotFound();
-    }
-
-    const updatedComment = await this.commentService.updateComment({ commentId, topic });
-    const mappedComment = await this.clientDataMappingService.mapComment(updatedComment);
-    return res.status(201).send(mappedComment);
+    await this.commentService.updateCommentsTopic({ oldTopic, newTopic });
+    return res.status(201).send();
   }
 
   async handleDeleteComment(req, res) {
@@ -96,9 +88,9 @@ class CommentController {
     );
 
     router.post(
-      '/api/v1/comments/:commentId',
-      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateParams(commentIdParamsOrQuerySchema), validateBody(postCommentBodySchema)],
-      (req, res) => this.handlePostComment(req, res)
+      '/api/v1/comments/topic',
+      [needsPermission(permissions.MANAGE_DOCUMENT_COMMENTS), jsonParser, validateBody(postCommentsTopicBodySchema)],
+      (req, res) => this.handlePostCommentsTopic(req, res)
     );
 
     router.delete(

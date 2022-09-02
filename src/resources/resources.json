@@ -127,7 +127,8 @@
     "resources": {
       "addCommentButtonText": "Write comment",
       "postCommentButtonText": "Post comment",
-      "newTopicPlaceholder": "New topic"
+      "newTopicPlaceholder": "New topic",
+      "commentDeleted": "The content of this comment was deleted by maintainers."
     }
   },
   {
@@ -136,7 +137,8 @@
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
       "postCommentButtonText": "Kommentar abschicken",
-      "newTopicPlaceholder": "Neues Thema"
+      "newTopicPlaceholder": "Neues Thema",
+      "commentDeleted": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
     }
   },
   {
@@ -167,7 +169,8 @@
       "deleteStoragePlanConfirmation": "Do you really want to delete storage plan \"{storagePlanName}\"?",
       "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.",
       "closeAccountConfirmation": "Do you really want to close your account?",
-      "exitFileEditor": "Do you really want to exit the editor? Your current changes will be lost."
+      "exitFileEditor": "Do you really want to exit the editor? Your current changes will be lost.",
+      "deleteCommentConfirmation": "Do you really want to delete this comment from \"{author}\" posted on \"{timestamp}\"?"
     }
   },
   {
@@ -198,7 +201,8 @@
       "deleteStoragePlanConfirmation": "Möchtest du den Speicherplan \"{storagePlanName}\" wirklich löschen?",
       "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
       "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?",
-      "exitFileEditor": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren."
+      "exitFileEditor": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.",
+      "deleteCommentConfirmation": "Möchtest du den Kommentar von \"{author}\", geschrieben am \"{timestamp}\", wirklich löschen?"
     }
   },
   {

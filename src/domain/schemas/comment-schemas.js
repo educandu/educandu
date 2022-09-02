@@ -8,8 +8,9 @@ export const putCommentBodySchema = joi.object({
   text: joi.string().required()
 });
 
-export const postCommentBodySchema = joi.object({
-  topic: joi.string().required()
+export const postCommentsTopicBodySchema = joi.object({
+  oldTopic: joi.string().required(),
+  newTopic: joi.string().required()
 });
 
 export const commentIdParamsOrQuerySchema = joi.object({

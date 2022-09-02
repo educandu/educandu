@@ -3,23 +3,25 @@
 .CommentsPanel-topicPanel {
   position: relative;
 
-  &.CommentsPanel-topicPanel--newTopic {
-    .ant-collapse-header {
-      display: flex;
-      align-items: center;
-    }
+  .ant-collapse-header {
+    align-items: center !important;
+  }
 
-    .ant-collapse-header-text {
-      width: 100%;
-    }
+  .ant-collapse-header-text {
+    width: 100%;
   }
 }
 
-.CommentsPanel-newTopicInput {
+.CommentsPanel-topicInput {
   padding: 5px 0;
+
+  &.CommentsPanel-topicInput--edit {
+    margin-right: 10px;
+  }
 }
 
 .CommentsPanel-comment {
+  position: relative;
   margin: @edu-content-padding;
   margin-bottom: 3 * @edu-content-padding;
 
@@ -47,10 +49,27 @@
   padding: @edu-content-padding;
   border-radius: @edu-border-radius-base;
   background-color: lighten(@edu-primary-color-light, 42%);
+
+  &.CommentsPanel-text--deleted {
+    font-style: italic;
+  }
+}
+
+.CommentsPanel-commentDeleteButton {
+  position: absolute;
+  bottom: 0;
+  right: -20px;
 }
 
 .CommentsPanel-addButton {
   margin-top: 20px;
   margin-left: auto;
   display: flex;
+}
+
+.CommentsPanel-editTopicButtonsGroup {
+  display: grid;
+  gap: 5px;
+  align-items: center;
+  grid-auto-flow: column;
 }

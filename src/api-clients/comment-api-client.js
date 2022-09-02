@@ -17,11 +17,11 @@ class CommentApiClient {
       .then(res => res.data);
   }
 
-  updateComment({ commentId, topic }) {
+  updateCommentsTopic({ oldTopic, newTopic }) {
     return this.httpClient
       .post(
-        `/api/v1/comments/${encodeURIComponent(commentId)}`,
-        { topic },
+        '/api/v1/comments/topic',
+        { oldTopic, newTopic },
         { responseType: 'json' }
       )
       .then(res => res.data);
