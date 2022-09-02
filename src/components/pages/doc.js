@@ -452,7 +452,7 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
-  const handleCommentPosted = async ({ topic, text }) => {
+  const handleCommentPostClick = async ({ topic, text }) => {
     try {
       await commentApiClient.addComment({ documentId: doc._id, topic, text });
       await fetchComments();
@@ -461,9 +461,18 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  const handleCommentsTopicChanged = async ({ oldTopic, newTopic }) => {
+  const handleCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
     try {
       await commentApiClient.updateCommentsTopic({ oldTopic, newTopic });
+      await fetchComments();
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
+  const handleCommentDeleteClick = async commentId => {
+    try {
+      await commentApiClient.deleteComment({ commentId });
       await fetchComments();
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -522,8 +531,9 @@ function Doc({ initialState, PageTemplate }) {
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
               <CommentsPanel
                 comments={comments}
-                onCommentPosted={handleCommentPosted}
-                onTopicChanged={handleCommentsTopicChanged}
+                onCommentPostClick={handleCommentPostClick}
+                onTopicChangeClick={handleCommentsTopicChangeClick}
+                onCommentDeleteClick={handleCommentDeleteClick}
                 />
             </section>
           )}

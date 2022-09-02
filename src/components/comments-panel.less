@@ -3,7 +3,6 @@
 .CommentsPanel-topicPanel {
   position: relative;
 
-  // &.CommentsPanel-topicPanel--input {
   .ant-collapse-header {
     align-items: center !important;
   }
@@ -11,8 +10,6 @@
   .ant-collapse-header-text {
     width: 100%;
   }
-
-  // }
 }
 
 .CommentsPanel-topicInput {
@@ -24,6 +21,7 @@
 }
 
 .CommentsPanel-comment {
+  position: relative;
   margin: @edu-content-padding;
   margin-bottom: 3 * @edu-content-padding;
 
@@ -51,6 +49,12 @@
   padding: @edu-content-padding;
   border-radius: @edu-border-radius-base;
   background-color: lighten(@edu-primary-color-light, 42%);
+}
+
+.CommentsPanel-commentDeleteButton {
+  position: absolute;
+  bottom: 0;
+  right: -20px;
 }
 
 .CommentsPanel-addButton {

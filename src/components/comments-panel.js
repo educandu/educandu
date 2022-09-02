@@ -5,12 +5,14 @@ import { Button, Collapse } from 'antd';
 import React, { useState } from 'react';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
+import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import { SaveOutlined } from '@ant-design/icons';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
+import { confirmCommentDelete } from './confirmation-dialogs.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxCommentTextLength, maxCommentTopicLength } from '../domain/validation-constants.js';
@@ -22,7 +24,7 @@ const MODE = {
   write: 'write'
 };
 
-function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
+function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('commentsPanel');
@@ -46,7 +48,7 @@ function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
   };
 
   const handlePostCommentClick = () => {
-    onCommentPosted({
+    onCommentPostClick({
       topic: currentTopic || newTopic.trim(),
       text: currentComment.trim()
     });
@@ -82,9 +84,19 @@ function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
 
   const handleSaveEditedTopicClick = event => {
     event.stopPropagation();
-    onTopicChanged({ oldTopic: editedTopic, newTopic: editedTopicNewText.trim() });
+    const newTopicText = editedTopicNewText.trim();
+
+    if (editedTopic !== newTopicText) {
+      onTopicChangeClick({ oldTopic: editedTopic, newTopic: newTopicText });
+    }
     setEditedTopic('');
     setEditedTopicNewText('');
+  };
+
+  const handleDeleteCommentClick = comment => {
+    const author = comment.createdBy.displayName;
+    const timestamp = formatDate(comment.createdOn);
+    confirmCommentDelete(t, author, timestamp, () => onCommentDeleteClick(comment._id));
   };
 
   const renderComment = comment => {
@@ -98,6 +110,11 @@ function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
         <div className="CommentsPanel-text">
           <Markdown>{comment.text}</Markdown>
         </div>
+        <Restricted to={permissions.MANAGE_DOCUMENT_COMMENTS}>
+          <div className="CommentsPanel-commentDeleteButton">
+            <DeleteButton onClick={() => handleDeleteCommentClick(comment)} />
+          </div>
+        </Restricted>
       </div>
     );
   };
@@ -230,8 +247,9 @@ function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
 
 CommentsPanel.propTypes = {
   comments: PropTypes.arrayOf(commentShape).isRequired,
-  onCommentPosted: PropTypes.func.isRequired,
-  onTopicChanged: PropTypes.func.isRequired
+  onCommentDeleteClick: PropTypes.func.isRequired,
+  onCommentPostClick: PropTypes.func.isRequired,
+  onTopicChangeClick: PropTypes.func.isRequired
 };
 
 export default CommentsPanel;
