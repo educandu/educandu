@@ -75,4 +75,4 @@ exitFileEditor:
   de: Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.
 deleteCommentConfirmation:
   en: Do you really want to delete this comment from "{author}" posted on "{timestamp}"?
-  de: Möchtest du den Kommentar von "{author}" geschrieben am "{timestamp}" wirklich löschen?
+  de: Möchtest du den Kommentar von "{author}", geschrieben am "{timestamp}", wirklich löschen?
