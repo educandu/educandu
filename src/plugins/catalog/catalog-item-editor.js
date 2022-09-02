@@ -1,9 +1,9 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { LINK_SOURCE_TYPE } from './constants.js';
+import React, { Fragment, useState } from 'react';
+import { Button, Form, Input, Radio } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
@@ -19,8 +19,9 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function CatalogItemEditor({ item, onChange }) {
+function CatalogItemEditor({ item, enableImageEditing, onChange }) {
   const { t } = useTranslation('catalog');
+  const [currentDocumentTitle, setCurrentDocumentTitle] = useState('');
 
   const { title, link, image } = item;
 
@@ -60,15 +61,23 @@ function CatalogItemEditor({ item, onChange }) {
     triggerChange({ link: { ...link, sourceUrl: '', documentId: value } });
   };
 
+  const handleDocumentTitleChange = newDocumentTitle => {
+    setCurrentDocumentTitle(newDocumentTitle);
+  };
+
+  const handleAdoptDocumentTitle = () => {
+    triggerChange({ title: currentDocumentTitle });
+  };
+
   return (
-    <React.Fragment>
+    <Fragment>
       <FormItem label={t('common:title')} {...formItemLayout}>
         <MarkdownInput inline value={title} onChange={handleTitleChange} />
       </FormItem>
       <FormItem label={t('linkSource')} {...formItemLayout}>
         <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeChange}>
-          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
           <RadioButton value={LINK_SOURCE_TYPE.document}>{t('documentLink')}</RadioButton>
+          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
         </RadioGroup>
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
@@ -82,46 +91,64 @@ function CatalogItemEditor({ item, onChange }) {
         </FormItem>
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (
-        <FormItem label={t('documentTitle')} {...formItemLayout}>
-          <DocumentSelector documentId={link.documentId} onChange={handleDocumentChange} />
-        </FormItem>
-      )}
-      <FormItem label={t('imageSource')} {...formItemLayout}>
-        <RadioGroup value={image.sourceType} onChange={handleImageSourceTypeChange}>
-          <RadioButton value="external">{t('common:externalLink')}</RadioButton>
-          <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
-        </RadioGroup>
-      </FormItem>
-      {image.sourceType === IMAGE_SOURCE_TYPE.external && (
-        <FormItem
-          label={t('common:externalUrl')}
-          {...formItemLayout}
-          {...validation.validateUrl(image.sourceUrl, t)}
-          hasFeedback
-          >
-          <Input value={image.sourceUrl} onChange={handleExternalImageUrlChange} />
-        </FormItem>
-      )}
-      {image.sourceType === IMAGE_SOURCE_TYPE.internal && (
-        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+        <FormItem label={t('common:document')} {...formItemLayout}>
           <div className="u-input-and-button">
-            <Input
-              addonBefore={CDN_URL_PREFIX}
-              value={image.sourceUrl}
-              onChange={handleInternalImageUrlChange}
+            <DocumentSelector
+              documentId={link.documentId}
+              onChange={handleDocumentChange}
+              onTitleChange={handleDocumentTitleChange}
               />
-            <ResourcePicker
-              url={storageLocationPathToUrl(image.sourceUrl)}
-              onUrlChange={url => handleInternalImageResourceUrlChange(urlToStorageLocationPath(url))}
-              />
+            <Button
+              type="primary"
+              disabled={!currentDocumentTitle || currentDocumentTitle === title}
+              onClick={handleAdoptDocumentTitle}
+              >
+              {t('adoptDocumentTitle')}
+            </Button>
           </div>
         </FormItem>
       )}
-    </React.Fragment>
+      {enableImageEditing && (
+        <Fragment>
+          <FormItem label={t('imageSource')} {...formItemLayout}>
+            <RadioGroup value={image.sourceType} onChange={handleImageSourceTypeChange}>
+              <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
+              <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+            </RadioGroup>
+          </FormItem>
+          {image.sourceType === IMAGE_SOURCE_TYPE.external && (
+            <FormItem
+              label={t('common:externalUrl')}
+              {...formItemLayout}
+              {...validation.validateUrl(image.sourceUrl, t)}
+              hasFeedback
+              >
+              <Input value={image.sourceUrl} onChange={handleExternalImageUrlChange} />
+            </FormItem>
+          )}
+          {image.sourceType === IMAGE_SOURCE_TYPE.internal && (
+            <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+              <div className="u-input-and-button">
+                <Input
+                  addonBefore={CDN_URL_PREFIX}
+                  value={image.sourceUrl}
+                  onChange={handleInternalImageUrlChange}
+                  />
+                <ResourcePicker
+                  url={storageLocationPathToUrl(image.sourceUrl)}
+                  onUrlChange={url => handleInternalImageResourceUrlChange(urlToStorageLocationPath(url))}
+                  />
+              </div>
+            </FormItem>
+          )}
+        </Fragment>
+      )}
+    </Fragment>
   );
 }
 
 CatalogItemEditor.propTypes = {
+  enableImageEditing: PropTypes.bool.isRequired,
   item: PropTypes.shape({
     title: PropTypes.string,
     link: PropTypes.shape({

@@ -8,7 +8,7 @@ function Markdown({ className, children, inline, tag, ...rest }) {
   const gfm = useService(GithubFlavoredMarkdown);
   const { cdnRootUrl } = useService(ClientConfig);
 
-  const Tag = tag || 'div';
+  const Tag = tag || (inline ? 'span' : 'div');
   const renderMethod = inline ? 'renderInline' : 'render';
   const innerHtml = { __html: gfm[renderMethod](children, { cdnRootUrl, renderMedia: !inline }) };
 
@@ -28,7 +28,7 @@ Markdown.defaultProps = {
   children: null,
   className: '',
   inline: false,
-  tag: 'div'
+  tag: null
 };
 
 export default React.memo(Markdown);
