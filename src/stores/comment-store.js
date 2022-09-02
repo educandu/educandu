@@ -26,6 +26,10 @@ class CommentStore {
     return this.collection.replaceOne({ _id: comment._id }, comment, { session, upsert: true });
   }
 
+  updateCommentsTopic({ oldTopic, newTopic }, { session } = {}) {
+    return this.collection.updateMany({ topic: oldTopic }, { $set: { topic: newTopic } }, { session, upsert: true });
+  }
+
   deleteCommentsByDocumentIds(documentIds, { session } = {}) {
     return this.collection.deleteMany({ documentId: { $in: documentIds } }, { session });
   }

@@ -7,6 +7,8 @@ import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import { SaveOutlined } from '@ant-design/icons';
+import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
@@ -20,7 +22,7 @@ const MODE = {
   write: 'write'
 };
 
-function CommentsPanel({ comments, onCommentPosted }) {
+function CommentsPanel({ comments, onCommentPosted, onTopicChanged }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('commentsPanel');
@@ -28,8 +30,10 @@ function CommentsPanel({ comments, onCommentPosted }) {
 
   const [mode, setMode] = useState(MODE.read);
   const [newTopic, setNewTopic] = useState('');
+  const [editedTopic, setEditedTopic] = useState('');
   const [currentTopic, setCurrentTopic] = useState('');
   const [currentComment, setCurrentComment] = useState('');
+  const [editedTopicNewText, setEditedTopicNewText] = useState('');
 
   const handleCollapseChange = panelIndex => {
     setMode(MODE.read);
@@ -56,13 +60,31 @@ function CommentsPanel({ comments, onCommentPosted }) {
     setCurrentComment(value);
   };
 
-  const handleNewTopicInputClick = event => {
+  const handleTopicInputClick = event => {
     event.stopPropagation();
   };
 
   const handleNewTopicChange = event => {
     const { value } = event.target;
     setNewTopic(value);
+  };
+
+  const handleEditTopicClick = (event, topic) => {
+    event.stopPropagation();
+    setEditedTopic(topic);
+    setEditedTopicNewText(topic);
+  };
+
+  const handleEditedTopicChange = event => {
+    const { value } = event.target;
+    setEditedTopicNewText(value);
+  };
+
+  const handleSaveEditedTopicClick = event => {
+    event.stopPropagation();
+    onTopicChanged({ oldTopic: editedTopic, newTopic: editedTopicNewText.trim() });
+    setEditedTopic('');
+    setEditedTopicNewText('');
   };
 
   const renderComment = comment => {
@@ -80,12 +102,48 @@ function CommentsPanel({ comments, onCommentPosted }) {
     );
   };
 
+  const renderTopicHeader = topic => {
+    if (topic === editedTopic) {
+      return (
+        <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
+          <MarkdownInput
+            inline
+            value={editedTopicNewText}
+            onChange={handleEditedTopicChange}
+            maxLength={maxCommentTopicLength}
+            />
+        </div>
+      );
+    }
+    return <Markdown inline>{topic}</Markdown>;
+  };
+
+  const renderEditTopicButton = topic => {
+    if (!hasUserPermission(user, permissions.MANAGE_DOCUMENT_COMMENTS)) {
+      return null;
+    }
+
+    return topic === editedTopic
+      ? <Button
+          type="primary"
+          icon={<SaveOutlined />}
+          onClick={handleSaveEditedTopicClick}
+          disabled={editedTopicNewText.trim().length === 0}
+          />
+      : <Button
+          type="link"
+          icon={<EditIcon />}
+          onClick={event => handleEditTopicClick(event, topic)}
+          />;
+  };
+
   const renderTopicPanel = (topic, index) => {
     return (
       <Panel
         key={index}
         className="CommentsPanel-topicPanel"
-        header={<Markdown inline>{topic}</Markdown>}
+        header={renderTopicHeader(topic)}
+        extra={renderEditTopicButton(topic)}
         >
         {commentGroups[topic].map(renderComment)}
 
@@ -129,9 +187,9 @@ function CommentsPanel({ comments, onCommentPosted }) {
     return (
       <Panel
         key="newTopic"
-        className="CommentsPanel-topicPanel CommentsPanel-topicPanel--newTopic"
+        className="CommentsPanel-topicPanel"
         header={
-          <div className="CommentsPanel-newTopicInput" onClick={handleNewTopicInputClick}>
+          <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
             <MarkdownInput
               inline
               value={newTopic}
@@ -172,7 +230,8 @@ function CommentsPanel({ comments, onCommentPosted }) {
 
 CommentsPanel.propTypes = {
   comments: PropTypes.arrayOf(commentShape).isRequired,
-  onCommentPosted: PropTypes.func.isRequired
+  onCommentPosted: PropTypes.func.isRequired,
+  onTopicChanged: PropTypes.func.isRequired
 };
 
 export default CommentsPanel;

@@ -3,20 +3,24 @@
 .CommentsPanel-topicPanel {
   position: relative;
 
-  &.CommentsPanel-topicPanel--newTopic {
-    .ant-collapse-header {
-      display: flex;
-      align-items: center;
-    }
-
-    .ant-collapse-header-text {
-      width: 100%;
-    }
+  // &.CommentsPanel-topicPanel--input {
+  .ant-collapse-header {
+    align-items: center !important;
   }
+
+  .ant-collapse-header-text {
+    width: 100%;
+  }
+
+  // }
 }
 
-.CommentsPanel-newTopicInput {
+.CommentsPanel-topicInput {
   padding: 5px 0;
+
+  &.CommentsPanel-topicInput--edit {
+    margin-right: 10px;
+  }
 }
 
 .CommentsPanel-comment {

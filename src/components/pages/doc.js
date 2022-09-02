@@ -461,6 +461,15 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
+  const handleCommentsTopicChanged = async ({ oldTopic, newTopic }) => {
+    try {
+      await commentApiClient.updateCommentsTopic({ oldTopic, newTopic });
+      await fetchComments();
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -511,7 +520,11 @@ function Doc({ initialState, PageTemplate }) {
           {view === VIEW.comments && (
             <section ref={commentsSectionRef} className="DocPage-commentsSection">
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
-              <CommentsPanel comments={comments} onCommentPosted={handleCommentPosted} />
+              <CommentsPanel
+                comments={comments}
+                onCommentPosted={handleCommentPosted}
+                onTopicChanged={handleCommentsTopicChanged}
+                />
             </section>
           )}
         </div>

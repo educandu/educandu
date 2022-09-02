@@ -71,13 +71,13 @@ describe('comment-service', () => {
     });
   });
 
-  describe('updateComment', () => {
-    let comment;
+  describe('updateCommentsTopic', () => {
+    let comments;
     let documentId;
 
     beforeEach(async () => {
       documentId = uniqueId.create();
-      comment = await sut.createComment({
+      const comment1 = await sut.createComment({
         data: {
           documentId,
           topic: 'comment-topic',
@@ -85,20 +85,37 @@ describe('comment-service', () => {
         },
         user
       });
-
-      result = await sut.updateComment({ commentId: comment._id, topic: 'new-comment-topic' });
-    });
-
-    it('should update the comment', () => {
-      expect(result).toEqual({
-        ...comment,
-        topic: 'new-comment-topic'
+      const comment2 = await sut.createComment({
+        data: {
+          documentId,
+          topic: 'comment-topic',
+          text: 'comment-text'
+        },
+        user
       });
+      const comment3 = await sut.createComment({
+        data: {
+          documentId,
+          topic: 'other-comment-topic',
+          text: 'comment-text'
+        },
+        user
+      });
+
+      await sut.updateCommentsTopic({ oldTopic: 'comment-topic', newTopic: 'new-comment-topic' });
+      comments = await Promise.all([
+        commentStore.getCommentById(comment1._id),
+        commentStore.getCommentById(comment2._id),
+        commentStore.getCommentById(comment3._id)
+      ]);
     });
 
-    it('should write it to the database', async () => {
-      const retrievedComment = await commentStore.getCommentById(comment._id);
-      expect(result).toEqual(retrievedComment);
+    it('should update the comments with the given topic', () => {
+      expect(comments[0].topic).toEqual('new-comment-topic');
+      expect(comments[1].topic).toEqual('new-comment-topic');
+    });
+    it('should not update the comments with another topic', () => {
+      expect(comments[2].topic).toEqual('other-comment-topic');
     });
   });
 

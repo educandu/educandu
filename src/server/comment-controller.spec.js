@@ -23,7 +23,6 @@ describe('comment-controller', () => {
   beforeEach(() => {
     commentService = {
       createComment: sandbox.stub(),
-      updateComment: sandbox.stub(),
       deleteComment: sandbox.stub(),
       getCommentById: sandbox.stub(),
       getAllDocumentComments: sandbox.stub()
@@ -167,79 +166,6 @@ describe('comment-controller', () => {
       });
     });
 
-  });
-
-  describe('handlePostComment', () => {
-    let comment;
-    let documentId;
-    let mappedComment;
-
-    describe('when the request contains an unknown comment id', () => {
-      beforeEach(() => {
-        const commentId = uniqueId.create();
-        commentService.getCommentById.withArgs(commentId).resolves(null);
-
-        req = { user, params: { commentId }, body: { topic: 'comment-topic' } };
-        res = {};
-      });
-
-      it('should throw NotFound', async () => {
-        await expect(() => sut.handlePostComment(req, res)).rejects.toThrow(NotFound);
-      });
-    });
-
-    describe('when the request contains the comment id of a deleted comment', () => {
-      beforeEach(() => {
-        const commentId = uniqueId.create();
-        commentService.getCommentById.withArgs(commentId).resolves({ deletedOn: new Date() });
-
-        req = { user, params: { commentId }, body: { topic: 'comment-topic' } };
-        res = {};
-      });
-
-      it('should throw NotFound', async () => {
-        await expect(() => sut.handlePostComment(req, res)).rejects.toThrow(NotFound);
-      });
-    });
-
-    describe('when the payload is correct', () => {
-      let updatedComment;
-
-      beforeEach(() => new Promise((resolve, reject) => {
-        documentId = uniqueId.create();
-        comment = {
-          documentId,
-          id: uniqueId.create(),
-          topic: 'comment-topic',
-          text: 'comment-text'
-        };
-        updatedComment = cloneDeep(comment);
-        mappedComment = cloneDeep(comment);
-
-        commentService.getCommentById.resolves(comment);
-
-        commentService.updateComment.resolves(updatedComment);
-        clientDataMappingService.mapComment.resolves(mappedComment);
-
-        req = { params: { commentId: comment._id }, body: { topic: 'new-comment-topic' } };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
-
-        sut.handlePostComment(req, res).catch(reject);
-      }));
-
-      it('should call commentService.updateComment', () => {
-        sinon.assert.calledWith(commentService.updateComment, { commentId: comment._id, topic: req.body.topic });
-      });
-
-      it('should call clientDataMappingService.mapComment', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapComment, comment);
-      });
-
-      it('should return the updated comment', () => {
-        expect(res._getData()).toEqual(updatedComment);
-      });
-    });
   });
 
   describe('handleDeleteComment', () => {
