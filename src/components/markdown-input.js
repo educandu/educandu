@@ -9,18 +9,28 @@ import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 
-function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, embeddable, ...rest }) {
+function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, embeddable, maxLength, ...rest }) {
   const { t } = useTranslation('markdownInput');
 
+  const renderCount = () => {
+    return maxLength
+      ? <div className="MarkdownInput-count">{value.length} / {maxLength}</div>
+      : null;
+  };
+
   const renderInlineInput = () => (
-    <Input
-      {...rest}
-      className={classNames('MarkdownInput-input', { 'is-disabled': disabled })}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      addonAfter={<MarkdownHelp disabled={disabled} inline />}
-      />
+    <div className="MarkdownInput-inlineInputContainer">
+      <Input
+        {...rest}
+        className={classNames('MarkdownInput-input', { 'is-disabled': disabled })}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        maxLength={maxLength || null}
+        addonAfter={<MarkdownHelp disabled={disabled} inline />}
+        />
+      {renderCount()}
+    </div>
   );
 
   const renderBlockInput = () => (
@@ -33,6 +43,7 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
         disabled={disabled}
         minRows={minRows}
         embeddable={embeddable}
+        maxLength={maxLength || null}
         />
       <div
         className={classNames(
@@ -42,6 +53,7 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
         >
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
+      {renderCount()}
     </div>
   );
 
@@ -72,6 +84,7 @@ MarkdownInput.propTypes = {
   disabled: PropTypes.bool,
   embeddable: PropTypes.bool,
   inline: PropTypes.bool,
+  maxLength: PropTypes.number,
   minRows: PropTypes.number,
   onChange: PropTypes.func,
   preview: PropTypes.bool,
@@ -82,6 +95,7 @@ MarkdownInput.defaultProps = {
   disabled: false,
   embeddable: false,
   inline: false,
+  maxLength: 0,
   minRows: 3,
   onChange: () => '',
   preview: false,

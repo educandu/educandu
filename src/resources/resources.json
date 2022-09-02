@@ -122,6 +122,24 @@
     }
   },
   {
+    "namespace": "commentsPanel",
+    "language": "en",
+    "resources": {
+      "addCommentButtonText": "Write comment",
+      "postCommentButtonText": "Post comment",
+      "newTopicPlaceholder": "New topic"
+    }
+  },
+  {
+    "namespace": "commentsPanel",
+    "language": "de",
+    "resources": {
+      "addCommentButtonText": "Kommentar schreiben",
+      "postCommentButtonText": "Kommentar abschicken",
+      "newTopicPlaceholder": "Neues Thema"
+    }
+  },
+  {
     "namespace": "confirmationDialogs",
     "language": "en",
     "resources": {

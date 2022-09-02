@@ -431,3 +431,19 @@ export const fileShape = PropTypes.shape({
   size: PropTypes.number,
   createdOn: PropTypes.string
 });
+
+export const commentShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  topic: PropTypes.string.isRequired,
+  text: PropTypes.string,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired
+  }).isRequired,
+  deletedOn: PropTypes.string,
+  deletedBy: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired
+  })
+});

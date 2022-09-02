@@ -1,5 +1,5 @@
 import uniqueId from './unique-id.js';
-import { canEditDocContent, canEditDocMetadata, groupCommentsByTopic } from './doc-utils.js';
+import { canEditDocContent, canEditDocMetadata } from './doc-utils.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 describe('doc-utils', () => {
@@ -426,38 +426,6 @@ describe('doc-utils', () => {
           room.members = [{ userId: user._id }];
           room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
           expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-      });
-    });
-  });
-
-  describe('groupCommentsByTopic', () => {
-    let result;
-
-    describe('when comments are empty string', () => {
-      beforeEach(() => {
-        result = groupCommentsByTopic([]);
-      });
-      it('should return empty object', () => {
-        expect(result).toEqual({});
-      });
-    });
-
-    describe('when comments of multiple topics are provided', () => {
-      let comments;
-      beforeEach(() => {
-        comments = [
-          { _id: 11, topic: 'topic-1', createdOn: new Date() },
-          { _id: 12, topic: 'topic-1', createdOn: new Date() },
-          { _id: 21, topic: 'topic-2', createdOn: new Date() },
-          { _id: 22, topic: 'topic-2', createdOn: new Date() }
-        ];
-        result = groupCommentsByTopic(comments);
-      });
-      it('should return a grouping sorted by most recently active topics ascending and within each topic the comments sorted descending by createdOn', () => {
-        expect(result).toEqual({
-          'topic-2': [comments[2], comments[3]],
-          'topic-1': [comments[0], comments[1]]
         });
       });
     });

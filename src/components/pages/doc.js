@@ -1,16 +1,17 @@
 /* eslint-disable complexity, max-lines */
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Markdown from '../markdown.js';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
+import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import ControlPanel from '../control-panel.js';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
+import CommentsPanel from '../comments-panel.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -18,8 +19,6 @@ import { useRequest } from '../request-context.js';
 import { CommentOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { useDateFormat } from '../locale-context.js';
-import { Breadcrumb, Collapse, message } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
@@ -30,11 +29,11 @@ import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { canEditDocContent, canEditDocMetadata, groupCommentsByTopic } from '../../utils/doc-utils.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -46,8 +45,6 @@ import {
 } from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
-
-const { Panel } = Collapse;
 
 const VIEW = {
   display: 'display',
@@ -92,7 +89,6 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
-  const { formatDate } = useDateFormat();
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
@@ -109,7 +105,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
-  const [commentGroups, setCommentGroups] = useState([]);
+  const [comments, setComments] = useState([]);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
@@ -128,9 +124,7 @@ function Doc({ initialState, PageTemplate }) {
   const fetchComments = useCallback(async () => {
     try {
       const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      const newCommentGroups = groupCommentsByTopic(response.comments);
-
-      setCommentGroups(newCommentGroups);
+      setComments(response.comments);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -262,7 +256,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsClose = () => {
     setView(VIEW.display);
-    setCommentGroups([]);
+    setComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
@@ -458,37 +452,13 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
-  const renderComment = comment => {
-    const userUrl = routes.getUserUrl(comment.createdBy._id);
-    return (
-      <div className="DocPage-comment" key={comment._id}>
-        <div className="DocPage-commentMetadata">
-          <a className="DocPage-commentAuthor" href={userUrl}>{comment.createdBy.displayName}</a>
-          <div className="DocPage-commentDate">{formatDate(comment.createdOn)}</div>
-        </div>
-        <div className="DocPage-commentText">
-          <Markdown>{comment.text}</Markdown>
-        </div>
-      </div>
-    );
-  };
-
-  const renderTopicPanel = (topic, index) => {
-    return (
-      <Panel header={<Markdown inline>{topic}</Markdown>} key={index}>
-        {commentGroups[topic].map(renderComment)}
-      </Panel>
-    );
-  };
-
-  const renderCommentTopics = () => {
-    const topics = Object.keys(commentGroups);
-
-    return (
-      <Collapse accordion>
-        {topics.map(renderTopicPanel)}
-      </Collapse>
-    );
+  const handleCommentPosted = async ({ topic, text }) => {
+    try {
+      await commentApiClient.addComment({ documentId: doc._id, topic, text });
+      await fetchComments();
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
   };
 
   let controlStatus;
@@ -541,7 +511,7 @@ function Doc({ initialState, PageTemplate }) {
           {view === VIEW.comments && (
             <section ref={commentsSectionRef} className="DocPage-commentsSection">
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
-              {renderCommentTopics()}
+              <CommentsPanel comments={comments} onCommentPosted={handleCommentPosted} />
             </section>
           )}
         </div>
