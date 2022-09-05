@@ -419,4 +419,15 @@ youtubeCopyrightNotice:
 emailIsInvalid:
   en: The value you provided is not a valid email address
   de: Deine Eingabe ist keine gültige E-Mail-Adresse
-
+verifiedDocumentBadge:
+  en: This document was verified by a maintainer
+  de: Dieses Dokument wurde von einem Maintainer Überprüft
+allowedOpenContributionBadge_none:
+  en: Open contribution is not allowed on this document
+  de: Open contribution is not allowed on this document
+allowedOpenContributionBadge_metadataAndContent:
+  en: Open contribution is allowed for the document metadata and document content
+  de: Open contribution is allowed for the document metadata and document content
+allowedOpenContributionBadge_content:
+  en: Open contribution is allowed for the document content
+  de: Open contribution is allowed for the document content
