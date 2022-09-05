@@ -966,7 +966,7 @@
       "originExternal": "extern",
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
-      "badges": "Abzeichen"
+      "badges": "Kennzeichen"
     }
   },
   {
@@ -2291,9 +2291,9 @@
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
       "emailIsInvalid": "The value you provided is not a valid email address",
       "verifiedDocumentBadge": "This document was verified by a maintainer",
-      "allowedOpenContributionBadge_none": "Open contribution is not allowed on this document",
-      "allowedOpenContributionBadge_metadataAndContent": "Open contribution is allowed for the document metadata and document content",
-      "allowedOpenContributionBadge_content": "Open contribution is allowed for the document content"
+      "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
+      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
+      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed"
     }
   },
   {
@@ -2437,10 +2437,10 @@
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
       "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
-      "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer Überprüft",
-      "allowedOpenContributionBadge_none": "Open contribution is not allowed on this document",
-      "allowedOpenContributionBadge_metadataAndContent": "Open contribution is allowed for the document metadata and document content",
-      "allowedOpenContributionBadge_content": "Open contribution is allowed for the document content"
+      "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
+      "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden"
     }
   },
   {
