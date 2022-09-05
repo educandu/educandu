@@ -95,13 +95,13 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
-  const handleMainTrackChange = newMainTrack => {
-    changeContent({ mainTrack: newMainTrack });
+  const handleMainTrackSettingsChange = ({ volume }) => {
+    changeContent({ mainTrack: { ...mainTrack, volume } });
   };
 
-  const handleSecondaryTrackChange = (index, newSecondaryTrack) => {
+  const handleSecondaryTrackSettingsChange = (index, { volume }) => {
     const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index] = newSecondaryTrack;
+    newSecondaryTracks[index] = { ...secondaryTracks[index], volume };
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
@@ -150,8 +150,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           <TrackMixer
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
-            onMainTrackChange={handleMainTrackChange}
-            onSecondaryTrackChange={handleSecondaryTrackChange}
+            onMainTrackSettingsChange={handleMainTrackSettingsChange}
+            onSecondaryTrackSettingsChange={handleSecondaryTrackSettingsChange}
             />
         </ItemPanel>
 

@@ -68,6 +68,9 @@ export const determineMediaDuration = memoizee(async url => {
 
   const playerPromise = new Promise((resolve, reject) => {
     try {
+      if (!url) {
+        resolve(null);
+      }
       const validUrl = new URL(url).href;
       const element = React.createElement(ReactPlayer, {
         url: validUrl,

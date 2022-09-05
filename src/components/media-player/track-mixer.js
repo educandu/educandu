@@ -9,7 +9,7 @@ import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 
-function TrackMixer({ mainTrack, secondaryTracks, onMainTrackChange, onSecondaryTrackChange }) {
+function TrackMixer({ mainTrack, secondaryTracks, onMainTrackSettingsChange, onSecondaryTrackSettingsChange }) {
   const { t } = useTranslation('trackMixer');
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
@@ -33,7 +33,7 @@ function TrackMixer({ mainTrack, secondaryTracks, onMainTrackChange, onSecondary
       secondaryTrackIndex: -1,
       trackDurationInMs: mainTrackDurationInMs || 0,
       getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs || 0),
-      handleVolumeChange: volume => onMainTrackChange({ ...mainTrack, volume })
+      handleVolumeChange: volume => onMainTrackSettingsChange({ volume })
     },
     ...secondaryTracks.map((secondaryTrack, index) => ({
       name: secondaryTrack.name,
@@ -41,7 +41,7 @@ function TrackMixer({ mainTrack, secondaryTracks, onMainTrackChange, onSecondary
       secondaryTrackIndex: index,
       trackDurationInMs: secondaryTrackDurations[index].duration || 0,
       getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration || 0),
-      handleVolumeChange: volume => onSecondaryTrackChange(index, { ...secondaryTracks[index], volume })
+      handleVolumeChange: volume => onSecondaryTrackSettingsChange(index, { volume })
     }))
   ];
 
@@ -89,8 +89,8 @@ TrackMixer.propTypes = {
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired,
     volume: PropTypes.number.isRequired
   }).isRequired,
-  onMainTrackChange: PropTypes.func.isRequired,
-  onSecondaryTrackChange: PropTypes.func.isRequired,
+  onMainTrackSettingsChange: PropTypes.func.isRequired,
+  onSecondaryTrackSettingsChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     sourceUrl: PropTypes.string,
