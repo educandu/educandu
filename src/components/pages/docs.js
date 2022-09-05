@@ -23,7 +23,10 @@ import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
+import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -241,16 +244,19 @@ function Docs({ initialState, PageTemplate }) {
       <div className="DocsPage-badges">
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
-            <LikeOutlined className="u-verified" />
+            <LikeOutlined className="u-verified-badge" />
           </Tooltip>
         )}
-        <div className="u-allowed-open-contribution">
-          <Tooltip title={t(`common:allowedOpenContributionBadge_${row.allowedOpenContribution}`)}>
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none && 'x'}
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content && 'c'}
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent && 'm'}
-          </Tooltip>
-        </div>
+        <Tooltip title={t(`common:allowedOpenContributionBadge_${row.allowedOpenContribution}`)}>
+          <div className="u-allowed-open-contribution-badge">
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+              && <AllowedOpenContributionNoneIcon />}
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+              && <AllowedOpenContributionContentIcon />}
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+              && <AllowedOpenContributionMetadataAndContentIcon />}
+          </div>
+        </Tooltip>
       </div>
     );
   };

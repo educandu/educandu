@@ -34,6 +34,9 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
+import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
+import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
@@ -510,16 +513,19 @@ function Doc({ initialState, PageTemplate }) {
               <div className="DocPage-badges">
                 {!!doc.verified && (
                 <Tooltip title={t('common:verifiedDocumentBadge')}>
-                  <LikeOutlined className="u-verified" />
+                  <LikeOutlined className="u-verified-badge" />
                 </Tooltip>
                 )}
-                <div className="u-allowed-open-contribution">
-                  <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none && 'x'}
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content && 'c'}
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent && 'm'}
-                  </Tooltip>
-                </div>
+                <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
+                  <div className="u-allowed-open-contribution-badge">
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+                      && <AllowedOpenContributionNoneIcon />}
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+                      && <AllowedOpenContributionContentIcon />}
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+                      && <AllowedOpenContributionMetadataAndContentIcon />}
+                  </div>
+                </Tooltip>
                 <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
               </div>
             }
