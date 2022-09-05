@@ -117,11 +117,12 @@ function DocumentMetadataModal({
   }, [isVisible]);
 
   const handleTagSearch = async typedInTag => {
+    const sanitizedTypedInTag = (typedInTag || '').trim();
     try {
-      if (typedInTag.length < 3) {
+      if (sanitizedTypedInTag.length < 3) {
         return;
       }
-      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(typedInTag);
+      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
       const newTagOptions = composeTagOptions(initialDocumentMetadata?.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {

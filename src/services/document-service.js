@@ -128,7 +128,8 @@ class DocumentService {
   }
 
   getDocumentTagsMatchingText(searchString) {
-    return this.documentStore.getDocumentTagsMatchingText(searchString);
+    const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
+    return this.documentStore.getDocumentTagsMatchingText(sanitizedSearchString);
   }
 
   async findDocumentsMetadataInSearchableDocuments(query) {
