@@ -4,6 +4,7 @@ import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
+import escapeStringRegexp from 'escape-string-regexp';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import inputValidators from '../utils/input-validators.js';
 import LanguageSelect from './localization/language-select.js';
@@ -117,11 +118,12 @@ function DocumentMetadataModal({
   }, [isVisible]);
 
   const handleTagSearch = async typedInTag => {
+    const sanitizedTypedInTag = escapeStringRegexp((typedInTag || '').trim());
     try {
-      if (typedInTag.length < 3) {
+      if (sanitizedTypedInTag.length < 3) {
         return;
       }
-      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(typedInTag);
+      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
       const newTagOptions = composeTagOptions(initialDocumentMetadata?.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
