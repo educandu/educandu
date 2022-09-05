@@ -1,12 +1,11 @@
 import joi from 'joi';
+import { slugValidationPattern } from '../validation-constants.js';
 
 export const idOrKeySchema = joi.string().alphanum().min(15).max(30);
 
 export const boolStringSchema = joi.any().valid('true', 'false', true, false);
 
-// Should use `slugValidationPattern` from `validation-constants.js`,
-// as soon as we implement https://educandu.atlassian.net/browse/EDU-308
-export const slugSchema = joi.string().allow('').required();
+export const slugSchema = joi.string().pattern(slugValidationPattern).allow('');
 
 export const sectionSchema = joi.object({
   key: idOrKeySchema.required(),

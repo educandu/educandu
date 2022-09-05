@@ -163,13 +163,13 @@ describe('user-service', () => {
   describe('addUserStorageReminder', () => {
     describe('when called with the ID of a non-existent user', () => {
       it('should throw a not found error', () => {
-        expect(() => sut.addUserStorageReminder('non-existent-user-id', executingUser._id)).rejects.toThrowError(NotFound);
+        expect(() => sut.addUserStorageReminder('non-existent-user-id', executingUser)).rejects.toThrowError(NotFound);
       });
     });
     describe('when called with the ID of a user that has no storage assigned yet', () => {
       let result;
       beforeEach(async () => {
-        result = await sut.addUserStorageReminder(user._id, executingUser._id);
+        result = await sut.addUserStorageReminder(user._id, executingUser);
       });
       it('should create a new default storage and add the reminder', () => {
         expect(result.reminders).toHaveLength(1);
@@ -182,7 +182,7 @@ describe('user-service', () => {
           { _id: user._id },
           { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 0, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
         );
-        result = await sut.addUserStorageReminder(user._id, executingUser._id);
+        result = await sut.addUserStorageReminder(user._id, executingUser);
       });
       it('should append a new reminder', () => {
         expect(result.reminders).toHaveLength(2);
@@ -311,11 +311,11 @@ describe('user-service', () => {
     let result;
 
     beforeEach(async () => {
-      result = await sut.addFavorite({ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xy', user: executingUser });
+      result = await sut.addFavorite({ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xyz', user: executingUser });
     });
 
     it('should add a new entry to the user\'s favorite collection', () => {
-      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xy', setOn: expect.any(Date) }]);
+      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.document, id: '9c348ntxgnr9xyz', setOn: expect.any(Date) }]);
     });
   });
 

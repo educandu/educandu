@@ -119,7 +119,7 @@ describe('document-service', () => {
         createdOn: now,
         createdBy: user._id,
         order: 1,
-        restoredFrom: '',
+        restoredFrom: null,
         archived: false,
         origin: DOCUMENT_ORIGIN.internal
       });
@@ -270,7 +270,7 @@ describe('document-service', () => {
         createdOn: secondTick,
         createdBy: secondUser._id,
         order: 2,
-        restoredFrom: '',
+        restoredFrom: null,
         archived: false,
         origin: DOCUMENT_ORIGIN.internal
       };
@@ -415,7 +415,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           },
@@ -431,7 +431,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           }
@@ -489,7 +489,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           },
@@ -505,7 +505,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           }

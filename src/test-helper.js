@@ -143,8 +143,8 @@ export async function setupTestUser(container, userValues) {
   const password = userValues?.password || 'test';
   const displayName = userValues?.displayName || 'Testibus';
   const roles = userValues?.roles || [ROLE.user];
-  const organization = userValues?.organization || null;
-  const introduction = userValues?.introduction || null;
+  const organization = userValues?.organization || '';
+  const introduction = userValues?.introduction || '';
   const lockedOut = userValues?.lockedOut || false;
 
   const { result, user } = await userService.createUser({ email, password, displayName });

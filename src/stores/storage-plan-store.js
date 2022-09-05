@@ -1,4 +1,6 @@
 import Database from './database.js';
+import { validate } from '../domain/validation.js';
+import { postStoragePlanDBSchema } from '../domain/schemas/storage-schemas.js';
 
 class StoragePlanStore {
   static get inject() { return [Database]; }
@@ -25,6 +27,7 @@ class StoragePlanStore {
   }
 
   async saveStoragePlan(storagePlan, { session } = {}) {
+    validate(storagePlan, postStoragePlanDBSchema);
     await this.collection.replaceOne({ _id: storagePlan._id }, storagePlan, { session, upsert: true });
   }
 

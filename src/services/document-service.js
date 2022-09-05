@@ -500,7 +500,7 @@ class DocumentService {
       documentId: data.documentId || uniqueId.create(),
       roomId: data.roomId || null,
       order: data.order || 0,
-      restoredFrom: data.restoredFrom || '',
+      restoredFrom: data.restoredFrom || null,
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
       title: data.title || '',
@@ -514,7 +514,7 @@ class DocumentService {
       allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
-      originUrl: data.originUrl || '',
+      originUrl: data.originUrl || null,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }

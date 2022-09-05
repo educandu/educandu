@@ -242,14 +242,16 @@ class UserService {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
-    const user = this._buildEmptyUser();
-    user.provider = provider;
-    user.email = lowerCasedEmail;
-    user.passwordHash = await this._hashPassword(password);
-    user.displayName = displayName;
-    user.roles = roles;
-    user.expires = verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate();
-    user.verificationCode = verified ? null : uniqueId.create();
+    const user = {
+      ...this._buildEmptyUser(),
+      provider,
+      email: lowerCasedEmail,
+      passwordHash: await this._hashPassword(password),
+      displayName,
+      roles,
+      expires: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      verificationCode: verified ? null : uniqueId.create()
+    };
 
     logger.info(`Creating new user with id ${user._id}`);
     await this.userStore.saveUser(user);
@@ -260,8 +262,10 @@ class UserService {
     const user = {
       ...this._buildEmptyUser(),
       _id,
-      displayName,
-      provider: `external/${hostName}`
+      provider: `external/${hostName}`,
+      email: null,
+      passwordHash: null,
+      displayName
     };
     await this.userStore.saveUser(user);
   }
@@ -368,8 +372,8 @@ class UserService {
       email: null,
       passwordHash: null,
       displayName: null,
-      organization: null,
-      introduction: null,
+      organization: '',
+      introduction: '',
       roles: [],
       expires: null,
       verificationCode: null,

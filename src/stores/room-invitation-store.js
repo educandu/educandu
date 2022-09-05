@@ -1,4 +1,6 @@
 import Database from './database.js';
+import { validate } from '../domain/validation.js';
+import { roomInvitationDBSchema } from '../domain/schemas/room-schemas.js';
 
 const roomInvitationMetadataProjection = {
   _id: 1,
@@ -35,6 +37,7 @@ class RoomInvitationStore {
   }
 
   saveRoomInvitation(roomInvitation, { session } = {}) {
+    validate(roomInvitation, roomInvitationDBSchema);
     return this.collection.replaceOne({ _id: roomInvitation._id }, roomInvitation, { session, upsert: true });
   }
 

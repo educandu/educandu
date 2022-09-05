@@ -8,7 +8,7 @@ export const getRoomMembershipConfirmationParamsSchema = joi.object({
 
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
-  slug: slugSchema,
+  slug: slugSchema.required(),
   documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
 });
 
@@ -31,7 +31,7 @@ export const patchRoomParamsSchema = joi.object({
 
 export const patchRoomBodySchema = joi.object({
   name: joi.string().required(),
-  slug: slugSchema,
+  slug: slugSchema.required(),
   documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required(),
   description: joi.string().allow('')
 });
@@ -55,4 +55,31 @@ export const deleteRoomInvitationParamsSchema = joi.object({
 
 export const getAuthorizeResourcesAccessParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
+});
+
+export const roomMemberDBSchema = joi.object({
+  userId: idOrKeySchema.required(),
+  joinedOn: joi.date().required()
+});
+
+export const roomDBSchema = joi.object({
+  _id: idOrKeySchema.required(),
+  name: joi.string().required(),
+  slug: slugSchema.required(),
+  description: joi.string().allow('').required(),
+  owner: idOrKeySchema.required(),
+  createdBy: idOrKeySchema.required(),
+  createdOn: joi.date().required(),
+  updatedOn: joi.date().required(),
+  members: joi.array().required().items(roomMemberDBSchema),
+  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
+});
+
+export const roomInvitationDBSchema = joi.object({
+  _id: idOrKeySchema.required(),
+  roomId: idOrKeySchema.required(),
+  email: joi.string().required(),
+  sentOn: joi.date().required(),
+  token: idOrKeySchema.required(),
+  expires: joi.date().required()
 });
