@@ -19,7 +19,7 @@ describe('room-utils', () => {
       },
       {
         description: 'when user (with client mapped data model) is room owner',
-        room: { owner: { key: 'my-user' }, members: [] },
+        room: { owner: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },
@@ -56,7 +56,7 @@ describe('room-utils', () => {
       },
       {
         description: 'when user (with client mapped data model) is room owner and room has exclusive documents mode',
-        room: { documentsMode: ROOM_DOCUMENTS_MODE.exclusive, owner: { key: 'my-user' }, members: [] },
+        room: { documentsMode: ROOM_DOCUMENTS_MODE.exclusive, owner: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },
