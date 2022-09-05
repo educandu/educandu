@@ -3,6 +3,9 @@
 .DocPage-controlPanels {
   position: sticky;
   bottom: 0;
+  top: %(~"calc(100% - %s)", @control-panel-height);
+  left: 0;
+  right: 0;
   margin-right: 50px;
   display: flex;
   justify-content: flex-end;
