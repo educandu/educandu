@@ -31,7 +31,8 @@ const documentExtendedMetadataProjection = {
   archived: 1,
   origin: 1,
   originUrl: 1,
-  contributors: 1
+  contributors: 1,
+  allowedOpenContribution: 1
 };
 
 class DocumentStore {

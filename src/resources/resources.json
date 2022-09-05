@@ -952,7 +952,8 @@
       "originInternal": "internal",
       "originExternal": "external",
       "initialAuthor": "Initial author",
-      "filterPlaceholder": "Filter by title or initial author"
+      "filterPlaceholder": "Filter by title or initial author",
+      "badges": "Badges"
     }
   },
   {
@@ -964,7 +965,8 @@
       "originInternal": "intern",
       "originExternal": "extern",
       "initialAuthor": "Erstautor",
-      "filterPlaceholder": "Nach Titel oder Erstautor filtern"
+      "filterPlaceholder": "Nach Titel oder Erstautor filtern",
+      "badges": "Kennzeichen"
     }
   },
   {
@@ -2287,7 +2289,11 @@
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
-      "emailIsInvalid": "The value you provided is not a valid email address"
+      "emailIsInvalid": "The value you provided is not a valid email address",
+      "verifiedDocumentBadge": "This document was verified by a maintainer",
+      "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
+      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
+      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed"
     }
   },
   {
@@ -2430,7 +2436,11 @@
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
+      "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
+      "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden"
     }
   },
   {

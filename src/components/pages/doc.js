@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
-import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -16,13 +15,14 @@ import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
-import { CommentOutlined } from '@ant-design/icons';
+import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
+import { CommentOutlined, LikeOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
@@ -34,9 +34,12 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
+import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
+import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
+import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -506,7 +509,26 @@ function Doc({ initialState, PageTemplate }) {
           )}
           <MetadataTitle
             text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
-            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />}
+            extra={
+              <div className="DocPage-badges">
+                {!!doc.verified && (
+                <Tooltip title={t('common:verifiedDocumentBadge')}>
+                  <LikeOutlined className="u-verified-badge" />
+                </Tooltip>
+                )}
+                <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
+                  <div className="u-allowed-open-contribution-badge">
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+                      && <AllowedOpenContributionNoneIcon />}
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+                      && <AllowedOpenContributionContentIcon />}
+                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+                      && <AllowedOpenContributionMetadataAndContentIcon />}
+                  </div>
+                </Tooltip>
+                <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
+              </div>
+            }
             />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
