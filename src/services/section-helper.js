@@ -113,6 +113,15 @@ export function extractCdnResources(sections, pluginRegistry) {
   ].sort();
 }
 
+export function validateSections(sections, pluginRegistry) {
+  for (const section of sections) {
+    if (section.content) {
+      const info = pluginRegistry.tryGetInfo(section.type);
+      info?.validateContent?.(section.content);
+    }
+  }
+}
+
 function _clipboardEncode(clipboardObject, encryptionKey) {
   const jsonText = JSON.stringify(clipboardObject || null);
   return AES.encrypt(jsonText, encryptionKey).toString();

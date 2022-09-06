@@ -1,3 +1,4 @@
+import joi from 'joi';
 import validation from '../../ui/validation.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { DISPLAY_MODE, DEFAULT_MAX_TILES_PER_ROW, TILES_HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
@@ -36,6 +37,32 @@ export function createDefaultContent(t) {
     items: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, (_, index) => createDefaultItem(index, t)),
     imageTilesConfig: ceateDefaultImageTileConfig()
   };
+}
+
+export function validateContent(content) {
+  const schema = joi.object({
+    displayMode: joi.string().valid(...Object.values(DISPLAY_MODE)).required(),
+    title: joi.string().allow('').required(),
+    width: joi.number().min(0).max(100).required(),
+    items: joi.array().items(joi.object({
+      title: joi.string().allow('').required(),
+      image: joi.object({
+        sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+        sourceUrl: joi.string().allow('').required()
+      }).required(),
+      link: joi.object({
+        sourceType: joi.string().valid(...Object.values(LINK_SOURCE_TYPE)).required(),
+        sourceUrl: joi.string().allow('').required(),
+        documentId: joi.string().allow(null).required()
+      }).required()
+    })).required(),
+    imageTilesConfig: joi.object({
+      maxTilesPerRow: joi.string().valid(...Object.values(DEFAULT_MAX_TILES_PER_ROW)).required(),
+      hoverEffect: joi.string().valid(...Object.values(TILES_HOVER_EFFECT)).required()
+    }).required()
+  });
+
+  joi.attempt(content, schema, { convert: false, noDefaults: true });
 }
 
 export function consolidateForDisplayMode(content) {

@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -35,6 +36,14 @@ class MarkdownInfo {
     return {
       text: ''
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      text: joi.string().allow('').required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

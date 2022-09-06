@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -48,13 +49,35 @@ class InteractiveMediaInfo {
     return {
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
-      playbackRange: [0, 1],
       copyrightNotice: '',
+      playbackRange: [0, 1],
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       showVideo: false,
       chapters: [this.getDefaultChapter(t)]
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      copyrightNotice: joi.string().allow('').required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+      width: joi.number().min(0).max(100).required(),
+      aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
+      showVideo: joi.boolean().required(),
+      chapters: joi.array().items(joi.object({
+        key: joi.string().required(),
+        startPosition: joi.number().min(0).max(1).required(),
+        title: joi.string().allow('').required(),
+        text: joi.string().allow('').required(),
+        answers: joi.array().items(joi.string().allow('')).required(),
+        correctAnswerIndex: joi.number().min(-1).required()
+      })).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

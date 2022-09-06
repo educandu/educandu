@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import AudioIcon from './audio-icon.js';
 import AudioDisplay from './audio-display.js';
@@ -38,6 +39,16 @@ class AudioInfo {
       sourceUrl: '',
       copyrightNotice: ''
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      copyrightNotice: joi.string().allow('').required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

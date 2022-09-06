@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import AnavisIcon from './anavis-icon.js';
 import { MEDIA_KIND } from './constants.js';
@@ -52,6 +53,27 @@ class AnavisInfo {
         aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine
       }
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      width: joi.number().min(0).max(100).required(),
+      parts: joi.array().items(joi.object({
+        color: joi.string().required(),
+        name: joi.string().allow('').required(),
+        length: joi.number().min(0).required(),
+        annotations: joi.array().items(joi.string().allow('')).required()
+      })).required(),
+      media: joi.object({
+        kind: joi.string().valid(...Object.values(MEDIA_KIND)).required(),
+        sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
+        sourceUrl: joi.string().allow('').required(),
+        copyrightNotice: joi.string().allow('').required(),
+        aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required()
+      }).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

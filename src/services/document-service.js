@@ -17,7 +17,7 @@ import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { createSectionRevision, extractCdnResources } from './section-helper.js';
+import { createSectionRevision, extractCdnResources, validateSections } from './section-helper.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -494,6 +494,7 @@ class DocumentService {
 
   _buildDocumentRevision(data) {
     const mappedSections = data.sections?.map(section => this._buildSection(section)) || [];
+    validateSections(mappedSections, this.pluginRegistry);
 
     return {
       _id: data._id || uniqueId.create(),

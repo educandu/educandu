@@ -1,10 +1,11 @@
+import joi from 'joi';
 import React from 'react';
 import VideoIcon from './video-icon.js';
 import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class VideoInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -40,10 +41,26 @@ class VideoInfo {
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       posterImage: {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
+        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      copyrightNotice: joi.string().allow('').required(),
+      width: joi.number().min(0).max(100).required(),
+      aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
+      posterImage: joi.object({
+        sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+        sourceUrl: joi.string().allow('').required()
+      }).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {
@@ -66,7 +83,7 @@ class VideoInfo {
     }
 
     if (
-      redactedContent.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal
+      redactedContent.posterImage.sourceType === IMAGE_SOURCE_TYPE.internal
       && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)
     ) {
       redactedContent.posterImage.sourceUrl = '';
@@ -84,7 +101,7 @@ class VideoInfo {
       cdnResources.push(content.sourceUrl);
     }
 
-    if (content.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal && content.posterImage.sourceUrl) {
+    if (content.posterImage.sourceType === IMAGE_SOURCE_TYPE.internal && content.posterImage.sourceUrl) {
       cdnResources.push(content.posterImage.sourceUrl);
     }
 

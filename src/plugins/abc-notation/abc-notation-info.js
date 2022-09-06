@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
@@ -38,6 +39,17 @@ class AbcNotationInfo {
       displayMidi: true,
       copyrightNotice: ''
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      abcCode: joi.string().allow('').required(),
+      width: joi.number().min(0).max(100).required(),
+      displayMidi: joi.boolean().required(),
+      copyrightNotice: joi.string().allow('').required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

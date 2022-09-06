@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import PdfViewerIcon from './pdf-viewer-icon.js';
@@ -37,6 +38,19 @@ class PdfViewerInfo {
       width: 100,
       caption: ''
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      initialPageNumber: joi.number().min(1).required(),
+      showTextOverlay: joi.boolean().required(),
+      width: joi.number().min(0).max(100).required(),
+      caption: joi.string().allow('').required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

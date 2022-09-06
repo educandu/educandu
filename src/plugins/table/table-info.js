@@ -1,10 +1,12 @@
+import joi from 'joi';
 import React from 'react';
 import TableIcon from './table-icon.js';
 import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { CELL_TYPE, COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
 
 const DEFAULT_TABLE_ROW_COUNT = 3;
 const DEFAULT_TABLE_COLUMN_COUNT = 3;
@@ -43,6 +45,27 @@ class TableInfo {
       columnDistribution: COLUMN_DISTRIBUTION.automatic,
       width: 100
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      rowCount: joi.number().min(1).required(),
+      columnCount: joi.number().min(1).required(),
+      cells: joi.array().items(joi.object({
+        rowIndex: joi.number().min(0).required(),
+        columnIndex: joi.number().min(0).required(),
+        rowSpan: joi.number().min(1).required(),
+        columnSpan: joi.number().min(1).required(),
+        cellType: joi.string().valid(...Object.values(CELL_TYPE)).required(),
+        text: joi.string().allow('').required(),
+        verticalAlignment: joi.string().valid(...Object.values(VERTICAL_ALIGNMENT)).required(),
+        horizontalAlignment: joi.string().valid(...Object.values(HORIZONTAL_ALIGNMENT)).required()
+      })).required(),
+      columnDistribution: joi.string().valid(...Object.values(COLUMN_DISTRIBUTION)).required(),
+      width: joi.number().min(0).max(100).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {
