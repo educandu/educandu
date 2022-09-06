@@ -27,6 +27,7 @@ const plugins = [
   'interval-trainer',
   'interactive-media',
   'multitrack-media',
+  'media-slideshow',
   'anavis'
 ];
 

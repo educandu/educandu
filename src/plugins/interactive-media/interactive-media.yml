@@ -49,6 +49,3 @@ results:
 currentProgress:
   en: Your current progress
   de: Dein aktueller Fortschritt
-resultsSummary:
-  en: "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
-  de: "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."

@@ -1905,8 +1905,7 @@
       "replay": "Replay",
       "reset": "Reset",
       "results": "Results",
-      "currentProgress": "Your current progress",
-      "resultsSummary": "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
+      "currentProgress": "Your current progress"
     }
   },
   {
@@ -1929,8 +1928,7 @@
       "replay": "Wiederholen",
       "reset": "Zurücksetzen",
       "results": "Ergebnisse",
-      "currentProgress": "Dein aktueller Fortschritt",
-      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
+      "currentProgress": "Dein aktueller Fortschritt"
     }
   },
   {
@@ -1979,6 +1977,34 @@
     "language": "de",
     "resources": {
       "name": "Markdown"
+    }
+  },
+  {
+    "namespace": "mediaSlideshow",
+    "language": "en",
+    "resources": {
+      "name": "Media slideshow",
+      "determiningDuration": "Determining media duration ...",
+      "chapter": "Chapter",
+      "editChapter": "Edit chapter",
+      "selectPreviousChapter": "Select previous chapter",
+      "selectNextChapter": "Select next chapter",
+      "startTimecode": "Start time",
+      "duration": "Duration"
+    }
+  },
+  {
+    "namespace": "mediaSlideshow",
+    "language": "de",
+    "resources": {
+      "name": "Slideshow-Medien",
+      "determiningDuration": "Mediendauer wird ermittelt ...",
+      "chapter": "Kapitel",
+      "editChapter": "Kapitel bearbeiten",
+      "selectPreviousChapter": "Vorheriges Kapitel wählen",
+      "selectNextChapter": "Nächstes Kapitel wählen",
+      "startTimecode": "Startzeit",
+      "duration": "Zeitdauer"
     }
   },
   {

@@ -1,0 +1,183 @@
+.MediaSlideshowDisplay {}
+
+.MediaSlideshowDisplay-content {
+  position: relative;
+  margin: 0 auto;
+}
+
+.MediaSlideshowEditor {
+  position: relative;
+}
+
+.MediaSlideshowEditor-chapterSelector {
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+.MediaSlideshowEditor-selectedChapterTitle {
+  .m-overflow-ellipsis;
+  width: 200px;
+  padding: 0 5px;
+  user-select: none;
+  text-align: center;
+}
+
+.MediaSlideshowEditor-chapterSelectorArrow {
+  color: @edu-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.ant-btn {
+    background-color: @edu-secondary-color-dark;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: @edu-white;
+      background-color: lighten(@edu-secondary-color-dark, 5%);
+    }
+  }
+
+  & > button:disabled {
+    color: @edu-white;
+    background-color: @edu-secondary-color-light;
+  }
+}
+
+.MediaSlideshowEditor-overlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 60%;
+  background-color: @edu-background-color-light;
+  z-index: @edu-z-index-sticky-content-layer;
+}
+
+.MediaSlideshowEditor-overlaySpinner {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  z-index: @edu-z-index-sticky-content-layer;
+}
+
+.MediaSlideshowEditor-separator {
+  margin: 0 -@edu-content-padding;
+  padding-top: 20px;
+  border: 1px dotted @edu-border-color-dark;
+  border-style: none none dotted;
+}
+
+.MediaSlideshowEditor-chapterEditorTitle {
+  display: flex;
+  justify-content: center;
+  color: @edu-text-color;
+  padding: @edu-content-padding 0;
+}
+
+.MediaSlideshowEditor-chapterEditorDivider {
+  margin: 0 -@edu-content-padding;
+  padding-top: 20px;
+  color: @edu-text-color;
+}
+
+.MediaSlideshowEditor-readonlyValue {
+  padding-left: 10px;
+}
+
+.MediaSlideshowEditor-answer {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto auto;
+  margin-bottom: @edu-content-padding;
+}
+
+.MediaSlideshowEditor-answerCheckmark {
+  color: @edu-disabled-color;
+
+  &:hover,
+  &:active,
+  &:disabled {
+    color: @edu-disabled-color;
+  }
+
+  &.is-active {
+    color: @edu-success-color;
+  }
+}
+
+.MediaSlideshowDisplay-overlay {
+  padding: @edu-content-padding;
+  background-color: @edu-background-color-light;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: auto;
+}
+
+.MediaSlideshowDisplay-overlayChapterTitle {
+  flex: none;
+  font-size: 12px;
+}
+
+.MediaSlideshowDisplay-overlayChapterContent {
+  width: 70%;
+  padding: 30px;
+  margin: 0 auto;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  @media @edu-media-phone {
+    width: 100%;
+  }
+}
+
+.MediaSlideshowDisplay-overlayChapterAnswers {
+  margin: 30px 0;
+}
+
+.MediaSlideshowDisplay-overlayChapterAnswer {
+  .m-control-group-wide;
+}
+
+.MediaSlideshowDisplay-answerMark {
+  width: 20px;
+}
+
+.MediaSlideshowDisplay-correctAnswerMark {
+  color: @edu-success-color;
+}
+
+.MediaSlideshowDisplay-incorrectAnswerMark {
+  color: @edu-error-color;
+}
+
+.MediaSlideshowDisplay-overlayChapterControls {
+  flex: none;
+  justify-content: end;
+  .m-control-group-wide;
+}
+
+.MediaSlideshowDisplay-progressBar {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.MediaSlideshowDisplay-progressBarCards {
+  .m-control-group-wide;
+}
