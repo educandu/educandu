@@ -168,6 +168,11 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     );
   };
 
+  const timelineParts = chapters.map((chapter, index) => ({
+    ...chapter,
+    title: `${t('chapter')} ${index + 1}`
+  }));
+
   return (
     <div className="MediaSlideshowEditor">
       <Form layout="horizontal">
@@ -204,8 +209,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           />
 
         <Timeline
+          parts={timelineParts}
           durationInMilliseconds={playbackDuration}
-          parts={chapters}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
           onPartDelete={handleChapterDelete}
@@ -226,7 +231,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                   className="MediaSlideshowEditor-chapterSelectorArrow"
                   />
               </Tooltip>
-              <span className="MediaSlideshowEditor-selectedChapterTitle">{t('chaperSelectorText')}</span>
+              <span className="MediaSlideshowEditor-selectedChapterTitle">{`${t('chapter')} ${selectedChapterIndex + 1}`}</span>
               <Tooltip title={t('selectNextChapter')}>
                 <Button
                   type="link"
