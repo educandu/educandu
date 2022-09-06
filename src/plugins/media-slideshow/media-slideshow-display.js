@@ -1,4 +1,5 @@
 import React, { useMemo, useRef } from 'react';
+import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -16,15 +17,11 @@ function MediaSlideshowDisplay({ content }) {
     startPosition: chapter.startPosition
   })), [chapters]);
 
-  let sourceUrl;
-  switch (sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
-      break;
-    default:
-      sourceUrl = content.sourceUrl || null;
-      break;
-  }
+  const sourceUrl = urlUtils.getMediaUrl({
+    cdnRootUrl: clientConfig.cdnRootUrl,
+    sourceType: content.sourceType,
+    sourceUrl: content.sourceUrl
+  });
 
   const renderChapterOverlay = () => {
 

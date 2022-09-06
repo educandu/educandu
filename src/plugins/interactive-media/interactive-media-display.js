@@ -1,5 +1,6 @@
 import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
 import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -37,15 +38,11 @@ function InteractiveMediaDisplay({ content }) {
     tooltip: chapter.title
   })), [chapters]);
 
-  let sourceUrl;
-  switch (sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
-      break;
-    default:
-      sourceUrl = content.sourceUrl || null;
-      break;
-  }
+  const sourceUrl = urlUtils.getMediaUrl({
+    cdnRootUrl: clientConfig.cdnRootUrl,
+    sourceType: content.sourceType,
+    sourceUrl: content.sourceUrl
+  });
 
   const handleMediaReady = () => {
     setIsMediaReady(true);
