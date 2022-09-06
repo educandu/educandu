@@ -13,6 +13,7 @@ import uniqueId from '../../utils/unique-id.js';
 import CommentsPanel from '../comments-panel.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
+import { LikeOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { Breadcrumb, message, Tooltip } from 'antd';
@@ -22,7 +23,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
-import { CommentOutlined, LikeOutlined } from '@ant-design/icons';
+import CommentsIcon from '../icons/multi-color/comments-icon.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
@@ -583,7 +584,7 @@ function Doc({ initialState, PageTemplate }) {
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
             <ControlPanel
               startOpen={initialView === VIEW.comments}
-              openIcon={<CommentOutlined />}
+              openIcon={<CommentsIcon />}
               onOpen={handleCommentsOpen}
               onClose={handleCommentsClose}
               leftSideContent={
