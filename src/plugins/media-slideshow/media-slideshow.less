@@ -23,6 +23,7 @@
   padding: 0 5px;
   user-select: none;
   text-align: center;
+  font-style: italic;
 }
 
 .MediaSlideshowEditor-chapterSelectorArrow {
@@ -78,13 +79,6 @@
   border-style: none none dotted;
 }
 
-.MediaSlideshowEditor-chapterEditorTitle {
-  display: flex;
-  justify-content: center;
-  color: @edu-text-color;
-  padding: @edu-content-padding 0;
-}
-
 .MediaSlideshowEditor-chapterEditorDivider {
   margin: 0 -@edu-content-padding;
   padding-top: 20px;
@@ -95,89 +89,21 @@
   padding-left: 10px;
 }
 
-.MediaSlideshowEditor-answer {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr auto auto;
-  margin-bottom: @edu-content-padding;
+.MediaSlideshowEditor-chapterImageOverlayWrapper {
+  background-color: @edu-white;
 }
 
-.MediaSlideshowEditor-answerCheckmark {
-  color: @edu-disabled-color;
-
-  &:hover,
-  &:active,
-  &:disabled {
-    color: @edu-disabled-color;
-  }
-
-  &.is-active {
-    color: @edu-success-color;
-  }
-}
-
-.MediaSlideshowDisplay-overlay {
-  padding: @edu-content-padding;
-  background-color: @edu-background-color-light;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  overflow: auto;
-}
-
-.MediaSlideshowDisplay-overlayChapterTitle {
-  flex: none;
-  font-size: 12px;
-}
-
-.MediaSlideshowDisplay-overlayChapterContent {
-  width: 70%;
-  padding: 30px;
-  margin: 0 auto;
-  flex: 1 1 auto;
+.MediaSlideshowEditor-chapterImagePlaceholder {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-
-  @media @edu-media-phone {
-    width: 100%;
-  }
+  font-size: 50px;
+  color: @edu-text-color-secondary;
 }
 
-.MediaSlideshowDisplay-overlayChapterAnswers {
-  margin: 30px 0;
-}
-
-.MediaSlideshowDisplay-overlayChapterAnswer {
-  .m-control-group-wide;
-}
-
-.MediaSlideshowDisplay-answerMark {
-  width: 20px;
-}
-
-.MediaSlideshowDisplay-correctAnswerMark {
-  color: @edu-success-color;
-}
-
-.MediaSlideshowDisplay-incorrectAnswerMark {
-  color: @edu-error-color;
-}
-
-.MediaSlideshowDisplay-overlayChapterControls {
-  flex: none;
-  justify-content: end;
-  .m-control-group-wide;
-}
-
-.MediaSlideshowDisplay-progressBar {
-  margin-top: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.MediaSlideshowDisplay-progressBarCards {
-  .m-control-group-wide;
+.MediaSlideshow-chapterImageOverlay {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -12,10 +12,7 @@ function MediaSlideshowDisplay({ content }) {
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
-
-  const parts = useMemo(() => chapters.map(chapter => ({
-    startPosition: chapter.startPosition
-  })), [chapters]);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
 
   const sourceUrl = urlUtils.getMediaUrl({
     cdnRootUrl: clientConfig.cdnRootUrl,
@@ -23,8 +20,28 @@ function MediaSlideshowDisplay({ content }) {
     sourceUrl: content.sourceUrl
   });
 
-  const renderChapterOverlay = () => {
+  const handlePlayingPartIndexChange = partIndex => {
+    setPlayingChapterIndex(partIndex);
+  };
 
+  const renderPlayingChapterImage = () => {
+    const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
+
+    if (!imageSourceUrl) {
+      return null;
+    }
+
+    const imageUrl = urlUtils.getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: chapters[playingChapterIndex].image.sourceType,
+      sourceUrl: chapters[playingChapterIndex].image.sourceUrl
+    });
+
+    return (
+      <div>
+        <img className="MediaSlideshow-chapterImageOverlay" src={imageUrl} />
+      </div>
+    );
   };
 
   return (
@@ -32,16 +49,17 @@ function MediaSlideshowDisplay({ content }) {
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
           mediaPlayerRef={mediaPlayerRef}
-          parts={parts}
+          parts={chapters}
           source={sourceUrl}
           screenMode={MEDIA_SCREEN_MODE.audio}
-          screenOverlay={renderChapterOverlay()}
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
           playbackRange={playbackRange}
           canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
+          screenOverlay={renderPlayingChapterImage()}
+          onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />
         <CopyrightNotice value={copyrightNotice} />
-        {/* Also for current image */}
+        <CopyrightNotice value={chapters[playingChapterIndex].image.copyrightNotice} />
       </div>
     </div>
   );

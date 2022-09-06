@@ -1742,7 +1742,6 @@
       "hoverEffect_colorizeZoom": "Color and zoom",
       "itemNumber": "Item {number}",
       "addItem": "Add item",
-      "imageSource": "Image source",
       "linkSource": "Link source",
       "documentLink": "Document link",
       "adoptDocumentTitle": "Adopt as title"
@@ -1763,7 +1762,6 @@
       "hoverEffect_colorizeZoom": "Färben und Zoomen",
       "itemNumber": "Eintrag {number}",
       "addItem": "Eintrag hinzufügen",
-      "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
       "documentLink": "Dokument-Link",
       "adoptDocumentTitle": "Als Titel übernehmen"
@@ -1990,7 +1988,8 @@
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
       "startTimecode": "Start time",
-      "duration": "Duration"
+      "duration": "Duration",
+      "chaperSelectorText": "Chapter selector"
     }
   },
   {
@@ -2004,7 +2003,8 @@
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
       "startTimecode": "Startzeit",
-      "duration": "Zeitdauer"
+      "duration": "Zeitdauer",
+      "chaperSelectorText": "Kapitel Wähler"
     }
   },
   {
@@ -2296,6 +2296,7 @@
       "copyrightNotice": "Copyright notice",
       "videoDisplay": "Video display",
       "source": "Source",
+      "imageSource": "Image source",
       "size": "Size",
       "naturalSize": "Natural size",
       "resource_image": "image",
@@ -2443,6 +2444,7 @@
       "copyrightNotice": "Urheberschutzvermerk",
       "videoDisplay": "Videoanzeige",
       "source": "Quelle",
+      "imageSource": "Bild-Quelle",
       "size": "Größe",
       "naturalSize": "Natürliche Größe",
       "resource_image": "Bild",

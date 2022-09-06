@@ -1,23 +1,31 @@
 import by from 'thenby';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import urlUtils from '../../utils/url-utils.js';
+import cloneDeep from '../../utils/clone-deep.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { Button, Divider, Form, Spin, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
+import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { Button, Divider, Form, Input, Radio, Spin, Tooltip } from 'antd';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { InfoCircleOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -32,6 +40,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaSlideshow');
   const [sourceDuration, setSourceDuration] = useState(0);
   const mediaSlideshowInfo = useService(MediaSlideshowInfo);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
@@ -106,6 +115,59 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     setSelectedChapterIndex(selectedChapterIndex + 1);
   };
 
+  const handleChapterImageSourceTypeChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.sourceUrl = '';
+    newChapters[selectedChapterIndex].image.sourceType = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterImageSourceUrlChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.sourceUrl = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterImageInternalResourceUrlChange = value => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.sourceUrl = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterImageCopyrightNoticeChanged = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.copyrightNotice = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handlePlayingPartIndexChange = partIndex => {
+    setPlayingChapterIndex(partIndex);
+  };
+
+  const renderPlayingChapterImage = () => {
+    const getImageUrl = () => urlUtils.getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: chapters[playingChapterIndex].image.sourceType,
+      sourceUrl: chapters[playingChapterIndex].image.sourceUrl
+    });
+
+    const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
+
+    return (
+      <div className="MediaSlideshowEditor-chapterImageOverlayWrapper">
+        {!imageSourceUrl && (
+          <AudioIcon className="MediaSlideshowEditor-chapterImagePlaceholder" />
+        )}
+        {!!imageSourceUrl && (
+          <img className="MediaSlideshow-chapterImageOverlay" src={getImageUrl()} />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="MediaSlideshowEditor">
       <Form layout="horizontal">
@@ -134,8 +196,11 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
         <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>
 
         <MediaPlayer
+          parts={chapters}
+          screenMode={MEDIA_SCREEN_MODE.preview}
+          screenOverlay={renderPlayingChapterImage()}
+          onPlayingPartIndexChange={handlePlayingPartIndexChange}
           source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={MEDIA_SCREEN_MODE.none}
           />
 
         <Timeline
@@ -161,7 +226,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                   className="MediaSlideshowEditor-chapterSelectorArrow"
                   />
               </Tooltip>
-              <span className="MediaSlideshowEditor-selectedChapterTitle">{chapters[selectedChapterIndex].title}</span>
+              <span className="MediaSlideshowEditor-selectedChapterTitle">{t('chaperSelectorText')}</span>
               <Tooltip title={t('selectNextChapter')}>
                 <Button
                   type="link"
@@ -184,6 +249,40 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
               <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
+            </FormItem>
+            <FormItem label={t('common:imageSource')} {...formItemLayout}>
+              <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
+                <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
+                <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
+              <FormItem
+                label={t('common:externalUrl')}
+                {...formItemLayout}
+                {...validation.validateUrl(chapters[selectedChapterIndex].image.sourceUrl, t)}
+                hasFeedback
+                >
+                <Input value={chapters[selectedChapterIndex].image.sourceUrl} onChange={handleChapterImageSourceUrlChange} />
+              </FormItem>
+            )}
+            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.internal && (
+              <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+                <div className="u-input-and-button">
+                  <Input
+                    addonBefore={CDN_URL_PREFIX}
+                    value={chapters[selectedChapterIndex].image.sourceUrl}
+                    onChange={handleChapterImageSourceUrlChange}
+                    />
+                  <ResourcePicker
+                    url={storageLocationPathToUrl(chapters[selectedChapterIndex].image.sourceUrl)}
+                    onUrlChange={url => handleChapterImageInternalResourceUrlChange(urlToStorageLocationPath(url))}
+                    />
+                </div>
+              </FormItem>
+            )}
+            <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+              <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
             </FormItem>
           </Fragment>
         )}

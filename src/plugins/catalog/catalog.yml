@@ -31,9 +31,6 @@ itemNumber:
 addItem:
   en: Add item
   de: Eintrag hinzufügen
-imageSource:
-  en: Image source
-  de: Bild-Quelle
 linkSource:
   en: Link source
   de: Link-Quelle

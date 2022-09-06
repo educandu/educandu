@@ -22,3 +22,6 @@ startTimecode:
 duration:
   en: Duration
   de: Zeitdauer
+chaperSelectorText:
+  en: Chapter selector
+  de: Kapitel Wähler

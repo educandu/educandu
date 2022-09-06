@@ -357,6 +357,9 @@ videoDisplay:
 source:
   en: Source
   de: Quelle
+imageSource:
+  en: Image source
+  de: Bild-Quelle
 size:
   en: Size
   de: Größe
