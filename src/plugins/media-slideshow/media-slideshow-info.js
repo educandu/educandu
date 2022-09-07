@@ -73,7 +73,12 @@ class MediaSlideshowInfo {
     }
 
     redactedContent.chapters.forEach(chapter => {
-      if (chapter.image?.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(chapter.image?.sourceUrl, targetRoomId)) {
+      chapter.image.copyrightNotice = this.gfm.redactCdnResources(
+        chapter.image.copyrightNotice,
+        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      );
+
+      if (chapter.image.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(chapter.image.sourceUrl, targetRoomId)) {
         chapter.image.sourceUrl = '';
       }
     });

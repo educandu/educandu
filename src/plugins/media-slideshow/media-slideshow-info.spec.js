@@ -32,7 +32,7 @@ describe('media-slideshow-info', () => {
       };
       result = sut.redactContent(content, otherRoomId);
       expect(result.copyrightNotice).toBe('[Click me 1]()');
-      expect(result.copyrightNotice).toBe('[Click me 2]()');
+      expect(result.chapters[0].image.copyrightNotice).toBe('[Click me 2]()');
     });
 
     it('redacts the media source url', () => {
@@ -139,9 +139,11 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
-            sourceUrl: null,
-            copyrightNotice: ''
+            image: {
+              sourceType: MEDIA_SOURCE_TYPE.internal,
+              sourceUrl: null,
+              copyrightNotice: ''
+            }
           }
         ]
       };
@@ -156,9 +158,11 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
-            sourceUrl: 'media/some-video-2.mp4',
-            copyrightNotice: ''
+            image: {
+              sourceType: MEDIA_SOURCE_TYPE.internal,
+              sourceUrl: 'media/some-video-2.mp4',
+              copyrightNotice: ''
+            }
           }
         ]
       };
