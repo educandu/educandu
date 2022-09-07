@@ -37,7 +37,7 @@ export const deleteStoragePlanParamsSchema = joi.object({
   storagePlanId: idOrKeySchema.required()
 });
 
-export const postStoragePlanDBSchema = joi.object({
+export const storagePlanDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   name: joi.string().required(),
   maxBytes: joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required()
