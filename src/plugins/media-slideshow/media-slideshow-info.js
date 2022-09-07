@@ -1,11 +1,12 @@
+import joi from 'joi';
 import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import MediaSlideshowDisplay from './media-slideshow-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class MediaSlideshowInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -38,7 +39,7 @@ class MediaSlideshowInfo {
       key: uniqueId.create(),
       startPosition: 0,
       image: {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
+        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: '',
         copyrightNotice: ''
       }
@@ -49,11 +50,32 @@ class MediaSlideshowInfo {
     return {
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
-      playbackRange: [0, 1],
       copyrightNotice: '',
+      playbackRange: [0, 1],
       width: 100,
       chapters: [this.getDefaultChapter(t)]
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      copyrightNotice: joi.string().allow('').required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+      width: joi.number().min(0).max(100).required(),
+      chapters: joi.array().items(joi.object({
+        key: joi.string().required(),
+        startPosition: joi.number().min(0).max(1).required(),
+        image: joi.object({
+          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required()
+        }).required()
+      })).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {
