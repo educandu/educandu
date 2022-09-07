@@ -108,8 +108,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
       newTests[index].answerAbcCode = '';
       newTests[index].sound = earTrainingInfo.getDefaultSound();
     } else {
-      newTests[index].questionImage = null;
-      newTests[index].answerImage = null;
+      newTests[index].questionImage = earTrainingInfo.getDefaultImage();
+      newTests[index].answerImage = earTrainingInfo.getDefaultImage();
       newTests[index].questionAbcCode = DEFAULT_ABC_CODE;
       newTests[index].answerAbcCode = DEFAULT_ABC_CODE;
       newTests[index].sound = { ...earTrainingInfo.getDefaultSound(), sourceType: SOUND_SOURCE_TYPE.midi };
@@ -180,8 +180,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const newTests = cloneDeep(tests);
 
     newTests[index].sound.sourceType = value;
-    newTests[index].sound.sourceUrl = value === SOUND_SOURCE_TYPE.midi ? null : '';
-    newTests[index].sound.copyrightNotice = value === SOUND_SOURCE_TYPE.midi ? null : newTests[index].sound.copyrightNotice || '';
+    newTests[index].sound.sourceUrl = '';
+    newTests[index].sound.copyrightNotice = '';
 
     changeContent({ tests: newTests });
   };

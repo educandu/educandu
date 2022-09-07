@@ -50,15 +50,15 @@ class ImageInfo {
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
-      effect: joi.any().valid([
+      effect: joi.alternatives().try(
         joi.object({
-          type: joi.any().valid(EFFECT_TYPE.hover),
+          type: joi.string().valid(EFFECT_TYPE.hover).required(),
           sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required()
         }),
         joi.object({
-          type: joi.any().valid(EFFECT_TYPE.reveal),
+          type: joi.string().valid(EFFECT_TYPE.reveal).required(),
           sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required(),
@@ -66,10 +66,7 @@ class ImageInfo {
           orientation: joi.string().valid(...Object.values(ORIENTATION)).required()
         }),
         joi.object({
-          type: joi.any().valid(EFFECT_TYPE.clip),
-          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
-          sourceUrl: joi.string().allow('').required(),
-          copyrightNotice: joi.string().allow('').required(),
+          type: joi.string().valid(EFFECT_TYPE.clip).required(),
           region: joi.object({
             x: joi.number().min(0).required(),
             y: joi.number().min(0).required(),
@@ -78,7 +75,7 @@ class ImageInfo {
           }).required()
         }),
         joi.any().valid(null)
-      ]).required()
+      ).required()
     });
 
     joi.attempt(content, schema, { convert: false, noDefaults: true });

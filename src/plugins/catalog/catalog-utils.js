@@ -57,7 +57,7 @@ export function validateContent(content) {
       }).required()
     })).required(),
     imageTilesConfig: joi.object({
-      maxTilesPerRow: joi.string().valid(...Object.values(DEFAULT_MAX_TILES_PER_ROW)).required(),
+      maxTilesPerRow: joi.number().min(1).required(),
       hoverEffect: joi.string().valid(...Object.values(TILES_HOVER_EFFECT)).required()
     }).required()
   });

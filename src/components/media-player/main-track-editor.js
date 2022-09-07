@@ -68,7 +68,7 @@ function MainTrackEditor({ content, onContentChanged }) {
     changeContent({
       sourceType: value,
       sourceUrl: '',
-      range: [0, 1],
+      playbackRange: [0, 1],
       showVideo: false,
       copyrightNotice: ''
     });

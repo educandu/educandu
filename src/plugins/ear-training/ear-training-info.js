@@ -76,16 +76,22 @@ class EarTrainingInfo {
       width: joi.number().min(0).max(100).required(),
       tests: joi.array().items(joi.object({
         mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
-        questionImage: joi.object({
-          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
-          sourceUrl: joi.string().allow('').required(),
-          copyrightNotice: joi.string().allow('').required()
-        }).required(),
-        answerImage: joi.object({
-          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
-          sourceUrl: joi.string().allow('').required(),
-          copyrightNotice: joi.string().allow('').required()
-        }).required(),
+        questionImage: joi.alternatives().try(
+          joi.object({
+            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+            sourceUrl: joi.string().allow('').required(),
+            copyrightNotice: joi.string().allow('').required()
+          }),
+          joi.any().valid(null)
+        ).required(),
+        answerImage: joi.alternatives().try(
+          joi.object({
+            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+            sourceUrl: joi.string().allow('').required(),
+            copyrightNotice: joi.string().allow('').required()
+          }),
+          joi.any().valid(null)
+        ).required(),
         questionAbcCode: joi.string().allow('').required(),
         answerAbcCode: joi.string().allow('').required(),
         sound: joi.object({
