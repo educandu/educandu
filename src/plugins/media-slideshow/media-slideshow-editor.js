@@ -3,23 +3,24 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
+import { Divider, Form, Input, Radio, Spin, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { Button, Divider, Form, Input, Radio, Spin, Tooltip } from 'antd';
+import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
-import { InfoCircleOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
@@ -107,12 +108,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handlePreviousChapterClick = () => {
-    setSelectedChapterIndex(selectedChapterIndex - 1);
-  };
-
-  const handleNextChapterClick = () => {
-    setSelectedChapterIndex(selectedChapterIndex + 1);
+  const handleSelectedChapterIndexChange = newSelectedChapterIndex => {
+    setSelectedChapterIndex(newSelectedChapterIndex);
   };
 
   const handleChapterImageSourceTypeChange = event => {
@@ -170,7 +167,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const timelineParts = chapters.map((chapter, index) => ({
     ...chapter,
-    title: `${t('chapter')} ${index + 1}`
+    title: `${t('common:chapter')} ${index + 1}`
   }));
 
   return (
@@ -198,7 +195,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
 
-        <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>
+        <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
 
         <MediaPlayer
           parts={chapters}
@@ -219,38 +216,19 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
         {chapters.length && (
           <Fragment>
-            <div className="MediaSlideshowEditor-chapterSelector">
-              <Tooltip title={t('selectPreviousChapter')}>
-                <Button
-                  type="link"
-                  size="small"
-                  shape="circle"
-                  icon={<LeftOutlined />}
-                  onClick={handlePreviousChapterClick}
-                  disabled={selectedChapterIndex === 0}
-                  className="MediaSlideshowEditor-chapterSelectorArrow"
-                  />
-              </Tooltip>
-              <span className="MediaSlideshowEditor-selectedChapterTitle">{`${t('chapter')} ${selectedChapterIndex + 1}`}</span>
-              <Tooltip title={t('selectNextChapter')}>
-                <Button
-                  type="link"
-                  size="small"
-                  shape="circle"
-                  icon={<RightOutlined />}
-                  onClick={handleNextChapterClick}
-                  disabled={selectedChapterIndex === chapters.length - 1}
-                  className="MediaSlideshowEditor-chapterSelectorArrow"
-                  />
-              </Tooltip>
-            </div>
+            <ChapterSelector
+              chaptersCount={chapters.length}
+              selectedChapterIndex={selectedChapterIndex}
+              selectedChapterTitle={`${t('common:chapter')} ${selectedChapterIndex + 1}`}
+              onChapterIndexChange={handleSelectedChapterIndexChange}
+              />
 
-            <FormItem label={t('startTimecode')} {...formItemLayout}>
+            <FormItem label={t('common:startTimecode')} {...formItemLayout}>
               <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('duration')} {...formItemLayout}>
+            <FormItem label={t('common:duration')} {...formItemLayout}>
               <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
@@ -296,7 +274,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
       {isDeterminingDuration && (
         <Fragment>
           <div className="MediaSlideshowEditor-overlay" />
-          <Spin className="MediaSlideshowEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
+          <Spin className="MediaSlideshowEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
         </Fragment>
       )}
     </div>

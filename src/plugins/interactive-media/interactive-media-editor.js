@@ -16,10 +16,11 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
-import { CheckOutlined, InfoCircleOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
+import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
@@ -109,12 +110,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handlePreviousChapterClick = () => {
-    setSelectedChapterIndex(selectedChapterIndex - 1);
-  };
-
-  const handleNextChapterClick = () => {
-    setSelectedChapterIndex(selectedChapterIndex + 1);
+  const handleChapterIndexChange = newSelectedChapterIndex => {
+    setSelectedChapterIndex(newSelectedChapterIndex);
   };
 
   const handleChapterTitleChange = event => {
@@ -223,7 +220,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
 
-        <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('editChapter')}</Divider>
+        <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
 
         <MediaPlayer
           source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
@@ -241,38 +238,19 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         {chapters.length && (
           <Fragment>
-            <div className="InteractiveMediaEditor-chapterSelector">
-              <Tooltip title={t('selectPreviousChapter')}>
-                <Button
-                  type="link"
-                  size="small"
-                  shape="circle"
-                  icon={<LeftOutlined />}
-                  onClick={handlePreviousChapterClick}
-                  disabled={selectedChapterIndex === 0}
-                  className="InteractiveMediaEditor-chapterSelectorArrow"
-                  />
-              </Tooltip>
-              <span className="InteractiveMediaEditor-selectedChapterTitle">{chapters[selectedChapterIndex].title}</span>
-              <Tooltip title={t('selectNextChapter')}>
-                <Button
-                  type="link"
-                  size="small"
-                  shape="circle"
-                  icon={<RightOutlined />}
-                  onClick={handleNextChapterClick}
-                  disabled={selectedChapterIndex === chapters.length - 1}
-                  className="InteractiveMediaEditor-chapterSelectorArrow"
-                  />
-              </Tooltip>
-            </div>
+            <ChapterSelector
+              chaptersCount={chapters.length}
+              selectedChapterIndex={selectedChapterIndex}
+              selectedChapterTitle={chapters[selectedChapterIndex].title}
+              onChapterIndexChange={handleChapterIndexChange}
+              />
 
-            <FormItem label={t('startTimecode')} {...formItemLayout}>
+            <FormItem label={t('common:startTimecode')} {...formItemLayout}>
               <span className="InteractiveMediaEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('duration')} {...formItemLayout}>
+            <FormItem label={t('common:duration')} {...formItemLayout}>
               <span className="InteractiveMediaEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
@@ -315,7 +293,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       {isDeterminingDuration && (
         <Fragment>
           <div className="InteractiveMediaEditor-overlay" />
-          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
+          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
         </Fragment>
       )}
     </div>
