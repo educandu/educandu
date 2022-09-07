@@ -619,7 +619,7 @@
     "namespace": "chapterSelector",
     "language": "de",
     "resources": {
-      "selectPreviousChapter": "Vorheriges Kapitel wählen",
+      "selectPreviousChapter": "Vorheriges Kapitel auswählen",
       "selectNextChapter": "Nächstes Kapitel wählen"
     }
   },
@@ -1990,7 +1990,7 @@
     "namespace": "mediaSlideshow",
     "language": "de",
     "resources": {
-      "name": "Slideshow-Medien"
+      "name": "Medien-Slideshow"
     }
   },
   {

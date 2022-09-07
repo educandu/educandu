@@ -68,7 +68,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     const newContent = {
       sourceType: value,
       sourceUrl: '',
-      range: [0, 1],
+      playbackRange: [0, 1],
       copyrightNotice: ''
     };
     if (useShowVideo) {
@@ -187,7 +187,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
           </RadioGroup>
         </FormItem>
       )}
-      { useShowVideo && (
+      {useShowVideo && (
         <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
           <Switch
             size="small"

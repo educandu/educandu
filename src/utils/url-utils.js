@@ -51,10 +51,8 @@ function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
   switch (sourceType) {
     case IMAGE_SOURCE_TYPE.internal:
       return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
-    case IMAGE_SOURCE_TYPE.external:
-      return sourceUrl || null;
     default:
-      return null;
+      return sourceUrl || null;
   }
 }
 

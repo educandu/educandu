@@ -96,11 +96,11 @@ class MediaSlideshowInfo {
     }
 
     content.chapters.forEach(chapter => {
-      if (chapter.image?.sourceType === MEDIA_SOURCE_TYPE.internal && chapter.image?.sourceUrl) {
+      if (chapter.image.sourceType === MEDIA_SOURCE_TYPE.internal && chapter.image.sourceUrl) {
         cdnResources.push(chapter.image.sourceUrl);
       }
 
-      cdnResources.push(...this.gfm.extractCdnResources(chapter.image?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.image.copyrightNotice));
     });
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
