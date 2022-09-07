@@ -1,17 +1,18 @@
 import by from 'thenby';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import validation from '../../ui/validation.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import DeleteButton from '../../components/delete-button.js';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
-import { Button, Divider, Form, Input, Spin, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
@@ -19,6 +20,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -42,12 +44,13 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('interactiveMedia');
-  const [sourceDuration, setSourceDuration] = useState(0);
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, playbackRange, chapters, width, showVideo } = content;
+
+  const [mediaDuration] = useMediaDurations([urlUtils.getMediaUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })]);
+  const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
 
@@ -68,15 +71,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const handleMainTrackContentChange = changedContent => {
     changeContent({ ...changedContent });
-  };
-
-  const handleDeterminingDuration = () => {
-    setIsDeterminingDuration(true);
-  };
-
-  const handleDurationDetermined = duration => {
-    setIsDeterminingDuration(false);
-    setSourceDuration(duration);
   };
 
   const handleChapterStartPositionChange = (key, newStartPosition) => {
@@ -202,8 +196,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       <Form layout="horizontal">
         <MainTrackEditor
           content={content}
-          onDeterminingDuration={handleDeterminingDuration}
-          onDurationDetermined={handleDurationDetermined}
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem
@@ -289,13 +281,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           </Fragment>
         )}
       </Form>
-
-      {isDeterminingDuration && (
-        <Fragment>
-          <div className="InteractiveMediaEditor-overlay" />
-          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
-        </Fragment>
-      )}
     </div>
   );
 }
