@@ -3,9 +3,9 @@ import Cdn from '../repositories/cdn.js';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('document-import-task-processor', () => {
@@ -91,7 +91,13 @@ describe('document-import-task-processor', () => {
               content: {
                 sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
-                posterImage: {}
+                copyrightNotice: '',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                posterImage: {
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
+                  sourceUrl: ''
+                },
+                width: 100
               },
               deletedOn: null,
               deletedBy: null,
@@ -119,7 +125,13 @@ describe('document-import-task-processor', () => {
               content: {
                 sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-2.mp4',
-                posterImage: {}
+                copyrightNotice: '',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                posterImage: {
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
+                  sourceUrl: ''
+                },
+                width: 100
               },
               deletedOn: null,
               deletedBy: null,
@@ -277,7 +289,13 @@ describe('document-import-task-processor', () => {
                 content: {
                   sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: 'media/video-3.mp4',
-                  posterImage: {}
+                  copyrightNotice: '',
+                  aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                  posterImage: {
+                    sourceType: MEDIA_SOURCE_TYPE.internal,
+                    sourceUrl: ''
+                  },
+                  width: 100
                 },
                 deletedOn: null,
                 deletedBy: null,
