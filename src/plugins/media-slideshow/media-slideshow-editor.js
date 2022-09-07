@@ -159,7 +159,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           <AudioIcon className="MediaSlideshowEditor-chapterImagePlaceholder" />
         )}
         {!!imageSourceUrl && (
-          <img className="MediaSlideshow-chapterImageOverlay" src={getImageUrl()} />
+          <img className="MediaSlideshowEditor-chapterImageOverlay" src={getImageUrl()} />
         )}
       </div>
     );

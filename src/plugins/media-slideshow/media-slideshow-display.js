@@ -38,15 +38,15 @@ function MediaSlideshowDisplay({ content }) {
     });
 
     return (
-      <div>
-        <img className="MediaSlideshow-chapterImageOverlay" src={imageUrl} />
+      <div className="MediaSlideshowDisplay-chapterImageOverlayWrapper">
+        <img className={`MediaSlideshowDisplay-chapterImageOverlay u-width-${width || 100}`} src={imageUrl} />
       </div>
     );
   };
 
   return (
     <div className="MediaSlideshowDisplay">
-      <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
+      <div className="MediaSlideshowDisplay-content">
         <MediaPlayer
           mediaPlayerRef={mediaPlayerRef}
           parts={chapters}

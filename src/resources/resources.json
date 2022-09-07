@@ -1980,6 +1980,20 @@
     }
   },
   {
+    "namespace": "mediaSlideshow",
+    "language": "en",
+    "resources": {
+      "name": "Media slideshow"
+    }
+  },
+  {
+    "namespace": "mediaSlideshow",
+    "language": "de",
+    "resources": {
+      "name": "Slideshow-Medien"
+    }
+  },
+  {
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
