@@ -1,7 +1,7 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import TestDisplay from './test-display.js';
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 class TestInfo {
 
@@ -30,7 +30,9 @@ class TestInfo {
 
   getDefaultContent() {
     return {
-      text: ''
+      text: 'default text',
+      firstNote: 48,
+      lastNote: 84
     };
   }
 
