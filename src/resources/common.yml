@@ -357,6 +357,9 @@ videoDisplay:
 source:
   en: Source
   de: Quelle
+imageSource:
+  en: Image source
+  de: Bild-Quelle
 size:
   en: Size
   de: Größe
@@ -431,3 +434,18 @@ allowedOpenContributionBadge_metadataAndContent:
 allowedOpenContributionBadge_content:
   en: Open contribution to this document's metadata is not allowed
   de: Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden
+duration:
+  en: Duration
+  de: Zeitdauer
+determiningDuration:
+  en: Determining media duration ...
+  de: Mediendauer wird ermittelt ...
+startTimecode:
+  en: Start time
+  de: Startzeit
+chapter:
+  en: Chapter
+  de: Kapitel
+editChapter:
+  en: Edit chapter
+  de: Kapitel bearbeiten

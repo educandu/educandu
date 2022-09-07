@@ -608,6 +608,22 @@
     }
   },
   {
+    "namespace": "chapterSelector",
+    "language": "en",
+    "resources": {
+      "selectPreviousChapter": "Select previous chapter",
+      "selectNextChapter": "Select next chapter"
+    }
+  },
+  {
+    "namespace": "chapterSelector",
+    "language": "de",
+    "resources": {
+      "selectPreviousChapter": "Vorheriges Kapitel auswählen",
+      "selectNextChapter": "Nächstes Kapitel wählen"
+    }
+  },
+  {
     "namespace": "mainTrackEditor",
     "language": "en",
     "resources": {
@@ -1742,7 +1758,6 @@
       "hoverEffect_colorizeZoom": "Color and zoom",
       "itemNumber": "Item {number}",
       "addItem": "Add item",
-      "imageSource": "Image source",
       "linkSource": "Link source",
       "documentLink": "Document link",
       "adoptDocumentTitle": "Adopt as title"
@@ -1763,7 +1778,6 @@
       "hoverEffect_colorizeZoom": "Färben und Zoomen",
       "itemNumber": "Eintrag {number}",
       "addItem": "Eintrag hinzufügen",
-      "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
       "documentLink": "Dokument-Link",
       "adoptDocumentTitle": "Als Titel übernehmen"
@@ -1890,13 +1904,6 @@
     "language": "en",
     "resources": {
       "name": "Interactive media",
-      "determiningDuration": "Determining media duration ...",
-      "chapter": "Chapter",
-      "editChapter": "Edit chapter",
-      "selectPreviousChapter": "Select previous chapter",
-      "selectNextChapter": "Select next chapter",
-      "startTimecode": "Start time",
-      "duration": "Duration",
       "answers": "Answers",
       "addAnswer": "Add answer",
       "addAnswerInfo": "In order to allow the user to review their knowledge, you can put the text above into a question and add possible answers here:",
@@ -1905,8 +1912,7 @@
       "replay": "Replay",
       "reset": "Reset",
       "results": "Results",
-      "currentProgress": "Your current progress",
-      "resultsSummary": "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
+      "currentProgress": "Your current progress"
     }
   },
   {
@@ -1914,13 +1920,6 @@
     "language": "de",
     "resources": {
       "name": "Interaktive Medien",
-      "determiningDuration": "Mediendauer wird ermittelt ...",
-      "chapter": "Kapitel",
-      "editChapter": "Kapitel bearbeiten",
-      "selectPreviousChapter": "Vorheriges Kapitel wählen",
-      "selectNextChapter": "Nächstes Kapitel wählen",
-      "startTimecode": "Startzeit",
-      "duration": "Zeitdauer",
       "answers": "Antworten",
       "addAnswer": "Antwort hinzufügen",
       "addAnswerInfo": "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, kannst du den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:",
@@ -1929,8 +1928,7 @@
       "replay": "Wiederholen",
       "reset": "Zurücksetzen",
       "results": "Ergebnisse",
-      "currentProgress": "Dein aktueller Fortschritt",
-      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
+      "currentProgress": "Dein aktueller Fortschritt"
     }
   },
   {
@@ -1979,6 +1977,20 @@
     "language": "de",
     "resources": {
       "name": "Markdown"
+    }
+  },
+  {
+    "namespace": "mediaSlideshow",
+    "language": "en",
+    "resources": {
+      "name": "Media slideshow"
+    }
+  },
+  {
+    "namespace": "mediaSlideshow",
+    "language": "de",
+    "resources": {
+      "name": "Medien-Slideshow"
     }
   },
   {
@@ -2270,6 +2282,7 @@
       "copyrightNotice": "Copyright notice",
       "videoDisplay": "Video display",
       "source": "Source",
+      "imageSource": "Image source",
       "size": "Size",
       "naturalSize": "Natural size",
       "resource_image": "image",
@@ -2293,7 +2306,12 @@
       "verifiedDocumentBadge": "This document was verified by a maintainer",
       "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
       "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
-      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed"
+      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed",
+      "duration": "Duration",
+      "determiningDuration": "Determining media duration ...",
+      "startTimecode": "Start time",
+      "chapter": "Chapter",
+      "editChapter": "Edit chapter"
     }
   },
   {
@@ -2417,6 +2435,7 @@
       "copyrightNotice": "Urheberschutzvermerk",
       "videoDisplay": "Videoanzeige",
       "source": "Quelle",
+      "imageSource": "Bild-Quelle",
       "size": "Größe",
       "naturalSize": "Natürliche Größe",
       "resource_image": "Bild",
@@ -2440,7 +2459,12 @@
       "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
       "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
       "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
-      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden"
+      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden",
+      "duration": "Zeitdauer",
+      "determiningDuration": "Mediendauer wird ermittelt ...",
+      "startTimecode": "Startzeit",
+      "chapter": "Kapitel",
+      "editChapter": "Kapitel bearbeiten"
     }
   },
   {

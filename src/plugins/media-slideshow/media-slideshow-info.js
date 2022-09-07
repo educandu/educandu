@@ -1,46 +1,47 @@
 import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import InteractiveMediaIcon from './interactive-media-icon.js';
-import InteractiveMediaDisplay from './interactive-media-display.js';
+import MediaSlideshowIcon from './media-slideshow-icon.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import MediaSlideshowDisplay from './media-slideshow-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
-class InteractiveMediaInfo {
+class MediaSlideshowInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
 
-  static get typeName() { return 'interactive-media'; }
+  static get typeName() { return 'media-slideshow'; }
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'interactive-media';
+    this.type = 'media-slideshow';
   }
 
   getName(t) {
-    return t('interactiveMedia:name');
+    return t('mediaSlideshow:name');
   }
 
   getIcon() {
-    return <InteractiveMediaIcon />;
+    return <MediaSlideshowIcon />;
   }
 
   getDisplayComponent() {
-    return InteractiveMediaDisplay;
+    return MediaSlideshowDisplay;
   }
 
   async resolveEditorComponent() {
-    return (await import('./interactive-media-editor.js')).default;
+    return (await import('./media-slideshow-editor.js')).default;
   }
 
-  getDefaultChapter(t) {
+  getDefaultChapter() {
     return {
       key: uniqueId.create(),
       startPosition: 0,
-      title: `[${t('common:chapter')}]`,
-      text: `[${t('common:text')}]`,
-      answers: [],
-      correctAnswerIndex: -1
+      image: {
+        sourceType: MEDIA_SOURCE_TYPE.internal,
+        sourceUrl: '',
+        copyrightNotice: ''
+      }
     };
   }
 
@@ -51,8 +52,6 @@ class InteractiveMediaInfo {
       playbackRange: [0, 1],
       copyrightNotice: '',
       width: 100,
-      aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-      showVideo: false,
       chapters: [this.getDefaultChapter(t)]
     };
   }
@@ -73,6 +72,17 @@ class InteractiveMediaInfo {
       redactedContent.sourceUrl = '';
     }
 
+    redactedContent.chapters.forEach(chapter => {
+      chapter.image.copyrightNotice = this.gfm.redactCdnResources(
+        chapter.image.copyrightNotice,
+        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      );
+
+      if (chapter.image.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(chapter.image.sourceUrl, targetRoomId)) {
+        chapter.image.sourceUrl = '';
+      }
+    });
+
     return redactedContent;
   }
 
@@ -85,8 +95,16 @@ class InteractiveMediaInfo {
       cdnResources.push(content.sourceUrl);
     }
 
+    content.chapters.forEach(chapter => {
+      if (chapter.image.sourceType === MEDIA_SOURCE_TYPE.internal && chapter.image.sourceUrl) {
+        cdnResources.push(chapter.image.sourceUrl);
+      }
+
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.image.copyrightNotice));
+    });
+
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
-export default InteractiveMediaInfo;
+export default MediaSlideshowInfo;

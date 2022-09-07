@@ -28,7 +28,7 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function MainTrackEditor({ content, onContentChanged }) {
+function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mainTrackEditor');
@@ -65,13 +65,16 @@ function MainTrackEditor({ content, onContentChanged }) {
 
   const handleSourceTypeChange = event => {
     const { value } = event.target;
-    changeContent({
+    const newContent = {
       sourceType: value,
       sourceUrl: '',
-      range: [0, 1],
-      showVideo: false,
+      playbackRange: [0, 1],
       copyrightNotice: ''
-    });
+    };
+    if (useShowVideo) {
+      newContent.showVideo = false;
+    }
+    changeContent(newContent);
   };
 
   const handleSourceUrlChangeComplete = async value => {
@@ -81,12 +84,17 @@ function MainTrackEditor({ content, onContentChanged }) {
       ? t('common:youtubeCopyrightNotice', { link: value })
       : copyrightNotice;
 
-    changeContent({
+    const newContent = {
       sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : value,
-      showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
       playbackRange: range,
       copyrightNotice: newCopyrightNotice
-    });
+    };
+
+    if (useShowVideo) {
+      newContent.showVideo = resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown;
+    }
+
+    changeContent(newContent);
 
     if (error) {
       handleError({ error, logger, t });
@@ -164,27 +172,31 @@ function MainTrackEditor({ content, onContentChanged }) {
         <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
       </FormItem>
       )}
-      <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
-        <RadioGroup
-          size="small"
-          defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
-          value={aspectRatio}
-          onChange={handleAspectRatioChanged}
-          disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
-          >
-          {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
-            <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
-          ))}
-        </RadioGroup>
-      </FormItem>
-      <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
-        <Switch
-          size="small"
-          checked={showVideo}
-          onChange={handleShowVideoChanged}
-          disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
-          />
-      </FormItem>
+      {useAspectRatio && (
+        <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
+          <RadioGroup
+            size="small"
+            defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
+            value={aspectRatio}
+            onChange={handleAspectRatioChanged}
+            disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+            >
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
+              <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+            ))}
+          </RadioGroup>
+        </FormItem>
+      )}
+      {useShowVideo && (
+        <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
+          <Switch
+            size="small"
+            checked={showVideo}
+            onChange={handleShowVideoChanged}
+            disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+            />
+        </FormItem>
+      )}
       <FormItem label={t('playbackRange')} {...formItemLayout}>
         <div className="u-input-and-button">
           <Input value={renderPlaybackRangeInfo()} readOnly />
@@ -211,7 +223,14 @@ MainTrackEditor.propTypes = {
     playbackRange: PropTypes.arrayOf(PropTypes.number),
     copyrightNotice: PropTypes.string
   }).isRequired,
-  onContentChanged: PropTypes.func.isRequired
+  onContentChanged: PropTypes.func.isRequired,
+  useAspectRatio: PropTypes.bool,
+  useShowVideo: PropTypes.bool
+};
+
+MainTrackEditor.defaultProps = {
+  useAspectRatio: true,
+  useShowVideo: true
 };
 
 export default MainTrackEditor;

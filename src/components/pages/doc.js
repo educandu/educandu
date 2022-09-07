@@ -555,8 +555,8 @@ function Doc({ initialState, PageTemplate }) {
               <CommentsPanel
                 comments={comments}
                 onCommentPostClick={handleCommentPostClick}
-                onTopicChangeClick={handleCommentsTopicChangeClick}
                 onCommentDeleteClick={handleCommentDeleteClick}
+                onTopicChangeClick={handleCommentsTopicChangeClick}
                 />
             </section>
           )}

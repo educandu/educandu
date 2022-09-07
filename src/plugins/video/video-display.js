@@ -1,4 +1,5 @@
 import React from 'react';
+import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
@@ -9,25 +10,17 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 function VideoDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  let sourceUrl;
-  switch (content.sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
-      break;
-    default:
-      sourceUrl = content.sourceUrl || null;
-      break;
-  }
+  const sourceUrl = urlUtils.getMediaUrl({
+    cdnRootUrl: clientConfig.cdnRootUrl,
+    sourceType: content.sourceType,
+    sourceUrl: content.sourceUrl
+  });
 
-  let posterImageUrl;
-  switch (content.posterImage?.sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      posterImageUrl = content.posterImage.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.posterImage.sourceUrl}` : null;
-      break;
-    default:
-      posterImageUrl = content.posterImage?.sourceUrl || null;
-      break;
-  }
+  const posterImageUrl = urlUtils.getMediaUrl({
+    cdnRootUrl: clientConfig.cdnRootUrl,
+    sourceType: content.posterImage?.sourceType,
+    sourceUrl: content.posterImage?.sourceUrl
+  });
 
   return (
     <div className="VideoDisplay">

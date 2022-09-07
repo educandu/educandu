@@ -268,7 +268,7 @@ Timeline.propTypes = {
   onStartPositionChange: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     startPosition: PropTypes.number.isRequired
   })).isRequired,
   selectedPartIndex: PropTypes.number
