@@ -5,25 +5,28 @@ import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
-import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import SortingSelector from '../sorting-selector.js';
+import { Input, Button, Switch, Tooltip } from 'antd';
 import DocumentInfoCell from '../document-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
+import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -76,7 +79,9 @@ function Docs({ initialState, PageTemplate }) {
       user: doc.user,
       origin: doc.origin,
       originTranslated: getOriginTranslated({ t, origin: doc.origin }),
-      archived: doc.archived
+      archived: doc.archived,
+      verified: doc.verified,
+      allowedOpenContribution: doc.allowedOpenContribution
     })), [t]);
 
   const [filterText, setFilterText] = useState('');
@@ -234,6 +239,28 @@ function Docs({ initialState, PageTemplate }) {
     );
   };
 
+  const renderBadges = (_, row) => {
+    return (
+      <div className="DocsPage-badges">
+        {!!row.verified && (
+          <Tooltip title={t('common:verifiedDocumentBadge')}>
+            <LikeOutlined className="u-verified-badge" />
+          </Tooltip>
+        )}
+        <Tooltip title={t(`common:allowedOpenContributionBadge_${row.allowedOpenContribution}`)}>
+          <div className="u-allowed-open-contribution-badge">
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+              && <AllowedOpenContributionNoneIcon />}
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+              && <AllowedOpenContributionContentIcon />}
+            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+              && <AllowedOpenContributionMetadataAndContentIcon />}
+          </div>
+        </Tooltip>
+      </div>
+    );
+  };
+
   const columns = [
     {
       title: t('common:title'),
@@ -264,6 +291,14 @@ function Docs({ initialState, PageTemplate }) {
       render: renderOrigin,
       responsive: ['lg'],
       width: '200px'
+    },
+    {
+      title: t('badges'),
+      dataIndex: 'badges',
+      key: 'badges',
+      render: renderBadges,
+      responsive: ['lg'],
+      width: '50px'
     },
     {
       title: t('common:archived'),

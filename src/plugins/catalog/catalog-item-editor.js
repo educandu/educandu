@@ -110,7 +110,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       )}
       {enableImageEditing && (
         <Fragment>
-          <FormItem label={t('imageSource')} {...formItemLayout}>
+          <FormItem label={t('common:imageSource')} {...formItemLayout}>
             <RadioGroup value={image.sourceType} onChange={handleImageSourceTypeChange}>
               <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
               <RadioButton value="external">{t('common:externalLink')}</RadioButton>

@@ -16,3 +16,6 @@ initialAuthor:
 filterPlaceholder:
   en: Filter by title or initial author
   de: Nach Titel oder Erstautor filtern
+badges:
+  en: Badges
+  de: Kennzeichen

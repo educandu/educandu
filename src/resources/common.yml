@@ -357,6 +357,9 @@ videoDisplay:
 source:
   en: Source
   de: Quelle
+imageSource:
+  en: Image source
+  de: Bild-Quelle
 size:
   en: Size
   de: Größe
@@ -419,4 +422,30 @@ youtubeCopyrightNotice:
 emailIsInvalid:
   en: The value you provided is not a valid email address
   de: Deine Eingabe ist keine gültige E-Mail-Adresse
-
+verifiedDocumentBadge:
+  en: This document was verified by a maintainer
+  de: Dieses Dokument wurde von einem Maintainer überprüft
+allowedOpenContributionBadge_none:
+  en: Open contribution to this document is not allowed
+  de: Dieses Dokument kann nicht öffentlich bearbeitet werden
+allowedOpenContributionBadge_metadataAndContent:
+  en: Open contribution to this document's metadata and content is allowed
+  de: Dieses Dokument kann vollständig öffentlich bearbeitet werden
+allowedOpenContributionBadge_content:
+  en: Open contribution to this document's metadata is not allowed
+  de: Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden
+duration:
+  en: Duration
+  de: Zeitdauer
+determiningDuration:
+  en: Determining media duration ...
+  de: Mediendauer wird ermittelt ...
+startTimecode:
+  en: Start time
+  de: Startzeit
+chapter:
+  en: Chapter
+  de: Kapitel
+editChapter:
+  en: Edit chapter
+  de: Kapitel bearbeiten

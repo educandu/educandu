@@ -1,0 +1,79 @@
+.MediaSlideshowDisplay {}
+
+.MediaSlideshowDisplay-content {
+  position: relative;
+  margin: 0 auto;
+}
+
+.MediaSlideshowEditor {
+  position: relative;
+}
+
+.MediaSlideshowEditor-overlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 60%;
+  background-color: @edu-background-color-light;
+  z-index: @edu-z-index-sticky-content-layer;
+}
+
+.MediaSlideshowEditor-overlaySpinner {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  z-index: @edu-z-index-sticky-content-layer;
+}
+
+.MediaSlideshowEditor-separator {
+  margin: 0 -@edu-content-padding;
+  padding-top: 20px;
+  border: 1px dotted @edu-border-color-dark;
+  border-style: none none dotted;
+}
+
+.MediaSlideshowEditor-chapterEditorDivider {
+  margin: 0 -@edu-content-padding;
+  padding-top: 20px;
+  color: @edu-text-color;
+}
+
+.MediaSlideshowEditor-readonlyValue {
+  padding-left: 10px;
+}
+
+.MediaSlideshowEditor-chapterImageOverlayWrapper {
+  background-color: @edu-white;
+}
+
+.MediaSlideshowEditor-chapterImagePlaceholder {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  color: @edu-text-color-secondary;
+}
+
+.MediaSlideshow-chapterImageOverlayWrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.MediaSlideshow-chapterImageOverlay {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

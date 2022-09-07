@@ -1,27 +1,24 @@
 import React from 'react';
 import { MEDIA_KIND } from './constants.js';
+import urlUtils from '../../utils/url-utils.js';
 import colorHelper from '../../ui/color-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 function AnavisDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
   const { parts, media, width } = content;
 
-  let sourceUrl;
-  switch (media.sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      sourceUrl = media.sourceUrl ? `${clientConfig.cdnRootUrl}/${media.sourceUrl}` : null;
-      break;
-    default:
-      sourceUrl = media.sourceUrl || null;
-      break;
-  }
+  const sourceUrl = urlUtils.getMediaUrl({
+    cdnRootUrl: clientConfig.cdnRootUrl,
+    sourceType: media.sourceType,
+    sourceUrl: media.sourceUrl
+  });
 
   const renderParts = () => {
     return parts.map((part, index) => (

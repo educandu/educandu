@@ -177,12 +177,17 @@ function MediaPlayerTrack({
     { 'MediaPlayerTrack--previewMode': screenMode === MEDIA_SCREEN_MODE.preview }
   );
 
+  const playerScreenClasses = classNames(
+    'MediaPlayerTrack-screen',
+    { 'is-hidden': !!screenOverlay }
+  );
+
   return (
     <div className={classes}>
       <div className="MediaPlayerTrack-aspectRatioContainer" style={{ paddingTop }}>
         <ReactPlayer
           ref={playerRef}
-          className="MediaPlayerTrack-screen"
+          className={playerScreenClasses}
           url={sourceUrl}
           width="100%"
           height="100%"

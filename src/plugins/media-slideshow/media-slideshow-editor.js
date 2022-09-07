@@ -1,53 +1,51 @@
 import by from 'thenby';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import InteractiveMediaInfo from './interactive-media-info.js';
 import Timeline from '../../components/media-player/timeline.js';
+import { Divider, Form, Input, Radio, Spin, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
-import { Button, Divider, Form, Input, Spin, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
-import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 14 }
 };
 
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: { span: 18, offset: 0 },
-    sm: { span: 14, offset: 4 }
-  }
-};
-
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
-function InteractiveMediaEditor({ content, onContentChanged }) {
+function MediaSlideshowEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
-  const { t } = useTranslation('interactiveMedia');
+  const { t } = useTranslation('mediaSlideshow');
   const [sourceDuration, setSourceDuration] = useState(0);
-  const interactiveMediaInfo = useService(InteractiveMediaInfo);
+  const mediaSlideshowInfo = useService(MediaSlideshowInfo);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const { sourceType, sourceUrl, playbackRange, chapters, width, showVideo } = content;
+  const { sourceType, sourceUrl, playbackRange, chapters, width } = content;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
 
@@ -91,7 +89,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleChapterAdd = startPosition => {
-    const chapter = { ...interactiveMediaInfo.getDefaultChapter(t), startPosition };
+    const chapter = { ...mediaSlideshowInfo.getDefaultChapter(t), startPosition };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
     changeContent({ chapters: newChapters });
   };
@@ -110,98 +108,75 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterIndexChange = newSelectedChapterIndex => {
+  const handleSelectedChapterIndexChange = newSelectedChapterIndex => {
     setSelectedChapterIndex(newSelectedChapterIndex);
   };
 
-  const handleChapterTitleChange = event => {
+  const handleChapterImageSourceTypeChange = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], title: value };
+    newChapters[selectedChapterIndex].image.sourceUrl = '';
+    newChapters[selectedChapterIndex].image.sourceType = value;
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterTextChange = event => {
+  const handleChapterImageSourceUrlChange = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], text: value };
+    newChapters[selectedChapterIndex].image.sourceUrl = value;
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterAnswerChanged = (index, event) => {
+  const handleChapterImageInternalResourceUrlChange = value => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.sourceUrl = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterImageCopyrightNoticeChanged = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex].answers[index] = value;
+    newChapters[selectedChapterIndex].image.copyrightNotice = value;
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterAnswerMarkClick = index => {
-    const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex].correctAnswerIndex = index;
-    changeContent({ chapters: newChapters });
+  const handlePlayingPartIndexChange = partIndex => {
+    setPlayingChapterIndex(partIndex);
   };
 
-  const handleChapterAnswerDeleteClick = index => {
-    const newChapters = cloneDeep(chapters);
-    const currentChapter = newChapters[selectedChapterIndex];
+  const renderPlayingChapterImage = () => {
+    const getImageUrl = () => urlUtils.getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: chapters[playingChapterIndex].image.sourceType,
+      sourceUrl: chapters[playingChapterIndex].image.sourceUrl
+    });
 
-    currentChapter.answers = removeItemAt(currentChapter.answers, index);
+    const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
 
-    let newCorrectAnswerIndex;
-    if (index > currentChapter.correctAnswerIndex) {
-      newCorrectAnswerIndex = currentChapter.correctAnswerIndex;
-    } else if (index < currentChapter.correctAnswerIndex) {
-      newCorrectAnswerIndex = currentChapter.correctAnswerIndex - 1;
-    } else {
-      newCorrectAnswerIndex = currentChapter.answers.length ? 0 : -1;
-    }
-
-    currentChapter.correctAnswerIndex = newCorrectAnswerIndex;
-
-    changeContent({ chapters: newChapters });
+    return (
+      <div className="MediaSlideshow-chapterImageOverlayWrapper">
+        {!imageSourceUrl && (
+          <AudioIcon className="MediaSlideshowEditor-chapterImagePlaceholder" />
+        )}
+        {!!imageSourceUrl && (
+          <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${getImageUrl()})` }} />
+        )}
+      </div>
+    );
   };
 
-  const handleNewChapterAnswerClick = () => {
-    const newChapters = cloneDeep(chapters);
-    const currentChapter = newChapters[selectedChapterIndex];
-
-    currentChapter.answers.push(`[${t('common:answer')}]`);
-    if (currentChapter.correctAnswerIndex === -1) {
-      currentChapter.correctAnswerIndex = 0;
-    }
-
-    changeContent({ chapters: newChapters });
-  };
-
-  const renderAnswer = (answer, index) => (
-    <div className="InteractiveMediaEditor-answer" key={index}>
-      <MarkdownInput
-        inline
-        value={answer}
-        disabled={!selectedChapterFraction}
-        onChange={event => handleChapterAnswerChanged(index, event)}
-        />
-      <Tooltip title={t('markCorrectAnswer')}>
-        <Button
-          type="link"
-          icon={<CheckOutlined />}
-          className={classNames(
-            'InteractiveMediaEditor-answerCheckmark',
-            { 'is-active': chapters[selectedChapterIndex].correctAnswerIndex === index }
-          )}
-          disabled={!selectedChapterFraction}
-          onClick={() => handleChapterAnswerMarkClick(index)}
-          />
-      </Tooltip>
-      <DeleteButton onClick={() => handleChapterAnswerDeleteClick(index)} />
-    </div>
-  );
+  const timelineParts = chapters.map((chapter, index) => ({
+    ...chapter,
+    title: `${t('common:chapter')} ${index + 1}`
+  }));
 
   return (
-    <div className="InteractiveMediaEditor">
+    <div className="MediaSlideshowEditor">
       <Form layout="horizontal">
         <MainTrackEditor
           content={content}
+          useShowVideo={false}
+          useAspectRatio={false}
           onDeterminingDuration={handleDeterminingDuration}
           onDurationDetermined={handleDurationDetermined}
           onContentChanged={handleMainTrackContentChange}
@@ -220,16 +195,19 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
 
-        <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
+        <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
 
         <MediaPlayer
+          parts={chapters}
+          screenMode={MEDIA_SCREEN_MODE.preview}
+          screenOverlay={renderPlayingChapterImage()}
+          onPlayingPartIndexChange={handlePlayingPartIndexChange}
           source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.preview : MEDIA_SCREEN_MODE.none}
           />
 
         <Timeline
+          parts={timelineParts}
           durationInMilliseconds={playbackDuration}
-          parts={chapters}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
           onPartDelete={handleChapterDelete}
@@ -241,50 +219,53 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             <ChapterSelector
               chaptersCount={chapters.length}
               selectedChapterIndex={selectedChapterIndex}
-              selectedChapterTitle={chapters[selectedChapterIndex].title}
-              onChapterIndexChange={handleChapterIndexChange}
+              selectedChapterTitle={`${t('common:chapter')} ${selectedChapterIndex + 1}`}
+              onChapterIndexChange={handleSelectedChapterIndexChange}
               />
 
             <FormItem label={t('common:startTimecode')} {...formItemLayout}>
-              <span className="InteractiveMediaEditor-readonlyValue">
+              <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
               </span>
             </FormItem>
             <FormItem label={t('common:duration')} {...formItemLayout}>
-              <span className="InteractiveMediaEditor-readonlyValue">
+              <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('common:title')} {...formItemLayout}>
-              <Input
-                disabled={!selectedChapterFraction}
-                onChange={handleChapterTitleChange}
-                value={chapters[selectedChapterIndex].title}
-                />
+            <FormItem label={t('common:imageSource')} {...formItemLayout}>
+              <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
+                <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
+                <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+              </RadioGroup>
             </FormItem>
-            <FormItem label={t('common:text')} {...formItemLayout}>
-              <MarkdownInput
-                preview
-                disabled={!selectedChapterFraction}
-                onChange={handleChapterTextChange}
-                value={chapters?.[selectedChapterIndex].text || ''}
-                />
-            </FormItem>
-            <FormItem {...tailFormItemLayout}>
-              <div>{t('addAnswerInfo')}</div>
-            </FormItem>
-            <FormItem label={t('answers')} {...formItemLayout}>
-              {(chapters?.[selectedChapterIndex].answers || []).map(renderAnswer)}
-              <Tooltip title={t('addAnswer')}>
-                <Button
-                  shape="circle"
-                  size="small"
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  disabled={!selectedChapterFraction}
-                  onClick={handleNewChapterAnswerClick}
-                  />
-              </Tooltip>
+            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
+              <FormItem
+                label={t('common:externalUrl')}
+                {...formItemLayout}
+                {...validation.validateUrl(chapters[selectedChapterIndex].image.sourceUrl, t)}
+                hasFeedback
+                >
+                <Input value={chapters[selectedChapterIndex].image.sourceUrl} onChange={handleChapterImageSourceUrlChange} />
+              </FormItem>
+            )}
+            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.internal && (
+              <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+                <div className="u-input-and-button">
+                  <Input
+                    addonBefore={CDN_URL_PREFIX}
+                    value={chapters[selectedChapterIndex].image.sourceUrl}
+                    onChange={handleChapterImageSourceUrlChange}
+                    />
+                  <ResourcePicker
+                    url={storageLocationPathToUrl(chapters[selectedChapterIndex].image.sourceUrl)}
+                    onUrlChange={url => handleChapterImageInternalResourceUrlChange(urlToStorageLocationPath(url))}
+                    />
+                </div>
+              </FormItem>
+            )}
+            <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+              <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
             </FormItem>
           </Fragment>
         )}
@@ -292,16 +273,16 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
       {isDeterminingDuration && (
         <Fragment>
-          <div className="InteractiveMediaEditor-overlay" />
-          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
+          <div className="MediaSlideshowEditor-overlay" />
+          <Spin className="MediaSlideshowEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
         </Fragment>
       )}
     </div>
   );
 }
 
-InteractiveMediaEditor.propTypes = {
+MediaSlideshowEditor.propTypes = {
   ...sectionEditorProps
 };
 
-export default InteractiveMediaEditor;
+export default MediaSlideshowEditor;

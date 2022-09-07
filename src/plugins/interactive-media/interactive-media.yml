@@ -1,27 +1,6 @@
 name:
   en: Interactive media
   de: Interaktive Medien
-determiningDuration:
-  en: Determining media duration ...
-  de: Mediendauer wird ermittelt ...
-chapter:
-  en: Chapter
-  de: Kapitel
-editChapter:
-  en: Edit chapter
-  de: Kapitel bearbeiten
-selectPreviousChapter:
-  en: Select previous chapter
-  de: Vorheriges Kapitel wählen
-selectNextChapter:
-  en: Select next chapter
-  de: Nächstes Kapitel wählen
-startTimecode:
-  en: Start time
-  de: Startzeit
-duration:
-  en: Duration
-  de: Zeitdauer
 answers:
   en: Answers
   de: Antworten
@@ -49,6 +28,3 @@ results:
 currentProgress:
   en: Your current progress
   de: Dein aktueller Fortschritt
-resultsSummary:
-  en: "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
-  de: "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
