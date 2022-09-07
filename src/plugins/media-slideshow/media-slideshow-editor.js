@@ -154,12 +154,12 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
 
     return (
-      <div className="MediaSlideshowEditor-chapterImageOverlayWrapper">
+      <div className="MediaSlideshow-chapterImageOverlayWrapper">
         {!imageSourceUrl && (
           <AudioIcon className="MediaSlideshowEditor-chapterImagePlaceholder" />
         )}
         {!!imageSourceUrl && (
-          <img className="MediaSlideshowEditor-chapterImageOverlay" src={getImageUrl()} />
+          <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${getImageUrl()})` }} />
         )}
       </div>
     );

@@ -38,15 +38,15 @@ function MediaSlideshowDisplay({ content }) {
     });
 
     return (
-      <div className="MediaSlideshowDisplay-chapterImageOverlayWrapper">
-        <img className={`MediaSlideshowDisplay-chapterImageOverlay u-width-${width || 100}`} src={imageUrl} />
+      <div className="MediaSlideshow-chapterImageOverlayWrapper">
+        <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${imageUrl})` }} />
       </div>
     );
   };
 
   return (
     <div className="MediaSlideshowDisplay">
-      <div className="MediaSlideshowDisplay-content">
+      <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
           mediaPlayerRef={mediaPlayerRef}
           parts={chapters}
