@@ -17,7 +17,7 @@ export function createDefaultItem(index, t) {
     link: {
       sourceType: LINK_SOURCE_TYPE.document,
       sourceUrl: '',
-      documentId: ''
+      documentId: null
     }
   };
 }
