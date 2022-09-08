@@ -17,6 +17,16 @@ class AdminApiClient {
       .then(res => res.data);
   }
 
+  postDocumentValidationRequest() {
+    return this.httpClient
+      .post(
+        '/api/v1/admin/document-validation',
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   postCdnResourcesConsolidationRequest() {
     return this.httpClient
       .post(

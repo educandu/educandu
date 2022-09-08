@@ -55,6 +55,7 @@ function Admin({ initialState, PageTemplate }) {
               <SettingsTab
                 initialSettings={settings}
                 lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
+                lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
                 lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
                 lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
                 onSettingsSaved={setSettings}
@@ -81,6 +82,7 @@ Admin.propTypes = {
     storagePlans: PropTypes.arrayOf(storagePlanWithAssignedUserCountShape).isRequired,
     lastCdnResourcesConsolidationBatch: batchShape,
     lastDocumentRegenerationBatch: batchShape,
+    lastDocumentValidationBatch: batchShape,
     lastCdnUploadDirectoryCreationBatch: batchShape
   }).isRequired
 };

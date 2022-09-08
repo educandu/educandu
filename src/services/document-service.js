@@ -17,7 +17,7 @@ import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { createSectionRevision, extractCdnResources, validateSections } from './section-helper.js';
+import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -443,6 +443,32 @@ class DocumentService {
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
+      }
+    }
+  }
+
+  async validateDocument(documentId) {
+    const doc = await this.documentStore.getDocumentById(documentId);
+    for (const section of doc.sections) {
+      try {
+        validateSection(section, this.pluginRegistry);
+      } catch (error) {
+        error.documentId = doc._id;
+        error.sectionKey = section.key;
+        throw error;
+      }
+    }
+
+    const revisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
+    for (const revision of revisions) {
+      for (const section of revision.sections) {
+        try {
+          validateSection(section, this.pluginRegistry);
+        } catch (error) {
+          error.documentRevisionId = revision._id;
+          error.sectionKey = section.key;
+          throw error;
+        }
       }
     }
   }

@@ -5,6 +5,7 @@ import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
+import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
 import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-creation-task-processor.js';
@@ -17,6 +18,7 @@ export default class TaskProcessor {
       TaskStore,
       LockStore,
       DocumentImportTaskProcessor,
+      DocumentValidationTaskProcessor,
       DocumentRegenerationTaskProcessor,
       CdnResourcesConsolidationTaskProcessor,
       CdnUploadDirectoryCreationTaskProcessor,
@@ -28,6 +30,7 @@ export default class TaskProcessor {
     taskStore,
     lockStore,
     documentImportTaskProcessor,
+    documentValidationTaskProcessor,
     documentRegenerationTaskProcessor,
     cdnResourcesConsolidationTaskProcessor,
     cdnUploadDirectoryCreationTaskProcessor,
@@ -39,6 +42,7 @@ export default class TaskProcessor {
 
     this.taskProcessors = {
       [TASK_TYPE.documentImport]: documentImportTaskProcessor,
+      [TASK_TYPE.documentValidation]: documentValidationTaskProcessor,
       [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor,
       [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor,
       [TASK_TYPE.cdnUploadDirectoryCreation]: cdnUploadDirectoryCreationTaskProcessor

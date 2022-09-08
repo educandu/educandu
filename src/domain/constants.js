@@ -18,6 +18,7 @@ export const DOCUMENT_IMPORT_TYPE = {
 export const BATCH_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
+  documentValidation: 'document-validation',
   cdnResourcesConsolidation: 'cdn-resources-consolidation',
   cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
 };
@@ -25,6 +26,7 @@ export const BATCH_TYPE = {
 export const TASK_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
+  documentValidation: 'document-validation',
   cdnResourcesConsolidation: 'cdn-resources-consolidation',
   cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
 };

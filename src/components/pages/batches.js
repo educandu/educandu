@@ -9,14 +9,12 @@ import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
+import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
-  BATCH_TYPE,
-  CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE
-} from '../../domain/constants.js';
-import {
   documentImportBatchDetailsShape,
+  documentValidationBatchDetailsShape,
   documentRegenerationBatchDetailsShape,
   cdnResourcesConsolidationBatchDetailsShape,
   cdnUploadDirectoryCreationBatchDetailsShape
@@ -74,6 +72,8 @@ function Batches({ initialState, PageTemplate }) {
     switch (batchType) {
       case BATCH_TYPE.documentImport:
         return t('batchTypeDocumentImport');
+      case BATCH_TYPE.documentValidation:
+        return t('batchTypeDocumentValidation');
       case BATCH_TYPE.documentRegeneration:
         return t('batchTypeDocumentRegeneration');
       case BATCH_TYPE.cdnResourcesConsolidation:
@@ -108,7 +108,7 @@ function Batches({ initialState, PageTemplate }) {
     return <a target="_blank" href={docUrl} rel="noreferrer noopener">{taskParams.title}</a>;
   };
 
-  const renderDocumentRegenerationEntityId = taskParams => (
+  const renderDocumentEntityId = taskParams => (
     <a target="_blank" href={routes.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
       {taskParams.documentId}
     </a>
@@ -198,12 +198,13 @@ function Batches({ initialState, PageTemplate }) {
         render: renderDocumentTitle
       });
       break;
+    case BATCH_TYPE.documentValidation:
     case BATCH_TYPE.documentRegeneration:
       taskTableColumns.push({
         title: t('common:document'),
         key: 'taskParamsTypeEntityId',
         dataIndex: 'taskParams',
-        render: renderDocumentRegenerationEntityId
+        render: renderDocumentEntityId
       });
       break;
     case BATCH_TYPE.cdnResourcesConsolidation:
@@ -299,6 +300,7 @@ Batches.propTypes = {
   initialState: PropTypes.shape({
     batch: PropTypes.oneOfType([
       documentImportBatchDetailsShape,
+      documentValidationBatchDetailsShape,
       documentRegenerationBatchDetailsShape,
       cdnResourcesConsolidationBatchDetailsShape,
       cdnUploadDirectoryCreationBatchDetailsShape

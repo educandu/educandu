@@ -13,21 +13,15 @@ footerLinksHeader:
 consentHeader:
   en: Consent text
   de: Zustimmungstext
-documentRegenerationHeader:
-  en: Document regeneration
-  de: Dokumentwiederherstellung
 documentRegenerationButton:
   en: Regenerate documents
   de: Dokumente neu erstellen
-cdnResourcesConsolidationHeader:
-  en: CDN resources consolidation
-  de: Konsolidierung der CDN-Ressourcen
+documentValidationButton:
+  en: Validate documents
+  de: Dokumente validieren
 cdnResourcesConsolidationButton:
   en: Consolidate CDN resources
   de: CDN-Ressourcen konsolidieren
-cdnUploadDirectoryCreationHeader:
-  en: CDN upload directory creation
-  de: Erstellung der CDN-Upload-Verzeichnisse
 cdnUploadDirectoryCreationButton:
   en: Create CDN upload directories
   de: CDN-Upload-Verzeichnisse erstellen

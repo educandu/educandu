@@ -22,6 +22,9 @@ batchType:
 batchTypeDocumentImport:
   en: Document import
   de: Dokumentimport
+batchTypeDocumentValidation:
+  en: Document validation
+  de: Dokumentvalidierung
 batchTypeDocumentRegeneration:
   en: Document regeneration
   de: Dokumentwiederherstellung
