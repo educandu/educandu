@@ -216,7 +216,7 @@ function MediaPlayerTrack({
             <AudioIcon />
           </div>
         )}
-        {screenMode === MEDIA_SCREEN_MODE.overlay && (
+        {(screenMode === MEDIA_SCREEN_MODE.overlay || screenOverlay) && (
           <div className="MediaPlayerTrack--screenOverlay">
             {screenOverlay}
           </div>
