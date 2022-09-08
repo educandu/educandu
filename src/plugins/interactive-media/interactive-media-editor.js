@@ -216,7 +216,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.preview : MEDIA_SCREEN_MODE.none}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+          screenWidth={50}
           />
 
         <Timeline

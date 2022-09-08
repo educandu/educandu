@@ -13,7 +13,6 @@ import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -148,9 +147,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
     return (
       <div className="MediaSlideshow-chapterImageOverlayWrapper">
-        {!imageSourceUrl && (
-          <AudioIcon className="MediaSlideshowEditor-chapterImagePlaceholder" />
-        )}
         {!!imageSourceUrl && (
           <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${getImageUrl()})` }} />
         )}
@@ -190,7 +186,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
-          screenMode={MEDIA_SCREEN_MODE.preview}
+          screenMode={MEDIA_SCREEN_MODE.overlay}
+          screenWidth={50}
           screenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}

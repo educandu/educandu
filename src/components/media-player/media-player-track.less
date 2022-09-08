@@ -1,5 +1,6 @@
 .MediaPlayerTrack {
   width: 100%;
+  margin: 0 auto;
 
   &.MediaPlayerTrack--noScreen {
     width: 0;
@@ -7,13 +8,9 @@
     overflow: hidden;
   }
 
-  &.MediaPlayerTrack--audioMode {
+  &.MediaPlayerTrack--audioMode,
+  &.MediaPlayerTrack--overlayMode {
     position: relative;
-  }
-
-  &.MediaPlayerTrack--previewMode {
-    width: 50%;
-    margin: 0 auto;
   }
 }
 

@@ -110,7 +110,8 @@ export const MEDIA_SCREEN_MODE = {
   none: 'none',
   audio: 'audio',
   video: 'video',
-  preview: 'preview'
+  preview: 'preview',
+  overlay: 'overlay'
 };
 
 export const MEDIA_SOURCE_TYPE = {

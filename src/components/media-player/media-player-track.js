@@ -14,6 +14,7 @@ function MediaPlayerTrack({
   sourceUrl,
   aspectRatio,
   screenMode,
+  screenWidth,
   screenOverlay,
   playbackRange,
   volume,
@@ -172,14 +173,15 @@ function MediaPlayerTrack({
 
   const classes = classNames(
     'MediaPlayerTrack',
+    `u-width-${screenWidth}`,
     { 'MediaPlayerTrack--noScreen': screenMode === MEDIA_SCREEN_MODE.none },
     { 'MediaPlayerTrack--audioMode': screenMode === MEDIA_SCREEN_MODE.audio },
-    { 'MediaPlayerTrack--previewMode': screenMode === MEDIA_SCREEN_MODE.preview }
+    { 'MediaPlayerTrack--overlayMode': screenMode === MEDIA_SCREEN_MODE.overlay }
   );
 
   const playerScreenClasses = classNames(
     'MediaPlayerTrack-screen',
-    { 'is-hidden': !!screenOverlay }
+    { 'is-hidden': screenMode === MEDIA_SCREEN_MODE.overlay }
   );
 
   return (
@@ -214,7 +216,7 @@ function MediaPlayerTrack({
             <AudioIcon />
           </div>
         )}
-        {screenOverlay && (
+        {(screenMode === MEDIA_SCREEN_MODE.overlay || screenOverlay) && (
           <div className="MediaPlayerTrack--screenOverlay">
             {screenOverlay}
           </div>
@@ -236,6 +238,7 @@ MediaPlayerTrack.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
+  screenWidth: PropTypes.number,
   sourceUrl: PropTypes.string.isRequired,
   trackRef: PropTypes.shape({
     current: PropTypes.any
@@ -254,6 +257,7 @@ MediaPlayerTrack.defaultProps = {
   playbackRate: 1,
   posterImageUrl: null,
   screenOverlay: null,
+  screenWidth: 100,
   trackRef: {
     current: null
   },

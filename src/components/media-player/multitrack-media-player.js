@@ -67,6 +67,7 @@ function MultitrackMediaPlayer({
   sources,
   aspectRatio,
   screenMode,
+  screenWidth,
   screenOverlay,
   showTrackMixer,
   canDownload,
@@ -289,6 +290,7 @@ function MultitrackMediaPlayer({
           volume={volume}
           aspectRatio={aspectRatio}
           screenMode={screenMode}
+          screenWidth={screenWidth}
           screenOverlay={screenOverlay}
           playbackRate={playbackRate}
           onDuration={handleDuration}
@@ -354,6 +356,7 @@ MultitrackMediaPlayer.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
+  screenWidth: PropTypes.number,
   showTrackMixer: PropTypes.bool,
   sources: PropTypes.oneOfType([
     PropTypes.shape({
@@ -391,6 +394,7 @@ MultitrackMediaPlayer.defaultProps = {
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
+  screenWidth: 100,
   showTrackMixer: false,
   sources: null
 };
