@@ -26,6 +26,7 @@ function MediaPlayer({
   playbackRange,
   aspectRatio,
   screenMode,
+  screenWidth,
   screenOverlay,
   canDownload,
   downloadFileName,
@@ -52,6 +53,7 @@ function MediaPlayer({
       sources={multitrackSources.value}
       aspectRatio={aspectRatio}
       screenMode={screenMode}
+      screenWidth={screenWidth}
       screenOverlay={screenOverlay}
       canDownload={canDownload}
       downloadFileName={downloadFileName}
@@ -90,6 +92,7 @@ MediaPlayer.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
+  screenWidth: PropTypes.number,
   source: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
@@ -112,6 +115,7 @@ MediaPlayer.defaultProps = {
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
+  screenWidth: 100,
   source: null
 };
 

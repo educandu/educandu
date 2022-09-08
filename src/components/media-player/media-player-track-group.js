@@ -62,6 +62,7 @@ const updateTrackNamesAndVolumes = (currentTrackStates, newSources) => ({
 function MediaPlayerTrackGroup({
   aspectRatio,
   screenMode,
+  screenWidth,
   screenOverlay,
   volume,
   posterImageUrl,
@@ -238,6 +239,7 @@ function MediaPlayerTrackGroup({
         sourceUrl={trackStates.mainTrack.sourceUrl}
         aspectRatio={aspectRatio}
         screenMode={screenMode}
+        screenWidth={screenWidth}
         screenOverlay={screenOverlay}
         playbackRange={trackStates.mainTrack.playbackRange}
         playbackRate={playbackRate}
@@ -277,6 +279,7 @@ MediaPlayerTrackGroup.propTypes = {
   posterImageUrl: PropTypes.string,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   screenOverlay: PropTypes.node,
+  screenWidth: PropTypes.number,
   sources: PropTypes.shape({
     mainTrack: PropTypes.shape({
       name: PropTypes.string,
@@ -306,6 +309,7 @@ MediaPlayerTrackGroup.defaultProps = {
   playbackRate: 1,
   posterImageUrl: null,
   screenOverlay: null,
+  screenWidth: 100,
   trackRef: {
     current: null
   },

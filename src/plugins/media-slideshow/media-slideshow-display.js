@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
 import urlUtils from '../../utils/url-utils.js';
+import { preloadImage } from '../../utils/image-utils.js';
+import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -19,6 +20,19 @@ function MediaSlideshowDisplay({ content }) {
     sourceType: content.sourceType,
     sourceUrl: content.sourceUrl
   });
+
+  useEffect(() => {
+    (async () => {
+      const imageUrls = chapters
+        .map(chapter => urlUtils.getImageUrl({
+          cdnRootUrl: clientConfig.cdnRootUrl,
+          sourceType: chapter.image.sourceType,
+          sourceUrl: chapter.image.sourceUrl
+        }))
+        .filter(url => url);
+      await Promise.all(imageUrls.map(url => preloadImage(url)));
+    })();
+  }, [clientConfig.cdnRootUrl, chapters]);
 
   const handlePlayingPartIndexChange = partIndex => {
     setPlayingChapterIndex(partIndex);
@@ -51,7 +65,7 @@ function MediaSlideshowDisplay({ content }) {
           mediaPlayerRef={mediaPlayerRef}
           parts={chapters}
           source={sourceUrl}
-          screenMode={MEDIA_SCREEN_MODE.audio}
+          screenMode={MEDIA_SCREEN_MODE.overlay}
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
           playbackRange={playbackRange}
           canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
