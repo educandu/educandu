@@ -1,5 +1,3 @@
-import ReactDOM from 'react-dom';
-
 export const preloadImage = async url => {
   if (!url) {
     return;
@@ -11,12 +9,10 @@ export const preloadImage = async url => {
 
   await new Promise(resolve => {
     element.onloadeddata = () => {
-      ReactDOM.unmountComponentAtNode(element);
       element.remove();
       resolve();
     };
     element.onerror = () => {
-      ReactDOM.unmountComponentAtNode(element);
       element.remove();
       resolve();
     };
