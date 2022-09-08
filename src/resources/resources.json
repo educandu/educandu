@@ -1023,16 +1023,14 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "forgotPassword": "Forgot your password?",
-      "hintContent": "The username is no longer supported for logging in.\nIt continues to be shown as the name under which you author website content.\n"
+      "forgotPassword": "Forgot your password?"
     }
   },
   {
     "namespace": "login",
     "language": "de",
     "resources": {
-      "forgotPassword": "Kennwort vergessen?",
-      "hintContent": "Der Benutzername kann nicht mehr für die Anmeldung benutzt werden.\nEr bleibt als Autorenname für alle von Ihnen bearbeiteten Website-Inhalte bestehen.\n"
+      "forgotPassword": "Kennwort vergessen?"
     }
   },
   {

@@ -5,7 +5,6 @@ import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import WarningIcon from '../icons/general/warning-icon.js';
 
 function Login({ PageTemplate, SiteLogo }) {
   const formRef = useRef();
@@ -39,10 +38,6 @@ function Login({ PageTemplate, SiteLogo }) {
             <Button type="primary" size="large" onClick={handleLoginClick} block>
               {t('common:login')}
             </Button>
-          </div>
-          <div className="LoginPage-hint">
-            <div className="LoginPage-hintIcon"><WarningIcon /></div>
-            {t('hintContent')}
           </div>
         </div>
       </div>
