@@ -298,7 +298,12 @@ describe('room-service', () => {
       await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
+        slug: 'my-slug',
+        description: '',
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        createdBy: myUser._id,
+        createdOn: new Date(),
+        updatedOn: new Date(),
         owner: myUser._id,
         members: [
           {

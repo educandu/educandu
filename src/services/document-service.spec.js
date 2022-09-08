@@ -5,8 +5,9 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
+import { EFFECT_TYPE } from '../plugins/image/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -72,9 +73,13 @@ describe('document-service', () => {
             content: {
               sourceType: IMAGE_SOURCE_TYPE.internal,
               sourceUrl: 'media/image-1.png',
+              copyrightNotice: '',
+              width: 100,
               effect: {
+                type: EFFECT_TYPE.hover,
                 sourceType: IMAGE_SOURCE_TYPE.internal,
-                sourceUrl: 'media/image-2.png'
+                sourceUrl: 'media/image-2.png',
+                copyrightNotice: ''
               }
             }
           },
@@ -84,7 +89,13 @@ describe('document-service', () => {
             content: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
-              posterImage: {}
+              aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+              copyrightNotice: '',
+              posterImage: {
+                sourceType: MEDIA_SOURCE_TYPE.internal,
+                sourceUrl: ''
+              },
+              width: 100
             }
           }
         ],
@@ -119,7 +130,7 @@ describe('document-service', () => {
         createdOn: now,
         createdBy: user._id,
         order: 1,
-        restoredFrom: '',
+        restoredFrom: null,
         archived: false,
         origin: DOCUMENT_ORIGIN.internal
       });
@@ -193,9 +204,13 @@ describe('document-service', () => {
             content: {
               sourceType: IMAGE_SOURCE_TYPE.internal,
               sourceUrl: 'media/image-1.png',
+              copyrightNotice: '',
+              width: 100,
               effect: {
+                type: EFFECT_TYPE.hover,
                 sourceType: IMAGE_SOURCE_TYPE.internal,
-                sourceUrl: 'media/image-2.png'
+                sourceUrl: 'media/image-2.png',
+                copyrightNotice: ''
               }
             }
           },
@@ -205,7 +220,13 @@ describe('document-service', () => {
             content: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
-              posterImage: {}
+              copyrightNotice: '',
+              aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+              posterImage: {
+                sourceType: MEDIA_SOURCE_TYPE.internal,
+                sourceUrl: ''
+              },
+              width: 100
             }
           }
         ],
@@ -230,7 +251,13 @@ describe('document-service', () => {
             content: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-2.mp4',
-              posterImage: {}
+              copyrightNotice: '',
+              aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+              posterImage: {
+                sourceType: MEDIA_SOURCE_TYPE.internal,
+                sourceUrl: ''
+              },
+              width: 100
             }
           }
         ]
@@ -270,7 +297,7 @@ describe('document-service', () => {
         createdOn: secondTick,
         createdBy: secondUser._id,
         order: 2,
-        restoredFrom: '',
+        restoredFrom: null,
         archived: false,
         origin: DOCUMENT_ORIGIN.internal
       };
@@ -350,7 +377,13 @@ describe('document-service', () => {
               content: {
                 sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
-                posterImage: {}
+                copyrightNotice: '',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                posterImage: {
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
+                  sourceUrl: ''
+                },
+                width: 100
               },
               deletedOn: new Date().toISOString()
             }
@@ -378,7 +411,13 @@ describe('document-service', () => {
               content: {
                 sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
-                posterImage: {}
+                copyrightNotice: '',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                posterImage: {
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
+                  sourceUrl: ''
+                },
+                width: 100
               }
             }
           ],
@@ -415,7 +454,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           },
@@ -431,7 +470,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           }
@@ -489,7 +528,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           },
@@ -505,7 +544,7 @@ describe('document-service', () => {
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
-            restoredFrom: '',
+            restoredFrom: null,
             archived: false,
             cdnResources: ['media/video-1.mp4']
           }
@@ -871,7 +910,7 @@ describe('document-service', () => {
             sourceType: 'internal',
             sourceUrl: 'media/image-1.png',
             width: 100,
-            text: 'Unmodified text',
+            copyrightNotice: 'Unmodified text',
             effect: null
           }
         };
@@ -884,7 +923,7 @@ describe('document-service', () => {
             sourceType: 'internal',
             sourceUrl: 'media/image-2.png',
             width: 100,
-            text: 'Initial text',
+            copyrightNotice: 'Initial text',
             effect: null
           }
         };
@@ -894,40 +933,40 @@ describe('document-service', () => {
             title: 'Revision 1',
             slug: 'rev-1',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated A' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section A' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, copyrightNotice: 'Unrelated A' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, copyrightNotice: 'Doomed section A' } }
             ]
           },
           {
             title: 'Revision 2',
             slug: 'rev-2',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated B' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, copyrightNotice: 'Unrelated B' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, copyrightNotice: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 3',
             slug: 'rev-3',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated C' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, copyrightNotice: 'Unrelated C' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, copyrightNotice: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 4',
             slug: 'rev-4',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated D' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, copyrightNotice: 'Unrelated D' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, copyrightNotice: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 5',
             slug: 'rev-5',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated E' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section C' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, copyrightNotice: 'Unrelated E' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, copyrightNotice: 'Doomed section C' } }
             ]
           }
         ]);
@@ -975,13 +1014,13 @@ describe('document-service', () => {
             deletedOn: null,
             deletedBy: null,
             deletedBecause: null,
-            content: { text: 'Doomed section A' }
+            content: { copyrightNotice: 'Doomed section A' }
           });
           expect(documentRevisionsAfterDeletion[4].sections[1]).toMatchObject({
             deletedOn: null,
             deletedBy: null,
             deletedBecause: null,
-            content: { text: 'Doomed section C' }
+            content: { copyrightNotice: 'Doomed section C' }
           });
         });
 

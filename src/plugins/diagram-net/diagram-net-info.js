@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import DiagramNetIcon from './diagram-net-icon.js';
@@ -32,6 +33,16 @@ class DiagramNetInfo {
       image: null,
       width: 100
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      xml: joi.string().allow(null).required(),
+      image: joi.string().allow(null).required(),
+      width: joi.number().min(0).max(100).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

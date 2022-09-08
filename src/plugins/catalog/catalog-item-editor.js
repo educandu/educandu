@@ -42,7 +42,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
   };
 
   const handleImageSourceTypeChange = event => {
-    triggerChange({ image: { sourceUrl: '', sourceType: event.target.value } });
+    triggerChange({ image: { sourceType: event.target.value, sourceUrl: '' } });
   };
 
   const handleTitleChange = event => {
@@ -50,11 +50,11 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
   };
 
   const handleLinkSourceTypeChange = event => {
-    triggerChange({ link: { sourceUrl: '', sourceType: event.target.value } });
+    triggerChange({ link: { sourceType: event.target.value, sourceUrl: '', documentId: null } });
   };
 
   const handleExternalLinkUrlValueChange = event => {
-    triggerChange({ link: { ...link, sourceUrl: event.target.value, documentId: '' } });
+    triggerChange({ link: { ...link, sourceUrl: event.target.value, documentId: null } });
   };
 
   const handleDocumentChange = value => {

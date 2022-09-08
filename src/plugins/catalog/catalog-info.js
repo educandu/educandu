@@ -2,9 +2,9 @@ import React from 'react';
 import CatalogIcon from './catalog-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import CatalogDisplay from './catalog-display.js';
-import { createDefaultContent } from './catalog-utils.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { createDefaultContent, validateContent } from './catalog-utils.js';
 
 export default class Catalog {
   static get typeName() { return 'catalog'; }
@@ -31,6 +31,10 @@ export default class Catalog {
 
   getDefaultContent(t) {
     return createDefaultContent(t);
+  }
+
+  validateContent(content) {
+    validateContent(content);
   }
 
   cloneContent(content) {

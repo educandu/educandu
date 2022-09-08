@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -44,6 +45,20 @@ class QuickTesterInfo {
       ],
       testsOrder: TESTS_ORDER.given
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      title: joi.string().allow('').required(),
+      teaser: joi.string().allow('').required(),
+      tests: joi.array().items(joi.object({
+        question: joi.string().allow('').required(),
+        answer: joi.string().allow('').required()
+      })).required(),
+      testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

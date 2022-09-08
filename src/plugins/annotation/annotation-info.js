@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -40,6 +41,18 @@ class AnnotationInfo {
       intent: INTENT.neutral,
       width: 100
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      title: joi.string().allow('').required(),
+      text: joi.string().allow('').required(),
+      behavior: joi.string().valid(...Object.values(BEHAVIOR)).required(),
+      intent: joi.string().valid(...Object.values(INTENT)).required(),
+      width: joi.number().min(0).max(100).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

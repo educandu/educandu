@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
@@ -36,16 +37,16 @@ class EarTrainingInfo {
   getDefaultImage() {
     return {
       sourceType: IMAGE_SOURCE_TYPE.internal,
-      sourceUrl: null,
-      copyrightNotice: null
+      sourceUrl: '',
+      copyrightNotice: ''
     };
   }
 
   getDefaultSound() {
     return {
       sourceType: SOUND_SOURCE_TYPE.internal,
-      sourceUrl: null,
-      copyrightNotice: null
+      sourceUrl: '',
+      copyrightNotice: ''
     };
   }
 
@@ -67,6 +68,42 @@ class EarTrainingInfo {
       tests: [this.getDefaultTest()],
       testsOrder: TESTS_ORDER.given
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      title: joi.string().allow('').required(),
+      width: joi.number().min(0).max(100).required(),
+      tests: joi.array().items(joi.object({
+        mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
+        questionImage: joi.alternatives().try(
+          joi.object({
+            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+            sourceUrl: joi.string().allow('').required(),
+            copyrightNotice: joi.string().allow('').required()
+          }),
+          joi.any().valid(null)
+        ).required(),
+        answerImage: joi.alternatives().try(
+          joi.object({
+            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+            sourceUrl: joi.string().allow('').required(),
+            copyrightNotice: joi.string().allow('').required()
+          }),
+          joi.any().valid(null)
+        ).required(),
+        questionAbcCode: joi.string().allow('').required(),
+        answerAbcCode: joi.string().allow('').required(),
+        sound: joi.object({
+          sourceType: joi.string().valid(...Object.values(SOUND_SOURCE_TYPE)).required(),
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required()
+        }).required()
+      })).required(),
+      testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

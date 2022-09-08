@@ -1,4 +1,6 @@
 import Database from './database.js';
+import { validate } from '../domain/validation.js';
+import { favoriteDBSchema, userDBSchema } from '../domain/schemas/user-schemas.js';
 
 class UserStore {
   static get inject() { return [Database]; }
@@ -50,11 +52,13 @@ class UserStore {
   }
 
   saveUser(user, { session } = {}) {
+    validate(user, userDBSchema);
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
   }
 
   addToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {
     const favorite = { type: favoriteType, id: favoriteId, setOn: favoriteSetOn };
+    validate(favorite, favoriteDBSchema);
     return this.collection.updateOne({ _id: userId }, { $push: { favorites: favorite } }, { session });
   }
 

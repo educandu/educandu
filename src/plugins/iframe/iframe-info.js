@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import IframeIcon from './iframe-icon.js';
 import IframeDisplay from './iframe-display.js';
@@ -33,6 +34,17 @@ class IframeInfo {
       height: 150,
       isBorderVisible: true
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      url: joi.string().allow('').required(),
+      width: joi.number().min(0).max(100).required(),
+      height: joi.number().min(0).required(),
+      isBorderVisible: joi.boolean().required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

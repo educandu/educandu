@@ -8,7 +8,7 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -41,7 +41,7 @@ function VideoEditor({ content, onContentChanged }) {
       sourceUrl: '',
       copyrightNotice: '',
       posterImage: {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
+        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     });
@@ -75,11 +75,11 @@ function VideoEditor({ content, onContentChanged }) {
 
   const handlePosterImageSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
+    changeContent({ posterImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
   const handlePosterImageSourceUrlFileNameChange = value => {
-    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
+    changeContent({ posterImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
   const renderPosterImageFormItem = () => (

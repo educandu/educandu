@@ -2,10 +2,10 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MultitrackMediaIcon from './multitrack-media-icon.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
-import { createDefaultContent } from './multitrack-media-utils.js';
 import MultitrackMediaDisplay from './multitrack-media-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { createDefaultContent, validateContent } from './multitrack-media-utils.js';
 
 class MultitrackMediaInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -35,6 +35,10 @@ class MultitrackMediaInfo {
 
   getDefaultContent(t) {
     return createDefaultContent(t);
+  }
+
+  validateContent(content) {
+    validateContent(content);
   }
 
   cloneContent(content) {

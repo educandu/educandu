@@ -16,7 +16,7 @@ function VideoDisplay({ content }) {
     sourceUrl: content.sourceUrl
   });
 
-  const posterImageUrl = urlUtils.getMediaUrl({
+  const posterImageUrl = urlUtils.getImageUrl({
     cdnRootUrl: clientConfig.cdnRootUrl,
     sourceType: content.posterImage?.sourceType,
     sourceUrl: content.posterImage?.sourceUrl

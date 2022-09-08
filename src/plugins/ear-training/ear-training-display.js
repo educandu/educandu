@@ -115,12 +115,12 @@ function EarTrainingDisplay({ content }) {
     let soundUrl = null;
     let sourceType = SOUND_SOURCE_TYPE.midi;
 
-    if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
+    if (currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
       sourceType = SOUND_SOURCE_TYPE.internal;
       soundUrl = currentTest.sound.sourceUrl ? `${clientConfig.cdnRootUrl}/${currentTest.sound.sourceUrl}` : null;
     }
 
-    if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.external) {
+    if (currentTest.sound.sourceType === SOUND_SOURCE_TYPE.external) {
       sourceType = SOUND_SOURCE_TYPE.external;
       soundUrl = currentTest.sound.sourceUrl || null;
     }

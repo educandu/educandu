@@ -1,7 +1,9 @@
+import joi from 'joi';
 import React from 'react';
 import ImageIcon from './image-icon.js';
 import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -36,10 +38,47 @@ class ImageInfo {
     return {
       sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: '',
-      width: 100,
       copyrightNotice: '',
+      width: 100,
       effect: null
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+      sourceUrl: joi.string().allow('').required(),
+      copyrightNotice: joi.string().allow('').required(),
+      width: joi.number().min(0).max(100).required(),
+      effect: joi.alternatives().try(
+        joi.object({
+          type: joi.string().valid(EFFECT_TYPE.hover).required(),
+          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required()
+        }),
+        joi.object({
+          type: joi.string().valid(EFFECT_TYPE.reveal).required(),
+          sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required(),
+          startPosition: joi.number().min(0).required(),
+          orientation: joi.string().valid(...Object.values(ORIENTATION)).required()
+        }),
+        joi.object({
+          type: joi.string().valid(EFFECT_TYPE.clip).required(),
+          region: joi.object({
+            x: joi.number().min(0).required(),
+            y: joi.number().min(0).required(),
+            width: joi.number().min(0).required(),
+            height: joi.number().min(0).required()
+          }).required()
+        }),
+        joi.any().valid(null)
+      ).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

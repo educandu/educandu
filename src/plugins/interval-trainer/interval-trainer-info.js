@@ -1,3 +1,4 @@
+import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import IntervalTrainerIcon from './interval-trainer-icon.js';
@@ -35,6 +36,22 @@ export default class IntervalTrainerInfo {
       keyboardOffset: 48,
       tests: []
     };
+  }
+
+  validateContent(content) {
+    const schema = joi.object({
+      title: joi.string().allow('').required(),
+      keyboardShortcuts: joi.string().allow('').required(),
+      keyboardStart: joi.number().min(0).required(),
+      keyboardEnd: joi.number().min(0).required(),
+      keyboardOffset: joi.number().min(0).required(),
+      tests: joi.array().items(joi.object({
+        question: joi.string().allow('').required(),
+        interval: joi.array().items(joi.number().min(0)).required()
+      })).required()
+    });
+
+    joi.attempt(content, schema, { convert: false, noDefaults: true });
   }
 
   cloneContent(content) {
