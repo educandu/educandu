@@ -7,19 +7,20 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { Divider, Form, Input, Radio, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
-import { Divider, Form, Input, Radio, Spin, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
+import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
@@ -39,13 +40,14 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mediaSlideshow');
-  const [sourceDuration, setSourceDuration] = useState(0);
   const mediaSlideshowInfo = useService(MediaSlideshowInfo);
   const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, playbackRange, chapters, width } = content;
+
+  const [mediaDuration] = useMediaDurations([urlUtils.getMediaUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })]);
+  const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
 
@@ -66,15 +68,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const handleMainTrackContentChange = changedContent => {
     changeContent({ ...changedContent });
-  };
-
-  const handleDeterminingDuration = () => {
-    setIsDeterminingDuration(true);
-  };
-
-  const handleDurationDetermined = duration => {
-    setIsDeterminingDuration(false);
-    setSourceDuration(duration);
   };
 
   const handleChapterStartPositionChange = (key, newStartPosition) => {
@@ -177,8 +170,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           content={content}
           useShowVideo={false}
           useAspectRatio={false}
-          onDeterminingDuration={handleDeterminingDuration}
-          onDurationDetermined={handleDurationDetermined}
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem
@@ -270,13 +261,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           </Fragment>
         )}
       </Form>
-
-      {isDeterminingDuration && (
-        <Fragment>
-          <div className="MediaSlideshowEditor-overlay" />
-          <Spin className="MediaSlideshowEditor-overlaySpinner" tip={t('common:determiningDuration')} size="large" />
-        </Fragment>
-      )}
     </div>
   );
 }
