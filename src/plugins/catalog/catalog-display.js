@@ -4,6 +4,7 @@ import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
+import Collapsible from '../../components/collapsible.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -95,12 +96,12 @@ function CatalogDisplay({ content }) {
   return (
     <div className="CatalogDisplay">
       <div className={`CatalogDisplay-container u-width-${width}`}>
-        {title && (
-          <div className="CatalogDisplay-title">
-            <Markdown inline>{title}</Markdown>
-          </div>
+        {!!title && (
+          <Collapsible width={width} isCollapsible isCollapsed={false} title={<Markdown inline>{title}</Markdown>}>
+            {renderItems()}
+          </Collapsible>
         )}
-        {renderItems()}
+        {!title && renderItems()}
       </div>
     </div>
   );
