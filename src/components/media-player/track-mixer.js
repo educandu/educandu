@@ -14,7 +14,7 @@ function TrackMixer({ mainTrack, secondaryTracks, onMainTrackSettingsChange, onS
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
-  const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * (mainTrackDuration.duration || 0);
+  const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
 
   const calculateBarWidth = (containerWidth, trackDuration) => {
     if (!containerWidth || !trackDuration || !mainTrackDurationInMs) {
@@ -31,16 +31,16 @@ function TrackMixer({ mainTrack, secondaryTracks, onMainTrackSettingsChange, onS
       name: mainTrack.name,
       volume: mainTrack.volume,
       secondaryTrackIndex: -1,
-      trackDurationInMs: mainTrackDurationInMs || 0,
-      getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs || 0),
+      trackDurationInMs: mainTrackDurationInMs,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs),
       handleVolumeChange: volume => onMainTrackSettingsChange({ volume })
     },
     ...secondaryTracks.map((secondaryTrack, index) => ({
       name: secondaryTrack.name,
       volume: secondaryTrack.volume,
       secondaryTrackIndex: index,
-      trackDurationInMs: secondaryTrackDurations[index].duration || 0,
-      getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration || 0),
+      trackDurationInMs: secondaryTrackDurations[index].duration,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration),
       handleVolumeChange: volume => onSecondaryTrackSettingsChange(index, { volume })
     }))
   ];

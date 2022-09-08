@@ -51,7 +51,7 @@ class MediaDurationCache {
       sourceUrl,
       hasError: false,
       isResolved: false,
-      duration: null
+      duration: 0
     };
   }
 
@@ -60,7 +60,7 @@ class MediaDurationCache {
       sourceUrl,
       hasError: !!error,
       isResolved: true,
-      duration: error ? null : duration
+      duration: error ? 0 : duration
     };
   }
 
