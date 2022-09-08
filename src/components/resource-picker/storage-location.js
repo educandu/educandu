@@ -135,7 +135,7 @@ function StorageLocation({
   return (
     <div className="StorageLocation">
       <div className="StorageLocation-buttonsLine">
-        <div>
+        <div className="StorageLocation-buttonsLineItem">
           <Search
             placeholder={t('common:search')}
             value={typedInSearchTerm}
@@ -144,7 +144,7 @@ function StorageLocation({
             enterButton={<SearchOutlined />}
             />
         </div>
-        <div className="StorageLocation-selectContainer">
+        <div className="StorageLocation-buttonsLineItem StorageLocation-buttonsLineItem--select">
           <Select
             value={filesViewerDisplay}
             onChange={onFilesViewerDisplayChange}
