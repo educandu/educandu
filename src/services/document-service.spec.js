@@ -55,10 +55,12 @@ describe('document-service', () => {
     let room;
     let createdDocument;
     let createdRevision;
-    const lock = { _id: uniqueId.create() };
+    const roomLock = { _id: uniqueId.create() };
+    const documentLock = { _id: uniqueId.create() };
 
     beforeEach(async () => {
-      sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
+      sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
+      sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
 
       createdRevision = null;
@@ -119,6 +121,10 @@ describe('document-service', () => {
 
     it('takes a lock on the document', () => {
       sinon.assert.calledWith(lockStore.takeDocumentLock, createdRevision.documentId);
+    });
+
+    it('takes a lock on the room', () => {
+      sinon.assert.calledWith(lockStore.takeRoomLock, room._id);
     });
 
     it('saves the revision', () => {
@@ -193,7 +199,11 @@ describe('document-service', () => {
     });
 
     it('releases the lock on the document', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, lock);
+      sinon.assert.calledWith(lockStore.releaseLock, documentLock);
+    });
+
+    it('releases the lock on the room', () => {
+      sinon.assert.calledWith(lockStore.releaseLock, roomLock);
     });
   });
 
@@ -371,10 +381,12 @@ describe('document-service', () => {
   describe('hardDeleteDocument', () => {
     let room;
     let documentToDelete;
-    const lock = { _id: uniqueId.create() };
+    const roomLock = { _id: uniqueId.create() };
+    const documentLock = { _id: uniqueId.create() };
 
     beforeEach(async () => {
-      sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
+      sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
+      sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
 
       room = await createTestRoom(container);
@@ -386,6 +398,10 @@ describe('document-service', () => {
 
     it('takes a lock on the document', () => {
       sinon.assert.calledWith(lockStore.takeDocumentLock, documentToDelete._id);
+    });
+
+    it('takes a lock on the room', () => {
+      sinon.assert.calledWith(lockStore.takeRoomLock, room._id);
     });
 
     it('updates the room which container the document', async () => {
@@ -404,7 +420,11 @@ describe('document-service', () => {
     });
 
     it('releases the lock on the document', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, lock);
+      sinon.assert.calledWith(lockStore.releaseLock, documentLock);
+    });
+
+    it('releases the lock on the room', () => {
+      sinon.assert.calledWith(lockStore.releaseLock, roomLock);
     });
   });
 

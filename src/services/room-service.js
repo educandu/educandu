@@ -101,14 +101,19 @@ export default class RoomService {
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 
-  async updateRoom(room) {
-    const updatedRoom = {
-      ...room,
-      slug: room.slug || '',
-      description: room.description || '',
-      updatedOn: new Date()
-    };
-    await this.roomStore.saveRoom(updatedRoom);
+  async updateRoomMetadata(roomId, { name, slug, documentsMode, description }) {
+    await this.roomStore.updateRoomMetadata(
+      roomId,
+      {
+        name: name.trim(),
+        slug: (slug || '').trim(),
+        documentsMode,
+        description: (description || '').trim(),
+        updatedOn: new Date()
+      }
+    );
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
+
     return updatedRoom;
   }
 
@@ -218,7 +223,9 @@ export default class RoomService {
   async removeRoomMember({ room, memberUserId }) {
     const member = room.members.find(m => m.userId === memberUserId);
     const remainingMembers = ensureIsExcluded(room.members, member);
-    const updatedRoom = await this.updateRoom({ ...room, members: remainingMembers });
+    await this.roomStore.updateRoomMembers(room._id, remainingMembers);
+
+    const updatedRoom = await this.roomStore.getRoomById(room._id);
 
     return updatedRoom;
   }

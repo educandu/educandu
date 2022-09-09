@@ -36,7 +36,7 @@ describe('room-controller', () => {
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
-      updateRoom: sandbox.stub(),
+      updateRoomMetadata: sandbox.stub(),
       removeRoomMember: sandbox.stub(),
       deleteRoomInvitation: sandbox.stub()
     };
@@ -136,7 +136,7 @@ describe('room-controller', () => {
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        roomService.updateRoom.resolves(updatedRoom);
+        roomService.updateRoomMetadata.resolves(updatedRoom);
 
         req = { user, params: { roomId: room._id }, body: { ...requestBody } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -149,8 +149,8 @@ describe('room-controller', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should call roomService.updateRoom', () => {
-        sinon.assert.calledWith(roomService.updateRoom, { ...room, ...requestBody });
+      it('should call roomService.updateRoomMetadata', () => {
+        sinon.assert.calledWith(roomService.updateRoomMetadata, room._id, { ...requestBody });
       });
 
       it('should respond with the updated room', () => {

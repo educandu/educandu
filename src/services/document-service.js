@@ -148,13 +148,17 @@ class DocumentService {
   }
 
   async createDocument({ data, user }) {
-    let lock;
+    let roomLock;
+    let documentLock;
     const documentId = uniqueId.create();
 
     await this.createUploadDirectoryMarkerForDocument(documentId);
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
+      documentLock = await this.lockStore.takeDocumentLock(documentId);
+      if (data.roomId) {
+        roomLock = await this.lockStore.takeRoomLock(data.roomId);
+      }
 
       let newDocument;
       await this.transactionRunner.run(async session => {
@@ -189,8 +193,11 @@ class DocumentService {
       await this.deleteUploadDirectoryMarkerForDocument(documentId);
       throw error;
     } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
+      if (documentLock) {
+        await this.lockStore.releaseLock(documentLock);
+      }
+      if (roomLock) {
+        await this.lockStore.releaseLock(roomLock);
       }
     }
   }
@@ -258,9 +265,11 @@ class DocumentService {
   }
 
   async hardDeleteDocument(documentId) {
-    let lock;
+    let roomLock;
+    let documentLock;
+
     try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
+      documentLock = await this.lockStore.takeDocumentLock(documentId);
 
       logger.info(`Hard deleting document '${documentId}'`);
 
@@ -268,6 +277,7 @@ class DocumentService {
         const doc = await this.documentStore.getDocumentById(documentId, { session });
 
         if (doc.roomId) {
+          roomLock = await this.lockStore.takeRoomLock(doc.roomId);
           const room = await this.roomStore.getRoomById(doc.roomId, { session });
           room.documents = ensureIsExcluded(room.documents, doc._id);
           await this.roomStore.saveRoom(room, { session });
@@ -277,8 +287,11 @@ class DocumentService {
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
       });
     } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
+      if (documentLock) {
+        await this.lockStore.releaseLock(documentLock);
+      }
+      if (roomLock) {
+        await this.lockStore.releaseLock(roomLock);
       }
     }
   }

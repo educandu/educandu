@@ -1,6 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { roomDBSchema, roomMemberDBSchema } from '../domain/schemas/room-schemas.js';
+import { roomDBSchema, roomMemberDBSchema, roomMembersDBSchema, roomMetadataDBSchema } from '../domain/schemas/room-schemas.js';
 
 class RoomStore {
   static get inject() { return [Database]; }
@@ -69,6 +69,16 @@ class RoomStore {
   appendRoomMember({ roomId, member }, { session } = {}) {
     validate(member, roomMemberDBSchema);
     return this.collection.updateOne({ _id: roomId }, { $push: { members: member } }, { session });
+  }
+
+  updateRoomMetadata(roomId, metadata, { session } = {}) {
+    validate(metadata, roomMetadataDBSchema);
+    return this.collection.updateOne({ _id: roomId }, { $set: { ...metadata } }, { session });
+  }
+
+  updateRoomMembers(roomId, members, { session } = {}) {
+    validate({ members }, roomMembersDBSchema);
+    return this.collection.updateOne({ _id: roomId }, { $set: { members } }, { session });
   }
 
   saveRoom(room, { session } = {}) {
