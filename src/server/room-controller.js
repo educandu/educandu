@@ -223,7 +223,7 @@ export default class RoomController {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
-    const documentsMetadata = await this.documentService.getDocumentsMetadataByRoomId(roomId);
+    const documentsMetadata = await this.documentService.getDocumentsMetadataByIds(room.documents);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom(room);
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);

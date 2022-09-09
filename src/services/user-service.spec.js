@@ -246,13 +246,22 @@ describe('user-service', () => {
     });
 
     describe('when there are favorites', () => {
-      let favoriteDocument;
+      let favoriteDocumentMetadata;
       let favoriteRoom;
       let favoriteUser;
 
       beforeEach(async () => {
+        const favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document', createdBy: user._id });
+        favoriteDocumentMetadata = {
+          _id: favoriteDocument._id,
+          slug: favoriteDocument.slug,
+          title: favoriteDocument.title,
+          language: favoriteDocument.language,
+          createdOn: favoriteDocument.createdOn,
+          updatedOn: favoriteDocument.updatedOn,
+          revision: favoriteDocument.revision
+        };
         favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
-        favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document', createdBy: user._id });
         favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
 
         const favorites = [
@@ -287,11 +296,11 @@ describe('user-service', () => {
             }
           },
           {
-            id: favoriteDocument._id,
+            id: favoriteDocumentMetadata._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
             data: {
-              ...favoriteDocument
+              ...favoriteDocumentMetadata
             }
           },
           {

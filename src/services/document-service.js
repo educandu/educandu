@@ -126,6 +126,10 @@ class DocumentService {
     return this.documentStore.getDocumentsMetadataByRoomId(roomId);
   }
 
+  getDocumentsMetadataByIds(documentIds) {
+    return this.documentStore.getDocumentsMetadataByIds(documentIds);
+  }
+
   getDocumentRevisionById(documentRevisionId) {
     return this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
   }

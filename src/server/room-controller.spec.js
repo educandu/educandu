@@ -41,7 +41,7 @@ describe('room-controller', () => {
       deleteRoomInvitation: sandbox.stub()
     };
     documentService = {
-      getDocumentsMetadataByRoomId: sandbox.stub()
+      getDocumentsMetadataByIds: sandbox.stub()
     };
     userService = {
       getUserById: sandbox.stub()
@@ -305,7 +305,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        documents: [uniqueId.create()]
       };
       mappedRoom = { ...room };
     });
@@ -334,7 +335,7 @@ describe('room-controller', () => {
           user: { _id: 'owner' }
         };
 
-        documents = [];
+        documents = [{ _id: room.documents[0] }];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
         mappedDocuments = [];
@@ -343,7 +344,7 @@ describe('room-controller', () => {
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
 
-        documentService.getDocumentsMetadataByRoomId.resolves(documents);
+        documentService.getDocumentsMetadataByIds.resolves(documents);
         roomService.getRoomInvitations.resolves(invitations);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
@@ -369,8 +370,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
       });
 
-      it('should call getDocumentsMetadataByRoomId', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      it('should call getDocumentsMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
@@ -404,7 +405,7 @@ describe('room-controller', () => {
 
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
-        documentService.getDocumentsMetadataByRoomId.resolves(documents);
+        documentService.getDocumentsMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
@@ -425,8 +426,8 @@ describe('room-controller', () => {
         sinon.assert.notCalled(roomService.getRoomInvitations);
       });
 
-      it('should call getDocumentsMetadataByRoomId', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      it('should call getDocumentsMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {

@@ -25,15 +25,13 @@ import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
+import { roomShape, invitationShape, documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
-
-const sortDocuments = documents => [...documents].sort(by(d => d.createdOn));
 
 function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
   return {
@@ -63,7 +61,7 @@ export default function Room({ PageTemplate, initialState }) {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [documents, setDocuments] = useState(sortDocuments(initialState.documents));
+  const [documents, setDocuments] = useState(initialState.documents);
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
@@ -137,7 +135,7 @@ export default function Room({ PageTemplate, initialState }) {
         templateDocumentId: clonedOrTemplateDocumentId
       });
     } else {
-      setDocuments(sortDocuments([...documents, ...createdDocuments]));
+      setDocuments([...documents, ...createdDocuments]);
       setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
     }
   };
@@ -172,7 +170,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleDeleteDocumentClick = doc => {
     confirmDocumentDelete(t, doc.title, async () => {
       await documentApiClient.hardDeleteDocument(doc._id);
-      setDocuments(sortDocuments(ensureIsExcluded(documents, doc)));
+      setDocuments(ensureIsExcluded(documents, doc));
     });
   };
 
@@ -396,6 +394,6 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape).isRequired,
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };
