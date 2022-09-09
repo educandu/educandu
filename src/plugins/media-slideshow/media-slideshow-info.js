@@ -75,7 +75,7 @@ class MediaSlideshowInfo {
       })).required()
     });
 
-    joi.attempt(content, schema, { convert: false, noDefaults: true });
+    joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

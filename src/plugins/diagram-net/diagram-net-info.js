@@ -42,7 +42,7 @@ class DiagramNetInfo {
       width: joi.number().min(0).max(100).required()
     });
 
-    joi.attempt(content, schema, { convert: false, noDefaults: true });
+    joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });
   }
 
   cloneContent(content) {

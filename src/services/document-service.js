@@ -448,14 +448,18 @@ class DocumentService {
   }
 
   async validateDocument(documentId) {
+    const errorCases = [];
+
     const doc = await this.documentStore.getDocumentById(documentId);
     for (const section of doc.sections) {
       try {
         validateSection(section, this.pluginRegistry);
       } catch (error) {
-        error.documentId = doc._id;
-        error.sectionKey = section.key;
-        throw error;
+        errorCases.push({
+          ...error,
+          documentId: doc._id,
+          sectionKey: section.key
+        });
       }
     }
 
@@ -465,11 +469,19 @@ class DocumentService {
         try {
           validateSection(section, this.pluginRegistry);
         } catch (error) {
-          error.documentRevisionId = revision._id;
-          error.sectionKey = section.key;
-          throw error;
+          errorCases.push({
+            ...error,
+            documentRevisionId: revision._id,
+            sectionKey: section.key
+          });
         }
       }
+    }
+
+    if (errorCases.length) {
+      const err = new Error(`Error validating document with ID ${documentId}`);
+      err.cases = errorCases;
+      throw err;
     }
   }
 

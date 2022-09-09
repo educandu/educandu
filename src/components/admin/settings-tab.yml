@@ -31,9 +31,9 @@ templateDocumentHeader:
 licenseHeader:
   en: License
   de: Lizenz
-dataMigrationHeader:
-  en: Data migration
-  de: Datenmigration
+technicalMaintenanceTasksHeader:
+  en: Technical maintenance tasks
+  de: Technische Instandhaltungsaufgaben
 lastExecution:
   en: Last execution
   de: Letzte Ausführung

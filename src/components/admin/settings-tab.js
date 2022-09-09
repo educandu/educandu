@@ -224,18 +224,18 @@ function SettingsTab({
       </Collapse>
 
       <Collapse className="SettingsTab-collapse SettingsTab-collapse--danger">
-        <Collapse.Panel header={t('dataMigrationHeader')} key="dataMigration">
-          <div className="SettingsTab-collapseRow">
-            <Button onClick={handleStartDocumentRegenerationClick} danger>
-              {t('documentRegenerationButton')}
-            </Button>
-            {renderLastBatchExecution(lastDocumentRegenerationBatch)}
-          </div>
+        <Collapse.Panel header={t('technicalMaintenanceTasksHeader')} key="technicalMaintenanceTasks">
           <div className="SettingsTab-collapseRow">
             <Button onClick={handleStartDocumentValidationClick} danger>
               {t('documentValidationButton')}
             </Button>
             {renderLastBatchExecution(lastDocumentValidationBatch)}
+          </div>
+          <div className="SettingsTab-collapseRow">
+            <Button onClick={handleStartDocumentRegenerationClick} danger>
+              {t('documentRegenerationButton')}
+            </Button>
+            {renderLastBatchExecution(lastDocumentRegenerationBatch)}
           </div>
           <div className="SettingsTab-collapseRow">
             <Button onClick={handleStartCdnResourcesConsolidationClick} danger>
