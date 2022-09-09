@@ -55,8 +55,12 @@ describe('document-service', () => {
     let room;
     let createdDocument;
     let createdRevision;
+    const lock = { _id: uniqueId.create() };
 
     beforeEach(async () => {
+      sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
+      sandbox.stub(lockStore, 'releaseLock');
+
       createdRevision = null;
       room = await createTestRoom(container);
 
@@ -113,6 +117,10 @@ describe('document-service', () => {
       expect(createdRevision.documentId).toMatch(/\w+/);
     });
 
+    it('takes a lock on the document', () => {
+      sinon.assert.calledWith(lockStore.takeDocumentLock, createdRevision.documentId);
+    });
+
     it('saves the revision', () => {
       expect(createdRevision).toMatchObject({
         ...data,
@@ -150,7 +158,7 @@ describe('document-service', () => {
       expect(createdDocument).toBeDefined();
     });
 
-    it('updated the room containing the document', async () => {
+    it('updates the room containing the document', async () => {
       const updatedRoom = await db.rooms.findOne({ _id: room._id });
       expect(updatedRoom.documents).toEqual([createdDocument._id]);
     });
@@ -182,6 +190,10 @@ describe('document-service', () => {
 
     it('saves all referenced cdn resources with the document', () => {
       expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+    });
+
+    it('releases the lock on the document', () => {
+      sinon.assert.calledWith(lockStore.releaseLock, lock);
     });
   });
 
@@ -353,6 +365,46 @@ describe('document-service', () => {
 
     it('saves all referenced cdn resources with the document', () => {
       expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+    });
+  });
+
+  describe('hardDeleteDocument', () => {
+    let room;
+    let documentToDelete;
+    const lock = { _id: uniqueId.create() };
+
+    beforeEach(async () => {
+      sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
+      sandbox.stub(lockStore, 'releaseLock');
+
+      room = await createTestRoom(container);
+      documentToDelete = await createTestDocument(container, user, { roomId: room._id });
+      await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
+
+      await sut.hardDeleteDocument(documentToDelete._id);
+    });
+
+    it('takes a lock on the document', () => {
+      sinon.assert.calledWith(lockStore.takeDocumentLock, documentToDelete._id);
+    });
+
+    it('updates the room which container the document', async () => {
+      const updatedRoom = await db.rooms.findOne({ _id: room._id });
+      expect(updatedRoom.documents).toEqual(['otherDocumentId']);
+    });
+
+    it('deletes the document revisions', async () => {
+      const documentRevisions = await db.documentRevisions.find({ documentId: documentToDelete._id }).toArray();
+      expect(documentRevisions).toEqual([]);
+    });
+
+    it('deletes the document', async () => {
+      const documentAfterDeletion = await db.documents.findOne({ documentId: documentToDelete._id });
+      expect(documentAfterDeletion).toEqual(null);
+    });
+
+    it('releases the lock on the document', () => {
+      sinon.assert.calledWith(lockStore.releaseLock, lock);
     });
   });
 
