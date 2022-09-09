@@ -26,12 +26,14 @@ class AdminController {
       settings,
       storagePlans,
       lastDocumentRegenerationBatch,
+      lastDocumentValidationBatch,
       lastCdnResourcesConsolidationBatch,
       lastCdnUploadDirectoryCreationBatch
     ] = await Promise.all([
       this.settingService.getAllSettings(),
       this.storageService.getAllStoragePlansWithAssignedUserCount(),
       this.batchService.getLastBatch(BATCH_TYPE.documentRegeneration),
+      this.batchService.getLastBatch(BATCH_TYPE.documentValidation),
       this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation),
       this.batchService.getLastBatch(BATCH_TYPE.cdnUploadDirectoryCreation)
     ]);
@@ -41,6 +43,9 @@ class AdminController {
       storagePlans,
       lastDocumentRegenerationBatch: lastDocumentRegenerationBatch
         ? await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user)
+        : null,
+      lastDocumentValidationBatch: lastDocumentValidationBatch
+        ? await this.clientDataMappingService.mapBatch(lastDocumentValidationBatch, user)
         : null,
       lastCdnResourcesConsolidationBatch: lastCdnResourcesConsolidationBatch
         ? await this.clientDataMappingService.mapBatch(lastCdnResourcesConsolidationBatch, user)
@@ -56,6 +61,13 @@ class AdminController {
   async handlePostDocumentRegenerationRequest(req, res) {
     const { user } = req;
     const batch = await this.batchService.createDocumentRegenerationBatch(user);
+
+    return res.status(201).send(batch);
+  }
+
+  async handlePostDocumentValidationRequest(req, res) {
+    const { user } = req;
+    const batch = await this.batchService.createDocumentValidationBatch(user);
 
     return res.status(201).send(batch);
   }
@@ -87,6 +99,12 @@ class AdminController {
       '/api/v1/admin/document-regeneration',
       needsPermission(permissions.ADMIN),
       (req, res) => this.handlePostDocumentRegenerationRequest(req, res)
+    );
+
+    router.post(
+      '/api/v1/admin/document-validation',
+      needsPermission(permissions.ADMIN),
+      (req, res) => this.handlePostDocumentValidationRequest(req, res)
     );
 
     router.post(

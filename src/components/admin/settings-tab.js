@@ -27,6 +27,7 @@ const logger = new Logger(import.meta.url);
 function SettingsTab({
   initialSettings,
   lastDocumentRegenerationBatch,
+  lastDocumentValidationBatch,
   lastCdnResourcesConsolidationBatch,
   lastCdnUploadDirectoryCreationBatch,
   onDirtyStateChange,
@@ -100,6 +101,15 @@ function SettingsTab({
   const handleStartDocumentRegenerationClick = async () => {
     try {
       const batch = await adminApiClient.postDocumentRegenerationRequest();
+      window.location = routes.getBatchUrl(batch._id);
+    } catch (error) {
+      handleApiError({ t, logger, error });
+    }
+  };
+
+  const handleStartDocumentValidationClick = async () => {
+    try {
+      const batch = await adminApiClient.postDocumentValidationRequest();
       window.location = routes.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
@@ -214,7 +224,13 @@ function SettingsTab({
       </Collapse>
 
       <Collapse className="SettingsTab-collapse SettingsTab-collapse--danger">
-        <Collapse.Panel header={t('dataMigrationHeader')} key="dataMigration">
+        <Collapse.Panel header={t('technicalMaintenanceTasksHeader')} key="technicalMaintenanceTasks">
+          <div className="SettingsTab-collapseRow">
+            <Button onClick={handleStartDocumentValidationClick} danger>
+              {t('documentValidationButton')}
+            </Button>
+            {renderLastBatchExecution(lastDocumentValidationBatch)}
+          </div>
           <div className="SettingsTab-collapseRow">
             <Button onClick={handleStartDocumentRegenerationClick} danger>
               {t('documentRegenerationButton')}
@@ -253,6 +269,7 @@ SettingsTab.propTypes = {
   lastCdnResourcesConsolidationBatch: batchShape,
   lastCdnUploadDirectoryCreationBatch: batchShape,
   lastDocumentRegenerationBatch: batchShape,
+  lastDocumentValidationBatch: batchShape,
   onDirtyStateChange: PropTypes.func.isRequired,
   onSettingsSaved: PropTypes.func.isRequired
 };
@@ -260,7 +277,8 @@ SettingsTab.propTypes = {
 SettingsTab.defaultProps = {
   lastCdnResourcesConsolidationBatch: null,
   lastCdnUploadDirectoryCreationBatch: null,
-  lastDocumentRegenerationBatch: null
+  lastDocumentRegenerationBatch: null,
+  lastDocumentValidationBatch: null
 };
 
 export default SettingsTab;

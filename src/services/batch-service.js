@@ -97,6 +97,27 @@ class BatchService {
     return batch;
   }
 
+  async createDocumentValidationBatch(user) {
+    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentValidation);
+
+    if (existingActiveBatch) {
+      throw new BadRequest('Another document validation batch is already in progress');
+    }
+
+    const batch = this._createBatchObject(user._id, BATCH_TYPE.documentValidation);
+
+    const allDocumentIds = await this.documentStore.getAllDocumentIds();
+
+    const tasks = allDocumentIds.map(documentId => this._createTaskObject(batch._id, TASK_TYPE.documentValidation, { documentId }));
+
+    await this.transactionRunner.run(async session => {
+      await this.batchStore.createBatch(batch, { session });
+      await this.taskStore.addTasks(tasks, { session });
+    });
+
+    return batch;
+  }
+
   async createCdnResourcesConsolidationBatch(user) {
     const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.cdnResourcesConsolidation);
 

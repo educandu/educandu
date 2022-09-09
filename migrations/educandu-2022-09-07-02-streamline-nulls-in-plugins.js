@@ -79,6 +79,14 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
       }
     }
 
+    if (section.type === 'pdf-viewer') {
+      if (section.content.sourceUrl === null) {
+        // Convert null -> empty string
+        section.content.sourceUrl = '';
+        sectionWasUpdated = true;
+      }
+    }
+
     if (section.type === 'catalog') {
       for (const item of section.content.items) {
         // Ensure property
@@ -103,10 +111,12 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
           test.answerAbcCode = test.fullAbcCode;
           delete test.startAbcCode;
           delete test.fullAbcCode;
+          sectionWasUpdated = true;
         }
         // Ensure value
         if (!test.mode) {
           test.mode = TEST_MODE.image;
+          sectionWasUpdated = true;
         }
         // Ensure object
         if (!test.sound) {
@@ -115,6 +125,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
             sourceUrl: '',
             copyrightNotice: ''
           };
+          sectionWasUpdated = true;
         }
         // Ensure object
         if (!test.questionImage) {
@@ -123,6 +134,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
             sourceUrl: '',
             copyrightNotice: ''
           };
+          sectionWasUpdated = true;
         }
         // Ensure object
         if (!test.answerImage) {
@@ -131,14 +143,17 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
             sourceUrl: '',
             copyrightNotice: ''
           };
+          sectionWasUpdated = true;
         }
         // Ensure value
         if (!test.questionAbcCode) {
           test.questionAbcCode = '';
+          sectionWasUpdated = true;
         }
         // Ensure value
         if (!test.answerAbcCode) {
           test.answerAbcCode = '';
+          sectionWasUpdated = true;
         }
         // Convert null -> empty string
         if (test.sound.sourceUrl === null) {

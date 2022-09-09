@@ -113,12 +113,16 @@ export function extractCdnResources(sections, pluginRegistry) {
   ].sort();
 }
 
+export function validateSection(section, pluginRegistry) {
+  if (section.content) {
+    const info = pluginRegistry.tryGetInfo(section.type);
+    info?.validateContent?.(section.content);
+  }
+}
+
 export function validateSections(sections, pluginRegistry) {
   for (const section of sections) {
-    if (section.content) {
-      const info = pluginRegistry.tryGetInfo(section.type);
-      info?.validateContent?.(section.content);
-    }
+    validateSection(section, pluginRegistry);
   }
 }
 

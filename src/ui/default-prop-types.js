@@ -296,6 +296,14 @@ export const documentImportTaskShape = PropTypes.shape({
   }).isRequired
 });
 
+export const documentValidationTaskShape = PropTypes.shape({
+  ...commonTaskProps,
+  taskType: PropTypes.oneOf([TASK_TYPE.documentValidation]),
+  taskParams: PropTypes.shape({
+    documentId: PropTypes.string.isRequired
+  }).isRequired
+});
+
 export const documentRegenerationTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.documentRegeneration]),
@@ -344,6 +352,13 @@ export const documentImportBatchDetailsShape = PropTypes.shape({
   batchType: PropTypes.oneOf([BATCH_TYPE.documentImport]).isRequired,
   batchParams: importSourceShape.isRequired,
   tasks: PropTypes.arrayOf(documentImportTaskShape).isRequired
+});
+
+export const documentValidationBatchDetailsShape = PropTypes.shape({
+  ...commonBatchProps,
+  batchType: PropTypes.oneOf([BATCH_TYPE.documentValidation]).isRequired,
+  batchParams: PropTypes.shape({}),
+  tasks: PropTypes.arrayOf(documentValidationTaskShape).isRequired
 });
 
 export const documentRegenerationBatchDetailsShape = PropTypes.shape({
