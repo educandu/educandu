@@ -1546,6 +1546,20 @@
     }
   },
   {
+    "namespace": "searchBar",
+    "language": "en",
+    "resources": {
+      "searchPlaceholder": "Search terms"
+    }
+  },
+  {
+    "namespace": "searchBar",
+    "language": "de",
+    "resources": {
+      "searchPlaceholder": "Suchbegriffe"
+    }
+  },
+  {
     "namespace": "sortingSelector",
     "language": "en",
     "resources": {
@@ -2259,7 +2273,6 @@
       "sortedByUser": "Sorted by user",
       "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
-      "searchPlaceholder": "Search terms",
       "search": "Search",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
       "capacity": "Capacity",
@@ -2412,7 +2425,6 @@
       "sortedByUser": "Nach Benutzer sortiert",
       "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
-      "searchPlaceholder": "Suchbegriffe",
       "search": "Suche",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
       "capacity": "Kapazität",
