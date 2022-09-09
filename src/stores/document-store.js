@@ -54,6 +54,10 @@ class DocumentStore {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentMetadataProjection, session }).toArray();
   }
 
+  getDocumentsExtendedMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
   getDocumentsMetadataBySlug(slug, { session } = {}) {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }

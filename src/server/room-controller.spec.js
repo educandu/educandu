@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
@@ -41,7 +42,7 @@ describe('room-controller', () => {
       deleteRoomInvitation: sandbox.stub()
     };
     documentService = {
-      getDocumentsMetadataByIds: sandbox.stub()
+      getDocumentsExtendedMetadataByIds: sandbox.stub()
     };
     userService = {
       getUserById: sandbox.stub()
@@ -338,13 +339,13 @@ describe('room-controller', () => {
         documents = [{ _id: room.documents[0] }];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
-        mappedDocuments = [];
+        mappedDocuments = cloneDeep(documents);
         mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
 
-        documentService.getDocumentsMetadataByIds.resolves(documents);
+        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
         roomService.getRoomInvitations.resolves(invitations);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
@@ -370,8 +371,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
       });
 
-      it('should call getDocumentsMetadataByIds', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByIds, room.documents);
+      it('should call getDocumentsExtendedMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
@@ -399,13 +400,13 @@ describe('room-controller', () => {
           user: { _id: 'member' }
         };
 
-        documents = [];
-        mappedDocuments = [];
+        documents = [{ _id: room.documents[0] }];
+        mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
-        documentService.getDocumentsMetadataByIds.resolves(documents);
+        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
@@ -426,8 +427,8 @@ describe('room-controller', () => {
         sinon.assert.notCalled(roomService.getRoomInvitations);
       });
 
-      it('should call getDocumentsMetadataByIds', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByIds, room.documents);
+      it('should call getDocumentsExtendedMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {

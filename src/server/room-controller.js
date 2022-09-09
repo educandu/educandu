@@ -223,10 +223,11 @@ export default class RoomController {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
-    const documentsMetadata = await this.documentService.getDocumentsMetadataByIds(room.documents);
+    const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
+    const sortedDocumentsMetadata = room.documents.map(documentId => documentsMetadata.find(doc => doc._id === documentId));
 
     const mappedRoom = await this.clientDataMappingService.mapRoom(room);
-    const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
+    const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(sortedDocumentsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, documents: mappedDocumentsMetadata, invitations: mappedInvitations });

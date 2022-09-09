@@ -19,23 +19,15 @@
   margin-bottom: 50px;
 }
 
-.RoomPage-documentInfo {
-  .m-control-group-wide;
+.RoomPage-documentRow {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  gap: @edu-control-spacing-wide;
 }
 
-.RoomPage-documentInfoItem {
-  padding: 10px 0;
-
-  &.RoomPage-documentInfoItem--icons {
-    white-space: nowrap;
-    padding-left: 5px;
-  }
-}
-
-.RoomPage-documentDeleteButton {
-  display: inline-flex;
-  align-items: baseline;
-  margin: 0 5px;
+.RoomPage-documentRowTitle {
+  .m-overflow-ellipsis;
 }
 
 .RoomPage-membersRow {

@@ -130,6 +130,10 @@ class DocumentService {
     return this.documentStore.getDocumentsMetadataByIds(documentIds);
   }
 
+  getDocumentsExtendedMetadataByIds(documentIds) {
+    return this.documentStore.getDocumentsExtendedMetadataByIds(documentIds);
+  }
+
   getDocumentRevisionById(documentRevisionId) {
     return this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
   }
