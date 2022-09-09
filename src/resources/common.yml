@@ -300,9 +300,6 @@ sortedByOrigin:
 sortedByArchived:
   en: Sorted by archived status
   de: Nach Archivierungsstatus sortiert
-searchPlaceholder:
-  en: Search terms
-  de: Suchbegriffe
 search:
   en: Search
   de: Suche

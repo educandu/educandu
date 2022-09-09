@@ -34,7 +34,7 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
       <Search
         size="large"
         ref={inputRef}
-        placeholder={t('common:searchPlaceholder')}
+        placeholder={t('searchPlaceholder')}
         value={searchText}
         onSearch={handleSearch}
         onChange={handleSearchInputChange}
