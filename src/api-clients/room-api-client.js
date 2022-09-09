@@ -17,10 +17,10 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  updateRoom({ roomId, name, slug, documentsMode, description }) {
+  updateRoomMetadata({ roomId, name, slug, documentsMode, description }) {
     return this.httpClient
       .patch(
-        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/metadata`,
         { name, slug, documentsMode, description },
         { responseType: 'json' }
       )

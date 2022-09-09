@@ -13,6 +13,7 @@ import BatchStore from '../stores/batch-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { ensureIsExcluded } from '../utils/array-utils.js';
 import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
@@ -147,13 +148,17 @@ class DocumentService {
   }
 
   async createDocument({ data, user }) {
-    let lock;
+    let roomLock;
+    let documentLock;
     const documentId = uniqueId.create();
 
     await this.createUploadDirectoryMarkerForDocument(documentId);
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
+      documentLock = await this.lockStore.takeDocumentLock(documentId);
+      if (data.roomId) {
+        roomLock = await this.lockStore.takeRoomLock(data.roomId);
+      }
 
       let newDocument;
       await this.transactionRunner.run(async session => {
@@ -175,6 +180,12 @@ class DocumentService {
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         await this.documentStore.saveDocument(newDocument, { session });
+
+        if (newDocument.roomId) {
+          const room = await this.roomStore.getRoomById(newDocument.roomId, { session });
+          room.documents.push(newDocument._id);
+          await this.roomStore.saveRoom(room, { session });
+        }
       });
 
       return newDocument;
@@ -182,8 +193,11 @@ class DocumentService {
       await this.deleteUploadDirectoryMarkerForDocument(documentId);
       throw error;
     } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
+      if (documentLock) {
+        await this.lockStore.releaseLock(documentLock);
+      }
+      if (roomLock) {
+        await this.lockStore.releaseLock(roomLock);
       }
     }
   }
@@ -251,19 +265,33 @@ class DocumentService {
   }
 
   async hardDeleteDocument(documentId) {
-    let lock;
-    try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
+    let roomLock;
+    let documentLock;
 
-      logger.info(`Hard deleting external document '${documentId}'`);
+    try {
+      documentLock = await this.lockStore.takeDocumentLock(documentId);
+
+      logger.info(`Hard deleting document '${documentId}'`);
 
       await this.transactionRunner.run(async session => {
+        const doc = await this.documentStore.getDocumentById(documentId, { session });
+
+        if (doc.roomId) {
+          roomLock = await this.lockStore.takeRoomLock(doc.roomId);
+          const room = await this.roomStore.getRoomById(doc.roomId, { session });
+          room.documents = ensureIsExcluded(room.documents, doc._id);
+          await this.roomStore.saveRoom(room, { session });
+        }
+
         await this.documentStore.deleteDocumentById(documentId, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
       });
     } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
+      if (documentLock) {
+        await this.lockStore.releaseLock(documentLock);
+      }
+      if (roomLock) {
+        await this.lockStore.releaseLock(roomLock);
       }
     }
   }

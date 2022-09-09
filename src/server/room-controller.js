@@ -85,7 +85,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
-    const updatedRoom = await this.roomService.updateRoom({ ...room, name, slug, documentsMode, description });
+    const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, documentsMode, description });
     return res.status(201).send(updatedRoom);
   }
 
@@ -269,7 +269,7 @@ export default class RoomController {
     );
 
     router.patch(
-      '/api/v1/rooms/:roomId',
+      '/api/v1/rooms/:roomId/metadata',
       [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomBodySchema)],
       (req, res) => this.handlePatchRoom(req, res)
     );

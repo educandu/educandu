@@ -62,17 +62,30 @@ export const roomMemberDBSchema = joi.object({
   joinedOn: joi.date().required()
 });
 
-export const roomDBSchema = joi.object({
-  _id: idOrKeySchema.required(),
+const roomMetadataDBProps = {
   name: joi.string().required(),
   slug: slugSchema.required(),
   description: joi.string().allow('').required(),
+  updatedOn: joi.date().required(),
+  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
+};
+
+const roomMembersDBProps = {
+  members: joi.array().required().items(roomMemberDBSchema)
+};
+
+export const roomMetadataDBSchema = joi.object(roomMetadataDBProps);
+
+export const roomMembersDBSchema = joi.object(roomMembersDBProps);
+
+export const roomDBSchema = joi.object({
+  ...roomMetadataDBProps,
+  ...roomMembersDBProps,
+  _id: idOrKeySchema.required(),
   owner: idOrKeySchema.required(),
   createdBy: idOrKeySchema.required(),
   createdOn: joi.date().required(),
-  updatedOn: joi.date().required(),
-  members: joi.array().required().items(roomMemberDBSchema),
-  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
+  documents: joi.array().required().items(idOrKeySchema)
 });
 
 export const roomInvitationDBSchema = joi.object({
