@@ -76,6 +76,8 @@ export default class TaskProcessor {
         errors: []
       };
 
+      let hasFailedIrrecoverably = false;
+
       const taskProcessor = this.taskProcessors[nextTask.taskType];
       if (!taskProcessor) {
         throw new Error(`Task type ${nextTask.taskType} is unknown`);
@@ -85,6 +87,7 @@ export default class TaskProcessor {
         logger.debug('Processing task');
         await taskProcessor.process(nextTask, batchParams, ctx);
       } catch (processingError) {
+        hasFailedIrrecoverably = !!processingError.isIrrecoverable;
         logger.debug(`Error processing task '${nextTask?._id}':`, processingError);
         currentAttempt.errors.push(serializeError(processingError));
       }
@@ -92,10 +95,14 @@ export default class TaskProcessor {
       currentAttempt.completedOn = new Date();
       nextTask.attempts.push(currentAttempt);
 
-      const attemptsExhausted = nextTask.attempts.length >= this.serverConfig.taskProcessing.maxAttempts;
-      const taskSuccessfullyProcessed = currentAttempt.errors.length === 0;
-      if (taskSuccessfullyProcessed || attemptsExhausted) {
-        logger.debug(`Marking task as processed due to: ${attemptsExhausted ? 'exhausted attempts' : 'task succesfully processed'}`);
+      if (currentAttempt.errors.length === 0) {
+        logger.debug('Task succesfully processed: marking task as processed.');
+        nextTask.processed = true;
+      } else if (hasFailedIrrecoverably) {
+        logger.debug('An irrecoverable error happened: marking task as processed.');
+        nextTask.processed = true;
+      } else if (nextTask.attempts.length >= this.serverConfig.taskProcessing.maxAttempts) {
+        logger.debug('Maximum attempts exhausted: marking task as processed.');
         nextTask.processed = true;
       }
 

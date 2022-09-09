@@ -7,6 +7,7 @@ import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
+import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 
 describe('task-processor', () => {
 
@@ -20,6 +21,7 @@ describe('task-processor', () => {
   let lockStore;
   let serverConfig;
   let documentImportTaskProcessor;
+  let documentValidationTaskProcessor;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -27,6 +29,7 @@ describe('task-processor', () => {
     lockStore = container.get(LockStore);
     serverConfig = container.get(ServerConfig);
     documentImportTaskProcessor = container.get(DocumentImportTaskProcessor);
+    documentValidationTaskProcessor = container.get(DocumentValidationTaskProcessor);
     sut = container.get(TaskProcessor);
   });
 
@@ -37,6 +40,7 @@ describe('task-processor', () => {
     sandbox.stub(lockStore, 'takeTaskLock');
     sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(documentImportTaskProcessor, 'process');
+    sandbox.stub(documentValidationTaskProcessor, 'process');
     sandbox.stub(serverConfig, 'taskProcessing').value({ maxAttempts: 2 });
   });
 
@@ -153,6 +157,55 @@ describe('task-processor', () => {
 
       it('should throw an error', () => {
         expect(thrownError?.message).toBe('Task type abc is unknown');
+      });
+    });
+
+    describe('when task processing fails with an irrecoverable error', () => {
+      let expectedError;
+
+      beforeEach(async () => {
+        ctx = { cancellationRequested: false };
+
+        nextTask = { _id: taskId, taskType: TASK_TYPE.documentValidation, processed: false, attempts: [] };
+
+        lockStore.takeTaskLock.resolves(lock);
+        taskStore.getUnprocessedTaskById.resolves(nextTask);
+        expectedError = new Error('Processing failure 1');
+        expectedError.isIrrecoverable = true;
+        documentValidationTaskProcessor.process.rejects(expectedError);
+
+        await sut.process(taskId, batchParams, ctx);
+      });
+
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
+      });
+
+      it('should call taskStore.getUnprocessedTaskById', () => {
+        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+      });
+
+      it('should call documentValidationTaskProcessor.process', () => {
+        sinon.assert.calledOnceWithExactly(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
+      });
+
+      it('should call taskStore.saveTask', () => {
+        sinon.assert.calledWith(taskStore.saveTask, {
+          _id: taskId,
+          taskType: TASK_TYPE.documentValidation,
+          processed: true,
+          attempts: [
+            {
+              startedOn: now,
+              completedOn: now,
+              errors: [serializeError(expectedError)]
+            }
+          ]
+        });
+      });
+
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 

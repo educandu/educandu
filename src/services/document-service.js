@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import by from 'thenby';
 import httpErrors from 'http-errors';
 import deepEqual from 'fast-deep-equal';
@@ -509,6 +511,7 @@ class DocumentService {
     if (errorCases.length) {
       const err = new Error(`Error validating document with ID ${documentId}`);
       err.cases = errorCases;
+      err.isIrrecoverable = true;
       throw err;
     }
   }
