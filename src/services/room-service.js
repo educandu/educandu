@@ -75,7 +75,8 @@ export default class RoomService {
       createdBy: user._id,
       createdOn: new Date(),
       updatedOn: new Date(),
-      members: []
+      members: [],
+      documents: []
     };
 
     try {

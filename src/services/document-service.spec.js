@@ -21,11 +21,9 @@ describe('document-service', () => {
   const sandbox = sinon.createSandbox();
   const now = new Date();
 
+  let lockStore;
   let container;
   let user;
-
-  let lockStore;
-
   let sut;
   let db;
 
@@ -54,18 +52,19 @@ describe('document-service', () => {
 
   describe('createDocument', () => {
     let data;
+    let room;
     let createdDocument;
     let createdRevision;
 
-    beforeEach(() => {
-      createdRevision = null;
-    });
-
     beforeEach(async () => {
+      createdRevision = null;
+      room = await createTestRoom(container);
+
       data = {
         title: 'Title',
         slug: 'my-doc',
         language: 'en',
+        roomId: room._id,
         sections: [
           {
             ...createDefaultSection(),
@@ -149,6 +148,11 @@ describe('document-service', () => {
 
     it('creates a document', () => {
       expect(createdDocument).toBeDefined();
+    });
+
+    it('updated the room containing the document', async () => {
+      const updatedRoom = await db.rooms.findOne({ _id: room._id });
+      expect(updatedRoom.documents).toEqual([createdDocument._id]);
     });
 
     it('saves the revision data onto the document', () => {

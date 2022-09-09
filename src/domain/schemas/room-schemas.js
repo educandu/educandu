@@ -72,6 +72,7 @@ export const roomDBSchema = joi.object({
   createdOn: joi.date().required(),
   updatedOn: joi.date().required(),
   members: joi.array().required().items(roomMemberDBSchema),
+  documents: joi.array().required().items(idOrKeySchema),
   documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
 });
 

@@ -167,12 +167,16 @@ export async function createTestRoom(container, roomValues = {}) {
 
   const room = {
     _id: roomValues._id || uniqueId.create(),
+    slug: roomValues.slug || '',
     name: roomValues.name || 'my-room',
+    description: roomValues.description || '',
     documentsMode: roomValues.documentsMode || ROOM_DOCUMENTS_MODE.exclusive,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),
-    members: roomValues.members || []
+    updatedOn: roomValues.updatedOn || new Date(),
+    members: roomValues.members || [],
+    documents: roomValues.documents || []
   };
   await db.rooms.insertOne(room);
   return room;

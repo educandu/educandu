@@ -75,7 +75,8 @@ describe('room-service', () => {
         createdOn: now,
         createdBy: myUser._id,
         updatedOn: now,
-        members: []
+        members: [],
+        documents: []
       });
     });
 
@@ -310,7 +311,8 @@ describe('room-service', () => {
             userId: otherUser._id,
             joinedOn: new Date()
           }
-        ]
+        ],
+        documents: []
       });
     });
 
