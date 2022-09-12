@@ -223,10 +223,6 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleDocumentDropdownClick = () => {
-
-  };
-
   const renderDocumentMenu = (doc, index) => {
     const items = [
       {
@@ -255,7 +251,7 @@ export default function Room({ PageTemplate, initialState }) {
     ];
     const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, index, menuItem)} />;
     return (
-      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} onClick={handleDocumentDropdownClick}>
+      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
         <Button type="ghost" icon={<SettingsIcon />} size="small" />
       </Dropdown>
     );

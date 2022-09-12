@@ -24,10 +24,17 @@
   align-items: center;
   grid-template-columns: 1fr auto;
   gap: @edu-control-spacing-wide;
+  padding: 10px;
+  border-radius: @edu-border-radius-base;
+
+  &:hover {
+    background-color: @edu-background-color-light;
+  }
 }
 
 .RoomPage-documentRowTitle {
   .m-overflow-ellipsis;
+  padding-right: 10px;
 }
 
 .RoomPage-membersRow {
