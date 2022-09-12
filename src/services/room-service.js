@@ -12,9 +12,9 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import { getPathForPrivateRoom } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
+  STORAGE_DIRECTORY_MARKER_NAME,
   INVALID_ROOM_INVITATION_REASON,
-  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
-  STORAGE_DIRECTORY_MARKER_NAME
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
 } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -112,6 +112,13 @@ export default class RoomService {
         updatedOn: new Date()
       }
     );
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
+
+    return updatedRoom;
+  }
+
+  async updateRoomDocuments(roomId, { documents }) {
+    await this.roomStore.updateRoomDocuments(roomId, { documents });
     const updatedRoom = await this.roomStore.getRoomById(roomId);
 
     return updatedRoom;

@@ -1,6 +1,6 @@
 import { validate } from '../validation.js';
 import { ROOM_DOCUMENTS_MODE } from '../constants.js';
-import { postRoomBodySchema, patchRoomBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
+import { postRoomBodySchema, patchRoomMetadataBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
   describe('when the body contains the required data', () => {
@@ -49,7 +49,7 @@ describe('postRoomBodySchema', () => {
   });
 });
 
-describe('patchRoomBodySchema', () => {
+describe('patchRoomMetadataBodySchema', () => {
   describe('when the body contains the required data', () => {
     it('should pass validation', () => {
       const body = {
@@ -57,7 +57,7 @@ describe('patchRoomBodySchema', () => {
         slug: '',
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
-      expect(() => validate(body, patchRoomBodySchema)).not.toThrow();
+      expect(() => validate(body, patchRoomMetadataBodySchema)).not.toThrow();
     });
   });
 
@@ -68,7 +68,7 @@ describe('patchRoomBodySchema', () => {
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
-      expect(() => validate(body, patchRoomBodySchema)).toThrow();
+      expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
     });
   });
 
@@ -79,7 +79,7 @@ describe('patchRoomBodySchema', () => {
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive
       };
 
-      expect(() => validate(body, patchRoomBodySchema)).toThrow();
+      expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
     });
   });
 
@@ -90,7 +90,7 @@ describe('patchRoomBodySchema', () => {
         slug: null
       };
 
-      expect(() => validate(body, patchRoomBodySchema)).toThrow();
+      expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
     });
   });
 
@@ -101,7 +101,7 @@ describe('patchRoomBodySchema', () => {
         slug: ''
       };
 
-      expect(() => validate(body, patchRoomBodySchema)).toThrow();
+      expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
     });
   });
 });

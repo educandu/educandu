@@ -17,7 +17,6 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
-import { ensureIsExcluded } from '../../utils/array-utils.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -25,6 +24,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
+import { ensureIsExcluded, swapItemsAt } from '../../utils/array-utils.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
@@ -54,6 +54,10 @@ function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
   };
 }
 
+function getSortedDocuments(room, documents) {
+  return room.documents.map(documentId => documents.find(doc => doc._id === documentId));
+}
+
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const formRef = useRef(null);
@@ -64,7 +68,7 @@ export default function Room({ PageTemplate, initialState }) {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [documents, setDocuments] = useState(initialState.documents);
+  const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
@@ -155,10 +159,9 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleRoomMetadataFormSubmitted = async ({ name, slug, documentsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, documentsMode, description };
-      await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, documentsMode, description });
+      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, documentsMode, description });
 
-      setRoom(updatedRoom);
+      setRoom(response.room);
       setIsRoomUpdateButtonDisabled(true);
       message.success(t('updateRoomSuccessMessage'));
     } catch (error) {
@@ -191,12 +194,30 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
-  const handleDocumentMenuClick = (doc, menuItem) => {
+  const handleDocumentMoveUp = async index => {
+    const newSortedDocuments = swapItemsAt(room.documents, index, index - 1);
+    const response = await roomApiClient.updateRoomDocuments({ roomId: room._id, documents: newSortedDocuments });
+    setRoom(response.room);
+    setDocuments(getSortedDocuments(response.room, documents));
+  };
+
+  const handleDocumentMoveDown = async index => {
+    const newSortedDocuments = swapItemsAt(room.documents, index, index + 1);
+    const response = await roomApiClient.updateRoomDocuments({ roomId: room._id, documents: newSortedDocuments });
+    setRoom(response.room);
+    setDocuments(getSortedDocuments(response.room, documents));
+  };
+
+  const handleDocumentMenuClick = (doc, index, menuItem) => {
     switch (menuItem.key) {
       case 'clone':
         return handleNewDocumentClick(doc);
       case 'delete':
         return handleDeleteDocumentClick(doc);
+      case 'moveUp':
+        return handleDocumentMoveUp(index);
+      case 'moveDown':
+        return handleDocumentMoveDown(index);
       default:
         throw new Error(`Unknown key: ${menuItem.key}`);
     }
@@ -232,7 +253,7 @@ export default function Room({ PageTemplate, initialState }) {
         danger: true
       }
     ];
-    const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, menuItem)} />;
+    const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, index, menuItem)} />;
     return (
       <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} onClick={handleDocumentDropdownClick}>
         <Button type="ghost" icon={<SettingsIcon />} size="small" />
