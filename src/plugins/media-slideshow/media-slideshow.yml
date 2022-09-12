@@ -1,3 +1,9 @@
 name:
   en: Media slideshow
   de: Medien-Slideshow
+chapterType_image:
+  en: image
+  de: Bild
+chapterType_text:
+  en: text
+  de: Text

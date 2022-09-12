@@ -319,16 +319,16 @@ roomsBreadcrumbPart:
   en: rooms
   de: Räume
 internalCdn:
-  en: Internal CDN
+  en: internal CDN
   de: Internes CDN
 externalLink:
-  en: External link
+  en: external link
   de: Externer Link
 youtube:
   en: Youtube
   de: Youtube
 externalUrl:
-  en: External URL
+  en: external URL
   de: Externe URL
 internalUrl:
   en: Internal URL
