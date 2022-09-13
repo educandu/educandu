@@ -203,14 +203,13 @@ class DocumentController {
     return res.send({ doc: mappedDoc });
   }
 
-  async handleGetDocsMetadata(req, res) {
-    const { user } = req;
+  async handleGetDocsTitles(req, res) {
     const { query } = req.query;
 
     const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments(query);
-    const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata, user);
+    const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
 
-    return res.send({ documents: mappedDocumentsMetadata });
+    return res.send({ documents: mappedDocumentsTitles });
   }
 
   async handleDeleteDocSection(req, res) {
@@ -351,9 +350,9 @@ class DocumentController {
     );
 
     router.get(
-      '/api/v1/docs/metadata',
+      '/api/v1/docs/titles',
       [needsPermission(permissions.VIEW_DOCS), validateQuery(getDocumentsTitlesQuerySchema)],
-      (req, res) => this.handleGetDocsMetadata(req, res)
+      (req, res) => this.handleGetDocsTitles(req, res)
     );
 
     router.get(

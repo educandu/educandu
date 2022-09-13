@@ -4,7 +4,7 @@ import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../constants.js';
 
 export const getDocumentsTitlesQuerySchema = joi.object({
-  query: joi.string().required()
+  query: joi.string().allow('').required()
 });
 
 export const documentIdParamsOrQuerySchema = joi.object({

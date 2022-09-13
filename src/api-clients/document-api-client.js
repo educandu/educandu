@@ -16,10 +16,10 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getDocumentsMetadata(query) {
+  getDocumentsTitles(query) {
     return this.httpClient
       .get(
-        `/api/v1/docs/metadata?query=${encodeURIComponent(query)}`,
+        `/api/v1/docs/titles?query=${encodeURIComponent(query)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
