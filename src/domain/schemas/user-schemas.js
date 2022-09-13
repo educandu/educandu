@@ -64,7 +64,7 @@ const storageReminderDBSchema = joi.object({
 });
 
 const storageDBSchema = joi.object({
-  plan: joi.string().allow(null).required(),
+  planId: joi.string().allow(null).required(),
   usedBytes: joi.number().required(),
   reminders: joi.array().required().items(storageReminderDBSchema)
 });

@@ -119,13 +119,13 @@ class UserService {
       throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
     }
 
-    const newStorage = { ...user.storage, plan: plan?._id || null };
+    const newStorage = { ...user.storage, planId: plan?._id || null };
 
     let oldPlanLock;
     let newPlanLock;
     try {
-      oldPlanLock = user.storage.plan ? await this.lockStore.takeStoragePlanLock(user.storage.plan) : null;
-      newPlanLock = newStorage.plan ? await this.lockStore.takeStoragePlanLock(newStorage.plan) : null;
+      oldPlanLock = user.storage.planId ? await this.lockStore.takeStoragePlanLock(user.storage.planId) : null;
+      newPlanLock = newStorage.planId ? await this.lockStore.takeStoragePlanLock(newStorage.planId) : null;
       user.storage = newStorage;
       await this.userStore.saveUser(user);
     } finally {
@@ -148,7 +148,7 @@ class UserService {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    if (!user.storage.plan) {
+    if (!user.storage.planId) {
       throw new BadRequest(`User with ID '${userId}' does not have storage plan allocated`);
     }
 
@@ -379,7 +379,7 @@ class UserService {
       verificationCode: null,
       lockedOut: false,
       storage: {
-        plan: null,
+        planId: null,
         usedBytes: 0,
         reminders: []
       },

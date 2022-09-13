@@ -393,8 +393,8 @@ class UserController {
     router.use(async (req, res, next) => {
       try {
         let storagePlan;
-        if (req.user?.storage.plan) {
-          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.plan);
+        if (req.user?.storage.planId) {
+          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.planId);
         }
         // eslint-disable-next-line require-atomic-updates
         req.storagePlan = storagePlan || null;

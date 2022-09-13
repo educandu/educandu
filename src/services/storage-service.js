@@ -147,11 +147,11 @@ export default class StorageService {
         return { uploadedFiles, usedBytes };
       }
 
-      if (!user.storage.plan) {
+      if (!user.storage.planId) {
         throw new Error('Cannot upload to private storage without a storage plan');
       }
 
-      const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
+      const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.planId);
       const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
       const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
 
@@ -267,8 +267,8 @@ export default class StorageService {
 
         const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
 
-        if (roomOwner.storage.plan) {
-          const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
+        if (roomOwner.storage.planId) {
+          const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
 
           locations.push({
             type: STORAGE_LOCATION_TYPE.private,

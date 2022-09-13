@@ -122,12 +122,12 @@ describe('user-service', () => {
       beforeEach(async () => {
         await db.users.updateOne(
           { _id: user._id },
-          { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 0, reminders: [] } } }
+          { $set: { storage: { planId: 'some-other-plan-id', usedBytes: 0, reminders: [] } } }
         );
         result = await sut.updateUserStoragePlan(user._id, storagePlan._id);
       });
       it('should assign the new plan', () => {
-        expect(result.plan).toBe(storagePlan._id);
+        expect(result.planId).toBe(storagePlan._id);
       });
     });
     describe('when called with the ID of a user that has no plan assigned yet', () => {
@@ -136,7 +136,7 @@ describe('user-service', () => {
         result = await sut.updateUserStoragePlan(user._id, storagePlan._id);
       });
       it('should assign the new plan', () => {
-        expect(result.plan).toBe(storagePlan._id);
+        expect(result.planId).toBe(storagePlan._id);
       });
     });
     describe('when called with a storage plan ID of `null`', () => {
@@ -144,12 +144,12 @@ describe('user-service', () => {
       beforeEach(async () => {
         await db.users.updateOne(
           { _id: user._id },
-          { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 250, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
+          { $set: { storage: { planId: 'some-other-plan-id', usedBytes: 250, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
         );
         result = await sut.updateUserStoragePlan(user._id, null);
       });
       it('should set the plan on the user to `null`', () => {
-        expect(result.plan).toBeNull();
+        expect(result.planId).toBeNull();
       });
       it('should not change the existing used bytes', () => {
         expect(result.usedBytes).toBe(250);
@@ -180,7 +180,7 @@ describe('user-service', () => {
       beforeEach(async () => {
         await db.users.updateOne(
           { _id: user._id },
-          { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 0, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
+          { $set: { storage: { planId: 'some-other-plan-id', usedBytes: 0, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
         );
         result = await sut.addUserStorageReminder(user._id, executingUser);
       });
@@ -222,7 +222,7 @@ describe('user-service', () => {
         ];
         await db.users.updateOne(
           { _id: user._id },
-          { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 0, reminders: existingReminders } } }
+          { $set: { storage: { planId: 'some-other-plan-id', usedBytes: 0, reminders: existingReminders } } }
         );
         result = await sut.deleteAllUserStorageReminders(user._id, storagePlan._id);
       });
