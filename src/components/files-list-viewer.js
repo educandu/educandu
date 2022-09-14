@@ -77,10 +77,12 @@ function FilesListViewer({
 
     const Icon = getResourceIcon({ url: row.url, isDirectory: row.isDirectory });
     return (
-      <div className="FilesListViewer-fileNameCell" >
-        <Icon />
-        <div className="FilesListViewer-fileName">{name}</div>
-      </div>
+      <Tooltip title={name}>
+        <div className="FilesListViewer-fileNameCell" >
+          <Icon />
+          <div className="FilesListViewer-fileName">{name}</div>
+        </div>
+      </Tooltip>
     );
   };
 
@@ -127,14 +129,13 @@ function FilesListViewer({
       title: () => t('common:name'),
       dataIndex: 'name',
       render: renderName,
-      sorter: by('isDirectory', { direction: -1 }).thenBy('name', { ignoreCase: true }),
-      defaultSortOrder: 'ascend'
+      sorter: by('isDirectory', { direction: -1 }).thenBy('name', { ignoreCase: true })
     },
     {
       title: () => t('common:type'),
       dataIndex: 'typeTranslated',
       width: 100,
-      responsive: ['sm'],
+      responsive: ['lg'],
       sorter: by('typeTranslated', { ignoreCase: true })
     },
     {
@@ -142,7 +143,7 @@ function FilesListViewer({
       dataIndex: 'sizeFormatted',
       align: 'right',
       width: 100,
-      responsive: ['sm'],
+      responsive: ['md'],
       sorter: by('size')
     },
     {
@@ -150,7 +151,7 @@ function FilesListViewer({
       dataIndex: 'createdOnFormatted',
       align: 'right',
       width: 170,
-      responsive: ['md'],
+      responsive: ['lg'],
       sorter: by('createdOn')
     },
     {
