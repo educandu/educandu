@@ -14,7 +14,6 @@ import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
@@ -27,22 +26,23 @@ const SCREEN = {
   filesUpload: 'files-upload'
 };
 
-const getFilesFromStorageObjects = (cdnObjects, documentsTitles, t) => {
-  return cdnObjects.map(obj => {
-    if (obj.type === CDN_OBJECT_TYPE.directory) {
-      const documentTitle = documentsTitles.find(doc => doc._id === obj.displayName);
-      obj.displayName = `${documentTitle?.title || t('common:unknown')} [${obj.displayName}]`;
-    }
-    return obj;
-  });
+const updateFileDisplayName = (cdnObject, documentsTitles, t) => {
+  if (cdnObject.type === CDN_OBJECT_TYPE.directory) {
+    const documentTitle = documentsTitles.find(doc => doc._id === cdnObject.displayName);
+    cdnObject.displayName = `${documentTitle?.title || t('common:unknown')} [${cdnObject.displayName}]`;
+  }
+  return cdnObject;
 };
 
-function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCancel }) {
+const updateFilesDisplayName = (cdnObjects, documentsTitles, t) => {
+  return cdnObjects.map(obj => updateFileDisplayName(obj, documentsTitles, t));
+};
+
+function StorageLocationScreens({ storageLocation, initialUrl, documentsTitles, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
@@ -50,7 +50,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
-  const [documentsTitles, setDocumentsTitles] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
@@ -82,11 +81,15 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
       }
 
       if (searchText) {
-        setSearchResult(getFilesFromStorageObjects(result.objects, documentsTitles, t));
+        setSearchResult(updateFilesDisplayName(result.objects, documentsTitles, t));
       } else {
+        const shouldUpdateCurrentDirectoryDisplayName = storageLocation.type === STORAGE_LOCATION_TYPE.public && result.currentDirectory.displayName !== 'media';
+
         setParentDirectory(result.parentDirectory);
-        setCurrentDirectory(result.currentDirectory);
-        setFiles(getFilesFromStorageObjects(result.objects, documentsTitles, t));
+        setCurrentDirectory(shouldUpdateCurrentDirectoryDisplayName
+          ? updateFileDisplayName(result.currentDirectory, documentsTitles, t)
+          : result.currentDirectory);
+        setFiles(updateFilesDisplayName(result.objects, documentsTitles, t));
       }
 
       setIsLoading(false);
@@ -98,7 +101,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
         message.error(err.message);
       }
     }
-  }, [currentDirectoryPath, storageLocation.homePath, storageLocation.rootPath, documentsTitles, storageApiClient, isMounted, t]);
+  }, [currentDirectoryPath, storageLocation, documentsTitles, storageApiClient, isMounted, t]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -245,14 +248,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   }, [fetchStorageContent]);
 
   useEffect(() => {
-    (async () => {
-      setDocumentsTitles(storageLocation.type === STORAGE_LOCATION_TYPE.public
-        ? (await documentApiClient.getDocumentsTitles({ includeRoomDocuments: true, includeArchivedDocuments: true })).documents
-        : []);
-    })();
-  }, [documentApiClient, storageLocation.type]);
-
-  useEffect(() => {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
@@ -319,6 +314,10 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
 }
 
 StorageLocationScreens.propTypes = {
+  documentsTitles: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  })).isRequired,
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,

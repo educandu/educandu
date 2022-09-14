@@ -162,6 +162,9 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
+            {!isInSearchMode && !!currentDirectory?.displayName && (
+              <div className="StorageLocation-currentDirectory">{`${t('common:folder')}: ${currentDirectory.displayName}`}</div>
+            )}
             <FilesViewer
               isLoading={isLoading}
               files={files}
