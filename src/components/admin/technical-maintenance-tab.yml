@@ -1,0 +1,15 @@
+lastExecution:
+  en: Last execution
+  de: Letzte Ausführung
+documentRegenerationButton:
+  en: Regenerate documents
+  de: Dokumente neu erstellen
+documentValidationButton:
+  en: Validate documents
+  de: Dokumente validieren
+cdnResourcesConsolidationButton:
+  en: Consolidate CDN resources
+  de: CDN-Ressourcen konsolidieren
+cdnUploadDirectoryCreationButton:
+  en: Create CDN upload directories
+  de: CDN-Upload-Verzeichnisse erstellen
