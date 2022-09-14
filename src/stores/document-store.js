@@ -79,7 +79,8 @@ class DocumentStore {
   }
 
   getDocumentsMetadataByConditions(conditions, { session } = {}) {
-    return this.collection.find({ $and: conditions }, { projection: documentMetadataProjection, session }).toArray();
+    const predicate = conditions.length ? { $and: conditions } : {};
+    return this.collection.find(predicate, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getDocumentsExtendedMetadataByConditions(conditions, { session } = {}) {

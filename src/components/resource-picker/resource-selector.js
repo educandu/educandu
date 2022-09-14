@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
-import StorageLocation from './storage-location-screens.js';
 import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import StorageLocationScreens from './storage-location-screens.js';
 import { getStorageLocationTypeForUrl } from '../../utils/storage-utils.js';
 
 const { TabPane } = Tabs;
@@ -40,7 +40,7 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
       case STORAGE_LOCATION_TYPE.private:
       case STORAGE_LOCATION_TYPE.public:
         return (
-          <StorageLocation
+          <StorageLocationScreens
             storageLocation={location}
             initialUrl={initialUrl}
             onSelect={onSelect}

@@ -204,9 +204,9 @@ class DocumentController {
   }
 
   async handleGetDocsTitles(req, res) {
-    const { query } = req.query;
+    const { query, includeRoomDocuments, includeArchivedDocuments } = req.query;
 
-    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments(query);
+    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments({ query, includeRoomDocuments, includeArchivedDocuments });
     const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
 
     return res.send({ documents: mappedDocumentsTitles });

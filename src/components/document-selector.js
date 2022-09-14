@@ -41,7 +41,7 @@ function DocumentSelector({ documentId, onChange, onTitleChange }) {
       setLoading(true);
 
       const { doc } = await documentApiClient.getDocument(documentId);
-      const { documents } = await documentApiClient.getDocumentsTitles(doc.title);
+      const { documents } = await documentApiClient.getDocumentsTitles({ query: doc.title, includeRoomDocuments: false, includeArchivedDocuments: false });
 
       updateOptions(documents);
       setSelectedOption({ key: doc._id, value: doc.title });
@@ -53,7 +53,7 @@ function DocumentSelector({ documentId, onChange, onTitleChange }) {
     let documents = [];
 
     if (value.length >= 3) {
-      const response = await documentApiClient.getDocumentsTitles(value);
+      const response = await documentApiClient.getDocumentsTitles({ query: value, includeRoomDocuments: false, includeArchivedDocuments: false });
       documents = response.documents;
     }
 

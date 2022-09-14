@@ -16,10 +16,16 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getDocumentsTitles(query) {
+  getDocumentsTitles({ query, includeRoomDocuments, includeArchivedDocuments }) {
+    const queryParams = [
+      `query=${encodeURIComponent(query || '')}`,
+      `includeRoomDocuments=${includeRoomDocuments || false}`,
+      `includeArchivedDocuments=${includeArchivedDocuments || false}`
+    ];
+
     return this.httpClient
       .get(
-        `/api/v1/docs/titles?query=${encodeURIComponent(query)}`,
+        `/api/v1/docs/titles?${queryParams.join('&')}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
