@@ -8,10 +8,19 @@
 .StorageLocation-filesViewer {
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
-  overflow: auto;
+  overflow: hidden;
 
   & .ant-table-placeholder .ant-table-cell {
     border: none;
+  }
+}
+
+.StorageLocation-filesViewerContent {
+  height: 100%;
+  overflow: auto;
+
+  &.StorageLocation-filesViewerContent--topPadding {
+    padding-top: @edu-content-padding;
   }
 }
 
@@ -41,8 +50,12 @@
 
 .StorageLocation-currentDirectory {
   .m-overflow-ellipsis;
+  position: absolute;
+  right: 1px;
+  left: 1px;
   font-size: 11px;
   padding-left: 5px;
   font-style: italic;
   background-color: @edu-background-color-light;
+  z-index: @edu-z-index-sticky-content-layer;
 }

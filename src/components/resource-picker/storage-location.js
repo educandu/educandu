@@ -126,10 +126,17 @@ function StorageLocation({
     return null;
   };
 
+  const showCurrentDirectoryName = !isInSearchMode && !!currentDirectory?.displayName;
+
   const getFilesViewerClasses = isDragActive => classNames({
     'StorageLocation-filesViewer': true,
     'u-can-drop': isDragActive && canAcceptFiles,
     'u-cannot-drop': isDragActive && !canAcceptFiles
+  });
+
+  const filesViewerContentClasses = classNames({
+    'StorageLocation-filesViewerContent': true,
+    'StorageLocation-filesViewerContent--topPadding': showCurrentDirectoryName
   });
 
   return (
@@ -162,23 +169,25 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            {!isInSearchMode && !!currentDirectory?.displayName && (
+            {showCurrentDirectoryName && (
               <div className="StorageLocation-currentDirectory">{`${t('common:folder')}: ${currentDirectory.displayName}`}</div>
             )}
-            <FilesViewer
-              isLoading={isLoading}
-              files={files}
-              parentDirectory={isInSearchMode ? null : parentDirectory}
-              display={filesViewerDisplay}
-              onFileClick={handleFileClick}
-              onFileDoubleClick={handleFileDoubleClick}
-              selectedFileUrl={highlightedFile?.portableUrl}
-              onDeleteFileClick={onDeleteFileClick}
-              onPreviewFileClick={onPreviewFileClick}
-              onNavigateToParent={onNavigateToParent}
-              canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
-              canDelete={storageLocation.isDeletionEnabled}
-              />
+            <div className={filesViewerContentClasses}>
+              <FilesViewer
+                isLoading={isLoading}
+                files={files}
+                parentDirectory={isInSearchMode ? null : parentDirectory}
+                display={filesViewerDisplay}
+                onFileClick={handleFileClick}
+                onFileDoubleClick={handleFileDoubleClick}
+                selectedFileUrl={highlightedFile?.portableUrl}
+                onDeleteFileClick={onDeleteFileClick}
+                onPreviewFileClick={onPreviewFileClick}
+                onNavigateToParent={onNavigateToParent}
+                canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
+                canDelete={storageLocation.isDeletionEnabled}
+                />
+            </div>
           </div>
         )}
       </ReactDropzone>
