@@ -115,9 +115,9 @@
       "documentsRegenerationHeader": "Documents regeneration",
       "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
       "cdnResourcesConsolidationHeader": "CDN resources consolidation",
-      "cdnResourcesConsolidationDescription": "Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
+      "cdnResourcesConsolidationDescription": "Update the list of CDN resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
       "cdnDirectoriesCreationHeader": "CDN directories creation",
-      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.",
+      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload directory for each existing document (including private documents in rooms). This task updates the CDN by adding the missing directories.",
       "lastExecution": "Last execution",
       "start": "Start task"
     }
@@ -126,15 +126,15 @@
     "namespace": "technicalMaintenanceTab",
     "language": "de",
     "resources": {
-      "tabInfo": "You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.",
-      "documentsValidationHeader": "Dokumente Validierung",
-      "documentsValidationDescription": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
-      "documentsRegenerationHeader": "Dokumente Neuerstellung",
-      "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
-      "cdnResourcesConsolidationHeader": "CDN-Ressourcen Konsolidierung",
-      "cdnResourcesConsolidationDescription": "Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
-      "cdnDirectoriesCreationHeader": "CDN-Verzeichnisse Erstellung",
-      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.",
+      "tabInfo": "Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des CDNs starten.",
+      "documentsValidationHeader": "Dokumente validieren",
+      "documentsValidationDescription": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.",
+      "documentsRegenerationHeader": "Dokumente neu erstellen",
+      "documentsRegenerationDescription": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.",
+      "cdnResourcesConsolidationHeader": "CDN-Ressourcen konsolidieren",
+      "cdnResourcesConsolidationDescription": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften CDN-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.",
+      "cdnDirectoriesCreationHeader": "CDN-Verzeichnisse erstellen",
+      "cdnDirectoriesCreationDescription": "Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im CDN existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.",
       "lastExecution": "Letzte Ausführung",
       "start": "Task starten"
     }
@@ -2325,7 +2325,7 @@
       "resource_pdf": "document",
       "resource_none": "Unknown",
       "resource_unknown": "Unknown",
-      "folder": "Folder",
+      "directory": "Directory",
       "pageCount": "Page count",
       "question": "Question",
       "answer": "Answer",
@@ -2477,7 +2477,7 @@
       "resource_pdf": "Dokument",
       "resource_none": "Unbekannt",
       "resource_unknown": "Unbekannt",
-      "folder": "Verzeichnis",
+      "directory": "Verzeichnis",
       "pageCount": "Seitenanzahl",
       "question": "Frage",
       "answer": "Antwort",
@@ -2589,7 +2589,7 @@
       "mimeTypeCategorySpreadsheet": "Spreadsheet",
       "mimeTypeCategoryPresentation": "Presentation",
       "mimeTypeCategoryProgram": "Program",
-      "mimeTypeCategoryFolder": "Folder",
+      "mimeTypeCategoryFolder": "Directory",
       "mimeTypeCategoryUnknown": "Unknown"
     }
   },

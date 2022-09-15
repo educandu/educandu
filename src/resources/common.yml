@@ -384,8 +384,8 @@ resource_none:
 resource_unknown:
   en: Unknown
   de: Unbekannt
-folder:
-  en: Folder
+directory:
+  en: Directory
   de: Verzeichnis
 pageCount:
   en: Page count
