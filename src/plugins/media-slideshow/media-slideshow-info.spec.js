@@ -1,3 +1,4 @@
+import { CHAPTER_TYPE } from './constants.js';
 import MediaSlideShowInfo from './media-slideshow-info.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -22,11 +23,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: `[Click me 1](cdn://rooms/${currentRoomId}/media/my-file-1.pdf)`,
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.external,
               sourceUrl: '',
               copyrightNotice: `[Click me 2](cdn://rooms/${currentRoomId}/media/my-file-2.pdf)`
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -42,11 +45,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: `rooms/${currentRoomId}/media/my-video-2.mp4`,
               copyrightNotice: ''
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -61,11 +66,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: `[Click me 1](cdn://rooms/${currentRoomId}/media/my-file-1.pdf)`,
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: `rooms/${currentRoomId}/media/my-video-2.mp4`,
               copyrightNotice: `[Click me 2](cdn://rooms/${currentRoomId}/media/my-file-2.pdf)`
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -82,11 +89,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: 'This [hyperlink](cdn://media/my-file-1.pdf) and [another one](https://google.com)',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.external,
               sourceUrl: '',
               copyrightNotice: 'This [hyperlink](cdn://media/my-file-2.pdf) and [another one](https://google.com)'
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -101,11 +110,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.youtube,
               sourceUrl: 'https://youtube.com/something-2',
               copyrightNotice: ''
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -120,11 +131,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.external,
               sourceUrl: 'https://someplace.com/video-2.mp4',
               copyrightNotice: ''
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -139,11 +152,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: null,
               copyrightNotice: ''
-            }
+            },
+            text: ''
           }
         ]
       };
@@ -158,11 +173,13 @@ describe('media-slideshow-info', () => {
         copyrightNotice: '',
         chapters: [
           {
+            type: CHAPTER_TYPE.image,
             image: {
               sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/some-video-2.mp4',
               copyrightNotice: ''
-            }
+            },
+            text: ''
           }
         ]
       };

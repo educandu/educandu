@@ -8,10 +8,10 @@ displayMode:
   en: Display mode
   de: Anzeigemodus
 displayMode_linkList:
-  en: Link list
+  en: link list
   de: Link-Liste
 displayMode_imageTiles:
-  en: Image tiles
+  en: image tiles
   de: Bildkacheln
 tilesPerRow:
   en: Tiles per row
@@ -35,7 +35,7 @@ linkSource:
   en: Link source
   de: Link-Quelle
 documentLink:
-  en: Document link
+  en: document link
   de: Dokument-Link
 adoptDocumentTitle:
   en: Adopt as title

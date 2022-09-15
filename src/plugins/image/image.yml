@@ -2,16 +2,16 @@ name:
   en: Image
   de: Bild
 noneOption:
-  en: None
+  en: none
   de: Kein Effekt
 hoverOption:
-  en: Hover
+  en: hover
   de: Hover
 revealOption:
-  en: Reveal
+  en: reveal
   de: Aufdecken
 clipOption:
-  en: Clip
+  en: clip
   de: Zuschneiden
 clippedWidth:
   en: Resulting width

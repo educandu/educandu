@@ -1784,8 +1784,8 @@
       "name": "Catalog",
       "noTitle": "No title",
       "displayMode": "Display mode",
-      "displayMode_linkList": "Link list",
-      "displayMode_imageTiles": "Image tiles",
+      "displayMode_linkList": "link list",
+      "displayMode_imageTiles": "image tiles",
       "tilesPerRow": "Tiles per row",
       "hoverEffect": "Hover effect",
       "hoverEffect_none": "No effect",
@@ -1793,7 +1793,7 @@
       "itemNumber": "Item {number}",
       "addItem": "Add item",
       "linkSource": "Link source",
-      "documentLink": "Document link",
+      "documentLink": "document link",
       "adoptDocumentTitle": "Adopt as title"
     }
   },
@@ -1898,10 +1898,10 @@
     "language": "en",
     "resources": {
       "name": "Image",
-      "noneOption": "None",
-      "hoverOption": "Hover",
-      "revealOption": "Reveal",
-      "clipOption": "Clip",
+      "noneOption": "none",
+      "hoverOption": "hover",
+      "revealOption": "reveal",
+      "clipOption": "clip",
       "clippedWidth": "Resulting width",
       "clippedHeight": "Resulting height",
       "effectTypeLabel": "Effect",
@@ -2017,14 +2017,18 @@
     "namespace": "mediaSlideshow",
     "language": "en",
     "resources": {
-      "name": "Media slideshow"
+      "name": "Media slideshow",
+      "chapterType_image": "image",
+      "chapterType_text": "text"
     }
   },
   {
     "namespace": "mediaSlideshow",
     "language": "de",
     "resources": {
-      "name": "Medien-Slideshow"
+      "name": "Medien-Slideshow",
+      "chapterType_image": "Bild",
+      "chapterType_text": "Text"
     }
   },
   {
@@ -2103,8 +2107,8 @@
     "resources": {
       "name": "Table",
       "columnDistribution": "Column width",
-      "columnDistribution_automatic": "Automatic",
-      "columnDistribution_even": "Even",
+      "columnDistribution_automatic": "automatic",
+      "columnDistribution_even": "even",
       "cellAction_convertAllToHeaderCells": "Convert to header cells",
       "cellAction_convertAllToBodyCells": "Convert to body cells",
       "cellAction_convertToHeaderRow": "Convert to header row",
@@ -2303,10 +2307,10 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "roomsBreadcrumbPart": "rooms",
-      "internalCdn": "Internal CDN",
-      "externalLink": "External link",
+      "internalCdn": "internal CDN",
+      "externalLink": "external link",
       "youtube": "Youtube",
-      "externalUrl": "External URL",
+      "externalUrl": "external URL",
       "internalUrl": "Internal URL",
       "youtubeUrl": "Youtube URL",
       "aspectRatio": "Aspect ratio",

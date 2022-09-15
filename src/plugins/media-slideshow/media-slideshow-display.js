@@ -1,4 +1,6 @@
+import { CHAPTER_TYPE } from './constants.js';
 import urlUtils from '../../utils/url-utils.js';
+import Markdown from '../../components/markdown.js';
 import { preloadImage } from '../../utils/image-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -58,6 +60,20 @@ function MediaSlideshowDisplay({ content }) {
     );
   };
 
+  const renderPlayingChapterText = () => {
+    return (
+      <div className="MediaSlideshow-chapterTextOverlayWrapper">
+        <Markdown>{chapters[playingChapterIndex].text}</Markdown>
+      </div>
+    );
+  };
+
+  const renderPlayingChapter = () => {
+    return chapters[playingChapterIndex].type === CHAPTER_TYPE.image
+      ? renderPlayingChapterImage()
+      : renderPlayingChapterText();
+  };
+
   return (
     <div className="MediaSlideshowDisplay">
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
@@ -69,11 +85,13 @@ function MediaSlideshowDisplay({ content }) {
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
           playbackRange={playbackRange}
           canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
-          screenOverlay={renderPlayingChapterImage()}
+          screenOverlay={renderPlayingChapter()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />
         <CopyrightNotice value={copyrightNotice} />
-        <CopyrightNotice value={chapters[playingChapterIndex].image.copyrightNotice} />
+        {chapters[playingChapterIndex].type === CHAPTER_TYPE.image && (
+          <CopyrightNotice value={chapters[playingChapterIndex].image.copyrightNotice} />
+        )}
       </div>
     </div>
   );

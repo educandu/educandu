@@ -1,5 +1,6 @@
 import joi from 'joi';
 import React from 'react';
+import { CHAPTER_TYPE } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
@@ -34,15 +35,21 @@ class MediaSlideshowInfo {
     return (await import('./media-slideshow-editor.js')).default;
   }
 
+  getDefaultChapterImage() {
+    return {
+      sourceType: IMAGE_SOURCE_TYPE.internal,
+      sourceUrl: '',
+      copyrightNotice: ''
+    };
+  }
+
   getDefaultChapter() {
     return {
       key: uniqueId.create(),
       startPosition: 0,
-      image: {
-        sourceType: IMAGE_SOURCE_TYPE.internal,
-        sourceUrl: '',
-        copyrightNotice: ''
-      }
+      type: CHAPTER_TYPE.image,
+      image: this.getDefaultChapterImage(),
+      text: ''
     };
   }
 
@@ -67,11 +74,13 @@ class MediaSlideshowInfo {
       chapters: joi.array().items(joi.object({
         key: joi.string().required(),
         startPosition: joi.number().min(0).max(1).required(),
+        type: joi.string().valid(...Object.values(CHAPTER_TYPE)).required(),
         image: joi.object({
           sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required()
-        }).required()
+        }).required(),
+        text: joi.string().allow('').required()
       })).required()
     });
 

@@ -5,10 +5,10 @@ columnDistribution:
   en: Column width
   de: Spaltenbreite
 columnDistribution_automatic:
-  en: Automatic
+  en: automatic
   de: Automatisch
 columnDistribution_even:
-  en: Even
+  en: even
   de: Gleichmäßig
 cellAction_convertAllToHeaderCells:
   en: Convert to header cells

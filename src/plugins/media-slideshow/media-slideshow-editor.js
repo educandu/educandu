@@ -1,4 +1,5 @@
 import by from 'thenby';
+import { CHAPTER_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
@@ -104,6 +105,15 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     setSelectedChapterIndex(newSelectedChapterIndex);
   };
 
+  const handleChapterTypeChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].type = value;
+    newChapters[selectedChapterIndex].text = '';
+    newChapters[selectedChapterIndex].image = mediaSlideshowInfo.getDefaultChapterImage();
+    changeContent({ chapters: newChapters });
+  };
+
   const handleChapterImageSourceTypeChange = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
@@ -129,6 +139,13 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.copyrightNotice = value;
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterTextChanged = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].text = value;
     changeContent({ chapters: newChapters });
   };
 
@@ -221,40 +238,55 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('common:imageSource')} {...formItemLayout}>
-              <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
-                <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
-                <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+            <FormItem label={t('common:type')} {...formItemLayout}>
+              <RadioGroup value={chapters[selectedChapterIndex].type} onChange={handleChapterTypeChange}>
+                <RadioButton value={CHAPTER_TYPE.image}>{t('chapterType_image')}</RadioButton>
+                <RadioButton value={CHAPTER_TYPE.text}>{t('chapterType_text')}</RadioButton>
               </RadioGroup>
             </FormItem>
-            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
-              <FormItem
-                label={t('common:externalUrl')}
-                {...formItemLayout}
-                {...validation.validateUrl(chapters[selectedChapterIndex].image.sourceUrl, t)}
-                hasFeedback
-                >
-                <Input value={chapters[selectedChapterIndex].image.sourceUrl} onChange={handleChapterImageSourceUrlChange} />
+            {chapters[selectedChapterIndex].type === CHAPTER_TYPE.image && (
+              <Fragment>
+                <FormItem label={t('common:imageSource')} {...formItemLayout}>
+                  <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
+                    <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
+                    <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+                  </RadioGroup>
+                </FormItem>
+                {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
+                  <FormItem
+                    label={t('common:externalUrl')}
+                    {...formItemLayout}
+                    {...validation.validateUrl(chapters[selectedChapterIndex].image.sourceUrl, t)}
+                    hasFeedback
+                    >
+                    <Input value={chapters[selectedChapterIndex].image.sourceUrl} onChange={handleChapterImageSourceUrlChange} />
+                  </FormItem>
+                )}
+                {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.internal && (
+                <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+                  <div className="u-input-and-button">
+                    <Input
+                      addonBefore={CDN_URL_PREFIX}
+                      value={chapters[selectedChapterIndex].image.sourceUrl}
+                      onChange={handleChapterImageSourceUrlChange}
+                      />
+                    <ResourcePicker
+                      url={storageLocationPathToUrl(chapters[selectedChapterIndex].image.sourceUrl)}
+                      onUrlChange={url => handleChapterImageInternalResourceUrlChange(urlToStorageLocationPath(url))}
+                      />
+                  </div>
+                </FormItem>
+                )}
+                <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+                  <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
+                </FormItem>
+              </Fragment>
+            )}
+            {chapters[selectedChapterIndex].type === CHAPTER_TYPE.text && (
+              <FormItem label={t('common:text')} {...formItemLayout}>
+                <MarkdownInput value={chapters[selectedChapterIndex].text} onChange={handleChapterTextChanged} />
               </FormItem>
             )}
-            {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.internal && (
-              <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-                <div className="u-input-and-button">
-                  <Input
-                    addonBefore={CDN_URL_PREFIX}
-                    value={chapters[selectedChapterIndex].image.sourceUrl}
-                    onChange={handleChapterImageSourceUrlChange}
-                    />
-                  <ResourcePicker
-                    url={storageLocationPathToUrl(chapters[selectedChapterIndex].image.sourceUrl)}
-                    onUrlChange={url => handleChapterImageInternalResourceUrlChange(urlToStorageLocationPath(url))}
-                    />
-                </div>
-              </FormItem>
-            )}
-            <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
-              <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
-            </FormItem>
           </Fragment>
         )}
       </Form>
