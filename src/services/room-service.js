@@ -7,14 +7,15 @@ import urlUtils from '../utils/url-utils.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
-import { ensureIsExcluded } from '../utils/array-utils.js';
+import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { getPathForPrivateRoom } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import {
+  STORAGE_DIRECTORY_MARKER_NAME,
   INVALID_ROOM_INVITATION_REASON,
-  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
-  STORAGE_DIRECTORY_MARKER_NAME
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
 } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -23,14 +24,15 @@ const logger = new Logger(import.meta.url);
 
 export default class RoomService {
   static get inject() {
-    return [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, TransactionRunner];
+    return [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, TransactionRunner];
   }
 
-  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, transactionRunner) {
+  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, documentStore, transactionRunner) {
     this.cdn = cdn;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
+    this.documentStore = documentStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
   }
@@ -114,6 +116,33 @@ export default class RoomService {
     );
     const updatedRoom = await this.roomStore.getRoomById(roomId);
 
+    return updatedRoom;
+  }
+
+  async updateRoomDocumentsOrder(roomId, documentIds) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeRoomLock(roomId);
+      const room = await this.roomStore.getRoomById(roomId);
+      const divergingDocumentIds = getSymmetricalDifference(documentIds, room.documents);
+
+      if (divergingDocumentIds.length) {
+        throw new BadRequest('Incorrect list of document ids was provided.');
+      }
+
+      const documents = await this.documentStore.getDocumentsMetadataByIds(documentIds);
+      const invalidDocumentIdsCount = documentIds.length - documents.length;
+      if (invalidDocumentIdsCount) {
+        throw new BadRequest(`${invalidDocumentIdsCount} invalid document ids were provided.`);
+      }
+
+      await this.roomStore.updateRoomDocuments(roomId, documentIds);
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
     return updatedRoom;
   }
 

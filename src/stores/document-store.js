@@ -50,6 +50,14 @@ class DocumentStore {
     return this.collection.findOne({ _id: id }, { projection: documentMetadataProjection, session });
   }
 
+  getDocumentsMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: documentMetadataProjection, session }).toArray();
+  }
+
+  getDocumentsExtendedMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
   getDocumentsMetadataBySlug(slug, { session } = {}) {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
@@ -64,10 +72,6 @@ class DocumentStore {
 
   getAllDocumentIds({ session } = {}) {
     return this.collection.distinct('_id', {}, { session });
-  }
-
-  getDocumentsMetadataByIds(ids, { session } = {}) {
-    return this.collection.find({ _id: { $in: ids } }, { session }).toArray();
   }
 
   getDocumentsMetadataByRoomId(roomId, { session } = {}) {

@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
@@ -37,11 +38,12 @@ describe('room-controller', () => {
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
       updateRoomMetadata: sandbox.stub(),
+      updateRoomDocumentsOrder: sandbox.stub(),
       removeRoomMember: sandbox.stub(),
       deleteRoomInvitation: sandbox.stub()
     };
     documentService = {
-      getDocumentsMetadataByRoomId: sandbox.stub()
+      getDocumentsExtendedMetadataByIds: sandbox.stub()
     };
     userService = {
       getUserById: sandbox.stub()
@@ -108,10 +110,11 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handlePatchRoom', () => {
+  describe('handlePatchRoomMetadata', () => {
 
     describe('when the request data is valid', () => {
       let room;
+      let mappedRoom;
       let requestBody;
       let updatedRoom;
 
@@ -134,15 +137,17 @@ describe('room-controller', () => {
           ...room,
           ...requestBody
         };
+        mappedRoom = cloneDeep(updatedRoom);
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
         roomService.updateRoomMetadata.resolves(updatedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
 
         req = { user, params: { roomId: room._id }, body: { ...requestBody } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        sut.handlePatchRoom(req, res).catch(reject);
+        sut.handlePatchRoomMetadata(req, res).catch(reject);
       }));
 
       it('should respond with status code 201', () => {
@@ -153,8 +158,12 @@ describe('room-controller', () => {
         sinon.assert.calledWith(roomService.updateRoomMetadata, room._id, { ...requestBody });
       });
 
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+      });
+
       it('should respond with the updated room', () => {
-        expect(res._getData()).toEqual(updatedRoom);
+        expect(res._getData()).toEqual({ room: updatedRoom });
       });
     });
 
@@ -169,7 +178,7 @@ describe('room-controller', () => {
       });
 
       it('should throw NotFound', async () => {
-        await expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(NotFound);
+        await expect(() => sut.handlePatchRoomMetadata(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -190,7 +199,123 @@ describe('room-controller', () => {
       });
 
       it('should throw Forbidden', async () => {
-        await expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(Forbidden);
+        await expect(() => sut.handlePatchRoomMetadata(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+  });
+
+  describe('handlePatchRoomDocuments', () => {
+
+    describe('when the request data is valid, posted by a room collaborator', () => {
+      let room;
+      let mappedRoom;
+      let requestBody;
+      let updatedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          name: 'name',
+          slug: 'slug',
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
+          description: 'description',
+          members: [{ userId: user._id }],
+          documents: []
+        };
+        requestBody = {
+          documentIds: [uniqueId.create()]
+        };
+        updatedRoom = {
+          ...room,
+          ...requestBody
+        };
+        mappedRoom = cloneDeep(updatedRoom);
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        roomService.updateRoomDocumentsOrder.resolves(updatedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+
+        req = { user, params: { roomId: room._id }, body: { ...requestBody } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handlePatchRoomDocuments(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should call roomService.updateRoomDocumentsOrder', () => {
+        sinon.assert.calledWith(roomService.updateRoomDocumentsOrder, room._id, requestBody.documentIds);
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+      });
+
+      it('should respond with the updated room', () => {
+        expect(res._getData()).toEqual({ room: updatedRoom });
+      });
+    });
+
+    describe('when the request contains an unknown room id', () => {
+      beforeEach(() => {
+        const roomId = uniqueId.create();
+
+        roomService.getRoomById.withArgs(roomId).resolves(null);
+
+        req = { user, params: { roomId }, body: { documents: [] } };
+        res = {};
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handlePatchRoomDocuments(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the request is made by a user which is not the room owner', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          name: 'name',
+          slug: 'slug',
+          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+          members: [{ userId: uniqueId.create() }]
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = { user, params: { roomId: room._id }, body: { documents: [] } };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchRoomDocuments(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the request is made by a user which is not a room collaborator', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          name: 'name',
+          slug: 'slug',
+          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
+          members: [{ userId: uniqueId.create() }]
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = { user, params: { roomId: room._id }, body: { documents: [] } };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchRoomDocuments(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });
@@ -305,7 +430,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        documents: [uniqueId.create()]
       };
       mappedRoom = { ...room };
     });
@@ -334,16 +460,16 @@ describe('room-controller', () => {
           user: { _id: 'owner' }
         };
 
-        documents = [];
+        documents = [{ _id: room.documents[0] }];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
-        mappedDocuments = [];
+        mappedDocuments = cloneDeep(documents);
         mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
 
-        documentService.getDocumentsMetadataByRoomId.resolves(documents);
+        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
         roomService.getRoomInvitations.resolves(invitations);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
@@ -369,8 +495,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
       });
 
-      it('should call getDocumentsMetadataByRoomId', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      it('should call getDocumentsExtendedMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
@@ -398,13 +524,13 @@ describe('room-controller', () => {
           user: { _id: 'member' }
         };
 
-        documents = [];
-        mappedDocuments = [];
+        documents = [{ _id: room.documents[0] }];
+        mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
         roomService.isRoomOwnerOrMember.resolves(true);
-        documentService.getDocumentsMetadataByRoomId.resolves(documents);
+        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
@@ -425,8 +551,8 @@ describe('room-controller', () => {
         sinon.assert.notCalled(roomService.getRoomInvitations);
       });
 
-      it('should call getDocumentsMetadataByRoomId', () => {
-        sinon.assert.calledWith(documentService.getDocumentsMetadataByRoomId, room._id);
+      it('should call getDocumentsExtendedMetadataByIds', () => {
+        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the invitations returned by the service', () => {

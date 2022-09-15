@@ -6,7 +6,7 @@ import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import { INVALID_ROOM_INVITATION_REASON, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestDocument } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -329,6 +329,77 @@ describe('room-service', () => {
     it('should return false when the is not a member', async () => {
       result = await sut.isRoomOwnerOrMember(roomId, uniqueId.create());
       expect(result).toBe(false);
+    });
+  });
+
+  describe('updateRoomDocumentsOrder', () => {
+    let lock;
+    let roomId;
+    let document1;
+    let document2;
+
+    beforeEach(async () => {
+      lock = { key: 'room' };
+      roomId = uniqueId.create();
+      document1 = await createTestDocument(container, myUser, {});
+      document2 = await createTestDocument(container, myUser, {});
+
+      await roomStore.saveRoom({
+        _id: roomId,
+        name: 'my room',
+        slug: 'my-slug',
+        description: '',
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        createdBy: myUser._id,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        owner: myUser._id,
+        members: [],
+        documents: [document1._id, document2._id]
+      });
+
+      lockStore.takeRoomLock.resolves(lock);
+      lockStore.releaseLock.resolves();
+    });
+
+    describe('when the provided document ids are different than the existing ones', () => {
+      beforeEach(async () => {
+        try {
+          await sut.updateRoomDocumentsOrder(roomId, [uniqueId.create()]);
+        } catch (error) {
+          result = error;
+        }
+      });
+
+      it('should throw BadRequest', () => {
+        expect(result.name).toBe('BadRequestError');
+      });
+
+      it('should take a lock on the room', () => {
+        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+      });
+
+      it('should release the lock on the room', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
+      });
+    });
+
+    describe('when the provided document ids are valid', () => {
+      beforeEach(async () => {
+        result = await sut.updateRoomDocumentsOrder(roomId, [document2._id, document1._id]);
+      });
+
+      it('should update the room documents order', () => {
+        expect(result.documents).toEqual([document2._id, document1._id]);
+      });
+
+      it('should take a lock on the room', () => {
+        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+      });
+
+      it('should release the lock on the room', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
+      });
     });
   });
 

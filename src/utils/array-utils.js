@@ -120,3 +120,10 @@ export function ensureIsUnique(items, keyFunc = item => item) {
   }
   return result;
 }
+
+export function getSymmetricalDifference(arrayA, arrayB) {
+  return [
+    ...arrayA.filter(x => !arrayB.includes(x)),
+    ...arrayB.filter(x => !arrayA.includes(x))
+  ];
+}

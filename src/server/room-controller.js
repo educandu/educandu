@@ -15,21 +15,23 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE } from '../domain/constants.js';
+import { NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
-  patchRoomBodySchema,
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
   deleteRoomsQuerySchema,
+  patchRoomMetadataBodySchema,
   deleteRoomMemberParamsSchema,
   postRoomInvitationBodySchema,
+  patchRoomDocumentsBodySchema,
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema
 } from '../domain/schemas/room-schemas.js';
+import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
@@ -70,7 +72,7 @@ export default class RoomController {
     return res.status(201).send(newRoom);
   }
 
-  async handlePatchRoom(req, res) {
+  async handlePatchRoomMetadata(req, res) {
     const { user } = req;
     const { roomId } = req.params;
     const { name, slug, documentsMode, description } = req.body;
@@ -86,7 +88,30 @@ export default class RoomController {
     }
 
     const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, documentsMode, description });
-    return res.status(201).send(updatedRoom);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+
+    return res.status(201).send({ room: mappedRoom });
+  }
+
+  async handlePatchRoomDocuments(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+    const { documentIds } = req.body;
+
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
+    }
+
+    const updatedRoom = await this.roomService.updateRoomDocumentsOrder(roomId, documentIds);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+
+    return res.status(201).send({ room: mappedRoom });
   }
 
   async handleDeleteRoomsForUser(req, res) {
@@ -223,7 +248,7 @@ export default class RoomController {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
-    const documentsMetadata = await this.documentService.getDocumentsMetadataByRoomId(roomId);
+    const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom(room);
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
@@ -270,8 +295,14 @@ export default class RoomController {
 
     router.patch(
       '/api/v1/rooms/:roomId/metadata',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomBodySchema)],
-      (req, res) => this.handlePatchRoom(req, res)
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomMetadataBodySchema)],
+      (req, res) => this.handlePatchRoomMetadata(req, res)
+    );
+
+    router.patch(
+      '/api/v1/rooms/:roomId/documents',
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomDocumentsBodySchema)],
+      (req, res) => this.handlePatchRoomDocuments(req, res)
     );
 
     router.delete(
