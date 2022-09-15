@@ -68,7 +68,7 @@ class UserStore {
   }
 
   async checkUsersWithStoragePlanExistByStoragePlanId(storagePlanId, { session } = {}) {
-    const matchingUser = await this.collection.findOne({ 'storage.plan': storagePlanId }, { session });
+    const matchingUser = await this.collection.findOne({ 'storage.planId': storagePlanId }, { session });
     return !!matchingUser;
   }
 }

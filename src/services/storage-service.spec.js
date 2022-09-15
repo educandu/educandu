@@ -395,7 +395,7 @@ describe('storage-service', () => {
 
         await db.users.updateOne(
           { _id: myUser._id },
-          { $set: { storage: { plan: null, usedBytes: 0, reminders: [] } } }
+          { $set: { storage: { planId: null, usedBytes: 0, reminders: [] } } }
         );
 
         try {
@@ -426,7 +426,7 @@ describe('storage-service', () => {
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 5 * 1000 * 1000 }
         ];
 
-        myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
+        myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         try {
@@ -478,7 +478,7 @@ describe('storage-service', () => {
         filesInOtherRoom = [{ name: `rooms/${otherRoomId}/media/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
 
         const usedBytes = [...filesInRoomBeforeUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0);
-        myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
+        myUser.storage = { planId: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves([roomId, otherRoomId]);
@@ -593,7 +593,7 @@ describe('storage-service', () => {
       beforeEach(async () => {
         path = 'media/file.jpeg';
 
-        myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
+        myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         cdn.deleteObjects.resolves();
@@ -643,7 +643,7 @@ describe('storage-service', () => {
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
         const usedBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-        myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
+        myUser.storage = { planId: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves(allOwnedPrivateRoomIds);
@@ -829,7 +829,7 @@ describe('storage-service', () => {
           documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
-          myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
+          myUser.storage = { planId: null, usedBytes: 0, reminders: [] };
 
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
@@ -851,7 +851,7 @@ describe('storage-service', () => {
           documentStore.getDocumentById.resolves({ roomId: 'room' });
           roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, members: [] });
 
-          myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
+          myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
 
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
@@ -921,7 +921,7 @@ describe('storage-service', () => {
           ownerUser = await setupTestUser(container, {
             email: 'owner@test.com',
             displayName: 'Owner',
-            storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
+            storage: { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
           });
 
           documentStore.getDocumentById.resolves({ roomId: 'room' });

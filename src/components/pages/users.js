@@ -43,7 +43,7 @@ function createUserSubsets(users, storagePlans) {
   for (const user of users) {
     const enrichedUserObject = {
       ...user,
-      storagePlan: storagePlansById.get(user.storage.plan) || null,
+      storagePlan: storagePlansById.get(user.storage.planId) || null,
       importSource: (/^external\/(.+)$/).exec(user.provider)?.[1] || null
     };
 
@@ -53,7 +53,7 @@ function createUserSubsets(users, storagePlans) {
       internalUsers.push(enrichedUserObject);
     }
 
-    if (user.storage.plan || user.storage.usedBytes || user.storage.reminders.length) {
+    if (user.storage.planId || user.storage.usedBytes || user.storage.reminders.length) {
       storageUsers.push(enrichedUserObject);
     }
   }
@@ -196,7 +196,7 @@ function Users({ initialState, PageTemplate }) {
       const oldStorage = user.storage;
 
       const newStorage = {
-        plan: oldStorage.plan,
+        plan: oldStorage.planId,
         usedBytes: 0,
         reminders: []
       };
@@ -249,7 +249,7 @@ function Users({ initialState, PageTemplate }) {
         size="small"
         className="UsersPage-storagePlanSelect"
         placeholder={t('selectPlan')}
-        value={user.storage.plan}
+        value={user.storage.planId}
         onChange={value => handleStoragePlanChange(user, value)}
         allowClear
         >

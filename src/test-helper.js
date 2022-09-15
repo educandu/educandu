@@ -157,7 +157,7 @@ export async function setupTestUser(container, userValues) {
   verifiedUser.introduction = introduction;
   verifiedUser.lockedOut = lockedOut;
   verifiedUser.accountClosedOn = userValues?.accountClosedOn || null;
-  verifiedUser.storage = userValues?.storage || { plan: null, usedBytes: 0, reminders: [] };
+  verifiedUser.storage = userValues?.storage || { planId: null, usedBytes: 0, reminders: [] };
   await userStore.saveUser(verifiedUser);
   return verifiedUser;
 }
