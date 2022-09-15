@@ -9,6 +9,7 @@ import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
+import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 import { batchShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
@@ -54,10 +55,6 @@ function Admin({ initialState, PageTemplate }) {
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="1">
               <SettingsTab
                 initialSettings={settings}
-                lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
-                lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
-                lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
-                lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
                 onSettingsSaved={setSettings}
                 onDirtyStateChange={setIsCurrentTabDirty}
                 />
@@ -66,6 +63,14 @@ function Admin({ initialState, PageTemplate }) {
               <StoragePlansTab
                 initialStoragePlans={storagePlans}
                 onStoragePlansSaved={setStoragePlans}
+                />
+            </TabPane>
+            <TabPane className="Tabs-tabPane" tab={t('technicalMaintenanceTabTitle')} key="3">
+              <TechnicalMaintenanceTab
+                lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
+                lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
+                lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
+                lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
                 />
             </TabPane>
           </Tabs>

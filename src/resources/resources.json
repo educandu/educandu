@@ -50,14 +50,8 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "consentHeader": "Consent text",
-      "documentRegenerationButton": "Regenerate documents",
-      "documentValidationButton": "Validate documents",
-      "cdnResourcesConsolidationButton": "Consolidate CDN resources",
-      "cdnUploadDirectoryCreationButton": "Create CDN upload directories",
       "templateDocumentHeader": "Template for new documents",
       "licenseHeader": "License",
-      "technicalMaintenanceTasksHeader": "Technical maintenance tasks",
-      "lastExecution": "Last execution",
       "pluginsHelpTextsHeader": "Help texts for plugins"
     }
   },
@@ -70,14 +64,8 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "consentHeader": "Zustimmungstext",
-      "documentRegenerationButton": "Dokumente neu erstellen",
-      "documentValidationButton": "Dokumente validieren",
-      "cdnResourcesConsolidationButton": "CDN-Ressourcen konsolidieren",
-      "cdnUploadDirectoryCreationButton": "CDN-Upload-Verzeichnisse erstellen",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
       "licenseHeader": "Lizenz",
-      "technicalMaintenanceTasksHeader": "Technische Instandhaltungsaufgaben",
-      "lastExecution": "Letzte Ausführung",
       "pluginsHelpTextsHeader": "Hilfetexte für Plugins"
     }
   },
@@ -115,6 +103,40 @@
     "resources": {
       "assignedUserCount": "Benutzerkonten",
       "sortedByAssignedUserCount": "Nach Benutzerkonten sortiert"
+    }
+  },
+  {
+    "namespace": "technicalMaintenanceTab",
+    "language": "en",
+    "resources": {
+      "tabInfo": "You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.",
+      "documentsValidationHeader": "Documents validation",
+      "documentsValidationDescription": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
+      "documentsRegenerationHeader": "Documents regeneration",
+      "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
+      "cdnResourcesConsolidationHeader": "CDN resources consolidation",
+      "cdnResourcesConsolidationDescription": "Update the list of CDN resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
+      "cdnDirectoriesCreationHeader": "CDN directories creation",
+      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload directory for each existing document (including private documents in rooms). This task updates the CDN by adding the missing directories.",
+      "lastExecution": "Last execution",
+      "start": "Start task"
+    }
+  },
+  {
+    "namespace": "technicalMaintenanceTab",
+    "language": "de",
+    "resources": {
+      "tabInfo": "Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des CDNs starten.",
+      "documentsValidationHeader": "Dokumente validieren",
+      "documentsValidationDescription": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.",
+      "documentsRegenerationHeader": "Dokumente neu erstellen",
+      "documentsRegenerationDescription": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.",
+      "cdnResourcesConsolidationHeader": "CDN-Ressourcen konsolidieren",
+      "cdnResourcesConsolidationDescription": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften CDN-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.",
+      "cdnDirectoriesCreationHeader": "CDN-Verzeichnisse erstellen",
+      "cdnDirectoriesCreationDescription": "Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im CDN existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.",
+      "lastExecution": "Letzte Ausführung",
+      "start": "Task starten"
     }
   },
   {
@@ -766,7 +788,8 @@
     "language": "en",
     "resources": {
       "settingsTabTitle": "Settings",
-      "storagePlansTabTitle": "Storage plans"
+      "storagePlansTabTitle": "Storage plans",
+      "technicalMaintenanceTabTitle": "Technical maintenance"
     }
   },
   {
@@ -774,7 +797,8 @@
     "language": "de",
     "resources": {
       "settingsTabTitle": "Einstellungen",
-      "storagePlansTabTitle": "Speicherpläne"
+      "storagePlansTabTitle": "Speicherpläne",
+      "technicalMaintenanceTabTitle": "Technische Instandhaltung"
     }
   },
   {
@@ -2301,7 +2325,7 @@
       "resource_pdf": "document",
       "resource_none": "Unknown",
       "resource_unknown": "Unknown",
-      "folder": "Folder",
+      "directory": "Directory",
       "pageCount": "Page count",
       "question": "Question",
       "answer": "Answer",
@@ -2453,7 +2477,7 @@
       "resource_pdf": "Dokument",
       "resource_none": "Unbekannt",
       "resource_unknown": "Unbekannt",
-      "folder": "Verzeichnis",
+      "directory": "Verzeichnis",
       "pageCount": "Seitenanzahl",
       "question": "Frage",
       "answer": "Antwort",
@@ -2565,7 +2589,7 @@
       "mimeTypeCategorySpreadsheet": "Spreadsheet",
       "mimeTypeCategoryPresentation": "Presentation",
       "mimeTypeCategoryProgram": "Program",
-      "mimeTypeCategoryFolder": "Folder",
+      "mimeTypeCategoryFolder": "Directory",
       "mimeTypeCategoryUnknown": "Unknown"
     }
   },

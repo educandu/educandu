@@ -178,7 +178,7 @@ function FilesListViewer({
       size: file.size,
       isDirectory,
       createdOn: file.createdOn,
-      typeTranslated: t(isDirectory ? 'common:folder' : `common:resource_${getResourceType(file.url)}`),
+      typeTranslated: t(isDirectory ? 'common:directory' : `common:resource_${getResourceType(file.url)}`),
       sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale: uiLocale }) : '---',
       createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
     };

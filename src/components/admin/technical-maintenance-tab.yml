@@ -1,0 +1,33 @@
+tabInfo:
+  en: You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.
+  de: Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des CDNs starten.
+documentsValidationHeader:
+  en: Documents validation
+  de: Dokumente validieren
+documentsValidationDescription:
+  en: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
+  de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.
+documentsRegenerationHeader:
+  en: Documents regeneration
+  de: Dokumente neu erstellen
+documentsRegenerationDescription:
+  en: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
+  de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
+cdnResourcesConsolidationHeader:
+  en: CDN resources consolidation
+  de: CDN-Ressourcen konsolidieren
+cdnResourcesConsolidationDescription:
+  en: Update the list of CDN resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
+  de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften CDN-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
+cdnDirectoriesCreationHeader:
+  en: CDN directories creation
+  de: CDN-Verzeichnisse erstellen
+cdnDirectoriesCreationDescription:
+  en: Ensure the CDN contains a public upload directory for each existing document (including private documents in rooms). This task updates the CDN by adding the missing directories.
+  de: Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im CDN existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.
+lastExecution:
+  en: Last execution
+  de: Letzte Ausführung
+start:
+  en: Start task
+  de: Task starten

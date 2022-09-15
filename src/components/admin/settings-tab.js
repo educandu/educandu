@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Button, Collapse, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -7,18 +6,16 @@ import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
 import { useService } from '../container-context.js';
-import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import DocumentSelector from '../document-selector.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
+import { settingsShape } from '../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import AdminApiClient from '../../api-clients/admin-api-client.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
-import { batchShape, settingsShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
@@ -26,17 +23,11 @@ const logger = new Logger(import.meta.url);
 
 function SettingsTab({
   initialSettings,
-  lastDocumentRegenerationBatch,
-  lastDocumentValidationBatch,
-  lastCdnResourcesConsolidationBatch,
-  lastCdnUploadDirectoryCreationBatch,
   onDirtyStateChange,
   onSettingsSaved
 }) {
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation('settingsTab');
   const pluginRegistry = useService(PluginRegistry);
-  const adminApiClient = useSessionAwareApiClient(AdminApiClient);
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
 
   const [dirtyKeys, setDirtyKeys] = useState([]);
@@ -97,46 +88,6 @@ function SettingsTab({
       handleApiError({ error, logger, t });
     }
   };
-
-  const handleStartDocumentRegenerationClick = async () => {
-    try {
-      const batch = await adminApiClient.postDocumentRegenerationRequest();
-      window.location = routes.getBatchUrl(batch._id);
-    } catch (error) {
-      handleApiError({ t, logger, error });
-    }
-  };
-
-  const handleStartDocumentValidationClick = async () => {
-    try {
-      const batch = await adminApiClient.postDocumentValidationRequest();
-      window.location = routes.getBatchUrl(batch._id);
-    } catch (error) {
-      handleApiError({ t, logger, error });
-    }
-  };
-
-  const handleStartCdnResourcesConsolidationClick = async () => {
-    try {
-      const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
-      window.location = routes.getBatchUrl(batch._id);
-    } catch (error) {
-      handleApiError({ t, logger, error });
-    }
-  };
-
-  const handleStartCdnUploadDirectoryCreationClick = async () => {
-    try {
-      const batch = await adminApiClient.postCdnUploadDirectoryCreationRequest();
-      window.location = routes.getBatchUrl(batch._id);
-    } catch (error) {
-      handleApiError({ t, logger, error });
-    }
-  };
-
-  const renderLastBatchExecution = batch => batch && (
-    <span>{t('lastExecution')}: <a href={routes.getBatchUrl(batch._id)}>{formatDate(batch.createdOn)}</a></span>
-  );
 
   return (
     <div className="SettingsTab">
@@ -223,35 +174,6 @@ function SettingsTab({
         </Collapse.Panel>
       </Collapse>
 
-      <Collapse className="SettingsTab-collapse SettingsTab-collapse--danger">
-        <Collapse.Panel header={t('technicalMaintenanceTasksHeader')} key="technicalMaintenanceTasks">
-          <div className="SettingsTab-collapseRow">
-            <Button onClick={handleStartDocumentValidationClick} danger>
-              {t('documentValidationButton')}
-            </Button>
-            {renderLastBatchExecution(lastDocumentValidationBatch)}
-          </div>
-          <div className="SettingsTab-collapseRow">
-            <Button onClick={handleStartDocumentRegenerationClick} danger>
-              {t('documentRegenerationButton')}
-            </Button>
-            {renderLastBatchExecution(lastDocumentRegenerationBatch)}
-          </div>
-          <div className="SettingsTab-collapseRow">
-            <Button onClick={handleStartCdnResourcesConsolidationClick} danger>
-              {t('cdnResourcesConsolidationButton')}
-            </Button>
-            {renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
-          </div>
-          <div className="SettingsTab-collapseRow">
-            <Button onClick={handleStartCdnUploadDirectoryCreationClick} danger>
-              {t('cdnUploadDirectoryCreationButton')}
-            </Button>
-            {renderLastBatchExecution(lastCdnUploadDirectoryCreationBatch)}
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-
       <Button
         type="primary"
         onClick={handleSaveButtonClick}
@@ -266,19 +188,8 @@ function SettingsTab({
 
 SettingsTab.propTypes = {
   initialSettings: settingsShape.isRequired,
-  lastCdnResourcesConsolidationBatch: batchShape,
-  lastCdnUploadDirectoryCreationBatch: batchShape,
-  lastDocumentRegenerationBatch: batchShape,
-  lastDocumentValidationBatch: batchShape,
   onDirtyStateChange: PropTypes.func.isRequired,
   onSettingsSaved: PropTypes.func.isRequired
-};
-
-SettingsTab.defaultProps = {
-  lastCdnResourcesConsolidationBatch: null,
-  lastCdnUploadDirectoryCreationBatch: null,
-  lastDocumentRegenerationBatch: null,
-  lastDocumentValidationBatch: null
 };
 
 export default SettingsTab;
