@@ -10,7 +10,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
 import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.js';
-import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   documentImportBatchDetailsShape,
@@ -23,11 +22,86 @@ import {
 const POLL_INTERVAL_IN_MS = 500;
 const logger = new Logger(import.meta.url);
 
+export const STATUS = {
+  pending: 'pending',
+  success: 'success',
+  warning: 'warning',
+  error: 'error'
+};
+
+const localizeStatus = (status, t) => {
+  switch (status) {
+    case STATUS.pending:
+      return t('status_pending');
+    case STATUS.success:
+      return t('status_success');
+    case STATUS.warning:
+      return t('status_warning');
+    case STATUS.error:
+      return t('status_error');
+    default:
+      throw new Error(`Invalid status '${status}'`);
+  }
+};
+
 function Batches({ initialState, PageTemplate }) {
-  const { t } = useTranslation('batches');
   const { formatDate } = useDateFormat();
+  const { t } = useTranslation('batches');
   const [batch, setBatch] = useState(initialState.batch);
+  const [taskTableItems, setTaskTableItems] = useState([]);
   const batchApiClient = useSessionAwareApiClient(BatchApiClient);
+  const [overallBatchStatus, setOverallBatchStatus] = useState(null);
+
+  useEffect(() => {
+    let errorCount = 0;
+    let warningCount = 0;
+
+    const taskItems = [];
+    for (const task of batch.tasks) {
+      if (!task.processed) {
+        taskItems.push({
+          ...task,
+          status: STATUS.pending,
+          localizedStatus: localizeStatus(STATUS.pending, t)
+        });
+      } else if (task.attempts[task.attempts.length - 1].errors.length) {
+        taskItems.push({
+          ...task,
+          status: STATUS.error,
+          localizedStatus: localizeStatus(STATUS.error, t)
+        });
+        errorCount += 1;
+      } else if (task.attempts.some(attempt => attempt.errors.length)) {
+        taskItems.push({
+          ...task,
+          status: STATUS.warning,
+          localizedStatus: localizeStatus(STATUS.warning, t)
+        });
+        warningCount += 1;
+      } else {
+        taskItems.push({
+          ...task,
+          status: STATUS.success,
+          localizedStatus: localizeStatus(STATUS.success, t)
+        });
+      }
+    }
+
+    setTaskTableItems(taskItems);
+
+    let batchStatus;
+    if (batch.progress < 1) {
+      batchStatus = STATUS.pending;
+    } else if (errorCount) {
+      batchStatus = STATUS.error;
+    } else if (warningCount) {
+      batchStatus = STATUS.warning;
+    } else {
+      batchStatus = STATUS.success;
+    }
+
+    setOverallBatchStatus(batchStatus);
+  }, [batch, t]);
 
   useEffect(() => {
     let nextTimeout = null;
@@ -54,18 +128,19 @@ function Batches({ initialState, PageTemplate }) {
     };
   }, [t, batchApiClient, batch._id, batch.progress]);
 
-  const renderTaskStatus = (processed, task) => {
-    if (!processed) {
-      return <span><SyncOutlined spin /> {t('taskStatusPending')}</span>;
+  const renderTaskStatus = (_, taskItem) => {
+    switch (taskItem.status) {
+      case STATUS.pending:
+        return <span><SyncOutlined spin /> {taskItem.localizedStatus}</span>;
+      case STATUS.warning:
+        return <span><WarningOutlined className="BatchesPage-warningIcon" /> {taskItem.localizedStatus}</span>;
+      case STATUS.error:
+        return <span><ExclamationCircleOutlined className="BatchesPage-errorIcon" /> {taskItem.localizedStatus}</span>;
+      case STATUS.success:
+        return <span><CheckOutlined className="BatchesPage-successIcon" /> {taskItem.localizedStatus}</span>;
+      default:
+        throw new Error(`Invalid status '${taskItem.status}'`);
     }
-
-    if (!isTaskSuccessful(task)) {
-      return <span><ExclamationCircleOutlined className="BatchesPage-errorIcon" /> {t('taskStatusFailed')}</span>;
-    }
-
-    return doesTaskHaveErrors(task)
-      ? <span><WarningOutlined className="BatchesPage-warningIcon" /> {t('taskStatusDoneWithWarnings')}</span>
-      : <span><CheckOutlined className="BatchesPage-successIcon" /> {t('taskStatusDone')}</span>;
   };
 
   const renderBatchType = batchType => {
@@ -85,14 +160,37 @@ function Batches({ initialState, PageTemplate }) {
     }
   };
 
-  const renderBatchStatus = progress => {
-    if (progress === 1) {
-      return t('batchStatusDone');
+  const renderBatchStatus = () => {
+    if (!overallBatchStatus) {
+      return null;
     }
-    if (progress === 0) {
-      return t('batchStatusPending');
+
+    let statusClasses;
+    let statusMessage;
+    switch (overallBatchStatus) {
+      case STATUS.pending:
+        statusClasses = 'BatchesPage-status BatchesPage-status--pending';
+        statusMessage = batch.progress % 1 !== 0
+          ? t('progressMessage', { progress: batch.progress })
+          : localizeStatus(STATUS.pending, t);
+        break;
+      case STATUS.warning:
+        statusClasses = 'BatchesPage-status BatchesPage-status--warning';
+        statusMessage = localizeStatus(STATUS.warning, t);
+        break;
+      case STATUS.error:
+        statusClasses = 'BatchesPage-status BatchesPage-status--error';
+        statusMessage = localizeStatus(STATUS.error, t);
+        break;
+      case STATUS.success:
+        statusClasses = 'BatchesPage-status BatchesPage-status--success';
+        statusMessage = localizeStatus(STATUS.success, t);
+        break;
+      default:
+        throw new Error(`Invalid status '${overallBatchStatus}'`);
     }
-    return t('batchStatusProcessing', { progress });
+
+    return <span className={statusClasses}>{statusMessage}</span>;
   };
 
   const renderDate = date => formatDate(date);
@@ -241,9 +339,17 @@ function Batches({ initialState, PageTemplate }) {
 
   taskTableColumns.push({
     title: t('taskStatus'),
-    dataIndex: 'processed',
+    dataIndex: 'localizedStatus',
     render: renderTaskStatus,
-    sorter: taskStatusSorter
+    sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus),
+    filters: [
+      { text: t('status_pending'), value: STATUS.pending },
+      { text: t('status_warning'), value: STATUS.warning },
+      { text: t('status_error'), value: STATUS.error },
+      { text: t('status_success'), value: STATUS.success }
+    ],
+    defaultFilteredValue: [STATUS.pending, STATUS.warning, STATUS.error],
+    onFilter: (value, record) => record.status === value
   });
 
   const batchInfos = [<span key="batch-type">{t('batchType')}: {renderBatchType(batch.batchType)}</span>];
@@ -264,7 +370,7 @@ function Batches({ initialState, PageTemplate }) {
           ))}
         </div>
         <div className="BatchesPage-batchInfo">
-          <div>{t('common:status')}: {renderBatchStatus(batch.progress)}</div>
+          <div>{t('common:status')}: {renderBatchStatus()}</div>
           <div>{t('common:createdOn')}: {renderDate(batch.createdOn)}</div>
           <div>{t('common:completedOn')}: {renderDate(batch.completedOn)}</div>
           <div>{t('common:user')}: {batch.createdBy.displayName}</div>
@@ -283,7 +389,7 @@ function Batches({ initialState, PageTemplate }) {
           size="small"
           bordered
           rowKey="_id"
-          dataSource={batch.tasks}
+          dataSource={taskTableItems}
           columns={taskTableColumns}
           pagination={false}
           expandable={{
