@@ -109,22 +109,34 @@
     "namespace": "technicalMaintenanceTab",
     "language": "en",
     "resources": {
+      "tabInfo": "You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.",
+      "documentsValidationHeader": "Documents validation",
+      "documentsValidationDescription": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
+      "documentsRegenerationHeader": "Documents regeneration",
+      "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
+      "cdnResourcesConsolidationHeader": "CDN resources consolidation",
+      "cdnResourcesConsolidationDescription": "Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
+      "cdnDirectoriesCreationHeader": "CDN directories creation",
+      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.",
       "lastExecution": "Last execution",
-      "documentRegenerationButton": "Regenerate documents",
-      "documentValidationButton": "Validate documents",
-      "cdnResourcesConsolidationButton": "Consolidate CDN resources",
-      "cdnUploadDirectoryCreationButton": "Create CDN upload directories"
+      "start": "Start task"
     }
   },
   {
     "namespace": "technicalMaintenanceTab",
     "language": "de",
     "resources": {
+      "tabInfo": "You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.",
+      "documentsValidationHeader": "Dokumente Validierung",
+      "documentsValidationDescription": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
+      "documentsRegenerationHeader": "Dokumente Neuerstellung",
+      "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
+      "cdnResourcesConsolidationHeader": "CDN-Ressourcen Konsolidierung",
+      "cdnResourcesConsolidationDescription": "Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
+      "cdnDirectoriesCreationHeader": "CDN-Verzeichnisse Erstellung",
+      "cdnDirectoriesCreationDescription": "Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.",
       "lastExecution": "Letzte Ausführung",
-      "documentRegenerationButton": "Dokumente neu erstellen",
-      "documentValidationButton": "Dokumente validieren",
-      "cdnResourcesConsolidationButton": "CDN-Ressourcen konsolidieren",
-      "cdnUploadDirectoryCreationButton": "CDN-Upload-Verzeichnisse erstellen"
+      "start": "Task starten"
     }
   },
   {

@@ -1,15 +1,33 @@
+tabInfo:
+  en: You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.
+  de: You can trigger different tasks from here, in order to execute technical maintenance over the database and the CDN.
+documentsValidationHeader:
+  en: Documents validation
+  de: Dokumente Validierung
+documentsValidationDescription:
+  en: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
+  de: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
+documentsRegenerationHeader:
+  en: Documents regeneration
+  de: Dokumente Neuerstellung
+documentsRegenerationDescription:
+  en: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
+  de: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
+cdnResourcesConsolidationHeader:
+  en: CDN resources consolidation
+  de: CDN-Ressourcen Konsolidierung
+cdnResourcesConsolidationDescription:
+  en: Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
+  de: Update the cdnResources array on documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
+cdnDirectoriesCreationHeader:
+  en: CDN directories creation
+  de: CDN-Verzeichnisse Erstellung
+cdnDirectoriesCreationDescription:
+  en: Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.
+  de: Ensure the CDN contains a public upload folder for each existing document (including room documents). This task updates the CDN.
 lastExecution:
   en: Last execution
   de: Letzte Ausführung
-documentRegenerationButton:
-  en: Regenerate documents
-  de: Dokumente neu erstellen
-documentValidationButton:
-  en: Validate documents
-  de: Dokumente validieren
-cdnResourcesConsolidationButton:
-  en: Consolidate CDN resources
-  de: CDN-Ressourcen konsolidieren
-cdnUploadDirectoryCreationButton:
-  en: Create CDN upload directories
-  de: CDN-Upload-Verzeichnisse erstellen
+start:
+  en: Start task
+  de: Task starten
