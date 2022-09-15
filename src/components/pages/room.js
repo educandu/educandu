@@ -195,15 +195,15 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleDocumentMoveUp = async index => {
-    const newSortedDocuments = swapItemsAt(room.documents, index, index - 1);
-    const response = await roomApiClient.updateRoomDocuments({ roomId: room._id, documents: newSortedDocuments });
+    const reorderedDocumentIds = swapItemsAt(room.documents, index, index - 1);
+    const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
   };
 
   const handleDocumentMoveDown = async index => {
-    const newSortedDocuments = swapItemsAt(room.documents, index, index + 1);
-    const response = await roomApiClient.updateRoomDocuments({ roomId: room._id, documents: newSortedDocuments });
+    const reorderedDocumentIds = swapItemsAt(room.documents, index, index + 1);
+    const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
   };

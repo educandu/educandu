@@ -9,7 +9,8 @@ import {
   replaceItem,
   splitIntoChunks,
   range,
-  ensureIsUnique
+  ensureIsUnique,
+  getSymmetricalDifference
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -241,6 +242,16 @@ describe('array-utils', () => {
       };
       const input = ['a', 'b', 'c', 'b', 'd', 'e'];
       expect(ensureIsUnique(input, nextCounterValue)).toStrictEqual(['a', 'b', 'c', 'b', 'd', 'e']);
+    });
+  });
+
+  describe('getSymmetricalDifference', () => {
+    it('returns an empty array when there is no difference', () => {
+      expect(getSymmetricalDifference(['a', 'b', 'c'], ['a', 'b', 'c'])).toEqual([]);
+    });
+
+    it('returns an array with differences from both directions', () => {
+      expect(getSymmetricalDifference(['a', 'b', 'd'], ['b', 'c', 'e'])).toEqual(['a', 'd', 'c', 'e']);
     });
   });
 });

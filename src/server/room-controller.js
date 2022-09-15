@@ -96,7 +96,7 @@ export default class RoomController {
   async handlePatchRoomDocuments(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { documents } = req.body;
+    const { documentIds } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -108,7 +108,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
     }
 
-    const updatedRoom = await this.roomService.updateRoomDocuments(roomId, { documents });
+    const updatedRoom = await this.roomService.updateRoomDocumentsOrder(roomId, documentIds);
     const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
 
     return res.status(201).send({ room: mappedRoom });

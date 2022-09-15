@@ -37,7 +37,7 @@ export const patchRoomMetadataBodySchema = joi.object({
 });
 
 export const patchRoomDocumentsBodySchema = joi.object({
-  documents: joi.array().items(idOrKeySchema).required()
+  documentIds: joi.array().items(idOrKeySchema).required()
 });
 
 export const deleteRoomsQuerySchema = joi.object({
@@ -78,15 +78,11 @@ const roomMembersDBProps = {
   members: joi.array().required().items(roomMemberDBSchema)
 };
 
-const roomDocumentsDBProps = {
-  documents: joi.array().required().items(idOrKeySchema)
-};
-
 export const roomMetadataDBSchema = joi.object(roomMetadataDBProps);
 
 export const roomMembersDBSchema = joi.object(roomMembersDBProps);
 
-export const roomDocumentsDBSchema = joi.object(roomDocumentsDBProps);
+export const roomDocumentsDBSchema = joi.array().required().items(idOrKeySchema);
 
 export const roomDBSchema = joi.object({
   ...roomMetadataDBProps,

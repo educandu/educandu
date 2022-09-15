@@ -27,11 +27,11 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  updateRoomDocuments({ roomId, documents }) {
+  updateRoomDocumentsOrder({ roomId, documentIds }) {
     return this.httpClient
       .patch(
         `/api/v1/rooms/${encodeURIComponent(roomId)}/documents`,
-        { documents },
+        { documentIds },
         { responseType: 'json' }
       )
       .then(res => res.data);

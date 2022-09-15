@@ -38,7 +38,7 @@ describe('room-controller', () => {
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
       updateRoomMetadata: sandbox.stub(),
-      updateRoomDocuments: sandbox.stub(),
+      updateRoomDocumentsOrder: sandbox.stub(),
       removeRoomMember: sandbox.stub(),
       deleteRoomInvitation: sandbox.stub()
     };
@@ -224,7 +224,7 @@ describe('room-controller', () => {
           documents: []
         };
         requestBody = {
-          documents: [uniqueId.create()]
+          documentIds: [uniqueId.create()]
         };
         updatedRoom = {
           ...room,
@@ -233,7 +233,7 @@ describe('room-controller', () => {
         mappedRoom = cloneDeep(updatedRoom);
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        roomService.updateRoomDocuments.resolves(updatedRoom);
+        roomService.updateRoomDocumentsOrder.resolves(updatedRoom);
         clientDataMappingService.mapRoom.resolves(mappedRoom);
 
         req = { user, params: { roomId: room._id }, body: { ...requestBody } };
@@ -247,8 +247,8 @@ describe('room-controller', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should call roomService.updateRoomDocuments', () => {
-        sinon.assert.calledWith(roomService.updateRoomDocuments, room._id, { ...requestBody });
+      it('should call roomService.updateRoomDocumentsOrder', () => {
+        sinon.assert.calledWith(roomService.updateRoomDocumentsOrder, room._id, requestBody.documentIds);
       });
 
       it('should call mapRoom with the room returned by the service', () => {

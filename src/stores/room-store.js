@@ -83,9 +83,9 @@ class RoomStore {
     return this.collection.updateOne({ _id: roomId }, { $set: { ...metadata } }, { session });
   }
 
-  updateRoomDocuments(roomId, { documents }, { session } = {}) {
-    validate({ documents }, roomDocumentsDBSchema);
-    return this.collection.updateOne({ _id: roomId }, { $set: { documents } }, { session });
+  updateRoomDocuments(roomId, documentIds, { session } = {}) {
+    validate(documentIds, roomDocumentsDBSchema);
+    return this.collection.updateOne({ _id: roomId }, { $set: { documents: documentIds } }, { session });
   }
 
   updateRoomMembers(roomId, members, { session } = {}) {
