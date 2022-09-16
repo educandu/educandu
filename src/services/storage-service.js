@@ -204,7 +204,8 @@ export default class StorageService {
       parentDirectory,
       currentDirectory,
       objects: searchTerm
-        ? objects.filter(obj => obj.path.toLowerCase().includes(searchTerm.toLowerCase()))
+        ? objects.filter(obj => obj.path.toLowerCase().includes(searchTerm.toLowerCase())
+          || obj.documentMetadata?.title.includes(searchTerm.toLowerCase()))
         : objects
     };
   }
