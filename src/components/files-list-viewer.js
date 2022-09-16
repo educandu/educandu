@@ -14,6 +14,7 @@ import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import FolderNavigateIcon from './icons/files/folder-navigate-icon.js';
+import { composeHumanReadableDisplayName } from '../utils/storage-utils.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
 const HEADER_ROW_HEIGHT_IN_PX = 47;
@@ -175,7 +176,7 @@ function FilesListViewer({
     const isDirectory = file.type === CDN_OBJECT_TYPE.directory;
     return {
       key: file.portableUrl,
-      name: file.displayName,
+      name: composeHumanReadableDisplayName({ cdnObject: file, t }),
       size: file.size,
       isDirectory,
       createdOn: file.createdOn,

@@ -9,6 +9,7 @@ import PreviewIcon from './icons/general/preview-icon.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
+import { composeHumanReadableDisplayName } from '../utils/storage-utils.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 import FolderFilledNavigateIcon from './icons/files/folder-filled-navigate-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from './action-button.js';
@@ -34,7 +35,7 @@ function FilesGridViewer({
 
   const handleDeleteClick = (event, file) => {
     event.stopPropagation();
-    confirmCdnFileDelete(t, file.displayName, () => onDeleteFileClick(file));
+    confirmCdnFileDelete(t, composeHumanReadableDisplayName({ cdnObject: file, t }), () => onDeleteFileClick(file));
   };
 
   const handleParentLinkClick = () => {
@@ -57,15 +58,16 @@ function FilesGridViewer({
     }
     const classes = classNames('FilesGridViewer-fileContainer', { 'is-selected': file.portableUrl === selectedFileUrl });
     const actionsClasses = classNames('FilesGridViewer-actions', { 'are-visible': file.portableUrl === selectedFileUrl });
+    const humanReadableDisplayName = composeHumanReadableDisplayName({ cdnObject: file, t });
 
     return (
       <div className={classes} key={file.portableUrl}>
-        <Tooltip title={file.displayName} placement="bottom">
+        <Tooltip title={humanReadableDisplayName} placement="bottom">
           <a className="FilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
             <div className="FilesGridViewer-fileDisplay">
               {fileDisplay}
             </div>
-            <span className="FilesGridViewer-fileName">{file.displayName}</span>
+            <span className="FilesGridViewer-fileName">{humanReadableDisplayName}</span>
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>

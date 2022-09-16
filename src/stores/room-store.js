@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import {
   roomDBSchema,
   roomMemberDBSchema,
@@ -55,6 +56,21 @@ class RoomStore {
 
   getRoomsByIdOwnedOrJoinedByUser({ roomId, userId }, { session } = {}) {
     return this.collection.findOne({ $and: [{ _id: roomId }, { $or: [{ owner: userId }, { 'members.userId': userId }] }] }, { session });
+  }
+
+  getRoomsByOwnerOrCollaboratorUser({ userId }, { session } = {}) {
+    return this.collection.find({
+      $or: [
+        { owner: userId },
+        {
+          $and: [
+            { documentsMode: ROOM_DOCUMENTS_MODE.collaborative },
+            { 'members.userId': userId }
+          ]
+        }
+      ]
+    }, { session })
+      .toArray();
   }
 
   getRoomsOwnedOrJoinedByUser(userId, { session } = {}) {

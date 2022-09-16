@@ -52,7 +52,8 @@ class StorageController {
     const { parentDirectory, currentDirectory, objects } = await this.storageService.getObjects({
       parentPath,
       searchTerm: searchTerm || null,
-      recursive: recursive === true.toString()
+      recursive: recursive === true.toString(),
+      user
     });
 
     return res.send({ parentDirectory, currentDirectory, objects });
