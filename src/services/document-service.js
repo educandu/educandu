@@ -143,21 +143,16 @@ class DocumentService {
     return this.documentStore.getDocumentTagsMatchingText(sanitizedSearchString);
   }
 
-  async findDocumentsMetadataInSearchableDocuments({ query, includeRoomDocuments, includeArchivedDocuments }) {
+  async findDocumentsMetadataInSearchableDocuments({ query }) {
     const sanitizedQuery = escapeStringRegexp(query.trim());
 
-    const queryConditions = [];
-
-    if (!includeArchivedDocuments) {
-      queryConditions.push({ archived: false });
-    }
-
-    if (!includeRoomDocuments) {
-      queryConditions.push({ roomId: null });
-    }
+    const queryConditions = [
+      { roomId: null },
+      { archived: false }
+    ];
 
     if (sanitizedQuery) {
-      queryConditions.title = { $regex: sanitizedQuery, $options: 'i' };
+      queryConditions.push({ title: { $regex: sanitizedQuery, $options: 'i' } });
     }
 
     const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(queryConditions);

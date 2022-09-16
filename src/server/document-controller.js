@@ -22,7 +22,7 @@ import {
   getDocumentQuerySchema,
   patchDocSectionsBodySchema,
   createDocumentDataBodySchema,
-  getDocumentsTitlesQuerySchema
+  getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound, BadRequest, Forbidden } = httpErrors;
@@ -203,10 +203,10 @@ class DocumentController {
     return res.send({ doc: mappedDoc });
   }
 
-  async handleGetDocsTitles(req, res) {
-    const { query, includeRoomDocuments, includeArchivedDocuments } = req.query;
+  async handleGetSearchableDocsTitles(req, res) {
+    const { query } = req.query;
 
-    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments({ query, includeRoomDocuments, includeArchivedDocuments });
+    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments({ query });
     const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
 
     return res.send({ documents: mappedDocumentsTitles });
@@ -351,8 +351,8 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs/titles',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(getDocumentsTitlesQuerySchema)],
-      (req, res) => this.handleGetDocsTitles(req, res)
+      [needsPermission(permissions.VIEW_DOCS), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
+      (req, res) => this.handleGetSearchableDocsTitles(req, res)
     );
 
     router.get(

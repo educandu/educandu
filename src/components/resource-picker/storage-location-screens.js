@@ -26,19 +26,7 @@ const SCREEN = {
   filesUpload: 'files-upload'
 };
 
-const updateFileDisplayName = (cdnObject, documentsTitles, t) => {
-  if (cdnObject.type === CDN_OBJECT_TYPE.directory) {
-    const documentTitle = documentsTitles.find(doc => doc._id === cdnObject.displayName);
-    cdnObject.displayName = `${documentTitle?.title || t('common:unknown')} [${cdnObject.displayName}]`;
-  }
-  return cdnObject;
-};
-
-const updateFilesDisplayName = (cdnObjects, documentsTitles, t) => {
-  return cdnObjects.map(obj => updateFileDisplayName(obj, documentsTitles, t));
-};
-
-function StorageLocationScreens({ storageLocation, initialUrl, documentsTitles, onSelect, onCancel }) {
+function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
@@ -81,15 +69,11 @@ function StorageLocationScreens({ storageLocation, initialUrl, documentsTitles, 
       }
 
       if (searchText) {
-        setSearchResult(updateFilesDisplayName(result.objects, documentsTitles, t));
+        setSearchResult(result.objects);
       } else {
-        const shouldUpdateCurrentDirectoryDisplayName = storageLocation.type === STORAGE_LOCATION_TYPE.public && result.currentDirectory.displayName !== 'media';
-
         setParentDirectory(result.parentDirectory);
-        setCurrentDirectory(shouldUpdateCurrentDirectoryDisplayName
-          ? updateFileDisplayName(result.currentDirectory, documentsTitles, t)
-          : result.currentDirectory);
-        setFiles(updateFilesDisplayName(result.objects, documentsTitles, t));
+        setCurrentDirectory(result.currentDirectory);
+        setFiles(result.objects);
       }
 
       setIsLoading(false);
@@ -101,7 +85,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, documentsTitles, 
         message.error(err.message);
       }
     }
-  }, [currentDirectoryPath, storageLocation, documentsTitles, storageApiClient, isMounted, t]);
+  }, [currentDirectoryPath, storageLocation, storageApiClient, isMounted]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -314,10 +298,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, documentsTitles, 
 }
 
 StorageLocationScreens.propTypes = {
-  documentsTitles: PropTypes.arrayOf(PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
-  })).isRequired,
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,

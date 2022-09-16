@@ -1,12 +1,10 @@
 import joi from 'joi';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
+import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../constants.js';
-import { idOrKeySchema, slugSchema, sectionSchema, boolStringSchema } from './shared-schemas.js';
 
-export const getDocumentsTitlesQuerySchema = joi.object({
-  query: joi.string().allow('').required(),
-  includeRoomDocuments: boolStringSchema,
-  includeArchivedDocuments: boolStringSchema
+export const getSearchableDocumentsTitlesQuerySchema = joi.object({
+  query: joi.string().allow('').required()
 });
 
 export const documentIdParamsOrQuerySchema = joi.object({
