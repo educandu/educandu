@@ -29,7 +29,11 @@ export const cdnObjectShape = PropTypes.shape({
   portableUrl: PropTypes.string.isRequired,
   createdOn: PropTypes.string,
   type: PropTypes.oneOf(Object.values(CDN_OBJECT_TYPE)).isRequired,
-  size: PropTypes.number
+  size: PropTypes.number,
+  documentMetadata: PropTypes.shape({
+    title: PropTypes.string,
+    isAccessibleToUser: PropTypes.bool.isRequired
+  })
 });
 
 export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });

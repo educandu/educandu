@@ -132,7 +132,7 @@ describe('storage-service', () => {
             size: null,
             documentMetadata: {
               title: 'Document title',
-              isPrivate: false
+              isAccessibleToUser: false
             }
           },
           objects: [
@@ -185,8 +185,8 @@ describe('storage-service', () => {
 
         rooms = [{ _id: 'Room ID', owner: myUser._id }];
         documents = [
-          { _id: '34q87zc95t9c287eh', title: 'Document1 title' },
-          { _id: '43vzvjz05tzdfz7rf', title: 'Document2 title', roomId: 'Room ID' }
+          { _id: '34q87zc95t9c287eh', title: 'Document1 title', roomId: 'Room ID' },
+          { _id: '43vzvjz05tzdfz7rf', title: 'Document2 title', roomId: 'Other room ID' }
         ];
 
         documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
@@ -217,7 +217,7 @@ describe('storage-service', () => {
             size: null,
             documentMetadata: {
               title: '',
-              isPrivate: false
+              isAccessibleToUser: false
             }
           },
           objects: [
@@ -232,7 +232,7 @@ describe('storage-service', () => {
               size: null,
               documentMetadata: {
                 title: 'Document1 title',
-                isPrivate: false
+                isAccessibleToUser: false
               }
             },
             {
@@ -246,7 +246,7 @@ describe('storage-service', () => {
               size: null,
               documentMetadata: {
                 title: 'Document2 title',
-                isPrivate: true
+                isAccessibleToUser: true
               }
             },
             {
@@ -289,7 +289,7 @@ describe('storage-service', () => {
             size: null,
             documentMetadata: {
               title: '',
-              isPrivate: false
+              isAccessibleToUser: false
             }
           },
           objects: [
@@ -304,7 +304,7 @@ describe('storage-service', () => {
               size: null,
               documentMetadata: {
                 title: '',
-                isPrivate: false
+                isAccessibleToUser: false
               }
             },
             {

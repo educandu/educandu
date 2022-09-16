@@ -9,7 +9,8 @@ const documentMetadataProjection = {
   updatedOn: 1,
   title: 1,
   slug: 1,
-  language: 1
+  language: 1,
+  roomId: 1
 };
 
 const documentExtendedMetadataProjection = {

@@ -183,14 +183,12 @@ export default class StorageService {
     ownedOrCollaboratedRooms = await this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId: user._id });
 
     const currentDirectoryDocument = documents.find(doc => doc._id === currentDirectory.displayName);
-    const currentDirectoryRoom = currentDirectoryDocument
-      ? ownedOrCollaboratedRooms.find(room => room._id === currentDirectoryDocument.roomId)
-      : null;
+    const isAccessibleDocument = !!currentDirectoryDocument?.roomId && !ownedOrCollaboratedRooms.find(room => room._id === currentDirectoryDocument.roomId);
 
     // eslint-disable-next-line require-atomic-updates
     currentDirectory.documentMetadata = {
       title: currentDirectoryDocument?.title || '',
-      isPrivate: !!currentDirectoryRoom
+      isAccessibleToUser: isAccessibleDocument
     };
 
     objects.forEach(obj => {
@@ -198,11 +196,11 @@ export default class StorageService {
 
       if (obj.type === CDN_OBJECT_TYPE.directory) {
         const directoryDocument = documents.find(doc => doc._id === obj.displayName);
-        const documentRoom = directoryDocument ? ownedOrCollaboratedRooms.find(room => room._id === directoryDocument.roomId) : null;
+        const isAccessibleToUser = !!directoryDocument?.roomId && !ownedOrCollaboratedRooms.find(room => room._id === directoryDocument.roomId);
 
         obj.documentMetadata = {
           title: directoryDocument?.title || '',
-          isPrivate: !!documentRoom
+          isAccessibleToUser
         };
       }
     });

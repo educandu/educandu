@@ -172,7 +172,7 @@ describe('storage-utils', () => {
           cdnObject: {
             type: CDN_OBJECT_TYPE.directory,
             displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: '', isPrivate: false }
+            documentMetadata: { title: '', isAccessibleByUser: false }
           }
         });
       });
@@ -182,7 +182,7 @@ describe('storage-utils', () => {
       });
     });
 
-    describe('when the cdn object corresponds to a private document', () => {
+    describe('when the cdn object corresponds to a private document belonging to another user', () => {
       beforeEach(() => {
         t = sinon.stub();
         t.withArgs('common:privateDocument').returns('Private document');
@@ -190,7 +190,7 @@ describe('storage-utils', () => {
           t,
           cdnObject: { type: CDN_OBJECT_TYPE.directory,
             displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: 'Document title', isPrivate: true } }
+            documentMetadata: { title: 'Document title', isAccessibleToUser: true } }
         });
       });
 

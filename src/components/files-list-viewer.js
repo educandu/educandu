@@ -130,7 +130,8 @@ function FilesListViewer({
       title: () => t('common:name'),
       dataIndex: 'name',
       render: renderName,
-      sorter: by('isDirectory', { direction: -1 }).thenBy('name', { ignoreCase: true })
+      sorter: by('isDirectory', { direction: -1 }).thenBy('name', { ignoreCase: true }),
+      defaultSortOrder: 'ascend'
     },
     {
       title: () => t('common:type'),

@@ -174,7 +174,7 @@ export function composeHumanReadableDisplayName({ cdnObject, t }) {
     return `${t('common:unknownDocument')} [${cdnObject.displayName}]`;
   }
 
-  return cdnObject.documentMetadata.isPrivate
+  return cdnObject.documentMetadata.isAccessibleToUser
     ? `${t('common:privateDocument')} [${cdnObject.displayName}]`
     : `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`;
 }
