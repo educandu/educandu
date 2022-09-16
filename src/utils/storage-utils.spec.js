@@ -163,7 +163,7 @@ describe('storage-utils', () => {
       });
     });
 
-    describe('when the cdn object does not contain document metadata title', () => {
+    describe('when the cdn object corresponds to a document accessible to the current user', () => {
       beforeEach(() => {
         t = sinon.stub();
         t.withArgs('common:unknownDocument').returns('Unknown document');
@@ -172,25 +172,27 @@ describe('storage-utils', () => {
           cdnObject: {
             type: CDN_OBJECT_TYPE.directory,
             displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: '', isAccessibleByUser: false }
+            documentMetadata: { title: 'Document title', isAccessibleToUser: true }
           }
         });
       });
 
       it('should return the composed display name', () => {
-        expect(result).toBe('Unknown document [ch5zqo897tzo8f3]');
+        expect(result).toBe('Document title [ch5zqo897tzo8f3]');
       });
     });
 
-    describe('when the cdn object corresponds to a private document belonging to another user', () => {
+    describe('when the cdn object corresponds to a document that is not accessible to the current user', () => {
       beforeEach(() => {
         t = sinon.stub();
         t.withArgs('common:privateDocument').returns('Private document');
         result = composeHumanReadableDisplayName({
           t,
-          cdnObject: { type: CDN_OBJECT_TYPE.directory,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.directory,
             displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: 'Document title', isAccessibleToUser: true } }
+            documentMetadata: { title: 'Document title', isAccessibleToUser: false }
+          }
         });
       });
 

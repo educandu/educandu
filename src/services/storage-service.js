@@ -22,6 +22,21 @@ import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPu
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
 
+const getDocumentMetadata = ({ documents, rooms, cdnObject }) => {
+  const doc = documents.find(d => d._id === cdnObject.displayName);
+
+  if (!doc) {
+    return null;
+  }
+
+  const isAccessibleToUser = !doc.roomId || rooms.some(room => room._id === doc.roomId);
+
+  return {
+    title: isAccessibleToUser ? doc.title : '',
+    isAccessibleToUser
+  };
+};
+
 export default class StorageService {
   static get inject() {
     return [
@@ -176,33 +191,13 @@ export default class StorageService {
       ignoreNonExistingPath: false
     });
 
-    let documents = [];
-    let ownedOrCollaboratedRooms = [];
+    const documents = await this.documentStore.getDocumentsMetadataByConditions([]);
+    const rooms = await this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId: user._id });
 
-    documents = await this.documentStore.getDocumentsMetadataByConditions([]);
-    ownedOrCollaboratedRooms = await this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId: user._id });
-
-    const currentDirectoryDocument = documents.find(doc => doc._id === currentDirectory.displayName);
-    const isAccessibleDocument = !!currentDirectoryDocument?.roomId && !ownedOrCollaboratedRooms.find(room => room._id === currentDirectoryDocument.roomId);
-
-    // eslint-disable-next-line require-atomic-updates
-    currentDirectory.documentMetadata = {
-      title: currentDirectoryDocument?.title || '',
-      isAccessibleToUser: isAccessibleDocument
-    };
+    currentDirectory.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: currentDirectory });
 
     objects.forEach(obj => {
-      obj.documentMetadata = null;
-
-      if (obj.type === CDN_OBJECT_TYPE.directory) {
-        const directoryDocument = documents.find(doc => doc._id === obj.displayName);
-        const isAccessibleToUser = !!directoryDocument?.roomId && !ownedOrCollaboratedRooms.find(room => room._id === directoryDocument.roomId);
-
-        obj.documentMetadata = {
-          title: directoryDocument?.title || '',
-          isAccessibleToUser
-        };
-      }
+      obj.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: obj });
     });
 
     return {

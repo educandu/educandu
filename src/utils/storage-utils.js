@@ -170,11 +170,11 @@ export function composeHumanReadableDisplayName({ cdnObject, t }) {
     return cdnObject.displayName;
   }
 
-  if (!cdnObject.documentMetadata || !cdnObject.documentMetadata.title) {
+  if (!cdnObject.documentMetadata) {
     return `${t('common:unknownDocument')} [${cdnObject.displayName}]`;
   }
 
   return cdnObject.documentMetadata.isAccessibleToUser
-    ? `${t('common:privateDocument')} [${cdnObject.displayName}]`
-    : `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`;
+    ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
+    : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
 }

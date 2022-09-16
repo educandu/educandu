@@ -132,7 +132,7 @@ describe('storage-service', () => {
             size: null,
             documentMetadata: {
               title: 'Document title',
-              isAccessibleToUser: false
+              isAccessibleToUser: true
             }
           },
           objects: [
@@ -215,10 +215,7 @@ describe('storage-service', () => {
             createdOn: null,
             type: CDN_OBJECT_TYPE.directory,
             size: null,
-            documentMetadata: {
-              title: '',
-              isAccessibleToUser: false
-            }
+            documentMetadata: null
           },
           objects: [
             {
@@ -232,7 +229,7 @@ describe('storage-service', () => {
               size: null,
               documentMetadata: {
                 title: 'Document1 title',
-                isAccessibleToUser: false
+                isAccessibleToUser: true
               }
             },
             {
@@ -245,8 +242,8 @@ describe('storage-service', () => {
               type: CDN_OBJECT_TYPE.directory,
               size: null,
               documentMetadata: {
-                title: 'Document2 title',
-                isAccessibleToUser: true
+                title: '',
+                isAccessibleToUser: false
               }
             },
             {
@@ -287,10 +284,7 @@ describe('storage-service', () => {
             createdOn: null,
             type: CDN_OBJECT_TYPE.directory,
             size: null,
-            documentMetadata: {
-              title: '',
-              isAccessibleToUser: false
-            }
+            documentMetadata: null
           },
           objects: [
             {
@@ -302,10 +296,7 @@ describe('storage-service', () => {
               createdOn: null,
               type: CDN_OBJECT_TYPE.directory,
               size: null,
-              documentMetadata: {
-                title: '',
-                isAccessibleToUser: false
-              }
+              documentMetadata: null
             },
             {
               displayName: 'some-file.pdf',
