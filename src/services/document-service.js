@@ -143,14 +143,17 @@ class DocumentService {
     return this.documentStore.getDocumentTagsMatchingText(sanitizedSearchString);
   }
 
-  async findDocumentsMetadataInSearchableDocuments(query) {
+  async findDocumentsMetadataInSearchableDocuments({ query }) {
     const sanitizedQuery = escapeStringRegexp(query.trim());
 
     const queryConditions = [
-      { archived: false },
       { roomId: null },
-      { title: { $regex: sanitizedQuery, $options: 'i' } }
+      { archived: false }
     ];
+
+    if (sanitizedQuery) {
+      queryConditions.push({ title: { $regex: sanitizedQuery, $options: 'i' } });
+    }
 
     const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(queryConditions);
 

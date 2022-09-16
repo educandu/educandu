@@ -14,6 +14,7 @@ import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import FolderNavigateIcon from './icons/files/folder-navigate-icon.js';
+import { composeHumanReadableDisplayName } from '../utils/storage-utils.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
 const HEADER_ROW_HEIGHT_IN_PX = 47;
@@ -77,10 +78,12 @@ function FilesListViewer({
 
     const Icon = getResourceIcon({ url: row.url, isDirectory: row.isDirectory });
     return (
-      <div className="FilesListViewer-fileNameCell" >
-        <Icon />
-        <div className="FilesListViewer-fileName">{name}</div>
-      </div>
+      <Tooltip title={name}>
+        <div className="FilesListViewer-fileNameCell" >
+          <Icon />
+          <div className="FilesListViewer-fileName">{name}</div>
+        </div>
+      </Tooltip>
     );
   };
 
@@ -134,7 +137,7 @@ function FilesListViewer({
       title: () => t('common:type'),
       dataIndex: 'typeTranslated',
       width: 100,
-      responsive: ['sm'],
+      responsive: ['lg'],
       sorter: by('typeTranslated', { ignoreCase: true })
     },
     {
@@ -142,7 +145,7 @@ function FilesListViewer({
       dataIndex: 'sizeFormatted',
       align: 'right',
       width: 100,
-      responsive: ['sm'],
+      responsive: ['md'],
       sorter: by('size')
     },
     {
@@ -150,7 +153,7 @@ function FilesListViewer({
       dataIndex: 'createdOnFormatted',
       align: 'right',
       width: 170,
-      responsive: ['md'],
+      responsive: ['lg'],
       sorter: by('createdOn')
     },
     {
@@ -174,7 +177,7 @@ function FilesListViewer({
     const isDirectory = file.type === CDN_OBJECT_TYPE.directory;
     return {
       key: file.portableUrl,
-      name: file.displayName,
+      name: composeHumanReadableDisplayName({ cdnObject: file, t }),
       size: file.size,
       isDirectory,
       createdOn: file.createdOn,

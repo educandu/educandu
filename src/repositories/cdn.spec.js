@@ -28,7 +28,7 @@ describe('cdn', () => {
   });
 
   describe('uploadObject', () => {
-    const targetFileName = 'some-folder/sub/test-file.txt';
+    const targetFileName = 'some-directory/sub/test-file.txt';
     const testFileContent = 'Hello World!';
     let testFileName;
     let actualResult;

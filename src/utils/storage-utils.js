@@ -4,6 +4,7 @@ import slugify from '@sindresorhus/slugify';
 import { getResourceExtension } from './resource-utils.js';
 import {
   CDN_URL_PREFIX,
+  CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
@@ -162,4 +163,18 @@ export function componseUniqueFileName(fileName, parentPath = null) {
   const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
   const newFileName = `${uniqueBaseName}.${extension}`;
   return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
+}
+
+export function composeHumanReadableDisplayName({ cdnObject, t }) {
+  if (cdnObject.type === CDN_OBJECT_TYPE.file || cdnObject.displayName === getPublicRootPath()) {
+    return cdnObject.displayName;
+  }
+
+  if (!cdnObject.documentMetadata) {
+    return `${t('common:unknownDocument')} [${cdnObject.displayName}]`;
+  }
+
+  return cdnObject.documentMetadata.isAccessibleToUser
+    ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
+    : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
 }

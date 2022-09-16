@@ -259,7 +259,8 @@ describe('user-service', () => {
           language: favoriteDocument.language,
           createdOn: favoriteDocument.createdOn,
           updatedOn: favoriteDocument.updatedOn,
-          revision: favoriteDocument.revision
+          revision: favoriteDocument.revision,
+          roomId: favoriteDocument.roomId
         };
         favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
         favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });

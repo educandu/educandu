@@ -22,6 +22,21 @@ import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPu
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
 
+const getDocumentMetadata = ({ documents, rooms, cdnObject }) => {
+  const doc = documents.find(d => d._id === cdnObject.displayName);
+
+  if (!doc) {
+    return null;
+  }
+
+  const isAccessibleToUser = !doc.roomId || rooms.some(room => room._id === doc.roomId);
+
+  return {
+    title: isAccessibleToUser ? doc.title : '',
+    isAccessibleToUser
+  };
+};
+
 export default class StorageService {
   static get inject() {
     return [
@@ -168,12 +183,21 @@ export default class StorageService {
     return { uploadedFiles, usedBytes };
   }
 
-  async getObjects({ parentPath, searchTerm, recursive }) {
+  async getObjects({ parentPath, searchTerm, recursive, user }) {
     const { parentDirectory, currentDirectory, objects } = await this._getObjects({
       parentPath,
       recursive,
       includeEmptyObjects: false,
       ignoreNonExistingPath: false
+    });
+
+    const documents = await this.documentStore.getDocumentsMetadataByConditions([]);
+    const rooms = await this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId: user._id });
+
+    currentDirectory.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: currentDirectory });
+
+    objects.forEach(obj => {
+      obj.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: obj });
     });
 
     return {
@@ -306,14 +330,14 @@ export default class StorageService {
     let totalSize = 0;
     for (const storagePath of storagePaths) {
       // eslint-disable-next-line no-await-in-loop
-      const size = await this._getFolderSize(storagePath);
+      const size = await this._getDirectorySize(storagePath);
       totalSize += size;
     }
     return totalSize;
   }
 
-  async _getFolderSize(folderPath) {
-    const prefix = `${folderPath}/`;
+  async _getDirectorySize(directoryPath) {
+    const prefix = `${directoryPath}/`;
     const objects = await this.cdn.listObjects({ prefix, recursive: true });
     return objects.reduce((totalSize, obj) => totalSize + obj.size, 0);
   }

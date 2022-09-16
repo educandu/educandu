@@ -63,9 +63,11 @@ describe('storage-service', () => {
     sandbox.stub(documentStore, 'getDocumentById');
     sandbox.stub(documentStore, 'getDocumentsMetadataByRoomId');
     sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId');
+    sandbox.stub(documentStore, 'getDocumentsMetadataByConditions');
     sandbox.stub(roomStore, 'getRoomById');
     sandbox.stub(roomStore, 'deleteRoomById');
     sandbox.stub(roomStore, 'getRoomIdsByOwnerId');
+    sandbox.stub(roomStore, 'getRoomsByOwnerOrCollaboratorUser');
     sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId');
     sandbox.stub(commentStore, 'deleteCommentsByDocumentIds');
 
@@ -82,8 +84,13 @@ describe('storage-service', () => {
   });
 
   describe('getObjects', () => {
+    let rooms;
+    let documents;
+
     beforeEach(() => {
       sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.domain.com');
+      documentStore.getDocumentsMetadataByConditions.resolves([]);
+      roomStore.getRoomsByOwnerOrCollaboratorUser.resolves([]);
     });
 
     describe('when neither the current directory nor the parent directory is the root', () => {
@@ -94,8 +101,13 @@ describe('storage-service', () => {
           { prefix: null, name: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
           { prefix: null, name: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
         ]);
+        rooms = [];
+        documents = [{ _id: '34q87zc95t9c287eh', title: 'Document title' }];
 
-        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', recursive: true });
+        roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
+        documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
+
+        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', recursive: true, user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({
@@ -117,7 +129,11 @@ describe('storage-service', () => {
             portableUrl: 'cdn://media/34q87zc95t9c287eh',
             createdOn: null,
             type: CDN_OBJECT_TYPE.directory,
-            size: null
+            size: null,
+            documentMetadata: {
+              title: 'Document title',
+              isAccessibleToUser: true
+            }
           },
           objects: [
             {
@@ -128,7 +144,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/34q87zc95t9c287eh/file-1.pdf',
               createdOn: '2022-06-09T12:00:00.000Z',
               type: CDN_OBJECT_TYPE.file,
-              size: 1000
+              size: 1000,
+              documentMetadata: null
             },
             {
               displayName: 'file-2 with spaces.pdf',
@@ -138,7 +155,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
               createdOn: '2022-06-09T12:00:00.000Z',
               type: CDN_OBJECT_TYPE.file,
-              size: 2000
+              size: 2000,
+              documentMetadata: null
             },
             {
               displayName: 'file-3 with weird &$#=.pdf',
@@ -148,7 +166,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
               createdOn: '2022-06-09T12:00:00.000Z',
               type: CDN_OBJECT_TYPE.file,
-              size: 3000
+              size: 3000,
+              documentMetadata: null
             }
           ]
         });
@@ -164,7 +183,16 @@ describe('storage-service', () => {
           { prefix: null, name: 'media/some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ]);
 
-        result = await sut.getObjects({ parentPath: 'media', recursive: true });
+        rooms = [{ _id: 'Room ID', owner: myUser._id }];
+        documents = [
+          { _id: '34q87zc95t9c287eh', title: 'Document1 title', roomId: 'Room ID' },
+          { _id: '43vzvjz05tzdfz7rf', title: 'Document2 title', roomId: 'Other room ID' }
+        ];
+
+        documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
+        roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
+
+        result = await sut.getObjects({ parentPath: 'media', recursive: true, user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({
@@ -186,7 +214,8 @@ describe('storage-service', () => {
             portableUrl: 'cdn://media',
             createdOn: null,
             type: CDN_OBJECT_TYPE.directory,
-            size: null
+            size: null,
+            documentMetadata: null
           },
           objects: [
             {
@@ -197,7 +226,11 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/34q87zc95t9c287eh',
               createdOn: null,
               type: CDN_OBJECT_TYPE.directory,
-              size: null
+              size: null,
+              documentMetadata: {
+                title: 'Document1 title',
+                isAccessibleToUser: true
+              }
             },
             {
               displayName: '43vzvjz05tzdfz7rf',
@@ -207,7 +240,11 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/43vzvjz05tzdfz7rf',
               createdOn: null,
               type: CDN_OBJECT_TYPE.directory,
-              size: null
+              size: null,
+              documentMetadata: {
+                title: '',
+                isAccessibleToUser: false
+              }
             },
             {
               displayName: 'some-file.pdf',
@@ -217,7 +254,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media/some-file.pdf',
               createdOn: '2022-06-09T12:00:00.000Z',
               type: CDN_OBJECT_TYPE.file,
-              size: 1000
+              size: 1000,
+              documentMetadata: null
             }
           ]
         });
@@ -232,7 +270,7 @@ describe('storage-service', () => {
           { prefix: null, name: 'some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ]);
 
-        result = await sut.getObjects({ parentPath: '', recursive: true });
+        result = await sut.getObjects({ parentPath: '', recursive: true, user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({
@@ -245,7 +283,8 @@ describe('storage-service', () => {
             portableUrl: 'cdn://',
             createdOn: null,
             type: CDN_OBJECT_TYPE.directory,
-            size: null
+            size: null,
+            documentMetadata: null
           },
           objects: [
             {
@@ -256,7 +295,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://media',
               createdOn: null,
               type: CDN_OBJECT_TYPE.directory,
-              size: null
+              size: null,
+              documentMetadata: null
             },
             {
               displayName: 'some-file.pdf',
@@ -266,7 +306,8 @@ describe('storage-service', () => {
               portableUrl: 'cdn://some-file.pdf',
               createdOn: '2022-06-09T12:00:00.000Z',
               type: CDN_OBJECT_TYPE.file,
-              size: 1000
+              size: 1000,
+              documentMetadata: null
             }
           ]
         });

@@ -106,7 +106,8 @@ describe('storage-controller', () => {
         sinon.assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
-          recursive: false
+          recursive: false,
+          user
         });
       });
 
@@ -145,7 +146,8 @@ describe('storage-controller', () => {
         sinon.assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
-          recursive: false
+          recursive: false,
+          user
         });
       });
 
@@ -181,7 +183,8 @@ describe('storage-controller', () => {
         sinon.assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
-          recursive: false
+          recursive: false,
+          user
         });
       });
 

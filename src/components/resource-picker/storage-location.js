@@ -8,9 +8,9 @@ import UploadIcon from '../icons/general/upload-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { isTouchDevice } from '../../ui/browser-helper.js';
 import { Alert, Button, Input, Modal, Select } from 'antd';
-import { canUploadToPath } from '../../utils/storage-utils.js';
 import { ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
+import { canUploadToPath, composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
 import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
@@ -126,10 +126,17 @@ function StorageLocation({
     return null;
   };
 
+  const showCurrentDirectoryName = !isInSearchMode && !!currentDirectory;
+
   const getFilesViewerClasses = isDragActive => classNames({
     'StorageLocation-filesViewer': true,
     'u-can-drop': isDragActive && canAcceptFiles,
     'u-cannot-drop': isDragActive && !canAcceptFiles
+  });
+
+  const filesViewerContentClasses = classNames({
+    'StorageLocation-filesViewerContent': true,
+    'StorageLocation-filesViewerContent--topPadding': showCurrentDirectoryName
   });
 
   return (
@@ -162,20 +169,27 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <FilesViewer
-              isLoading={isLoading}
-              files={files}
-              parentDirectory={isInSearchMode ? null : parentDirectory}
-              display={filesViewerDisplay}
-              onFileClick={handleFileClick}
-              onFileDoubleClick={handleFileDoubleClick}
-              selectedFileUrl={highlightedFile?.portableUrl}
-              onDeleteFileClick={onDeleteFileClick}
-              onPreviewFileClick={onPreviewFileClick}
-              onNavigateToParent={onNavigateToParent}
-              canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
-              canDelete={storageLocation.isDeletionEnabled}
-              />
+            {showCurrentDirectoryName && (
+              <div className="StorageLocation-currentDirectory">
+                {`${t('common:directory')}: ${composeHumanReadableDisplayName({ cdnObject: currentDirectory, t })}`}
+              </div>
+            )}
+            <div className={filesViewerContentClasses}>
+              <FilesViewer
+                isLoading={isLoading}
+                files={files}
+                parentDirectory={isInSearchMode ? null : parentDirectory}
+                display={filesViewerDisplay}
+                onFileClick={handleFileClick}
+                onFileDoubleClick={handleFileDoubleClick}
+                selectedFileUrl={highlightedFile?.portableUrl}
+                onDeleteFileClick={onDeleteFileClick}
+                onPreviewFileClick={onPreviewFileClick}
+                onNavigateToParent={onNavigateToParent}
+                canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
+                canDelete={storageLocation.isDeletionEnabled}
+                />
+            </div>
           </div>
         )}
       </ReactDropzone>

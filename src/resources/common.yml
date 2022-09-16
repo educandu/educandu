@@ -261,6 +261,12 @@ opt:
 unknown:
   en: Unknown
   de: Unbekannt
+unknownDocument:
+  en: Unknown document
+  de: Unbekanntes Dokument
+privateDocument:
+  en: Private document
+  de: Privates Dokument
 storage:
   en: Storage
   de: Speicher

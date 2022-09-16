@@ -1,13 +1,15 @@
 import sinon from 'sinon';
 import uniqueId from './unique-id.js';
-import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   isAccessibleStoragePath,
   getStorageLocationTypeForPath,
   getPathForPrivateRoom,
   getRoomIdFromPrivateStoragePath,
-  componseUniqueFileName
+  componseUniqueFileName,
+  composeHumanReadableDisplayName
 } from './storage-utils.js';
+import { beforeEach } from 'vitest';
 
 describe('storage-utils', () => {
   let result;
@@ -91,14 +93,111 @@ describe('storage-utils', () => {
       { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-wo-ld-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', prefix: 'media/my-folder/', expectedOutput: 'media/my-folder/hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: '### ###.mp3', prefix: 'media/my-folder/', expectedOutput: 'media/my-folder/ch5zqo897tzo8f3.mp3' }
+      { fileName: 'Hello World 123 !"§.mp3', prefix: 'media/my-directory/', expectedOutput: 'media/my-directory/hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: '### ###.mp3', prefix: 'media/my-directory/', expectedOutput: 'media/my-directory/ch5zqo897tzo8f3.mp3' }
     ];
 
     testCases.forEach(({ fileName, prefix, expectedOutput }) => {
       it(`should transform fileName '${fileName} with prefix ${prefix === null ? 'null' : `'${prefix}'`} to '${expectedOutput}'`, () => {
         const actualOutput = componseUniqueFileName(fileName, prefix);
         expect(actualOutput).toBe(expectedOutput);
+      });
+    });
+  });
+
+  describe('composeHumanReadableDisplayName', () => {
+    let t;
+
+    describe('when the cdn object is a file', () => {
+      beforeEach(() => {
+        t = sinon.fake();
+        result = composeHumanReadableDisplayName({
+          t,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.file,
+            displayName: 'my-file.jpeg',
+            documentMetadata: null
+          }
+        });
+      });
+
+      it('should return the file display name', () => {
+        expect(result).toBe('my-file.jpeg');
+      });
+    });
+
+    describe('when the cdn object is the public root path', () => {
+      beforeEach(() => {
+        t = sinon.fake();
+        result = composeHumanReadableDisplayName({
+          t,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.directory,
+            displayName: 'media',
+            documentMetadata: null
+          }
+        });
+      });
+
+      it('should return the file display name', () => {
+        expect(result).toBe('media');
+      });
+    });
+
+    describe('when the cdn object does not contain document metadata', () => {
+      beforeEach(() => {
+        t = sinon.stub();
+        t.withArgs('common:unknownDocument').returns('Unknown document');
+        result = composeHumanReadableDisplayName({
+          t,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.directory,
+            displayName: 'ch5zqo897tzo8f3',
+            documentMetadata: null
+          }
+        });
+      });
+
+      it('should return the composed display name', () => {
+        expect(result).toBe('Unknown document [ch5zqo897tzo8f3]');
+      });
+    });
+
+    describe('when the cdn object corresponds to a document accessible to the current user', () => {
+      beforeEach(() => {
+        t = sinon.stub();
+        t.withArgs('common:unknownDocument').returns('Unknown document');
+        result = composeHumanReadableDisplayName({
+          t,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.directory,
+            displayName: 'ch5zqo897tzo8f3',
+            documentMetadata: { title: 'Document title', isAccessibleToUser: true }
+          }
+        });
+      });
+
+      it('should return the composed display name', () => {
+        expect(result).toBe('Document title [ch5zqo897tzo8f3]');
+      });
+    });
+
+    describe('when the cdn object corresponds to a document that is not accessible to the current user', () => {
+      beforeEach(() => {
+        t = sinon.stub();
+        t.withArgs('common:privateDocument').returns('Private document');
+        result = composeHumanReadableDisplayName({
+          t,
+          cdnObject: {
+            type: CDN_OBJECT_TYPE.directory,
+            displayName: 'ch5zqo897tzo8f3',
+            documentMetadata: { title: 'Document title', isAccessibleToUser: false }
+          }
+        });
+      });
+
+      it('should return the composed display name', () => {
+        expect(result).toBe('Private document [ch5zqo897tzo8f3]');
       });
     });
   });

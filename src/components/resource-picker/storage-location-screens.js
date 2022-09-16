@@ -85,7 +85,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
         message.error(err.message);
       }
     }
-  }, [currentDirectoryPath, storageLocation.homePath, storageLocation.rootPath, storageApiClient, isMounted]);
+  }, [currentDirectoryPath, storageLocation, storageApiClient, isMounted]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
