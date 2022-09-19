@@ -60,8 +60,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
       setIsLoading(true);
       const result = await storageApiClient.getCdnObjects({
         parentPath: searchText ? storageLocation.rootPath : currentDirectoryPath,
-        searchTerm: searchText || null,
-        recursive: !!searchText
+        searchTerm: searchText || null
       });
 
       if (!isMounted.current) {
