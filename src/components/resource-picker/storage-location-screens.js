@@ -231,6 +231,11 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
     };
   }, []);
 
+  const handleNavigateToParent = () => {
+    const newCurrentDirectoryPath = getParentPathForStorageLocationPath(currentDirectory.path);
+    setCurrentDirectoryPath(newCurrentDirectoryPath);
+  };
+
   return (
     <Fragment>
       {screen === SCREEN.default && (
@@ -250,7 +255,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
           onPreviewFileClick={handlePreviewFileClick}
           onSearchTermChange={handleSearchTermChange}
           onFilesViewerDisplayChange={handleFilesViewerDisplayChange}
-          onNavigateToParent={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
+          onNavigateToParent={handleNavigateToParent}
           onFilesDropped={handleFilesDropped}
           onDirectoryClick={handleDirectoryClick}
           onFileDoubleClick={handleFileDoubleClick}
