@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useDebouncedCallback } from '../ui/hooks.js';
 
-function DebouncedInput({ elementType: Component, value, onChange, ...props }) {
+function DebouncedInput({ elementType: Component, value, onChange, onEnter, onSearch, ...props }) {
   const [actualValue, setActualValue] = useState(value);
   const debouncedOnChange = useDebouncedCallback(onChange, 250);
 
@@ -16,18 +16,32 @@ function DebouncedInput({ elementType: Component, value, onChange, ...props }) {
     debouncedOnChange(event.target.value);
   };
 
-  return <Component {...props} value={actualValue} onChange={handleChange} />;
+  const componentProps = { ...props };
+
+  if (onEnter) {
+    componentProps.onEnter = () => onEnter(actualValue);
+  }
+
+  if (onSearch) {
+    componentProps.onSearch = () => onSearch(actualValue);
+  }
+
+  return <Component {...componentProps} value={actualValue} onChange={handleChange} />;
 }
 
 DebouncedInput.propTypes = {
   elementType: PropTypes.elementType,
   onChange: PropTypes.func,
+  onEnter: PropTypes.func,
+  onSearch: PropTypes.func,
   value: PropTypes.string
 };
 
 DebouncedInput.defaultProps = {
   elementType: Input,
   onChange: () => {},
+  onEnter: null,
+  onSearch: null,
   value: ''
 };
 

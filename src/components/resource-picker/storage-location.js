@@ -83,8 +83,10 @@ function StorageLocation({
     setTypedInSearchTerm(value);
   };
 
-  const handleSearchClick = async () => {
-    if (typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH) {
+  const handleSearchClick = async value => {
+    setTypedInSearchTerm(value);
+
+    if (value.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
         content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
@@ -93,7 +95,7 @@ function StorageLocation({
       return;
     }
 
-    await onSearchTermChange(typedInSearchTerm);
+    await onSearchTermChange(value);
   };
 
   const handleBackToDirectoryScreenClick = async () => {
