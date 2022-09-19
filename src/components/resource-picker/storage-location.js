@@ -181,7 +181,7 @@ function StorageLocation({
               <FilesViewer
                 isLoading={isLoading}
                 files={files}
-                parentDirectory={isInSearchMode ? null : parentDirectory}
+                parentDirectory={parentDirectory}
                 display={filesViewerDisplay}
                 onFileClick={handleFileClick}
                 onFileDoubleClick={handleFileDoubleClick}

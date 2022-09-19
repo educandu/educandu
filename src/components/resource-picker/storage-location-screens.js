@@ -36,7 +36,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
-  const [searchResult, setSearchResult] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
@@ -66,13 +65,9 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
         return;
       }
 
-      if (searchTerm) {
-        setSearchResult(result.objects);
-      } else {
-        setParentDirectory(result.parentDirectory);
-        setCurrentDirectory(result.currentDirectory);
-        setFiles(result.objects);
-      }
+      setParentDirectory(result.parentDirectory);
+      setCurrentDirectory(result.currentDirectory);
+      setFiles(result.objects);
 
       setIsLoading(false);
     } catch (err) {
@@ -110,7 +105,6 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const handleDeleteFileClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
     setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-    setSearchResult(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
     setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
   };
 
@@ -189,13 +183,11 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
       return;
     }
 
-    const collectionToUse = contentFetchingProps.searchTerm ? searchResult : files;
-    const previouslyHighlightedFileStillExists = collectionToUse.some(file => file.portableUrl === highlightedFile.portableUrl);
-
+    const previouslyHighlightedFileStillExists = files.some(file => file.portableUrl === highlightedFile.portableUrl);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
-  }, [screen, contentFetchingProps.searchTerm, highlightedFile, files, searchResult]);
+  }, [screen, contentFetchingProps.searchTerm, highlightedFile, files]);
 
   useEffect(() => {
     if (!files.length || !showInitialFileHighlighting) {
@@ -219,7 +211,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   }, [initialUrl, storageLocation.homePath, storageLocation.rootPath]);
 
   useEffect(() => {
-    setSearchResult([]);
+    setFiles([]);
     fetchStorageContent(contentFetchingProps.searchTerm, contentFetchingProps.currentDirectoryPath);
   }, [fetchStorageContent, contentFetchingProps]);
 
@@ -239,11 +231,11 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
     <Fragment>
       {screen === SCREEN.default && (
         <StorageLocation
-          files={contentFetchingProps.searchTerm ? searchResult : files}
+          files={files}
           isLoading={isLoading}
           searchTerm={contentFetchingProps.searchTerm}
           currentDirectory={currentDirectory}
-          parentDirectory={contentFetchingProps.searchTerm ? null : parentDirectory}
+          parentDirectory={parentDirectory}
           highlightedFile={highlightedFile}
           storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
