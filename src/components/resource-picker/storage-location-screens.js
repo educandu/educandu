@@ -16,7 +16,7 @@ import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../../utils/storage-utils.js';
 
 const SCREEN = {
@@ -98,13 +98,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   };
 
   const handleFileDoubleClick = newFile => {
-    if (newFile.type === CDN_OBJECT_TYPE.file) {
-      onSelect(newFile.portableUrl);
-    }
-    if (newFile.type === CDN_OBJECT_TYPE.directory) {
-      setIsLoading(true);
-      setCurrentDirectoryPath(newFile.path);
-    }
+    onSelect(newFile.portableUrl);
   };
 
   const handleSelectHighlightedFileClick = () => {
