@@ -96,7 +96,7 @@ describe('storage-service', () => {
     describe('when neither the current directory nor the parent directory is the root', () => {
       let result;
       beforeEach(async () => {
-        cdn.listObjects.withArgs({ prefix: 'media/34q87zc95t9c287eh/', recursive: true }).resolves([
+        cdn.listObjects.withArgs({ prefix: 'media/34q87zc95t9c287eh/', recursive: false }).resolves([
           { prefix: null, name: 'media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
           { prefix: null, name: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
           { prefix: null, name: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
@@ -107,7 +107,7 @@ describe('storage-service', () => {
         roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
         documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
 
-        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', recursive: true, user: myUser });
+        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({
@@ -177,7 +177,7 @@ describe('storage-service', () => {
     describe('when the parent directory is the root', () => {
       let result;
       beforeEach(async () => {
-        cdn.listObjects.withArgs({ prefix: 'media/', recursive: true }).resolves([
+        cdn.listObjects.withArgs({ prefix: 'media/', recursive: false }).resolves([
           { prefix: 'media/34q87zc95t9c287eh/', name: null, size: null, lastModified: null },
           { prefix: 'media/43vzvjz05tzdfz7rf/', name: null, size: null, lastModified: null },
           { prefix: null, name: 'media/some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
@@ -192,7 +192,7 @@ describe('storage-service', () => {
         documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
         roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
 
-        result = await sut.getObjects({ parentPath: 'media', recursive: true, user: myUser });
+        result = await sut.getObjects({ parentPath: 'media', user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({
@@ -265,12 +265,12 @@ describe('storage-service', () => {
     describe('when the current directory is the root', () => {
       let result;
       beforeEach(async () => {
-        cdn.listObjects.withArgs({ prefix: '', recursive: true }).resolves([
+        cdn.listObjects.withArgs({ prefix: '', recursive: false }).resolves([
           { prefix: 'media/', name: null, size: null, lastModified: null },
           { prefix: null, name: 'some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ]);
 
-        result = await sut.getObjects({ parentPath: '', recursive: true, user: myUser });
+        result = await sut.getObjects({ parentPath: '', user: myUser });
       });
       it('should construct all paths and URLs correctly', () => {
         expect(result).toStrictEqual({

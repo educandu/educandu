@@ -183,10 +183,10 @@ export default class StorageService {
     return { uploadedFiles, usedBytes };
   }
 
-  async getObjects({ parentPath, searchTerm, recursive, user }) {
-    const { parentDirectory, currentDirectory, objects } = await this._getObjects({
+  async getObjects({ parentPath, searchTerm, user }) {
+    const { parentDirectory, currentDirectory, objects: currentLevelObjects } = await this._getObjects({
       parentPath,
-      recursive,
+      recursive: false,
       includeEmptyObjects: false,
       ignoreNonExistingPath: false
     });
@@ -196,17 +196,36 @@ export default class StorageService {
 
     currentDirectory.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: currentDirectory });
 
-    objects.forEach(obj => {
+    currentLevelObjects.forEach(obj => {
       obj.documentMetadata = getDocumentMetadata({ documents, rooms, cdnObject: obj });
     });
+
+    if (searchTerm) {
+      const { objects: innerLevelsObjects } = await this._getObjects({
+        parentPath,
+        recursive: true,
+        includeEmptyObjects: false,
+        ignoreNonExistingPath: false
+      });
+
+      const matchingAllLevelsObjects = [
+        ...currentLevelObjects.filter(obj => (
+          obj.documentMetadata?.title.toLowerCase().includes(searchTerm.toLowerCase()) && obj.documentMetadata.isAccessibleToUser)
+          || obj.displayName.toLowerCase().includes(searchTerm.toLowerCase())),
+        ...innerLevelsObjects.filter(obj => obj.displayName.toLowerCase().includes(searchTerm.toLowerCase()))
+      ];
+
+      return {
+        parentDirectory,
+        currentDirectory,
+        objects: matchingAllLevelsObjects
+      };
+    }
 
     return {
       parentDirectory,
       currentDirectory,
-      objects: searchTerm
-        ? objects.filter(obj => obj.path.toLowerCase().includes(searchTerm.toLowerCase())
-          || obj.documentMetadata?.title.includes(searchTerm.toLowerCase()))
-        : objects
+      objects: currentLevelObjects
     };
   }
 

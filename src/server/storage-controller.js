@@ -45,14 +45,13 @@ class StorageController {
 
   async handleGetCdnObjects(req, res) {
     const { user } = req;
-    const { parentPath, searchTerm, recursive } = req.query;
+    const { parentPath, searchTerm } = req.query;
 
     await this._checkPathAccess(parentPath, user);
 
     const { parentDirectory, currentDirectory, objects } = await this.storageService.getObjects({
       parentPath,
       searchTerm: searchTerm || null,
-      recursive: recursive === true.toString(),
       user
     });
 
