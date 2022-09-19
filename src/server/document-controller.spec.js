@@ -51,7 +51,7 @@ describe('document-controller', () => {
 
     user = { _id: uniqueId.create() };
     room = { _id: uniqueId.create() };
-    doc = { _id: uniqueId.create(), slug: '', sections: [] };
+    doc = { _id: uniqueId.create(), roomId: null, slug: '', sections: [] };
 
     sut = new DocumentController(documentService, roomService, clientDataMappingService, pageRenderer);
   });
@@ -191,7 +191,7 @@ describe('document-controller', () => {
 
     describe('when the template document exists but the document already contains sections', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -217,7 +217,7 @@ describe('document-controller', () => {
 
     describe('when the view query param is not \'edit\'', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -246,7 +246,7 @@ describe('document-controller', () => {
       });
 
       it('should call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
+        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -254,9 +254,9 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document belongs to a room and the user is not a room owner or member', () => {
+    describe('when the template document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: room._id };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -265,7 +265,7 @@ describe('document-controller', () => {
         res = {};
 
         doc.slug = 'doc-slug';
-        doc.roomId = room._id;
+        doc.roomId = null;
         room.owner = uniqueId.create();
         room.members = [];
 
@@ -280,9 +280,120 @@ describe('document-controller', () => {
       });
     });
 
+    describe('when the template document belongs to a room and the user is the room owner', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = null;
+        room.owner = user._id;
+        room.members = [];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+      });
+    });
+
+    describe('when the template document belongs to a room and the user is a room member', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = null;
+        room.owner = uniqueId.create();
+        room.members = [{ userId: user._id }];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+      });
+    });
+
+    describe('when the document belongs to a room and the user is not a room owner or member', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create(), roomId: null };
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        room.owner = user._id;
+        room.members = [];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+
+        return sut.handleGetDocPage(req, res);
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+      });
+    });
+
     describe('when the document belongs to a room and the user is the room owner', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -319,7 +430,7 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room and the user is a room member', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -358,7 +469,7 @@ describe('document-controller', () => {
       let documentRevision;
 
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -391,7 +502,7 @@ describe('document-controller', () => {
       });
 
       it('should call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
+        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -403,7 +514,7 @@ describe('document-controller', () => {
       let documentRevision;
 
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create() };
+        templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },

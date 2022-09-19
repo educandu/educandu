@@ -74,19 +74,24 @@ class DocumentController {
       if (!templateDocument) {
         throw new NotFound();
       }
+
+      const templateDocumentRoom = templateDocument.roomId ? await this.roomService.getRoomById(templateDocument.roomId) : null;
+      if (templateDocumentRoom && !isRoomOwnerOrMember({ room: templateDocumentRoom, userId: user._id })) {
+        throw new Forbidden();
+      }
     } else {
       templateDocument = null;
     }
 
     const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
 
-    if (!!room && !isRoomOwnerOrMember({ room, userId: user._id })) {
+    if (room && !isRoomOwnerOrMember({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
-    const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];
+    const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections, room: mappedRoom });
   }

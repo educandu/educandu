@@ -11,7 +11,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
 import roomUtils from '../../utils/room-utils.js';
 import { useDateFormat } from '../locale-context.js';
-import { useSettings } from '../settings-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -36,11 +35,12 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ documentToClone, room, settings, t }) {
+function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisible = false }) {
   return {
-    isVisible: false,
-    cloneDocumentId: documentToClone?._id,
-    templateDocumentId: documentToClone ? null : settings.templateDocument?.documentId,
+    mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
+    allowMultiple: !documentToClone,
+    isVisible,
+    documentToClone,
     initialDocumentMetadata: documentToClone
       ? {
         ...documentToClone,
@@ -61,7 +61,6 @@ function getSortedDocuments(room, documents) {
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const formRef = useRef(null);
-  const settings = useSettings();
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
@@ -72,7 +71,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ room, settings, t }));
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
   const isRoomOwner = user?._id === room.owner._id;
   const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
@@ -124,15 +123,12 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleNewDocumentClick = (documentToClone = null) => {
-    setDocumentMetadataModalState({
-      ...getDocumentMetadataModalState({ documentToClone, room, settings, t }),
-      isVisible: true
-    });
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isVisible: true }));
   };
 
   const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
     const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
-    const shouldNavigateToCreatedDocument = createdDocuments.length === 1 || clonedOrTemplateDocumentId;
+    const shouldNavigateToCreatedDocument = createdDocuments.length === 1;
 
     if (shouldNavigateToCreatedDocument) {
       window.location = routes.getDocUrl({
@@ -434,11 +430,7 @@ export default function Room({ PageTemplate, initialState }) {
         )}
 
         <DocumentMetadataModal
-          mode={DOCUMENT_METADATA_MODAL_MODE.create}
-          isVisible={documentMetadataModalState.isVisible}
-          allowMultiple={!documentMetadataModalState.cloneDocumentId}
-          templateDocumentId={documentMetadataModalState.templateDocumentId}
-          initialDocumentMetadata={documentMetadataModalState.initialDocumentMetadata}
+          {...documentMetadataModalState}
           onSave={handleDocumentMetadataModalSave}
           onClose={handleDocumentMetadataModalCancel}
           />

@@ -53,6 +53,10 @@ export default class RoomService {
     return this.roomStore.getRoomsOwnedOrJoinedByUser(userId);
   }
 
+  getRoomsByOwnerOrCollaboratorUser(userId) {
+    return this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId });
+  }
+
   getRoomInvitationsByEmail(email) {
     return this.roomInvitationStore.getRoomInvitationsByEmail(email);
   }

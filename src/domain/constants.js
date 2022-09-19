@@ -41,6 +41,11 @@ export const FEATURE_TOGGLES = {
   comments: 'comments'
 };
 
+export const ROOM_USER_ROLE = {
+  owner: 'owner',
+  ownerOrCollaborator: 'ownerOrCollaborator'
+};
+
 export const ROOM_DOCUMENTS_MODE = {
   exclusive: 'exclusive',
   collaborative: 'collaborative'

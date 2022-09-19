@@ -1,9 +1,15 @@
 newDocument:
   en: New document
   de: Neues Dokument
+cloneDocument:
+  en: Clone document
+  de: Dokument klonen
 editDocument:
   en: Edit document metadata
   de: Dokument-Metadaten bearbeiten
+roomRequired:
+  en: Please specify a room
+  de: Bitte gib einen Raum an
 titleRequired:
   en: Please specify a document title
   de: Bitte gib einen Dokument-Titel an
@@ -61,3 +67,27 @@ verifiedInfo:
 allowedOpenContributionInfo:
   en: You can restrict the parts of the document the open community can contribute to.
   de: Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.
+cloningStrategy:
+  en: Where should the cloned document be created?
+  de: Wo soll das geklonte Dokument erstellt werden?
+cloningStrategy_cloneWithinArea_fromRoom:
+  en: in the same room
+  de: im selben Raum
+cloningStrategy_cloneWithinArea_fromPublicArea:
+  en: in the public area
+  de: im offenen Bereich
+cloningStrategy_crossCloneIntoRoom_fromRoom:
+  en: in another room
+  de: in einem anderen Raum
+cloningStrategy_crossCloneIntoRoom_fromPublicArea:
+  en: in a room
+  de: in einem Raum
+cloningStrategy_crossCloneIntoPublicArea:
+  en: in the public area
+  de: im offenen Bereich
+targetRoom:
+  en: Please select a room
+  de: Bitte wähle einen Raum aus
+noAvailableRooms:
+  en: No available rooms
+  de: Keine Räume verfügbar

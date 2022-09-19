@@ -4,6 +4,7 @@ import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
+import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -11,9 +12,9 @@ import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTest
 describe('client-data-mapping-service', () => {
   const sandbox = sinon.createSandbox();
 
+  let markdownInfo;
   let userStore;
   let container;
-  let result;
   let user1;
   let user2;
   let sut;
@@ -21,12 +22,11 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
-
+    markdownInfo = container.get(MarkdownInfo);
     sut = container.get(ClientDataMappingService);
   });
 
   beforeEach(async () => {
-    sandbox.stub(urlUtils, 'getGravatarUrl');
     user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
     user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
@@ -41,6 +41,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapWebsitePublicUser', () => {
+    let result;
     let viewedUser;
     let viewingUser;
 
@@ -61,7 +62,7 @@ describe('client-data-mapping-service', () => {
         favorites: [],
         accountClosedOn: null
       };
-      urlUtils.getGravatarUrl.withArgs(viewedUser.email).returns('www://avatar.domain/12345');
+      sandbox.stub(urlUtils, 'getGravatarUrl').withArgs(viewedUser.email).returns('www://avatar.domain/12345');
     });
 
     describe('when the viewing user is annonymous', () => {
@@ -144,6 +145,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapWebsiteUser', () => {
+    let result;
     let dbUser;
     const favoriteSetOnDate = new Date();
 
@@ -206,6 +208,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapBatches', () => {
+    let result;
     let batches;
 
     beforeEach(async () => {
@@ -297,6 +300,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapBatch', () => {
+    let result;
     let batch;
 
     describe('for batches/tasks of type `document-import`', () => {
@@ -408,6 +412,8 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapRoom', () => {
+    let result;
+
     const owner = {
       _id: 'owner',
       email: 'owner@owner',
@@ -484,6 +490,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapRoomInvitations', () => {
+    let result;
     let invitations;
 
     beforeEach(async () => {
@@ -503,6 +510,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapRoomInvitationWithBasicRoomData', () => {
+    let result;
     let room;
     let invitation;
 
@@ -530,6 +538,7 @@ describe('client-data-mapping-service', () => {
   });
 
   describe('mapComment', () => {
+    let result;
     let comment;
 
     beforeEach(async () => {
@@ -556,6 +565,77 @@ describe('client-data-mapping-service', () => {
           _id: user2._id,
           displayName: user2.displayName
         }
+      });
+    });
+  });
+
+  describe('createProposedSections', () => {
+    let result;
+    let targetRoomId;
+    let testSection;
+    let testDocument;
+
+    beforeEach(() => {
+      targetRoomId = uniqueId.create();
+
+      testSection = {
+        key: uniqueId.create(),
+        revision: uniqueId.create(),
+        deletedOn: null,
+        deletedBy: null,
+        deletedBecause: null,
+        type: MarkdownInfo.typeName,
+        content: { ...markdownInfo.getDefaultContent(), text: 'original' }
+      };
+
+      testDocument = {
+        _id: uniqueId.create(),
+        roomId: uniqueId.create(),
+        sections: [testSection]
+      };
+    });
+
+    describe('when called with a document that has a valid section', () => {
+      let redactedContent;
+      beforeEach(() => {
+        redactedContent = { ...markdownInfo.getDefaultContent(), text: 'redacted' };
+        sandbox.stub(markdownInfo, 'redactContent').withArgs(testSection.content).returns(redactedContent);
+        result = sut.createProposedSections(testDocument, targetRoomId);
+      });
+      it('returns an array that includes that section', () => {
+        expect(result).toHaveLength(1);
+      });
+      it('assigns a new key to that section', () => {
+        expect(result[0].key).not.toEqual(testSection.key);
+      });
+      it('sets the revision to null for that section', () => {
+        expect(result[0].revision).toBeNull();
+      });
+      it('calls redactContent for that section\'s content on the respective plugin info', () => {
+        sinon.assert.calledOnceWithExactly(markdownInfo.redactContent, testSection.content, targetRoomId);
+      });
+      it('assigns the redacted content to that section', () => {
+        expect(result[0].content).toStrictEqual(redactedContent);
+      });
+    });
+
+    describe('when called with a document that has a deleted section', () => {
+      beforeEach(() => {
+        testSection.content = null;
+        result = sut.createProposedSections(testDocument, targetRoomId);
+      });
+      it('returns an array that does not include that section', () => {
+        expect(result).toHaveLength(0);
+      });
+    });
+
+    describe('when called with a document that has a section with unknown type', () => {
+      beforeEach(() => {
+        testSection.type = 'i-really-do-not-know';
+        result = sut.createProposedSections(testDocument, targetRoomId);
+      });
+      it('returns an array that does not include that section', () => {
+        expect(result).toHaveLength(0);
       });
     });
   });

@@ -1,9 +1,13 @@
 import joi from 'joi';
-import { ROOM_DOCUMENTS_MODE } from '../constants.js';
 import { idOrKeySchema, slugSchema } from './shared-schemas.js';
+import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../constants.js';
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
   token: idOrKeySchema.required()
+});
+
+export const getRoomsQuerySchema = joi.object({
+  userRole: joi.string().valid(...Object.values(ROOM_USER_ROLE)).required()
 });
 
 export const postRoomBodySchema = joi.object({

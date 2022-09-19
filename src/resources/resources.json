@@ -328,7 +328,9 @@
     "language": "en",
     "resources": {
       "newDocument": "New document",
+      "cloneDocument": "Clone document",
       "editDocument": "Edit document metadata",
+      "roomRequired": "Please specify a room",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "invalidTags": "Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}",
@@ -345,7 +347,15 @@
       "allowedOpenContribution_none": "None",
       "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
       "verifiedInfo": "As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
-      "allowedOpenContributionInfo": "You can restrict the parts of the document the open community can contribute to."
+      "allowedOpenContributionInfo": "You can restrict the parts of the document the open community can contribute to.",
+      "cloningStrategy": "Where should the cloned document be created?",
+      "cloningStrategy_cloneWithinArea_fromRoom": "in the same room",
+      "cloningStrategy_cloneWithinArea_fromPublicArea": "in the public area",
+      "cloningStrategy_crossCloneIntoRoom_fromRoom": "in another room",
+      "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in a room",
+      "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
+      "targetRoom": "Please select a room",
+      "noAvailableRooms": "No available rooms"
     }
   },
   {
@@ -353,7 +363,9 @@
     "language": "de",
     "resources": {
       "newDocument": "Neues Dokument",
+      "cloneDocument": "Dokument klonen",
       "editDocument": "Dokument-Metadaten bearbeiten",
+      "roomRequired": "Bitte gib einen Raum an",
       "titleRequired": "Bitte gib einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "invalidTags": "Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein",
@@ -370,7 +382,15 @@
       "allowedOpenContribution_none": "Keine",
       "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
       "verifiedInfo": "Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.",
-      "allowedOpenContributionInfo": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann."
+      "allowedOpenContributionInfo": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.",
+      "cloningStrategy": "Wo soll das geklonte Dokument erstellt werden?",
+      "cloningStrategy_cloneWithinArea_fromRoom": "im selben Raum",
+      "cloningStrategy_cloneWithinArea_fromPublicArea": "im offenen Bereich",
+      "cloningStrategy_crossCloneIntoRoom_fromRoom": "in einem anderen Raum",
+      "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in einem Raum",
+      "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
+      "targetRoom": "Bitte wähle einen Raum aus",
+      "noAvailableRooms": "Keine Räume verfügbar"
     }
   },
   {
@@ -2221,6 +2241,7 @@
       "delete": "Delete",
       "hardDelete": "Delete irreversibly",
       "clone": "Clone",
+      "create": "Create",
       "moveUp": "Move up",
       "moveDown": "Move down",
       "openHelp": "Open help",
@@ -2375,6 +2396,7 @@
       "delete": "Löschen",
       "hardDelete": "Unwiderruflich löschen",
       "clone": "Klonen",
+      "create": "Erstellen",
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
       "openHelp": "Hilfe öffnen",

@@ -4,18 +4,22 @@ import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
+import { useService } from './container-context.js';
+import { useSettings } from './settings-context.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import ClientConfig from '../bootstrap/client-config.js';
 import inputValidators from '../utils/input-validators.js';
+import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../api-clients/document-api-client.js';
-import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider } from 'antd';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider, Empty } from 'antd';
+import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import { maxDocumentDescriptionLength, maxTagLength, minTagLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
@@ -25,8 +29,120 @@ const logger = new Logger(import.meta.url);
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
-  update: 'update'
+  update: 'update',
+  clone: 'clone'
 };
+
+const CLONING_STRATEGY = {
+  none: 'none',
+  cloneWithinArea: 'cloneWithinArea',
+  crossCloneIntoRoom: 'crossCloneIntoRoom',
+  crossCloneIntoPublicArea: 'crossCloneIntoPublicArea'
+};
+
+function getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t }) {
+  if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
+    return {
+      strategyOptions: [{ label: '', value: CLONING_STRATEGY.none }],
+      roomOptions: []
+    };
+  }
+
+  const roomOptions = clientConfig.areRoomsEnabled
+    ? availableRooms.filter(room => room._id !== documentToClone.roomId).map(room => ({
+      label: room.name,
+      value: room._id
+    }))
+    : [];
+
+  const strategyOptions = [
+    {
+      label: documentToClone.roomId
+        ? t('cloningStrategy_cloneWithinArea_fromRoom')
+        : t('cloningStrategy_cloneWithinArea_fromPublicArea'),
+      value: CLONING_STRATEGY.cloneWithinArea
+    }
+  ];
+
+  if (clientConfig.areRoomsEnabled) {
+    strategyOptions.push({
+      label: documentToClone.roomId
+        ? t('cloningStrategy_crossCloneIntoRoom_fromRoom')
+        : t('cloningStrategy_crossCloneIntoRoom_fromPublicArea'),
+      value: CLONING_STRATEGY.crossCloneIntoRoom
+    });
+  }
+
+  if (documentToClone.roomId) {
+    strategyOptions.push({
+      label: t('cloningStrategy_crossCloneIntoPublicArea'),
+      value: CLONING_STRATEGY.crossCloneIntoPublicArea
+    });
+  }
+
+  return { strategyOptions, roomOptions };
+}
+
+function determineActualTemplateDocumentId({ mode, documentToClone, useTemplateDocument, defaultTemplateDocumentId }) {
+  switch (mode) {
+    case DOCUMENT_METADATA_MODAL_MODE.clone:
+      return documentToClone._id;
+    case DOCUMENT_METADATA_MODAL_MODE.create:
+      return useTemplateDocument ? defaultTemplateDocumentId : null;
+    case DOCUMENT_METADATA_MODAL_MODE.update:
+      return null;
+    default:
+      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
+  }
+}
+
+function determineTargetRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId }) {
+  switch (mode) {
+    case DOCUMENT_METADATA_MODAL_MODE.clone:
+      switch (cloningStrategy) {
+        case CLONING_STRATEGY.cloneWithinArea:
+          return documentToClone.roomId || null;
+        case CLONING_STRATEGY.crossCloneIntoRoom:
+          return cloningTargetRoomId;
+        case CLONING_STRATEGY.crossCloneIntoPublicArea:
+          return null;
+        default:
+          throw new Error(`Invalid cloning strategy: '${cloningStrategy}'`);
+      }
+    case DOCUMENT_METADATA_MODAL_MODE.create:
+      return initialDocumentMetadata.roomId || null;
+    case DOCUMENT_METADATA_MODAL_MODE.update:
+      return null; // Not used for metadata updates
+    default:
+      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
+  }
+}
+
+function getDialogTitle(mode, t) {
+  switch (mode) {
+    case DOCUMENT_METADATA_MODAL_MODE.clone:
+      return t('cloneDocument');
+    case DOCUMENT_METADATA_MODAL_MODE.create:
+      return t('newDocument');
+    case DOCUMENT_METADATA_MODAL_MODE.update:
+      return t('editDocument');
+    default:
+      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
+  }
+}
+
+function getDialogOkButtonText(mode, t) {
+  switch (mode) {
+    case DOCUMENT_METADATA_MODAL_MODE.clone:
+      return t('common:clone');
+    case DOCUMENT_METADATA_MODAL_MODE.create:
+      return t('common:create');
+    case DOCUMENT_METADATA_MODAL_MODE.update:
+      return t('common:save');
+    default:
+      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
+  }
+}
 
 function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
   const mergedTags = new Set([...initialDocumentTags, ...tagSuggestions]);
@@ -46,22 +162,30 @@ function DocumentMetadataModal({
   allowMultiple,
   onSave,
   onClose,
-  initialDocumentMetadata,
-  templateDocumentId
+  documentToClone,
+  initialDocumentMetadata
 }) {
   const user = useUser();
   const formRef = useRef(null);
+  const settings = useSettings();
   const { uiLanguage } = useLocale();
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('documentMetadataModal');
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const [loading, setLoading] = useState(false);
-  const [generateSequence, setGenerateSequence] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(false);
   const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
 
   const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
   const canVerify = hasUserPermission(user, permissions.VERIFY_DOC);
   const canRestrictOpenContribution = hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION);
+
+  const defaultTemplateDocumentId = settings.templateDocument?.documentId || null;
+  const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
+  const canCreateSequenes = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
 
   const initialValues = {
     title: initialDocumentMetadata.title || t('newDocument'),
@@ -69,10 +193,34 @@ function DocumentMetadataModal({
     slug: initialDocumentMetadata.slug || '',
     tags: initialDocumentMetadata.tags || [],
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
+    generateSequence: false,
     sequenceCount: 2,
+    review: '',
     verified: initialDocumentMetadata.verified,
-    allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution
+    allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution,
+    useTemplateDocument: canUseTemplateDocument,
+    cloningStrategy: CLONING_STRATEGY.cloneWithinArea,
+    cloningTargetRoomId: ''
   };
+
+  const cloningOptions = getCloningOptions({
+    mode,
+    documentToClone,
+    availableRooms,
+    clientConfig,
+    t
+  });
+
+  const allowedOpenContributionOptions = Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)
+    .map(optionKey => ({ key: optionKey, value: t(`allowedOpenContribution_${optionKey}`) }));
+
+  const roomValidationRules = [
+    {
+      required: true,
+      message: t('roomRequired'),
+      whitespace: true
+    }
+  ];
 
   const titleValidationRules = [
     {
@@ -91,7 +239,7 @@ function DocumentMetadataModal({
 
   const slugValidationRules = [
     {
-      validator: (rule, value) => {
+      validator: (_, value) => {
         return value && !inputValidators.isValidSlug(value)
           ? Promise.reject(new Error(t('common:invalidSlug')))
           : Promise.resolve();
@@ -101,7 +249,7 @@ function DocumentMetadataModal({
 
   const tagsValidationRules = [
     {
-      validator: (rule, value) => {
+      validator: (_, value) => {
         return value.length && value.some(tag => !inputValidators.isValidTag({ tag }))
           ? Promise.reject(new Error(t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })))
           : Promise.resolve();
@@ -109,12 +257,30 @@ function DocumentMetadataModal({
     }
   ];
 
-  useEffect(() => {
-    if (isVisible && formRef.current) {
-      formRef.current.resetFields();
-      setGenerateSequence(false);
+  const loadRooms = useCallback(async () => {
+    if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
+      setAvailableRooms([]);
+      setIsLoadingRooms(false);
+      return;
     }
-  }, [isVisible]);
+
+    setAvailableRooms([]);
+    setIsLoadingRooms(true);
+    setAvailableRooms(await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrCollaborator }));
+    setIsLoadingRooms(false);
+  }, [mode, roomApiClient]);
+
+  useEffect(() => {
+    if (!isVisible) {
+      return;
+    }
+    if (formRef.current) {
+      formRef.current.resetFields();
+    }
+    if (clientConfig.areRoomsEnabled) {
+      loadRooms();
+    }
+  }, [isVisible, clientConfig.areRoomsEnabled, loadRooms]);
 
   const handleTagSearch = async typedInTag => {
     const sanitizedTypedInTag = (typedInTag || '').trim();
@@ -128,10 +294,6 @@ function DocumentMetadataModal({
     } catch (error) {
       handleApiError({ error, t });
     }
-  };
-
-  const handleGenerateSequenceChange = event => {
-    setGenerateSequence(event.target.checked);
   };
 
   const handleOk = () => {
@@ -148,14 +310,17 @@ function DocumentMetadataModal({
     slug,
     language,
     tags,
+    generateSequence,
     sequenceCount,
     review,
     allowedOpenContribution,
     verified,
-    useTemplateDocument
+    useTemplateDocument,
+    cloningStrategy,
+    cloningTargetRoomId
   }) => {
     try {
-      setLoading(true);
+      setIsSaving(true);
 
       const mappedDocument = {
         title: (title || '').trim(),
@@ -168,57 +333,89 @@ function DocumentMetadataModal({
         allowedOpenContribution: canRestrictOpenContribution ? allowedOpenContribution : initialDocumentMetadata.allowedOpenContribution
       };
 
-      if (mode === DOCUMENT_METADATA_MODAL_MODE.create) {
-        const savedDocuments = [];
-        const documentsToSave = generateSequence
-          ? Array.from({ length: sequenceCount }, (_, index) => ({
+      const actualTemplateDocumentId = determineActualTemplateDocumentId({
+        mode,
+        documentToClone,
+        useTemplateDocument,
+        defaultTemplateDocumentId
+      });
+
+      const targetRoomId = determineTargetRoomId({
+        mode,
+        initialDocumentMetadata,
+        documentToClone,
+        cloningStrategy,
+        cloningTargetRoomId
+      });
+
+      const savedDocuments = [];
+      if (mode === DOCUMENT_METADATA_MODAL_MODE.update) {
+        savedDocuments.push(await documentApiClient.updateDocumentMetadata({
+          documentId: initialDocumentMetadata._id,
+          metadata: mappedDocument
+        }));
+      } else {
+        const documentsToSave = Array.from({ length: generateSequence ? sequenceCount : 1 }, (_, index) => {
+          const extraProps = generateSequence
+            ? { title: `${mappedDocument.title} (${index + 1})`, slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '' }
+            : {};
+
+          return {
             ...cloneDeep(mappedDocument),
-            roomId: initialDocumentMetadata.roomId,
-            title: `${mappedDocument.title} (${index + 1})`,
-            slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '',
-            tags: mappedDocument.tags,
-            review: mappedDocument.review,
-            verified: mappedDocument.verified,
-            allowedOpenContribution: mappedDocument.allowedOpenContribution
-          }))
-          : [
-            {
-              ...cloneDeep(mappedDocument),
-              roomId: initialDocumentMetadata.roomId
-            }
-          ];
+            ...extraProps,
+            roomId: targetRoomId
+          };
+        });
 
         for (const documentToSave of documentsToSave) {
           // eslint-disable-next-line no-await-in-loop
           savedDocuments.push(await documentApiClient.createDocument(documentToSave));
         }
-
-        onSave(savedDocuments, useTemplateDocument ? templateDocumentId : null);
-      } else {
-        const savedDocument = await documentApiClient.updateDocumentMetadata({ documentId: initialDocumentMetadata._id, metadata: mappedDocument });
-        onSave([savedDocument]);
       }
+
+      onSave(savedDocuments, actualTemplateDocumentId);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
-  const allowedOpenContributionOptions = Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)
-    .map(optionKey => ({ key: optionKey, value: t(`allowedOpenContribution_${optionKey}`) }));
-
   return (
     <Modal
-      title={mode === DOCUMENT_METADATA_MODAL_MODE.create ? t('newDocument') : t('editDocument')}
+      title={getDialogTitle(mode, t)}
       visible={isVisible}
       onOk={handleOk}
       onCancel={handleCancel}
       maskClosable={false}
-      okButtonProps={{ loading }}
-      okText={t('common:save')}
+      okButtonProps={{ loading: isSaving }}
+      okText={getDialogOkButtonText(mode, t)}
       >
       <Form onFinish={handleFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialValues}>
+        <FormItem
+          name="cloningStrategy"
+          label={t('cloningStrategy')}
+          hidden={mode !== DOCUMENT_METADATA_MODAL_MODE.clone || cloningOptions.strategyOptions.length <= 1}
+          >
+          <Select options={cloningOptions.strategyOptions} />
+        </FormItem>
+        <FormItem
+          noStyle
+          hidden={mode !== DOCUMENT_METADATA_MODAL_MODE.clone}
+          shouldUpdate={(prevValues, currentValues) => prevValues.cloningStrategy !== currentValues.cloningStrategy}
+          >
+          {({ getFieldValue }) => getFieldValue('cloningStrategy') === CLONING_STRATEGY.crossCloneIntoRoom
+            ? (
+              <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={roomValidationRules}>
+                <Select
+                  loading={isLoadingRooms}
+                  options={cloningOptions.roomOptions}
+                  notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
+                  />
+              </FormItem>
+            )
+            : null}
+        </FormItem>
         <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
           <Input />
         </FormItem>
@@ -242,70 +439,62 @@ function DocumentMetadataModal({
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        {mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple && (
-          <Fragment>
-            <FormItem name="generateSequence" valuePropName="checked">
-              <Checkbox onChange={handleGenerateSequenceChange}>
-                <Fragment>
-                  <span>{t('generateSequence')}</span>
-                  <Tooltip title={t('sequenceInfo')}>
-                    <InfoCircleOutlined className="u-info-icon" />
-                  </Tooltip>
-                </Fragment>
-              </Checkbox>
-            </FormItem>
-            {generateSequence && (
-              <div>
-                <span>{generateSequence}</span>
-                <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
-                  <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
-                </FormItem>
-              </div>
-            )}
-          </Fragment>
-        )}
-        {templateDocumentId && (
-          <FormItem name="useTemplateDocument" valuePropName="checked">
-            <Checkbox>{t('useTemplateDocument')}</Checkbox>
-          </FormItem>
-        )}
+        <FormItem name="generateSequence" valuePropName="checked" hidden={!canCreateSequenes}>
+          <Checkbox>
+            <Fragment>
+              <span>{t('generateSequence')}</span>
+              <Tooltip title={t('sequenceInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+            </Fragment>
+          </Checkbox>
+        </FormItem>
+        <FormItem
+          noStyle
+          hidden={!canCreateSequenes}
+          shouldUpdate={(prevValues, currentValues) => prevValues.generateSequence !== currentValues.generateSequence}
+          >
+          {({ getFieldValue }) => getFieldValue('generateSequence')
+            ? (
+              <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
+                <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
+              </FormItem>
+            )
+            : null}
+        </FormItem>
+        <FormItem name="useTemplateDocument" valuePropName="checked" hidden={!canUseTemplateDocument}>
+          <Checkbox>{t('useTemplateDocument')}</Checkbox>
+        </FormItem>
         {(canReview || canVerify) && (
-          <Fragment>
-            <Divider className="DocumentMetadataModal-divider" />
-            {canReview && (
-              <FormItem name="review" label={t('review')}>
-                <NeverScrollingTextArea />
-              </FormItem>
-            )}
-            {canRestrictOpenContribution && (
-              <FormItem
-                name="allowedOpenContribution"
-                label={
-                  <Fragment>
-                    {t('allowedOpenContribution')}
-                    <Tooltip title={t('allowedOpenContributionInfo')}>
-                      <InfoCircleOutlined className="u-info-icon" />
-                    </Tooltip>
-                  </Fragment>
-                }
-                >
-                <Select>
-                  {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
-                </Select>
-              </FormItem>
-            )}
-            {canVerify && (
-              <FormItem name="verified" valuePropName="checked">
-                <Checkbox>
-                  {t('verified')}
-                  <Tooltip title={t('verifiedInfo')}>
-                    <InfoCircleOutlined className="u-info-icon" />
-                  </Tooltip>
-                </Checkbox>
-              </FormItem>
-            )}
-          </Fragment>
+          <Divider className="DocumentMetadataModal-divider" />
         )}
+        <FormItem name="review" label={t('review')} hidden={!canReview}>
+          <NeverScrollingTextArea />
+        </FormItem>
+        <FormItem
+          name="allowedOpenContribution"
+          hidden={!canRestrictOpenContribution}
+          label={
+            <Fragment>
+              {t('allowedOpenContribution')}
+              <Tooltip title={t('allowedOpenContributionInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+            </Fragment>
+          }
+          >
+          <Select>
+            {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
+          </Select>
+        </FormItem>
+        <FormItem name="verified" valuePropName="checked" hidden={!canVerify}>
+          <Checkbox>
+            {t('verified')}
+            <Tooltip title={t('verifiedInfo')}>
+              <InfoCircleOutlined className="u-info-icon" />
+            </Tooltip>
+          </Checkbox>
+        </FormItem>
       </Form>
     </Modal>
   );
@@ -313,6 +502,7 @@ function DocumentMetadataModal({
 
 DocumentMetadataModal.propTypes = {
   allowMultiple: PropTypes.bool,
+  documentToClone: documentExtendedMetadataShape,
   initialDocumentMetadata: PropTypes.oneOfType([
     PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
@@ -320,14 +510,13 @@ DocumentMetadataModal.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  templateDocumentId: PropTypes.string
+  onSave: PropTypes.func.isRequired
 };
 
 DocumentMetadataModal.defaultProps = {
   allowMultiple: false,
-  initialDocumentMetadata: null,
-  templateDocumentId: null
+  documentToClone: null,
+  initialDocumentMetadata: null
 };
 
 export default DocumentMetadataModal;
