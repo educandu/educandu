@@ -7,8 +7,8 @@ import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { ROOM_USER_ROLE } from '../domain/constants.js';
 import ClientConfig from '../bootstrap/client-config.js';
-import inputValidators from '../utils/input-validators.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -17,144 +17,26 @@ import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider, Empty } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
-import { maxDocumentDescriptionLength, maxTagLength, minTagLength } from '../domain/validation-constants.js';
+import {
+  CLONING_STRATEGY,
+  composeTagOptions,
+  determineActualTemplateDocumentId,
+  determineTargetRoomId,
+  DOCUMENT_METADATA_MODAL_MODE,
+  getAllowedOpenContributionOptions,
+  getCloningOptions,
+  getDefaultLanguageFromUiLanguage,
+  getDialogOkButtonText,
+  getDialogTitle,
+  getValidationRules
+} from './document-metadata-modal-utils.js';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
 const logger = new Logger(import.meta.url);
-
-export const DOCUMENT_METADATA_MODAL_MODE = {
-  create: 'create',
-  update: 'update',
-  clone: 'clone'
-};
-
-const CLONING_STRATEGY = {
-  none: 'none',
-  cloneWithinArea: 'cloneWithinArea',
-  crossCloneIntoRoom: 'crossCloneIntoRoom',
-  crossCloneIntoPublicArea: 'crossCloneIntoPublicArea'
-};
-
-function getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t }) {
-  if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
-    return {
-      strategyOptions: [{ label: '', value: CLONING_STRATEGY.none }],
-      roomOptions: []
-    };
-  }
-
-  const roomOptions = clientConfig.areRoomsEnabled
-    ? availableRooms.filter(room => room._id !== documentToClone.roomId).map(room => ({
-      label: room.name,
-      value: room._id
-    }))
-    : [];
-
-  const strategyOptions = [
-    {
-      label: documentToClone.roomId
-        ? t('cloningStrategy_cloneWithinArea_fromRoom')
-        : t('cloningStrategy_cloneWithinArea_fromPublicArea'),
-      value: CLONING_STRATEGY.cloneWithinArea
-    }
-  ];
-
-  if (clientConfig.areRoomsEnabled) {
-    strategyOptions.push({
-      label: documentToClone.roomId
-        ? t('cloningStrategy_crossCloneIntoRoom_fromRoom')
-        : t('cloningStrategy_crossCloneIntoRoom_fromPublicArea'),
-      value: CLONING_STRATEGY.crossCloneIntoRoom
-    });
-  }
-
-  if (documentToClone.roomId) {
-    strategyOptions.push({
-      label: t('cloningStrategy_crossCloneIntoPublicArea'),
-      value: CLONING_STRATEGY.crossCloneIntoPublicArea
-    });
-  }
-
-  return { strategyOptions, roomOptions };
-}
-
-function determineActualTemplateDocumentId({ mode, documentToClone, useTemplateDocument, defaultTemplateDocumentId }) {
-  switch (mode) {
-    case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return documentToClone._id;
-    case DOCUMENT_METADATA_MODAL_MODE.create:
-      return useTemplateDocument ? defaultTemplateDocumentId : null;
-    case DOCUMENT_METADATA_MODAL_MODE.update:
-      return null;
-    default:
-      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
-  }
-}
-
-function determineTargetRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId }) {
-  switch (mode) {
-    case DOCUMENT_METADATA_MODAL_MODE.clone:
-      switch (cloningStrategy) {
-        case CLONING_STRATEGY.cloneWithinArea:
-          return documentToClone.roomId || null;
-        case CLONING_STRATEGY.crossCloneIntoRoom:
-          return cloningTargetRoomId;
-        case CLONING_STRATEGY.crossCloneIntoPublicArea:
-          return null;
-        default:
-          throw new Error(`Invalid cloning strategy: '${cloningStrategy}'`);
-      }
-    case DOCUMENT_METADATA_MODAL_MODE.create:
-      return initialDocumentMetadata.roomId || null;
-    case DOCUMENT_METADATA_MODAL_MODE.update:
-      return null; // Not used for metadata updates
-    default:
-      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
-  }
-}
-
-function getDialogTitle(mode, t) {
-  switch (mode) {
-    case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('cloneDocument');
-    case DOCUMENT_METADATA_MODAL_MODE.create:
-      return t('newDocument');
-    case DOCUMENT_METADATA_MODAL_MODE.update:
-      return t('editDocument');
-    default:
-      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
-  }
-}
-
-function getDialogOkButtonText(mode, t) {
-  switch (mode) {
-    case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('common:clone');
-    case DOCUMENT_METADATA_MODAL_MODE.create:
-      return t('common:create');
-    case DOCUMENT_METADATA_MODAL_MODE.update:
-      return t('common:save');
-    default:
-      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
-  }
-}
-
-function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
-  const mergedTags = new Set([...initialDocumentTags, ...tagSuggestions]);
-  return [...mergedTags].map(tag => ({ key: tag, value: tag }));
-}
-
-function getDefaultLanguageFromUiLanguage(uiLanguage) {
-  switch (uiLanguage) {
-    case 'de': return 'de';
-    default: return 'en';
-  }
-}
 
 function DocumentMetadataModal({
   isVisible,
@@ -203,59 +85,11 @@ function DocumentMetadataModal({
     cloningTargetRoomId: ''
   };
 
-  const cloningOptions = getCloningOptions({
-    mode,
-    documentToClone,
-    availableRooms,
-    clientConfig,
-    t
-  });
+  const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t });
 
-  const allowedOpenContributionOptions = Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)
-    .map(optionKey => ({ key: optionKey, value: t(`allowedOpenContribution_${optionKey}`) }));
+  const allowedOpenContributionOptions = getAllowedOpenContributionOptions({ t });
 
-  const roomValidationRules = [
-    {
-      required: true,
-      message: t('roomRequired'),
-      whitespace: true
-    }
-  ];
-
-  const titleValidationRules = [
-    {
-      required: true,
-      message: t('titleRequired'),
-      whitespace: true
-    }
-  ];
-
-  const descriptionValidationRules = [
-    {
-      max: maxDocumentDescriptionLength,
-      message: t('descriptionTooLong', { maxChars: maxDocumentDescriptionLength })
-    }
-  ];
-
-  const slugValidationRules = [
-    {
-      validator: (_, value) => {
-        return value && !inputValidators.isValidSlug(value)
-          ? Promise.reject(new Error(t('common:invalidSlug')))
-          : Promise.resolve();
-      }
-    }
-  ];
-
-  const tagsValidationRules = [
-    {
-      validator: (_, value) => {
-        return value.length && value.some(tag => !inputValidators.isValidTag({ tag }))
-          ? Promise.reject(new Error(t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })))
-          : Promise.resolve();
-      }
-    }
-  ];
+  const validationRules = getValidationRules({ t });
 
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
@@ -406,7 +240,7 @@ function DocumentMetadataModal({
           >
           {({ getFieldValue }) => getFieldValue('cloningStrategy') === CLONING_STRATEGY.crossCloneIntoRoom
             ? (
-              <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={roomValidationRules}>
+              <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={validationRules.roomValidationRules}>
                 <Select
                   loading={isLoadingRooms}
                   options={cloningOptions.roomOptions}
@@ -416,19 +250,19 @@ function DocumentMetadataModal({
             )
             : null}
         </FormItem>
-        <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
+        <FormItem name="title" label={t('common:title')} rules={validationRules.titleValidationRules}>
           <Input />
         </FormItem>
-        <FormItem name="description" label={t('common:description')} rules={descriptionValidationRules}>
+        <FormItem name="description" label={t('common:description')} rules={validationRules.descriptionValidationRules}>
           <NeverScrollingTextArea />
         </FormItem>
         <FormItem name="language" label={t('common:language')}>
           <LanguageSelect />
         </FormItem>
-        <FormItem name="slug" label={t('common:slug')} rules={slugValidationRules}>
+        <FormItem name="slug" label={t('common:slug')} rules={validationRules.slugValidationRules}>
           <Input />
         </FormItem>
-        <FormItem name="tags" label={t('common:tags')} rules={tagsValidationRules}>
+        <FormItem name="tags" label={t('common:tags')} rules={validationRules.tagsValidationRules}>
           <Select
             mode="tags"
             tokenSeparators={[' ', '\t']}
