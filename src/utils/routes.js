@@ -49,8 +49,9 @@ function getDocumentRevisionUrl(revisionId) {
   return urlUtils.concatParts(revisionPrefix, revisionId);
 }
 
-function getAdminUrl() {
-  return adminPath;
+function getAdminUrl({ tab } = {}) {
+  const queryString = urlUtils.composeQueryString({ tab });
+  return queryString ? `${adminPath}?${queryString}` : adminPath;
 }
 
 function getImportsUrl() {

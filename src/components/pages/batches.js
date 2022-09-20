@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Table, List } from 'antd';
+import { Table, List, Checkbox } from 'antd';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +51,7 @@ function Batches({ initialState, PageTemplate }) {
   const [taskTableItems, setTaskTableItems] = useState([]);
   const batchApiClient = useSessionAwareApiClient(BatchApiClient);
   const [overallBatchStatus, setOverallBatchStatus] = useState(null);
+  const [hideSuccessfullyCompletedTasks, setHideSuccessfullyCompletedTasks] = useState(true);
 
   useEffect(() => {
     let errorCount = 0;
@@ -78,7 +79,7 @@ function Batches({ initialState, PageTemplate }) {
           localizedStatus: localizeStatus(STATUS.warning, t)
         });
         warningCount += 1;
-      } else {
+      } else if (!hideSuccessfullyCompletedTasks) {
         taskItems.push({
           ...task,
           status: STATUS.success,
@@ -101,7 +102,7 @@ function Batches({ initialState, PageTemplate }) {
     }
 
     setOverallBatchStatus(batchStatus);
-  }, [batch, t]);
+  }, [batch, hideSuccessfullyCompletedTasks, t]);
 
   useEffect(() => {
     let nextTimeout = null;
@@ -127,6 +128,10 @@ function Batches({ initialState, PageTemplate }) {
       }
     };
   }, [t, batchApiClient, batch._id, batch.progress]);
+
+  const handleHideSuccessfullyCompletedTasksChange = event => {
+    setHideSuccessfullyCompletedTasks(event.target.checked);
+  };
 
   const renderTaskStatus = (_, taskItem) => {
     switch (taskItem.status) {
@@ -307,7 +312,7 @@ function Batches({ initialState, PageTemplate }) {
       break;
     case BATCH_TYPE.cdnResourcesConsolidation:
       taskTableColumns.push({
-        title: `${t('common:document')}}`,
+        title: t('common:document'),
         key: 'taskParamsTypeEntityId',
         dataIndex: 'taskParams',
         render: renderCdnResourcesConsolidationEntityId
@@ -341,15 +346,7 @@ function Batches({ initialState, PageTemplate }) {
     title: t('taskStatus'),
     dataIndex: 'localizedStatus',
     render: renderTaskStatus,
-    sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus),
-    filters: [
-      { text: t('status_pending'), value: STATUS.pending },
-      { text: t('status_warning'), value: STATUS.warning },
-      { text: t('status_error'), value: STATUS.error },
-      { text: t('status_success'), value: STATUS.success }
-    ],
-    defaultFilteredValue: [STATUS.pending, STATUS.warning, STATUS.error],
-    onFilter: (value, record) => record.status === value
+    sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus)
   });
 
   const batchInfos = [<span key="batch-type">{t('batchType')}: {renderBatchType(batch.batchType)}</span>];
@@ -385,6 +382,14 @@ function Batches({ initialState, PageTemplate }) {
             />
         )}
         <h2>{t('tasks')}</h2>
+        <div className="BatchesPage-tableFilter">
+          <Checkbox
+            checked={hideSuccessfullyCompletedTasks}
+            onChange={handleHideSuccessfullyCompletedTasksChange}
+            >
+            {t('hideSuccessfullyCompletedTasks')}
+          </Checkbox>
+        </div>
         <Table
           size="small"
           bordered

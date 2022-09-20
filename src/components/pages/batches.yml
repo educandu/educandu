@@ -58,3 +58,6 @@ status_warning:
 status_error:
   en: Completed with errors
   de: Abgeschlossen mit Fehlern
+hideSuccessfullyCompletedTasks:
+  en: Hide successfully completed tasks
+  de: Erfolgreich abgeschlossene Tasks ausblenden
