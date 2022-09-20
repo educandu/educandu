@@ -264,7 +264,7 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
   const topics = Object.keys(commentGroups);
 
   return (
-    <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel">
+    <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" defaultActiveKey="newTopic">
       {topics.map(renderTopicPanel)}
       {renderNewTopicPanel()}
     </Collapse>
