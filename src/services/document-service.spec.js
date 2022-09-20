@@ -5,8 +5,8 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import { EFFECT_TYPE } from '../plugins/image/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
+import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -80,11 +80,26 @@ describe('document-service', () => {
               sourceUrl: 'media/image-1.png',
               copyrightNotice: '',
               width: 100,
-              effect: {
-                type: EFFECT_TYPE.hover,
+              effectType: EFFECT_TYPE.hover,
+              hoverEffect: {
                 sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: 'media/image-2.png',
                 copyrightNotice: ''
+              },
+              revealEffect: {
+                sourceType: IMAGE_SOURCE_TYPE.internal,
+                sourceUrl: '',
+                copyrightNotice: '',
+                startPosition: 0,
+                orientation: ORIENTATION.horizontal
+              },
+              clipEffect: {
+                region: {
+                  x: 0,
+                  y: 0,
+                  width: 0,
+                  height: 0
+                }
               }
             }
           },
@@ -232,11 +247,26 @@ describe('document-service', () => {
               sourceUrl: 'media/image-1.png',
               copyrightNotice: '',
               width: 100,
-              effect: {
-                type: EFFECT_TYPE.hover,
+              effectType: EFFECT_TYPE.hover,
+              hoverEffect: {
                 sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: 'media/image-2.png',
                 copyrightNotice: ''
+              },
+              revealEffect: {
+                sourceType: IMAGE_SOURCE_TYPE.internal,
+                sourceUrl: '',
+                copyrightNotice: '',
+                startPosition: 0,
+                orientation: ORIENTATION.horizontal
+              },
+              clipEffect: {
+                region: {
+                  x: 0,
+                  y: 0,
+                  width: 0,
+                  height: 0
+                }
               }
             }
           },
@@ -981,26 +1011,22 @@ describe('document-service', () => {
         const unrelatedSection = {
           ...createDefaultSection(),
           revision: uniqueId.create(),
-          type: 'image',
+          type: 'audio',
           content: {
-            sourceType: 'internal',
-            sourceUrl: 'media/image-1.png',
-            width: 100,
-            copyrightNotice: 'Unmodified text',
-            effect: null
+            sourceType: MEDIA_SOURCE_TYPE.internal,
+            sourceUrl: 'media/audio-1.mp3',
+            copyrightNotice: 'Unmodified text'
           }
         };
 
         const sectionToBeDeleted = {
           ...createDefaultSection(),
           revision: uniqueId.create(),
-          type: 'image',
+          type: 'audio',
           content: {
-            sourceType: 'internal',
-            sourceUrl: 'media/image-2.png',
-            width: 100,
-            copyrightNotice: 'Initial text',
-            effect: null
+            sourceType: MEDIA_SOURCE_TYPE.internal,
+            sourceUrl: 'media/audio-2.mp3',
+            copyrightNotice: 'Initial text'
           }
         };
 
@@ -1193,8 +1219,8 @@ describe('document-service', () => {
         });
 
         it('removes the cdn resources of the hard-deleted section', () => {
-          expect(documentRevisionsBeforeDeletion[4].cdnResources).toMatchObject(['media/image-1.png', 'media/image-2.png']);
-          expect(documentRevisionsAfterDeletion[4].cdnResources).toMatchObject(['media/image-1.png']);
+          expect(documentRevisionsBeforeDeletion[4].cdnResources).toMatchObject(['media/audio-1.mp3', 'media/audio-2.mp3']);
+          expect(documentRevisionsAfterDeletion[4].cdnResources).toMatchObject(['media/audio-1.mp3']);
         });
       });
 

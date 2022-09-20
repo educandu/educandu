@@ -14,12 +14,16 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect } from './image-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-const defaultClipRegion = { x: 10, y: 10, width: 80, height: 80 };
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
+};
 
 function ImageEditor({ content, onContentChanged }) {
   const { t } = useTranslation('image');
@@ -27,19 +31,13 @@ function ImageEditor({ content, onContentChanged }) {
   const [currentImageSource, setCurrentImageSource] = useState(null);
   const [clipSizeInPx, setClipSizeInPx] = useState({ width: 0, height: 0 });
 
-  const { sourceType, sourceUrl, width, copyrightNotice, effect } = content;
-  const effectType = effect?.type || EFFECT_TYPE.none;
-
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
+  const { sourceType, sourceUrl, width, copyrightNotice, effectType, hoverEffect, revealEffect, clipEffect } = content;
 
   useEffect(() => {
     setCurrentImageSource(urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl }));
   }, [clientConfig, sourceType, sourceUrl]);
 
-  const updateClipState = useCallback(() => {
+  const updateClipEffectState = useCallback(() => {
     if (effectType !== EFFECT_TYPE.clip) {
       return;
     }
@@ -54,15 +52,15 @@ function ImageEditor({ content, onContentChanged }) {
       return;
     }
 
-    const clipWidth = Math.round(img.naturalWidth * (effect.region.width / 100));
-    const clipHeight = Math.round(img.naturalHeight * (effect.region.height / 100));
+    const clipWidth = Math.round(img.naturalWidth * (clipEffect.region.width / 100));
+    const clipHeight = Math.round(img.naturalHeight * (clipEffect.region.height / 100));
 
     setClipSizeInPx({ width: clipWidth, height: clipHeight });
-  }, [currentImageSource, effectType, effect]);
+  }, [currentImageSource, effectType, clipEffect]);
 
   useEffect(() => {
-    updateClipState();
-  }, [updateClipState, effect?.region]);
+    updateClipEffectState();
+  }, [updateClipEffectState, clipEffect.region]);
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -70,140 +68,136 @@ function ImageEditor({ content, onContentChanged }) {
       = newContent.sourceType === IMAGE_SOURCE_TYPE.external
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
-    const isInvalidEffectSourceUrl
-      = [EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(newContent.effect?.type)
-      && newContent.effect.sourceType === IMAGE_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.effect.sourceUrl, t).validateStatus === 'error';
-    onContentChanged(newContent, isInvalidSourceUrl || isInvalidEffectSourceUrl);
+    const isInvalidHoverEffectSourceUrl
+      = newContent.effectType === EFFECT_TYPE.hover
+      && newContent.hoverEffect.sourceType === IMAGE_SOURCE_TYPE.external
+      && validation.validateUrl(newContent.hoverEffect.sourceUrl, t).validateStatus === 'error';
+
+    const isInvalidClipEffectSourceUrl
+      = newContent.effectType === EFFECT_TYPE.clip
+      && newContent.clipEffect.sourceType === IMAGE_SOURCE_TYPE.external
+      && validation.validateUrl(newContent.clipEffect.sourceUrl, t).validateStatus === 'error';
+
+    onContentChanged(newContent, isInvalidSourceUrl || isInvalidHoverEffectSourceUrl || isInvalidClipEffectSourceUrl);
   };
 
-  const getResetEffect = () => {
-    switch (effectType) {
-      case EFFECT_TYPE.none:
-        return null;
-      case EFFECT_TYPE.clip:
-        return { ...effect, region: { ...defaultClipRegion } };
-      default:
-        return { ...effect };
-    }
-  };
-
-  const handleSourceTypeValueChanged = event => {
+  const handleSourceTypeChange = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '', effect: getResetEffect() });
+    changeContent({
+      sourceType: value,
+      sourceUrl: '',
+      copyrightNotice: '',
+      clipEffect: createDefaultClipEffect()
+    });
   };
 
-  const handleExternalSourceUrlValueChanged = event => {
+  const handleExternalSourceUrlChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value, effect: getResetEffect() });
+    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
   };
 
-  const handleInternalSourceUrlValueChanged = event => {
+  const handleInternalSourceUrlChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value, effect: getResetEffect() });
+    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
   };
 
-  const handleInternalSourceUrlFileNameChanged = value => {
-    changeContent({ sourceUrl: value, effect: getResetEffect() });
+  const handleInternalSourceUrlFileNameChange = value => {
+    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
   };
 
-  const handleCopyrightNoticeChanged = event => {
+  const handleCopyrightNoticeChange = event => {
     const { value } = event.target;
     changeContent({ copyrightNotice: value });
   };
 
-  const handleEffectOptionChange = event => {
-    const { value } = event.target;
-
-    const baseEffect = {
-      sourceType: effect?.sourceType || IMAGE_SOURCE_TYPE.internal,
-      sourceUrl: effect?.sourceUrl || '',
-      copyrightNotice: effect?.copyrightNotice || ''
-    };
-
-    switch (value) {
-      case EFFECT_TYPE.reveal:
-        changeContent({
-          effect: {
-            ...baseEffect,
-            type: EFFECT_TYPE.reveal,
-            startPosition: 10,
-            orientation: ORIENTATION.horizontal
-          }
-        });
-        break;
-      case EFFECT_TYPE.hover:
-        changeContent({
-          effect: {
-            ...baseEffect,
-            type: EFFECT_TYPE.hover
-          }
-        });
-        break;
-      case EFFECT_TYPE.clip:
-        changeContent({
-          effect: {
-            type: EFFECT_TYPE.clip,
-            region: { ...defaultClipRegion }
-          }
-        });
-        break;
-      case EFFECT_TYPE.none:
-      default:
-        changeContent({ effect: null });
-    }
-  };
-
-  const handleEffectExternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleEffectInternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleEffectInternalSourceUrlFileNameChanged = value => {
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleEffectSourceTypeValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { ...effect, sourceType: value, sourceUrl: '' };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleWidthValueChanged = value => {
+  const handleWidthChange = value => {
     changeContent({ width: value });
   };
 
-  const handleOrientationValueChanged = event => {
+  const handleEffectTypeChange = event => {
     const { value } = event.target;
-    const newEffect = { ...effect, orientation: value };
-    changeContent({ effect: newEffect });
+    changeContent({
+      effectType: value,
+      hoverEffect: createDefaultHoverEffect(),
+      revealEffect: createDefaultRevealEffect(),
+      clipEffect: createDefaultClipEffect()
+    });
   };
 
-  const handleEffectCopyrightNoticeChanged = event => {
+  const handleHoverEffectSourceTypeChange = event => {
     const { value } = event.target;
-    const newEffect = { ...effect, copyrightNotice: value };
-    changeContent({ effect: newEffect });
+    const newHoverEffect = { ...hoverEffect, sourceType: value, sourceUrl: '' };
+    changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleStartPositionValueChanged = newPosition => {
-    const newEffect = { ...effect, startPosition: Math.max(0, Math.min(100, newPosition)) };
-    changeContent({ effect: newEffect });
+  const handleHoverEffectExternalSourceUrlChange = event => {
+    const { value } = event.target;
+    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
+    changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleClipEffectImageLoad = () => updateClipState();
+  const handleHoverEffectInternalSourceUrlChange = event => {
+    const { value } = event.target;
+    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
+    changeContent({ hoverEffect: newHoverEffect });
+  };
+
+  const handleHoverEffectInternalSourceUrlFileNameChange = value => {
+    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
+    changeContent({ hoverEffect: newHoverEffect });
+  };
+
+  const handleHoverEffectCopyrightNoticeChange = event => {
+    const { value } = event.target;
+    const newHoverEffect = { ...hoverEffect, copyrightNotice: value };
+    changeContent({ hoverEffect: newHoverEffect });
+  };
+
+  const handleRevealEffectSourceTypeChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, sourceType: value, sourceUrl: '' };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectExternalSourceUrlChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, sourceUrl: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectInternalSourceUrlChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, sourceUrl: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectInternalSourceUrlFileNameChange = value => {
+    const newRevealEffect = { ...revealEffect, sourceUrl: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectCopyrightNoticeChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, copyrightNotice: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectStartPositionChange = newPosition => {
+    const newRevealEffect = { ...revealEffect, startPosition: Math.max(0, Math.min(100, newPosition)) };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectOrientationChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, orientation: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleClipEffectImageLoad = () => updateClipEffectState();
 
   const handleClipRegionsChanged = newRegions => {
     const region = newRegions[0];
-    const newEffect = {
-      ...effect,
+    const newClipEffect = {
       region: {
         x: Math.round(region.x),
         y: Math.round(region.y),
@@ -211,7 +205,7 @@ function ImageEditor({ content, onContentChanged }) {
         height: Math.round(region.height)
       }
     };
-    changeContent({ effect: newEffect });
+    changeContent({ clipEffect: newClipEffect });
   };
 
   const renderSourceTypeInput = (value, onChangeHandler) => (
@@ -254,18 +248,20 @@ function ImageEditor({ content, onContentChanged }) {
   return (
     <div className="ImageEditor">
       <Form layout="horizontal">
-        {renderSourceTypeInput(sourceType, handleSourceTypeValueChanged)}
-
-        {sourceType === IMAGE_SOURCE_TYPE.external
-          && renderExternalSourceTypeInput(sourceUrl, handleExternalSourceUrlValueChanged)}
-
-        {sourceType === IMAGE_SOURCE_TYPE.internal
-          && renderInternalSourceTypeInput(sourceUrl, handleInternalSourceUrlValueChanged, handleInternalSourceUrlFileNameChanged)}
-
-        {renderCopyrightNoticeInput(copyrightNotice, handleCopyrightNoticeChanged)}
+        {renderSourceTypeInput(sourceType, handleSourceTypeChange)}
+        {sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
+          sourceUrl,
+          handleExternalSourceUrlChange
+        )}
+        {sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
+          sourceUrl,
+          handleInternalSourceUrlChange,
+          handleInternalSourceUrlFileNameChange
+        )}
+        {renderCopyrightNoticeInput(copyrightNotice, handleCopyrightNoticeChange)}
 
         <Form.Item label={t('effectTypeLabel')} {...formItemLayout}>
-          <RadioGroup value={effectType} onChange={handleEffectOptionChange}>
+          <RadioGroup value={effectType} onChange={handleEffectTypeChange}>
             <RadioButton value={EFFECT_TYPE.none}>{t('noneOption')}</RadioButton>
             <RadioButton value={EFFECT_TYPE.hover}>{t('hoverOption')}</RadioButton>
             <RadioButton value={EFFECT_TYPE.reveal}>{t('revealOption')}</RadioButton>
@@ -273,37 +269,50 @@ function ImageEditor({ content, onContentChanged }) {
           </RadioGroup>
         </Form.Item>
 
-        {effect && (
+        {effectType !== EFFECT_TYPE.none && (
           <div className="Panel">
             <div className="Panel-content">
-              {[EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(effect.type) && (
+              {effectType === EFFECT_TYPE.hover && (
               <Fragment>
-                {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}
-
-                {effect.sourceType === IMAGE_SOURCE_TYPE.external
-                    && renderExternalSourceTypeInput(effect.sourceUrl, handleEffectExternalSourceUrlValueChanged)}
-
-                {effect.sourceType === IMAGE_SOURCE_TYPE.internal
-                    && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
-
-                {renderCopyrightNoticeInput(effect.copyrightNotice, handleEffectCopyrightNoticeChanged)}
+                {renderSourceTypeInput(hoverEffect.sourceType, handleHoverEffectSourceTypeChange)}
+                {hoverEffect.sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
+                  hoverEffect.sourceUrl,
+                  handleHoverEffectExternalSourceUrlChange
+                )}
+                {hoverEffect.sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
+                  hoverEffect.sourceUrl,
+                  handleHoverEffectInternalSourceUrlChange,
+                  handleHoverEffectInternalSourceUrlFileNameChange
+                )}
+                {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
               </Fragment>
               )}
 
-              {effect.type === EFFECT_TYPE.reveal && (
+              {effectType === EFFECT_TYPE.reveal && (
               <Fragment>
+                {renderSourceTypeInput(revealEffect.sourceType, handleRevealEffectSourceTypeChange)}
+                {revealEffect.sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
+                  revealEffect.sourceUrl,
+                  handleRevealEffectExternalSourceUrlChange
+                )}
+                {revealEffect.sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
+                  revealEffect.sourceUrl,
+                  handleRevealEffectInternalSourceUrlChange,
+                  handleRevealEffectInternalSourceUrlFileNameChange
+                )}
+                {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
                 <FormItem label={t('startPosition')} {...formItemLayout}>
                   <InputNumber
-                    defaultValue={effect.startPosition}
+                    defaultValue={revealEffect.startPosition}
                     min={0}
                     max={100}
                     formatter={value => `${value}%`}
                     parser={value => value.replace('%', '')}
-                    onChange={handleStartPositionValueChanged}
+                    onChange={handleRevealEffectStartPositionChange}
                     />
                 </FormItem>
                 <FormItem label={t('orientationLabel')} {...formItemLayout}>
-                  <RadioGroup value={effect.orientation} onChange={handleOrientationValueChanged}>
+                  <RadioGroup value={revealEffect.orientation} onChange={handleRevealEffectOrientationChange}>
                     <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
                     <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
                   </RadioGroup>
@@ -311,7 +320,7 @@ function ImageEditor({ content, onContentChanged }) {
               </Fragment>
               )}
 
-              {effect.type === EFFECT_TYPE.clip && (
+              {effectType === EFFECT_TYPE.clip && (
                 <div className="ImageEditor-clipEffect">
                   {!!currentImageSource && (
                     <Fragment>
@@ -319,7 +328,7 @@ function ImageEditor({ content, onContentChanged }) {
                       <RegionSelect
                         constraint
                         maxRegions={1}
-                        regions={[{ ...effect.region, data: {} }]}
+                        regions={[{ ...clipEffect.region, data: {} }]}
                         onChange={handleClipRegionsChanged}
                         regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
                         >
@@ -349,7 +358,7 @@ function ImageEditor({ content, onContentChanged }) {
           }
           {...formItemLayout}
           >
-          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>
     </div>
