@@ -208,11 +208,13 @@ export default class StorageService {
         ignoreNonExistingPath: false
       });
 
+      const docTitleMatchesSearchTerm = obj => obj.documentMetadata?.title.toLowerCase().includes(searchTerm.toLowerCase())
+        && obj.documentMetadata.isAccessibleToUser;
+      const displayNameMatchesSearchTerm = obj => obj.displayName.toLowerCase().includes(searchTerm.toLowerCase());
+
       const matchingAllLevelsObjects = [
-        ...currentLevelObjects.filter(obj => (
-          obj.documentMetadata?.title.toLowerCase().includes(searchTerm.toLowerCase()) && obj.documentMetadata.isAccessibleToUser)
-          || obj.displayName.toLowerCase().includes(searchTerm.toLowerCase())),
-        ...innerLevelsObjects.filter(obj => obj.displayName.toLowerCase().includes(searchTerm.toLowerCase()))
+        ...currentLevelObjects.filter(obj => docTitleMatchesSearchTerm(obj) || displayNameMatchesSearchTerm(obj)),
+        ...innerLevelsObjects.filter(obj => displayNameMatchesSearchTerm(obj))
       ];
 
       return {
