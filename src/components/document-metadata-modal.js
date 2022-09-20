@@ -80,7 +80,7 @@ function DocumentMetadataModal({
     review: '',
     verified: initialDocumentMetadata.verified,
     allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution,
-    useTemplateDocument: canUseTemplateDocument,
+    useTemplateDocument: false,
     cloningStrategy: CLONING_STRATEGY.cloneWithinArea,
     cloningTargetRoomId: ''
   };
