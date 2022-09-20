@@ -183,7 +183,7 @@ function ImageEditor({ content, onContentChanged }) {
 
   const handleOrientationValueChanged = event => {
     const { value } = event.target;
-    const newEffect = { effect, orientation: value };
+    const newEffect = { ...effect, orientation: value };
     changeContent({ effect: newEffect });
   };
 
