@@ -3,12 +3,13 @@ import classNames from 'classnames';
 import UsedStorage from '../used-storage.js';
 import FilesViewer from '../files-viewer.js';
 import reactDropzoneNs from 'react-dropzone';
+import DebouncedInput from '../debounced-input.js';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
-import React, { useEffect, useRef, useState } from 'react';
 import { isTouchDevice } from '../../ui/browser-helper.js';
-import { Alert, Button, Input, Modal, Select } from 'antd';
-import { ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Button, Modal, Select, Input } from 'antd';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
 import { canUploadToPath, composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
 import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
@@ -78,12 +79,14 @@ function StorageLocation({
     dropzoneRef.current.open();
   };
 
-  const handleSearchTermChange = event => {
-    setTypedInSearchTerm(event.target.value);
+  const handleSearchTermChange = value => {
+    setTypedInSearchTerm(value);
   };
 
-  const handleSearchClick = async () => {
-    if (typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH) {
+  const handleSearchClick = async value => {
+    setTypedInSearchTerm(value);
+
+    if (value.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
         content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
@@ -92,7 +95,7 @@ function StorageLocation({
       return;
     }
 
-    await onSearchTermChange(typedInSearchTerm);
+    await onSearchTermChange(value);
   };
 
   const handleBackToDirectoryScreenClick = async () => {
@@ -143,12 +146,12 @@ function StorageLocation({
     <div className="StorageLocation">
       <div className="StorageLocation-buttonsLine">
         <div className="StorageLocation-buttonsLineItem">
-          <Search
+          <DebouncedInput
+            elementType={Search}
             placeholder={t('common:search')}
             value={typedInSearchTerm}
             onSearch={handleSearchClick}
             onChange={handleSearchTermChange}
-            enterButton={<SearchOutlined />}
             />
         </div>
         <div className="StorageLocation-buttonsLineItem StorageLocation-buttonsLineItem--select">
@@ -178,7 +181,7 @@ function StorageLocation({
               <FilesViewer
                 isLoading={isLoading}
                 files={files}
-                parentDirectory={isInSearchMode ? null : parentDirectory}
+                parentDirectory={parentDirectory}
                 display={filesViewerDisplay}
                 onFileClick={handleFileClick}
                 onFileDoubleClick={handleFileDoubleClick}

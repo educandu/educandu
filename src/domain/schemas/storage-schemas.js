@@ -3,8 +3,7 @@ import { idOrKeySchema } from './shared-schemas.js';
 
 export const getCdnObjectsQuerySchema = joi.object({
   parentPath: joi.string(),
-  searchTerm: joi.string().min(3),
-  recursive: joi.string().valid(true.toString(), false.toString())
+  searchTerm: joi.string().min(3)
 });
 
 export const deleteCdnObjectQuerySchema = joi.object({
