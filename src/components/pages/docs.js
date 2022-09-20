@@ -7,13 +7,13 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
-import { useSettings } from '../settings-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
 import DocumentInfoCell from '../document-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,8 +21,8 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
@@ -31,11 +31,12 @@ import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allo
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ documentToClone, settings, t }) {
+function getDocumentMetadataModalState({ t, documentToClone = null, isVisible = false }) {
   return {
-    isVisible: false,
-    cloneDocumentId: documentToClone?._id,
-    templateDocumentId: documentToClone ? null : settings.templateDocument?.documentId,
+    mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
+    allowMultiple: false,
+    isVisible,
+    documentToClone,
     initialDocumentMetadata: documentToClone
       ? {
         ...documentToClone,
@@ -62,7 +63,6 @@ const getOriginTranslated = ({ t, origin }) => {
 
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
-  const settings = useSettings();
   const { t } = useTranslation('docs');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -88,7 +88,7 @@ function Docs({ initialState, PageTemplate }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
   const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ settings, t }));
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
   const sortingOptions = [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
@@ -134,22 +134,23 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleNewDocumentClick = () => {
-    setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ settings, t }), isVisible: true });
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, isVisible: true }));
   };
 
   const handleCloneClick = row => {
     const documentToClone = documents.find(d => d._id === row.documentId);
-    setDocumentMetadataModalState({ ...getDocumentMetadataModalState({ documentToClone, settings, t }), isVisible: true });
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, documentToClone, isVisible: true }));
   };
 
   const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
 
+    const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
     window.location = routes.getDocUrl({
       id: createdDocuments[0]._id,
       slug: createdDocuments[0].slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentId: documentMetadataModalState.cloneDocumentId || templateDocumentId
+      templateDocumentId: clonedOrTemplateDocumentId
     });
   };
 
@@ -340,11 +341,7 @@ function Docs({ initialState, PageTemplate }) {
           </Restricted>
         </aside>
         <DocumentMetadataModal
-          allowMultiple={false}
-          mode={DOCUMENT_METADATA_MODAL_MODE.create}
-          isVisible={documentMetadataModalState.isVisible}
-          templateDocumentId={documentMetadataModalState.templateDocumentId}
-          initialDocumentMetadata={documentMetadataModalState.initialDocumentMetadata}
+          {...documentMetadataModalState}
           onSave={handleDocumentMetadataModalSave}
           onClose={handleDocumentMetadataModalClose}
           />

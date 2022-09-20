@@ -52,6 +52,9 @@ hardDelete:
 clone:
   en: Clone
   de: Klonen
+create:
+  en: Create
+  de: Erstellen
 moveUp:
   en: Move up
   de: Nach oben verschieben

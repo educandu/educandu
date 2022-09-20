@@ -3,18 +3,20 @@ import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { BATCH_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getAllUserPermissions } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static get inject() { return [UserStore, StoragePlanStore, RoomStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, RoomStore, PluginRegistry]; }
 
-  constructor(userStore, storagePlanStore, roomStore) {
+  constructor(userStore, storagePlanStore, roomStore, pluginRegistry) {
     this.userStore = userStore;
     this.roomStore = roomStore;
     this.storagePlanStore = storagePlanStore;
+    this.pluginRegistry = pluginRegistry;
   }
 
   mapWebsitePublicUser({ viewedUser, viewingUser }) {
@@ -80,12 +82,23 @@ class ClientDataMappingService {
     }));
   }
 
-  createProposedSections(documentRevision) {
-    return documentRevision.sections.filter(this._isProposableSection).map(section => ({
-      ...section,
-      key: uniqueId.create(),
-      revision: null
-    }));
+  createProposedSections(docOrRevision, targetRoomId) {
+    return docOrRevision.sections.reduce((proposedSections, section) => {
+      if (!this._isDeletedSection(section)) {
+        const info = this.pluginRegistry.tryGetInfo(section.type);
+        const redactedContent = info?.redactContent?.(section.content, targetRoomId) || null;
+        if (redactedContent) {
+          proposedSections.push({
+            ...section,
+            key: uniqueId.create(),
+            revision: null,
+            content: redactedContent
+          });
+        }
+      }
+
+      return proposedSections;
+    }, []);
   }
 
   async mapDocOrRevision(docOrRevision, user) {
@@ -384,11 +397,11 @@ class ClientDataMappingService {
     return result;
   }
 
-  _isProposableSection(section) {
-    return !section.deletedOn
-      && !section.deletedBy
-      && !section.deletedBecause
-      && section.content;
+  _isDeletedSection(section) {
+    return section.deletedOn
+      || section.deletedBy
+      || section.deletedBecause
+      || !section.content;
   }
 
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {

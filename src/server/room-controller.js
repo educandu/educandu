@@ -15,7 +15,12 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { NOT_ROOM_OWNER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
+import {
+  NOT_ROOM_OWNER_ERROR_MESSAGE,
+  NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE,
+  NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE,
+  ROOM_USER_ROLE
+} from '../domain/constants.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
@@ -29,7 +34,8 @@ import {
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
-  getRoomMembershipConfirmationParamsSchema
+  getRoomMembershipConfirmationParamsSchema,
+  getRoomsQuerySchema
 } from '../domain/schemas/room-schemas.js';
 import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 
@@ -54,14 +60,29 @@ export default class RoomController {
     const { user } = req;
     const { token } = req.params;
 
-    if (!user) {
-      throw new Unauthorized();
-    }
-
     const { roomId, roomName, roomSlug, invalidInvitationReason } = await this.roomService.verifyInvitationToken({ token, user });
     const initialState = { token, roomId, roomName, roomSlug, invalidInvitationReason };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.roomMembershipConfirmation, initialState);
+  }
+
+  async handleGetRooms(req, res) {
+    const { user } = req;
+    const { userRole } = req.query;
+
+    let rooms;
+    switch (userRole) {
+      case ROOM_USER_ROLE.owner:
+        rooms = await this.roomService.getRoomsOwnedByUser(user._id);
+        break;
+      case ROOM_USER_ROLE.ownerOrCollaborator:
+        rooms = await this.roomService.getRoomsByOwnerOrCollaboratorUser(user._id);
+        break;
+      default:
+        throw new BadRequest();
+    }
+
+    return res.send(rooms);
   }
 
   async handlePostRoom(req, res) {
@@ -286,6 +307,12 @@ export default class RoomController {
     if (!this.serverConfig.areRoomsEnabled) {
       return;
     }
+
+    router.get(
+      '/api/v1/rooms',
+      [needsPermission(permissions.OWN_ROOMS), validateQuery(getRoomsQuerySchema)],
+      (req, res) => this.handleGetRooms(req, res)
+    );
 
     router.post(
       '/api/v1/rooms',

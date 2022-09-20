@@ -7,7 +7,7 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -32,6 +32,7 @@ describe('room-controller', () => {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomsOwnedByUser: sandbox.stub(),
+      getRoomsByOwnerOrCollaboratorUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
       getRoomInvitationById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
@@ -80,6 +81,65 @@ describe('room-controller', () => {
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('handleGetRooms', () => {
+
+    describe('when called with user role "owner"', () => {
+      const ownedRooms = Array.from({ length: 3 }, () => ({ _id: uniqueId.create() }));
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        roomService.getRoomsOwnedByUser.resolves(ownedRooms);
+
+        req = { user, query: { userRole: ROOM_USER_ROLE.owner } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRooms(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the owned rooms', () => {
+        expect(res._getData()).toEqual(ownedRooms);
+      });
+    });
+
+    describe('when called with user role "ownerOrCollaborator"', () => {
+      const ownedOrCollaboratedRooms = Array.from({ length: 3 }, () => ({ _id: uniqueId.create() }));
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        roomService.getRoomsByOwnerOrCollaboratorUser.resolves(ownedOrCollaboratedRooms);
+
+        req = { user, query: { userRole: ROOM_USER_ROLE.ownerOrCollaborator } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRooms(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the owned/collaborated rooms', () => {
+        expect(res._getData()).toEqual(ownedOrCollaboratedRooms);
+      });
+    });
+
+    describe('when called with an invalid user role', () => {
+      beforeEach(() => {
+        req = { user, query: { userRole: 'invalid' } };
+        res = httpMocks.createResponse();
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handleGetRooms(req, res)).rejects.toThrow(BadRequest);
+      });
+    });
+
   });
 
   describe('handlePostRoom', () => {

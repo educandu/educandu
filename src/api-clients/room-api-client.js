@@ -1,10 +1,20 @@
 import HttpClient from './http-client.js';
+import urlUtils from '../utils/url-utils.js';
 
 class RoomApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
     this.httpClient = httpClient;
+  }
+
+  getRooms({ userRole }) {
+    return this.httpClient
+      .get(
+        `/api/v1/rooms?${urlUtils.composeQueryString({ userRole })}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   addRoom({ name, slug, documentsMode }) {
