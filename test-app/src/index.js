@@ -28,6 +28,7 @@ const plugins = [
   'media-slideshow',
   'interactive-media',
   'multitrack-media',
+  'media-analysis',
   'anavis'
 ];
 

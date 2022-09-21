@@ -12,7 +12,7 @@ import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
+import { createDefaultSecondaryTrack } from './media-analysis-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
@@ -24,10 +24,10 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function MultitrackMediaEditor({ content, onContentChanged }) {
+function MediaAnalysisEditor({ content, onContentChanged }) {
   const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
-  const { t } = useTranslation('multitrackMedia');
+  const { t } = useTranslation('mediaAnalysis');
 
   const { width, mainTrack, secondaryTracks } = content;
   const sources = {
@@ -106,7 +106,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div className="MultitrackMediaEditor">
+    <div className="MediaAnalysisEditor">
       <Form layout="horizontal">
         <ItemPanel header={t('common:mainTrack')}>
           <FormItem label={t('common:name')} {...formItemLayout}>
@@ -139,7 +139,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           {t('common:addTrack')}
         </Button>
         <ItemPanel header={t('common:trackMixer')}>
-          <div className="MultitrackMediaEditor-trackMixerPreview">
+          <div className="MediaAnalysisEditor-trackMixerPreview">
             <MultitrackMediaPlayer
               sources={sources}
               aspectRatio={mainTrack.aspectRatio}
@@ -173,8 +173,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   );
 }
 
-MultitrackMediaEditor.propTypes = {
+MediaAnalysisEditor.propTypes = {
   ...sectionEditorProps
 };
 
-export default MultitrackMediaEditor;
+export default MediaAnalysisEditor;

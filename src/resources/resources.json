@@ -2032,6 +2032,20 @@
     }
   },
   {
+    "namespace": "mediaAnalysis",
+    "language": "en",
+    "resources": {
+      "name": "Media analysis"
+    }
+  },
+  {
+    "namespace": "mediaAnalysis",
+    "language": "de",
+    "resources": {
+      "name": "Medien-Analyse"
+    }
+  },
+  {
     "namespace": "mediaSlideshow",
     "language": "en",
     "resources": {
@@ -2053,22 +2067,14 @@
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
-      "name": "Multitrack media",
-      "mainTrack": "Main track",
-      "secondaryTrack": "Track {number}",
-      "addTrack": "Add track",
-      "trackMixer": "Track mixer"
+      "name": "Multitrack media"
     }
   },
   {
     "namespace": "multitrackMedia",
     "language": "de",
     "resources": {
-      "name": "Mehrspur-Medien",
-      "mainTrack": "Hauptspur",
-      "secondaryTrack": "Spur {number}",
-      "addTrack": "Spur hinzufügen",
-      "trackMixer": "Spur-Mixer"
+      "name": "Mehrspur-Medien"
     }
   },
   {
@@ -2369,7 +2375,11 @@
       "determiningDuration": "Determining media duration ...",
       "startTimecode": "Start time",
       "chapter": "Chapter",
-      "editChapter": "Edit chapter"
+      "editChapter": "Edit chapter",
+      "mainTrack": "Main track",
+      "secondaryTrack": "Track {number}",
+      "addTrack": "Add track",
+      "trackMixer": "Track mixer"
     }
   },
   {
@@ -2524,7 +2534,11 @@
       "determiningDuration": "Mediendauer wird ermittelt ...",
       "startTimecode": "Startzeit",
       "chapter": "Kapitel",
-      "editChapter": "Kapitel bearbeiten"
+      "editChapter": "Kapitel bearbeiten",
+      "mainTrack": "Hauptspur",
+      "secondaryTrack": "Spur {number}",
+      "addTrack": "Spur hinzufügen",
+      "trackMixer": "Spur-Mixer"
     }
   },
   {
