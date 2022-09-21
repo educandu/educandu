@@ -29,6 +29,7 @@ export function useReloadPersistedWindow() {
 }
 
 export function useDebouncedCallback(callback, timeLimit = 250) {
+  const lastPendingArgs = useRef();
   const storedCallback = useRef();
   const timeout = useRef();
 
@@ -38,21 +39,33 @@ export function useDebouncedCallback(callback, timeLimit = 250) {
     () => () => {
       timeout.current && clearTimeout(timeout.current);
       timeout.current = null;
+      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
+      lastPendingArgs.current = null;
     },
     [timeLimit, storedCallback]
   );
 
-  return useCallback((...args) => {
-    const oldCurrent = timeout.current;
-    if (oldCurrent) {
-      clearTimeout(oldCurrent);
-    }
+  const debouncedCallback = useCallback((...args) => {
+    lastPendingArgs.current = args;
 
+    timeout.current && clearTimeout(timeout.current);
     timeout.current = setTimeout(() => {
       timeout.current = null;
-      storedCallback.current(...args);
+      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
+      lastPendingArgs.current = null;
     }, timeLimit);
   }, [timeLimit, storedCallback]);
+
+  if (!debouncedCallback.flush) {
+    debouncedCallback.flush = function flush() {
+      timeout.current && clearTimeout(timeout.current);
+      timeout.current = null;
+      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
+      lastPendingArgs.current = null;
+    };
+  }
+
+  return debouncedCallback;
 }
 
 export function useOnComponentMounted(callback) {

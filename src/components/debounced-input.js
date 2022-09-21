@@ -3,9 +3,13 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useDebouncedCallback } from '../ui/hooks.js';
 
-function DebouncedInput({ elementType: Component, value, onChange, onEnter, onSearch, ...props }) {
+function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onChange, onSearch, ...props }) {
   const [actualValue, setActualValue] = useState(value);
-  const debouncedOnChange = useDebouncedCallback(onChange, 250);
+  const debouncedOnChange = useDebouncedCallback(onChange, timeLimit);
+
+  apiRef.current = {
+    flush: () => debouncedOnChange.flush()
+  };
 
   useEffect(() => {
     setActualValue(value);
@@ -18,30 +22,31 @@ function DebouncedInput({ elementType: Component, value, onChange, onEnter, onSe
 
   const componentProps = { ...props };
 
-  if (onEnter) {
-    componentProps.onEnter = () => onEnter(actualValue);
-  }
-
   if (onSearch) {
-    componentProps.onSearch = () => onSearch(actualValue);
+    componentProps.onSearch = (...args) => {
+      debouncedOnChange.flush();
+      onSearch(...args);
+    };
   }
 
   return <Component {...componentProps} value={actualValue} onChange={handleChange} />;
 }
 
 DebouncedInput.propTypes = {
+  apiRef: PropTypes.object,
   elementType: PropTypes.elementType,
   onChange: PropTypes.func,
-  onEnter: PropTypes.func,
   onSearch: PropTypes.func,
+  timeLimit: PropTypes.number,
   value: PropTypes.string
 };
 
 DebouncedInput.defaultProps = {
+  apiRef: { current: null },
   elementType: Input,
   onChange: () => {},
-  onEnter: null,
   onSearch: null,
+  timeLimit: 250,
   value: ''
 };
 
