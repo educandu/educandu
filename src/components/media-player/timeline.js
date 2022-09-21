@@ -2,6 +2,7 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FlagOutlined } from '@ant-design/icons';
+import colorHelper from '../../ui/color-helper.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { useNumberFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
@@ -217,15 +218,31 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   };
 
   const renderSegment = (segment, index) => {
-    const classes = classNames('Timeline-segment', { 'is-selected': index === selectedPartIndex });
+    const style = { width: `${segment.width}px` };
+    const classes = classNames(
+      'Timeline-segment',
+      { 'is-selected': index === selectedPartIndex && timelineState.segments.length > 1 }
+    );
+
+    if (segment.color) {
+      style.backgroundColor = segment.color;
+      style.color = colorHelper.getContrastColor(segment.color);
+    }
+
     return (
-      <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>{segment.title}</div>
+      <div key={segment.key} className={classes} style={style}>{segment.title}</div>
     );
   };
 
-  const renderDeleteSegment = segment => {
+  const renderDeleteSegment = (segment, index) => {
+    const style = { width: `${segment.width}px` };
+    const classes = classNames(
+      'Timeline-deleteSegment',
+      { 'is-selected': index === selectedPartIndex && timelineState.segments.length > 1 }
+    );
+
     return (
-      <div key={segment.key} className="Timeline-deleteSegment" style={{ width: `${segment.width}px` }}>
+      <div key={segment.key} className={classes} style={style}>
         {segment.width >= MIN_PART_WIDTH_IN_PX && (
           <Button
             className="Timeline-deleteButton"
@@ -269,6 +286,7 @@ Timeline.propTypes = {
   parts: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     title: PropTypes.string,
+    colorHex: PropTypes.string,
     startPosition: PropTypes.number.isRequired
   })).isRequired,
   selectedPartIndex: PropTypes.number

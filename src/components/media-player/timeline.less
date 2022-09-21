@@ -58,11 +58,7 @@
   border-right: 1px dotted @timeline-segments-bar-color;
 
   &.is-selected {
-    &::before {
-      content: '•';
-      margin-right: 5px;
-      font-weight: bold;
-    }
+    box-shadow: 0px -2px 2px @edu-border-color-base;
   }
 
   &:last-of-type {
@@ -87,6 +83,10 @@
   justify-content: center;
   background-color: @edu-background-color-light;
   border-right: 1px dotted @edu-border-color-base;
+
+  &.is-selected {
+    box-shadow: 0px 2px 2px @edu-border-color-base;
+  }
 
   &:last-of-type {
     border-right: none;
