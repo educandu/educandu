@@ -14,7 +14,7 @@ import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect } from './image-utils.js';
+import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect, createInitialClipEffect, createInitialRevealEffect } from './image-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -23,6 +23,14 @@ const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 14 }
+};
+
+const resetRevealEffect = effectType => {
+  return effectType === EFFECT_TYPE.reveal ? createInitialRevealEffect() : createDefaultRevealEffect();
+};
+
+const resetClipEffect = effectType => {
+  return effectType === EFFECT_TYPE.clip ? createInitialClipEffect() : createDefaultClipEffect();
 };
 
 function ImageEditor({ content, onContentChanged }) {
@@ -87,22 +95,22 @@ function ImageEditor({ content, onContentChanged }) {
       sourceType: value,
       sourceUrl: '',
       copyrightNotice: '',
-      clipEffect: createDefaultClipEffect()
+      clipEffect: resetClipEffect(effectType)
     });
   };
 
   const handleExternalSourceUrlChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
+    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
   };
 
   const handleInternalSourceUrlChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
+    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
   };
 
   const handleInternalSourceUrlFileNameChange = value => {
-    changeContent({ sourceUrl: value, clipEffect: createDefaultClipEffect() });
+    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
   };
 
   const handleCopyrightNoticeChange = event => {
@@ -119,8 +127,8 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({
       effectType: value,
       hoverEffect: createDefaultHoverEffect(),
-      revealEffect: createDefaultRevealEffect(),
-      clipEffect: createDefaultClipEffect()
+      revealEffect: resetRevealEffect(value),
+      clipEffect: resetClipEffect(value)
     });
   };
 
