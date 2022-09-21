@@ -1,21 +1,3 @@
-taskType:
-  en: Task type
-  de: Tasktyp
-taskStatus:
-  en: Task status
-  de: Taskstatus
-taskStatusPending:
-  en: Pending
-  de: Ausstehend
-taskStatusDone:
-  en: Done
-  de: Abgeschlossen
-taskStatusFailed:
-  en: Failed
-  de: Fehler
-taskStatusDoneWithWarnings:
-  en: Done (with warnings)
-  de: Abgeschlossen (mit Warnungen)
 batchType:
   en: Batch type
   de: Chargentyp
@@ -34,15 +16,6 @@ batchTypeCdnResourcesConsolidation:
 batchTypeCdnUploadDirectoryCreation:
   en: CDN upload directory creation
   de: Erstellung der CDN-Upload-Verzichnisse
-batchStatusPending:
-  en: Pending
-  de: Ausstehend
-batchStatusDone:
-  en: Done
-  de: Abgeschlossen
-batchStatusProcessing:
-  en: '{progress, number, percent} completed'
-  de: '{progress, number, percent} abgeschlossen'
 documentImportType:
   en: Import type
   de: Import-Typ
@@ -64,3 +37,27 @@ batchErrors:
 tasks:
   en: Tasks
   de: Tasks
+taskType:
+  en: Task type
+  de: Tasktyp
+taskStatus:
+  en: Task status
+  de: Taskstatus
+progressMessage:
+  en: '{progress, number, percent} completed'
+  de: '{progress, number, percent} abgeschlossen'
+status_pending:
+  en: Pending
+  de: Ausstehend
+status_success:
+  en: Successfully completed
+  de: Erfolgreich abgeschlossen
+status_warning:
+  en: Completed with warnings
+  de: Abgeschlossen mit Warnungen
+status_error:
+  en: Completed with errors
+  de: Abgeschlossen mit Fehlern
+hideSuccessfullyCompletedTasks:
+  en: Hide successfully completed tasks
+  de: Erfolgreich abgeschlossene Tasks ausblenden

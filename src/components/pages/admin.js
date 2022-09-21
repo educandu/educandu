@@ -1,10 +1,12 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import Restricted from '../restricted.js';
+import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
+import { useRequest } from '../request-context.js';
 import SettingsTab from '../admin/settings-tab.js';
-import React, { useEffect, useState } from 'react';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
@@ -15,10 +17,11 @@ import { batchShape, settingsShape, storagePlanWithAssignedUserCountShape } from
 const { TabPane } = Tabs;
 
 function Admin({ initialState, PageTemplate }) {
+  const request = useRequest();
   const { t } = useTranslation('admin');
-  const [currentTab, setCurrentTab] = useState('1');
   const [isCurrentTabDirty, setIsCurrentTabDirty] = useState(false);
   const [settings, setSettings] = useState(cloneDeep(initialState.settings));
+  const [currentTab, setCurrentTab] = useState(request.query.tab || 'settings');
   const [storagePlans, setStoragePlans] = useState(cloneDeep(initialState.storagePlans));
 
   useBeforeunload(event => {
@@ -27,17 +30,19 @@ function Admin({ initialState, PageTemplate }) {
     }
   });
 
-  const handleTabChange = newKey => {
-    if (isCurrentTabDirty) {
-      confirmDiscardUnsavedChanges(t, () => setCurrentTab(newKey));
-    } else {
-      setCurrentTab(newKey);
-    }
+  const changeTab = tab => {
+    setCurrentTab(tab);
+    setIsCurrentTabDirty(false);
+    history.replaceState(null, '', routes.getAdminUrl({ tab }));
   };
 
-  useEffect(() => {
-    setIsCurrentTabDirty(false);
-  }, [currentTab]);
+  const handleTabChange = newKey => {
+    if (isCurrentTabDirty) {
+      confirmDiscardUnsavedChanges(t, () => changeTab(newKey));
+    } else {
+      changeTab(newKey);
+    }
+  };
 
   return (
     <PageTemplate>
@@ -52,20 +57,20 @@ function Admin({ initialState, PageTemplate }) {
             onChange={handleTabChange}
             destroyInactiveTabPane
             >
-            <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="1">
+            <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="settings">
               <SettingsTab
                 initialSettings={settings}
                 onSettingsSaved={setSettings}
                 onDirtyStateChange={setIsCurrentTabDirty}
                 />
             </TabPane>
-            <TabPane className="Tabs-tabPane" tab={t('storagePlansTabTitle')} key="2">
+            <TabPane className="Tabs-tabPane" tab={t('storagePlansTabTitle')} key="storage-plans">
               <StoragePlansTab
                 initialStoragePlans={storagePlans}
                 onStoragePlansSaved={setStoragePlans}
                 />
             </TabPane>
-            <TabPane className="Tabs-tabPane" tab={t('technicalMaintenanceTabTitle')} key="3">
+            <TabPane className="Tabs-tabPane" tab={t('technicalMaintenanceTabTitle')} key="technical-maintenance">
               <TechnicalMaintenanceTab
                 lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
                 lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
