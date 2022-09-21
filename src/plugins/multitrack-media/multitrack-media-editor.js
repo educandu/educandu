@@ -124,7 +124,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             collapsed
             key={index.toString()}
             itemsCount={secondaryTracks.length}
-            header={t('secondaryTrack', { number: index + 1 })}
+            header={t('secondaryTrack', { number: index + 2 })}
             onMoveUp={handleMoveTrackUp}
             onMoveDown={handleMoveTrackDown}
             onDelete={handleDeleteTrack}
