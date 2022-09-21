@@ -19,7 +19,7 @@ function ImageDisplay({ content }) {
   const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
-  const { copyrightNotice, sourceType, sourceUrl, effect, width } = content;
+  const { copyrightNotice, sourceType, sourceUrl, effectType, hoverEffect, revealEffect, clipEffect, width } = content;
   const src = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   useEffect(() => {
@@ -38,7 +38,7 @@ function ImageDisplay({ content }) {
   }, [mainImageRef]);
 
   useEffect(() => {
-    if (effect?.type !== EFFECT_TYPE.hover || !isMainImageLoaded) {
+    if (effectType !== EFFECT_TYPE.hover || !isMainImageLoaded) {
       return;
     }
     const mainImage = mainImageRef.current;
@@ -50,8 +50,8 @@ function ImageDisplay({ content }) {
     const hoverImage = new Image();
     hoverImage.src = urlUtils.getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: effect.sourceType,
-      sourceUrl: effect.sourceUrl
+      sourceType: hoverEffect.sourceType,
+      sourceUrl: hoverEffect.sourceUrl
     });
 
     hoverImage.onload = () => {
@@ -63,26 +63,26 @@ function ImageDisplay({ content }) {
       context.drawImage(hoverImage, 0, 0, hoverImage.naturalWidth, hoverImage.naturalHeight, 0, 0, finalWidth, finalHeight);
 
     };
-  }, [mainImageRef, effect, clientConfig, isMainImageLoaded]);
+  }, [mainImageRef, effectType, hoverEffect, clientConfig, isMainImageLoaded]);
 
   useEffect(() => {
-    if (effect?.type !== EFFECT_TYPE.clip || !isMainImageLoaded) {
+    if (effectType !== EFFECT_TYPE.clip || !isMainImageLoaded) {
       return;
     }
     const mainImage = mainImageRef.current;
     const canvas = clipEffectCanvasRef.current;
     const context = canvas.getContext('2d');
-    const mainImageWidth = mainImage.naturalWidth * (effect.region.width / 100);
-    const mainImageHeight = mainImage.naturalHeight * (effect.region.height / 100);
-    const x = mainImage.naturalWidth * (effect.region.x / 100);
-    const y = mainImage.naturalHeight * (effect.region.y / 100);
+    const mainImageWidth = mainImage.naturalWidth * (clipEffect.region.width / 100);
+    const mainImageHeight = mainImage.naturalHeight * (clipEffect.region.height / 100);
+    const x = mainImage.naturalWidth * (clipEffect.region.x / 100);
+    const y = mainImage.naturalHeight * (clipEffect.region.y / 100);
     canvas.width = mainImageWidth;
     canvas.height = mainImageHeight;
     context.drawImage(mainImage, x, y, mainImageWidth, mainImageHeight, 0, 0, mainImageWidth, mainImageHeight);
-  }, [clipEffectCanvasRef, mainImageRef, effect, isMainImageLoaded]);
+  }, [clipEffectCanvasRef, mainImageRef, effectType, clipEffect, isMainImageLoaded]);
 
   const handleMainImageMouseEnter = () => {
-    if (effect?.type === EFFECT_TYPE.hover) {
+    if (effectType === EFFECT_TYPE.hover) {
       setShouldApplyHoverEffect(true);
     }
   };
@@ -101,12 +101,16 @@ function ImageDisplay({ content }) {
 
   const renderRevealEffect = () => {
     const imageUrl = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
-    const effectImageUrl = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType: effect.sourceType, sourceUrl: effect.sourceUrl });
+    const effectImageUrl = urlUtils.getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: revealEffect.sourceType,
+      sourceUrl: revealEffect.sourceUrl
+    });
 
     return (
       <ReactCompareSlider
-        position={effect.startPosition}
-        portrait={effect.orientation === ORIENTATION.vertical}
+        position={revealEffect.startPosition}
+        portrait={revealEffect.orientation === ORIENTATION.vertical}
         className={`ImageDisplay-mainImage u-width-${width}`}
         itemOne={isMainImageLoaded && <img src={effectImageUrl} style={styleFitContainer()} />}
         itemTwo={<img src={imageUrl} ref={mainImageRef} style={styleFitContainer()} />}
@@ -128,8 +132,8 @@ function ImageDisplay({ content }) {
   );
 
   const showMainImageCopyright = !shouldApplyHoverEffect;
-  const showEffectImageCopyright = effect?.copyrightNotice
-    && (effect.type === EFFECT_TYPE.reveal || (effect.type === EFFECT_TYPE.hover && shouldApplyHoverEffect));
+  const showHoverEffectImageCopyright = effectType === EFFECT_TYPE.hover && hoverEffect.copyrightNotice && shouldApplyHoverEffect;
+  const showRevealEffectImageCopyright = effectType === EFFECT_TYPE.reveal && revealEffect.copyrightNotice;
 
   if (hasMainImageFailed) {
     return (
@@ -141,9 +145,7 @@ function ImageDisplay({ content }) {
 
   return (
     <div className="ImageDisplay">
-      {effect?.type === EFFECT_TYPE.reveal && renderRevealEffect()}
-      {effect?.type === EFFECT_TYPE.clip && renderClipEffect()}
-      {effect?.type !== EFFECT_TYPE.reveal && effect?.type !== EFFECT_TYPE.clip && (
+      {(effectType === EFFECT_TYPE.none || effectType === EFFECT_TYPE.hover) && (
         <img
           ref={mainImageRef}
           className={mainImageClasses}
@@ -151,9 +153,12 @@ function ImageDisplay({ content }) {
           src={urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })}
           />
       )}
-      {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
+      {effectType === EFFECT_TYPE.hover && renderHoverEffect()}
+      {effectType === EFFECT_TYPE.reveal && renderRevealEffect()}
+      {effectType === EFFECT_TYPE.clip && renderClipEffect()}
       {showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
-      {showEffectImageCopyright && <CopyrightNotice value={effect.copyrightNotice} />}
+      {showHoverEffectImageCopyright && <CopyrightNotice value={hoverEffect.copyrightNotice} />}
+      {showRevealEffectImageCopyright && <CopyrightNotice value={revealEffect.copyrightNotice} />}
     </div>
   );
 }
