@@ -14,7 +14,7 @@ function ChapterSelector({
 
   return (
     <div className="ChapterSelector">
-      <Tooltip title={t('selectPreviousChapter')}>
+      <Tooltip title={t('selectPreviousChapter')} placement="bottom">
         <Button
           type="link"
           size="small"
@@ -26,7 +26,7 @@ function ChapterSelector({
           />
       </Tooltip>
       <span className="ChapterSelector-title">{selectedChapterTitle}</span>
-      <Tooltip title={t('selectNextChapter')}>
+      <Tooltip title={t('selectNextChapter')} placement="bottom">
         <Button
           type="link"
           size="small"
