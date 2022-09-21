@@ -58,7 +58,11 @@
   border-right: 1px dotted @timeline-segments-bar-color;
 
   &.is-selected {
-    background-color: @edu-secondary-color-dark;
+    &::before {
+      content: '•';
+      margin-right: 5px;
+      font-weight: bold;
+    }
   }
 
   &:last-of-type {
