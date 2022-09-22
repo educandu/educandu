@@ -64,7 +64,7 @@ class DocumentStore {
   }
 
   getPublicDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
-    return this.collection.find({ createdBy, roomId: null }, { projection: documentMetadataProjection, session }).toArray();
+    return this.collection.find({ createdBy, roomId: null, archived: false }, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
