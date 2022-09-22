@@ -7,7 +7,6 @@ import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { ROOM_USER_ROLE } from '../domain/constants.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
@@ -17,6 +16,7 @@ import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider, Empty } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import {
@@ -156,6 +156,21 @@ function DocumentMetadataModal({
     try {
       setIsSaving(true);
 
+      const targetRoomId = determineTargetRoomId({
+        mode,
+        initialDocumentMetadata,
+        documentToClone,
+        cloningStrategy,
+        cloningTargetRoomId
+      });
+
+      const actualTemplateDocumentId = determineActualTemplateDocumentId({
+        mode,
+        documentToClone,
+        useTemplateDocument,
+        defaultTemplateDocumentId
+      });
+
       const mappedDocument = {
         title: (title || '').trim(),
         slug: (slug || '').trim(),
@@ -167,20 +182,9 @@ function DocumentMetadataModal({
         allowedOpenContribution: canRestrictOpenContribution ? allowedOpenContribution : initialDocumentMetadata.allowedOpenContribution
       };
 
-      const actualTemplateDocumentId = determineActualTemplateDocumentId({
-        mode,
-        documentToClone,
-        useTemplateDocument,
-        defaultTemplateDocumentId
-      });
-
-      const targetRoomId = determineTargetRoomId({
-        mode,
-        initialDocumentMetadata,
-        documentToClone,
-        cloningStrategy,
-        cloningTargetRoomId
-      });
+      if (targetRoomId) {
+        mappedDocument.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
+      }
 
       const savedDocuments = [];
       if (mode === DOCUMENT_METADATA_MODAL_MODE.update) {
@@ -215,6 +219,66 @@ function DocumentMetadataModal({
     }
   };
 
+  const renderSequenceCountFormInput = generateSequence => {
+    if (!generateSequence) {
+      return null;
+    }
+    return (
+      <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
+        <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
+      </FormItem>
+    );
+  };
+
+  const renderCloningTargetRoomIdFormInput = cloningStrategy => {
+    if (cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom) {
+      return null;
+    }
+
+    return (
+      <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={validationRules.roomValidationRules}>
+        <Select
+          loading={isLoadingRooms}
+          options={cloningOptions.roomOptions}
+          notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
+          />
+      </FormItem>
+    );
+  };
+
+  const renderAllowedOpenContributionFormItem = (cloningStrategy, cloningTargetRoomId) => {
+    const targetRoomId = determineTargetRoomId({
+      mode,
+      initialDocumentMetadata,
+      documentToClone,
+      cloningStrategy,
+      cloningTargetRoomId
+    });
+    const noTargetRoomSelectedYet = cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && !cloningTargetRoomId;
+
+    if (targetRoomId || noTargetRoomSelectedYet) {
+      return null;
+    }
+
+    return (
+      <FormItem
+        name="allowedOpenContribution"
+        label={
+          <Fragment>
+            {t('allowedOpenContribution')}
+            <Tooltip title={t('allowedOpenContributionInfo')}>
+              <InfoCircleOutlined className="u-info-icon" />
+            </Tooltip>
+          </Fragment>
+        }
+        >
+        <Select>
+          {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
+        </Select>
+      </FormItem>
+    );
+  };
+
   return (
     <Modal
       title={getDialogTitle(mode, t)}
@@ -236,19 +300,9 @@ function DocumentMetadataModal({
         <FormItem
           noStyle
           hidden={mode !== DOCUMENT_METADATA_MODAL_MODE.clone}
-          shouldUpdate={(prevValues, currentValues) => prevValues.cloningStrategy !== currentValues.cloningStrategy}
+          dependencies={['cloningStrategy']}
           >
-          {({ getFieldValue }) => getFieldValue('cloningStrategy') === CLONING_STRATEGY.crossCloneIntoRoom
-            ? (
-              <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={validationRules.roomValidationRules}>
-                <Select
-                  loading={isLoadingRooms}
-                  options={cloningOptions.roomOptions}
-                  notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
-                  />
-              </FormItem>
-            )
-            : null}
+          {({ getFieldValue }) => renderCloningTargetRoomIdFormInput(getFieldValue('cloningStrategy'))}
         </FormItem>
         <FormItem name="title" label={t('common:title')} rules={validationRules.titleValidationRules}>
           <Input />
@@ -286,15 +340,9 @@ function DocumentMetadataModal({
         <FormItem
           noStyle
           hidden={!canCreateSequenes}
-          shouldUpdate={(prevValues, currentValues) => prevValues.generateSequence !== currentValues.generateSequence}
+          dependencies={['generateSequence']}
           >
-          {({ getFieldValue }) => getFieldValue('generateSequence')
-            ? (
-              <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
-                <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
-              </FormItem>
-            )
-            : null}
+          {({ getFieldValue }) => renderSequenceCountFormInput(getFieldValue('generateSequence'))}
         </FormItem>
         <FormItem name="useTemplateDocument" valuePropName="checked" hidden={!canUseTemplateDocument}>
           <Checkbox>{t('useTemplateDocument')}</Checkbox>
@@ -306,21 +354,16 @@ function DocumentMetadataModal({
           <NeverScrollingTextArea />
         </FormItem>
         <FormItem
-          name="allowedOpenContribution"
+          noStyle
           hidden={!canRestrictOpenContribution}
-          label={
-            <Fragment>
-              {t('allowedOpenContribution')}
-              <Tooltip title={t('allowedOpenContributionInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-            </Fragment>
-          }
+          dependencies={['cloningStrategy', 'cloningTargetRoomId']}
           >
-          <Select>
-            {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
-          </Select>
+          {({ getFieldValue }) => renderAllowedOpenContributionFormItem(
+            getFieldValue('cloningStrategy'),
+            getFieldValue('cloningTargetRoomId')
+          )}
         </FormItem>
+
         <FormItem name="verified" valuePropName="checked" hidden={!canVerify}>
           <Checkbox>
             {t('verified')}
