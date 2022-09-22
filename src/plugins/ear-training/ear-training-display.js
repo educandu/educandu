@@ -8,12 +8,12 @@ import { shuffleItems } from '../../utils/array-utils.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 
@@ -21,17 +21,12 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
 function EarTrainingDisplay({ content }) {
+  const [tests, setTests] = useState([]);
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
-
-  const questionImageRef = useRef();
-  const answerImageCanvasRef = useRef();
-
-  const [tests, setTests] = useState([]);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [viewedTestIndices, setViewedTestIndices] = useState([0]);
   const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
-  const [isCurrentQuestionImageLoaded, setIsCurrentQuestionImageLoaded] = useState(false);
 
   const { title, width } = content;
   const currentTest = tests[currentTestIndex] || null;
@@ -39,48 +34,6 @@ function EarTrainingDisplay({ content }) {
   useEffect(() => {
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   }, [content.testsOrder, content.tests]);
-
-  useEffect(() => {
-    setIsCurrentQuestionImageLoaded(false);
-
-    const questionImage = questionImageRef.current;
-    if (!questionImage || currentTest.mode !== TEST_MODE.image) {
-      return;
-    }
-
-    if (questionImage.complete) {
-      setIsCurrentQuestionImageLoaded(questionImage.naturalHeight !== 0);
-    } else {
-      questionImage.onload = () => setIsCurrentQuestionImageLoaded(true);
-    }
-  }, [currentTest, questionImageRef]);
-
-  useEffect(() => {
-    if (!tests.length || currentTest.mode !== TEST_MODE.image || !isCurrentQuestionImageLoaded) {
-      return;
-    }
-    const questionImage = questionImageRef.current;
-    const canvas = answerImageCanvasRef.current;
-    const context = canvas.getContext('2d');
-    canvas.width = questionImage.width;
-    canvas.height = questionImage.height;
-
-    const answerImage = new Image();
-    answerImage.src = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: currentTest.answerImage.sourceType,
-      sourceUrl: currentTest.answerImage.sourceUrl
-    });
-
-    answerImage.onload = () => {
-      const widthFactor = canvas.width / answerImage.naturalWidth;
-      const heightFactor = canvas.height / answerImage.naturalHeight;
-      const factorToUse = Math.min(heightFactor, widthFactor);
-      const finalHeight = answerImage.naturalHeight * factorToUse;
-      const finalWidth = answerImage.naturalWidth * factorToUse;
-      context.drawImage(answerImage, 0, 0, answerImage.naturalWidth, answerImage.naturalHeight, 0, 0, finalWidth, finalHeight);
-    };
-  }, [tests, currentTest, questionImageRef, answerImageCanvasRef, clientConfig, isCurrentQuestionImageLoaded]);
 
   const handleAnswerVisibilityChange = event => {
     const { value } = event.target;
@@ -142,12 +95,6 @@ function EarTrainingDisplay({ content }) {
     );
   };
 
-  const questionImageClasses = classNames(
-    'EarTrainingDisplay-questionImage',
-    { 'EarTrainingDisplay-questionImage--toggledOff': isCurrentTestAnswerVisible },
-    `u-width-${width}`
-  );
-
   const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index + 1 }) }));
 
   return (
@@ -181,36 +128,49 @@ function EarTrainingDisplay({ content }) {
               />
           </div>
         )}
-        {tests.length && (
+        {!!tests.length && (
           <div className="EarTrainingDisplay-test">
             {currentTest.mode === TEST_MODE.image && (
               <Fragment>
-                <img
-                  ref={questionImageRef}
-                  className={questionImageClasses}
-                  src={urlUtils.getImageUrl({
-                    cdnRootUrl: clientConfig.cdnRootUrl,
-                    sourceType: currentTest.questionImage.sourceType,
-                    sourceUrl: currentTest.questionImage.sourceUrl
-                  })}
+                <div className="EarTrainingDisplay-images">
+                  <img
+                    className={classNames({
+                      'EarTrainingDisplay-image': true,
+                      'EarTrainingDisplay-image--visible': isCurrentTestAnswerVisible
+                    })}
+                    src={urlUtils.getImageUrl({
+                      cdnRootUrl: clientConfig.cdnRootUrl,
+                      sourceType: currentTest.answerImage.sourceType,
+                      sourceUrl: currentTest.answerImage.sourceUrl
+                    })}
+                    />
+                  <img
+                    className={classNames({
+                      'EarTrainingDisplay-image': true,
+                      'EarTrainingDisplay-image--visible': !isCurrentTestAnswerVisible
+                    })}
+                    src={urlUtils.getImageUrl({
+                      cdnRootUrl: clientConfig.cdnRootUrl,
+                      sourceType: currentTest.questionImage.sourceType,
+                      sourceUrl: currentTest.questionImage.sourceUrl
+                    })}
+                    />
+                </div>
+                <CopyrightNotice
+                  value={
+                    isCurrentTestAnswerVisible
+                      ? currentTest.answerImage.copyrightNotice
+                      : currentTest.questionImage.copyrightNotice
+                  }
                   />
-                {!isCurrentTestAnswerVisible && <CopyrightNotice value={currentTest.questionImage.copyrightNotice} />}
-              </Fragment>
-            )}
-            {currentTest.mode === TEST_MODE.image && (
-              <Fragment>
-                <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
-                {isCurrentTestAnswerVisible && <CopyrightNotice value={currentTest.answerImage.copyrightNotice} /> }
               </Fragment>
             )}
             {currentTest.mode === TEST_MODE.abcCode && (
               <AbcNotation abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
             )}
-
             {renderSoundPlayer()}
           </div>
         )}
-
         <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
           <RadioButton className="EarTrainingDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
           <RadioButton className="EarTrainingDisplay-radioButton" value>{t('common:answer')}</RadioButton>
