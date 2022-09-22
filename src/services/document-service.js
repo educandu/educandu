@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 
+import joi from 'joi';
 import by from 'thenby';
 import httpErrors from 'http-errors';
 import deepEqual from 'fast-deep-equal';
@@ -20,6 +21,7 @@ import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
@@ -490,8 +492,18 @@ class DocumentService {
 
   async validateDocument(documentId) {
     const errorCases = [];
+    const validationOptions = { abortEarly: false, convert: false, noDefaults: true };
 
     const doc = await this.documentStore.getDocumentById(documentId);
+    try {
+      joi.attempt(doc, documentDBSchema, validationOptions);
+    } catch (error) {
+      errorCases.push({
+        ...error,
+        documentId: doc._id
+      });
+    }
+
     for (const section of doc.sections) {
       try {
         validateSection(section, this.pluginRegistry);
@@ -506,6 +518,15 @@ class DocumentService {
 
     const revisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     for (const revision of revisions) {
+      try {
+        joi.attempt(revision, documentRevisionDBSchema, validationOptions);
+      } catch (error) {
+        errorCases.push({
+          ...error,
+          documentId: doc._id
+        });
+      }
+
       for (const section of revision.sections) {
         try {
           validateSection(section, this.pluginRegistry);
