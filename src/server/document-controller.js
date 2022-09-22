@@ -96,7 +96,7 @@ class DocumentController {
         throw new Unauthorized();
       }
 
-      room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+      room = await this.roomService.getRoomById(doc.roomId);
 
       if (!isRoomOwnerOrMember({ room, userId: user._id })) {
         throw new Forbidden();
