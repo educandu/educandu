@@ -6,6 +6,7 @@ import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
+import DebouncedInput from '../debounced-input.js';
 import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,6 +22,7 @@ import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOC
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 
 const { TabPane } = Tabs;
+const { Search, TextArea } = Input;
 
 const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
 const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
@@ -54,6 +56,31 @@ function Tests({ PageTemplate }) {
     const url = new URL(window.document.location.href);
     url.searchParams.set('tab', newTab);
     window.history.replaceState(null, null, url.href);
+  };
+
+  // DebouncedInput
+  const diElementTypes = {
+    Input: { elementType: Input, handleSearch: false },
+    Search: { elementType: Search, handleSearch: true },
+    TextArea: { elementType: TextArea, handleSearch: false }
+  };
+  const diApiRef = useRef();
+  const diEventLogRef = useRef();
+  const [diEventLog, setDiEventLog] = useState('');
+  const [diTimeLimit, setDiTimeLimit] = useState(2000);
+  const [diValue, setDiValue] = useState('Lorem ipsum');
+  const [diElementType, setDiElementType] = useState(Object.keys(diElementTypes)[0]);
+  const handleDiEvent = (eventName, ...args) => {
+    if (eventName === 'onChange') {
+      setDiValue(args[0]);
+    }
+    setDiEventLog(currentLog => args.length
+      ? `${currentLog}[${new Date().toISOString()}] ${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
+      : `${currentLog}[${new Date().toISOString()}] ${eventName}\n`);
+    setTimeout(() => {
+      const eventLogElement = diEventLogRef.current;
+      eventLogElement.scrollTop = eventLogElement.scrollHeight;
+    }, 0);
   };
 
   // ImageEditor
@@ -120,8 +147,8 @@ function Tests({ PageTemplate }) {
       ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
       : `${currentLog}${eventName}\n`);
     setTimeout(() => {
-      const textarea = mpEventLogRef.current;
-      textarea.scrollTop = textarea.scrollHeight;
+      const eventLogElement = mpEventLogRef.current;
+      eventLogElement.scrollTop = eventLogElement.scrollHeight;
     }, 0);
   };
   const handleRandomPlaybackRangeClick = () => {
@@ -182,8 +209,8 @@ function Tests({ PageTemplate }) {
       ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
       : `${currentLog}${eventName}\n`);
     setTimeout(() => {
-      const textarea = mmpEventLogRef.current;
-      textarea.scrollTop = textarea.scrollHeight;
+      const eventLogElement = mmpEventLogRef.current;
+      eventLogElement.scrollTop = eventLogElement.scrollHeight;
     }, 0);
   };
 
@@ -248,6 +275,29 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="DebouncedInput" key="DebouncedInput">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              Element type:
+              <Radio.Group value={diElementType} onChange={event => setDiElementType(event.target.value)}>
+                {Object.keys(diElementTypes).map(key => <Radio.Button key={key} value={key}>{key}</Radio.Button>)}
+              </Radio.Group>
+              Time limit:
+              <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={500} value={diTimeLimit} onChange={setDiTimeLimit} />
+              <Button onClick={() => diApiRef.current.flush()}>Flush</Button>
+            </div>
+            <div>Event Log</div>
+            <div ref={diEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
+              <pre>{diEventLog}</pre>
+            </div>
+            <DebouncedInput
+              apiRef={diApiRef}
+              timeLimit={diTimeLimit}
+              elementType={diElementTypes[diElementType].elementType}
+              value={diValue}
+              onChange={value => handleDiEvent('onChange', value)}
+              {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
+              />
+          </TabPane>
           <TabPane tab="ImageEditor" key="ImageEditor">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
