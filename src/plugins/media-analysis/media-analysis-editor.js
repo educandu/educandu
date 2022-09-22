@@ -1,7 +1,7 @@
 import by from 'thenby';
-import { COLOR_SWATCHES } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
+import { COLOR_SWATCHES } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';

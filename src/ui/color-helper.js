@@ -6,7 +6,7 @@ function hexToRgb(hex) {
     : [0, 0, 0];
 }
 
-// Algorhithm followed: https://alienryderflex.com/hsp.html
+// Algorithm followed: https://alienryderflex.com/hsp.html
 export function getContrastColor(hex, threshold = 0.6) {
   const rgb = hexToRgb(hex);
   const percievedRed = 0.299;
