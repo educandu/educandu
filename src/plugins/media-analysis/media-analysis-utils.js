@@ -1,4 +1,6 @@
 import joi from 'joi';
+import uniqueId from '../../utils/unique-id.js';
+import { hexCodeValidationPattern } from '../../domain/validation-constants.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 export function createDefaultSecondaryTrack(index, t) {
@@ -24,11 +26,22 @@ export function createDefaultMainTrack(t) {
   };
 }
 
+export function createDefaultChapter(t) {
+  return {
+    key: uniqueId.create(),
+    startPosition: 0,
+    color: '#6D8BB1',
+    title: `[${t('common:chapter')}]`,
+    text: `[${t('common:text')}]`
+  };
+}
+
 export function createDefaultContent(t) {
   return {
     width: 100,
     mainTrack: createDefaultMainTrack(t),
-    secondaryTracks: [createDefaultSecondaryTrack(0, t)]
+    secondaryTracks: [createDefaultSecondaryTrack(0, t)],
+    chapters: [createDefaultChapter(t)]
   };
 }
 
@@ -52,6 +65,13 @@ export function validateContent(content) {
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       volume: joi.number().min(0).max(1).required()
+    })).required(),
+    chapters: joi.array().items(joi.object({
+      key: joi.string().required(),
+      startPosition: joi.number().min(0).max(1).required(),
+      color: joi.string().pattern(hexCodeValidationPattern).required(),
+      title: joi.string().allow('').required(),
+      text: joi.string().allow('').required()
     })).required()
   });
 

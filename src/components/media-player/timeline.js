@@ -2,11 +2,11 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FlagOutlined } from '@ant-design/icons';
-import colorHelper from '../../ui/color-helper.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { useNumberFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { isTouchDevice } from '../../ui/browser-helper.js';
+import { getContrastColor } from '../../ui/color-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
@@ -117,7 +117,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     const markers = parts.slice(1).map(part => ({ key: part.key, left: part.startPosition * currentTimelineWidth }));
 
     const segments = parts.map((part, index) => {
-      const segment = { key: part.key, title: part.title };
+      const segment = { key: part.key, title: part.title, color: part.color };
 
       if (parts.length === 1) {
         segment.width = timelineBounds.width;
@@ -226,7 +226,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 
     if (segment.color) {
       style.backgroundColor = segment.color;
-      style.color = colorHelper.getContrastColor(segment.color);
+      style.color = getContrastColor(segment.color);
     }
 
     return (

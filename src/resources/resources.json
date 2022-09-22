@@ -2035,14 +2035,20 @@
     "namespace": "mediaAnalysis",
     "language": "en",
     "resources": {
-      "name": "Media analysis"
+      "name": "Media analysis",
+      "segmentsPanelHeader": "Segments",
+      "chapterColorLabel": "Color",
+      "chapterTextLabel": "Annotation"
     }
   },
   {
     "namespace": "mediaAnalysis",
     "language": "de",
     "resources": {
-      "name": "Medien-Analyse"
+      "name": "Medien-Analyse",
+      "segmentsPanelHeader": "Segmente",
+      "chapterColorLabel": "Farbe",
+      "chapterTextLabel": "Anmerkung"
     }
   },
   {
