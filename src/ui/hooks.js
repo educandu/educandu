@@ -28,6 +28,16 @@ export function useReloadPersistedWindow() {
   }, []);
 }
 
+function cancelTimeout(timeout) {
+  timeout.current && clearTimeout(timeout.current);
+  timeout.current = null;
+}
+
+function flushPendingArgs(pendingArgs, callback) {
+  pendingArgs.current && callback.current(...pendingArgs.current);
+  pendingArgs.current = null;
+}
+
 export function useDebouncedCallback(callback, timeLimit = 250) {
   const lastPendingArgs = useRef();
   const storedCallback = useRef();
@@ -37,31 +47,25 @@ export function useDebouncedCallback(callback, timeLimit = 250) {
 
   useEffect(
     () => () => {
-      timeout.current && clearTimeout(timeout.current);
-      timeout.current = null;
-      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
-      lastPendingArgs.current = null;
+      cancelTimeout(timeout);
+      flushPendingArgs(lastPendingArgs, storedCallback);
     },
     [timeLimit, storedCallback]
   );
 
   const debouncedCallback = useCallback((...args) => {
     lastPendingArgs.current = args;
-
-    timeout.current && clearTimeout(timeout.current);
+    cancelTimeout(timeout);
     timeout.current = setTimeout(() => {
       timeout.current = null;
-      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
-      lastPendingArgs.current = null;
+      flushPendingArgs(lastPendingArgs, storedCallback);
     }, timeLimit);
   }, [timeLimit, storedCallback]);
 
   if (!debouncedCallback.flush) {
     debouncedCallback.flush = function flush() {
-      timeout.current && clearTimeout(timeout.current);
-      timeout.current = null;
-      lastPendingArgs.current && storedCallback.current(...lastPendingArgs.current);
-      lastPendingArgs.current = null;
+      cancelTimeout(timeout);
+      flushPendingArgs(lastPendingArgs, storedCallback);
     };
   }
 
