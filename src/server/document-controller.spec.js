@@ -9,7 +9,7 @@ import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
 import { DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -254,6 +254,32 @@ describe('document-controller', () => {
       });
     });
 
+    describe('when the template document belongs to a room and the user is not authenticated', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        req = {
+          user: null,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = null;
+        room.owner = uniqueId.create();
+        room.members = [];
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Unauthorized);
+      });
+    });
+
     describe('when the template document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
         templateDocument = { _id: uniqueId.create(), roomId: room._id };
@@ -351,6 +377,41 @@ describe('document-controller', () => {
 
       it('should call pageRenderer.sendPage', () => {
         sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+      });
+    });
+
+    describe('when the document belongs to a room and the user is not authenticated', () => {
+      beforeEach(() => {
+        templateDocument = { _id: uniqueId.create(), roomId: null };
+        req = {
+          user: null,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view', templateDocumentId: templateDocument._id }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        room.owner = user._id;
+        room.members = [];
+
+        templateSections = [{}];
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+        mappedTemplateDocument = { ...templateDocument };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+        documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Unauthorized);
       });
     });
 

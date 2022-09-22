@@ -25,7 +25,7 @@ import {
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound, BadRequest, Forbidden } = httpErrors;
+const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -75,18 +75,34 @@ class DocumentController {
         throw new NotFound();
       }
 
-      const templateDocumentRoom = templateDocument.roomId ? await this.roomService.getRoomById(templateDocument.roomId) : null;
-      if (templateDocumentRoom && !isRoomOwnerOrMember({ room: templateDocumentRoom, userId: user._id })) {
-        throw new Forbidden();
+      if (templateDocument.roomId) {
+        if (!user) {
+          throw new Unauthorized();
+        }
+
+        const templateDocumentRoom = await this.roomService.getRoomById(templateDocument.roomId);
+
+        if (!isRoomOwnerOrMember({ room: templateDocumentRoom, userId: user._id })) {
+          throw new Forbidden();
+        }
       }
     } else {
       templateDocument = null;
     }
 
-    const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+    let room;
+    if (doc.roomId) {
+      if (!user) {
+        throw new Unauthorized();
+      }
 
-    if (room && !isRoomOwnerOrMember({ room, userId: user._id })) {
-      throw new Forbidden();
+      room = await this.roomService.getRoomById(doc.roomId);
+
+      if (!isRoomOwnerOrMember({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+    } else {
+      room = null;
     }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
