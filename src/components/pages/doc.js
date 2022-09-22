@@ -518,6 +518,7 @@ function Doc({ initialState, PageTemplate }) {
                   <LikeOutlined className="u-verified-badge" />
                 </Tooltip>
                 )}
+                {!room && (
                 <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
                   <div className="u-allowed-open-contribution-badge">
                     {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
@@ -528,6 +529,7 @@ function Doc({ initialState, PageTemplate }) {
                       && <AllowedOpenContributionMetadataAndContentIcon />}
                   </div>
                 </Tooltip>
+                )}
                 <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
               </div>
             }
