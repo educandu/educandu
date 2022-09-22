@@ -58,7 +58,7 @@
   border-right: 1px dotted @timeline-segments-bar-color;
 
   &.is-selected {
-    background-color: @edu-secondary-color-dark;
+    box-shadow: 0px -2px 2px @edu-border-color-base;
   }
 
   &:last-of-type {
@@ -83,6 +83,11 @@
   justify-content: center;
   background-color: @edu-background-color-light;
   border-right: 1px dotted @edu-border-color-base;
+
+  &.is-selected {
+    box-shadow: 0px 2px 10px @edu-border-color-base;
+    background-color: darken(@edu-background-color-light, 3%);
+  }
 
   &:last-of-type {
     border-right: none;
