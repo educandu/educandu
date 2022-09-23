@@ -3,7 +3,7 @@ import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js
 
 export function createDefaultSecondaryTrack(index, t) {
   return {
-    name: `[${t('common:secondaryTrack', { number: index + 1 })}]`,
+    name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
     sourceType: MEDIA_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: '',
