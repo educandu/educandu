@@ -1,8 +1,8 @@
 import React from 'react';
 import { MEDIA_KIND } from './constants.js';
 import urlUtils from '../../utils/url-utils.js';
-import colorHelper from '../../ui/color-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getContrastColor } from '../../ui/color-helper.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -23,7 +23,7 @@ function AnavisDisplay({ content }) {
   const renderParts = () => {
     return parts.map((part, index) => (
       <div key={index.toString()} className="AnavisDisplay-partOuter" style={{ flex: `${part.length} 0 0%` }}>
-        <div className="AnavisDisplay-partInner" style={{ color: colorHelper.getContrastColor(part.color), backgroundColor: part.color }} title={part.name}>
+        <div className="AnavisDisplay-partInner" style={{ color: getContrastColor(part.color), backgroundColor: part.color }} title={part.name}>
           <div className="AnavisDisplay-partName">{part.name}</div>
         </div>
       </div>

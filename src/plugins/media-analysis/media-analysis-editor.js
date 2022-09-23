@@ -1,21 +1,30 @@
+import by from 'thenby';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useRef } from 'react';
+import urlUtils from '../../utils/url-utils.js';
+import { COLOR_SWATCHES } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
+import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { getFullSourceUrl } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import MarkdownInput from '../../components/markdown-input.js';
+import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { useNumberFormat } from '../../components/locale-context.js';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { createDefaultSecondaryTrack } from './media-analysis-utils.js';
+import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
+import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import { createDefaultChapter, createDefaultSecondaryTrack } from './media-analysis-utils.js';
 
 const FormItem = Form.Item;
 
@@ -24,12 +33,15 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
+const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
+
 function MediaAnalysisEditor({ content, onContentChanged }) {
   const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
+  const { formatPercentage } = useNumberFormat();
 
-  const { width, mainTrack, secondaryTracks } = content;
+  const { width, mainTrack, secondaryTracks, chapters } = content;
   const sources = {
     mainTrack: {
       name: mainTrack.name,
@@ -51,6 +63,25 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
       volume: track.volume
     }))
   };
+
+  const [mainTrackMediaDuration] = useMediaDurations([
+    urlUtils.getMediaUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: mainTrack.sourceType,
+      sourceUrl: mainTrack.sourceUrl
+    })
+  ]);
+
+  const mainTrackSourceDuration = mainTrackMediaDuration.duration;
+  const mainTrackPlaybackDuration = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackSourceDuration;
+
+  const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
+  const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
+
+  useEffect(() => {
+    const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
+    setSelectedChapterFraction(nextChapterStartPosition - chapters[selectedChapterIndex].startPosition);
+  }, [chapters, selectedChapterIndex, mainTrackPlaybackDuration]);
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -105,6 +136,57 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ secondaryTracks: newSecondaryTracks });
   };
 
+  const handleChapterAdd = startPosition => {
+    const chapter = { ...createDefaultChapter(t), startPosition };
+    const newChapters = ensureChaptersOrder([...chapters, chapter]);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterDelete = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    const deletedChapterStartPosition = chapters[chapterIndex].startPosition;
+    const newChapters = removeItemAt(chapters, chapterIndex);
+    const followingChapter = newChapters[chapterIndex];
+    if (followingChapter) {
+      followingChapter.startPosition = deletedChapterStartPosition;
+    }
+    if (selectedChapterIndex > newChapters.length - 1) {
+      setSelectedChapterIndex(newChapters.length - 1);
+    }
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterStartPositionChange = (key, newStartPosition) => {
+    const chapter = chapters.find(p => p.key === key);
+    chapter.startPosition = newStartPosition;
+    const newChapters = [...chapters];
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterIndexChange = newSelectedChapterIndex => {
+    setSelectedChapterIndex(newSelectedChapterIndex);
+  };
+
+  const handleChapterTitleChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], title: value };
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterColorChange = value => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], color: value };
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterTextChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], text: value };
+    changeContent({ chapters: newChapters });
+  };
+
   return (
     <div className="MediaAnalysisEditor">
       <Form layout="horizontal">
@@ -141,10 +223,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
             <MultitrackMediaPlayer
+              parts={chapters}
               sources={sources}
               aspectRatio={mainTrack.aspectRatio}
               screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
               mediaPlayerRef={playerRef}
+              screenWidth={50}
               />
           </div>
           <TrackMixer
@@ -153,6 +237,60 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             onMainTrackSettingsChange={handleMainTrackSettingsChange}
             onSecondaryTrackSettingsChange={handleSecondaryTrackSettingsChange}
             />
+        </ItemPanel>
+        <ItemPanel header={t('segmentsPanelHeader')}>
+          <Timeline
+            durationInMilliseconds={mainTrackPlaybackDuration}
+            parts={chapters}
+            selectedPartIndex={selectedChapterIndex}
+            onPartAdd={handleChapterAdd}
+            onPartDelete={handleChapterDelete}
+            onStartPositionChange={handleChapterStartPositionChange}
+            />
+
+          {chapters.length && (
+          <Fragment>
+            <ChapterSelector
+              chaptersCount={chapters.length}
+              selectedChapterIndex={selectedChapterIndex}
+              selectedChapterTitle={chapters[selectedChapterIndex].title}
+              onChapterIndexChange={handleChapterIndexChange}
+              />
+            <FormItem label={t('common:startTimecode')} {...formItemLayout}>
+              <span className="InteractiveMediaEditor-readonlyValue">
+                {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
+              </span>
+            </FormItem>
+            <FormItem label={t('common:duration')} {...formItemLayout}>
+              <span className="InteractiveMediaEditor-readonlyValue">
+                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
+              </span>
+            </FormItem>
+            <FormItem label={t('common:title')} {...formItemLayout}>
+              <Input
+                disabled={!selectedChapterFraction}
+                onChange={handleChapterTitleChange}
+                value={chapters[selectedChapterIndex].title}
+                />
+            </FormItem>
+            <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
+              <ColorPicker
+                width={382}
+                colors={COLOR_SWATCHES}
+                color={chapters[selectedChapterIndex].color}
+                onChange={handleChapterColorChange}
+                />
+            </FormItem>
+            <FormItem label={t('chapterTextLabel')} {...formItemLayout}>
+              <MarkdownInput
+                preview
+                disabled={!selectedChapterFraction}
+                onChange={handleChapterTextChange}
+                value={chapters?.[selectedChapterIndex].text || ''}
+                />
+            </FormItem>
+          </Fragment>
+          )}
         </ItemPanel>
 
         <FormItem

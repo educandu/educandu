@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-operators */
 function hexToRgb(hex) {
   const result = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i).exec(hex);
   return result
@@ -5,16 +6,18 @@ function hexToRgb(hex) {
     : [0, 0, 0];
 }
 
-const isLight = hex => {
+// Algorithm followed: https://alienryderflex.com/hsp.html
+export function getContrastColor(hex, threshold = 0.6) {
   const rgb = hexToRgb(hex);
-  const yiq = ((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114)) / 1000;
-  return yiq >= 128;
-};
+  const percievedRed = 0.299;
+  const percievedGreen = 0.587;
+  const percievedBlue = 0.114;
 
-export function getContrastColor(col) {
-  return isLight(col) ? '#000' : '#FFF';
+  const redQuota = percievedRed * ((rgb[0] / 255) ** 2);
+  const greenQuota = percievedGreen * ((rgb[1] / 255) ** 2);
+  const blueQuote = percievedBlue * ((rgb[2] / 255) ** 2);
+
+  const contrast = Math.sqrt(redQuota + greenQuota + blueQuote);
+
+  return contrast > threshold ? '#000000' : '#ffffff';
 }
-
-export default {
-  getContrastColor
-};

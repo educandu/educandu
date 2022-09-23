@@ -145,6 +145,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               aspectRatio={mainTrack.aspectRatio}
               screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
               mediaPlayerRef={playerRef}
+              screenWidth={50}
               />
           </div>
           <TrackMixer

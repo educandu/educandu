@@ -16,3 +16,5 @@ export const maxDocumentDescriptionLength = 1000;
 
 export const maxCommentTopicLength = 200;
 export const maxCommentTextLength = 2000;
+
+export const hexCodeValidationPattern = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
