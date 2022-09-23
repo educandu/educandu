@@ -286,7 +286,7 @@ Timeline.propTypes = {
   parts: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     title: PropTypes.string,
-    colorHex: PropTypes.string,
+    color: PropTypes.string,
     startPosition: PropTypes.number.isRequired
   })).isRequired,
   selectedPartIndex: PropTypes.number
