@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
+import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getContrastColor } from '../../ui/color-helper.js';
 import { getFullSourceUrl } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
@@ -11,7 +13,7 @@ function MediaAnalysisDisplay({ content }) {
   const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
 
-  const { width, mainTrack, secondaryTracks } = content;
+  const { width, mainTrack, secondaryTracks, chapters } = content;
 
   const sources = {
     mainTrack: {
@@ -35,17 +37,68 @@ function MediaAnalysisDisplay({ content }) {
     }))
   };
 
-  const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)].filter(text => !!text).join('\n\n');
+  const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
+    .filter(text => !!text).join('\n\n');
+
+  const determineChapterWidthInPercentage = chapterIndex => {
+    const startPosition = chapters[chapterIndex]?.startPosition || 0;
+    const nextStartPosition = chapters[chapterIndex + 1]?.startPosition || 1;
+    return (nextStartPosition - startPosition) * 100;
+  };
+
+  const renderChapterTitle = (chapter, index) => {
+    const widthInPercentage = determineChapterWidthInPercentage(index);
+    return (
+      <div
+        key={index}
+        className="MediaAnalysisDisplay-chapterTitle"
+        style={{
+          width: `${widthInPercentage}%`,
+          backgroundColor: `${chapter.color}`,
+          color: `${getContrastColor(chapter.color)}`
+        }}
+        >
+        {chapter.title}
+      </div>
+    );
+  };
+  const renderChapterText = (chapter, index) => {
+    const widthInPercentage = determineChapterWidthInPercentage(index);
+    return (
+      <div
+        key={index}
+        className="MediaAnalysisDisplay-chapterText"
+        style={{ width: `${widthInPercentage}%` }}
+        >
+        <Markdown>{chapter.text}</Markdown>
+      </div>
+    );
+  };
+
+  const renderChapters = () => {
+    return (
+      <div className="MediaAnalysisDisplay-chapters">
+        <div className="MediaAnalysisDisplay-chapterTitles">
+          {chapters.map(renderChapterTitle)}
+        </div>
+        <div className="MediaAnalysisDisplay-chapterTexts">
+          {chapters.map(renderChapterText)}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="MediaAnalysisDisplay">
       <div className={`MediaAnalysisDisplay-content u-width-${width || 100}`}>
         <MultitrackMediaPlayer
+          parts={chapters}
           sources={sources}
           aspectRatio={mainTrack.aspectRatio}
           screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           mediaPlayerRef={playerRef}
           showTrackMixer
+          extraCustomContent={renderChapters()}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />
       </div>

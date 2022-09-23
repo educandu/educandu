@@ -4,6 +4,44 @@
   margin: 0 auto;
 }
 
+.MediaAnalysisDisplay-chapters {
+  margin-top: 10px;
+}
+
+.MediaAnalysisDisplay-chapterTitles {
+  display: flex;
+  height: 25px;
+  margin-bottom: 10px;
+}
+
+.MediaAnalysisDisplay-chapterTitle {
+  .m-overflow-ellipsis;
+  text-align: center;
+  padding: 0 4px;
+  border-right: 1px dotted @edu-white;
+
+  &:last-of-type {
+    border-right: none;
+  }
+}
+
+.MediaAnalysisDisplay-chapterTexts {
+  display: flex;
+  min-height: 100px;
+  max-height: 200px;
+}
+
+.MediaAnalysisDisplay-chapterText {
+  overflow: auto;
+  padding: @edu-content-padding;
+  border: 1px solid @edu-border-color-base;
+  border-right: none;
+
+  &:last-of-type {
+    border-right: 1px solid @edu-border-color-base;
+  }
+}
+
 .MediaAnalysisEditor {}
 
 .MediaAnalysisEditor-trackMixerPreview {
