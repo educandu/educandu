@@ -1,5 +1,5 @@
 import React from 'react';
-import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
+import { Piano } from 'react-piano';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 export default function PianoComponent({ content }) {
