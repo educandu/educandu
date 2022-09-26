@@ -131,7 +131,7 @@ export function determineActualTemplateDocumentId({ mode, documentToClone, useTe
   }
 }
 
-export function determineTargetRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId }) {
+export function determineDocumentRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId }) {
   switch (mode) {
     case DOCUMENT_METADATA_MODAL_MODE.clone:
       switch (cloningStrategy) {
@@ -145,9 +145,8 @@ export function determineTargetRoomId({ mode, initialDocumentMetadata, documentT
           throw new Error(`Invalid cloning strategy: '${cloningStrategy}'`);
       }
     case DOCUMENT_METADATA_MODAL_MODE.create:
-      return initialDocumentMetadata.roomId || null;
     case DOCUMENT_METADATA_MODAL_MODE.update:
-      return null; // Not used for metadata updates
+      return initialDocumentMetadata.roomId || null;
     default:
       throw new Error(`Invalid document metadata modal mode: '${mode}'`);
   }

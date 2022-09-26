@@ -23,7 +23,7 @@ import {
   CLONING_STRATEGY,
   composeTagOptions,
   determineActualTemplateDocumentId,
-  determineTargetRoomId,
+  determineDocumentRoomId,
   DOCUMENT_METADATA_MODAL_MODE,
   getAllowedOpenContributionOptions,
   getCloningOptions,
@@ -156,7 +156,7 @@ function DocumentMetadataModal({
     try {
       setIsSaving(true);
 
-      const targetRoomId = determineTargetRoomId({
+      const documentRoomId = determineDocumentRoomId({
         mode,
         initialDocumentMetadata,
         documentToClone,
@@ -182,7 +182,7 @@ function DocumentMetadataModal({
         allowedOpenContribution: canRestrictOpenContribution ? allowedOpenContribution : initialDocumentMetadata.allowedOpenContribution
       };
 
-      if (targetRoomId) {
+      if (documentRoomId) {
         mappedDocument.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
       }
 
@@ -201,7 +201,7 @@ function DocumentMetadataModal({
           return {
             ...cloneDeep(mappedDocument),
             ...extraProps,
-            roomId: targetRoomId
+            roomId: documentRoomId
           };
         });
 
@@ -247,7 +247,7 @@ function DocumentMetadataModal({
   };
 
   const renderAllowedOpenContributionFormItem = (cloningStrategy, cloningTargetRoomId) => {
-    const targetRoomId = determineTargetRoomId({
+    const documentRoomId = determineDocumentRoomId({
       mode,
       initialDocumentMetadata,
       documentToClone,
@@ -256,7 +256,7 @@ function DocumentMetadataModal({
     });
     const noTargetRoomSelectedYet = cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && !cloningTargetRoomId;
 
-    if (targetRoomId || noTargetRoomSelectedYet) {
+    if (documentRoomId || noTargetRoomSelectedYet) {
       return null;
     }
 
