@@ -107,7 +107,7 @@ class DocumentController {
     }
 
     if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDocContent({ user, doc, room })) {
-      return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug, templateDocumentId }));
+      return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
