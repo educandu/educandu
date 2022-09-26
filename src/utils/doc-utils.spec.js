@@ -19,203 +19,55 @@ describe('doc-utils', () => {
       expect(canEditDocContent({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.admin}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.admin];
-      });
-
-      it('should return false when the doc is external', () => {
-        doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-        expect(canEditDocContent({ user, doc, room })).toBe(false);
-      });
-
-      it('should return false when the doc is archived', () => {
-        doc.archived = true;
-        expect(canEditDocContent({ user, doc, room })).toBe(false);
-      });
-
-      it('should still return true even when the user is neither room owner nor collaborator', () => {
-        room.owner = uniqueId.create();
-        expect(canEditDocContent({ user, doc, room })).toBe(true);
-      });
-
-      it('should return true when the document is not within a room', () => {
-        room = null;
-        expect(canEditDocContent({ user, doc, room })).toBe(true);
-      });
+    it('should return false when the document is archived', () => {
+      doc.archived = true;
+      expect(canEditDocContent({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.maintainer}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.maintainer];
-      });
-
-      it('should return false when the doc is external', () => {
-        doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-        expect(canEditDocContent({ user, doc, room })).toBe(false);
-      });
-
-      it('should return false when the doc is archived', () => {
-        doc.archived = true;
-        expect(canEditDocContent({ user, doc, room })).toBe(false);
-      });
-
-      it('should still return true even when the user is neither room owner nor collaborator', () => {
-        room.owner = uniqueId.create();
-        expect(canEditDocContent({ user, doc, room })).toBe(true);
-      });
-
-      it('should return true when the document is not within a room', () => {
-        room = null;
-        expect(canEditDocContent({ user, doc, room })).toBe(true);
-      });
+    it('should return false when the document is external', () => {
+      doc.origin = `${DOCUMENT_ORIGIN.external}/test`;
+      expect(canEditDocContent({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.user}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.user];
-      });
+    it('should return false when the private document is in a room that the user is not owner or collaborator of', () => {
+      doc.roomId = room._id;
+      room.owner = uniqueId.create();
+      expect(canEditDocContent({ user, doc, room })).toBe(false);
+    });
 
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
-        });
+    it('should return false when the private document is in a room that the user is only a member of', () => {
+      doc.roomId = room._id;
+      room.owner = uniqueId.create();
+      room.member = [{ userId: user._id }];
+      room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+      expect(canEditDocContent({ user, doc, room })).toBe(false);
+    });
 
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
+    it('should return false when the public document does not allow content or metadata editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      expect(canEditDocContent({ user, doc, room: null })).toBe(false);
+    });
 
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
+    it(`should return false when the public document does not allow content or metadata editing but the user is a ${ROLE.maintainer}`, () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      user.roles = [ROLE.maintainer];
+      expect(canEditDocContent({ user, doc, room: null })).toBe(true);
+    });
 
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
+    it(`should return false when the public document does not allow content or metadata editing but the user is an ${ROLE.admin}`, () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      user.roles = [ROLE.admin];
+      expect(canEditDocContent({ user, doc, room: null })).toBe(true);
+    });
 
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
+    it('should return true when the public document allows metadata and content editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
+      expect(canEditDocContent({ user, doc, room: null })).toBe(true);
+    });
 
-        it('should return true when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-      });
-
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
-        });
-
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return true when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(true);
-        });
-      });
-
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
-        });
-
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocContent({ user, doc, room })).toBe(false);
-        });
-      });
+    it('should return true when the public document allows content editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
+      expect(canEditDocContent({ user, doc, room: null })).toBe(true);
     });
   });
 
@@ -231,203 +83,55 @@ describe('doc-utils', () => {
       expect(canEditDocMetadata({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.admin}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.admin];
-      });
-
-      it('should return false when the doc is external', () => {
-        doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-      });
-
-      it('should return false when the doc is archived', () => {
-        doc.archived = true;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-      });
-
-      it('should still return true even when the user is neither room owner nor collaborator', () => {
-        room.owner = uniqueId.create();
-        expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-      });
-
-      it('should return true when the document is not within a room', () => {
-        room = null;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-      });
+    it('should return false when the document is archived', () => {
+      doc.archived = true;
+      expect(canEditDocMetadata({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.maintainer}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.maintainer];
-      });
-
-      it('should return false when the doc is external', () => {
-        doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-      });
-
-      it('should return false when the doc is archived', () => {
-        doc.archived = true;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-      });
-
-      it('should still return true even when the user is neither room owner nor collaborator', () => {
-        room.owner = uniqueId.create();
-        expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-      });
-
-      it('should return true when the document is not within a room', () => {
-        room = null;
-        expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-      });
+    it('should return false when the document is external', () => {
+      doc.origin = `${DOCUMENT_ORIGIN.external}/test`;
+      expect(canEditDocMetadata({ user, doc, room })).toBe(false);
     });
 
-    describe(`when the user has '${ROLE.user}' role`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.user];
-      });
+    it('should return false when the private document is in a room that the user is not owner or collaborator of', () => {
+      doc.roomId = room._id;
+      room.owner = uniqueId.create();
+      expect(canEditDocMetadata({ user, doc, room })).toBe(false);
+    });
 
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
-        });
+    it('should return false when the private document is in a room that the user is only a member of', () => {
+      doc.roomId = room._id;
+      room.owner = uniqueId.create();
+      room.member = [{ userId: user._id }];
+      room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+      expect(canEditDocMetadata({ user, doc, room })).toBe(false);
+    });
 
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
+    it('should return false when the public document does not allow content or metadata editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      expect(canEditDocMetadata({ user, doc, room: null })).toBe(false);
+    });
 
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
+    it('should return false when the public document does not allow metadata editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
+      expect(canEditDocMetadata({ user, doc, room: null })).toBe(false);
+    });
 
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
+    it(`should return false when the public document does not allow content or metadata editing but the user is a ${ROLE.maintainer}`, () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      user.roles = [ROLE.maintainer];
+      expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
+    });
 
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
+    it(`should return false when the public document does not allow content or metadata editing but the user is an ${ROLE.admin}`, () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      user.roles = [ROLE.admin];
+      expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
+    });
 
-        it('should return true when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-        });
-
-        it('should return true when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(true);
-        });
-      });
-
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
-        });
-
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-      });
-
-      describe(`and the doc has allowedOpenContribution set to '${DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none}'`, () => {
-        beforeEach(() => {
-          doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
-        });
-
-        it('should return false when the doc is external', () => {
-          doc.origin = `${DOCUMENT_ORIGIN.external}-educandu`;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is archived', () => {
-          doc.archived = true;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is neither room owner nor collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: uniqueId.create() }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room member but not collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the doc is not in a room', () => {
-          room = null;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room owner', () => {
-          room.owner = user._id;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-
-        it('should return false when the user is room collaborator', () => {
-          room.owner = uniqueId.create();
-          room.members = [{ userId: user._id }];
-          room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-          expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-        });
-      });
+    it('should return true when the public document allows metadata and content editing', () => {
+      doc.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
+      expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
     });
   });
 });
