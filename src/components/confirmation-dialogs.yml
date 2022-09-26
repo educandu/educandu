@@ -26,8 +26,8 @@ deleteRoomInvitationConfirmation:
   en: Do you really want revoke room invitation send to "{invitationEmail}"?
   de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
 leaveRoomConfirmation:
-  en: Do you really want to leave room "{roomName}"?
-  de: Möchtest du den Raum "{roomName}" wirklich verlassen?
+  en: Do you really want to cancel your membership in room "{roomName}"?
+  de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?
 deleteCdnDocumentConfirmation:
   en: Do you really want to delete the CDN file "{fileName}"?
   de: Möchtest du die Datei "{fileName}" wirklich vom CDN löschen?
