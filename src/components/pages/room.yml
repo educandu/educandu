@@ -52,6 +52,6 @@ removeMember:
 revokeInvitation:
   en: Revoke invitation
   de: Einladung widerrufen
-leaveRoom:
-  en: Leave room
-  de: Raum verlassen
+cancelRoomMembership:
+  en: Cancel room membership
+  de: Raum-Mitgliedschaft beenden

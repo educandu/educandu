@@ -172,7 +172,7 @@
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberDisplayName}\" from the room?",
       "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
-      "leaveRoomConfirmation": "Do you really want to leave room \"{roomName}\"?",
+      "leaveRoomConfirmation": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
@@ -204,7 +204,7 @@
       "deleteRoomConfirmation": "Möchtest du den Raum \"{roomName}\" wirklich löschen?",
       "deleteRoomMemberConfirmation": "Möchtest du das Mitglied \"{memberDisplayName}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchtest du die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
-      "leaveRoomConfirmation": "Möchtest du den Raum \"{roomName}\" wirklich verlassen?",
+      "leaveRoomConfirmation": "Möchtest du deine Mitgliedschaft im Raum \"{roomName}\" wirklich beenden?",
       "deleteCdnDocumentConfirmation": "Möchtest du die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte gib einen Grund an",
@@ -1167,7 +1167,7 @@
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
       "revokeInvitation": "Revoke invitation",
-      "leaveRoom": "Leave room"
+      "cancelRoomMembership": "Cancel room membership"
     }
   },
   {
@@ -1192,7 +1192,7 @@
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
       "revokeInvitation": "Einladung widerrufen",
-      "leaveRoom": "Raum verlassen"
+      "cancelRoomMembership": "Raum-Mitgliedschaft beenden"
     }
   },
   {
