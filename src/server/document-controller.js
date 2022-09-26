@@ -5,6 +5,7 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
+import { canEditDocContent } from '../utils/doc-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -103,6 +104,10 @@ class DocumentController {
       }
     } else {
       room = null;
+    }
+
+    if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDocContent({ user, doc, room })) {
+      return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;

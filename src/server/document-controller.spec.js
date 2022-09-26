@@ -7,7 +7,7 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
-import { DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -51,7 +51,14 @@ describe('document-controller', () => {
 
     user = { _id: uniqueId.create() };
     room = { _id: uniqueId.create() };
-    doc = { _id: uniqueId.create(), roomId: null, slug: '', sections: [] };
+    doc = {
+      _id: uniqueId.create(),
+      roomId: null,
+      slug: '',
+      sections: [],
+      origin: DOCUMENT_ORIGIN.internal,
+      allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+    };
 
     sut = new DocumentController(documentService, roomService, clientDataMappingService, pageRenderer);
   });
@@ -568,6 +575,31 @@ describe('document-controller', () => {
 
       it('should call pageRenderer.sendPage', () => {
         sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+      });
+    });
+
+    describe('when the view query param is \'edit\' but the doc is archived (thus non-editable)', () => {
+      beforeEach(() => new Promise((resolve, reject) => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'edit' }
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        doc.slug = 'doc-slug';
+        doc.archived = true;
+
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        pageRenderer.sendPage.resolves();
+
+        sut.handleGetDocPage(req, res).catch(reject);
+      }));
+
+      it('should redirect to the document url in display mode', () => {
+        expect(res._getRedirectUrl()).toBe(`/docs/${doc._id}/${doc.slug}`);
       });
     });
 
