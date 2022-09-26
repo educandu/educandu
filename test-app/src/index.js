@@ -28,7 +28,7 @@ const plugins = [
   'table',
   'interactive-media',
   'multitrack-media',
-  'test'
+  'midi-piano'
 ];
 
 const config = {

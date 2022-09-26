@@ -1932,6 +1932,20 @@
     }
   },
   {
+    "namespace": "midiPiano",
+    "language": "en",
+    "resources": {
+      "name": "Midi piano"
+    }
+  },
+  {
+    "namespace": "midiPiano",
+    "language": "de",
+    "resources": {
+      "name": "Midi-Klavier"
+    }
+  },
+  {
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
@@ -2083,20 +2097,6 @@
       "menuGroup_connect": "Verbinden",
       "menuGroup_verticalAlignment": "Vertikale Ausrichtung",
       "menuGroup_horizontalAlignment": "Horizontale Ausrichtung"
-    }
-  },
-  {
-    "namespace": "test",
-    "language": "en",
-    "resources": {
-      "name": "Test"
-    }
-  },
-  {
-    "namespace": "test",
-    "language": "de",
-    "resources": {
-      "name": "Test"
     }
   },
   {

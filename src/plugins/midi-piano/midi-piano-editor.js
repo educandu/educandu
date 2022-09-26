@@ -3,7 +3,7 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { Button } from 'antd';
 import PianoComponent from './piano-component.js';
 
-export default function TestEditor({ content, onContentChanged }) {
+export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleClick = () => {
     onContentChanged({ ...content, text: new Date().toString() });
@@ -19,6 +19,6 @@ export default function TestEditor({ content, onContentChanged }) {
   );
 }
 
-TestEditor.propTypes = {
+MidiPianoEditor.propTypes = {
   ...sectionEditorProps
 };

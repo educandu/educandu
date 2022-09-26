@@ -1,19 +1,19 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import TestDisplay from './test-display.js';
+import MidiPianoDisplay from './midi-piano-display.js';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-class TestInfo {
+class MidiPianoInfo {
 
-  static get typeName() { return 'test'; }
+  static get typeName() { return 'midi-piano'; }
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'test';
+    this.type = 'midi-piano';
   }
 
   getName(t) {
-    return t('test:name');
+    return t('midiPiano:name');
   }
 
   getIcon() {
@@ -21,11 +21,11 @@ class TestInfo {
   }
 
   getDisplayComponent() {
-    return TestDisplay;
+    return MidiPianoDisplay;
   }
 
   async resolveEditorComponent() {
-    return (await import('./test-editor.js')).default;
+    return (await import('./midi-piano-editor.js')).default;
   }
 
   getDefaultContent() {
@@ -51,4 +51,4 @@ class TestInfo {
   }
 }
 
-export default TestInfo;
+export default MidiPianoInfo;
