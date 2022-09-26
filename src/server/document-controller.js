@@ -14,7 +14,7 @@ import { validateBody, validateParams, validateQuery } from '../domain/validatio
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   documentIdParamsOrQuerySchema,
-  documentMetadataBodySchema,
+  updateDocumentMetadataBodySchema,
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
@@ -330,7 +330,7 @@ class DocumentController {
       jsonParser,
       needsPermission(permissions.EDIT_DOC),
       validateParams(documentIdParamsOrQuerySchema),
-      validateBody(documentMetadataBodySchema),
+      validateBody(updateDocumentMetadataBodySchema),
       (req, res) => this.handlePatchDocumentMetadata(req, res)
     );
 

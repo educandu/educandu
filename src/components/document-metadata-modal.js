@@ -59,7 +59,7 @@ function DocumentMetadataModal({
   const [isSaving, setIsSaving] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
-  const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata?.tags));
+  const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata.tags));
 
   const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
   const canVerify = hasUserPermission(user, permissions.VERIFY_DOC);
@@ -67,7 +67,19 @@ function DocumentMetadataModal({
 
   const defaultTemplateDocumentId = settings.templateDocument?.documentId || null;
   const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
-  const canCreateSequenes = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
+  const canCreateSequences = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
+
+  const initialQualityMetadataValues = mode === DOCUMENT_METADATA_MODAL_MODE.update
+    ? {
+      review: initialDocumentMetadata.review,
+      verified: initialDocumentMetadata.verified,
+      allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution
+    }
+    : {
+      review: '',
+      verified: false,
+      allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+    };
 
   const initialValues = {
     title: initialDocumentMetadata.title || t('newDocument'),
@@ -77,12 +89,10 @@ function DocumentMetadataModal({
     language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
     generateSequence: false,
     sequenceCount: 2,
-    review: '',
-    verified: initialDocumentMetadata.verified,
-    allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution,
     useTemplateDocument: false,
     cloningStrategy: CLONING_STRATEGY.cloneWithinArea,
-    cloningTargetRoomId: ''
+    cloningTargetRoomId: '',
+    ...initialQualityMetadataValues
   };
 
   const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t });
@@ -123,7 +133,7 @@ function DocumentMetadataModal({
         return;
       }
       const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
-      const newTagOptions = composeTagOptions(initialDocumentMetadata?.tags, tagSuggestions);
+      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
       handleApiError({ error, t });
@@ -138,17 +148,25 @@ function DocumentMetadataModal({
 
   const handleCancel = () => onClose();
 
+  const handleValuesChange = (_, { cloningStrategy, cloningTargetRoomId }) => {
+    const documentRoomId = determineDocumentRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId });
+    const noTargetRoomSelectedYet = cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && !cloningTargetRoomId;
+    if (documentRoomId || noTargetRoomSelectedYet) {
+      formRef.current.setFieldsValue({ allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent });
+    }
+  };
+
   const handleFinish = async ({
     title,
     description,
     slug,
     language,
     tags,
+    review,
+    verified,
+    allowedOpenContribution,
     generateSequence,
     sequenceCount,
-    review,
-    allowedOpenContribution,
-    verified,
     useTemplateDocument,
     cloningStrategy,
     cloningTargetRoomId
@@ -172,43 +190,39 @@ function DocumentMetadataModal({
       });
 
       const mappedDocument = {
-        title: (title || '').trim(),
-        slug: (slug || '').trim(),
-        description: (description || '').trim(),
+        title: title.trim(),
+        slug: slug.trim(),
+        description,
         language,
         tags,
-        review: canReview ? (review || '').trim() : initialDocumentMetadata.review,
-        verified: !!(canVerify ? verified : initialDocumentMetadata.verified),
-        allowedOpenContribution: canRestrictOpenContribution ? allowedOpenContribution : initialDocumentMetadata.allowedOpenContribution
+        review,
+        verified,
+        allowedOpenContribution
       };
 
-      if (documentRoomId) {
-        mappedDocument.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
-      }
-
       const savedDocuments = [];
-      if (mode === DOCUMENT_METADATA_MODAL_MODE.update) {
-        savedDocuments.push(await documentApiClient.updateDocumentMetadata({
-          documentId: initialDocumentMetadata._id,
-          metadata: mappedDocument
-        }));
-      } else {
-        const documentsToSave = Array.from({ length: generateSequence ? sequenceCount : 1 }, (_, index) => {
-          const extraProps = generateSequence
-            ? { title: `${mappedDocument.title} (${index + 1})`, slug: mappedDocument.slug ? `${mappedDocument.slug}/${index + 1}` : '' }
-            : {};
 
-          return {
-            ...cloneDeep(mappedDocument),
-            ...extraProps,
-            roomId: documentRoomId
-          };
-        });
-
-        for (const documentToSave of documentsToSave) {
-          // eslint-disable-next-line no-await-in-loop
-          savedDocuments.push(await documentApiClient.createDocument(documentToSave));
-        }
+      switch (mode) {
+        case DOCUMENT_METADATA_MODAL_MODE.clone:
+        case DOCUMENT_METADATA_MODAL_MODE.create:
+          for (let sequenceIndex = 0; sequenceIndex < (generateSequence ? sequenceCount : 1); sequenceIndex += 1) {
+            const documentToSave = { ...cloneDeep(mappedDocument), roomId: documentRoomId };
+            if (generateSequence) {
+              documentToSave.title = `${mappedDocument.title} (${sequenceIndex + 1})`;
+              documentToSave.slug = mappedDocument.slug ? `${mappedDocument.slug}/${sequenceIndex + 1}` : '';
+            }
+            // eslint-disable-next-line no-await-in-loop
+            savedDocuments.push(await documentApiClient.createDocument(documentToSave));
+          }
+          break;
+        case DOCUMENT_METADATA_MODAL_MODE.update:
+          savedDocuments.push(await documentApiClient.updateDocumentMetadata({
+            documentId: initialDocumentMetadata._id,
+            metadata: mappedDocument
+          }));
+          break;
+        default:
+          throw new Error(`Invalid document metadata modal mode: '${mode}'`);
       }
 
       onSave(savedDocuments, actualTemplateDocumentId);
@@ -289,7 +303,14 @@ function DocumentMetadataModal({
       okButtonProps={{ loading: isSaving }}
       okText={getDialogOkButtonText(mode, t)}
       >
-      <Form onFinish={handleFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialValues}>
+      <Form
+        ref={formRef}
+        layout="vertical"
+        name="document-metadata-form"
+        initialValues={initialValues}
+        onValuesChange={handleValuesChange}
+        onFinish={handleFinish}
+        >
         <FormItem
           name="cloningStrategy"
           label={t('cloningStrategy')}
@@ -327,7 +348,7 @@ function DocumentMetadataModal({
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        <FormItem name="generateSequence" valuePropName="checked" hidden={!canCreateSequenes}>
+        <FormItem name="generateSequence" valuePropName="checked" hidden={!canCreateSequences}>
           <Checkbox>
             <Fragment>
               <span>{t('generateSequence')}</span>
@@ -339,7 +360,7 @@ function DocumentMetadataModal({
         </FormItem>
         <FormItem
           noStyle
-          hidden={!canCreateSequenes}
+          hidden={!canCreateSequences}
           dependencies={['generateSequence']}
           >
           {({ getFieldValue }) => renderSequenceCountFormInput(getFieldValue('generateSequence'))}
@@ -383,7 +404,7 @@ DocumentMetadataModal.propTypes = {
   initialDocumentMetadata: PropTypes.oneOfType([
     PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
-  ]),
+  ]).isRequired,
   isVisible: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
@@ -392,8 +413,7 @@ DocumentMetadataModal.propTypes = {
 
 DocumentMetadataModal.defaultProps = {
   allowMultiple: false,
-  documentToClone: null,
-  initialDocumentMetadata: null
+  documentToClone: null
 };
 
 export default DocumentMetadataModal;

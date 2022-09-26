@@ -28,7 +28,7 @@ export const createDocumentDataBodySchema = joi.object({
   roomId: idOrKeySchema.allow(null)
 });
 
-export const documentMetadataBodySchema = joi.object({
+export const updateDocumentMetadataBodySchema = joi.object({
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema.required(),
