@@ -91,13 +91,12 @@ function MediaAnalysisDisplay({ content }) {
     );
   };
 
-  const renderChaptersOnly = (!sources.mainTrack.sourceUrl || !sources.secondaryTracks[0]?.sourceUrl) && chapters.length > 1;
+  const canRenderMediaPlayer = sources.mainTrack.sourceUrl && sources.secondaryTracks.every(track => track.sourceUrl);
 
   return (
     <div className="MediaAnalysisDisplay">
       <div className={`MediaAnalysisDisplay-content u-width-${width || 100}`}>
-        {renderChaptersOnly && renderChapters()}
-        {!renderChaptersOnly && (
+        {canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
               parts={chapters}
@@ -111,6 +110,7 @@ function MediaAnalysisDisplay({ content }) {
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>
         )}
+        {!canRenderMediaPlayer && renderChapters()}
       </div>
     </div>
   );
