@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { Fragment, useRef } from 'react';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
@@ -50,7 +50,7 @@ function MediaAnalysisDisplay({ content }) {
     const widthInPercentage = determineChapterWidthInPercentage(index);
     return (
       <div
-        key={index}
+        key={chapter.key}
         className="MediaAnalysisDisplay-chapterTitle"
         style={{
           width: `${widthInPercentage}%`,
@@ -66,7 +66,7 @@ function MediaAnalysisDisplay({ content }) {
     const widthInPercentage = determineChapterWidthInPercentage(index);
     return (
       <div
-        key={index}
+        key={chapter.key}
         className="MediaAnalysisDisplay-chapterText"
         style={{ width: `${widthInPercentage}%` }}
         >
@@ -76,31 +76,41 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const renderChapters = () => {
+    const chapterTextsAreSet = chapters.some(chapter => chapter.text);
     return (
       <div className="MediaAnalysisDisplay-chapters">
         <div className="MediaAnalysisDisplay-chapterTitles">
           {chapters.map(renderChapterTitle)}
         </div>
-        <div className="MediaAnalysisDisplay-chapterTexts">
-          {chapters.map(renderChapterText)}
-        </div>
+        {chapterTextsAreSet && (
+          <div className="MediaAnalysisDisplay-chapterTexts">
+            {chapters.map(renderChapterText)}
+          </div>
+        )}
       </div>
     );
   };
 
+  const renderChaptersOnly = (!sources.mainTrack.sourceUrl || !sources.secondaryTracks[0]?.sourceUrl) && chapters.length > 1;
+
   return (
     <div className="MediaAnalysisDisplay">
       <div className={`MediaAnalysisDisplay-content u-width-${width || 100}`}>
-        <MultitrackMediaPlayer
-          parts={chapters}
-          sources={sources}
-          aspectRatio={mainTrack.aspectRatio}
-          screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-          mediaPlayerRef={playerRef}
-          showTrackMixer
-          extraCustomContent={renderChapters()}
-          />
-        <CopyrightNotice value={combinedCopyrightNotice} />
+        {renderChaptersOnly && renderChapters()}
+        {!renderChaptersOnly && (
+          <Fragment>
+            <MultitrackMediaPlayer
+              parts={chapters}
+              sources={sources}
+              aspectRatio={mainTrack.aspectRatio}
+              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+              mediaPlayerRef={playerRef}
+              showTrackMixer
+              extraCustomContent={renderChapters()}
+              />
+            <CopyrightNotice value={combinedCopyrightNotice} />
+          </Fragment>
+        )}
       </div>
     </div>
   );
