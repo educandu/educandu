@@ -2084,6 +2084,24 @@
     }
   },
   {
+    "namespace": "musicXmlViewer",
+    "language": "en",
+    "resources": {
+      "name": "MusicXML viewer",
+      "zoom": "Zoom",
+      "caption": "Caption"
+    }
+  },
+  {
+    "namespace": "musicXmlViewer",
+    "language": "de",
+    "resources": {
+      "name": "MusicXML-Anzeige",
+      "zoom": "Zoom",
+      "caption": "Legende"
+    }
+  },
+  {
     "namespace": "pdfViewer",
     "language": "en",
     "resources": {

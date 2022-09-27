@@ -22,6 +22,7 @@ const plugins = [
   'diagram-net',
   'iframe',
   'abc-notation',
+  'music-xml-viewer',
   'quick-tester',
   'ear-training',
   'interval-trainer',
