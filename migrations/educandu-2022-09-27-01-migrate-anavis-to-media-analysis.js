@@ -43,7 +43,7 @@ export default class Educandu_2022_09_27_01_migrate_anavis_to_media_analysis {
             startPosition: lengthUntilPart / partsTotalLength,
             color: part.color,
             title: part.name,
-            text: sanitizedAnnotations.join('\\\n\n')
+            text: sanitizedAnnotations.join('\n\n')
           };
         })
       };
