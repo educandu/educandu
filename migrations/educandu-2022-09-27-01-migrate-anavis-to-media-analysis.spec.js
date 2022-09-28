@@ -71,7 +71,7 @@ const MEDIA_ANALYSIS_SECTION = {
         startPosition: 0,
         color: '#aaaaaa',
         title: 'Part A',
-        text: 'Episode a\\\n1\\. Section x 2.'
+        text: 'Episode a\\\n\n1\\. Section x 2.'
       },
       {
         key: 'createdId',
