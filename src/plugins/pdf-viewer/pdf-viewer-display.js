@@ -30,8 +30,8 @@ function PdfViewerDisplay({ content }) {
   };
 
   return (
-    <div className="PdfViewer">
-      <div className={`PdfViewer-viewer u-width-${width || 100}`}>
+    <div className="PdfViewerDisplay">
+      <div className={`PdfViewerDisplay-viewer u-width-${width || 100}`}>
         <PdfDocument
           file={fileObject}
           pageNumber={pageNumber}
@@ -41,7 +41,7 @@ function PdfViewerDisplay({ content }) {
           />
       </div>
       {!!caption && (
-        <div className={`PdfViewer-caption u-width-${width || 100}`}>
+        <div className={`PdfViewerDisplay-caption u-width-${width || 100}`}>
           <Markdown inline>{caption}</Markdown>
         </div>
       )}

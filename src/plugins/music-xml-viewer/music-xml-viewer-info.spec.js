@@ -8,7 +8,7 @@ describe('music-xml-viewer-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts the PDF source url', () => {
+    it('redacts the XML source url', () => {
       const input = {
         sourceType: SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-song.xml'

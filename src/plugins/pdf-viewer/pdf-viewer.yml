@@ -1,9 +1,6 @@
 name:
   en: PDF viewer
   de: PDF-Anzeige
-caption:
-  en: Caption
-  de: Legende
 initialPageNumber:
   en: Initially displayed page
   de: Zuerst angezeigte Seite

@@ -467,4 +467,6 @@ addTrack:
 trackMixer:
   en: Track mixer
   de: Spur-Mixer
-
+caption:
+  en: Caption
+  de: Legende

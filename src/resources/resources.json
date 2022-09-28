@@ -2088,8 +2088,7 @@
     "language": "en",
     "resources": {
       "name": "MusicXML viewer",
-      "zoom": "Zoom",
-      "caption": "Caption"
+      "zoom": "Zoom"
     }
   },
   {
@@ -2097,8 +2096,7 @@
     "language": "de",
     "resources": {
       "name": "MusicXML-Anzeige",
-      "zoom": "Zoom",
-      "caption": "Legende"
+      "zoom": "Zoom"
     }
   },
   {
@@ -2106,7 +2104,6 @@
     "language": "en",
     "resources": {
       "name": "PDF viewer",
-      "caption": "Caption",
       "initialPageNumber": "Initially displayed page",
       "showTextOverlay": "Show text overlay",
       "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n"
@@ -2117,7 +2114,6 @@
     "language": "de",
     "resources": {
       "name": "PDF-Anzeige",
-      "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
       "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
@@ -2403,7 +2399,8 @@
       "mainTrack": "Main track",
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
-      "trackMixer": "Track mixer"
+      "trackMixer": "Track mixer",
+      "caption": "Caption"
     }
   },
   {
@@ -2562,7 +2559,8 @@
       "mainTrack": "Hauptspur",
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
-      "trackMixer": "Spur-Mixer"
+      "trackMixer": "Spur-Mixer",
+      "caption": "Legende"
     }
   },
   {

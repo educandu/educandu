@@ -95,7 +95,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <Form.Item label={t('caption')} {...formItemLayout}>
+        <Form.Item label={t('common:caption')} {...formItemLayout}>
           <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
         </Form.Item>
       </Form>

@@ -44,12 +44,12 @@ function MusicXmlViewerDisplay({ content }) {
   }, [actualUrl, zoom, osmd]);
 
   return (
-    <div className="MusicXmlViewer">
-      <div className={`MusicXmlViewer-viewer u-width-${width || 100}`}>
+    <div className="MusicXmlViewerDisplay">
+      <div className={`MusicXmlViewerDisplay-viewer u-width-${width || 100}`}>
         <div ref={divRef} />
       </div>
       {!!caption && (
-        <div className={`PdfViewer-caption u-width-${width || 100}`}>
+        <div className={`MusicXmlViewerDisplay-caption u-width-${width || 100}`}>
           <Markdown inline>{caption}</Markdown>
         </div>
       )}
