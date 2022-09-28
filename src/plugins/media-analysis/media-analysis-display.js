@@ -1,5 +1,7 @@
-import React, { Fragment, useRef } from 'react';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
+import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
 import { getFullSourceUrl } from '../../utils/media-utils.js';
@@ -11,7 +13,9 @@ import MultitrackMediaPlayer from '../../components/media-player/multitrack-medi
 
 function MediaAnalysisDisplay({ content }) {
   const playerRef = useRef(null);
+  const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
+  const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
   const { width, mainTrack, secondaryTracks, chapters } = content;
 
@@ -40,6 +44,10 @@ function MediaAnalysisDisplay({ content }) {
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
     .filter(text => !!text).join('\n\n');
 
+  const handleChaptersTextsToggleClick = () => {
+    setAreTextsExpanded(prevValue => !prevValue);
+  };
+
   const determineChapterWidthInPercentage = chapterIndex => {
     const startPosition = chapters[chapterIndex]?.startPosition || 0;
     const nextStartPosition = chapters[chapterIndex + 1]?.startPosition || 1;
@@ -67,8 +75,8 @@ function MediaAnalysisDisplay({ content }) {
     return (
       <div
         key={chapter.key}
-        className="MediaAnalysisDisplay-chapterText"
         style={{ width: `${widthInPercentage}%` }}
+        className={classNames('MediaAnalysisDisplay-chapterText', { 'is-expanded': areTextsExpanded })}
         >
         <Markdown>{chapter.text}</Markdown>
       </div>
@@ -83,9 +91,14 @@ function MediaAnalysisDisplay({ content }) {
           {chapters.map(renderChapterTitle)}
         </div>
         {chapterTextsAreSet && (
-          <div className="MediaAnalysisDisplay-chapterTexts">
-            {chapters.map(renderChapterText)}
-          </div>
+          <Fragment>
+            <div className={classNames('MediaAnalysisDisplay-chapterTexts', { 'is-expanded': areTextsExpanded })}>
+              {chapters.map(renderChapterText)}
+            </div>
+            <a onClick={handleChaptersTextsToggleClick} className="MediaAnalysisDisplay-chaptersTextsToggle">
+              {areTextsExpanded ? t('less') : t('more')}
+            </a>
+          </Fragment>
         )}
       </div>
     );
@@ -104,7 +117,7 @@ function MediaAnalysisDisplay({ content }) {
               aspectRatio={mainTrack.aspectRatio}
               screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
               mediaPlayerRef={playerRef}
-              showTrackMixer
+              showTrackMixer={secondaryTracks.length > 0}
               extraCustomContent={renderChapters()}
               />
             <CopyrightNotice value={combinedCopyrightNotice} />

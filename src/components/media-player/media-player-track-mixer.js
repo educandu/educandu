@@ -57,14 +57,16 @@ function MediaPlayerTrackMixer({ mainTrack, secondaryTracks, onMainTrackVolumeCh
               value={track.volume}
               onChange={newValue => track.onVolumeChange(newValue)}
               />
-            <div className="MediaPlayerTrackMixer-trackSolo">
-              <Button
-                type="link"
-                icon={<SoloIcon />}
-                disabled={currentSoloTrackIndex > -1 && currentSoloTrackIndex !== index}
-                onClick={() => handleTrackSoloClick(track, index)}
-                />
-            </div>
+            {tracks.length > 1 && (
+              <div className="MediaPlayerTrackMixer-trackSolo">
+                <Button
+                  type="link"
+                  icon={<SoloIcon />}
+                  disabled={currentSoloTrackIndex > -1 && currentSoloTrackIndex !== index}
+                  onClick={() => handleTrackSoloClick(track, index)}
+                  />
+              </div>
+            )}
           </div>
           <div className="MediaPlayerTrackMixer-trackName">
             {track.displayName}
