@@ -10,16 +10,16 @@ export const MEDIA_VOLUME_SLIDER_ORIENTATION = {
 };
 
 function MediaVolumeSlider({ value, onChange, orientation }) {
-  const [lastValueBeforeMutting, setLastValueBeforeMutting] = useState(value);
+  const [lastValueBeforeMuting, setLastValueBeforeMuting] = useState(value);
 
   useEffect(() => {
     if (value > 0) {
-      setLastValueBeforeMutting(value);
+      setLastValueBeforeMuting(value);
     }
   }, [value]);
 
   const handleVolumeButtonClick = () => {
-    onChange(value ? 0 : lastValueBeforeMutting);
+    onChange(value ? 0 : lastValueBeforeMuting);
   };
 
   const handleSliderChange = sliderValue => {
