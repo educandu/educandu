@@ -1,7 +1,7 @@
 import React from 'react';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { Button } from 'antd';
-import PianoComponent from './piano-component.js';
+// import PianoComponent from './piano-component.js';
 
 export default function MidiPianoEditor({ content, onContentChanged }) {
 
@@ -14,7 +14,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
       <Button onClick={handleClick}>Click here </Button>
       {content.text}
       <div>{content.text}</div>
-      <PianoComponent content={content} />
+      {/* <PianoComponent content={content} /> */}
     </div>
   );
 }
