@@ -7,14 +7,15 @@ import { useTranslation } from 'react-i18next';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
+import MusicXmlDocument from '../music-xml-document.js';
 import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ResourcePicker from '../resource-picker/resource-picker.js';
-import { Button, Form, Input, InputNumber, Radio, Tabs } from 'antd';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
 import MediaRangeSelector from '../media-player/media-range-selector.js';
+import { Button, Form, Input, InputNumber, Radio, Slider, Tabs } from 'antd';
 import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
@@ -57,6 +58,15 @@ function Tests({ PageTemplate }) {
     url.searchParams.set('tab', newTab);
     window.history.replaceState(null, null, url.href);
   };
+
+  // MusicXmlDocument
+  const mxdSources = [
+    { title: '<empty>', url: '' },
+    { title: 'Bach - Praeludium in C-Dur', url: 'https://cdn.staging.openmusic.academy/media/j4VnRosMXE1mdX24fA4aPJ/johann-sebastian-bach-praeludium-in-c-dur-bwv-846-1-648QZxTSjXRPVB99ULym1Y.xml' },
+    { title: 'Beethoven - An die ferne Geliebte', url: 'https://cdn.staging.openmusic.academy/media/j4VnRosMXE1mdX24fA4aPJ/beethoven-an-die-ferne-geliebte-4hzPUSv3Xk51CcVjM8eJPc.xml' }
+  ];
+  const [mxdUrl, setMxdUrl] = useState('');
+  const [mxdZoom, setMxdZoom] = useState(1);
 
   // DebouncedInput
   const diElementTypes = {
@@ -275,6 +285,15 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="MusicXmlDocument" key="MusicXmlDocument">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <div>Load Url:</div>
+              {mxdSources.map(({ title, url }) => <Button key={url} onClick={() => setMxdUrl(url)}>{title}</Button>)}
+              <div>Zoom:</div>
+              <Slider style={{ width: '200px' }} min={0.5} max={1.5} step={0.05} value={mxdZoom} onChange={setMxdZoom} />
+            </div>
+            <MusicXmlDocument url={mxdUrl} zoom={mxdZoom} />
+          </TabPane>
           <TabPane tab="DebouncedInput" key="DebouncedInput">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               Element type:

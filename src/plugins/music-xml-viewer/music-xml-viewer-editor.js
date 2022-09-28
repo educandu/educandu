@@ -1,12 +1,13 @@
 import React, { Fragment } from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import { range } from '../../utils/array-utils.js';
+import { Form, Input, Slider, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { CDN_URL_PREFIX } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE, SOURCE_TYPE } from './constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
@@ -17,29 +18,35 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function PdfViewerEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('pdfViewer');
+const possibleZoomSliderValues = range({ from: MIN_ZOOM_VALUE * 100, to: MAX_ZOOM_VALUE * 100, step: 5 });
 
-  const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
+const zoomSliderMarks = possibleZoomSliderValues.reduce((all, val) => {
+  const markLabel = val % 25 === 0 ? `${val}%` : '';
+  const node = <span>{markLabel}</span>;
+  return { ...all, [val]: node };
+}, {});
+
+const zoomTipFormatter = val => `${val}%`;
+
+function MusicXmlViewerEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('musicXmlViewer');
+
+  const { sourceUrl, zoom, width, caption } = content;
 
   const triggerContentChanged = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleSourceUrlChange = event => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value, initialPageNumber: 1 });
+    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value });
   };
 
   const handleCdnFileNameChange = newValue => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue, initialPageNumber: 1 });
+    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue });
   };
 
-  const handleInitialPageNumberChange = newInitialPageNumber => {
-    triggerContentChanged({ initialPageNumber: newInitialPageNumber });
-  };
-
-  const handleShowTextOverlayChange = newShowTextOverlay => {
-    triggerContentChanged({ showTextOverlay: newShowTextOverlay });
+  const handleZoomChange = newValue => {
+    triggerContentChanged({ zoom: newValue / 100 });
   };
 
   const handleWidthChange = newValue => {
@@ -51,7 +58,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div className="PdfViewerEditor">
+    <div className="MusicXmlViewerEditor">
       <Form layout="horizontal">
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div className="u-input-and-button">
@@ -66,21 +73,16 @@ function PdfViewerEditor({ content, onContentChanged }) {
               />
           </div>
         </FormItem>
-        <Form.Item label={t('initialPageNumber')} {...formItemLayout}>
-          <InputNumber min={1} step={1} value={initialPageNumber} onChange={handleInitialPageNumberChange} />
-        </Form.Item>
-        <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('showTextOverlayInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('showTextOverlay')}</span>
-            </Fragment>
-          }
-          {...formItemLayout}
-          >
-          <Switch size="small" checked={showTextOverlay} onChange={handleShowTextOverlayChange} />
+        <Form.Item label={t('zoom')} {...formItemLayout}>
+          <Slider
+            min={MIN_ZOOM_VALUE * 100}
+            max={MAX_ZOOM_VALUE * 100}
+            marks={zoomSliderMarks}
+            step={5}
+            value={zoom * 100}
+            onChange={handleZoomChange}
+            tipFormatter={zoomTipFormatter}
+            />
         </Form.Item>
         <Form.Item
           label={
@@ -103,8 +105,8 @@ function PdfViewerEditor({ content, onContentChanged }) {
   );
 }
 
-PdfViewerEditor.propTypes = {
+MusicXmlViewerEditor.propTypes = {
   ...sectionEditorProps
 };
 
-export default PdfViewerEditor;
+export default MusicXmlViewerEditor;
