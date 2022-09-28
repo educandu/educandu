@@ -1,3 +1,5 @@
+@media-analysis-text-padding: 4px;
+
 .MediaAnalysisDisplay {}
 
 .MediaAnalysisDisplay-content {
@@ -17,7 +19,7 @@
 .MediaAnalysisDisplay-chapterTitle {
   .m-overflow-ellipsis;
   text-align: center;
-  padding: 0 4px;
+  padding: 0 @media-analysis-text-padding;
   border-right: 1px dotted @edu-white;
 
   &:last-of-type {
@@ -33,7 +35,7 @@
 
 .MediaAnalysisDisplay-chapterText {
   overflow: auto;
-  padding: @edu-content-padding;
+  padding: @media-analysis-text-padding;
   border: 1px solid @edu-border-color-base;
   border-right: none;
 

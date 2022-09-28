@@ -76,19 +76,23 @@ export async function setupTestEnvironment() {
     },
     plugins: [
       'markdown',
-      'quick-tester',
       'audio',
       'video',
       'image',
-      'pdf-viewer',
-      'iframe',
-      'anavis',
       'catalog',
-      'diagram-net',
       'annotation',
+      'table',
+      'pdf-viewer',
+      'diagram-net',
+      'iframe',
       'abc-notation',
+      'quick-tester',
       'ear-training',
-      'interval-trainer'
+      'interval-trainer',
+      'media-slideshow',
+      'interactive-media',
+      'multitrack-media',
+      'media-analysis'
     ]
   });
 

@@ -15,6 +15,7 @@ function ItemPanel({
   onMoveUp,
   onMoveDown,
   onDelete,
+  canDeleteLastItem,
   itemsCount
 }) {
   const { t } = useTranslation();
@@ -62,7 +63,7 @@ function ItemPanel({
     });
   }
   if (onDelete) {
-    const isDeleteDisabled = itemsCount <= 1;
+    const isDeleteDisabled = !canDeleteLastItem && itemsCount <= 1;
     items.push({
       key: 'delete',
       label: t('common:delete'),
@@ -94,6 +95,7 @@ function ItemPanel({
 }
 
 ItemPanel.propTypes = {
+  canDeleteLastItem: PropTypes.bool,
   children: PropTypes.node.isRequired,
   header: PropTypes.string,
   index: PropTypes.number,
@@ -104,6 +106,7 @@ ItemPanel.propTypes = {
 };
 
 ItemPanel.defaultProps = {
+  canDeleteLastItem: false,
   header: '',
   index: 0,
   itemsCount: 1,
