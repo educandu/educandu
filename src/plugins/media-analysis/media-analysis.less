@@ -1,4 +1,4 @@
-@media-analysis-text-padding: 4px;
+@media-analysis-text-padding: 5px;
 
 .MediaAnalysisDisplay {}
 
@@ -12,7 +12,8 @@
 
 .MediaAnalysisDisplay-chapterTitles {
   display: flex;
-  height: 25px;
+  height: 40px;
+  line-height: 40px;
   margin-bottom: 10px;
 }
 
@@ -20,7 +21,12 @@
   .m-overflow-ellipsis;
   text-align: center;
   padding: 0 @media-analysis-text-padding;
-  border-right: 1px dotted @edu-white;
+  border-left: 1px dotted @edu-white;
+  border-right: 1px dotted @edu-border-color-dark;
+
+  &:first-of-type {
+    border-left: none;
+  }
 
   &:last-of-type {
     border-right: none;
@@ -36,11 +42,10 @@
 .MediaAnalysisDisplay-chapterText {
   overflow: auto;
   padding: @media-analysis-text-padding;
-  border: 1px solid @edu-border-color-base;
-  border-right: none;
+  border-right: 1px dotted @edu-border-color-base;
 
   &:last-of-type {
-    border-right: 1px solid @edu-border-color-base;
+    border-right: none;
   }
 }
 

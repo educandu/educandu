@@ -55,11 +55,16 @@
 .Timeline-segment {
   .m-overflow-ellipsis;
   text-align: center;
-  padding: 0 4px;
-  border-right: 1px dotted @timeline-segments-bar-color;
+  padding: 0 5px;
+  border-left: 1px dotted @timeline-segments-bar-color;
+  border-right: 1px dotted @edu-border-color-dark;
 
   &.is-selected {
     box-shadow: 0px -2px 2px @edu-border-color-base;
+  }
+
+  &:first-of-type {
+    border-left: none;
   }
 
   &:last-of-type {
