@@ -1724,30 +1724,6 @@
     }
   },
   {
-    "namespace": "anavis",
-    "language": "en",
-    "resources": {
-      "name": "Anavis",
-      "defaultPartName": "Unnamed",
-      "nameLabel": "Name",
-      "color": "Color",
-      "length": "Length",
-      "unsupportedFileFormat": "Unsupported file format"
-    }
-  },
-  {
-    "namespace": "anavis",
-    "language": "de",
-    "resources": {
-      "name": "Anavis",
-      "defaultPartName": "Unbenannt",
-      "nameLabel": "Name",
-      "color": "Farbe",
-      "length": "Länge",
-      "unsupportedFileFormat": "Nicht unterstütztes Dateiformat"
-    }
-  },
-  {
     "namespace": "annotation",
     "language": "en",
     "resources": {

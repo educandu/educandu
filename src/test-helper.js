@@ -93,8 +93,7 @@ export async function setupTestEnvironment() {
       'media-slideshow',
       'interactive-media',
       'multitrack-media',
-      'media-analysis',
-      'anavis'
+      'media-analysis'
     ]
   });
 

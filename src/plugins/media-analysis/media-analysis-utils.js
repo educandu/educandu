@@ -40,7 +40,7 @@ export function createDefaultContent(t) {
   return {
     width: 100,
     mainTrack: createDefaultMainTrack(t),
-    secondaryTracks: [createDefaultSecondaryTrack(0, t)],
+    secondaryTracks: [],
     chapters: [createDefaultChapter(t)]
   };
 }

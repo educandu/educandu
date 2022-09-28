@@ -204,6 +204,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
           <ItemPanel
             index={index}
             collapsed
+            canDeleteLastItem
             key={index.toString()}
             itemsCount={secondaryTracks.length}
             header={t('common:secondaryTrack', { number: index + 2 })}

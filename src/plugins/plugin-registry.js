@@ -5,7 +5,6 @@ import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
-import AnavisInfo from './anavis/anavis-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -30,7 +29,6 @@ const allPossibleInfoTypes = [
   ImageInfo,
   TableInfo,
   IframeInfo,
-  AnavisInfo,
   CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,
