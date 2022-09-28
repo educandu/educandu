@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Slider } from 'antd';
+import React, { useEffect, useState } from 'react';
 import MuteIcon from '../icons/media-player/mute-icon.js';
 import VolumeIcon from '../icons/media-player/volume-icon.js';
 
@@ -10,12 +10,21 @@ export const MEDIA_VOLUME_SLIDER_ORIENTATION = {
 };
 
 function MediaVolumeSlider({ value, onChange, orientation }) {
+  const [lastValueBeforeMuting, setLastValueBeforeMuting] = useState(value);
+
+  useEffect(() => {
+    if (value > 0) {
+      setLastValueBeforeMuting(value);
+    }
+  }, [value]);
+
   const handleVolumeButtonClick = () => {
-    onChange(value ? 0 : 1);
+    onChange(value ? 0 : lastValueBeforeMuting);
   };
 
-  const handleSliderChange = newValue => {
-    onChange(newValue / 100);
+  const handleSliderChange = sliderValue => {
+    const newValue = sliderValue / 100;
+    onChange(newValue);
   };
 
   return (
