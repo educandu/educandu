@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { Button } from 'antd';
 import { Piano } from 'react-piano';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import * as Tone from 'tone';
@@ -8,8 +7,7 @@ import { midiValueToName } from './soundmap.js';
 export default function PianoComponent({ content }) {
 
   const sampler = useRef(null);
-  // const samplerArray = useRef([]);
-  const samplerHasLoaded = useRef(false);
+  const samplerHasLoaded = useRef(false); // Set to true after 2 seconds. Needs to be set to true when the buffer is loaded.
 
   useEffect(() => {
     sampler.current = new Tone.Sampler({
@@ -47,7 +45,7 @@ export default function PianoComponent({ content }) {
       },
       baseUrl: 'https://tonejs.github.io/audio/salamander/'
     }).toDestination();
-    // samplerArray.current.push(sampler);
+
     if (!samplerHasLoaded.curent) {
       setTimeout(() => {
         samplerHasLoaded.current = true;
@@ -55,16 +53,10 @@ export default function PianoComponent({ content }) {
     }
   });
 
-  const handleButtonClick = () => {
-    sampler.current.triggerAttackRelease('A4', '8n');
-  };
-
   const playNote = midiNumber => {
     if (!samplerHasLoaded.current) {
       return;
     }
-    // eslint-disable-next-line no-console
-    console.log(samplerHasLoaded.current);
     sampler.current.triggerAttack(midiValueToName[midiNumber]);
   };
 
@@ -75,7 +67,6 @@ export default function PianoComponent({ content }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
       <div style={{ paddingTop: '1rem', width: '100%', aspectRatio: '6/1' }}>
-        <Button onClick={handleButtonClick}>Ton abspielen</Button>
         <Piano
           noteRange={{ first: content.firstNote, last: content.lastNote }}
           playNote={playNote}

@@ -122,6 +122,11 @@ export const IMAGE_SOURCE_TYPE = {
   external: 'external'
 };
 
+export const MIDI_SOURCE_TYPE = {
+  internal: 'internal',
+  external: 'external'
+};
+
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
   public: 'public',
