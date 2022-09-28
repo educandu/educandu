@@ -2014,7 +2014,9 @@
       "name": "Media analysis",
       "segmentsPanelHeader": "Segments",
       "chapterColorLabel": "Color",
-      "chapterTextLabel": "Annotation"
+      "chapterTextLabel": "Annotation",
+      "more": "more ...",
+      "less": "less ..."
     }
   },
   {
@@ -2024,7 +2026,9 @@
       "name": "Medien-Analyse",
       "segmentsPanelHeader": "Segmente",
       "chapterColorLabel": "Farbe",
-      "chapterTextLabel": "Anmerkung"
+      "chapterTextLabel": "Anmerkung",
+      "more": "mehr ...",
+      "less": "weniger ..."
     }
   },
   {

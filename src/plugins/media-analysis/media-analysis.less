@@ -8,6 +8,7 @@
 
 .MediaAnalysisDisplay-chapters {
   margin-top: 10px;
+  position: relative;
 }
 
 .MediaAnalysisDisplay-chapterTitles {
@@ -34,19 +35,41 @@
 }
 
 .MediaAnalysisDisplay-chapterTexts {
+  height: 35px;
   display: flex;
-  min-height: 100px;
-  max-height: 200px;
+  overflow: hidden;
+  padding-bottom: 5px;
+
+  &.is-expanded {
+    height: auto;
+  }
 }
 
 .MediaAnalysisDisplay-chapterText {
-  overflow: auto;
   padding: @media-analysis-text-padding;
   border-right: 1px dotted @edu-border-color-base;
+
+  & p {
+    .m-overflow-ellipsis;
+  }
+
+  &.is-expanded p {
+    overflow: auto;
+    white-space: unset;
+    text-overflow: unset;
+  }
 
   &:last-of-type {
     border-right: none;
   }
+}
+
+.MediaAnalysisDisplay-chaptersTextsToggle {
+  position: absolute;
+  right: 5px;
+  bottom: -12px;
+  font-size: 11px;
+  user-select: none;
 }
 
 .MediaAnalysisEditor {}
