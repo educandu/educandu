@@ -16,7 +16,6 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   const { t } = useTranslation('midiPiano');
 
   const { sourceType, sourceUrl, midiTrackTitle } = content;
-  const hasMidiTrackTitle = midiTrackTitle !== '';
 
   const formItemLayout = {
     labelCol: { span: 4 },
