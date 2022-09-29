@@ -470,3 +470,6 @@ trackMixer:
 caption:
   en: Caption
   de: Legende
+defaultVolumePreset:
+  en: Default
+  de: Standard

@@ -2380,7 +2380,8 @@
       "secondaryTrack": "Track {number}",
       "addTrack": "Add track",
       "trackMixer": "Track mixer",
-      "caption": "Caption"
+      "caption": "Caption",
+      "defaultVolumePreset": "Default"
     }
   },
   {
@@ -2540,7 +2541,8 @@
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
       "trackMixer": "Spur-Mixer",
-      "caption": "Legende"
+      "caption": "Legende",
+      "defaultVolumePreset": "Standard"
     }
   },
   {
