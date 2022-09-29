@@ -2255,7 +2255,8 @@
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
-      "emailIsInvalid": "The value you provided is not a valid email address"
+      "emailIsInvalid": "The value you provided is not a valid email address",
+      "midiTrackTitle": "Midi file title"
     }
   },
   {
@@ -2398,7 +2399,8 @@
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
+      "midiTrackTitle": "Mididatei-Titel"
     }
   },
   {

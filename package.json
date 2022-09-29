@@ -26,6 +26,9 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@educandu/node-jsx-loader": "^2.2.0",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@sindresorhus/slugify": "^2.1.0",
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.0.3",

@@ -419,4 +419,7 @@ youtubeCopyrightNotice:
 emailIsInvalid:
   en: The value you provided is not a valid email address
   de: Deine Eingabe ist keine gültige E-Mail-Adresse
+midiTrackTitle:
+  en: Midi file title
+  de: Mididatei-Titel
 

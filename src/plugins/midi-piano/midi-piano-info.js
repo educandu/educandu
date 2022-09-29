@@ -35,7 +35,8 @@ class MidiPianoInfo {
       sourceUrl: '',
       firstNote: 48,
       lastNote: 84,
-      hasMidiFile: false
+      hasMidiFile: false,
+      midiTrackTitle: ''
     };
   }
 

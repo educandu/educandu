@@ -1,9 +1,9 @@
 import React from 'react';
-import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { Form, Input, Radio, Button } from 'antd';
+import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { CDN_URL_PREFIX, MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 import validation from '../../ui/validation.js';
+import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { CDN_URL_PREFIX, MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
@@ -15,15 +15,13 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const { t } = useTranslation('midiPiano');
 
+  const { sourceType, sourceUrl, midiTrackTitle } = content;
+  const hasMidiTrackTitle = midiTrackTitle !== '';
+
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 }
   };
-
-  // eslint-disable-next-line no-console
-  console.log(content);
-
-  const { sourceType, sourceUrl } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -52,6 +50,11 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleInternalSourceUrlFileNameChanged = value => {
     changeContent({ sourceUrl: value });
+  };
+
+  const handleMidiTrackTitleValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ midiTrackTitle: value });
   };
 
   const renderSourceTypeInput = (value, onChangeHandler) => (
@@ -85,8 +88,17 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
     </FormItem>
   );
 
+  const renderMidiTrackTitleInput = (value, onChangeHandler) => (
+    <FormItem label={t('common:midiTrackTitle')} {...formItemLayout} hasFeedback>
+      <Input value={value} onChange={onChangeHandler} />
+    </FormItem>
+  );
+
   return (
     <div className="MidiPianoEditor">
+
+      {renderMidiTrackTitleInput(midiTrackTitle, handleMidiTrackTitleValueChanged)}
+
       <Form>
         {renderSourceTypeInput(sourceType, handleSourceTypeValueChanged)}
 
