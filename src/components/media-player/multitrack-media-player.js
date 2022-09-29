@@ -74,6 +74,9 @@ function MultitrackMediaPlayer({
   downloadFileName,
   posterImageUrl,
   extraCustomContent,
+  volumePresetOptions,
+  selectedVolumePreset,
+  onSelectedVolumePresetChange,
   onPartEndReached,
   onEndReached,
   onPlayStateChange,
@@ -327,6 +330,9 @@ function MultitrackMediaPlayer({
           <MediaPlayerTrackMixer
             mainTrack={loadedSources.mainTrack}
             secondaryTracks={loadedSources.secondaryTracks}
+            volumePresetOptions={volumePresetOptions}
+            selectedVolumePreset={selectedVolumePreset}
+            onSelectedVolumePresetChange={onSelectedVolumePresetChange}
             onMainTrackVolumeChange={handleMainTrackVolumeChange}
             onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
             />
@@ -350,6 +356,7 @@ MultitrackMediaPlayer.propTypes = {
   onPlayingPartIndexChange: PropTypes.func,
   onReady: PropTypes.func,
   onSeek: PropTypes.func,
+  onSelectedVolumePresetChange: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
   })),
@@ -357,6 +364,7 @@ MultitrackMediaPlayer.propTypes = {
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
   screenWidth: PropTypes.number,
+  selectedVolumePreset: PropTypes.number,
   showTrackMixer: PropTypes.bool,
   sources: PropTypes.oneOfType([
     PropTypes.shape({
@@ -373,7 +381,11 @@ MultitrackMediaPlayer.propTypes = {
       }))
     }),
     PropTypes.func
-  ])
+  ]),
+  volumePresetOptions: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    value: PropTypes.number
+  }))
 };
 
 MultitrackMediaPlayer.defaultProps = {
@@ -390,13 +402,16 @@ MultitrackMediaPlayer.defaultProps = {
   onPlayingPartIndexChange: () => {},
   onReady: () => {},
   onSeek: () => {},
+  onSelectedVolumePresetChange: () => {},
   parts: [{ startPosition: 0 }],
   posterImageUrl: null,
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
   screenWidth: 100,
+  selectedVolumePreset: -1,
   showTrackMixer: false,
-  sources: null
+  sources: null,
+  volumePresetOptions: []
 };
 
 export default MultitrackMediaPlayer;
