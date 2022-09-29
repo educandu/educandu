@@ -63,6 +63,17 @@ function getGravatarUrl(userEmail) {
 
 }
 
+function getMidiUrl({ cdnRootUrl, sourceType, sourceUrl }) {
+  switch (sourceType) {
+    case IMAGE_SOURCE_TYPE.external:
+      return sourceUrl || null;
+    case IMAGE_SOURCE_TYPE.internal:
+      return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
+    default:
+      return null;
+  }
+}
+
 export default {
   removeTrailingSlashes,
   removeLeadingSlashes,
@@ -74,5 +85,6 @@ export default {
   isFullyQualifiedUrl,
   ensureIsFullyQualifiedUrl,
   getImageUrl,
-  getGravatarUrl
+  getGravatarUrl,
+  getMidiUrl
 };

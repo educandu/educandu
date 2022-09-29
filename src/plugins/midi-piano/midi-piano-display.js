@@ -12,9 +12,11 @@ export default function MidiPianoDisplay({ content }) {
     return true;
   };
 
+  // eslint-disable-next-line no-console
+  console.log(content);
+
   return (
     <React.Fragment>
-      {/* <div>{content.text}</div> */}
       <PianoComponent content={content} />
       {hasMidiFile() &&
         <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>

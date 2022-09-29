@@ -35,7 +35,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleSourceTypeValueChanged = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value });
+    changeContent({ sourceType: value, sourceUrl: '' });
   };
 
   const handleExternalSourceUrlValueChanged = event => {
@@ -45,6 +45,8 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleInternalSourceUrlValueChanged = event => {
     const { value } = event.target;
+    // eslint-disable-next-line no-console
+    console.dir(event.target);
     changeContent({ sourceUrl: value });
   };
 
