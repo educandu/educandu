@@ -43,8 +43,11 @@ function TrackMixer({
     setIsVolumePresetsModalVisible(true);
   };
 
-  const handleVolumePresetsModalOk = updatedVolumePresets => {
-    onVolumePresetsChange(updatedVolumePresets);
+  const handleVolumePresetsModalOk = (hasMadeChanges, updatedVolumePresets) => {
+    if (hasMadeChanges) {
+      onSelectedVolumePresetChange(0);
+      onVolumePresetsChange(updatedVolumePresets);
+    }
     setIsVolumePresetsModalVisible(false);
   };
 
