@@ -45,12 +45,12 @@ function MediaAnalysisDisplay({ content }) {
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
     .filter(text => !!text).join('\n\n');
 
-  const handleChaptersTextsToggleClick = () => {
-    setAreTextsExpanded(prevValue => !prevValue);
-  };
-
   const handleSelectedVolumePresetChange = volumePresetIndex => {
     setSelectedVolumePresetIndex(volumePresetIndex);
+  };
+
+  const handleChaptersTextsToggleClick = () => {
+    setAreTextsExpanded(prevValue => !prevValue);
   };
 
   const determineChapterWidthInPercentage = chapterIndex => {
