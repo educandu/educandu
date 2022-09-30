@@ -262,7 +262,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               />
           </div>
           <TrackMixer
-            volumePreset={volumePresets}
+            volumePresets={volumePresets}
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
             selectedVolumePreset={selectedVolumePresetIndex}
