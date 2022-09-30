@@ -12,6 +12,7 @@ import { Divider, Form, Input, Radio, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
+import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { useNumberFormat } from '../../components/locale-context.js';
@@ -21,7 +22,6 @@ import ResourcePicker from '../../components/resource-picker/resource-picker.js'
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
@@ -207,7 +207,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           screenWidth={50}
           screenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
+          source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
         <Timeline

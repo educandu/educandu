@@ -1,8 +1,13 @@
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
+import { useService } from '../container-context.js';
 import MediaPlayerTrack from './media-player-track.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getResourceType } from '../../utils/resource-utils.js';
+import { getMediaSourceType } from '../../utils/media-utils.js';
+import PreloadingMediaPlayerTrack from './preloading-media-player-track.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 const createInitialTrackStates = sources => ({
   mainTrack: {
@@ -75,7 +80,12 @@ function MediaPlayerTrackGroup({
   onPlayStateChange,
   sources
 }) {
+  const clientConfig = useService(ClientConfig);
   const [trackStates, setTrackStates] = useState(createInitialTrackStates(sources));
+
+  const cdnRootUrl = clientConfig.cdnRootUrl;
+  const isMultitrack = !!trackStates.secondaryTracks.length;
+
   const trackRefs = useRef({
     mainTrack: { current: null },
     secondaryTracks: sources.secondaryTracks.map(() => ({ current: null }))
@@ -230,9 +240,16 @@ function MediaPlayerTrackGroup({
     }));
   };
 
-  return (
-    <Fragment>
-      <MediaPlayerTrack
+  const getTrackComponent = sourceUrl => {
+    const isAudioFile = getResourceType(sourceUrl) === RESOURCE_TYPE.audio;
+    const isInternalFile = getMediaSourceType({ sourceUrl, cdnRootUrl }) === MEDIA_SOURCE_TYPE.internal;
+    return isMultitrack && isInternalFile && isAudioFile ? PreloadingMediaPlayerTrack : MediaPlayerTrack;
+  };
+
+  const renderMainTrack = () => {
+    const TrackComponent = getTrackComponent(trackStates.mainTrack.sourceUrl);
+    return (
+      <TrackComponent
         key={`${trackStates.mainTrack.sourceUrl}|${trackStates.mainTrack.playbackRange.toString()}`}
         trackRef={trackRefs.current.mainTrack}
         volume={volume * trackStates.mainTrack.volume}
@@ -244,26 +261,37 @@ function MediaPlayerTrackGroup({
         playbackRange={trackStates.mainTrack.playbackRange}
         playbackRate={playbackRate}
         posterImageUrl={posterImageUrl}
-        loadImmediately={!!trackStates.secondaryTracks.length || loadImmediately}
+        loadImmediately={isMultitrack || loadImmediately}
         onDuration={handleMainTrackDuration}
         onEndReached={handleMainTrackEndReached}
         onProgress={handleMainTrackProgress}
         onPlayStateChange={handleMainTrackPlayStateChange}
         />
-      {trackStates.secondaryTracks.map((track, index) => (
-        <MediaPlayerTrack
-          key={`${track.sourceUrl}|${index.toString()}`}
-          trackRef={trackRefs.current.secondaryTracks[index]}
-          volume={volume * track.volume}
-          sourceUrl={track.sourceUrl}
-          screenMode={MEDIA_SCREEN_MODE.none}
-          playbackRate={playbackRate}
-          loadImmediately
-          onDuration={newDuration => handleSecondaryTrackDuration(newDuration, index)}
-          onProgress={newProgress => handleSecondaryTrackProgress(newProgress, index)}
-          onPlayStateChange={newPlayState => handleSecondaryTrackPlayStateChange(newPlayState, index)}
-          />
-      ))}
+    );
+  };
+
+  const renderSecondaryTrack = (track, index) => {
+    const TrackComponent = getTrackComponent(track.sourceUrl);
+    return (
+      <TrackComponent
+        key={`${track.sourceUrl}|${index.toString()}`}
+        trackRef={trackRefs.current.secondaryTracks[index]}
+        volume={volume * track.volume}
+        sourceUrl={track.sourceUrl}
+        screenMode={MEDIA_SCREEN_MODE.none}
+        playbackRate={playbackRate}
+        loadImmediately={isMultitrack || loadImmediately}
+        onDuration={newDuration => handleSecondaryTrackDuration(newDuration, index)}
+        onProgress={newProgress => handleSecondaryTrackProgress(newProgress, index)}
+        onPlayStateChange={newPlayState => handleSecondaryTrackPlayStateChange(newPlayState, index)}
+        />
+    );
+  };
+
+  return (
+    <Fragment>
+      {renderMainTrack()}
+      {trackStates.secondaryTracks.map(renderSecondaryTrack)}
     </Fragment>
   );
 }
