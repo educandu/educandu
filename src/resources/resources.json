@@ -760,6 +760,20 @@
     }
   },
   {
+    "namespace": "volumePresetsModal",
+    "language": "en",
+    "resources": {
+      "modalTitle": "Manage volume presets"
+    }
+  },
+  {
+    "namespace": "volumePresetsModal",
+    "language": "de",
+    "resources": {
+      "modalTitle": "Volumen-Vorwahl bearbeiten"
+    }
+  },
+  {
     "namespace": "newsTab",
     "language": "en",
     "resources": {

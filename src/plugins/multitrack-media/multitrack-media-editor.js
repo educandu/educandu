@@ -102,6 +102,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     setSelectedVolumePresetIndex(volumePresetIndex);
   };
 
+  const handleVolumePresetsChange = updatedVolumePresets => {
+    changeContent({ volumePresets: updatedVolumePresets });
+  };
+
   const handleMainTrackVolumeChange = volume => {
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets[selectedVolumePresetIndex].mainTrack = volume;
@@ -158,10 +162,11 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               />
           </div>
           <TrackMixer
+            volumePresets={volumePresets}
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
             selectedVolumePreset={selectedVolumePresetIndex}
-            volumePresetOptions={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
+            onVolumePresetsChange={handleVolumePresetsChange}
             onMainTrackVolumeChange={handleMainTrackVolumeChange}
             onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
             onSelectedVolumePresetChange={handleSelectedVolumePresetChange}

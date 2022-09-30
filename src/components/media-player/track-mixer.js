@@ -1,12 +1,13 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Select, Tooltip } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useMediaDurations } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import DimensionsProvider from '../dimensions-provider.js';
+import VolumePresetsModal from './volume-presets-modal.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
@@ -14,14 +15,16 @@ const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 function TrackMixer({
   mainTrack,
   secondaryTracks,
-  volumePresetOptions,
+  volumePresets,
   selectedVolumePreset,
   onMainTrackVolumeChange,
   onSecondaryTrackVolumeChange,
-  onSelectedVolumePresetChange
+  onSelectedVolumePresetChange,
+  onVolumePresetsChange
 }) {
   const { t } = useTranslation('trackMixer');
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
+  const [isVolumePresetsModalVisible, setIsVolumePresetsModalVisible] = useState(false);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
   const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
@@ -34,6 +37,19 @@ function TrackMixer({
     const msToPxRatio = containerWidth / mainTrackDurationInMs;
     const maxBarWidth = containerWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
     return Math.min(maxBarWidth, trackDuration * msToPxRatio);
+  };
+
+  const handleVolumePresetsSettingsClick = () => {
+    setIsVolumePresetsModalVisible(true);
+  };
+
+  const handleVolumePresetsModalOk = updatedVolumePresets => {
+    onVolumePresetsChange(updatedVolumePresets);
+    setIsVolumePresetsModalVisible(false);
+  };
+
+  const handleVolumePresetsModalClose = () => {
+    setIsVolumePresetsModalVisible(false);
   };
 
   const tracks = [
@@ -64,12 +80,12 @@ function TrackMixer({
             <div className="TrackMixer-volumePresetsSetup">
               <Select
                 value={selectedVolumePreset}
-                options={volumePresetOptions}
+                options={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
                 onSelect={onSelectedVolumePresetChange}
                 className="TrackMixer-volumePresetSelector"
                 />
               <Tooltip title={t('manageVolumePresets')}>
-                <Button icon={<SettingOutlined />} />
+                <Button icon={<SettingOutlined />} onClick={handleVolumePresetsSettingsClick} />
               </Tooltip>
             </div>
           </div>
@@ -105,6 +121,13 @@ function TrackMixer({
           </DimensionsProvider>
         </div>
       </div>
+
+      <VolumePresetsModal
+        volumePresets={volumePresets}
+        onOk={handleVolumePresetsModalOk}
+        onClose={handleVolumePresetsModalClose}
+        isVisible={isVolumePresetsModalVisible}
+        />
     </div>
   );
 }
@@ -119,15 +142,17 @@ TrackMixer.propTypes = {
   onMainTrackVolumeChange: PropTypes.func.isRequired,
   onSecondaryTrackVolumeChange: PropTypes.func.isRequired,
   onSelectedVolumePresetChange: PropTypes.func.isRequired,
+  onVolumePresetsChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     sourceUrl: PropTypes.string,
     volume: PropTypes.number.isRequired
   })).isRequired,
   selectedVolumePreset: PropTypes.number.isRequired,
-  volumePresetOptions: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string,
-    value: PropTypes.number
+  volumePresets: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    mainTrack: PropTypes.number,
+    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired
 };
 
