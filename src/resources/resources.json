@@ -747,14 +747,16 @@
     "namespace": "trackMixer",
     "language": "en",
     "resources": {
-      "noTrack": "no track"
+      "noTrack": "no track",
+      "manageVolumePresets": "Manage volume presets"
     }
   },
   {
     "namespace": "trackMixer",
     "language": "de",
     "resources": {
-      "noTrack": "keine Spur"
+      "noTrack": "keine Spur",
+      "manageVolumePresets": "Volumen-Vorwahl bearbeiten"
     }
   },
   {
@@ -2381,7 +2383,8 @@
       "addTrack": "Add track",
       "trackMixer": "Track mixer",
       "caption": "Caption",
-      "defaultVolumePreset": "Default"
+      "defaultVolumePreset": "Default",
+      "volumesPreset": "Volumes preset"
     }
   },
   {
@@ -2542,7 +2545,8 @@
       "addTrack": "Spur hinzufügen",
       "trackMixer": "Spur-Mixer",
       "caption": "Legende",
-      "defaultVolumePreset": "Standard"
+      "defaultVolumePreset": "Standard",
+      "volumesPreset": "Volumen-Vorwahl"
     }
   },
   {

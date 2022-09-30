@@ -57,23 +57,30 @@ function MediaPlayerTrackMixer({
 
   return (
     <div className="MediaPlayerTrackMixer">
-      {!!volumePresetOptions.length > 1 && (
-        <Select
-          value={selectedVolumePreset}
-          options={volumePresetOptions}
-          onSelect={onSelectedVolumePresetChange}
-          className="MediaPlayerTrackMixer-volumePresetSelector"
-          />
+      {volumePresetOptions.length > 1 && (
+        <div className="MediaPlayerTrackMixer-volumePreset">
+          <span>{`${t('common:volumesPreset')}:`}</span>
+          <Select
+            bordered={false}
+            placement="bottomRight"
+            dropdownMatchSelectWidth={false}
+            value={selectedVolumePreset}
+            options={volumePresetOptions}
+            onSelect={onSelectedVolumePresetChange}
+            className="MediaPlayerTrackMixer-volumePresetSelector"
+            />
+        </div>
       )}
-      {tracks.map((track, index) => (
-        <div key={index.toString()} className="MediaPlayerTrackMixer-track">
-          <div className="MediaPlayerTrackMixer-trackVolume">
-            <MediaVolumeSlider
-              orientation="vertical"
-              value={track.volume}
-              onChange={newValue => track.onVolumeChange(newValue)}
-              />
-            {tracks.length > 1 && (
+      <div className="MediaPlayerTrackMixer-tracks">
+        {tracks.map((track, index) => (
+          <div key={index.toString()} className="MediaPlayerTrackMixer-track">
+            <div className="MediaPlayerTrackMixer-trackVolume">
+              <MediaVolumeSlider
+                orientation="vertical"
+                value={track.volume}
+                onChange={newValue => track.onVolumeChange(newValue)}
+                />
+              {tracks.length > 1 && (
               <div className="MediaPlayerTrackMixer-trackSolo">
                 <Button
                   type="link"
@@ -82,13 +89,14 @@ function MediaPlayerTrackMixer({
                   onClick={() => handleTrackSoloClick(track, index)}
                   />
               </div>
-            )}
+              )}
+            </div>
+            <div className="MediaPlayerTrackMixer-trackName">
+              {track.displayName}
+            </div>
           </div>
-          <div className="MediaPlayerTrackMixer-trackName">
-            {track.displayName}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

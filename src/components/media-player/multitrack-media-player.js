@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import cloneDeep from '../../utils/clone-deep.js';
 import { useService } from '../container-context.js';
 import { useDedupedCallback } from '../../ui/hooks.js';
 import HttpClient from '../../api-clients/http-client.js';
@@ -214,22 +215,19 @@ function MultitrackMediaPlayer({
   };
 
   const handleMainTrackVolumeChange = newValue => {
-    setLoadedSources(oldValue => ({
-      ...oldValue,
-      mainTrack: {
-        ...oldValue.mainTrack,
-        volume: newValue
-      }
-    }));
+    setLoadedSources(oldValue => {
+      const newLoadedSources = cloneDeep(oldValue);
+      newLoadedSources.mainTrack.volume = newValue;
+      return newLoadedSources;
+    });
   };
 
   const handleSecondaryTrackVolumeChange = (newValue, secondaryTrackIndex) => {
-    setLoadedSources(oldValue => ({
-      ...oldValue,
-      secondaryTracks: oldValue.secondaryTracks.map((track, index) => {
-        return index === secondaryTrackIndex ? { ...track, volume: newValue } : track;
-      })
-    }));
+    setLoadedSources(oldValue => {
+      const newLoadedSources = cloneDeep(oldValue);
+      newLoadedSources.secondaryTracks[secondaryTrackIndex].volume = newValue;
+      return newLoadedSources;
+    });
   };
 
   mediaPlayerRef.current = {

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { Button, Select, Tooltip } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { useMediaDurations } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import DimensionsProvider from '../dimensions-provider.js';
@@ -56,18 +57,26 @@ function TrackMixer({
 
   return (
     <div className="TrackMixer">
-      <Select
-        className="TrackMixer-volumePresetSelector"
-        filterOption={false}
-        value={selectedVolumePreset}
-        options={volumePresetOptions}
-        onSelect={onSelectedVolumePresetChange}
-        />
       <div className="TrackMixer-tracks">
-        <div className="TrackMixer-namesColumn">
+        <div className="TrackMixer-volumesColumn">
+          <div className="TrackMixer-volumePresets">
+            <span>{`${t('common:volumesPreset')}:`}</span>
+            <div className="TrackMixer-volumePresetsSetup">
+              <Select
+                value={selectedVolumePreset}
+                options={volumePresetOptions}
+                onSelect={onSelectedVolumePresetChange}
+                className="TrackMixer-volumePresetSelector"
+                />
+              <Tooltip title={t('manageVolumePresets')}>
+                <Button icon={<SettingOutlined />} />
+              </Tooltip>
+            </div>
+          </div>
+
           {tracks.map(trackInfo => (
-            <div className="TrackMixer-nameRow" key={trackInfo.secondaryTrackIndex}>
-              <div className="TrackMixer-name">{trackInfo.name}</div>
+            <div className="TrackMixer-trackNameAndVolume" key={trackInfo.secondaryTrackIndex}>
+              <div className="TrackMixer-trackName">{trackInfo.name}</div>
               <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} />
             </div>
           ))}

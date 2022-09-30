@@ -473,3 +473,6 @@ caption:
 defaultVolumePreset:
   en: Default
   de: Standard
+volumesPreset:
+  en: Volumes preset
+  de: Volumen-Vorwahl
