@@ -71,6 +71,7 @@
     "markdown-it": "^12.2.0",
     "md5": "^2.3.0",
     "memoizee": "^0.4.15",
+    "midi-player-js": "^2.0.16",
     "mime": "^2.5.2",
     "minio": "^7.0.26",
     "moment": "^2.29.1",

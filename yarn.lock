@@ -5390,6 +5390,11 @@ micromatch@^4.0.2:
     braces "^3.0.1"
     picomatch "^2.0.5"
 
+midi-player-js@^2.0.16:
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/midi-player-js/-/midi-player-js-2.0.16.tgz#41167859e3f430e55eeb962887cb498726d6c570"
+  integrity sha512-Y1yCRvvSjJjT5J4U8T4XTCDF1FLXtw8Otvq5BAmIob/2cj10aQUDrPDFByTWeuMRPu6/nLhusROc1DuTLCzRnw==
+
 midimessage@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/midimessage/-/midimessage-1.0.5.tgz#ad99f04d863a053a2563d553c5bf35070b48802c"
