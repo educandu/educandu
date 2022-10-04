@@ -280,7 +280,7 @@ function MediaPlayerTrackGroup({
         sourceUrl={track.sourceUrl}
         screenMode={MEDIA_SCREEN_MODE.none}
         playbackRate={playbackRate}
-        loadImmediately={isMultitrack || loadImmediately}
+        loadImmediately
         onDuration={newDuration => handleSecondaryTrackDuration(newDuration, index)}
         onProgress={newProgress => handleSecondaryTrackProgress(newProgress, index)}
         onPlayStateChange={newPlayState => handleSecondaryTrackPlayStateChange(newPlayState, index)}
