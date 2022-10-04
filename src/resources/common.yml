@@ -473,6 +473,6 @@ caption:
 defaultVolumePreset:
   en: Default
   de: Standard
-volumesPreset:
+volumePreset:
   en: Volumes preset
-  de: Volumen-Vorwahl
+  de: Lautstärke-Voreinstellung

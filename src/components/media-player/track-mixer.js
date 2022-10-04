@@ -79,7 +79,7 @@ function TrackMixer({
       <div className="TrackMixer-tracks">
         <div className="TrackMixer-volumesColumn">
           <div className="TrackMixer-volumePresets">
-            <span>{`${t('common:volumesPreset')}:`}</span>
+            <span>{`${t('common:volumePreset')}:`}</span>
             <div className="TrackMixer-volumePresetsSetup">
               <Select
                 value={selectedVolumePreset}

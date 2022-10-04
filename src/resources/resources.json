@@ -756,7 +756,7 @@
     "language": "de",
     "resources": {
       "noTrack": "keine Spur",
-      "manageVolumePresets": "Volumen-Vorwahl bearbeiten"
+      "manageVolumePresets": "Lautstärke-Voreinstellungen bearbeiten"
     }
   },
   {
@@ -770,7 +770,7 @@
     "namespace": "volumePresetsModal",
     "language": "de",
     "resources": {
-      "modalTitle": "Volumen-Vorwahl bearbeiten"
+      "modalTitle": "Lautstärke-Voreinstellungen bearbeiten"
     }
   },
   {
@@ -2398,7 +2398,7 @@
       "trackMixer": "Track mixer",
       "caption": "Caption",
       "defaultVolumePreset": "Default",
-      "volumesPreset": "Volumes preset"
+      "volumePreset": "Volumes preset"
     }
   },
   {
@@ -2560,7 +2560,7 @@
       "trackMixer": "Spur-Mixer",
       "caption": "Legende",
       "defaultVolumePreset": "Standard",
-      "volumesPreset": "Volumen-Vorwahl"
+      "volumePreset": "Lautstärke-Voreinstellung"
     }
   },
   {

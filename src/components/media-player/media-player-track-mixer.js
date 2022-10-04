@@ -59,7 +59,7 @@ function MediaPlayerTrackMixer({
     <div className="MediaPlayerTrackMixer">
       {volumePresetOptions.length > 1 && (
         <div className="MediaPlayerTrackMixer-volumePreset">
-          <span>{`${t('common:volumesPreset')}:`}</span>
+          <span>{`${t('common:volumePreset')}:`}</span>
           <Select
             bordered={false}
             placement="bottomRight"
