@@ -1,11 +1,19 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import { Button, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import MediaVolumeSlider from './media-volume-slider.js';
 import SoloIcon from '../icons/media-player/solo-icon.js';
 
-function MediaPlayerTrackMixer({ mainTrack, secondaryTracks, onMainTrackVolumeChange, onSecondaryTrackVolumeChange }) {
+function MediaPlayerTrackMixer({
+  mainTrack,
+  secondaryTracks,
+  volumePresetOptions,
+  selectedVolumePreset,
+  onMainTrackVolumeChange,
+  onSecondaryTrackVolumeChange,
+  onSelectedVolumePresetChange
+}) {
   const { t } = useTranslation('mediaPlayerTrackMixer');
 
   const [tracks, setTracks] = useState([]);
@@ -49,15 +57,30 @@ function MediaPlayerTrackMixer({ mainTrack, secondaryTracks, onMainTrackVolumeCh
 
   return (
     <div className="MediaPlayerTrackMixer">
-      {tracks.map((track, index) => (
-        <div key={index.toString()} className="MediaPlayerTrackMixer-track">
-          <div className="MediaPlayerTrackMixer-trackVolume">
-            <MediaVolumeSlider
-              orientation="vertical"
-              value={track.volume}
-              onChange={newValue => track.onVolumeChange(newValue)}
-              />
-            {tracks.length > 1 && (
+      {volumePresetOptions.length > 1 && (
+        <div className="MediaPlayerTrackMixer-volumePreset">
+          <span>{`${t('common:volumePreset')}:`}</span>
+          <Select
+            bordered={false}
+            placement="bottomRight"
+            dropdownMatchSelectWidth={false}
+            value={selectedVolumePreset}
+            options={volumePresetOptions}
+            onSelect={onSelectedVolumePresetChange}
+            className="MediaPlayerTrackMixer-volumePresetSelector"
+            />
+        </div>
+      )}
+      <div className="MediaPlayerTrackMixer-tracks">
+        {tracks.map((track, index) => (
+          <div key={index.toString()} className="MediaPlayerTrackMixer-track">
+            <div className="MediaPlayerTrackMixer-trackVolume">
+              <MediaVolumeSlider
+                orientation="vertical"
+                value={track.volume}
+                onChange={newValue => track.onVolumeChange(newValue)}
+                />
+              {tracks.length > 1 && (
               <div className="MediaPlayerTrackMixer-trackSolo">
                 <Button
                   type="link"
@@ -66,13 +89,14 @@ function MediaPlayerTrackMixer({ mainTrack, secondaryTracks, onMainTrackVolumeCh
                   onClick={() => handleTrackSoloClick(track, index)}
                   />
               </div>
-            )}
+              )}
+            </div>
+            <div className="MediaPlayerTrackMixer-trackName">
+              {track.displayName}
+            </div>
           </div>
-          <div className="MediaPlayerTrackMixer-trackName">
-            {track.displayName}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -84,16 +108,25 @@ MediaPlayerTrackMixer.propTypes = {
   }).isRequired,
   onMainTrackVolumeChange: PropTypes.func,
   onSecondaryTrackVolumeChange: PropTypes.func,
+  onSelectedVolumePresetChange: PropTypes.func,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     volume: PropTypes.number.isRequired
+  })),
+  selectedVolumePreset: PropTypes.number,
+  volumePresetOptions: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    value: PropTypes.number
   }))
 };
 
 MediaPlayerTrackMixer.defaultProps = {
   onMainTrackVolumeChange: () => {},
   onSecondaryTrackVolumeChange: () => {},
-  secondaryTracks: []
+  onSelectedVolumePresetChange: () => {},
+  secondaryTracks: [],
+  selectedVolumePreset: -1,
+  volumePresetOptions: []
 };
 
 export default MediaPlayerTrackMixer;

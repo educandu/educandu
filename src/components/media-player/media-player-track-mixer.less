@@ -1,4 +1,6 @@
-.MediaPlayerTrackMixer {
+.MediaPlayerTrackMixer {}
+
+.MediaPlayerTrackMixer-tracks {
   display: flex;
   flex-wrap: wrap;
   .m-fake-flex-gap(10px);
@@ -24,4 +26,16 @@
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.MediaPlayerTrackMixer-volumePreset {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.MediaPlayerTrackMixer-volumePresetSelector {
+  text-decoration: underline;
+  max-width: 200px;
 }

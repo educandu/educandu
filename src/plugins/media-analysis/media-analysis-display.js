@@ -16,8 +16,9 @@ function MediaAnalysisDisplay({ content }) {
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const { width, mainTrack, secondaryTracks, chapters } = content;
+  const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 
   const sources = {
     mainTrack: {
@@ -27,22 +28,26 @@ function MediaAnalysisDisplay({ content }) {
         sourceType: mainTrack.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
-      volume: mainTrack.volume,
+      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
       playbackRange: mainTrack.playbackRange
     },
-    secondaryTracks: secondaryTracks.map(track => ({
+    secondaryTracks: secondaryTracks.map((track, index) => ({
       name: track.name,
       sourceUrl: urlUtils.getMediaUrl({
         sourceUrl: track.sourceUrl,
         sourceType: track.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
-      volume: track.volume
+      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
     }))
   };
 
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
     .filter(text => !!text).join('\n\n');
+
+  const handleSelectedVolumePresetChange = volumePresetIndex => {
+    setSelectedVolumePresetIndex(volumePresetIndex);
+  };
 
   const handleChaptersTextsToggleClick = () => {
     setAreTextsExpanded(prevValue => !prevValue);
@@ -119,6 +124,9 @@ function MediaAnalysisDisplay({ content }) {
               mediaPlayerRef={playerRef}
               showTrackMixer={secondaryTracks.length > 0}
               extraCustomContent={renderChapters()}
+              selectedVolumePreset={selectedVolumePresetIndex}
+              onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
+              volumePresetOptions={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
               />
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>

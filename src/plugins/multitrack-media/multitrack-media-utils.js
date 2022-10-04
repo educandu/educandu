@@ -6,8 +6,7 @@ export function createDefaultSecondaryTrack(index, t) {
     name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
     sourceType: MEDIA_SOURCE_TYPE.internal,
     sourceUrl: '',
-    copyrightNotice: '',
-    volume: 1
+    copyrightNotice: ''
   };
 }
 
@@ -19,16 +18,25 @@ export function createDefaultMainTrack(t) {
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
     showVideo: false,
-    playbackRange: [0, 1],
-    volume: 1
+    playbackRange: [0, 1]
+  };
+}
+
+export function createDefaultVolumePreset(t, secondaryTracksCount) {
+  return {
+    name: t('common:defaultVolumePreset'),
+    mainTrack: 1,
+    secondaryTracks: new Array(secondaryTracksCount).fill(1)
   };
 }
 
 export function createDefaultContent(t) {
+  const secondaryTracks = [createDefaultSecondaryTrack(0, t)];
   return {
     width: 100,
     mainTrack: createDefaultMainTrack(t),
-    secondaryTracks: [createDefaultSecondaryTrack(0, t)]
+    secondaryTracks,
+    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
   };
 }
 
@@ -42,16 +50,18 @@ export function validateContent(content) {
       copyrightNotice: joi.string().allow('').required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
       showVideo: joi.boolean().required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
-      volume: joi.number().min(0).max(1).required()
-
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
     }).required(),
     secondaryTracks: joi.array().items(joi.object({
       name: joi.string().allow('').required(),
       sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
-      copyrightNotice: joi.string().allow('').required(),
-      volume: joi.number().min(0).max(1).required()
+      copyrightNotice: joi.string().allow('').required()
+    })).required(),
+    volumePresets: joi.array().items(joi.object({
+      name: joi.string().required(),
+      mainTrack: joi.number().min(0).max(1).required(),
+      secondaryTracks: joi.array().items(joi.number().min(0).max(1)).required()
     })).required()
   });
 

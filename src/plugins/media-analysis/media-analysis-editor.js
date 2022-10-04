@@ -41,28 +41,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaAnalysis');
   const { formatPercentage } = useNumberFormat();
 
-  const { width, mainTrack, secondaryTracks, chapters } = content;
-  const sources = {
-    mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: mainTrack.sourceUrl,
-        sourceType: mainTrack.sourceType,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: mainTrack.volume,
-      playbackRange: mainTrack.playbackRange
-    },
-    secondaryTracks: secondaryTracks.map(track => ({
-      name: track.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: track.sourceUrl,
-        sourceType: track.sourceType,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: track.volume
-    }))
-  };
+  const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     urlUtils.getMediaUrl({
@@ -77,6 +56,29 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+
+  const sources = {
+    mainTrack: {
+      name: mainTrack.name,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: mainTrack.sourceUrl,
+        sourceType: mainTrack.sourceType,
+        cdnRootUrl: clientConfig.cdnRootUrl
+      }),
+      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
+      playbackRange: mainTrack.playbackRange
+    },
+    secondaryTracks: secondaryTracks.map((track, index) => ({
+      name: track.name,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: track.sourceUrl,
+        sourceType: track.sourceType,
+        cdnRootUrl: clientConfig.cdnRootUrl
+      }),
+      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
+    }))
+  };
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -109,31 +111,58 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const handleMoveTrackUp = index => {
-    changeContent({ secondaryTracks: swapItemsAt(secondaryTracks, index, index - 1) });
+    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index - 1);
+    const newVolumePresets = volumePresets.slice();
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index - 1);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleMoveTrackDown = index => {
-    changeContent({ secondaryTracks: swapItemsAt(secondaryTracks, index, index + 1) });
+    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index + 1);
+    const newVolumePresets = volumePresets.slice();
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index + 1);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleDeleteTrack = index => {
-    changeContent({ secondaryTracks: removeItemAt(secondaryTracks, index) });
+    const newSecondaryTracks = removeItemAt(secondaryTracks, index);
+    const newVolumePresets = volumePresets.slice();
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = removeItemAt(preset.secondaryTracks, index);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleAddTrackButtonClick = () => {
     const newSecondaryTracks = secondaryTracks.slice();
     newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
-    changeContent({ secondaryTracks: newSecondaryTracks });
+    const newVolumePresets = volumePresets.slice();
+    newVolumePresets.forEach(preset => preset.secondaryTracks.push(1));
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
-  const handleMainTrackSettingsChange = ({ volume }) => {
-    changeContent({ mainTrack: { ...mainTrack, volume } });
+  const handleSelectedVolumePresetChange = volumePresetIndex => {
+    setSelectedVolumePresetIndex(volumePresetIndex);
   };
 
-  const handleSecondaryTrackSettingsChange = (index, { volume }) => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index] = { ...secondaryTracks[index], volume };
-    changeContent({ secondaryTracks: newSecondaryTracks });
+  const handleVolumePresetsChange = updatedVolumePresets => {
+    changeContent({ volumePresets: updatedVolumePresets });
+  };
+
+  const handleMainTrackVolumeChange = volume => {
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets[selectedVolumePresetIndex].mainTrack = volume;
+    changeContent({ volumePresets: newVolumePresets });
+  };
+
+  const handleSecondaryTrackVolumeChange = (volume, secondaryTrackIndex) => {
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets[selectedVolumePresetIndex].secondaryTracks[secondaryTrackIndex] = volume;
+    changeContent({ volumePresets: newVolumePresets });
   };
 
   const handleChapterAdd = startPosition => {
@@ -233,10 +262,14 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               />
           </div>
           <TrackMixer
+            volumePresets={volumePresets}
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
-            onMainTrackSettingsChange={handleMainTrackSettingsChange}
-            onSecondaryTrackSettingsChange={handleSecondaryTrackSettingsChange}
+            selectedVolumePreset={selectedVolumePresetIndex}
+            onVolumePresetsChange={handleVolumePresetsChange}
+            onMainTrackVolumeChange={handleMainTrackVolumeChange}
+            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
+            onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
         <ItemPanel header={t('segmentsPanelHeader')}>

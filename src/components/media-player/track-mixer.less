@@ -2,33 +2,47 @@
 @track-mixer-bar-height: 18px;
 @tracx-mixer-bar-duration-top: -4px;
 @tracx-mixer-bar-duration-left-right: 2px;
-@track-mixer-column-padding: 10px 0;
 @track-mixer-bar-overflow-width: 10px;
 
-.TrackMixer {
+.TrackMixer {}
+
+.TrackMixer-tracks {
   display: grid;
+  align-items: end;
   grid-template-columns: auto 1fr;
-  gap: 15px;
 }
 
-.TrackMixer-namesColumn {
-  padding: @track-mixer-column-padding;
+.TrackMixer-volumesColumn {}
+
+.TrackMixer-volumePresets {
+  display: flex;
+  flex-direction: column;
 }
 
-.TrackMixer-nameRow {
+.TrackMixer-volumePresetsSetup {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr auto;
+  margin: 5px 0 20px 0px;
+}
+
+.TrackMixer-volumePresetSelector {
+  width: 100%;
+}
+
+.TrackMixer-trackNameAndVolume {
   .m-control-group;
   height: @track-mixer-row-height;
+  margin-right: 15px;
 }
 
-.TrackMixer-name {
+.TrackMixer-trackName {
   .m-overflow-ellipsis;
   text-align: end;
   width: 100px;
 }
 
 .TrackMixer-barsColumn {
-  margin: 0 10px 0 0;
-  padding: @track-mixer-column-padding;
   border-left: 1px dashed @edu-border-color-dark;
   border-right: 1px dashed @edu-border-color-dark;
 }
