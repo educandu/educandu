@@ -33,10 +33,13 @@ class MidiPianoInfo {
     return {
       sourceType: MIDI_SOURCE_TYPE.internal,
       sourceUrl: '',
-      firstNote: 48,
-      lastNote: 84,
+      noteRange: {
+        first: 31,
+        last: 89
+      },
       hasMidiFile: false,
-      midiTrackTitle: ''
+      midiTrackTitle: '',
+      activeNotes: []
     };
   }
 

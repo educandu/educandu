@@ -1935,14 +1935,22 @@
     "namespace": "midiPiano",
     "language": "en",
     "resources": {
-      "name": "Midi piano"
+      "name": "Midi piano",
+      "midiTrackTitle": "Track title",
+      "pianoKeyRange": "Key range",
+      "confirm": "Confirm",
+      "keyRangeSelectionNote": "Please select the two outermost keys to be displayed."
     }
   },
   {
     "namespace": "midiPiano",
     "language": "de",
     "resources": {
-      "name": "Midi-Klavier"
+      "name": "Midi-Klavier",
+      "midiTrackTitle": "Stück-Titel",
+      "pianoKeyRange": "Tastenumfang",
+      "confirm": "Bestätigen",
+      "keyRangeSelectionNote": "Bitte wählen Sie die beiden äußersten anzuzeigenden Tasten aus."
     }
   },
   {
@@ -2255,8 +2263,7 @@
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
-      "emailIsInvalid": "The value you provided is not a valid email address",
-      "midiTrackTitle": "Track title"
+      "emailIsInvalid": "The value you provided is not a valid email address"
     }
   },
   {
@@ -2399,8 +2406,7 @@
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
-      "midiTrackTitle": "Stück-Titel"
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
     }
   },
   {
