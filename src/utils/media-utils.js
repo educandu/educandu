@@ -1,10 +1,11 @@
 import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
+import urlUtils from './url-utils.js';
 import reactPlayerNs from 'react-player';
 import validation from '../ui/validation.js';
 import { getResourceType } from './resource-utils.js';
-import { MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
+import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -142,10 +143,16 @@ export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange
   return (playbackRange[1] - playbackRange[0]) * sourceDuration;
 }
 
-export function getFullSourceUrl({ url, sourceType, cdnRootUrl }) {
-  return url && sourceType === MEDIA_SOURCE_TYPE.internal
-    ? `${cdnRootUrl}/${url}`
-    : url || null;
+export function getMediaSourceType({ sourceUrl, cdnRootUrl }) {
+  if (sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX)) {
+    return MEDIA_SOURCE_TYPE.internal;
+  }
+
+  if (sourceUrl.startsWith('https://www.youtube.com/')) {
+    return MEDIA_SOURCE_TYPE.youtube;
+  }
+
+  return MEDIA_SOURCE_TYPE.external;
 }
 
 export async function getMediaInformation({ url, sourceType, playbackRange, cdnRootUrl, t }) {
@@ -167,7 +174,7 @@ export async function getMediaInformation({ url, sourceType, playbackRange, cdnR
       return defaultResult;
     }
 
-    const completeUrl = getFullSourceUrl({ url, sourceType, cdnRootUrl });
+    const completeUrl = urlUtils.getMediaUrl({ sourceUrl: url, sourceType, cdnRootUrl });
 
     const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
     const duration = await determineMediaDuration(completeUrl);

@@ -9,6 +9,7 @@ import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -21,7 +22,6 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { createDefaultChapter, createDefaultSecondaryTrack } from './media-analysis-utils.js';
@@ -45,8 +45,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: getFullSourceUrl({
-        url: mainTrack.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: mainTrack.sourceUrl,
         sourceType: mainTrack.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
@@ -55,8 +55,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     },
     secondaryTracks: secondaryTracks.map(track => ({
       name: track.name,
-      sourceUrl: getFullSourceUrl({
-        url: track.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: track.sourceUrl,
         sourceType: track.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),

@@ -47,16 +47,21 @@ function MediaPlayerTrack({
     }
   }, [playbackRange, lastPlaybackRange, sourceDuration, currentPlayState, onDuration, onProgress, onPlayStateChange]);
 
-  const changePlayState = newPlayState => {
-    setLastPlayStateBeforeBuffering(prev => newPlayState !== MEDIA_PLAY_STATE.buffering ? newPlayState : prev);
-    setCurrentPlayState(newPlayState);
-    onPlayStateChange?.(newPlayState);
-  };
-
   const changeProgress = newSourceTimecode => {
     const trackStartTimecode = lastPlaybackRange[0] * sourceDuration;
     setLastProgressTimecode(newSourceTimecode);
     onProgress?.(newSourceTimecode - trackStartTimecode);
+  };
+
+  const changePlayState = newPlayState => {
+    if (newPlayState === MEDIA_PLAY_STATE.pausing) {
+      const sourceTimecode = playerRef.current.getCurrentTime() * 1000;
+      changeProgress(sourceTimecode);
+    }
+
+    setLastPlayStateBeforeBuffering(prev => newPlayState !== MEDIA_PLAY_STATE.buffering ? newPlayState : prev);
+    setCurrentPlayState(newPlayState);
+    onPlayStateChange?.(newPlayState);
   };
 
   const seekToStartIfNecessary = newSourceDuration => {

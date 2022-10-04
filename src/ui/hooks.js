@@ -82,6 +82,12 @@ export function useOnComponentMounted(callback) {
   }, [callback, isCallbackCalled]);
 }
 
+export function useOnComponentUnmount(callback) {
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
+  useEffect(() => () => callbackRef.current?.(), []);
+}
+
 export function useDedupedCallback(callback) {
   const obj = useRef({});
   obj.current.callback = callback;

@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
-import { getFullSourceUrl } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -22,8 +22,8 @@ function MediaAnalysisDisplay({ content }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: getFullSourceUrl({
-        url: mainTrack.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: mainTrack.sourceUrl,
         sourceType: mainTrack.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
@@ -32,8 +32,8 @@ function MediaAnalysisDisplay({ content }) {
     },
     secondaryTracks: secondaryTracks.map(track => ({
       name: track.name,
-      sourceUrl: getFullSourceUrl({
-        url: track.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: track.sourceUrl,
         sourceType: track.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),

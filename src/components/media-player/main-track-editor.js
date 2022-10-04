@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import validation from '../../ui/validation.js';
 import MarkdownInput from '../markdown-input.js';
 import React, { Fragment, useState } from 'react';
@@ -13,8 +14,8 @@ import MediaRangeSelector from './media-range-selector.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import ResourcePicker from '../resource-picker/resource-picker.js';
+import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { formatMediaPosition, getFullSourceUrl, getMediaInformation } from '../../utils/media-utils.js';
 import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -203,7 +204,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
           <MediaRangeSelector
             range={playbackRange}
             onRangeChange={handlePlaybackRangeChange}
-            sourceUrl={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
+            sourceUrl={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
             />
         </div>
       </FormItem>

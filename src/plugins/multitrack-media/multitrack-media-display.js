@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
+import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { getFullSourceUrl } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -16,8 +16,8 @@ function MultitrackMediaDisplay({ content }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: getFullSourceUrl({
-        url: mainTrack.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: mainTrack.sourceUrl,
         sourceType: mainTrack.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
@@ -26,8 +26,8 @@ function MultitrackMediaDisplay({ content }) {
     },
     secondaryTracks: secondaryTracks.map(track => ({
       name: track.name,
-      sourceUrl: getFullSourceUrl({
-        url: track.sourceUrl,
+      sourceUrl: urlUtils.getMediaUrl({
+        sourceUrl: track.sourceUrl,
         sourceType: track.sourceType,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),

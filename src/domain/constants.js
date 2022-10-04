@@ -172,7 +172,7 @@ export const CDN_URL_PREFIX = 'cdn://';
 
 export const AVATAR_SIZE = 110;
 
-export const MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS = 100;
+export const MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS = 20;
 
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';

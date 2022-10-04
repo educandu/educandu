@@ -11,6 +11,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
+import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -21,7 +22,6 @@ import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { formatMediaPosition, getFullSourceUrl } from '../../utils/media-utils.js';
 import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
@@ -216,7 +216,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
-          source={getFullSourceUrl({ url: sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
+          source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           screenWidth={50}
           />
