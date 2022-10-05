@@ -2,15 +2,17 @@ import PropTypes from 'prop-types';
 import { Piano } from 'react-piano';
 import React, { useEffect, useState, useRef } from 'react';
 
-export default function PianoComponent({ noteRange, playNote, stopNote, setActiveNotesInChildRef }) {
+export default function PianoComponent(props) {
 
-  const [activeNotes, setActiveNotes] = useState([]);
+  const defaultKeyWidth = 29.2;
+  const renderCount = useRef(0);
+  const renderPiano = useRef(false);
   const containerDiv = useRef(null);
   const containerWidth = useRef(null);
   const pianoWrapperDiv = useRef(null);
   const pianoWrapperWidth = useRef(null);
-  const renderPiano = useRef(false);
-  const defaultKeyWidth = 29.2;
+  const { noteRange, playNote, stopNote, keys } = props;
+  const [pianoWrapperDimensions, setPianoWrapperDimensions] = useState({});
 
   function getNumberOfKeysRendered() {
     return noteRange.last - noteRange.first + 1;
@@ -18,38 +20,7 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
 
   const numberOfKeysRendered = getNumberOfKeysRendered();
 
-  function setActiveNotesWrapper(eventType, midiValue) {
-    setActiveNotes(prevArray => {
-      if (midiValue === 0) {
-        return [];
-      }
-      let array;
-      let index;
-      const prevNotes = [...prevArray];
-      switch (eventType) {
-        case 'Note on':
-          array = [...prevArray];
-          array.push(midiValue);
-          break;
-        case 'Note off':
-          index = prevNotes.indexOf(midiValue);
-          prevNotes.splice(index, 1);
-          array = [...prevNotes];
-          break;
-        default:
-          break;
-      }
-      return array;
-    });
-  }
-
-  useEffect(() => {
-    setActiveNotesInChildRef.current = setActiveNotesWrapper;
-  }, []);
-
-  const [pianoWrapperDimensions, setpianoWrapperDimensions] = useState({});
-
-  const getWidthAndHeight = clientWidth => {
+  const getPianoWrapperDimensions = clientWidth => {
     let width;
     let height;
     if (numberOfKeysRendered > 39) {
@@ -72,16 +43,6 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
     return { width: `${width}px`, height: `${height}px` };
   };
 
-  useEffect(() => {
-    if (!containerDiv.current.clientWidth || containerDiv.current.clientWidth === containerWidth.current) {
-      return;
-    }
-    containerWidth.current = containerDiv.current.clientWidth;
-    const obj = getWidthAndHeight(containerDiv.current.clientWidth);
-    renderPiano.current = true;
-    setpianoWrapperDimensions(obj);
-  });
-
   const handleWindowResize = () => {
     const neededWidth = numberOfKeysRendered * defaultKeyWidth;
     if (containerDiv.current.clientWidth === containerWidth.current) {
@@ -93,9 +54,23 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
     if (containerDiv.current.clientWidth > containerWidth.current && neededWidth < containerDiv.current.clientWidth) {
       return;
     }
-    const obj = getWidthAndHeight(containerDiv.current.clientWidth);
-    setpianoWrapperDimensions(obj);
+    const obj = getPianoWrapperDimensions(containerDiv.current.clientWidth);
+    setPianoWrapperDimensions(obj);
   };
+
+  useEffect(() => {
+    renderCount.current += 1;
+  });
+
+  useEffect(() => {
+    if (containerDiv.current.clientWidth === containerWidth.current) {
+      return;
+    }
+    containerWidth.current = containerDiv.current.clientWidth;
+    const obj = getPianoWrapperDimensions(containerDiv.current.clientWidth);
+    renderPiano.current = true;
+    setPianoWrapperDimensions(obj);
+  });
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize);
@@ -103,6 +78,19 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
       window.removeEventListener('resize', handleWindowResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (renderCount.current !== 2) {
+      return;
+    }
+    const keyElems = document.querySelectorAll('.ReactPiano__Key');
+    const midiValueStart = noteRange.first;
+    let index = midiValueStart;
+    for (const elem of keyElems) {
+      keys.current[index] = elem;
+      index += 1;
+    }
+  });
 
   return (
     <div ref={containerDiv} style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -112,7 +100,6 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
           noteRange={noteRange}
           playNote={playNote}
           stopNote={stopNote}
-          activeNotes={activeNotes}
           />)}
       </div>
     </div>
@@ -120,12 +107,9 @@ export default function PianoComponent({ noteRange, playNote, stopNote, setActiv
 }
 
 PianoComponent.propTypes = {
+  keys: PropTypes.object.isRequired,
   noteRange: PropTypes.object.isRequired,
   playNote: PropTypes.func.isRequired,
-  setActiveNotesInChildRef: PropTypes.object,
   stopNote: PropTypes.func.isRequired
 };
 
-PianoComponent.defaultProps = {
-  setActiveNotesInChildRef: {}
-};

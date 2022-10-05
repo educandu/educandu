@@ -4,8 +4,8 @@ import { Button } from 'antd';
 import midiPlayerNs from 'midi-player-js';
 import urlUtils from '../../utils/url-utils.js';
 import React, { useEffect, useRef } from 'react';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import PianoComponent from './piano-component.js';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -14,19 +14,18 @@ import PauseIcon from '../../components/icons/media-player/pause-icon.js';
 
 export default function MidiPianoDisplay({ content }) {
 
-  const sampler = useRef(null);
+  const keys = useRef([]);
   const player = useRef(null);
-  const samplerHasLoaded = useRef(false);
+  const sampler = useRef(null);
   const midiData = useRef(null);
+  const midiAccessObj = useRef(null);
+  const samplerHasLoaded = useRef(false);
+  const { NOTES } = midiPlayerNs.Constants;
   const { sourceType, sourceUrl, midiTrackTitle, noteRange } = content;
-  const clientConfig = useService(ClientConfig);
-  const src = urlUtils.getMidiUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
   const hasMidiFile = sourceUrl !== '';
   const hasMidiTrackTitle = midiTrackTitle !== '';
-  const { NOTES } = midiPlayerNs.Constants;
-  const midiAccessObj = useRef(null);
-
-  const setActiveNotesInChildRef = useRef(null);
+  const clientConfig = useService(ClientConfig);
+  const src = urlUtils.getMidiUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   const getNoteNameFromMidiValue = midiValue => {
     return NOTES[midiValue];
@@ -48,7 +47,7 @@ export default function MidiPianoDisplay({ content }) {
     }
   };
 
-  function handleSamplerEvent(eventType, noteName, midiValue) {
+  function handleSamplerEvent(eventType, noteName) {
     switch (eventType) {
       case 'Note on':
         sampler.current.triggerAttack(noteName);
@@ -59,7 +58,19 @@ export default function MidiPianoDisplay({ content }) {
       default:
         break;
     }
-    setActiveNotesInChildRef.current(eventType, midiValue);
+  }
+
+  function updateKeyVisualization(eventType, midiValue) {
+    if (!keys.current[midiValue]) {
+      return;
+    }
+    if (eventType === 'Note on') {
+      keys.current[midiValue].classList.add('ReactPiano__Key--active');
+      return;
+    }
+    if (eventType === 'Note off') {
+      keys.current[midiValue].classList.remove('ReactPiano__Key--active');
+    }
   }
 
   function handleMidiDeviceEvent(message) {
@@ -68,7 +79,8 @@ export default function MidiPianoDisplay({ content }) {
     const command = message.data[0];
     const eventType = getEventTypefromMidiCommand(command, velocity);
     const midiValue = message.data[1];
-    handleSamplerEvent(eventType, noteName, midiValue);
+    updateKeyVisualization(eventType, midiValue);
+    handleSamplerEvent(eventType, noteName);
   }
 
   function onMIDISuccess(midiAccess) {
@@ -92,8 +104,8 @@ export default function MidiPianoDisplay({ content }) {
     const eventType = velocity > 0 ? 'Note on' : 'Note off';
     const noteName = message.noteName;
     const midiValue = message.noteNumber;
-
-    handleSamplerEvent(eventType, noteName, midiValue);
+    updateKeyVisualization(eventType, midiValue);
+    handleSamplerEvent(eventType, noteName);
   }
 
   function instantiatePlayer() {
@@ -113,6 +125,14 @@ export default function MidiPianoDisplay({ content }) {
     player.current.loadArrayBuffer(midiData.current);
   }
 
+  const removeActiveClassFromKeys = () => {
+    for (const key of keys.current) {
+      if (key && key.classList.contains('ReactPiano__Key--active')) {
+        key.classList.remove('ReactPiano__Key--active');
+      }
+    }
+  };
+
   const startMidiPlayer = () => {
 
     if (player.current !== null && player.current.isPlaying()) {
@@ -131,14 +151,14 @@ export default function MidiPianoDisplay({ content }) {
       return;
     }
     player.current.pause();
+    removeActiveClassFromKeys();
     sampler.current.releaseAll();
-    setActiveNotesInChildRef.current('Note off', 0);
   };
 
   const stopMidiPlayer = () => {
     player.current.stop();
+    removeActiveClassFromKeys();
     sampler.current.releaseAll();
-    setActiveNotesInChildRef.current('Note off', 0);
   };
 
   const playNote = midiValue => {
@@ -240,7 +260,7 @@ export default function MidiPianoDisplay({ content }) {
       if (!midiAccessObj.current) {
         return;
       }
-      if (player.current !== null && player.current.isPlaying) {
+      if (player.current !== null && player.current.isPlaying()) {
         stopMidiPlayer();
       }
       for (const input of midiAccessObj.current.inputs.values()) {
@@ -255,8 +275,7 @@ export default function MidiPianoDisplay({ content }) {
         noteRange={noteRange}
         playNote={playNote}
         stopNote={stopNote}
-        setActiveNotesInChildRef={setActiveNotesInChildRef}
-        keyWidthToHeight={1}
+        keys={keys}
         />
       <div style={{ paddingTop: '1.5rem' }}>
         {hasMidiFile

@@ -1,8 +1,8 @@
 import { Piano } from 'react-piano';
-import React, { Fragment, useState } from 'react';
-import { Form, Input, Radio, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import React, { Fragment, useState } from 'react';
+import { Form, Input, Radio, Button } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { CDN_URL_PREFIX, MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
@@ -10,14 +10,12 @@ import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/
 
 export default function MidiPianoEditor({ content, onContentChanged }) {
 
-  const RadioButton = Radio.Button;
-  const RadioGroup = Radio.Group;
   const FormItem = Form.Item;
-  const [keyRangeSelectorPianoOpened, setKeyRangeSelectorOpened] = useState(false);
-
+  const RadioGroup = Radio.Group;
+  const RadioButton = Radio.Button;
   const { t } = useTranslation('midiPiano');
-
   const { sourceType, sourceUrl, midiTrackTitle, activeNotes } = content;
+  const [keyRangeSelectorPianoOpened, setKeyRangeSelectorOpened] = useState(false);
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -44,8 +42,6 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleInternalSourceUrlValueChanged = event => {
     const { value } = event.target;
-    // eslint-disable-next-line no-console
-    console.dir(event.target);
     changeContent({ sourceUrl: value });
   };
 
@@ -59,21 +55,12 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   };
 
   const handleActiveNotesChanged = midiValue => {
-    // // eslint-disable-next-line no-console
-    // console.log(`MIDIVALUE ${midiValue}`);
-    // // eslint-disable-next-line no-console
-    // console.log(`activeNotes: ${activeNotes}`);
-
     let validNoteRange;
     let array = [...activeNotes];
 
-    // eslint-disable-next-line no-console
-    console.log(`array: ${array}`);
     if (array.includes(midiValue)) {
       const index = array.indexOf(midiValue);
       array.splice(index, 1);
-      // eslint-disable-next-line no-console
-      console.log(`AN REMOVE: ${array}`);
       if (array.length === 2) {
         array.sort((a, b) => {
           return a - b;
@@ -82,8 +69,6 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
           first: array[0],
           last: array[1]
         };
-        // eslint-disable-next-line no-console
-        console.log(validNoteRange);
         changeContent({ activeNotes: array, noteRange: validNoteRange });
         return;
       }
@@ -99,13 +84,9 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
         first: array[0],
         last: array[1]
       };
-      // eslint-disable-next-line no-console
-      console.log(validNoteRange);
       changeContent({ activeNotes: array, noteRange: validNoteRange });
       return;
     }
-    // eslint-disable-next-line no-console
-    console.log(`AN ADD: ${array}`);
     changeContent({ activeNotes: array, noteRange: validNoteRange });
   };
 
