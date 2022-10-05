@@ -83,8 +83,6 @@ export default function MidiPianoDisplay({ content }) {
     console.log('Could not access your MIDI devices.');
   }
 
-  navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-
   function handleMidiPlayerEvent(message) {
 
     const velocity = message.velocity;
@@ -129,13 +127,18 @@ export default function MidiPianoDisplay({ content }) {
   };
 
   const pauseMidiPlayer = () => {
+    if (!player.current.isPlaying()) {
+      return;
+    }
     player.current.pause();
     sampler.current.releaseAll();
+    setActiveNotesInChildRef.current('Note off', 0);
   };
 
   const stopMidiPlayer = () => {
     player.current.stop();
     sampler.current.releaseAll();
+    setActiveNotesInChildRef.current('Note off', 0);
   };
 
   const playNote = midiValue => {
@@ -174,6 +177,10 @@ export default function MidiPianoDisplay({ content }) {
   const renderMidiTrackTitle = () => (
     <div style={{ display: 'flex', justifyContent: 'center' }}>{midiTrackTitle}</div>
   );
+
+  useEffect(() => {
+    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+  });
 
   useEffect(() => {
     if (sampler.current) {
@@ -251,7 +258,6 @@ export default function MidiPianoDisplay({ content }) {
         setActiveNotesInChildRef={setActiveNotesInChildRef}
         keyWidthToHeight={1}
         />
-
       <div style={{ paddingTop: '1.5rem' }}>
         {hasMidiFile
           && renderControls()}

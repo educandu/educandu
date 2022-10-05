@@ -1939,7 +1939,7 @@
       "midiTrackTitle": "Track title",
       "pianoKeyRange": "Key range",
       "confirm": "Confirm",
-      "keyRangeSelectionNote": "Please select the two outermost keys to be displayed."
+      "keyRangeSelectionNote": "Please select the two outermost white keys to be displayed."
     }
   },
   {
@@ -1950,7 +1950,7 @@
       "midiTrackTitle": "Stück-Titel",
       "pianoKeyRange": "Tastenumfang",
       "confirm": "Bestätigen",
-      "keyRangeSelectionNote": "Bitte wählen Sie die beiden äußersten anzuzeigenden Tasten aus."
+      "keyRangeSelectionNote": "Bitte wählen Sie die beiden äußersten anzuzeigenden weißen Tasten aus."
     }
   },
   {
