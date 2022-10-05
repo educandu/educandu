@@ -89,7 +89,9 @@ function MediaPlayerTrack({
   };
 
   const handleBufferEnd = () => {
-    changePlayState(lastPlayStateBeforeBuffering);
+    if (currentPlayState === MEDIA_PLAY_STATE.buffering) {
+      changePlayState(lastPlayStateBeforeBuffering);
+    }
   };
 
   const handlePlay = () => {
