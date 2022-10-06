@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
+import { useService } from './container-context.js';
+import HttpClient from '../api-clients/http-client.js';
 import OpenSheetMusicDisplayExport from 'opensheetmusicdisplay';
 
 const { OpenSheetMusicDisplay } = OpenSheetMusicDisplayExport;
@@ -14,6 +16,7 @@ function MusicXmlDocument({ url, zoom }) {
   const divRef = useRef(null);
   const isMounted = useRef(false);
   const lastLoadedUrl = useRef(null);
+  const httpClient = useService(HttpClient);
   const hasRenderedAtLeastOnce = useRef(false);
 
   useEffect(() => {
@@ -34,7 +37,8 @@ function MusicXmlDocument({ url, zoom }) {
       if (url) {
         if (url !== lastLoadedUrl.current) {
           lastLoadedUrl.current = url;
-          await currentOsmd.load(url);
+          const res = await httpClient.get(url, { responseType: 'document', withCredetials: true });
+          await currentOsmd.load(res.data);
         }
         if (isMounted.current) {
           currentOsmd.zoom = zoom;
@@ -45,7 +49,7 @@ function MusicXmlDocument({ url, zoom }) {
         currentOsmd.clear();
       }
     })();
-  }, [url, zoom, osmd]);
+  }, [url, zoom, osmd, httpClient]);
 
   return (
     <div ref={divRef} />
