@@ -40,6 +40,9 @@ externalUsers:
 storageUsers:
   en: Users with storage
   de: Benutzer mit Speicher
+closedAccountUsers:
+  en: Closed accounts
+  de: Geschlossene Kontos
 selectPlan:
   en: Select plan
   de: Plan auswählen
@@ -58,3 +61,6 @@ storageSpace:
 reminders:
   en: Reminders
   de: Erinnerungen
+accountClosedOn:
+  en: Account closing date
+  de: Kontoschlussdatum
