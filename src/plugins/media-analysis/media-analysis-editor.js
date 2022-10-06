@@ -1,10 +1,14 @@
 import by from 'thenby';
+import classNames from 'classnames';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import { COLOR_SWATCHES } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import * as reactDropzoneNs from 'react-dropzone';
 import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
@@ -13,7 +17,6 @@ import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useNumberFormat } from '../../components/locale-context.js';
 import TrackMixer from '../../components/media-player/track-mixer.js';
@@ -22,11 +25,16 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { ImportOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
-import { createDefaultChapter, createDefaultSecondaryTrack } from './media-analysis-utils.js';
+import { createDefaultChapter, createDefaultSecondaryTrack, parseChaptersFromCsv } from './media-analysis-utils.js';
+
+const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
 const FormItem = Form.Item;
+
+const logger = new Logger(import.meta.url);
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -165,6 +173,39 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ volumePresets: newVolumePresets });
   };
 
+  const handleFileDrop = async fs => {
+    if (!fs.length) {
+      return;
+    }
+
+    try {
+      const newChapters = await parseChaptersFromCsv(fs[0]);
+      setSelectedChapterIndex(0);
+      changeContent({ chapters: newChapters });
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
+  const dropzone = useDropzone({
+    maxFiles: 1,
+    // We have to disable the FS Access API due to some Chrome bug when setting `accept`,
+    // see also https://github.com/react-dropzone/react-dropzone/issues/1127
+    useFsAccessApi: false,
+    accept: { 'text/csv': ['.csv'] },
+    onDrop: handleFileDrop,
+    noKeyboard: true,
+    noClick: true
+  });
+
+  const handleExtraItemClick = key => {
+    if (key === 'import-from-csv') {
+      dropzone.open();
+    } else {
+      throw new Error(`Invalid key '${key}'`);
+    }
+  };
+
   const handleChapterAdd = startPosition => {
     const chapter = { ...createDefaultChapter(t), startPosition };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
@@ -215,6 +256,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], text: value };
     changeContent({ chapters: newChapters });
   };
+
+  const segmentsDropzoneClasses = classNames({
+    'MediaAnalysisEditor-segments': true,
+    'u-can-drop': dropzone.isDragAccept,
+    'u-cannot-drop': dropzone.isDragReject
+  });
 
   return (
     <div className="MediaAnalysisEditor">
@@ -272,61 +319,72 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
-        <ItemPanel header={t('segmentsPanelHeader')}>
-          <Timeline
-            durationInMilliseconds={mainTrackPlaybackDuration}
-            parts={chapters}
-            selectedPartIndex={selectedChapterIndex}
-            onPartAdd={handleChapterAdd}
-            onPartDelete={handleChapterDelete}
-            onStartPositionChange={handleChapterStartPositionChange}
-            />
-
-          {chapters.length && (
-          <Fragment>
-            <ChapterSelector
-              chaptersCount={chapters.length}
-              selectedChapterIndex={selectedChapterIndex}
-              selectedChapterTitle={chapters[selectedChapterIndex].title}
-              onChapterIndexChange={handleChapterIndexChange}
+        <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
+          <input {...dropzone.getInputProps()} hidden />
+          <ItemPanel
+            header={t('segmentsPanelHeader')}
+            extraItems={[
+              {
+                key: 'import-from-csv',
+                label: t('importFromCsv'),
+                icon: <ImportOutlined className="u-dropdown-icon" />
+              }
+            ]}
+            onExtraItemClick={handleExtraItemClick}
+            >
+            <Timeline
+              durationInMilliseconds={mainTrackPlaybackDuration}
+              parts={chapters}
+              selectedPartIndex={selectedChapterIndex}
+              onPartAdd={handleChapterAdd}
+              onPartDelete={handleChapterDelete}
+              onStartPositionChange={handleChapterStartPositionChange}
               />
-            <FormItem label={t('common:startTimecode')} {...formItemLayout}>
-              <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
-              </span>
-            </FormItem>
-            <FormItem label={t('common:duration')} {...formItemLayout}>
-              <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
-              </span>
-            </FormItem>
-            <FormItem label={t('common:title')} {...formItemLayout}>
-              <Input
-                disabled={!selectedChapterFraction}
-                onChange={handleChapterTitleChange}
-                value={chapters[selectedChapterIndex].title}
+            {chapters.length && (
+            <Fragment>
+              <ChapterSelector
+                chaptersCount={chapters.length}
+                selectedChapterIndex={selectedChapterIndex}
+                selectedChapterTitle={chapters[selectedChapterIndex].title}
+                onChapterIndexChange={handleChapterIndexChange}
                 />
-            </FormItem>
-            <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
-              <ColorPicker
-                width={382}
-                colors={COLOR_SWATCHES}
-                color={chapters[selectedChapterIndex].color}
-                onChange={handleChapterColorChange}
-                />
-            </FormItem>
-            <FormItem label={t('chapterTextLabel')} {...formItemLayout}>
-              <MarkdownInput
-                preview
-                disabled={!selectedChapterFraction}
-                onChange={handleChapterTextChange}
-                value={chapters?.[selectedChapterIndex].text || ''}
-                />
-            </FormItem>
-          </Fragment>
-          )}
-        </ItemPanel>
-
+              <FormItem label={t('common:startTimecode')} {...formItemLayout}>
+                <span className="InteractiveMediaEditor-readonlyValue">
+                  {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
+                </span>
+              </FormItem>
+              <FormItem label={t('common:duration')} {...formItemLayout}>
+                <span className="InteractiveMediaEditor-readonlyValue">
+                  {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
+                </span>
+              </FormItem>
+              <FormItem label={t('common:title')} {...formItemLayout}>
+                <Input
+                  disabled={!selectedChapterFraction}
+                  onChange={handleChapterTitleChange}
+                  value={chapters[selectedChapterIndex].title}
+                  />
+              </FormItem>
+              <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
+                <ColorPicker
+                  width={382}
+                  colors={COLOR_SWATCHES}
+                  color={chapters[selectedChapterIndex].color}
+                  onChange={handleChapterColorChange}
+                  />
+              </FormItem>
+              <FormItem label={t('chapterTextLabel')} {...formItemLayout}>
+                <MarkdownInput
+                  preview
+                  disabled={!selectedChapterFraction}
+                  onChange={handleChapterTextChange}
+                  value={chapters?.[selectedChapterIndex].text || ''}
+                  />
+              </FormItem>
+            </Fragment>
+            )}
+          </ItemPanel>
+        </div>
         <FormItem
           label={
             <Fragment>

@@ -16,3 +16,6 @@ more:
 less:
   en: less ...
   de: weniger ...
+importFromCsv:
+  en: Import from CSV file
+  de: Aus CSV-Datei importieren

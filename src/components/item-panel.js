@@ -16,7 +16,9 @@ function ItemPanel({
   onMoveDown,
   onDelete,
   canDeleteLastItem,
-  itemsCount
+  itemsCount,
+  extraItems,
+  onExtraItemClick
 }) {
   const { t } = useTranslation();
   const settingsButtonRef = useRef(null);
@@ -41,7 +43,7 @@ function ItemPanel({
       case 'delete':
         return confirmDeleteItem(t, header, () => onDelete(index));
       default:
-        throw new Error(`Unknown key: ${menuItem.key}`);
+        return onExtraItemClick(menuItem.key);
     }
   };
 
@@ -73,6 +75,8 @@ function ItemPanel({
     });
   }
 
+  items.push(...extraItems);
+
   const renderMenu = () => {
     if (!items.length) {
       return null;
@@ -97,20 +101,30 @@ function ItemPanel({
 ItemPanel.propTypes = {
   canDeleteLastItem: PropTypes.bool,
   children: PropTypes.node.isRequired,
+  extraItems: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.node,
+    danger: PropTypes.bool,
+    disabled: PropTypes.bool
+  })),
   header: PropTypes.string,
   index: PropTypes.number,
   itemsCount: PropTypes.number,
   onDelete: PropTypes.func,
+  onExtraItemClick: PropTypes.func,
   onMoveDown: PropTypes.func,
   onMoveUp: PropTypes.func
 };
 
 ItemPanel.defaultProps = {
   canDeleteLastItem: false,
+  extraItems: [],
   header: '',
   index: 0,
   itemsCount: 1,
   onDelete: null,
+  onExtraItemClick: () => {},
   onMoveDown: null,
   onMoveUp: null
 };

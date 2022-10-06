@@ -2032,7 +2032,8 @@
       "chapterColorLabel": "Color",
       "chapterTextLabel": "Annotation",
       "more": "more ...",
-      "less": "less ..."
+      "less": "less ...",
+      "importFromCsv": "Import from CSV file"
     }
   },
   {
@@ -2044,7 +2045,8 @@
       "chapterColorLabel": "Farbe",
       "chapterTextLabel": "Anmerkung",
       "more": "mehr ...",
-      "less": "weniger ..."
+      "less": "weniger ...",
+      "importFromCsv": "Aus CSV-Datei importieren"
     }
   },
   {
