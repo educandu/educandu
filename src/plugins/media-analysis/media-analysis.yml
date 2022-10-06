@@ -16,6 +16,9 @@ more:
 less:
   en: less ...
   de: weniger ...
+exportAsCsv:
+  en: Export as CSV file
+  de: Als CSV-Datei exportieren
 importFromCsv:
   en: Import from CSV file
   de: Aus CSV-Datei importieren

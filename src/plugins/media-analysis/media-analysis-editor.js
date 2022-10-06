@@ -8,6 +8,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
 import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
+import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -25,10 +26,10 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { ImportOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
-import { createDefaultChapter, createDefaultSecondaryTrack, parseChaptersFromCsv } from './media-analysis-utils.js';
+import { ExportOutlined, ImportOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
@@ -45,6 +46,7 @@ const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.star
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
   const playerRef = useRef(null);
+  const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
   const { formatPercentage } = useNumberFormat();
@@ -179,7 +181,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     }
 
     try {
-      const newChapters = await parseChaptersFromCsv(fs[0]);
+      const newChapters = await importChaptersFromCsv(fs[0]);
       setSelectedChapterIndex(0);
       changeContent({ chapters: newChapters });
     } catch (error) {
@@ -187,7 +189,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     }
   };
 
-  const dropzone = useDropzone({
+  const csvImportDropzone = useDropzone({
     maxFiles: 1,
     // We have to disable the FS Access API due to some Chrome bug when setting `accept`,
     // see also https://github.com/react-dropzone/react-dropzone/issues/1127
@@ -198,11 +200,23 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     noClick: true
   });
 
+  const startCsvExport = async () => {
+    const csv = exportChaptersAsCsv(chapters);
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    await httpClient.download(url, 'segments.csv');
+    URL.revokeObjectURL(url);
+  };
+
   const handleExtraItemClick = key => {
-    if (key === 'import-from-csv') {
-      dropzone.open();
-    } else {
-      throw new Error(`Invalid key '${key}'`);
+    switch (key) {
+      case 'export-as-csv':
+        startCsvExport();
+        break;
+      case 'import-from-csv':
+        csvImportDropzone.open();
+        break;
+      default:
+        throw new Error(`Invalid key '${key}'`);
     }
   };
 
@@ -259,8 +273,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const segmentsDropzoneClasses = classNames({
     'MediaAnalysisEditor-segments': true,
-    'u-can-drop': dropzone.isDragAccept,
-    'u-cannot-drop': dropzone.isDragReject
+    'u-can-drop': csvImportDropzone.isDragAccept,
+    'u-cannot-drop': csvImportDropzone.isDragReject
   });
 
   return (
@@ -319,11 +333,16 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
-        <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
-          <input {...dropzone.getInputProps()} hidden />
+        <div {...csvImportDropzone.getRootProps({ className: segmentsDropzoneClasses })}>
+          <input {...csvImportDropzone.getInputProps()} hidden />
           <ItemPanel
             header={t('segmentsPanelHeader')}
             extraItems={[
+              {
+                key: 'export-as-csv',
+                label: t('exportAsCsv'),
+                icon: <ExportOutlined className="u-dropdown-icon" />
+              },
               {
                 key: 'import-from-csv',
                 label: t('importFromCsv'),

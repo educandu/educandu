@@ -2033,6 +2033,7 @@
       "chapterTextLabel": "Annotation",
       "more": "more ...",
       "less": "less ...",
+      "exportAsCsv": "Export as CSV file",
       "importFromCsv": "Import from CSV file"
     }
   },
@@ -2046,6 +2047,7 @@
       "chapterTextLabel": "Anmerkung",
       "more": "mehr ...",
       "less": "weniger ...",
+      "exportAsCsv": "Als CSV-Datei exportieren",
       "importFromCsv": "Aus CSV-Datei importieren"
     }
   },

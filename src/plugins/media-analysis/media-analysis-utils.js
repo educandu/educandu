@@ -65,7 +65,20 @@ export function createDefaultContent(t) {
   };
 }
 
-export function parseChaptersFromCsv(csvStringOrFile) {
+export function exportChaptersToCsv(chapters) {
+  return [
+    'startPosition,title,color,text',
+    ...chapters.map(chapter => [
+      chapter.startPosition.toString(),
+      `"${chapter.title.replace(/"/g, '""')}"`,
+      `"${chapter.color.replace(/"/g, '""')}"`,
+      `"${chapter.text.replace(/"/g, '""')}"`
+    ].join(',')),
+    ''
+  ].join('\n');
+}
+
+export function importChaptersFromCsv(csvStringOrFile) {
   return new Promise((resolve, reject) => {
     parseCsv(csvStringOrFile, {
       header: true,
