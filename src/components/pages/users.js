@@ -30,7 +30,8 @@ const availableRoles = Object.values(ROLE);
 const TABS = {
   internalUsers: 'internal-users',
   externalUsers: 'external-users',
-  storageUsers: 'storage-users'
+  storageUsers: 'storage-users',
+  closedAccountUsers: 'closed-accounts'
 };
 
 function createUserSubsets(users, storagePlans) {
@@ -40,7 +41,10 @@ function createUserSubsets(users, storagePlans) {
   const externalUsers = [];
   const storageUsers = [];
 
-  for (const user of users) {
+  const activeAccountUsers = users.filter(user => !user.accountClosedOn);
+  const closedAccountUsers = users.filter(user => user.accountClosedOn);
+
+  for (const user of activeAccountUsers) {
     const enrichedUserObject = {
       ...user,
       storagePlan: storagePlansById.get(user.storage.planId) || null,
@@ -58,7 +62,7 @@ function createUserSubsets(users, storagePlans) {
     }
   }
 
-  return { internalUsers, externalUsers, storageUsers };
+  return { internalUsers, externalUsers, storageUsers, closedAccountUsers };
 }
 
 function Users({ initialState, PageTemplate }) {
@@ -75,6 +79,7 @@ function Users({ initialState, PageTemplate }) {
   const [internalUsers, setInternalUsers] = useState([]);
   const [externalUsers, setExternalUsers] = useState([]);
   const [storageUsers, setStorageUsers] = useState([]);
+  const [closedAccountUsers, setClosedAccountUsers] = useState([]);
 
   useEffect(() => {
     const subsets = createUserSubsets(users, initialState.storagePlans);
@@ -82,6 +87,7 @@ function Users({ initialState, PageTemplate }) {
     setInternalUsers(subsets.internalUsers);
     setExternalUsers(subsets.externalUsers);
     setStorageUsers(subsets.storageUsers);
+    setClosedAccountUsers(subsets.closedAccountUsers);
   }, [users, initialState.storagePlans]);
 
   const handleRoleChange = async (user, newRoles) => {
@@ -305,6 +311,10 @@ function Users({ initialState, PageTemplate }) {
     );
   };
 
+  const renderAccountClosedOn = accountClosedOn => {
+    return <span>{formatDate(accountClosedOn)}</span>;
+  };
+
   const internalUserTableColumns = [
     {
       title: () => t('common:displayName'),
@@ -414,6 +424,23 @@ function Users({ initialState, PageTemplate }) {
     }
   ];
 
+  const closedAccountUserTableColumns = [
+    {
+      title: () => t('common:displayName'),
+      dataIndex: 'displayName',
+      key: 'displayName',
+      sorter: by(x => x.displayName, { ignoreCase: true }),
+      render: renderDisplayName
+    },
+    {
+      title: () => t('accountClosedOn'),
+      dataIndex: 'accountClosedOn',
+      key: 'accountClosedOn',
+      sorter: by(x => x.accountClosedOn),
+      render: renderAccountClosedOn
+    }
+  ];
+
   return (
     <PageTemplate>
       <div className="UsersPage">
@@ -442,6 +469,15 @@ function Users({ initialState, PageTemplate }) {
             <Table
               dataSource={storageUsers}
               columns={storageUserTableColumns}
+              rowKey="_id"
+              size="middle"
+              bordered
+              />
+          </TabPane>
+          <TabPane className="Tabs-tabPane" tab={t('closedAccountUsers')} key={TABS.closedAccountUsers}>
+            <Table
+              dataSource={closedAccountUsers}
+              columns={closedAccountUserTableColumns}
               rowKey="_id"
               size="middle"
               bordered

@@ -1269,12 +1269,14 @@
       "internalUsers": "Internal users",
       "externalUsers": "External users",
       "storageUsers": "Users with storage",
+      "closedAccountUsers": "Closed accounts",
       "selectPlan": "Select plan",
       "addReminder": "Add reminder",
       "removeAllReminders": "Remove reminders",
       "deleteAllPrivateRooms": "Delete private rooms",
       "storageSpace": "Storage space",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "accountClosedOn": "Account closing date"
     }
   },
   {
@@ -1295,12 +1297,14 @@
       "internalUsers": "Interne Benutzer",
       "externalUsers": "Externe Benutzer",
       "storageUsers": "Benutzer mit Speicher",
+      "closedAccountUsers": "Geschlossene Kontos",
       "selectPlan": "Plan auswählen",
       "addReminder": "Erinnerung hinzufügen",
       "removeAllReminders": "Erinnerungen entfernen",
       "deleteAllPrivateRooms": "Private Räume löschen",
       "storageSpace": "Speicherplatz",
-      "reminders": "Erinnerungen"
+      "reminders": "Erinnerungen",
+      "accountClosedOn": "Kontoschlussdatum"
     }
   },
   {
