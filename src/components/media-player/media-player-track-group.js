@@ -227,6 +227,15 @@ function MediaPlayerTrackGroup({
       }
     }));
 
+    if (newPlayState === MEDIA_PLAY_STATE.pausing) {
+      const currentMainTimecode = trackStates.mainTrack.currentTimecode;
+      syncSecondaryTracks(currentMainTimecode, false);
+    }
+    if (newPlayState === MEDIA_PLAY_STATE.playing) {
+      const currentMainTimecode = trackStates.mainTrack.currentTimecode;
+      syncSecondaryTracks(currentMainTimecode, true);
+    }
+
     onPlayStateChange(newPlayState);
   };
 
