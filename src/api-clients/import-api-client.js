@@ -19,11 +19,11 @@ class ImportApiClient {
       .then(res => res.data);
   }
 
-  postImport({ hostName, documentsToImport }) {
+  postImport({ hostName, documentsToImport, nativeImport }) {
     return this.httpClient
       .post(
         '/api/v1/imports',
-        { hostName, documentsToImport },
+        { hostName, documentsToImport, nativeImport },
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -33,7 +33,7 @@ class DocumentImportTaskProcessor {
       apiKey: importSource.apiKey,
       documentId,
       toRevision: importableRevision,
-      includeEmails: batchParams.nativeImport || false
+      includeEmails: batchParams.nativeImport
     });
 
     if (ctx.cancellationRequested) {

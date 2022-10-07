@@ -6,7 +6,7 @@ import { validateQuery } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { getExportsQuerySchema, getExportsDocumentQuerySchema } from '../domain/schemas/export-schemas.js';
 
-const { BadRequest } = httpErrors;
+const { BadRequest, Forbidden } = httpErrors;
 
 class ExportController {
   static get inject() { return [ExportService, Database]; }
@@ -43,6 +43,9 @@ class ExportController {
     }
 
     const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, toRevision, includeEmails });
+    if (revisions.some(revision => revision.roomId)) {
+      throw new Forbidden('Private documents cannot be exported');
+    }
 
     return res.send({ revisions, users, cdnRootUrl });
   }
@@ -56,7 +59,7 @@ class ExportController {
 
     router.get(
       '/api/v1/exports/:documentId',
-      validateQuery(getExportsDocumentQuerySchema),
+      [needsPermission(permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER), validateQuery(getExportsDocumentQuerySchema)],
       (req, res) => this.handleGetExport(req, res)
     );
   }
