@@ -88,7 +88,7 @@ describe('export-service', () => {
     beforeEach(() => {
       sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByDocumentId');
 
-      userStore.getUsersByIds.resolves([{ _id: 'user1', displayName: 'JohnDoe' }]);
+      userStore.getUsersByIds.resolves([{ _id: 'user1', displayName: 'JohnDoe', email: 'johndoe@test.com' }]);
       documentRevisionStore.getAllDocumentRevisionsByDocumentId.resolves([rev1, rev2, rev3]);
     });
 
@@ -130,7 +130,25 @@ describe('export-service', () => {
       });
 
       it('should return revisions', () => {
-        expect(result).toEqual({ revisions: [rev1, rev2], users: [{ _id: 'user1', displayName: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
+        expect(result).toEqual({
+          revisions: [rev1, rev2],
+          users: [{ _id: 'user1', displayName: 'JohnDoe', email: null }],
+          cdnRootUrl: 'https://cdn.root.url'
+        });
+      });
+    });
+
+    describe('with includeEmails = true', () => {
+      beforeEach(async () => {
+        result = await sut.getDocumentExport({ documentId: 'abc', toRevision: '2', includeEmails: true });
+      });
+
+      it('should return revisions', () => {
+        expect(result).toEqual({
+          revisions: [rev1, rev2],
+          users: [{ _id: 'user1', displayName: 'JohnDoe', email: 'johndoe@test.com' }],
+          cdnRootUrl: 'https://cdn.root.url'
+        });
       });
     });
   });

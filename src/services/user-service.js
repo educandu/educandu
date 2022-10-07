@@ -270,6 +270,33 @@ class UserService {
     await this.userStore.saveUser(user);
   }
 
+  async ensureInternalUser({ _id, displayName, email }) {
+    const users = await this.userStore.getUsersByEmailAddress(email);
+    const activeUser = users.find(user => !user.accountClosedOn);
+    const userWithClosedAccount = users.find(user => user.accountClosedOn);
+
+    if (activeUser) {
+      return activeUser._id;
+    }
+
+    if (userWithClosedAccount) {
+      return userWithClosedAccount._id;
+    }
+
+    const user = {
+      ...this._buildEmptyUser(),
+      _id,
+      provider: DEFAULT_PROVIDER_NAME,
+      email,
+      passwordHash: null,
+      displayName,
+      accountClosedOn: new Date()
+    };
+    await this.userStore.saveUser(user);
+
+    return _id;
+  }
+
   async verifyUser(verificationCode, provider = DEFAULT_PROVIDER_NAME) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;

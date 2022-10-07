@@ -24,7 +24,7 @@ class ExportService {
       .sort(by(doc => doc.updatedOn, 'desc'));
   }
 
-  async getDocumentExport({ documentId, toRevision }) {
+  async getDocumentExport({ documentId, toRevision, includeEmails = false }) {
     const revisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     const lastRevisionIndex = revisions.findIndex(revision => revision._id === toRevision);
 
@@ -36,7 +36,7 @@ class ExportService {
 
     const userIds = extractUserIdsFromDocsOrRevisions(revisionsToExport);
     const users = (await this.userStore.getUsersByIds(userIds))
-      .map(({ _id, displayName }) => ({ _id, displayName }));
+      .map(({ _id, displayName, email }) => ({ _id, displayName, email: includeEmails ? email : null }));
 
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${users.length} users in document ${documentId} up to revision '${toRevision}', but found ${userIds.length}`);

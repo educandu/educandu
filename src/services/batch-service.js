@@ -29,8 +29,8 @@ class BatchService {
     this.roomStore = roomStore;
   }
 
-  async createImportBatch({ importSource, documentsToImport, user }) {
-    const batchParams = { ...importSource };
+  async createImportBatch({ importSource, documentsToImport, user, nativeImport = false }) {
+    const batchParams = { ...importSource, nativeImport };
     delete batchParams.apiKey;
 
     const batch = this._createBatchObject(user._id, BATCH_TYPE.documentImport, batchParams);
