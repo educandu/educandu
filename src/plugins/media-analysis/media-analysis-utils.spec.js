@@ -32,7 +32,7 @@ describe('media-analysis-utils', () => {
       const csv = exportChaptersToCsv(chapters);
 
       expect(csv).toBe([
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0,"Intro","#4582b4","Annotation 1 - Segment 1\n\nAnnotation 2 - Segment 1"',
         '0.3,"Chorus","#228b22","Annotation with ""QUOTES"" inside"',
         '0.6,"Outro","#000000","Another annotation"',
@@ -46,7 +46,7 @@ describe('media-analysis-utils', () => {
 
     it('parses the chapters correctly', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0,Intro,#4582b4,"Annotation 1 - Segment 1\n\nAnnotation 2 - Segment 1"',
         '0.3,Chorus,#228b22,"Annotation 1 - Segment 2\n\nAnnotation 2 - Segment 2"',
         '0.6,Outro,#000000,"Annotation 1 - Segment 3\n\nAnnotation 2 - Segment 3"',
@@ -82,7 +82,7 @@ describe('media-analysis-utils', () => {
 
     it('throws if the CSV does not contain any chapters', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         ''
       ].join('\n');
 
@@ -91,7 +91,7 @@ describe('media-analysis-utils', () => {
 
     it('throws if chapters do not start at position 0', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0.1,Intro,#4582b4,"Annotation"',
         ''
       ].join('\n');
@@ -101,7 +101,7 @@ describe('media-analysis-utils', () => {
 
     it('throws if start positions are not unique', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0,Intro,#4582b4,"Annotation"',
         '0.3,Chorus,#228b22,"Annotation"',
         '0.3,Outro,#000000,"Annotation"',
@@ -113,7 +113,7 @@ describe('media-analysis-utils', () => {
 
     it('throws if start positions are out of order', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0,Intro,#4582b4,"Annotation"',
         '0.6,Chorus,#228b22,"Annotation"',
         '0.3,Outro,#000000,"Annotation"',
@@ -125,7 +125,7 @@ describe('media-analysis-utils', () => {
 
     it('throws if the chapter validation fails', async () => {
       const csv = [
-        'startPosition,title,color,text',
+        '"startPosition","title","color","text"',
         '0,Intro,#4582b4,"Annotation"',
         '0.3,Chorus,#228b22,"Annotation"',
         '0.6,Outro,#invalid_color,"Annotation"',
