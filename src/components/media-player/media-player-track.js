@@ -28,24 +28,33 @@ function MediaPlayerTrack({
   onPlayStateChange
 }) {
   const playerRef = useRef();
+  const playerHandlersRef = useRef({});
   const [sourceDuration, setSourceDuration] = useState(0);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
-  const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
-  const [lastPlayStateBeforeBuffering, setLastPlayStateBeforeBuffering] = useState(MEDIA_PLAY_STATE.initializing);
+
+  const [trackPlayState, setTrackPlayState] = useState({
+    current: MEDIA_PLAY_STATE.initializing,
+    beforeBuffering: MEDIA_PLAY_STATE.initializing
+  });
 
   useEffect(() => {
     if (playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1]) {
       setLastPlaybackRange(playbackRange);
       onDuration(sourceDuration * (playbackRange[1] - playbackRange[0]));
-      setCurrentPlayState(MEDIA_PLAY_STATE.initializing);
+
+      setTrackPlayState({
+        current: MEDIA_PLAY_STATE.initializing,
+        beforeBuffering: MEDIA_PLAY_STATE.initializing
+      });
+
       onPlayStateChange?.(MEDIA_PLAY_STATE.initializing);
       playerRef.current.seekTo(playbackRange[0]);
       setLastProgressTimecode(0);
       onProgress?.(0);
     }
-  }, [playbackRange, lastPlaybackRange, sourceDuration, currentPlayState, onDuration, onProgress, onPlayStateChange]);
+  }, [playbackRange, lastPlaybackRange, sourceDuration, trackPlayState, onDuration, onProgress, onPlayStateChange]);
 
   const changeProgress = newSourceTimecode => {
     const trackStartTimecode = lastPlaybackRange[0] * sourceDuration;
@@ -58,9 +67,8 @@ function MediaPlayerTrack({
       const sourceTimecode = playerRef.current.getCurrentTime() * 1000;
       changeProgress(sourceTimecode);
     }
-
-    setLastPlayStateBeforeBuffering(prev => newPlayState !== MEDIA_PLAY_STATE.buffering ? newPlayState : prev);
-    setCurrentPlayState(newPlayState);
+    const beforeBuffering = newPlayState === MEDIA_PLAY_STATE.buffering ? trackPlayState.beforeBuffering : newPlayState;
+    setTrackPlayState({ current: newPlayState, beforeBuffering });
     onPlayStateChange?.(newPlayState);
   };
 
@@ -81,15 +89,23 @@ function MediaPlayerTrack({
   };
 
   const handleReady = () => {
-    changePlayState(currentPlayState === MEDIA_PLAY_STATE.initializing ? MEDIA_PLAY_STATE.stopped : currentPlayState);
+    const newPlayState = trackPlayState.current === MEDIA_PLAY_STATE.initializing ? MEDIA_PLAY_STATE.stopped : trackPlayState.current;
+    changePlayState(newPlayState);
   };
 
   const handleBuffer = () => {
     changePlayState(MEDIA_PLAY_STATE.buffering);
   };
 
+  playerHandlersRef.current.handleBufferEnd = () => {
+    if (trackPlayState.current === MEDIA_PLAY_STATE.buffering) {
+      changePlayState(trackPlayState.beforeBuffering);
+    }
+  };
+
+  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
   const handleBufferEnd = () => {
-    changePlayState(lastPlayStateBeforeBuffering);
+    playerHandlersRef.current.handleBufferEnd();
   };
 
   const handlePlay = () => {
@@ -139,8 +155,10 @@ function MediaPlayerTrack({
     const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
     if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
-      setLastPlayStateBeforeBuffering(MEDIA_PLAY_STATE.stopped);
-      setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
+      setTrackPlayState({
+        current: MEDIA_PLAY_STATE.stopped,
+        beforeBuffering: MEDIA_PLAY_STATE.stopped
+      });
       changeProgress(trackStopTimecode);
       handleEnded();
 
@@ -148,7 +166,7 @@ function MediaPlayerTrack({
     }
 
     const millisecondsSinceLastSeek = Date.now() - lastSeekTimestamp;
-    if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && currentPlayState !== MEDIA_PLAY_STATE.buffering) {
+    if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && trackPlayState.current !== MEDIA_PLAY_STATE.buffering) {
       changeProgress(currentSourceTimestamp);
     }
   };
@@ -203,8 +221,8 @@ function MediaPlayerTrack({
           muted={volume === 0}
           playbackRate={playbackRate}
           progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
-          light={loadImmediately ? false : currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
-          playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
+          light={loadImmediately ? false : trackPlayState.current === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
+          playing={trackPlayState.current === MEDIA_PLAY_STATE.playing || trackPlayState.current === MEDIA_PLAY_STATE.buffering}
           onReady={handleReady}
           onBuffer={handleBuffer}
           onBufferEnd={handleBufferEnd}
@@ -216,7 +234,7 @@ function MediaPlayerTrack({
           onProgress={handleProgress}
           onClickPreview={handleClickPreview}
           />
-        {screenMode === MEDIA_SCREEN_MODE.audio && currentPlayState !== MEDIA_PLAY_STATE.initializing && (
+        {screenMode === MEDIA_SCREEN_MODE.audio && trackPlayState.current !== MEDIA_PLAY_STATE.initializing && (
           <div className="MediaPlayerTrack--audioModeOverlay">
             <AudioIcon />
           </div>

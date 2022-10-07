@@ -20,7 +20,7 @@ import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack } from '../../plugins/multitrack-media/multitrack-media-utils.js';
+import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 
 const { TabPane } = Tabs;
 const { Search, TextArea } = Input;
@@ -207,6 +207,13 @@ function Tests({ PageTemplate }) {
           { name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7, volume: 1 }
         ]
       }
+    },
+    {
+      title: 'Youtube',
+      sources: {
+        mainTrack: { name: 'Youtube', sourceUrl: YOUTUBE_VIDEO_URL, volume: 1, playbackRange: [0, 1] },
+        secondaryTracks: [{ name: 'External', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1 }]
+      }
     }
   ];
   const mmpPlayerRef = useRef();
@@ -247,7 +254,8 @@ function Tests({ PageTemplate }) {
           { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
           { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
           { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
-        ]
+        ],
+        volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
       }
     },
     {
@@ -259,7 +267,8 @@ function Tests({ PageTemplate }) {
           { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Violine 1', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1 },
           { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Violine 2', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2 },
           { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
-        ]
+        ],
+        volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
       }
     },
     {
@@ -275,7 +284,17 @@ function Tests({ PageTemplate }) {
           { ...createDefaultSecondaryTrack(4, mmpTranslation), name: 'FX', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_5 },
           { ...createDefaultSecondaryTrack(5, mmpTranslation), name: 'Lead bell', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_6 },
           { ...createDefaultSecondaryTrack(6, mmpTranslation), name: 'Lead synth', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_7 }
-        ]
+        ],
+        volumePresets: [createDefaultVolumePreset(mmpTranslation, 7)]
+      }
+    },
+    {
+      title: 'Youtube',
+      content: {
+        ...createDefaultContent(mmpTranslation),
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Youtube', sourceType: MEDIA_SOURCE_TYPE.youtube, sourceUrl: YOUTUBE_VIDEO_URL, showVideo: true },
+        secondaryTracks: [{ ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'External', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0 }],
+        volumePresets: [createDefaultVolumePreset(mmpTranslation, 1)]
       }
     }
   ];
