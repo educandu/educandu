@@ -16,3 +16,12 @@ more:
 less:
   en: less ...
   de: weniger ...
+exportAsCsv:
+  en: Export as CSV file
+  de: Als CSV-Datei exportieren
+importFromCsv:
+  en: Import from CSV file
+  de: Aus CSV-Datei importieren
+segmentsDropzoneInfo:
+  en: You can drop a CSV file in this box in order to import segments
+  de: Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren

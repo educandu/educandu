@@ -2036,7 +2036,10 @@
       "chapterColorLabel": "Color",
       "chapterTextLabel": "Annotation",
       "more": "more ...",
-      "less": "less ..."
+      "less": "less ...",
+      "exportAsCsv": "Export as CSV file",
+      "importFromCsv": "Import from CSV file",
+      "segmentsDropzoneInfo": "You can drop a CSV file in this box in order to import segments"
     }
   },
   {
@@ -2048,7 +2051,10 @@
       "chapterColorLabel": "Farbe",
       "chapterTextLabel": "Anmerkung",
       "more": "mehr ...",
-      "less": "weniger ..."
+      "less": "weniger ...",
+      "exportAsCsv": "Als CSV-Datei exportieren",
+      "importFromCsv": "Aus CSV-Datei importieren",
+      "segmentsDropzoneInfo": "Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren"
     }
   },
   {

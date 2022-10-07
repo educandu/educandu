@@ -1,7 +1,16 @@
 import joi from 'joi';
 import uniqueId from '../../utils/unique-id.js';
+import { csvToObjects, objectsToCsv } from '../../utils/csv-utils.js';
 import { hexCodeValidationPattern } from '../../domain/validation-constants.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+
+const chapterSchema = joi.object({
+  key: joi.string().required(),
+  startPosition: joi.number().min(0).max(1).required(),
+  color: joi.string().pattern(hexCodeValidationPattern).required(),
+  title: joi.string().allow('').required(),
+  text: joi.string().allow('').required()
+});
 
 export function createDefaultSecondaryTrack(index, t) {
   return {
@@ -54,6 +63,47 @@ export function createDefaultContent(t) {
   };
 }
 
+export function exportChaptersToCsv(chapters) {
+  return objectsToCsv(chapters, ['startPosition', 'title', 'color', 'text']);
+}
+
+export async function importChaptersFromCsv(csvStringOrFile) {
+  const data = await csvToObjects(csvStringOrFile);
+
+  const chapters = [];
+
+  let lastStartPosition = -1;
+  for (let index = 0; index < data.length; index += 1) {
+    const row = data[index];
+    const chapter = {
+      key: uniqueId.create(),
+      startPosition: Number(row.startPosition),
+      color: String(row.color),
+      title: String(row.title),
+      text: String(row.text)
+    };
+
+    joi.attempt(chapter, chapterSchema, { abortEarly: false, convert: false, noDefaults: true });
+
+    if (index === 0 && chapter.startPosition !== 0) {
+      throw new Error('First chapter has to start at position 0');
+    }
+
+    if (chapter.startPosition <= lastStartPosition) {
+      throw new Error('Invalid start position');
+    }
+
+    lastStartPosition = chapter.startPosition;
+    chapters.push(chapter);
+  }
+
+  if (!chapters.length) {
+    throw new Error('There has to be at least one chapter');
+  }
+
+  return chapters;
+}
+
 export function validateContent(content) {
   const schema = joi.object({
     width: joi.number().min(0).max(100).required(),
@@ -72,13 +122,7 @@ export function validateContent(content) {
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required()
     })).required(),
-    chapters: joi.array().items(joi.object({
-      key: joi.string().required(),
-      startPosition: joi.number().min(0).max(1).required(),
-      color: joi.string().pattern(hexCodeValidationPattern).required(),
-      title: joi.string().allow('').required(),
-      text: joi.string().allow('').required()
-    })).required(),
+    chapters: joi.array().items(chapterSchema).required(),
     volumePresets: joi.array().items(joi.object({
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),
