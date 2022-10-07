@@ -359,7 +359,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               onPartDelete={handleChapterDelete}
               onStartPositionChange={handleChapterStartPositionChange}
               />
-            {chapters.length && (
+            {!!chapters.length && (
             <Fragment>
               <ChapterSelector
                 chaptersCount={chapters.length}
