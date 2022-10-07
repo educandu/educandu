@@ -272,7 +272,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const segmentsDropzoneClasses = classNames({
-    'MediaAnalysisEditor-segments': true,
+    'MediaAnalysisEditor-segmentsDropzone': true,
     'u-can-drop': csvImportDropzone.isDragAccept,
     'u-cannot-drop': csvImportDropzone.isDragReject
   });
@@ -403,6 +403,11 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             </Fragment>
             )}
           </ItemPanel>
+          <div className="MediaAnalysisEditor-segmentsDropzoneInfo">
+            <Tooltip title={t('segmentsDropzoneInfo')}>
+              <InfoCircleOutlined className="u-info-icon" />
+            </Tooltip>
+          </div>
         </div>
         <FormItem
           label={
