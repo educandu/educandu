@@ -29,25 +29,36 @@ const createInitialTrackStates = sources => ({
   }))
 });
 
-const haveMediaTracksChanged = (currentTrackStates, newSources) => {
-  if (
-    newSources.mainTrack.sourceUrl !== currentTrackStates.mainTrack.sourceUrl
-    || newSources.mainTrack.playbackRange[0] !== currentTrackStates.mainTrack.playbackRange[0]
-    || newSources.mainTrack.playbackRange[1] !== currentTrackStates.mainTrack.playbackRange[1]
+const hasMainTrackMediaChanged = (currentTrackStates, sources) => {
+  return sources.mainTrack.sourceUrl !== currentTrackStates?.mainTrack?.sourceUrl
+    || sources.mainTrack.playbackRange[0] !== currentTrackStates?.mainTrack?.playbackRange[0]
+    || sources.mainTrack.playbackRange[1] !== currentTrackStates?.mainTrack?.playbackRange[1];
+};
+
+const hasSecondaryTrackMediaChanged = (currentTrackStates, sources, index) => {
+  return sources.secondaryTracks[index]?.sourceUrl !== currentTrackStates?.secondaryTracks[index]?.sourceUrl;
+};
+
+const hasAnyMediaChanged = (currentTrackStates, newSources) => {
+  return hasMainTrackMediaChanged(currentTrackStates, newSources)
     || newSources.secondaryTracks.length !== currentTrackStates.secondaryTracks.length
-  ) {
-    return true;
+    || currentTrackStates.secondaryTracks.some((track, index) => hasSecondaryTrackMediaChanged(currentTrackStates, newSources, index));
+};
+
+const resetTrackStates = (currentTrackStates, sources) => {
+  const newTrackStates = createInitialTrackStates(sources);
+
+  if (!hasMainTrackMediaChanged(currentTrackStates, sources)) {
+    newTrackStates.mainTrack.duration = currentTrackStates.mainTrack.duration;
   }
 
-  for (let i = 0; i < currentTrackStates.secondaryTracks.length; i += 1) {
-    const newSourceSecondaryTrack = newSources.secondaryTracks[i];
-    const currentSecondaryTrackState = currentTrackStates.secondaryTracks[i];
-    if (newSourceSecondaryTrack.sourceUrl !== currentSecondaryTrackState.sourceUrl) {
-      return true;
+  newTrackStates.secondaryTracks.forEach((track, index) => {
+    if (!hasSecondaryTrackMediaChanged(currentTrackStates, sources, index)) {
+      track.duration = currentTrackStates.secondaryTracks[index].duration;
     }
-  }
+  });
 
-  return false;
+  return newTrackStates;
 };
 
 const updateTrackNamesAndVolumes = (currentTrackStates, newSources) => ({
@@ -148,11 +159,11 @@ function MediaPlayerTrackGroup({
       mainTrack: { current: null },
       secondaryTracks: newSources.secondaryTracks.map(() => ({ current: null }))
     };
-    setTrackStates(createInitialTrackStates(newSources));
-  }, [trackRefs, setTrackStates]);
+    setTrackStates(prev => resetTrackStates(prev, newSources));
+  }, [trackRefs]);
 
   useEffect(() => {
-    if (haveMediaTracksChanged(trackStates, sources)) {
+    if (hasAnyMediaChanged(trackStates, sources)) {
       reinitialize(sources);
       return;
     }
