@@ -95,7 +95,9 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const handleAddTrackButtonClick = () => {
     const newSecondaryTracks = secondaryTracks.slice();
     newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
-    changeContent({ secondaryTracks: newSecondaryTracks });
+    const newVolumePresets = volumePresets.slice();
+    newVolumePresets.forEach(preset => preset.secondaryTracks.push(1));
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleSelectedVolumePresetChange = volumePresetIndex => {
