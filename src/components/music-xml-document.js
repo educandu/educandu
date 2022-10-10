@@ -37,7 +37,7 @@ function MusicXmlDocument({ url, zoom }) {
       if (url) {
         if (url !== lastLoadedUrl.current) {
           lastLoadedUrl.current = url;
-          const res = await httpClient.get(url, { responseType: 'document', withCredetials: true });
+          const res = await httpClient.get(url, { responseType: 'document', withCredentials: true });
           await currentOsmd.load(res.data);
         }
         if (isMounted.current) {
