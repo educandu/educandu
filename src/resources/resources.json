@@ -954,7 +954,8 @@
     "language": "en",
     "resources": {
       "importButton": "Start import",
-      "backToImports": "Back to the overview"
+      "backToImports": "Back to the overview",
+      "nativeImportPlaceholder": "Text for native import"
     }
   },
   {
@@ -962,7 +963,8 @@
     "language": "de",
     "resources": {
       "importButton": "Import starten",
-      "backToImports": "Zurück zur Übersicht"
+      "backToImports": "Zurück zur Übersicht",
+      "nativeImportPlaceholder": "Text für Schlussimport"
     }
   },
   {

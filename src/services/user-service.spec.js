@@ -350,4 +350,72 @@ describe('user-service', () => {
     });
   });
 
+  describe('ensureInternalUser', () => {
+    let result;
+
+    describe('when there is an internal active user with the same email', () => {
+      beforeEach(async () => {
+        result = await sut.ensureInternalUser({ _id: uniqueId.create(), displayName: 'John', email: user.email });
+        await setupTestUser(container, { email: 'user1@test.com', password, displayName: 'User 1', accountClosedOn: now });
+      });
+
+      it('should return the existing active user\'s id', () => {
+        expect(result).toEqual(user._id);
+      });
+    });
+
+    describe('when there are several internal closed account users with the same email', () => {
+      let usersWithClosedAccounts;
+
+      beforeEach(async () => {
+        usersWithClosedAccounts = [
+          await setupTestUser(container, { email: 'user1@test.com', password, displayName: 'User 1', accountClosedOn: now }),
+          await setupTestUser(container, { email: 'user2@test.com', password, displayName: 'User 2', accountClosedOn: now })
+        ];
+
+        result = await sut.ensureInternalUser({ _id: uniqueId.create(), displayName: 'John', email: 'user1@test.com' });
+      });
+
+      it('should return the id of the first matching user', () => {
+        expect(result).toEqual(usersWithClosedAccounts[0]._id);
+      });
+    });
+
+    describe('when there is no internal user with the same email', () => {
+      const newUserId = uniqueId.create();
+
+      beforeEach(async () => {
+        result = await sut.ensureInternalUser({ _id: newUserId, displayName: 'John', email: 'user1@test.com' });
+      });
+
+      it('should return the id of the created user', () => {
+        expect(result).toEqual(newUserId);
+      });
+
+      it('should create a closed account user', async () => {
+        const newUser = await db.users.findOne({ _id: newUserId });
+        expect(newUser).toStrictEqual({
+          _id: newUserId,
+          displayName: 'John',
+          email: 'user1@test.com',
+          introduction: '',
+          organization: '',
+          storage: {
+            planId: null,
+            usedBytes: 0,
+            reminders: []
+          },
+          favorites: [],
+          roles: [],
+          provider: 'educandu',
+          expires: null,
+          lockedOut: false,
+          passwordHash: null,
+          verificationCode: null,
+          accountClosedOn: now
+        });
+      });
+    });
+  });
+
 });

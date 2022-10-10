@@ -32,15 +32,34 @@ class DocumentImportTaskProcessor {
       baseUrl: routes.getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentId,
-      toRevision: importableRevision
+      toRevision: importableRevision,
+      includeEmails: batchParams.nativeImport
     });
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
     }
 
-    await Promise.all(documentExport.users
-      .map(user => this.userService.ensureExternalUser({ _id: user._id, displayName: user.displayName, hostName: batchParams.hostName })));
+    if (batchParams.nativeImport) {
+      const userMap = {};
+      for (const user of documentExport.users) {
+        const userId = await this.userService.ensureInternalUser({ _id: user._id, displayName: user.displayName, email: user.email });
+        userMap[user._id] = userId;
+      }
+
+      documentExport.revisions.forEach(revision => {
+        revision.createdBy = userMap[revision.createdBy];
+        revision.sections.forEach(section => {
+          if (section.deletedBy) {
+            section.deletedBy = userMap[section.deletedBy];
+          }
+        });
+      });
+
+    } else {
+      await Promise.all(documentExport.users
+        .map(user => this.userService.ensureExternalUser({ _id: user._id, displayName: user.displayName, hostName: batchParams.hostName })));
+    }
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
@@ -66,8 +85,8 @@ class DocumentImportTaskProcessor {
     const docUrl = routes.getDocUrl({ id: sortedRevisions[0].documentId, slug: sortedRevisions[0].slug });
     const baseUrl = routes.getImportSourceBaseUrl(importSource);
 
-    const originUrl = `${baseUrl}${docUrl}`;
-    const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
+    const originUrl = batchParams.nativeImport ? null : `${baseUrl}${docUrl}`;
+    const origin = batchParams.nativeImport ? DOCUMENT_ORIGIN.internal : `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
 
     await this.documentService.importDocumentRevisions({
       documentId,

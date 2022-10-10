@@ -4,3 +4,6 @@ importButton:
 backToImports:
   en: Back to the overview
   de: Zurück zur Übersicht
+nativeImportPlaceholder:
+  en: Text for native import
+  de: Text für Schlussimport

@@ -6,7 +6,7 @@ import { validateQuery } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { getExportsQuerySchema, getExportsDocumentQuerySchema } from '../domain/schemas/export-schemas.js';
 
-const { BadRequest } = httpErrors;
+const { BadRequest, Forbidden } = httpErrors;
 
 class ExportController {
   static get inject() { return [ExportService, Database]; }
@@ -33,6 +33,8 @@ class ExportController {
   async handleGetExport(req, res) {
     const documentId = req.params.documentId;
     const toRevision = req.query.toRevision;
+    const includeEmails = req.query.includeEmails === true.toString();
+
     const importingSystemSchemaHash = req.query.databaseSchemaHash;
 
     const schemaHash = await this.database.getSchemaHash();
@@ -40,7 +42,10 @@ class ExportController {
       throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
     }
 
-    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, toRevision });
+    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, toRevision, includeEmails });
+    if (revisions.some(revision => revision.roomId)) {
+      throw new Forbidden('Private documents cannot be exported');
+    }
 
     return res.send({ revisions, users, cdnRootUrl });
   }
@@ -54,7 +59,7 @@ class ExportController {
 
     router.get(
       '/api/v1/exports/:documentId',
-      validateQuery(getExportsDocumentQuerySchema),
+      [needsPermission(permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER), validateQuery(getExportsDocumentQuerySchema)],
       (req, res) => this.handleGetExport(req, res)
     );
   }

@@ -51,6 +51,10 @@ class UserStore {
     return this.collection.findOne({ email, accountClosedOn: null }, { session });
   }
 
+  getUsersByEmailAddress(email, { session } = {}) {
+    return this.collection.find({ email }, { session }).toArray();
+  }
+
   saveUser(user, { session } = {}) {
     validate(user, userDBSchema);
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });

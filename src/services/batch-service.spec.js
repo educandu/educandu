@@ -95,7 +95,8 @@ describe('batch-service', () => {
             batchParams: {
               name: 'source-1',
               hostName: 'source1.com',
-              allowUnsecure: false
+              allowUnsecure: false,
+              nativeImport: false
             },
             errors: []
           }
@@ -140,7 +141,32 @@ describe('batch-service', () => {
         const dbEntries = await db.batches.find({}).toArray();
         expect(dbEntries).toEqual([result]);
       });
+    });
 
+    describe('when creating a new batch with nativeImport', () => {
+      beforeEach(async () => {
+        await sut.createImportBatch({ importSource, documentsToImport, user, nativeImport: true });
+      });
+
+      it('creates a new batch in the database', async () => {
+        const dbEntries = await db.batches.find({}).toArray();
+        expect(dbEntries).toEqual([
+          {
+            _id: expect.stringMatching(/\w+/),
+            createdBy: user._id,
+            createdOn: expect.any(Date),
+            completedOn: null,
+            batchType: BATCH_TYPE.documentImport,
+            batchParams: {
+              name: 'source-1',
+              hostName: 'source1.com',
+              allowUnsecure: false,
+              nativeImport: true
+            },
+            errors: []
+          }
+        ]);
+      });
     });
 
     describe('when there is an existing lock for the same import source', () => {
@@ -345,7 +371,8 @@ describe('batch-service', () => {
           batchParams: {
             name: 'source-1',
             hostName: 'source1.com',
-            allowUnsecure: false
+            allowUnsecure: false,
+            nativeImport: false
           },
           errors: [],
           progress: 0.5
@@ -359,7 +386,8 @@ describe('batch-service', () => {
           batchParams: {
             name: 'source-1',
             hostName: 'source2',
-            allowUnsecure: false
+            allowUnsecure: false,
+            nativeImport: false
           },
           errors: [],
           progress: 0
@@ -426,7 +454,8 @@ describe('batch-service', () => {
         batchParams: {
           name: 'source-1',
           hostName: 'source1.com',
-          allowUnsecure: false
+          allowUnsecure: false,
+          nativeImport: false
         },
         errors: [],
         progress: 0.5,

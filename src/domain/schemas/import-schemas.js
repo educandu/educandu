@@ -1,6 +1,6 @@
 import joi from 'joi';
-import { idOrKeySchema } from './shared-schemas.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../domain/constants.js';
+import { boolStringSchema, idOrKeySchema } from './shared-schemas.js';
 
 const importedDocumentSchema = joi.object({
   _id: idOrKeySchema.required(),
@@ -23,5 +23,6 @@ export const createImportQuerySchema = joi.object({
 
 export const postImportBodySchema = joi.object({
   hostName: joi.string().required(),
-  documentsToImport: joi.array().required().items(importedDocumentSchema)
+  documentsToImport: joi.array().required().items(importedDocumentSchema),
+  nativeImport: boolStringSchema
 });

@@ -1,5 +1,5 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import { Button, Input } from 'antd';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
@@ -14,20 +14,31 @@ export default function CreateImport({ initialState, PageTemplate }) {
   const { t } = useTranslation('createImport');
   const clientConfig = useService(ClientConfig);
   const importApiClient = useSessionAwareApiClient(ImportApiClient);
+
+  const [nativeImportText, setNativeImportText] = useState('');
   const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
-  const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
+  const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
 
   const importSource = clientConfig.importSources.find(source => source.hostName === initialState.importSourceHostName);
   const importSourceBaseUrl = routes.getImportSourceBaseUrl(importSource);
+
+  const handleImportTextChange = event => {
+    const { value } = event.target;
+    setNativeImportText(value);
+  };
 
   const handleImportClick = async () => {
     setIsCreatingNewImportBatch(true);
     const documentsToImport = selectedDocumentIds.map(id => importableDocuments.find(doc => doc._id === id));
 
     try {
-      const result = await importApiClient.postImport({ hostName: importSource.hostName, documentsToImport });
+      const result = await importApiClient.postImport({
+        hostName: importSource.hostName,
+        documentsToImport,
+        nativeImport: nativeImportText === 'nativeImport'
+      });
       setIsCreatingNewImportBatch(false);
       window.location = routes.getBatchUrl(result.batch._id);
     } catch (error) {
@@ -72,6 +83,12 @@ export default function CreateImport({ initialState, PageTemplate }) {
         <div><a href={routes.getImportsUrl()}>{t('backToImports')}</a></div>
         <h1>{t('pageNames:createImport')}</h1>
         <h2> {t('common:source')}: {importSource?.name} </h2>
+        <Input
+          value={nativeImportText}
+          onChange={handleImportTextChange}
+          className="CreateImportPage-input"
+          placeholder={t('nativeImportPlaceholder')}
+          />
         {renderImportButton()}
         <DocumentImportTable
           importableDocuments={importableDocuments}

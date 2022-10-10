@@ -57,7 +57,7 @@ class ImportController {
   }
 
   async handlePostImport(req, res) {
-    const { hostName, documentsToImport } = req.body;
+    const { hostName, documentsToImport, nativeImport } = req.body;
     const user = req.user;
 
     const importSource = this.serverConfig.importSources.find(source => source.hostName === hostName);
@@ -65,7 +65,7 @@ class ImportController {
       throw new NotFound(`'${hostName}' is not a host name of a known import source`);
     }
 
-    const batch = await this.batchService.createImportBatch({ importSource, documentsToImport, user });
+    const batch = await this.batchService.createImportBatch({ importSource, documentsToImport, user, nativeImport });
     res.status(201).send({ batch });
   }
 
