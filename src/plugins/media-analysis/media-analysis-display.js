@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
-import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -15,32 +15,35 @@ function MediaAnalysisDisplay({ content }) {
   const playerRef = useRef(null);
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
+
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
   const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 
-  const sources = {
-    mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: mainTrack.sourceUrl,
-        sourceType: mainTrack.sourceType,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-      playbackRange: mainTrack.playbackRange
-    },
-    secondaryTracks: secondaryTracks.map((track, index) => ({
-      name: track.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: track.sourceUrl,
-        sourceType: track.sourceType,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
-    }))
-  };
+  const sources = useMemo(() => {
+    return {
+      mainTrack: {
+        name: mainTrack.name,
+        sourceUrl: urlUtils.getMediaUrl({
+          sourceUrl: mainTrack.sourceUrl,
+          sourceType: mainTrack.sourceType,
+          cdnRootUrl: clientConfig.cdnRootUrl
+        }),
+        volume: volumePresets[selectedVolumePresetIndex].mainTrack,
+        playbackRange: mainTrack.playbackRange
+      },
+      secondaryTracks: secondaryTracks.map((track, index) => ({
+        name: track.name,
+        sourceUrl: urlUtils.getMediaUrl({
+          sourceUrl: track.sourceUrl,
+          sourceType: track.sourceType,
+          cdnRootUrl: clientConfig.cdnRootUrl
+        }),
+        volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
+      }))
+    };
+  }, [mainTrack, secondaryTracks, volumePresets, clientConfig, selectedVolumePresetIndex]);
 
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
     .filter(text => !!text).join('\n\n');
