@@ -42,7 +42,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mediaSlideshow');
   const mediaSlideshowInfo = useService(MediaSlideshowInfo);
-  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(-1);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const { sourceType, sourceUrl, playbackRange, chapters, width } = content;
@@ -162,6 +162,10 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   };
 
   const renderPlayingChapterImage = () => {
+    if (playingChapterIndex === -1) {
+      return null;
+    }
+
     const {
       sourceType: imageSourceType,
       sourceUrl: imageSourceUrl,
@@ -222,6 +226,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           parts={chapters}
           screenMode={MEDIA_SCREEN_MODE.overlay}
           screenWidth={50}
+          playbackRange={playbackRange}
           screenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
