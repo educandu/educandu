@@ -1,11 +1,11 @@
 import by from 'thenby';
-import { CHAPTER_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import Markdown from '../../components/markdown.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -265,8 +265,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
               <Fragment>
                 <FormItem label={t('common:imageSource')} {...formItemLayout}>
                   <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
-                    <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
-                    <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
                 {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
@@ -306,8 +306,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                   {...formItemLayout}
                   >
                   <RadioGroup value={chapters[selectedChapterIndex].image.fit} onChange={handleChapterImageFitChange}>
-                    <RadioButton value="cover">{t('imageFit_cover')}</RadioButton>
-                    <RadioButton value="contain">{t('imageFit_contain')}</RadioButton>
+                    <RadioButton value={IMAGE_FIT.cover}>{t('imageFit_cover')}</RadioButton>
+                    <RadioButton value={IMAGE_FIT.contain}>{t('imageFit_contain')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
                 <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
