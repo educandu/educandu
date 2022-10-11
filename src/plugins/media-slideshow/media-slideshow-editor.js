@@ -1,10 +1,11 @@
 import by from 'thenby';
-import { CHAPTER_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import Markdown from '../../components/markdown.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -18,8 +19,8 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
+import ResourcePicker from '../../components/resource-picker/resource-picker.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
@@ -135,6 +136,13 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const handleChapterImageFitChange = event => {
+    const { value } = event.target;
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].image.fit = value;
+    changeContent({ chapters: newChapters });
+  };
+
   const handleChapterImageCopyrightNoticeChanged = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
@@ -158,19 +166,28 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
       return null;
     }
 
-    const getImageUrl = () => urlUtils.getImageUrl({
+    const {
+      sourceType: imageSourceType,
+      sourceUrl: imageSourceUrl,
+      fit: imageFit
+    } = chapters[playingChapterIndex].image;
+
+    const imageUrl = urlUtils.getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: chapters[playingChapterIndex].image.sourceType,
-      sourceUrl: chapters[playingChapterIndex].image.sourceUrl
+      sourceType: imageSourceType,
+      sourceUrl: imageSourceUrl
     });
 
-    const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
+    if (!imageUrl) {
+      return null;
+    }
 
     return (
       <div className="MediaSlideshow-chapterImageOverlayWrapper">
-        {!!imageSourceUrl && (
-          <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${getImageUrl()})` }} />
-        )}
+        <div
+          className="MediaSlideshow-chapterImageOverlay"
+          style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: imageFit }}
+          />
       </div>
     );
   };
@@ -253,8 +270,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
               <Fragment>
                 <FormItem label={t('common:imageSource')} {...formItemLayout}>
                   <RadioGroup value={chapters[selectedChapterIndex].image.sourceType} onChange={handleChapterImageSourceTypeChange}>
-                    <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
-                    <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
                 {chapters[selectedChapterIndex].image.sourceType === IMAGE_SOURCE_TYPE.external && (
@@ -282,6 +299,22 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                   </div>
                 </FormItem>
                 )}
+                <FormItem
+                  label={
+                    <Fragment>
+                      <Tooltip title={<Markdown>{t('imageFitInfoMarkdown')}</Markdown>}>
+                        <InfoCircleOutlined className="u-info-icon" />
+                      </Tooltip>
+                      <span>{t('imageFit')}</span>
+                    </Fragment>
+                  }
+                  {...formItemLayout}
+                  >
+                  <RadioGroup value={chapters[selectedChapterIndex].image.fit} onChange={handleChapterImageFitChange}>
+                    <RadioButton value={IMAGE_FIT.cover}>{t('imageFit_cover')}</RadioButton>
+                    <RadioButton value={IMAGE_FIT.contain}>{t('imageFit_contain')}</RadioButton>
+                  </RadioGroup>
+                </FormItem>
                 <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
                   <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
                 </FormItem>

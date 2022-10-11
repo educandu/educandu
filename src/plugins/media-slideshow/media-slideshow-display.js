@@ -41,21 +41,28 @@ function MediaSlideshowDisplay({ content }) {
   };
 
   const renderPlayingChapterImage = () => {
-    const imageSourceUrl = chapters[playingChapterIndex].image.sourceUrl;
-
-    if (!imageSourceUrl) {
-      return null;
-    }
+    const {
+      sourceType: imageSourceType,
+      sourceUrl: imageSourceUrl,
+      fit: imageFit
+    } = chapters[playingChapterIndex].image;
 
     const imageUrl = urlUtils.getImageUrl({
       cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: chapters[playingChapterIndex].image.sourceType,
-      sourceUrl: chapters[playingChapterIndex].image.sourceUrl
+      sourceType: imageSourceType,
+      sourceUrl: imageSourceUrl
     });
+
+    if (!imageUrl) {
+      return null;
+    }
 
     return (
       <div className="MediaSlideshow-chapterImageOverlayWrapper">
-        <div className="MediaSlideshow-chapterImageOverlay" style={{ backgroundImage: `url(${imageUrl})` }} />
+        <div
+          className="MediaSlideshow-chapterImageOverlay"
+          style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: imageFit }}
+          />
       </div>
     );
   };
