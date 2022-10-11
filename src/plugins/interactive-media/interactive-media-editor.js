@@ -216,6 +216,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
+          playbackRange={playbackRange}
           source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           screenWidth={50}

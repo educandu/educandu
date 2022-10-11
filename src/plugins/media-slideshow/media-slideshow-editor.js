@@ -209,6 +209,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           parts={chapters}
           screenMode={MEDIA_SCREEN_MODE.overlay}
           screenWidth={50}
+          playbackRange={playbackRange}
           screenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
