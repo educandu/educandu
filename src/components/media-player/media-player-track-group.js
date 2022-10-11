@@ -174,7 +174,16 @@ function MediaPlayerTrackGroup({
     }
   }, [sources, trackStates, reinitialize]);
 
-  const setDurations = (mainTrackDuration, secondaryTrackDurations) => {
+  useEffect(() => {
+    const mainTrackDuration = trackStates.mainTrack.duration;
+    const secondaryTrackDurations = trackStates.secondaryTracks.map(track => track.duration);
+
+    if (!mainTrackDuration || (!!mainTrackDuration && secondaryTrackDurations.every(d => !!d))) {
+      onDuration(mainTrackDuration);
+    }
+  }, [trackStates, onDuration]);
+
+  const setDeterminedDurations = (mainTrackDuration, secondaryTrackDurations) => {
     setTrackStates(prev => ({
       mainTrack: {
         ...prev.mainTrack,
@@ -185,18 +194,14 @@ function MediaPlayerTrackGroup({
         duration: secondaryTrackDurations[index]
       }))
     }));
-
-    if (!!mainTrackDuration && secondaryTrackDurations.every(x => !!x)) {
-      onDuration(mainTrackDuration);
-    }
   };
 
   const handleMainTrackDuration = duration => {
-    setDurations(duration, trackStates.secondaryTracks.map(track => track.duration));
+    setDeterminedDurations(duration, trackStates.secondaryTracks.map(track => track.duration));
   };
 
   const handleSecondaryTrackDuration = (duration, trackIndex) => {
-    setDurations(
+    setDeterminedDurations(
       trackStates.mainTrack.duration,
       trackStates.secondaryTracks.map((track, index) => index === trackIndex ? duration : track.duration)
     );
