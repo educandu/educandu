@@ -1,8 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { useService } from '../container-context.js';
 import MediaPlayerTrack from './media-player-track.js';
+import HttpClient from '../../api-clients/http-client.js';
 import { useOnComponentUnmount } from '../../ui/hooks.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getMediaSourceType } from '../../utils/media-utils.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 function PreloadingMediaPlayerTrack({
   sourceUrl,
@@ -21,6 +25,8 @@ function PreloadingMediaPlayerTrack({
   onEndReached,
   onPlayStateChange
 }) {
+  const httpClient = useService(HttpClient);
+  const clientConfig = useService(ClientConfig);
   const [objectUrl, setObjectUrl] = useState(null);
   const [loadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
 
@@ -36,9 +42,13 @@ function PreloadingMediaPlayerTrack({
     setLastLoadingSourceUrl(sourceUrl);
 
     (async () => {
-      const response = await fetch(sourceUrl);
-      const blob = await response.blob();
-      const newObjectUrl = URL.createObjectURL(blob);
+      const sourceType = getMediaSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      const response = await httpClient.get(sourceUrl, {
+        responseType: 'blob',
+        withCredentials: sourceType === MEDIA_SOURCE_TYPE.internal
+      });
+
+      const newObjectUrl = URL.createObjectURL(response.data);
 
       const oldObjectUrl = objectUrl;
 
@@ -48,7 +58,7 @@ function PreloadingMediaPlayerTrack({
         URL.revokeObjectURL(oldObjectUrl);
       }
     })();
-  }, [sourceUrl, loadingSourceUrl, objectUrl]);
+  }, [sourceUrl, loadingSourceUrl, objectUrl, httpClient, clientConfig]);
 
   useOnComponentUnmount(() => {
     if (objectUrl) {
