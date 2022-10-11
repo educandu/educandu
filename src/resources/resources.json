@@ -2065,7 +2065,11 @@
     "resources": {
       "name": "Media slideshow",
       "chapterType_image": "image",
-      "chapterType_text": "text"
+      "chapterType_text": "text",
+      "imageFit": "Image fit",
+      "imageFit_cover": "cover",
+      "imageFit_contain": "contain",
+      "imageFitInfoMarkdown": "__cover__\n\nScales the image (while preserving its ratio) to the smallest possible\nsize to fill the display area, leaving no empty space.\n\n__contain__\n\nScales the image as large as possible within the display\narea without cropping or stretching the image.\n"
     }
   },
   {
@@ -2074,7 +2078,11 @@
     "resources": {
       "name": "Medien-Slideshow",
       "chapterType_image": "Bild",
-      "chapterType_text": "Text"
+      "chapterType_text": "Text",
+      "imageFit": "Bild-Anpassung",
+      "imageFit_cover": "Abdecken",
+      "imageFit_contain": "Umfassen",
+      "imageFitInfoMarkdown": "__Abdecken__\n\nSkaliert das Bild (unter Beibehaltung der Proportionen) auf die kleinstmögliche\nGröße, um den Anzeigebereich so auszufüllen, dass kein Leerraum bleibt.\n\n__Umfassen__\n\nSkaliert das Bild so groß wie möglich innerhalb des Anzeigebereichs,\nohne das Bild zu beschneiden oder zu strecken.\n"
     }
   },
   {

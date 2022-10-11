@@ -1,8 +1,8 @@
 import joi from 'joi';
 import React from 'react';
-import { CHAPTER_TYPE } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
 import MediaSlideshowDisplay from './media-slideshow-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
@@ -39,6 +39,7 @@ class MediaSlideshowInfo {
     return {
       sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: '',
+      fit: IMAGE_FIT.cover,
       copyrightNotice: ''
     };
   }
@@ -78,6 +79,7 @@ class MediaSlideshowInfo {
         image: joi.object({
           sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
           sourceUrl: joi.string().allow('').required(),
+          fit: joi.string().valid(...Object.values(IMAGE_FIT)).required(),
           copyrightNotice: joi.string().allow('').required()
         }).required(),
         text: joi.string().allow('').required()
