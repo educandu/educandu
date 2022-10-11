@@ -6,11 +6,19 @@ import { useService } from '../container-context.js';
 import { useDedupedCallback } from '../../ui/hooks.js';
 import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
+import ClientConfig from '../../bootstrap/client-config.js';
 import MediaPlayerControls from './media-player-controls.js';
+import { getMediaSourceType } from '../../utils/media-utils.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
 import MediaPlayerTrackMixer from './media-player-track-mixer.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
+import {
+  MEDIA_ASPECT_RATIO,
+  MEDIA_PLAY_STATE,
+  MEDIA_SCREEN_MODE,
+  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS,
+  MEDIA_SOURCE_TYPE
+} from '../../domain/constants.js';
 
 const SOURCE_TYPE = {
   none: 'none',
@@ -92,6 +100,7 @@ function MultitrackMediaPlayer({
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
+  const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const { t } = useTranslation('multitrackMediaPlayer');
@@ -195,7 +204,12 @@ function MultitrackMediaPlayer({
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
-      httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName);
+      const mainTrackMediaSourceType = getMediaSourceType({
+        sourceUrl: loadedSources.mainTrack.sourceUrl,
+        cdnRootUrl: clientConfig.cdnRootUrl
+      });
+      const withCredentials = mainTrackMediaSourceType === MEDIA_SOURCE_TYPE.internal;
+      httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName, withCredentials);
     }
   };
 
