@@ -151,7 +151,7 @@ describe('import-service', () => {
       });
 
       it('should return an array of documents that can be freshly imported (added)', () => {
-        expect(result).toEqual([{ _id: 'documentId', importedRevision: null, importableRevision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language', importType: 'add' }]);
+        expect(result).toEqual([{ _id: 'documentId', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language', importType: 'add' }]);
       });
     });
 
@@ -172,9 +172,9 @@ describe('import-service', () => {
 
       it('should return the array of importable documents', () => {
         expect(result).toEqual([
-          { _id: 'documentId1', importedRevision: 'revision1a', importableRevision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b', importType: 'update' },
-          { _id: 'documentId2', importedRevision: 'revision2a', importableRevision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a', importType: 'reimport' },
-          { _id: 'documentId4', importedRevision: null, importableRevision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a', importType: 'add' }
+          { _id: 'documentId1', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b', importType: 'update' },
+          { _id: 'documentId2', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a', importType: 'reimport' },
+          { _id: 'documentId4', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a', importType: 'add' }
         ]);
       });
     });

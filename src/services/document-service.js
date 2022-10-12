@@ -182,7 +182,7 @@ class DocumentService {
           throw new BadRequest(`Found unexpected existing revisions for document ${documentId}`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
+        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
@@ -235,7 +235,7 @@ class DocumentService {
           throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
+        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
         const newRevision = this._buildDocumentRevision({
           ...cloneDeep(ancestorRevision),
           ...data,
@@ -393,7 +393,7 @@ class DocumentService {
           throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
+        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
         const clonedRevision = cloneDeep(revisionToRestore);
         const newRevision = this._buildDocumentRevision({
           ...clonedRevision,
@@ -424,7 +424,7 @@ class DocumentService {
     }
   }
 
-  async importDocumentRevisions({ documentId, revisions, ancestorId, origin, originUrl }) {
+  async importDocumentRevisions({ documentId, revisions, origin, originUrl }) {
     let lock;
 
     await this.createUploadDirectoryMarkerForDocument(documentId);
@@ -434,33 +434,20 @@ class DocumentService {
 
       let newDocument;
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
-        const latestExistingRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-
-        if (!ancestorId && latestExistingRevision) {
-          throw new Error(`Found unexpected existing revisions for document '${documentId}'`);
-        }
-
-        if (ancestorId && latestExistingRevision?._id !== ancestorId) {
-          throw new Error(`Import of document '${documentId}' expected to find revision '${ancestorId}' as the latest revision but found revision '${latestExistingRevision?._id}'`);
-        }
-
-        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length);
+        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length, { session });
         const newDocumentRevisions = revisions.map((revision, index) => {
           return this._buildDocumentRevision({ ...revision, documentId, order: nextOrders[index], origin, originUrl });
         });
 
-        newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
+        newDocument = this._buildDocumentFromRevisions(newDocumentRevisions);
 
-        await this.documentRevisionStore.saveDocumentRevisions(newDocumentRevisions);
+        await this.documentRevisionStore.saveDocumentRevisions(newDocumentRevisions, { session });
         await this.documentStore.saveDocument(newDocument, { session });
       });
 
       return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
     } catch (error) {
-      if (!ancestorId) {
-        await this.deleteUploadDirectoryMarkerForDocument(documentId);
-      }
+      await this.deleteUploadDirectoryMarkerForDocument(documentId);
       throw error;
     } finally {
       if (lock) {

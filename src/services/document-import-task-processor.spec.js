@@ -7,10 +7,11 @@ import uniqueId from '../utils/unique-id.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 
 describe('document-import-task-processor', () => {
+  const now = new Date();
   const sandbox = sinon.createSandbox();
 
   let db;
@@ -34,6 +35,22 @@ describe('document-import-task-processor', () => {
     sut = container.get(DocumentImportTaskProcessor);
   });
 
+  beforeEach(() => {
+    sandbox.useFakeTimers(now);
+
+    importSource = { hostName: 'host.name', allowUnsecure: false, apiKey: 'FG5GFDFR352DFS' };
+    sandbox.stub(serverConfig, 'importSources').value([importSource]);
+    sandbox.stub(exportApiClient, 'getDocumentExport');
+    sandbox.stub(userService, 'ensureInternalUser');
+    sandbox.stub(cdn, 'objectExists').resolves(false);
+    sandbox.stub(cdn, 'uploadObjectFromUrl').resolves();
+  });
+
+  afterEach(async () => {
+    await pruneTestEnvironment(container);
+    sandbox.restore();
+  });
+
   afterAll(async () => {
     await destroyTestEnvironment(container);
   });
@@ -51,24 +68,6 @@ describe('document-import-task-processor', () => {
     let batchParams;
     let documentId;
 
-    const now = new Date();
-
-    beforeEach(() => {
-      sandbox.useFakeTimers(now);
-
-      importSource = { hostName: 'host.name', allowUnsecure: false, apiKey: 'FG5GFDFR352DFS' };
-      sandbox.stub(serverConfig, 'importSources').value([importSource]);
-      sandbox.stub(exportApiClient, 'getDocumentExport');
-      sandbox.stub(userService, 'ensureInternalUser');
-      sandbox.stub(cdn, 'objectExists').resolves(false);
-      sandbox.stub(cdn, 'uploadObjectFromUrl').resolves();
-    });
-
-    afterEach(async () => {
-      await pruneTestEnvironment(container);
-      sandbox.restore();
-    });
-
     describe('a task to import a new document', () => {
       beforeEach(async () => {
         documentId = uniqueId.create();
@@ -82,6 +81,8 @@ describe('document-import-task-processor', () => {
         revision1 = {
           _id: uniqueId.create(),
           documentId,
+          roomId: null,
+          description: 'Description 1',
           slug: 'slug-1',
           tags: ['tag-1'],
           title: 'title-1',
@@ -109,6 +110,9 @@ describe('document-import-task-processor', () => {
               deletedBecause: null
             }
           ],
+          review: 'review',
+          verified: true,
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content,
           restoredFrom: uniqueId.create(),
           cdnResources: ['media/video-1.mp4']
         };
@@ -116,6 +120,8 @@ describe('document-import-task-processor', () => {
         revision2 = {
           _id: uniqueId.create(),
           documentId,
+          roomId: null,
+          description: 'Description 2',
           slug: 'slug-2',
           tags: ['tag-2'],
           title: 'title-2',
@@ -143,13 +149,15 @@ describe('document-import-task-processor', () => {
               deletedBecause: null
             }
           ],
+          review: 'review',
+          verified: true,
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
+          restoredFrom: uniqueId.create(),
           cdnResources: ['media/video-2.mp4']
         };
         task = {
           taskParams: {
-            documentId,
-            importedRevision: null,
-            importableRevision: revision2._id
+            documentId
           }
         };
 
@@ -168,7 +176,6 @@ describe('document-import-task-processor', () => {
           baseUrl: `https://${batchParams.hostName}`,
           apiKey: importSource.apiKey,
           documentId: task.taskParams.documentId,
-          toRevision: task.taskParams.importableRevision,
           includeEmails: false
         });
       });
@@ -223,7 +230,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 1,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
             cdnResources: ['media/video-1.mp4'],
             archived: false
           },
@@ -238,7 +245,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 2,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
             cdnResources: ['media/video-2.mp4'],
             archived: false
           }
@@ -263,106 +270,145 @@ describe('document-import-task-processor', () => {
           updatedBy: revision2.createdBy,
           order: 2,
           origin: `external/${batchParams.hostName}`,
-          originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-1`,
+          originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
           cdnResources: ['media/video-2.mp4'],
           archived: false,
           contributors: [user1._id, user2._id]
         };
         delete expectedDocument.documentId;
+        delete expectedDocument.restoredFrom;
 
         expect(importedDocument).toMatchObject(expectedDocument);
       });
+    });
 
-      describe('followed by a task to update the document', () => {
+    describe('consecutive tasks to import the same document (with new revisions added in the meantime)', () => {
+      beforeEach(async () => {
+        task = {
+          taskParams: {
+            documentId
+          }
+        };
+        ctx = { cancellationRequested: false };
 
-        beforeEach(async () => {
-          user3 = { _id: uniqueId.create(), displayName: 'User 3' };
+        exportApiClient.getDocumentExport.resolves({
+          revisions: [revision2, revision1],
+          users: [user1, user2],
+          cdnRootUrl
+        });
+        await sut.process(task, batchParams, ctx);
 
-          revision3 = {
-            _id: uniqueId.create(),
-            documentId,
-            slug: 'slug-3',
-            tags: ['tag-3'],
-            title: 'title-3',
-            createdBy: user3._id,
-            language: 'de',
-            order: 3000,
+        user3 = { _id: uniqueId.create(), displayName: 'User 3' };
+        revision3 = {
+          _id: uniqueId.create(),
+          documentId,
+          roomId: null,
+          description: 'Description 3',
+          slug: 'slug-3',
+          tags: ['tag-3'],
+          title: 'title-3',
+          createdBy: user3._id,
+          language: 'de',
+          order: 3000,
+          sections: [
+            {
+              revision: uniqueId.create(),
+              key: uniqueId.create(),
+              type: 'video',
+              content: {
+                sourceType: MEDIA_SOURCE_TYPE.internal,
+                sourceUrl: 'media/video-3.mp4',
+                copyrightNotice: '',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                posterImage: {
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
+                  sourceUrl: ''
+                },
+                width: 100
+              },
+              deletedOn: null,
+              deletedBy: null,
+              deletedBecause: null
+            }
+          ],
+          review: 'review',
+          verified: true,
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content,
+          cdnResources: ['media/video-3.mp4']
+        };
+        exportApiClient.getDocumentExport.resolves({
+          revisions: [revision1, revision2, revision3],
+          users: [user3],
+          cdnRootUrl
+        });
+        await sut.process(task, batchParams, ctx);
+      });
+
+      it('should call exportApiClient.getDocumentExport', () => {
+        sinon.assert.calledWith(exportApiClient.getDocumentExport, {
+          baseUrl: `https://${batchParams.hostName}`,
+          apiKey: importSource.apiKey,
+          documentId: task.taskParams.documentId,
+          includeEmails: false
+        });
+      });
+
+      it('should create the users', async () => {
+        const importedUser3 = await db.users.findOne({ _id: user3._id });
+        expect(importedUser3).toMatchObject({
+          _id: user3._id,
+          email: null,
+          expires: null,
+          lockedOut: false,
+          passwordHash: null,
+          organization: '',
+          introduction: '',
+          provider: `external/${batchParams.hostName}`,
+          roles: [],
+          displayName: user3.displayName,
+          verificationCode: null
+        });
+      });
+
+      it('should upload the CDN resources', () => {
+        sinon.assert.calledWith(cdn.uploadObjectFromUrl, revision3.cdnResources[0], `${cdnRootUrl}/${revision3.cdnResources[0]}`);
+      });
+
+      it('should re-create the existing revisions and add the new one', async () => {
+        const importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
+
+        expect(importedRevisions).toMatchObject([
+          {
+            ...revision1,
             sections: [
               {
-                revision: uniqueId.create(),
-                key: uniqueId.create(),
-                type: 'video',
-                content: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
-                  sourceUrl: 'media/video-3.mp4',
-                  copyrightNotice: '',
-                  aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-                  posterImage: {
-                    sourceType: MEDIA_SOURCE_TYPE.internal,
-                    sourceUrl: ''
-                  },
-                  width: 100
-                },
-                deletedOn: null,
-                deletedBy: null,
-                deletedBecause: null
+                ...revision1.sections[0],
+                revision: expect.stringMatching(/\w+/)
               }
             ],
-            cdnResources: ['media/video-3.mp4']
-          };
-
-          task = {
-            taskParams: {
-              documentId,
-              importedRevision: revision2._id,
-              importableRevision: revision3._id
-            }
-          };
-
-          exportApiClient.getDocumentExport.resolves({
-            revisions: [revision3],
-            users: [user3],
-            cdnRootUrl
-          });
-
-          ctx = { cancellationRequested: false };
-          await sut.process(task, batchParams, ctx);
-        });
-
-        it('should call exportApiClient.getDocumentExport', () => {
-          sinon.assert.calledWith(exportApiClient.getDocumentExport, {
-            baseUrl: `https://${batchParams.hostName}`,
-            apiKey: importSource.apiKey,
-            documentId: task.taskParams.documentId,
-            toRevision: task.taskParams.importableRevision,
-            includeEmails: false
-          });
-        });
-
-        it('should create the users', async () => {
-          const importedUser3 = await db.users.findOne({ _id: user3._id });
-          expect(importedUser3).toMatchObject({
-            _id: user3._id,
-            email: null,
-            expires: null,
-            lockedOut: false,
-            passwordHash: null,
-            organization: '',
-            introduction: '',
-            provider: `external/${batchParams.hostName}`,
-            roles: [],
-            displayName: user3.displayName,
-            verificationCode: null
-          });
-        });
-
-        it('should upload the CDN resources', () => {
-          sinon.assert.calledWith(cdn.uploadObjectFromUrl, revision3.cdnResources[0], `${cdnRootUrl}/${revision3.cdnResources[0]}`);
-        });
-
-        it('should create the revisions', async () => {
-          const importedRevision3 = await db.documentRevisions.findOne({ _id: revision3._id });
-          expect(importedRevision3).toMatchObject({
+            createdOn: now,
+            order: 3,
+            origin: `external/${batchParams.hostName}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
+            cdnResources: ['media/video-1.mp4'],
+            archived: false
+          },
+          {
+            ...revision2,
+            sections: [
+              {
+                ...revision2.sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
+            createdOn: now,
+            order: 4,
+            origin: `external/${batchParams.hostName}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
+            cdnResources: ['media/video-2.mp4'],
+            archived: false
+          },
+          {
             ...revision3,
             sections: [
               {
@@ -371,41 +417,41 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 3,
+            order: 5,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
             archived: false
-          });
-        });
+          }
+        ]);
+      });
 
-        it('should update the document', async () => {
-          const importedDocument = await db.documents.findOne({ _id: documentId });
-          const expectedDocument = {
-            ...revision3,
-            sections: [
-              {
-                ...revision3.sections[0],
-                revision: expect.stringMatching(/\w+/)
-              }
-            ],
-            _id: documentId,
-            revision: revision3._id,
-            createdOn: now,
-            createdBy: revision1.createdBy,
-            updatedOn: now,
-            updatedBy: revision3.createdBy,
-            order: 3,
-            origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
-            cdnResources: ['media/video-3.mp4'],
-            archived: false,
-            contributors: [user1._id, user2._id, user3._id]
-          };
-          delete expectedDocument.documentId;
+      it('should update the document', async () => {
+        const importedDocument = await db.documents.findOne({ _id: documentId });
+        const expectedDocument = {
+          ...revision3,
+          sections: [
+            {
+              ...revision3.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
+          _id: documentId,
+          revision: revision3._id,
+          createdOn: now,
+          createdBy: revision1.createdBy,
+          updatedOn: now,
+          updatedBy: revision3.createdBy,
+          order: 5,
+          origin: `external/${batchParams.hostName}`,
+          originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
+          cdnResources: ['media/video-3.mp4'],
+          archived: false,
+          contributors: [user1._id, user2._id, user3._id]
+        };
+        delete expectedDocument.documentId;
 
-          expect(importedDocument).toMatchObject(expectedDocument);
-        });
+        expect(importedDocument).toMatchObject(expectedDocument);
       });
     });
 
@@ -498,9 +544,7 @@ describe('document-import-task-processor', () => {
         };
         task = {
           taskParams: {
-            documentId,
-            importedRevision: null,
-            importableRevision: revision2._id
+            documentId
           }
         };
 
@@ -519,7 +563,6 @@ describe('document-import-task-processor', () => {
           baseUrl: `https://${batchParams.hostName}`,
           apiKey: importSource.apiKey,
           documentId: task.taskParams.documentId,
-          toRevision: task.taskParams.importableRevision,
           includeEmails: true
         });
       });

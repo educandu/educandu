@@ -32,7 +32,6 @@ class ExportController {
 
   async handleGetExport(req, res) {
     const documentId = req.params.documentId;
-    const toRevision = req.query.toRevision;
     const includeEmails = req.query.includeEmails === true.toString();
 
     const importingSystemSchemaHash = req.query.databaseSchemaHash;
@@ -42,7 +41,7 @@ class ExportController {
       throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
     }
 
-    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, toRevision, includeEmails });
+    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ documentId, includeEmails });
     if (revisions.some(revision => revision.roomId)) {
       throw new Forbidden('Private documents cannot be exported');
     }

@@ -294,8 +294,6 @@ export const documentImportTaskShape = PropTypes.shape({
     slug: PropTypes.string.isRequired,
     language: PropTypes.string.isRequired,
     updatedOn: PropTypes.string,
-    importedRevision: PropTypes.string,
-    importableRevision: PropTypes.string.isRequired,
     importType: PropTypes.oneOf(Object.values(DOCUMENT_IMPORT_TYPE))
   }).isRequired
 });
