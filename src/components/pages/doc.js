@@ -327,9 +327,10 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     try {
+      const targetRoomId = room?._id || null;
       const clipboardText = await window.navigator.clipboard.readText();
       const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
-      const redactedSection = redactSectionContent({ section: newSection, pluginRegistry });
+      const redactedSection = redactSectionContent({ section: newSection, pluginRegistry, targetRoomId });
       const newSections = insertItemAt(currentSections, redactedSection, index);
       setCurrentSections(newSections);
       setIsDirty(true);
