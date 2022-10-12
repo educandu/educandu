@@ -31,10 +31,10 @@ class HttpClient {
     });
   }
 
-  async download(url, fileName) {
+  async download(url, fileName, withCredentials = false) {
     let urlObject = null;
     try {
-      const response = await axios.get(url, { responseType: 'blob' });
+      const response = await axios.get(url, { responseType: 'blob', withCredentials });
       urlObject = URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = urlObject;
