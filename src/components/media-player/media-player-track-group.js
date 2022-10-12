@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import { useService } from '../container-context.js';
 import MediaPlayerTrack from './media-player-track.js';
+import { useDedupedCallback } from '../../ui/hooks.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import { getMediaSourceType } from '../../utils/media-utils.js';
@@ -94,6 +95,8 @@ function MediaPlayerTrackGroup({
   const clientConfig = useService(ClientConfig);
   const [trackStates, setTrackStates] = useState(createInitialTrackStates(sources));
 
+  const triggerDurationIfNeeded = useDedupedCallback(onDuration);
+
   const cdnRootUrl = clientConfig.cdnRootUrl;
   const isMultitrack = !!trackStates.secondaryTracks.length;
 
@@ -179,9 +182,9 @@ function MediaPlayerTrackGroup({
     const secondaryTrackDurations = trackStates.secondaryTracks.map(track => track.duration);
 
     if (!mainTrackDuration || (!!mainTrackDuration && secondaryTrackDurations.every(d => !!d))) {
-      onDuration(mainTrackDuration);
+      triggerDurationIfNeeded(mainTrackDuration);
     }
-  }, [trackStates, onDuration]);
+  }, [trackStates, triggerDurationIfNeeded]);
 
   const setDeterminedDurations = (mainTrackDuration, secondaryTrackDurations) => {
     setTrackStates(prev => ({
