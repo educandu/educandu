@@ -69,6 +69,8 @@ describe('document-import-task-processor', () => {
     let documentId;
 
     describe('a task to import a new document', () => {
+      let importedRevisions;
+
       beforeEach(async () => {
         documentId = uniqueId.create();
 
@@ -169,6 +171,8 @@ describe('document-import-task-processor', () => {
 
         ctx = { cancellationRequested: false };
         await sut.process(task, batchParams, ctx);
+
+        importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
       });
 
       it('should call exportApiClient.getDocumentExport', () => {
@@ -216,8 +220,7 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(cdn.uploadObjectFromUrl, revision2.cdnResources[0], `${cdnRootUrl}/${revision2.cdnResources[0]}`);
       });
 
-      it('should create the revisions', async () => {
-        const importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
+      it('should create the revisions', () => {
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
@@ -228,7 +231,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 1,
+            order: importedRevisions[0].order,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
             cdnResources: ['media/video-1.mp4'],
@@ -243,7 +246,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 2,
+            order: importedRevisions[0].order + 1,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
             cdnResources: ['media/video-2.mp4'],
@@ -268,7 +271,7 @@ describe('document-import-task-processor', () => {
           createdBy: revision1.createdBy,
           updatedOn: now,
           updatedBy: revision2.createdBy,
-          order: 2,
+          order: importedRevisions[1].order,
           origin: `external/${batchParams.hostName}`,
           originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-2`,
           cdnResources: ['media/video-2.mp4'],
@@ -283,6 +286,8 @@ describe('document-import-task-processor', () => {
     });
 
     describe('consecutive tasks to import the same document (with new revisions added in the meantime)', () => {
+      let importedRevisions;
+
       beforeEach(async () => {
         task = {
           taskParams: {
@@ -342,6 +347,8 @@ describe('document-import-task-processor', () => {
           cdnRootUrl
         });
         await sut.process(task, batchParams, ctx);
+
+        importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
       });
 
       it('should call exportApiClient.getDocumentExport', () => {
@@ -374,9 +381,7 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(cdn.uploadObjectFromUrl, revision3.cdnResources[0], `${cdnRootUrl}/${revision3.cdnResources[0]}`);
       });
 
-      it('should re-create the existing revisions and add the new one', async () => {
-        const importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
-
+      it('should re-create the existing revisions and add the new one', () => {
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
@@ -387,7 +392,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 3,
+            order: importedRevisions[0].order,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-1.mp4'],
@@ -402,7 +407,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 4,
+            order: importedRevisions[0].order + 1,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-2.mp4'],
@@ -417,7 +422,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 5,
+            order: importedRevisions[0].order + 2,
             origin: `external/${batchParams.hostName}`,
             originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
@@ -442,7 +447,7 @@ describe('document-import-task-processor', () => {
           createdBy: revision1.createdBy,
           updatedOn: now,
           updatedBy: revision3.createdBy,
-          order: 5,
+          order: importedRevisions[2].order,
           origin: `external/${batchParams.hostName}`,
           originUrl: `https://${batchParams.hostName}/docs/${documentId}/slug-3`,
           cdnResources: ['media/video-3.mp4'],
@@ -457,6 +462,7 @@ describe('document-import-task-processor', () => {
 
     describe('a task to import a new document as native', () => {
       let user1ImportingSystem;
+      let importedRevisions;
 
       beforeEach(async () => {
         documentId = uniqueId.create();
@@ -556,6 +562,7 @@ describe('document-import-task-processor', () => {
 
         ctx = { cancellationRequested: false };
         await sut.process(task, batchParams, ctx);
+        importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
       });
 
       it('should call exportApiClient.getDocumentExport', () => {
@@ -572,8 +579,7 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(cdn.uploadObjectFromUrl, revision2.cdnResources[0], `${cdnRootUrl}/${revision2.cdnResources[0]}`);
       });
 
-      it('should create the revisions', async () => {
-        const importedRevisions = await db.documentRevisions.find({ documentId }, { sort: [['order', 1]] }).toArray();
+      it('should create the revisions', () => {
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
@@ -585,7 +591,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 1,
+            order: importedRevisions[0].order,
             origin: 'internal',
             originUrl: null,
             cdnResources: ['media/video-1.mp4'],
@@ -601,7 +607,7 @@ describe('document-import-task-processor', () => {
               }
             ],
             createdOn: now,
-            order: 2,
+            order: importedRevisions[0].order + 1,
             origin: 'internal',
             originUrl: null,
             cdnResources: ['media/video-2.mp4'],
@@ -627,7 +633,7 @@ describe('document-import-task-processor', () => {
           createdBy: user1ImportingSystem._id,
           updatedOn: now,
           updatedBy: user2._id,
-          order: 2,
+          order: importedRevisions[1].order,
           origin: 'internal',
           originUrl: null,
           cdnResources: ['media/video-2.mp4'],

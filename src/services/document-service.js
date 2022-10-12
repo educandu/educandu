@@ -182,7 +182,7 @@ class DocumentService {
           throw new BadRequest(`Found unexpected existing revisions for document ${documentId}`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
+        const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
@@ -235,7 +235,7 @@ class DocumentService {
           throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
+        const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
           ...cloneDeep(ancestorRevision),
           ...data,
@@ -393,7 +393,7 @@ class DocumentService {
           throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder({ session });
+        const nextOrder = await this.documentOrderStore.getNextOrder();
         const clonedRevision = cloneDeep(revisionToRestore);
         const newRevision = this._buildDocumentRevision({
           ...clonedRevision,
@@ -434,7 +434,7 @@ class DocumentService {
 
       let newDocument;
       await this.transactionRunner.run(async session => {
-        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length, { session });
+        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length);
         const newDocumentRevisions = revisions.map((revision, index) => {
           return this._buildDocumentRevision({ ...revision, documentId, order: nextOrders[index], origin, originUrl });
         });
