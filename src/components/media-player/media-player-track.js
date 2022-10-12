@@ -207,6 +207,9 @@ function MediaPlayerTrack({
     { 'is-hidden': screenMode === MEDIA_SCREEN_MODE.overlay }
   );
 
+  const isBufferingWhilePlaying = trackPlayState.current === MEDIA_PLAY_STATE.buffering && trackPlayState.beforeBuffering === MEDIA_PLAY_STATE.playing;
+  const shouldPlay = trackPlayState.current === MEDIA_PLAY_STATE.playing || isBufferingWhilePlaying;
+
   return (
     <div className={classes}>
       <div className="MediaPlayerTrack-aspectRatioContainer" style={{ paddingTop }}>
@@ -222,7 +225,7 @@ function MediaPlayerTrack({
           playbackRate={playbackRate}
           progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
           light={loadImmediately ? false : trackPlayState.current === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
-          playing={trackPlayState.current === MEDIA_PLAY_STATE.playing || trackPlayState.current === MEDIA_PLAY_STATE.buffering}
+          playing={shouldPlay}
           onReady={handleReady}
           onBuffer={handleBuffer}
           onBufferEnd={handleBufferEnd}
