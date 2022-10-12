@@ -25,14 +25,14 @@ class ExportApiClient {
       .then(res => res.data);
   }
 
-  async getDocumentExport({ baseUrl, apiKey, documentId, toRevision, includeEmails }) {
+  async getDocumentExport({ baseUrl, apiKey, documentId, includeEmails }) {
     const databaseSchemaHash = await this.database.getSchemaHash();
 
     return this.httpClient
       .get(
         `${baseUrl}/api/v1/exports/${encodeURIComponent(documentId)}`,
         {
-          params: { toRevision, includeEmails, databaseSchemaHash },
+          params: { includeEmails, databaseSchemaHash },
           headers: { [API_KEY_HEADER]: apiKey },
           responseType: 'json'
         }

@@ -48,8 +48,6 @@ class ImportService {
           slug: exportableDocument.slug,
           language: exportableDocument.language,
           updatedOn: exportableDocument.updatedOn,
-          importedRevision: importedDocument?.revision || null,
-          importableRevision: exportableDocument.revision,
           importType
         };
       })

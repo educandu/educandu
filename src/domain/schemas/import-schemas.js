@@ -8,8 +8,6 @@ const importedDocumentSchema = joi.object({
   slug: joi.string().allow('').required(),
   language: joi.string().required(),
   updatedOn: joi.string().required(),
-  importedRevision: idOrKeySchema.required().allow(null),
-  importableRevision: idOrKeySchema.required(),
   importType: joi.string().valid(...Object.values(DOCUMENT_IMPORT_TYPE))
 });
 

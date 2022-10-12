@@ -41,8 +41,6 @@ class BatchService {
       slug: doc.slug,
       language: doc.language,
       updatedOn: new Date(doc.updatedOn),
-      importedRevision: doc.importedRevision,
-      importableRevision: doc.importableRevision,
       importType: doc.importType
     }));
 

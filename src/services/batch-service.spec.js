@@ -60,8 +60,6 @@ describe('batch-service', () => {
           slug: 'doc-1',
           language: 'en',
           updatedOn: '2021-11-24T16:00:32.200Z',
-          importedRevision: null,
-          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
           importType: 'add'
         },
         {
@@ -70,8 +68,6 @@ describe('batch-service', () => {
           slug: 'doc-2',
           language: 'en',
           updatedOn: '2021-11-24T16:05:27.800Z',
-          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
           importType: 'update'
         }
       ];
@@ -331,8 +327,6 @@ describe('batch-service', () => {
           slug: 'doc-1',
           language: 'en',
           updatedOn: '2021-11-24T16:00:32.200Z',
-          importedRevision: null,
-          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
           importType: 'add'
         },
         {
@@ -341,8 +335,6 @@ describe('batch-service', () => {
           slug: 'doc-2',
           language: 'en',
           updatedOn: '2021-11-24T16:05:27.800Z',
-          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
           importType: 'update'
         }
       ];
@@ -421,8 +413,6 @@ describe('batch-service', () => {
           slug: 'doc-1',
           language: 'en',
           updatedOn: '2021-11-24T16:00:32.200Z',
-          importedRevision: null,
-          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
           importType: 'add'
         },
         {
@@ -431,8 +421,6 @@ describe('batch-service', () => {
           slug: 'doc-2',
           language: 'en',
           updatedOn: '2021-11-24T16:05:27.800Z',
-          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
           importType: 'update'
         }
       ];
@@ -467,8 +455,6 @@ describe('batch-service', () => {
             processed: true,
             taskParams: {
               importType: 'add',
-              importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
-              importedRevision: null,
               documentId: documentsToImport[0]._id,
               language: 'en',
               slug: 'doc-1',
@@ -484,8 +470,6 @@ describe('batch-service', () => {
             processed: false,
             taskParams: {
               importType: 'update',
-              importableRevision: '6AXHKzH3z26r7JKJyPN6er',
-              importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
               documentId: documentsToImport[1]._id,
               language: 'en',
               slug: 'doc-2',

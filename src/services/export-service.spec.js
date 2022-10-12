@@ -92,46 +92,14 @@ describe('export-service', () => {
       documentRevisionStore.getAllDocumentRevisionsByDocumentId.resolves([rev1, rev2, rev3]);
     });
 
-    describe('with toRevision = null', () => {
+    describe('with includeEmails = false', () => {
       beforeEach(async () => {
-        result = null;
-
-        try {
-          await sut.getDocumentExport({ documentId: 'abc', toRevision: null });
-        } catch (error) {
-          result = error;
-        }
+        result = await sut.getDocumentExport({ documentId: 'abc', includeEmails: false });
       });
 
-      it('should throw', () => {
-        expect(result.message).toBe('The specified revision \'null\' is invalid for document \'abc\'');
-      });
-    });
-
-    describe('with toRevision = \'4\'', () => {
-      beforeEach(async () => {
-        result = null;
-
-        try {
-          await sut.getDocumentExport({ documentId: 'abc', toRevision: '4' });
-        } catch (error) {
-          result = error;
-        }
-      });
-
-      it('should throw', () => {
-        expect(result.message).toBe('The specified revision \'4\' is invalid for document \'abc\'');
-      });
-    });
-
-    describe('with toRevision = \'2\'', () => {
-      beforeEach(async () => {
-        result = await sut.getDocumentExport({ documentId: 'abc', toRevision: '2' });
-      });
-
-      it('should return revisions', () => {
+      it('should return revisions without emails', () => {
         expect(result).toEqual({
-          revisions: [rev1, rev2],
+          revisions: [rev1, rev2, rev3],
           users: [{ _id: 'user1', displayName: 'JohnDoe', email: null }],
           cdnRootUrl: 'https://cdn.root.url'
         });
@@ -140,12 +108,12 @@ describe('export-service', () => {
 
     describe('with includeEmails = true', () => {
       beforeEach(async () => {
-        result = await sut.getDocumentExport({ documentId: 'abc', toRevision: '2', includeEmails: true });
+        result = await sut.getDocumentExport({ documentId: 'abc', includeEmails: true });
       });
 
-      it('should return revisions', () => {
+      it('should return revisions with emails', () => {
         expect(result).toEqual({
-          revisions: [rev1, rev2],
+          revisions: [rev1, rev2, rev3],
           users: [{ _id: 'user1', displayName: 'JohnDoe', email: 'johndoe@test.com' }],
           cdnRootUrl: 'https://cdn.root.url'
         });

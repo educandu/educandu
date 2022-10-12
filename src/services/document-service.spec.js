@@ -535,12 +535,17 @@ describe('document-service', () => {
       ];
     });
 
-    describe('when it is the first revision', () => {
+    describe('when it is the first import', () => {
       let createdDocument;
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentId, revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentId, revisions, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         createdDocument = await db.documents.findOne({ _id: documentId });
+      });
+
+      afterEach(async () => {
+        await pruneTestEnvironment(container);
+        sandbox.restore();
       });
 
       it('creates the revisions', async () => {
@@ -596,7 +601,6 @@ describe('document-service', () => {
           createdBy: revisions[1].createdBy,
           updatedOn: now,
           updatedBy: revisions[1].createdBy,
-          order: 2,
           archived: false,
           origin: 'external/origin.url',
           originUrl: 'https://origin.url',
@@ -609,16 +613,21 @@ describe('document-service', () => {
       });
     });
 
-    describe('when it is the second revision', () => {
+    describe('when it is the second import', () => {
       let updatedDocument;
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        await sut.importDocumentRevisions({ documentId, revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0], revisions[1]], origin: 'external/origin.url', originUrl: 'https://origin.url' });
         updatedDocument = await db.documents.findOne({ _id: documentId });
       });
 
-      it('creates the revisions', async () => {
+      afterEach(async () => {
+        await pruneTestEnvironment(container);
+        sandbox.restore();
+      });
+
+      it('creates the new revisions', async () => {
         const createdRevisions = await db.documentRevisions.find({ documentId }).toArray();
         expect(createdRevisions).toEqual([
           {
@@ -630,7 +639,7 @@ describe('document-service', () => {
                 deletedOn: new Date(revisions[0].sections[0].deletedOn)
               }
             ],
-            order: 1,
+            order: 2,
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -646,7 +655,7 @@ describe('document-service', () => {
                 revision: expect.stringMatching(/\w+/)
               }
             ],
-            order: 2,
+            order: 3,
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -676,7 +685,6 @@ describe('document-service', () => {
           createdBy: revisions[1].createdBy,
           updatedOn: new Date(revisions[1].createdOn),
           updatedBy: revisions[1].createdBy,
-          order: 2,
           archived: false,
           contributors: [revisions[1].createdBy],
           cdnResources: ['media/video-1.mp4']
@@ -684,25 +692,6 @@ describe('document-service', () => {
         delete expectedDocument.documentId;
 
         expect(updatedDocument).toMatchObject(expectedDocument);
-      });
-    });
-
-    describe('when the ancestorId does not match the last revision', () => {
-      let result;
-      const expectedAncestorId = uniqueId.create();
-
-      beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-
-        try {
-          await sut.importDocumentRevisions({ documentId, revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        } catch (error) {
-          result = error;
-        }
-      });
-
-      it('throws', () => {
-        expect(result?.message).toBe(`Import of document '${documentId}' expected to find revision '${expectedAncestorId}' as the latest revision but found revision '${revisions[0]._id}'`);
       });
     });
   });
