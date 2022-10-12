@@ -37,8 +37,21 @@ function MusicXmlDocument({ url, zoom }) {
       if (url) {
         if (url !== lastLoadedUrl.current) {
           lastLoadedUrl.current = url;
-          const res = await httpClient.get(url, { responseType: 'document', withCredentials: true });
-          await currentOsmd.load(res.data);
+
+          const res = await httpClient.get(url, { responseType: 'blob', withCredentials: true });
+          const blob = res.data;
+
+          const fileHeader = await blob.slice(0, 2).text();
+          const isCompressed = fileHeader === 'PK';
+
+          const xmlDoc = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = event => resolve(event.target.result);
+            reader.onerror = event => reject(event.target.error);
+            isCompressed ? reader.readAsBinaryString(blob) : reader.readAsText(blob);
+          });
+
+          await currentOsmd.load(xmlDoc);
         }
         if (isMounted.current) {
           currentOsmd.zoom = zoom;
