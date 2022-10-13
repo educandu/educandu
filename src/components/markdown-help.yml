@@ -14,8 +14,8 @@ inlineTooltipHtml:
       <p>[Link-Text](Link-Adresse)</p>
     </div>
 blockTooltipText:
-  en: Please click in order to show formatting options for this field
-  de: Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen
+  en: Click to show formatting options for this field
+  de: Klicken, um Formatierungsoptionen für dieses Feld anzuzeigen
 blockHelpTableHeaderLeft:
   en: How you write it
   de: Wie du es schreibst

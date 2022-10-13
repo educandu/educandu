@@ -1,7 +1,4 @@
-@markdown-help-block-help-inactive-opacity: 0.45;
-
 .MarkdownHelp {
-  font-size: 16px;
   display: grid;
   align-content: center;
   justify-content: center;
@@ -11,36 +8,16 @@
     cursor: not-allowed;
   }
 
-  &.MarkdownHelp--small {
-    font-size: 11px;
-  }
-
   &.MarkdownHelp--block {
-    padding: 3px 9px;
-    border-radius: 5px;
+    .m-markdown-button;
     background-color: @edu-secondary-color-light;
-    opacity: @markdown-help-block-help-inactive-opacity;
-    transition: all 300ms ease;
 
     &.MarkdownHelp--small {
-      padding: 1px 4px;
-      border-radius: 2px;
-    }
-
-    &:hover,
-    &:active,
-    &:focus {
-      opacity: 1;
-      transition: all 300ms ease;
+      .m-markdown-button-small;
     }
 
     &.is-disabled {
-
-      &:hover,
-      &:active,
-      &:focus {
-        opacity: @markdown-help-block-help-inactive-opacity;
-      }
+      .m-markdown-button-disabled;
     }
   }
 }

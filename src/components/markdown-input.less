@@ -28,12 +28,31 @@
 
 .MarkdownInput-blockHelpContainer {
   position: absolute;
+  display: grid;
+  gap: 3px;
+  grid-auto-flow: column;
   bottom: 10px;
   right: 10px;
 
   &.MarkdownInput-blockHelpContainer--embeddable {
     bottom: 3px;
     right: 3px;
+  }
+}
+
+.MarkdownInput-resourcePicker {
+  .m-markdown-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: darken(@edu-background-color-base, 3%);
+
+  &.MarkdownInput-resourcePicker--small {
+    .m-markdown-button-small;
+  }
+
+  &.is-disabled {
+    .m-markdown-button-disabled;
   }
 }
 

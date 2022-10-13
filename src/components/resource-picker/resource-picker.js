@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import ResourceSelector from './resource-selector.js';
 import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
@@ -9,9 +9,13 @@ import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 // (when we have more locations than just from the public/private CDN).
 const allowedLocationTypes = [STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private];
 
-function ResourcePicker({ url, onUrlChange }) {
+function ResourcePicker({ isOpen, isButtonVisible, url, onUrlChange }) {
   const { t } = useTranslation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(isOpen);
+
+  useEffect(() => {
+    setIsModalVisible(isOpen);
+  }, [isOpen]);
 
   const handleSelectButtonClick = () => {
     setIsModalVisible(true);
@@ -32,12 +36,14 @@ function ResourcePicker({ url, onUrlChange }) {
 
   return (
     <div>
+      {isButtonVisible && (
       <Button
         type="primary"
         onClick={handleSelectButtonClick}
         >
         {t('common:select')}
       </Button>
+      )}
       <Modal
         centered
         width="80%"
@@ -60,11 +66,15 @@ function ResourcePicker({ url, onUrlChange }) {
 }
 
 ResourcePicker.propTypes = {
+  isButtonVisible: PropTypes.bool,
+  isOpen: PropTypes.bool,
   onUrlChange: PropTypes.func,
   url: PropTypes.string
 };
 
 ResourcePicker.defaultProps = {
+  isButtonVisible: true,
+  isOpen: false,
   onUrlChange: () => {},
   url: ''
 };
