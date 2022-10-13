@@ -537,9 +537,10 @@ describe('document-service', () => {
 
     describe('when it is the first import', () => {
       let createdDocument;
+      let importedDocumentRevisions;
 
       beforeEach(async () => {
-        await sut.importDocumentRevisions({ documentId, revisions, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        importedDocumentRevisions = await sut.importDocumentRevisions({ documentId, revisions, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         createdDocument = await db.documents.findOne({ _id: documentId });
       });
 
@@ -561,7 +562,7 @@ describe('document-service', () => {
                 deletedOn: new Date(revisions[0].sections[0].deletedOn)
               }
             ],
-            order: 1,
+            order: importedDocumentRevisions[0].order,
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -577,7 +578,7 @@ describe('document-service', () => {
                 revision: expect.stringMatching(/\w+/)
               }
             ],
-            order: 2,
+            order: importedDocumentRevisions[0].order + 1,
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -596,6 +597,7 @@ describe('document-service', () => {
         const expectedDocument = {
           ...revisions[1],
           _id: documentId,
+          order: importedDocumentRevisions[1].order,
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
@@ -615,10 +617,11 @@ describe('document-service', () => {
 
     describe('when it is the second import', () => {
       let updatedDocument;
+      let importedDocumentRevisions;
 
       beforeEach(async () => {
         await sut.importDocumentRevisions({ documentId, revisions: [revisions[0]], origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        await sut.importDocumentRevisions({ documentId, revisions: [revisions[0], revisions[1]], origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        importedDocumentRevisions = await sut.importDocumentRevisions({ documentId, revisions: [revisions[0], revisions[1]], origin: 'external/origin.url', originUrl: 'https://origin.url' });
         updatedDocument = await db.documents.findOne({ _id: documentId });
       });
 
@@ -639,7 +642,7 @@ describe('document-service', () => {
                 deletedOn: new Date(revisions[0].sections[0].deletedOn)
               }
             ],
-            order: 2,
+            order: importedDocumentRevisions[0].order,
             createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -655,7 +658,7 @@ describe('document-service', () => {
                 revision: expect.stringMatching(/\w+/)
               }
             ],
-            order: 3,
+            order: importedDocumentRevisions[0].order + 1,
             createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
@@ -680,6 +683,7 @@ describe('document-service', () => {
             }
           ],
           _id: documentId,
+          order: importedDocumentRevisions[1].order,
           revision: revisions[1]._id,
           createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
