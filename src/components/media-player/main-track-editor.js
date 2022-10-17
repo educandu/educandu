@@ -6,6 +6,7 @@ import validation from '../../ui/validation.js';
 import MarkdownInput from '../markdown-input.js';
 import React, { Fragment, useState } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
+import DebouncedInput from '../debounced-input.js';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import { useNumberFormat } from '../locale-context.js';
@@ -102,8 +103,8 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     }
   };
 
-  const handleSourceUrlChange = event => {
-    changeContent({ sourceUrl: event.target.value });
+  const handleDebouncedSourceUrlChange = value => {
+    changeContent({ sourceUrl: value });
   };
 
   const handleSourceUrlBlur = event => {
@@ -149,16 +150,16 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       </FormItem>
       {sourceType === MEDIA_SOURCE_TYPE.external && (
       <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
       </FormItem>
       )}
       {sourceType === MEDIA_SOURCE_TYPE.internal && (
       <FormItem label={t('common:internalUrl')} {...formItemLayout}>
         <div className="u-input-and-button">
-          <Input
+          <DebouncedInput
             addonBefore={CDN_URL_PREFIX}
             value={sourceUrl}
-            onChange={handleSourceUrlChange}
+            onChange={handleDebouncedSourceUrlChange}
             onBlur={handleSourceUrlBlur}
             />
           <ResourcePicker
@@ -170,7 +171,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       )}
       {sourceType === MEDIA_SOURCE_TYPE.youtube && (
       <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
       </FormItem>
       )}
       {useAspectRatio && (

@@ -5,6 +5,7 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import MarkdownInput from '../markdown-input.js';
+import DebouncedInput from '../debounced-input.js';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -81,8 +82,8 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
     }
   };
 
-  const handleSourceUrlChange = event => {
-    changeContent({ sourceUrl: event.target.value });
+  const handleDebouncedSourceUrlChange = value => {
+    changeContent({ sourceUrl: value });
   };
 
   const handleSourceUrlBlur = event => {
@@ -107,16 +108,16 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
       </FormItem>
       {sourceType === MEDIA_SOURCE_TYPE.external && (
       <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
       </FormItem>
       )}
       {sourceType === MEDIA_SOURCE_TYPE.internal && (
       <FormItem label={t('common:internalUrl')} {...formItemLayout}>
         <div className="u-input-and-button">
-          <Input
+          <DebouncedInput
             addonBefore={CDN_URL_PREFIX}
             value={sourceUrl}
-            onChange={handleSourceUrlChange}
+            onChange={handleDebouncedSourceUrlChange}
             onBlur={handleSourceUrlBlur}
             />
           <ResourcePicker
@@ -128,7 +129,7 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
       )}
       {sourceType === MEDIA_SOURCE_TYPE.youtube && (
       <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <Input value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
       </FormItem>
       )}
       <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>

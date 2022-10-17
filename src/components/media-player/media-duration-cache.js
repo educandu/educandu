@@ -1,7 +1,7 @@
 import Logger from '../../common/logger.js';
+import { isBrowser } from '../../ui/browser-helper.js';
 import { determineMediaDuration } from '../../utils/media-utils.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
-import { isBrowser } from '../../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
 
