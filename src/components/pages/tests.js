@@ -2,6 +2,7 @@
 
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import UrlInput from '../url-input.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +21,8 @@ import ResourceSelector from '../resource-picker/resource-selector.js';
 import MediaRangeSelector from '../media-player/media-range-selector.js';
 import { COLOR_SWATCHES } from '../../plugins/media-analysis/constants.js';
 import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
-import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs } from 'antd';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
+import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
@@ -61,6 +62,10 @@ function Tests({ PageTemplate }) {
     const url = new URL(window.document.location.href);
     url.searchParams.set('tab', newTab);
     window.history.replaceState(null, null, url.href);
+  };
+  const handleCopyToClipboard = async clipboardText => {
+    await window.navigator.clipboard.writeText(clipboardText);
+    message.success('Copied to clipboard');
   };
 
   // WaveformCanvas
@@ -312,10 +317,40 @@ function Tests({ PageTemplate }) {
   ];
   const [mmpContent, setMmpContent] = useState(mmpPresets[0].content);
 
+  // UrlInput
+  const [urlInputValue, setUrlInputValue] = useState('');
+  const handleUrlInputCopyYoutubeClick = () => handleCopyToClipboard('https://www.youtube.com/watch?v=221F55VPp2M');
+  const handleUrlInputCopyExternalClick = () => handleCopyToClipboard('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
+  const handleUrlInputCopyPrivateCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputCopyPublicCdnClick = () => handleCopyToClipboard('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputSetYoutubeClick = () => setUrlInputValue('https://www.youtube.com/watch?v=221F55VPp2M');
+  const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
+  const handleUrlInputSetPrivateCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputSetPublicCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputChange = ({ sourceUrl, sourceType }) => {
+    setUrlInputValue(sourceUrl);
+    console.log('Identified sourceType: ', sourceType);
+  };
+
   return (
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="UrlInput" key="UrlInput">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
+              <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
+              <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
+              <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
+              <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
+              <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
+              <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
+            </div>
+            <UrlInput sourceUrl={urlInputValue} onChange={handleUrlInputChange} />
+          </TabPane>
           <TabPane tab="WaveformCanvas" key="WaveformCanvas">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               Pen width:
