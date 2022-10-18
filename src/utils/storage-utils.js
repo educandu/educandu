@@ -1,7 +1,6 @@
 import uniqueId from './unique-id.js';
 import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
-import escapeStringRegexp from 'escape-string-regexp';
 import { getResourceExtension } from './resource-utils.js';
 import {
   CDN_URL_PREFIX,
@@ -178,22 +177,4 @@ export function composeHumanReadableDisplayName({ cdnObject, t }) {
   return cdnObject.documentMetadata.isAccessibleToUser
     ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
     : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
-}
-
-export function isCdnUrl({ sourceUrl, cdnRootUrl }) {
-  return sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX);
-}
-
-export function getCdnPath({ sourceUrl, cdnRootUrl }) {
-  return sourceUrl
-    .replace(new RegExp(`^${escapeStringRegexp(cdnRootUrl)}/?`), '')
-    .replace(new RegExp(`^${escapeStringRegexp(CDN_URL_PREFIX)}/?`), '');
-}
-
-export function ensurePortableUrlIfStorageUrl({ sourceUrl, cdnRootUrl }) {
-  if (!isCdnUrl({ sourceUrl, cdnRootUrl })) {
-    return sourceUrl;
-  }
-
-  return `${CDN_URL_PREFIX}${getCdnPath({ sourceUrl, cdnRootUrl })}`;
 }
