@@ -24,7 +24,7 @@ class Wavedrawer {
     this._canvas = canvas;
     this._ctx = canvas.getContext('2d');
     this._options = { ...DEFAULT_OPTIONS, ...options };
-    this._values = Array.from({ length: this._options.width }, () => 0);
+    this._peaks = Array.from({ length: this._options.width }, () => 0);
 
     this._initCanvas();
     this._draw();
@@ -37,12 +37,12 @@ class Wavedrawer {
 
     this._options = newOptions;
 
-    if (this.width !== this._values.length) {
-      // Adjust values array size to changed width
-      const oldValues = this._values;
-      const factor = oldValues.length / this._options.width;
-      const mapIndex = index => Math.max(0, Math.min(oldValues.length - 1, Math.round(index * factor)));
-      this._values = Array.from({ length: this._options.width }, (_, index) => oldValues[mapIndex(index)]);
+    if (this.width !== this._peaks.length) {
+      // Adjust peaks array size to changed component width
+      const oldPeaks = this._peaks;
+      const factor = oldPeaks.length / this._options.width;
+      const mapIndex = index => Math.max(0, Math.min(oldPeaks.length - 1, Math.round(index * factor)));
+      this._peaks = Array.from({ length: this._options.width }, (_, index) => oldPeaks[mapIndex(index)]);
     }
 
     if (needsRerendering) {
@@ -53,7 +53,7 @@ class Wavedrawer {
   }
 
   clear() {
-    this._values = Array.from({ length: this._options.width }, () => 0);
+    this._peaks = Array.from({ length: this._options.width }, () => 0);
     this._draw();
   }
 
@@ -81,25 +81,25 @@ class Wavedrawer {
   }
 
   _handleUserDraw(canvasX, canvasY) {
-    const newValue = Math.abs((this._options.height / 2) - canvasY) * 2 / this._options.height;
+    const newPeakValue = Math.abs((this._options.height / 2) - canvasY) * 2 / this._options.height;
 
     const startX = Math.round(canvasX - (this._options.penWidth / 2));
     const stopX = startX + this._options.penWidth;
 
     for (let x = startX; x <= stopX; x += 1) {
       if (x > 0 && x < this._options.width) {
-        this._values[x] = newValue;
+        this._peaks[x] = newPeakValue;
       }
     }
 
     if (this._options.smoothing) {
       if (startX > 0) {
-        const oldValue = this._values[startX - 1];
-        this._values[startX - 1] = oldValue + ((newValue - oldValue) / 2);
+        const oldPeakValue = this._peaks[startX - 1];
+        this._peaks[startX - 1] = oldPeakValue + ((newPeakValue - oldPeakValue) / 2);
       }
       if (stopX < this._options.width) {
-        const oldValue = this._values[stopX + 1];
-        this._values[stopX + 1] = oldValue + ((newValue - oldValue) / 2);
+        const oldPeakValue = this._peaks[stopX + 1];
+        this._peaks[stopX + 1] = oldPeakValue + ((newPeakValue - oldPeakValue) / 2);
       }
     }
 
@@ -114,7 +114,7 @@ class Wavedrawer {
     // Draw the waveform
     this._ctx.fillStyle = this._options.penColor;
     for (let x = 0; x < this._options.width; x += 1) {
-      const blockHeight = Math.round(this._values[x] * this._options.height) || 0;
+      const blockHeight = Math.round(this._peaks[x] * this._options.height) || 0;
       const y = Math.round((this._options.height - blockHeight) / 2);
       this._ctx.fillRect(x, y, 1, blockHeight);
     }
