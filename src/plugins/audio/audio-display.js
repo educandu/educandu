@@ -1,29 +1,26 @@
 import React from 'react';
-import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 function AudioDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const sourceUrl = urlUtils.getMediaUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType: content.sourceType,
-    sourceUrl: content.sourceUrl
-  });
+  const url = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const canDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="AudioDisplay">
       <div className="AudioDisplay-content">
-        {sourceUrl && (
+        {url && (
           <MediaPlayer
-            source={sourceUrl}
+            source={url}
+            canDownload={canDownload}
             screenMode={MEDIA_SCREEN_MODE.none}
-            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
         <CopyrightNotice value={content.copyrightNotice} />

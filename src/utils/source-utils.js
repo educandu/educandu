@@ -68,3 +68,8 @@ export function getSourceType({ url, cdnRootUrl }) {
 
   return SOURCE_TYPE.unsupported;
 }
+
+export function isInternalSourceType({ url, cdnRootUrl }) {
+  const sourceType = getSourceType({ url, cdnRootUrl });
+  return sourceType === SOURCE_TYPE.internalPrivate || sourceType === SOURCE_TYPE.internalPublic;
+}

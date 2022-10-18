@@ -1,5 +1,5 @@
 import { SOURCE_TYPE } from '../domain/constants.js';
-import { getSourceType, getPortableUrl, getAccessibleUrl } from './source-utils.js';
+import { getSourceType, getPortableUrl, getAccessibleUrl, isInternalSourceType } from './source-utils.js';
 
 describe('source-utils', () => {
   describe('getSourceType', () => {
@@ -25,6 +25,34 @@ describe('source-utils', () => {
       describe(`when called with url = ${url}`, () => {
         it(`should return '${expectedResult}'`, () => {
           expect(getSourceType({ url, cdnRootUrl })).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('isInternalSourceType', () => {
+    const cdnRootUrl = 'http://cdn-root/';
+    const testCases = [
+      { url: '', expectedResult: false },
+      { url: 'cdn://resource.jpeg', expectedResult: false },
+      { url: 'cdn://media/resource.jpeg', expectedResult: true },
+      { url: 'cdn://rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: true },
+      { url: 'media/resource.jpeg', expectedResult: true },
+      { url: 'rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: true },
+      { url: 'http://cdn-root/resource.jpeg', expectedResult: false },
+      { url: 'http://cdn-root/media/resource.jpeg', expectedResult: true },
+      { url: 'http://cdn-root/rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: true },
+      { url: 'https://www.youtube.com/resource', expectedResult: false },
+      { url: 'https://youtu.be/resource', expectedResult: false },
+      { url: 'https://other.domain/resource.jpeg', expectedResult: false },
+      { url: 'http://other.domain/resource.jpeg', expectedResult: false },
+      { url: 'other.domain/resource.jpeg', expectedResult: false }
+    ];
+
+    testCases.forEach(({ url, expectedResult }) => {
+      describe(`when called with url = ${url}`, () => {
+        it(`should return '${expectedResult}'`, () => {
+          expect(isInternalSourceType({ url, cdnRootUrl })).toBe(expectedResult);
         });
       });
     });

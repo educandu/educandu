@@ -3,7 +3,7 @@ import React from 'react';
 import AudioIcon from './audio-icon.js';
 import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -35,7 +35,6 @@ class AudioInfo {
 
   getDefaultContent() {
     return {
-      sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       copyrightNotice: ''
     };
@@ -43,7 +42,6 @@ class AudioInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required()
     });
@@ -63,7 +61,7 @@ class AudioInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!isAccessibleStoragePath(content.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
@@ -75,7 +73,7 @@ class AudioInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
-    if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
+    if (isInternalSourceType({ url: content.sourceUrl })) {
       cdnResources.push(content.sourceUrl);
     }
 

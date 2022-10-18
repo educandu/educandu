@@ -1006,7 +1006,6 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'audio',
           content: {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
             sourceUrl: 'media/audio-1.mp3',
             copyrightNotice: 'Unmodified text'
           }
@@ -1017,7 +1016,6 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'audio',
           content: {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
             sourceUrl: 'media/audio-2.mp3',
             copyrightNotice: 'Initial text'
           }
