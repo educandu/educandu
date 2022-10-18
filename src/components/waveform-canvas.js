@@ -12,6 +12,9 @@ const DEFAULT_OPTIONS = {
   backgroundColor: '#eeeeee'
 };
 
+const MOUSE_EVENT_BUTTON_PRIMARY = 0;
+const MOUSE_EVENT_BUTTONS_PRIMARY = 1;
+
 class Wavedrawer {
   constructor(element, options = {}) {
     const canvas = element.ownerDocument.createElement('canvas');
@@ -66,12 +69,12 @@ class Wavedrawer {
     this._canvas.width = this._options.width;
     this._canvas.height = this._options.height;
     this._canvas.onmousedown = event => {
-      if (event.button === 0) {
+      if (event.button === MOUSE_EVENT_BUTTON_PRIMARY) {
         this._handleUserDraw(event.offsetX, event.offsetY);
       }
     };
     this._canvas.onmousemove = event => {
-      if (event.buttons === 1) {
+      if (event.buttons === MOUSE_EVENT_BUTTONS_PRIMARY) {
         this._handleUserDraw(event.offsetX, event.offsetY);
       }
     };
