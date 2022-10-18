@@ -1,4 +1,11 @@
-.ColorPicker {}
+.ColorPicker {
+  display: block;
+
+  &.ColorPicker--inline {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
 
 .ColorPicker-currentColor {
   width: 72px;
@@ -8,6 +15,12 @@
   box-sizing: border-box;
   cursor: pointer;
   transition: all 300ms ease;
+
+  &.ColorPicker-currentColor--inline {
+    width: 48px;
+    height: 24px;
+    border-radius: 3px;
+  }
 
   &:hover {
     border-color: @input-hover-border-color;

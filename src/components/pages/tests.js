@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
-import WaveformCanvas from '../waveform-canvas.js';
 import MusicXmlDocument from '../music-xml-document.js';
 import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
@@ -18,13 +17,20 @@ import ResourcePicker from '../resource-picker/resource-picker.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
 import MediaRangeSelector from '../media-player/media-range-selector.js';
-import { COLOR_SWATCHES } from '../../plugins/media-analysis/constants.js';
 import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs } from 'antd';
+import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-canvas.js';
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
+import {
+  DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+  DEFAULT_WAVEFORM_BASELINE_COLOR,
+  DEFAULT_WAVEFORM_PEN_COLOR,
+  DEFAULT_WAVEFORM_PEN_WIDTH,
+  DEFAULT_WAVEFORM_SMOOTHING
+} from '../../plugins/audio-waveform/constants.js';
 
 const { TabPane } = Tabs;
 const { Search, TextArea } = Input;
@@ -63,13 +69,13 @@ function Tests({ PageTemplate }) {
     window.history.replaceState(null, null, url.href);
   };
 
-  // WaveformCanvas
-  const wcApiRef = useRef();
-  const [wcPenWidth, setWcPenWidth] = useState(2);
-  const [wcSmoothing, setWcSmoothing] = useState(true);
-  const [wcPenColor, setWcPenColor] = useState('#666666');
-  const [wcBaselineColor, setWcBaselineColor] = useState('#333333');
-  const [wcBackgroundColor, setWcBackgroundColor] = useState('#eeeeee');
+  // AudioWaveformCanvas
+  const awcApiRef = useRef();
+  const [awcPenWidth, setAwcPenWidth] = useState(DEFAULT_WAVEFORM_PEN_WIDTH);
+  const [awcSmoothing, setAwcSmoothing] = useState(DEFAULT_WAVEFORM_SMOOTHING);
+  const [awcPenColor, setAwcPenColor] = useState(DEFAULT_WAVEFORM_PEN_COLOR);
+  const [awcBaselineColor, setAwcBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
+  const [awcBackgroundColor, setAwcBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
 
   // MusicXmlDocument
   const mxdSources = [
@@ -316,32 +322,32 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
-          <TabPane tab="WaveformCanvas" key="WaveformCanvas">
+          <TabPane tab="AudioWaveformCanvas" key="AudioWaveformCanvas">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               Pen width:
-              <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={wcPenWidth} onChange={value => setWcPenWidth(value)} />
+              <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={awcPenWidth} onChange={value => setAwcPenWidth(value)} />
               Smoothing:
-              <Checkbox checked={wcSmoothing} onChange={event => setWcSmoothing(event.target.checked)} />
+              <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
               Pen color:
-              <ColorPicker width={382} colors={COLOR_SWATCHES} color={wcPenColor} onChange={value => setWcPenColor(value)} />
+              <ColorPicker width={382} color={awcPenColor} onChange={value => setAwcPenColor(value)} />
               Baseline color:
-              <ColorPicker width={382} colors={COLOR_SWATCHES} color={wcBaselineColor} onChange={value => setWcBaselineColor(value)} />
+              <ColorPicker width={382} color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
               Background color:
-              <ColorPicker width={382} colors={COLOR_SWATCHES} color={wcBackgroundColor} onChange={value => setWcBackgroundColor(value)} />
-              <Button onClick={() => wcApiRef.current.clear()}>Reset</Button>
+              <ColorPicker width={382} color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
+              <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
             </div>
             <div style={{ border: '1px solid silver' }}>
               <DimensionsProvider>
                 {({ containerWidth }) => (
-                  <WaveformCanvas
-                    apiRef={wcApiRef}
+                  <AudioWaveformCanvas
+                    apiRef={awcApiRef}
                     width={containerWidth}
                     height={Math.round(containerWidth / 2.5)}
-                    penWidth={wcPenWidth}
-                    smoothing={wcSmoothing}
-                    penColor={wcPenColor}
-                    baselineColor={wcBaselineColor}
-                    backgroundColor={wcBackgroundColor}
+                    penWidth={awcPenWidth}
+                    smoothing={awcSmoothing}
+                    penColor={awcPenColor}
+                    baselineColor={awcBaselineColor}
+                    backgroundColor={awcBackgroundColor}
                     />
                 )}
               </DimensionsProvider>
