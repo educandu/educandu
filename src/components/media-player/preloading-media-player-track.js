@@ -28,14 +28,14 @@ function PreloadingMediaPlayerTrack({
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const [objectUrl, setObjectUrl] = useState(null);
-  const [loadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
+  const [lastLoadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
 
   if (!loadImmediately) {
     throw new Error('Deferred loading is not supported');
   }
 
   useEffect(() => {
-    if (sourceUrl === loadingSourceUrl) {
+    if (sourceUrl === lastLoadingSourceUrl) {
       return;
     }
 
@@ -58,7 +58,7 @@ function PreloadingMediaPlayerTrack({
         URL.revokeObjectURL(oldObjectUrl);
       }
     })();
-  }, [sourceUrl, loadingSourceUrl, objectUrl, httpClient, clientConfig]);
+  }, [sourceUrl, lastLoadingSourceUrl, objectUrl, httpClient, clientConfig]);
 
   useOnComponentUnmount(() => {
     if (objectUrl) {
