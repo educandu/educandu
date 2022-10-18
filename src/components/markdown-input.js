@@ -9,8 +9,8 @@ import { useStorage } from './storage-context.js';
 import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
-import ResourcePicker from './resource-picker/resource-picker.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
 
 const URL_INSERT_EVENT = 'urlInsert';
 
@@ -45,7 +45,7 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
     setIsResourcePickerOpen(true);
   };
 
-  const handleUrlSelect = url => {
+  const handleResourcePickerUrlSelect = url => {
     const caretPosition = currentCaretPosition > -1 ? currentCaretPosition : value.length;
     const valueBeforeCaret = value.substr(0, caretPosition);
     const valueAfterCaret = value.substr(caretPosition);
@@ -54,6 +54,10 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
     blockInputContainerRef.current.value = `${valueBeforeCaret}${urlMarkdown}${valueAfterCaret}`;
     blockInputContainerRef.current.dispatchEvent(new Event(URL_INSERT_EVENT));
 
+    setIsResourcePickerOpen(false);
+  };
+
+  const handleResourcePickerClose = () => {
     setIsResourcePickerOpen(false);
   };
 
@@ -93,10 +97,10 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
         })}
         >
         <LinkOutlined />
-        <ResourcePicker
-          isButtonVisible={false}
-          isOpen={isResourcePickerOpen}
-          onUrlChange={handleUrlSelect}
+        <ResourcePickerDialog
+          isVisible={isResourcePickerOpen}
+          onSelect={handleResourcePickerUrlSelect}
+          onClose={handleResourcePickerClose}
           />
       </div>
     );
