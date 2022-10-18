@@ -13,13 +13,13 @@ import ResourcePicker from './resource-picker/resource-picker.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { ensurePortableUrlIfStorageUrl, storageLocationPathToUrl } from '../utils/storage-utils.js';
 
-function UrlInput({ sourceUrl, onChange }) {
+function UrlInput({ value, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
 
   const sourceType = useMemo(
-    () => getSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    , [clientConfig.cdnRootUrl, sourceUrl]
+    () => getSourceType({ sourceUrl: value, cdnRootUrl: clientConfig.cdnRootUrl })
+    , [clientConfig.cdnRootUrl, value]
   );
 
   const inputPrefixIcon = useMemo(() => {
@@ -40,16 +40,16 @@ function UrlInput({ sourceUrl, onChange }) {
   }, [sourceType]);
 
   const handleUrlChange = selectedPortableUrl => {
-    onChange({ sourceUrl: selectedPortableUrl, sourceType });
+    onChange(selectedPortableUrl);
   };
 
   const handleInputValueChange = event => {
-    onChange({ sourceUrl: event.target.value, sourceType });
+    onChange(event.target.value);
   };
 
   const handleInputBlur = () => {
-    const url = ensurePortableUrlIfStorageUrl({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    onChange({ sourceUrl: url, sourceType });
+    const url = ensurePortableUrlIfStorageUrl({ sourceUrl: value, cdnRootUrl: clientConfig.cdnRootUrl });
+    onChange(url);
   };
 
   const renderInputPrefix = () => {
@@ -65,14 +65,14 @@ function UrlInput({ sourceUrl, onChange }) {
   return (
     <div className="UrlInput u-input-and-button">
       <Input
-        value={sourceUrl}
+        value={value}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
         onBlur={handleInputBlur}
         />
       <ResourcePicker
-        url={storageLocationPathToUrl(sourceUrl)}
-        onUrlChange={url => handleUrlChange(url)}
+        url={storageLocationPathToUrl(value)}
+        onUrlChange={handleUrlChange}
         />
     </div>
   );
@@ -80,11 +80,11 @@ function UrlInput({ sourceUrl, onChange }) {
 
 UrlInput.propTypes = {
   onChange: PropTypes.func.isRequired,
-  sourceUrl: PropTypes.string
+  value: PropTypes.string
 };
 
 UrlInput.defaultProps = {
-  sourceUrl: ''
+  value: ''
 };
 
 export default UrlInput;

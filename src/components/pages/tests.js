@@ -327,9 +327,8 @@ function Tests({ PageTemplate }) {
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
   const handleUrlInputSetPrivateCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
   const handleUrlInputSetPublicCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
-  const handleUrlInputChange = ({ sourceUrl, sourceType }) => {
-    setUrlInputValue(sourceUrl);
-    console.log('Identified sourceType: ', sourceType);
+  const handleUrlInputChange = url => {
+    setUrlInputValue(url);
   };
 
   return (
@@ -349,7 +348,7 @@ function Tests({ PageTemplate }) {
               <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
               <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
             </div>
-            <UrlInput sourceUrl={urlInputValue} onChange={handleUrlInputChange} />
+            <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
           </TabPane>
           <TabPane tab="WaveformCanvas" key="WaveformCanvas">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
