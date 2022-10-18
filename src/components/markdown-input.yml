@@ -1,3 +1,6 @@
 previewArea:
   en: Preview area
   de: Vorschaubereich
+resourcePickerTooltip:
+  en: Click to insert a link to a selected resource
+  de: Klicken, um eine gewählte Ressource einzusetzen

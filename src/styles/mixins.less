@@ -300,3 +300,37 @@
   .m-control-group;
   gap: @edu-control-spacing-wide;
 }
+
+.m-markdown-button {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 3px 9px;
+  opacity: 0.45;
+  border-radius: 5px;
+  color: @edu-text-color;
+  transition: all 300ms ease;
+
+  &:hover,
+  &:active,
+  &:focus {
+    opacity: 1;
+    transition: all 300ms ease;
+  }
+}
+
+.m-markdown-button-small {
+  .m-markdown-button;
+  font-size: 12px;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.m-markdown-button-disabled {
+
+  &:hover,
+  &:active,
+  &:focus {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
