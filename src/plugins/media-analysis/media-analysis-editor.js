@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
-import { COLOR_SWATCHES } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
 import { Button, Form, Input, Tooltip } from 'antd';
@@ -386,8 +385,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               </FormItem>
               <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
                 <ColorPicker
-                  width={382}
-                  colors={COLOR_SWATCHES}
                   color={chapters[selectedChapterIndex].color}
                   onChange={handleChapterColorChange}
                   />

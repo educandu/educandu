@@ -48,26 +48,31 @@ function ensureIsFullyQualifiedUrl(pathOrUrl, fallbackBase) {
 }
 
 function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
-  switch (sourceType) {
-    case IMAGE_SOURCE_TYPE.internal:
-      return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
-    default:
-      return sourceUrl || null;
+  if (!sourceUrl) {
+    return null;
   }
+
+  if (sourceType === IMAGE_SOURCE_TYPE.internal && !sourceUrl.startsWith(cdnRootUrl)) {
+    return `${cdnRootUrl}/${sourceUrl.replace(/^cdn:\/\//, '')}`;
+  }
+
+  return sourceUrl;
 }
 
 function getMediaUrl({ cdnRootUrl, sourceType, sourceUrl }) {
-  switch (sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
-    default:
-      return sourceUrl || null;
+  if (!sourceUrl) {
+    return null;
   }
+
+  if (sourceType === MEDIA_SOURCE_TYPE.internal && !sourceUrl.startsWith(cdnRootUrl)) {
+    return `${cdnRootUrl}/${sourceUrl.replace(/^cdn:\/\//, '')}`;
+  }
+
+  return sourceUrl;
 }
 
 function getGravatarUrl(userEmail) {
   return gravatar.url(userEmail, { s: AVATAR_SIZE, d: 'mp' });
-
 }
 
 export default {

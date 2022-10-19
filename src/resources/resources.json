@@ -1804,6 +1804,42 @@
     }
   },
   {
+    "namespace": "audioWaveform",
+    "language": "en",
+    "resources": {
+      "name": "Audio waveform",
+      "chooseImageDividerText": "Choose a ready-made image",
+      "generateImageDividerText": "or generate an image from an audio file",
+      "generalSettingsDividerText": "General settings",
+      "generateWaveformFromAudioFile": "Generate waveform from audio file",
+      "dialogTitle": "Generate waveform image",
+      "dialogDropzoneInfo": "Drag an audio file into this box",
+      "dialogLocalFilePickerButtonText": "Select an audio file from my machine",
+      "dialogCdnFilePickerButtonText": "Select an audio file from the CDN",
+      "dialogLocalFilePickerPenColorLabel": "Waveform",
+      "dialogLocalFilePickerBaselineColorLabel": "Baseline",
+      "dialogLocalFilePickerBackgroundColorLabel": "Background"
+    }
+  },
+  {
+    "namespace": "audioWaveform",
+    "language": "de",
+    "resources": {
+      "name": "Audio-Wellenform",
+      "chooseImageDividerText": "Wähle ein vorgefertigtes Bild aus",
+      "generateImageDividerText": "oder erstelle ein Bild aus einer Audio-Datei",
+      "generalSettingsDividerText": "Generelle Einstellungen",
+      "generateWaveformFromAudioFile": "Wellenform aus Audio-Datei erstellen",
+      "dialogTitle": "Wellenform-Bild erstellen",
+      "dialogDropzoneInfo": "Ziehe eine Audio-Datei in diese Box",
+      "dialogLocalFilePickerButtonText": "Audio-Datei vom lokalen Computer auswählen",
+      "dialogCdnFilePickerButtonText": "Audio-Datei vom CDN auswählen",
+      "dialogLocalFilePickerPenColorLabel": "Wellenform",
+      "dialogLocalFilePickerBaselineColorLabel": "Grundlinie",
+      "dialogLocalFilePickerBackgroundColorLabel": "Hintergrund"
+    }
+  },
+  {
     "namespace": "audio",
     "language": "en",
     "resources": {

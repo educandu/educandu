@@ -26,6 +26,7 @@ const plugins = [
   'quick-tester',
   'ear-training',
   'interval-trainer',
+  'audio-waveform',
   'media-slideshow',
   'interactive-media',
   'multitrack-media',

@@ -1,5 +1,6 @@
 import { CHAPTER_TYPE } from './constants.js';
 import urlUtils from '../../utils/url-utils.js';
+import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import { preloadImage } from '../../utils/image-utils.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -61,7 +62,7 @@ function MediaSlideshowDisplay({ content }) {
       <div className="MediaSlideshow-chapterImageOverlayWrapper">
         <div
           className="MediaSlideshow-chapterImageOverlay"
-          style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: imageFit }}
+          style={{ backgroundImage: cssUrl(imageUrl), backgroundSize: imageFit }}
           />
       </div>
     );

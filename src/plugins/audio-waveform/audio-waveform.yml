@@ -1,0 +1,36 @@
+name:
+  en: Audio waveform
+  de: Audio-Wellenform
+chooseImageDividerText:
+  en: Choose a ready-made image
+  de: Wähle ein vorgefertigtes Bild aus
+generateImageDividerText:
+  en: or generate an image from an audio file
+  de: oder erstelle ein Bild aus einer Audio-Datei
+generalSettingsDividerText:
+  en: General settings
+  de: Generelle Einstellungen
+generateWaveformFromAudioFile:
+  en: Generate waveform from audio file
+  de: Wellenform aus Audio-Datei erstellen
+dialogTitle:
+  en: Generate waveform image
+  de: Wellenform-Bild erstellen
+dialogDropzoneInfo:
+  en: Drag an audio file into this box
+  de: Ziehe eine Audio-Datei in diese Box
+dialogLocalFilePickerButtonText:
+  en: Select an audio file from my machine
+  de: Audio-Datei vom lokalen Computer auswählen
+dialogCdnFilePickerButtonText:
+  en: Select an audio file from the CDN
+  de: Audio-Datei vom CDN auswählen
+dialogLocalFilePickerPenColorLabel:
+  en: Waveform
+  de: Wellenform
+dialogLocalFilePickerBaselineColorLabel:
+  en: Baseline
+  de: Grundlinie
+dialogLocalFilePickerBackgroundColorLabel:
+  en: Background
+  de: Hintergrund

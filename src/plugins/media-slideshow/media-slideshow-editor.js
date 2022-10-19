@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
@@ -186,7 +187,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
       <div className="MediaSlideshow-chapterImageOverlayWrapper">
         <div
           className="MediaSlideshow-chapterImageOverlay"
-          style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: imageFit }}
+          style={{ backgroundImage: cssUrl(imageUrl), backgroundSize: imageFit }}
           />
       </div>
     );

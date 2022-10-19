@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
-import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../domain/constants.js';
-
-const DEFAULT_OPTIONS = {
-  width: IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
-  height: Math.round(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH / 2.5),
-  penWidth: 2,
-  smoothing: true,
-  penColor: '#666666',
-  baselineColor: '#333333',
-  backgroundColor: '#eeeeee'
-};
+import { drawWaveform } from './audio-waveform-utils.js';
+import {
+  DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+  DEFAULT_WAVEFORM_BASELINE_COLOR,
+  DEFAULT_WAVEFORM_HEIGHT,
+  DEFAULT_WAVEFORM_PEN_COLOR,
+  DEFAULT_WAVEFORM_PEN_WIDTH,
+  DEFAULT_WAVEFORM_SMOOTHING,
+  DEFAULT_WAVEFORM_WIDTH
+} from './constants.js';
 
 const MOUSE_EVENT_BUTTON_PRIMARY = 0;
 const MOUSE_EVENT_BUTTONS_PRIMARY = 1;
@@ -18,12 +17,23 @@ const MOUSE_EVENT_BUTTONS_PRIMARY = 1;
 class Wavedrawer {
   constructor(element, options = {}) {
     const canvas = element.ownerDocument.createElement('canvas');
-    canvas.setAttribute('style', 'display: block;');
+    canvas.setAttribute('style', 'display: block; cursor: crosshair;');
     element.replaceChildren(canvas);
 
     this._canvas = canvas;
     this._ctx = canvas.getContext('2d');
-    this._options = { ...DEFAULT_OPTIONS, ...options };
+
+    this._options = {
+      width: DEFAULT_WAVEFORM_WIDTH,
+      height: DEFAULT_WAVEFORM_HEIGHT,
+      penWidth: DEFAULT_WAVEFORM_PEN_WIDTH,
+      smoothing: DEFAULT_WAVEFORM_SMOOTHING,
+      penColor: DEFAULT_WAVEFORM_PEN_COLOR,
+      baselineColor: DEFAULT_WAVEFORM_BASELINE_COLOR,
+      backgroundColor: DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+      ...options
+    };
+
     this._peaks = Array.from({ length: this._options.width }, () => 0);
 
     this._initCanvas();
@@ -107,25 +117,19 @@ class Wavedrawer {
   }
 
   _draw() {
-    // Draw the background
-    this._ctx.fillStyle = this._options.backgroundColor;
-    this._ctx.fillRect(0, 0, this._options.width, this._options.height);
-
-    // Draw the waveform
-    this._ctx.fillStyle = this._options.penColor;
-    for (let x = 0; x < this._options.width; x += 1) {
-      const blockHeight = Math.round(this._peaks[x] * this._options.height) || 0;
-      const y = Math.round((this._options.height - blockHeight) / 2);
-      this._ctx.fillRect(x, y, 1, blockHeight);
-    }
-
-    // Draw the baseline
-    this._ctx.fillStyle = this._options.baselineColor;
-    this._ctx.fillRect(0, Math.round(this._options.height / 2), this._options.width, 1);
+    drawWaveform({
+      canvas: this._canvas,
+      peaks: this._peaks,
+      width: this._options.width,
+      height: this._options.height,
+      penColor: this._options.penColor,
+      baselineColor: this._options.baselineColor,
+      backgroundColor: this._options.backgroundColor
+    });
   }
 }
 
-function WaveformCanvas({ apiRef, backgroundColor, baselineColor, height, penColor, penWidth, smoothing, width }) {
+function AudioWaveformCanvas({ apiRef, backgroundColor, baselineColor, height, penColor, penWidth, smoothing, width }) {
   const containerRef = useRef();
   const wavedrawerRef = useRef();
 
@@ -150,7 +154,7 @@ function WaveformCanvas({ apiRef, backgroundColor, baselineColor, height, penCol
   );
 }
 
-WaveformCanvas.propTypes = {
+AudioWaveformCanvas.propTypes = {
   apiRef: PropTypes.shape({ current: PropTypes.any }),
   backgroundColor: PropTypes.string,
   baselineColor: PropTypes.string,
@@ -161,15 +165,15 @@ WaveformCanvas.propTypes = {
   width: PropTypes.number
 };
 
-WaveformCanvas.defaultProps = {
+AudioWaveformCanvas.defaultProps = {
   apiRef: null,
-  backgroundColor: DEFAULT_OPTIONS.backgroundColor,
-  baselineColor: DEFAULT_OPTIONS.baselineColor,
-  height: DEFAULT_OPTIONS.height,
-  penColor: DEFAULT_OPTIONS.penColor,
-  penWidth: DEFAULT_OPTIONS.penWidth,
-  smoothing: DEFAULT_OPTIONS.smoothing,
-  width: DEFAULT_OPTIONS.width
+  backgroundColor: DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+  baselineColor: DEFAULT_WAVEFORM_BASELINE_COLOR,
+  height: DEFAULT_WAVEFORM_HEIGHT,
+  penColor: DEFAULT_WAVEFORM_PEN_COLOR,
+  penWidth: DEFAULT_WAVEFORM_PEN_WIDTH,
+  smoothing: DEFAULT_WAVEFORM_SMOOTHING,
+  width: DEFAULT_WAVEFORM_WIDTH
 };
 
-export default WaveformCanvas;
+export default AudioWaveformCanvas;

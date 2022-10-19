@@ -1,0 +1,38 @@
+.AudioWaveformDisplay {}
+
+.AudioWaveformDisplay-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.AudioWaveformGeneratorDialog-dropzone {
+  .m-control-border-base;
+  padding: 10px;
+}
+
+.AudioWaveformGeneratorDialog-previewArea {
+  height: 250px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  color: @edu-disabled-color-checked;
+}
+
+.AudioWaveformGeneratorDialog-controls {
+  margin-top: @edu-content-padding;
+  display: grid;
+  gap: @edu-control-spacing-wide;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+  }
+}

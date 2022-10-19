@@ -14,6 +14,7 @@ import DiagramNetInfo from './diagram-net/diagram-net-info.js';
 import QuickTesterInfo from './quick-tester/quick-tester-info.js';
 import AbcNotationInfo from './abc-notation/abc-notation-info.js';
 import EarTrainingInfo from './ear-training/ear-training-info.js';
+import AudioWaveformInfo from './audio-waveform/audio-waveform-info.js';
 import MediaAnalysisInfo from './media-analysis/media-analysis-info.js';
 import MediaSlideshowInfo from './media-slideshow/media-slideshow-info.js';
 import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
@@ -37,6 +38,7 @@ const allPossibleInfoTypes = [
   QuickTesterInfo,
   AbcNotationInfo,
   EarTrainingInfo,
+  AudioWaveformInfo,
   MediaAnalysisInfo,
   MediaSlideshowInfo,
   MusicXmlViewerInfo,
