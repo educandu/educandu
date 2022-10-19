@@ -1,9 +1,7 @@
 import { ORIENTATION } from './constants.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 
 export function createDefaultHoverEffect() {
   return {
-    sourceType: IMAGE_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: ''
   };
@@ -11,7 +9,6 @@ export function createDefaultHoverEffect() {
 
 export function createDefaultRevealEffect() {
   return {
-    sourceType: IMAGE_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: '',
     startPosition: 0,

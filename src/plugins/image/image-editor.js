@@ -1,29 +1,31 @@
 import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
-import urlUtils from '../../utils/url-utils.js';
+import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Radio, InputNumber, Tooltip } from 'antd';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { Form, Input, Radio, InputNumber, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect, createInitialClipEffect, createInitialRevealEffect } from './image-utils.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
+import { isInternalSourceType, getAccessibleUrl } from '../../utils/source-utils.js';
+import {
+  createDefaultClipEffect,
+  createDefaultHoverEffect,
+  createDefaultRevealEffect,
+  createInitialClipEffect,
+  createInitialRevealEffect
+}
+  from './image-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 const resetRevealEffect = effectType => {
   return effectType === EFFECT_TYPE.reveal ? createInitialRevealEffect() : createDefaultRevealEffect();
@@ -42,7 +44,7 @@ function ImageEditor({ content, onContentChanged }) {
   const { sourceType, sourceUrl, width, copyrightNotice, effectType, hoverEffect, revealEffect, clipEffect } = content;
 
   useEffect(() => {
-    setCurrentImageSource(urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl }));
+    setCurrentImageSource(getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl }));
   }, [clientConfig, sourceType, sourceUrl]);
 
   const updateClipEffectState = useCallback(() => {
@@ -70,46 +72,22 @@ function ImageEditor({ content, onContentChanged }) {
     updateClipEffectState();
   }, [updateClipEffectState, clipEffect.region]);
 
+  const isInvalidUrl = url => !isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
+    && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidSourceUrl
-      = newContent.sourceType === IMAGE_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
-    const isInvalidHoverEffectSourceUrl
-      = newContent.effectType === EFFECT_TYPE.hover
-      && newContent.hoverEffect.sourceType === IMAGE_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.hoverEffect.sourceUrl, t).validateStatus === 'error';
+    const isInvalidSourceUrl = isInvalidUrl(newContent.sourceUrl);
+    const isInvalidHoverEffectSourceUrl = newContent.effectType === EFFECT_TYPE.hover
+      && isInvalidUrl(newContent.hoverEffect.sourceUrl);
+    const isInvalidRevealEffectSourceUrl = newContent.effectType === EFFECT_TYPE.reveal
+      && isInvalidUrl(newContent.revealEffect.sourceUrl);
 
-    const isInvalidClipEffectSourceUrl
-      = newContent.effectType === EFFECT_TYPE.clip
-      && newContent.clipEffect.sourceType === IMAGE_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.clipEffect.sourceUrl, t).validateStatus === 'error';
-
-    onContentChanged(newContent, isInvalidSourceUrl || isInvalidHoverEffectSourceUrl || isInvalidClipEffectSourceUrl);
+    onContentChanged(newContent, isInvalidSourceUrl || isInvalidHoverEffectSourceUrl || isInvalidRevealEffectSourceUrl);
   };
 
-  const handleSourceTypeChange = event => {
-    const { value } = event.target;
-    changeContent({
-      sourceType: value,
-      sourceUrl: '',
-      copyrightNotice: '',
-      clipEffect: resetClipEffect(effectType)
-    });
-  };
-
-  const handleExternalSourceUrlChange = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
-  };
-
-  const handleInternalSourceUrlChange = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
-  };
-
-  const handleInternalSourceUrlFileNameChange = value => {
+  const handleSourceUrlChange = value => {
     changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
   };
 
@@ -132,25 +110,7 @@ function ImageEditor({ content, onContentChanged }) {
     });
   };
 
-  const handleHoverEffectSourceTypeChange = event => {
-    const { value } = event.target;
-    const newHoverEffect = { ...hoverEffect, sourceType: value, sourceUrl: '' };
-    changeContent({ hoverEffect: newHoverEffect });
-  };
-
-  const handleHoverEffectExternalSourceUrlChange = event => {
-    const { value } = event.target;
-    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
-    changeContent({ hoverEffect: newHoverEffect });
-  };
-
-  const handleHoverEffectInternalSourceUrlChange = event => {
-    const { value } = event.target;
-    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
-    changeContent({ hoverEffect: newHoverEffect });
-  };
-
-  const handleHoverEffectInternalSourceUrlFileNameChange = value => {
+  const handleHoverEffectSourceUrlChange = value => {
     const newHoverEffect = { ...hoverEffect, sourceUrl: value };
     changeContent({ hoverEffect: newHoverEffect });
   };
@@ -161,25 +121,7 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleRevealEffectSourceTypeChange = event => {
-    const { value } = event.target;
-    const newRevealEffect = { ...revealEffect, sourceType: value, sourceUrl: '' };
-    changeContent({ revealEffect: newRevealEffect });
-  };
-
-  const handleRevealEffectExternalSourceUrlChange = event => {
-    const { value } = event.target;
-    const newRevealEffect = { ...revealEffect, sourceUrl: value };
-    changeContent({ revealEffect: newRevealEffect });
-  };
-
-  const handleRevealEffectInternalSourceUrlChange = event => {
-    const { value } = event.target;
-    const newRevealEffect = { ...revealEffect, sourceUrl: value };
-    changeContent({ revealEffect: newRevealEffect });
-  };
-
-  const handleRevealEffectInternalSourceUrlFileNameChange = value => {
+  const handleRevealEffectSourceUrlChange = value => {
     const newRevealEffect = { ...revealEffect, sourceUrl: value };
     changeContent({ revealEffect: newRevealEffect });
   };
@@ -216,59 +158,27 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ clipEffect: newClipEffect });
   };
 
-  const renderSourceTypeInput = (value, onChangeHandler) => (
-    <FormItem label={t('common:source')} {...formItemLayout}>
-      <RadioGroup value={value} onChange={onChangeHandler}>
-        <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-        <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-      </RadioGroup>
-    </FormItem>
-  );
-
-  const renderInternalSourceTypeInput = (value, onInputChangeHandler, onFileChangeHandler) => (
-    <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-      <div className="u-input-and-button">
-        <Input
-          addonBefore={CDN_URL_PREFIX}
-          value={value}
-          onChange={onInputChangeHandler}
-          />
-        <ResourcePicker
-          url={storageLocationPathToUrl(value)}
-          onUrlChange={url => onFileChangeHandler(urlToStorageLocationPath(url))}
-          />
-      </div>
-    </FormItem>
-  );
-
-  const renderExternalSourceTypeInput = (value, onChangeHandler) => (
-    <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
-      <Input value={value} onChange={onChangeHandler} />
-    </FormItem>
-  );
-
   const renderCopyrightNoticeInput = (value, onChangeHandler) => (
-    <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+    <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
       <MarkdownInput value={value} onChange={onChangeHandler} />
     </Form.Item>
   );
 
+  const allowedSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
+
   return (
     <div className="ImageEditor">
       <Form layout="horizontal">
-        {renderSourceTypeInput(sourceType, handleSourceTypeChange)}
-        {sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
-          sourceUrl,
-          handleExternalSourceUrlChange
-        )}
-        {sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
-          sourceUrl,
-          handleInternalSourceUrlChange,
-          handleInternalSourceUrlFileNameChange
-        )}
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+          <UrlInput
+            value={sourceUrl}
+            allowedSourceTypes={allowedSourceTypes}
+            onChange={handleSourceUrlChange}
+            />
+        </FormItem>
         {renderCopyrightNoticeInput(copyrightNotice, handleCopyrightNoticeChange)}
 
-        <Form.Item label={t('effectTypeLabel')} {...formItemLayout}>
+        <Form.Item label={t('effectTypeLabel')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={effectType} onChange={handleEffectTypeChange}>
             <RadioButton value={EFFECT_TYPE.none}>{t('noneOption')}</RadioButton>
             <RadioButton value={EFFECT_TYPE.hover}>{t('hoverOption')}</RadioButton>
@@ -282,34 +192,28 @@ function ImageEditor({ content, onContentChanged }) {
             <div className="Panel-content">
               {effectType === EFFECT_TYPE.hover && (
               <Fragment>
-                {renderSourceTypeInput(hoverEffect.sourceType, handleHoverEffectSourceTypeChange)}
-                {hoverEffect.sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
-                  hoverEffect.sourceUrl,
-                  handleHoverEffectExternalSourceUrlChange
-                )}
-                {hoverEffect.sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
-                  hoverEffect.sourceUrl,
-                  handleHoverEffectInternalSourceUrlChange,
-                  handleHoverEffectInternalSourceUrlFileNameChange
-                )}
+                <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+                  <UrlInput
+                    value={hoverEffect.sourceUrl}
+                    allowedSourceTypes={allowedSourceTypes}
+                    onChange={handleHoverEffectSourceUrlChange}
+                    />
+                </FormItem>
                 {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
               </Fragment>
               )}
 
               {effectType === EFFECT_TYPE.reveal && (
               <Fragment>
-                {renderSourceTypeInput(revealEffect.sourceType, handleRevealEffectSourceTypeChange)}
-                {revealEffect.sourceType === IMAGE_SOURCE_TYPE.external && renderExternalSourceTypeInput(
-                  revealEffect.sourceUrl,
-                  handleRevealEffectExternalSourceUrlChange
-                )}
-                {revealEffect.sourceType === IMAGE_SOURCE_TYPE.internal && renderInternalSourceTypeInput(
-                  revealEffect.sourceUrl,
-                  handleRevealEffectInternalSourceUrlChange,
-                  handleRevealEffectInternalSourceUrlFileNameChange
-                )}
+                <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+                  <UrlInput
+                    value={revealEffect.sourceUrl}
+                    allowedSourceTypes={allowedSourceTypes}
+                    onChange={handleRevealEffectSourceUrlChange}
+                    />
+                </FormItem>
                 {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
-                <FormItem label={t('startPosition')} {...formItemLayout}>
+                <FormItem label={t('startPosition')} {...FORM_ITEM_LAYOUT}>
                   <InputNumber
                     defaultValue={revealEffect.startPosition}
                     min={0}
@@ -319,7 +223,7 @@ function ImageEditor({ content, onContentChanged }) {
                     onChange={handleRevealEffectStartPositionChange}
                     />
                 </FormItem>
-                <FormItem label={t('orientationLabel')} {...formItemLayout}>
+                <FormItem label={t('orientationLabel')} {...FORM_ITEM_LAYOUT}>
                   <RadioGroup value={revealEffect.orientation} onChange={handleRevealEffectOrientationChange}>
                     <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
                     <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
@@ -364,7 +268,7 @@ function ImageEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
