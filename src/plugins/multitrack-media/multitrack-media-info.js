@@ -1,8 +1,8 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MultitrackMediaIcon from './multitrack-media-icon.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import MultitrackMediaDisplay from './multitrack-media-display.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './multitrack-media-utils.js';
@@ -53,7 +53,7 @@ class MultitrackMediaInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.mainTrack.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.mainTrack.sourceUrl, targetRoomId)) {
+    if (!isAccessibleStoragePath(redactedContent.mainTrack.sourceUrl, targetRoomId)) {
       redactedContent.mainTrack.sourceUrl = '';
     }
 
@@ -63,7 +63,7 @@ class MultitrackMediaInfo {
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );
 
-      if (secondaryTrack.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(secondaryTrack.sourceUrl, targetRoomId)) {
+      if (!isAccessibleStoragePath(secondaryTrack.sourceUrl, targetRoomId)) {
         secondaryTrack.sourceUrl = '';
       }
     });
@@ -76,13 +76,13 @@ class MultitrackMediaInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.mainTrack.copyrightNotice));
 
-    if (content.mainTrack.sourceType === MEDIA_SOURCE_TYPE.internal && content.mainTrack.sourceUrl) {
+    if (isInternalSourceType({ url: content.mainTrack.sourceUrl })) {
       cdnResources.push(content.mainTrack.sourceUrl);
     }
     content.secondaryTracks.forEach(secondaryTrack => {
       cdnResources.push(...this.gfm.extractCdnResources(secondaryTrack.copyrightNotice));
 
-      if (secondaryTrack.sourceType === MEDIA_SOURCE_TYPE.internal && secondaryTrack.sourceUrl) {
+      if (isInternalSourceType({ url: secondaryTrack.sourceUrl })) {
         cdnResources.push(secondaryTrack.sourceUrl);
       }
     });

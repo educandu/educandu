@@ -10,7 +10,6 @@ import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
@@ -23,6 +22,7 @@ import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
+import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
@@ -35,11 +35,6 @@ const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useD
 const FormItem = Form.Item;
 
 const logger = new Logger(import.meta.url);
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
@@ -277,7 +272,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     <div className="MediaAnalysisEditor">
       <Form layout="horizontal">
         <ItemPanel header={t('common:mainTrack')}>
-          <FormItem label={t('common:name')} {...formItemLayout}>
+          <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
             <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
           </FormItem>
           <MainTrackEditor
@@ -363,30 +358,30 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
                 selectedChapterTitle={chapters[selectedChapterIndex].title}
                 onChapterIndexChange={handleChapterIndexChange}
                 />
-              <FormItem label={t('common:startTimecode')} {...formItemLayout}>
+              <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
                 <span className="InteractiveMediaEditor-readonlyValue">
                   {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
                 </span>
               </FormItem>
-              <FormItem label={t('common:duration')} {...formItemLayout}>
+              <FormItem label={t('common:duration')} {...FORM_ITEM_LAYOUT}>
                 <span className="InteractiveMediaEditor-readonlyValue">
                   {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
                 </span>
               </FormItem>
-              <FormItem label={t('common:title')} {...formItemLayout}>
+              <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
                 <Input
                   disabled={!selectedChapterFraction}
                   onChange={handleChapterTitleChange}
                   value={chapters[selectedChapterIndex].title}
                   />
               </FormItem>
-              <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
+              <FormItem label={t('chapterColorLabel')} {...FORM_ITEM_LAYOUT}>
                 <ColorPicker
                   color={chapters[selectedChapterIndex].color}
                   onChange={handleChapterColorChange}
                   />
               </FormItem>
-              <FormItem label={t('chapterTextLabel')} {...formItemLayout}>
+              <FormItem label={t('chapterTextLabel')} {...FORM_ITEM_LAYOUT}>
                 <MarkdownInput
                   preview
                   disabled={!selectedChapterFraction}
@@ -412,7 +407,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
