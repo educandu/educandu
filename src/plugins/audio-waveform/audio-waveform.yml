@@ -10,6 +10,9 @@ generateImageDividerText:
 generalSettingsDividerText:
   en: General settings
   de: Generelle Einstellungen
+generateWaveformFromAudioFile:
+  en: Generate waveform from audio file
+  de: Wellenform aus Audio-Datei erstellen
 dialogTitle:
   en: Generate waveform image
   de: Wellenform-Bild erstellen

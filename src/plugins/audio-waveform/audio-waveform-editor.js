@@ -49,7 +49,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
     changeContent({ sourceUrl: urlToStorageLocationPath(url) });
   };
 
-  const handleCreateWaveform = () => {
+  const handleGenerateWaveform = () => {
     setIsWaveformGeneratorDialogVisible(true);
   };
 
@@ -101,8 +101,8 @@ function AudioWaveformEditor({ content, onContentChanged }) {
         )}
         <Divider plain>{t('generateImageDividerText')}</Divider>
         <FormItem {...formItemLayoutWithoutLabel}>
-          <Button type="primary" onClick={handleCreateWaveform}>
-            {t('Wellenform aus Audio-Datei erstellen')}
+          <Button type="primary" onClick={handleGenerateWaveform}>
+            {t('generateWaveformFromAudioFile')}
           </Button>
         </FormItem>
         <Divider plain>{t('generalSettingsDividerText')}</Divider>
