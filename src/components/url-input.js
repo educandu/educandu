@@ -10,12 +10,16 @@ import PublicIcon from './icons/general/public-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
-import { getSourceType, getPortableUrl } from '../utils/source-utils.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { getSourceType, getPortableUrl, getPersistableUrl } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
+
+  const portableUrl = useMemo(() => {
+    return getPortableUrl({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
+  }, [value, clientConfig]);
 
   const sourceType = useMemo(() => {
     const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -39,17 +43,8 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
     }
   }, [sourceType]);
 
-  const handleUrlChange = selectedPortableUrl => {
-    onChange(selectedPortableUrl);
-  };
-
   const handleInputValueChange = newValue => {
-    onChange(newValue);
-  };
-
-  const handleInputBlur = () => {
-    const url = getPortableUrl({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
-    onChange(url);
+    onChange(getPersistableUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl }));
   };
 
   const renderInputPrefix = () => {
@@ -66,12 +61,11 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
   return (
     <div className="UrlInput u-input-and-button">
       <DebouncedInput
-        value={value}
+        value={portableUrl}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
-        onBlur={handleInputBlur}
         />
-      <ResourcePicker url={value} onUrlChange={handleUrlChange} />
+      <ResourcePicker url={portableUrl} onUrlChange={handleInputValueChange} />
     </div>
   );
 }

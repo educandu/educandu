@@ -6,10 +6,9 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
-import { getSourceType, getPortableUrl, isInternalSourceType } from '../../utils/source-utils.js';
+import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 
@@ -28,14 +27,13 @@ function AudioEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlChange = url => {
-    const urlOrStoragePath = urlToStorageLocationPath(url);
-    const newSourceType = getSourceType({ url: urlOrStoragePath, cdnRootUrl: clientConfig.cdnRootUrl });
+    const newSourceType = getSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl });
 
     const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: url })
       : '';
 
-    changeContent({ sourceUrl: urlOrStoragePath, copyrightNotice: newCopyrightNotice });
+    changeContent({ sourceUrl: url, copyrightNotice: newCopyrightNotice });
   };
 
   const handleCopyrightNoticeChange = event => {
@@ -52,8 +50,8 @@ function AudioEditor({ content, onContentChanged }) {
       <Form layout="horizontal">
         <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
           <UrlInput
+            value={sourceUrl}
             onChange={handleSourceUrlChange}
-            value={getPortableUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
             />
         </FormItem>
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>

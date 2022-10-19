@@ -22,6 +22,10 @@ function getCdnPath({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' })
     .replace(new RegExp(`^${escapeStringRegexp(CDN_URL_PREFIX)}/?`), '');
 }
 
+export function getPersistableUrl({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
+  return getCdnPath({ url, cdnRootUrl });
+}
+
 export function getPortableUrl({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
   if (isCdnPath(url)) {
     return `${CDN_URL_PREFIX}${url}`;
