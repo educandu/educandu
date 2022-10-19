@@ -1,4 +1,3 @@
-import { describe } from 'vitest';
 import sut from './url-utils.js';
 
 describe('url-utils', () => {
