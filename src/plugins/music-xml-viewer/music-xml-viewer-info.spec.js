@@ -1,4 +1,3 @@
-import { SOURCE_TYPE } from './constants.js';
 import MusicXmlViewerInfo from './music-xml-viewer-info.js';
 
 describe('music-xml-viewer-info', () => {
@@ -10,7 +9,6 @@ describe('music-xml-viewer-info', () => {
   describe('redactContent', () => {
     it('redacts the XML source url', () => {
       const input = {
-        sourceType: SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-song.xml'
       };
       const result = sut.redactContent(input, '67890');
@@ -19,7 +17,6 @@ describe('music-xml-viewer-info', () => {
 
     it('leaves accessible paths intact', () => {
       const input = {
-        sourceType: SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-song.xml'
       };
       const result = sut.redactContent(input, '12345');
@@ -29,12 +26,18 @@ describe('music-xml-viewer-info', () => {
 
   describe('getCdnResources', () => {
     it('returns empty list for an internal resource without url', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: null });
+      const result = sut.getCdnResources({ sourceUrl: null });
       expect(result).toHaveLength(0);
     });
-    it('returns a list with the url for an internal resource', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: 'media/some-song.xml' });
-      expect(result).toEqual(['media/some-song.xml']);
+
+    it('returns a list with the url for an internal public resource', () => {
+      const result = sut.getCdnResources({ sourceUrl: 'media/12345/some-song.xml' });
+      expect(result).toEqual(['media/12345/some-song.xml']);
+    });
+
+    it('returns a list with the url for an internal private resource', () => {
+      const result = sut.getCdnResources({ sourceUrl: 'rooms/12345/media/some-song.xml' });
+      expect(result).toEqual(['rooms/12345/media/some-song.xml']);
     });
   });
 });
