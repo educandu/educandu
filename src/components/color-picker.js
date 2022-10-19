@@ -51,7 +51,7 @@ ColorPicker.defaultProps = {
   inline: false,
   onChange: () => {},
   placement: 'bottomLeft',
-  width: 320
+  width: 382
 };
 
 export default ColorPicker;

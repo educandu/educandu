@@ -175,15 +175,15 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
         <div className="AudioWaveformGeneratorDialog-controls">
           <div>
             <span>{t('dialogLocalFilePickerPenColorLabel')}: </span>
-            <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} width={382} inline />
+            <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
           </div>
           <div>
             <span>{t('dialogLocalFilePickerBaselineColorLabel')}: </span>
-            <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} width={382} inline />
+            <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
           </div>
           <div>
             <span>{t('dialogLocalFilePickerBackgroundColorLabel')}: </span>
-            <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} width={382} inline />
+            <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
           </div>
         </div>
         <div className="AudioWaveformGeneratorDialog-controls">

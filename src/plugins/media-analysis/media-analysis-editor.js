@@ -385,7 +385,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               </FormItem>
               <FormItem label={t('chapterColorLabel')} {...formItemLayout}>
                 <ColorPicker
-                  width={382}
+
                   color={chapters[selectedChapterIndex].color}
                   onChange={handleChapterColorChange}
                   />

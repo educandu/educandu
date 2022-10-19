@@ -329,11 +329,11 @@ function Tests({ PageTemplate }) {
               Smoothing:
               <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
               Pen color:
-              <ColorPicker width={382} color={awcPenColor} onChange={value => setAwcPenColor(value)} />
+              <ColorPicker color={awcPenColor} onChange={value => setAwcPenColor(value)} />
               Baseline color:
-              <ColorPicker width={382} color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
+              <ColorPicker color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
               Background color:
-              <ColorPicker width={382} color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
+              <ColorPicker color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
               <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
             </div>
             <div style={{ border: '1px solid silver' }}>
