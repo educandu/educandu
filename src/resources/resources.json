@@ -1717,22 +1717,22 @@
     "namespace": "urlInput",
     "language": "en",
     "resources": {
-      "tooltip_youtube": "Youtube URL",
-      "tooltip_internal-public": "Internal public storage URL",
-      "tooltip_internal-private": "Internal private storage URL",
-      "tooltip_external": "External URL",
-      "tooltip_unsupported": "Unsupported value"
+      "tooltip_youtube": "Youtube",
+      "tooltip_internal-public": "internal public storage",
+      "tooltip_internal-private": "internal private storage",
+      "tooltip_external": "external",
+      "tooltip_unsupported": "unsupported"
     }
   },
   {
     "namespace": "urlInput",
     "language": "de",
     "resources": {
-      "tooltip_youtube": "Youtube URL",
-      "tooltip_internal-public": "Interner öffentlicher Speicher URL",
-      "tooltip_internal-private": "Interner privater Speicher URL",
-      "tooltip_external": "Externer URL",
-      "tooltip_unsupported": "Nicht unterstützten Wert"
+      "tooltip_youtube": "Youtube",
+      "tooltip_internal-public": "interner öffentlicher Speicher",
+      "tooltip_internal-private": "interner privater Speicher",
+      "tooltip_external": "extern",
+      "tooltip_unsupported": "nicht unterstützt"
     }
   },
   {

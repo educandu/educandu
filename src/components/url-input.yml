@@ -1,15 +1,15 @@
 tooltip_youtube:
-  en: Youtube URL
-  de: Youtube URL
+  en: Youtube
+  de: Youtube
 tooltip_internal-public:
-  en: Internal public storage URL
-  de: Interner öffentlicher Speicher URL
+  en: internal public storage
+  de: interner öffentlicher Speicher
 tooltip_internal-private:
-  en: Internal private storage URL
-  de: Interner privater Speicher URL
+  en: internal private storage
+  de: interner privater Speicher
 tooltip_external:
-  en: External URL
-  de: Externer URL
+  en: external
+  de: extern
 tooltip_unsupported:
-  en: Unsupported value
-  de: Nicht unterstützten Wert
+  en: unsupported
+  de: nicht unterstützt
