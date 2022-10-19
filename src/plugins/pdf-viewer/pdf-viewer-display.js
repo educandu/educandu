@@ -1,28 +1,24 @@
-import { SOURCE_TYPE } from './constants.js';
 import React, { useMemo, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import MiniPager from '../../components/mini-pager.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../../components/pdf-document.js';
 
 function PdfViewerDisplay({ content }) {
-  const { sourceType, sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
+  const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
 
   const [pdf, setPdf] = useState(null);
   const clientConfig = useService(ClientConfig);
   const [pageNumber, setPageNumber] = useState(initialPageNumber);
 
   const fileObject = useMemo(() => {
-    if (sourceType !== SOURCE_TYPE.internal) {
-      throw new Error(`Invalid source type '${sourceType}'`);
-    }
-
     return sourceUrl
-      ? { url: `${clientConfig.cdnRootUrl}/${sourceUrl}`, withCredentials: true }
+      ? { url: getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl }), withCredentials: true }
       : null;
-  }, [sourceType, sourceUrl, clientConfig.cdnRootUrl]);
+  }, [sourceUrl, clientConfig.cdnRootUrl]);
 
   const onDocumentLoadSuccess = loadedPdfDocument => {
     setPdf(loadedPdfDocument);
