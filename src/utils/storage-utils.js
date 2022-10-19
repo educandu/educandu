@@ -1,6 +1,7 @@
 import uniqueId from './unique-id.js';
 import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
+import escapeStringRegexp from 'escape-string-regexp';
 import { getResourceExtension } from './resource-utils.js';
 import {
   CDN_URL_PREFIX,
@@ -9,11 +10,11 @@ import {
   IMAGE_OPTIMIZATION_QUALITY,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
-  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
+  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES,
+  INTERNAL_PUBLIC_STORAGE_PATH_PATTERN,
+  INTERNAL_PRIVATE_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
-const publicCdnPathPattern = /^media(\/.*)?$/;
-const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const getScaledDownDimensions = img => {
@@ -75,10 +76,10 @@ export function processFilesBeforeUpload({ files, optimizeImages }) {
 }
 
 export function getStorageLocationTypeForPath(path) {
-  if (publicCdnPathPattern.test(path)) {
+  if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(path)) {
     return STORAGE_LOCATION_TYPE.public;
   }
-  if (privateCdnPathPattern.test(path)) {
+  if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(path)) {
     return STORAGE_LOCATION_TYPE.private;
   }
   return STORAGE_LOCATION_TYPE.unknown;
@@ -89,8 +90,8 @@ export function canUploadToPath(path) {
     return false;
   }
 
-  const publicPathMatch = path.match(publicCdnPathPattern);
-  const privatePathMatch = path.match(privateCdnPathPattern);
+  const publicPathMatch = path.match(INTERNAL_PUBLIC_STORAGE_PATH_PATTERN);
+  const privatePathMatch = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
 
   const documentId = publicPathMatch?.[1];
   const roomId = privatePathMatch?.[1];
@@ -137,7 +138,7 @@ export function getPathForPrivateRoom(roomId) {
 }
 
 export function getRoomIdFromPrivateStoragePath(path) {
-  const match = path.match(privateCdnPathPattern);
+  const match = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
   return match ? match[1] : null;
 }
 
@@ -177,4 +178,22 @@ export function composeHumanReadableDisplayName({ cdnObject, t }) {
   return cdnObject.documentMetadata.isAccessibleToUser
     ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
     : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
+}
+
+export function isCdnUrl({ sourceUrl, cdnRootUrl }) {
+  return sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX);
+}
+
+export function getCdnPath({ sourceUrl, cdnRootUrl }) {
+  return sourceUrl
+    .replace(new RegExp(`^${escapeStringRegexp(cdnRootUrl)}/?`), '')
+    .replace(new RegExp(`^${escapeStringRegexp(CDN_URL_PREFIX)}/?`), '');
+}
+
+export function ensurePortableUrlIfStorageUrl({ sourceUrl, cdnRootUrl }) {
+  if (!isCdnUrl({ sourceUrl, cdnRootUrl })) {
+    return sourceUrl;
+  }
+
+  return `${CDN_URL_PREFIX}${getCdnPath({ sourceUrl, cdnRootUrl })}`;
 }

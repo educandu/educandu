@@ -1714,6 +1714,28 @@
     }
   },
   {
+    "namespace": "urlInput",
+    "language": "en",
+    "resources": {
+      "tooltip_youtube": "Youtube",
+      "tooltip_internal-public": "internal public storage",
+      "tooltip_internal-private": "internal private storage",
+      "tooltip_external": "external",
+      "tooltip_unsupported": "unsupported"
+    }
+  },
+  {
+    "namespace": "urlInput",
+    "language": "de",
+    "resources": {
+      "tooltip_youtube": "Youtube",
+      "tooltip_internal-public": "interner öffentlicher Speicher",
+      "tooltip_internal-private": "interner privater Speicher",
+      "tooltip_external": "extern",
+      "tooltip_unsupported": "nicht unterstützt"
+    }
+  },
+  {
     "namespace": "usedStorage",
     "language": "en",
     "resources": {
