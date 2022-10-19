@@ -15,7 +15,7 @@ export default class Educandu_2022_10_18_01_remove_sourceType_from_audio_plugin 
       {
         arrayFilters: [
           {
-            'sectionElement.type': { $in: ['audio'] },
+            'sectionElement.type': 'audio',
             'sectionElement.content': { $ne: null }
           }
         ],
