@@ -64,6 +64,22 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
     return () => URL.revokeObjectURL(url);
   }, [generatedPeaks, waveformPenColor, waveformBaselineColor, waveformBackgroundColor]);
 
+  const generatePeaks = async getAudioFileFunc => {
+    setIsGeneratingPeaks(true);
+
+    const audioContext = new AudioContext();
+
+    try {
+      const blob = await getAudioFileFunc();
+      const peaks = await extractPeaks(blob, audioContext, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH);
+      setGeneratedPeaks(peaks);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    } finally {
+      setIsGeneratingPeaks(false);
+    }
+  };
+
   const handleOk = async () => {
     const filename = 'waveform.png';
 
@@ -85,17 +101,10 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
     }
   };
 
-  const handleFileDrop = async fs => {
-    if (!fs.length) {
-      return;
+  const handleFileDrop = fs => {
+    if (fs.length) {
+      generatePeaks(() => Promise.resolve(fs[0]));
     }
-
-    const file = fs[0];
-    const audioContext = new AudioContext();
-
-    setIsGeneratingPeaks(true);
-    setGeneratedPeaks(await extractPeaks(file, audioContext, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH));
-    setIsGeneratingPeaks(false);
   };
 
   const dropzone = useDropzone({
@@ -113,22 +122,19 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
     setIsCdnResourcePickerVisible(true);
   };
 
-  const handleCdnResourcePickerSelect = async sourceUrl => {
+  const handleCdnResourcePickerSelect = sourceUrl => {
     setIsCdnResourcePickerVisible(false);
+    generatePeaks(async () => {
+      const sourceType = getMediaSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      const resolvedUrl = urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    const audioContext = new AudioContext();
+      const response = await httpClient.get(resolvedUrl, {
+        responseType: 'blob',
+        withCredentials: sourceType === MEDIA_SOURCE_TYPE.internal
+      });
 
-    const sourceType = getMediaSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const resolvedUrl = urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl });
-
-    const response = await httpClient.get(resolvedUrl, {
-      responseType: 'blob',
-      withCredentials: sourceType === MEDIA_SOURCE_TYPE.internal
+      return response.data;
     });
-
-    setIsGeneratingPeaks(true);
-    setGeneratedPeaks(await extractPeaks(response.data, audioContext, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH));
-    setIsGeneratingPeaks(false);
   };
 
   const handleCdnResourcePickerClose = () => {
