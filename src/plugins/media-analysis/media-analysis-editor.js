@@ -2,7 +2,6 @@ import by from 'thenby';
 import classNames from 'classnames';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
 import { Button, Form, Input, Tooltip } from 'antd';
@@ -13,6 +12,7 @@ import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
@@ -53,10 +53,9 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
-    urlUtils.getMediaUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: mainTrack.sourceType,
-      sourceUrl: mainTrack.sourceUrl
+    getAccessibleUrl({
+      url: mainTrack.sourceUrl,
+      cdnRootUrl: clientConfig.cdnRootUrl
     })
   ]);
 
@@ -70,9 +69,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: mainTrack.sourceUrl,
-        sourceType: mainTrack.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: mainTrack.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].mainTrack,
@@ -80,9 +78,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     },
     secondaryTracks: secondaryTracks.map((track, index) => ({
       name: track.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: track.sourceUrl,
-        sourceType: track.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: track.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]

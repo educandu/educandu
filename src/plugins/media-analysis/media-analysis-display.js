@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -25,9 +25,8 @@ function MediaAnalysisDisplay({ content }) {
     return {
       mainTrack: {
         name: mainTrack.name,
-        sourceUrl: urlUtils.getMediaUrl({
-          sourceUrl: mainTrack.sourceUrl,
-          sourceType: mainTrack.sourceType,
+        sourceUrl: getAccessibleUrl({
+          url: mainTrack.sourceUrl,
           cdnRootUrl: clientConfig.cdnRootUrl
         }),
         volume: volumePresets[selectedVolumePresetIndex].mainTrack,
@@ -35,9 +34,8 @@ function MediaAnalysisDisplay({ content }) {
       },
       secondaryTracks: secondaryTracks.map((track, index) => ({
         name: track.name,
-        sourceUrl: urlUtils.getMediaUrl({
-          sourceUrl: track.sourceUrl,
-          sourceType: track.sourceType,
+        sourceUrl: getAccessibleUrl({
+          url: track.sourceUrl,
           cdnRootUrl: clientConfig.cdnRootUrl
         }),
         volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
