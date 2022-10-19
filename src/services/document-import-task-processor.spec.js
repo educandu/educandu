@@ -7,8 +7,8 @@ import uniqueId from '../utils/unique-id.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 
 describe('document-import-task-processor', () => {
   const now = new Date();
@@ -97,12 +97,10 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100
@@ -136,12 +134,10 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-2.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100
@@ -321,12 +317,10 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-3.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100
@@ -497,12 +491,10 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100
@@ -531,12 +523,10 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-2.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100

@@ -1,36 +1,27 @@
 import React from 'react';
-import urlUtils from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 function VideoDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const sourceUrl = urlUtils.getMediaUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType: content.sourceType,
-    sourceUrl: content.sourceUrl
-  });
-
-  const posterImageUrl = urlUtils.getImageUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType: content.posterImage?.sourceType,
-    sourceUrl: content.posterImage?.sourceUrl
-  });
+  const url = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const canDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const posterImageUrl = getAccessibleUrl({ url: content.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="VideoDisplay">
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
-        {sourceUrl && (
+        {url && (
           <MediaPlayer
-            source={sourceUrl}
+            source={url}
             posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
-            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
+            canDownload={canDownload}
             />
         )}
         <CopyrightNotice value={content.copyrightNotice} />

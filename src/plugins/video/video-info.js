@@ -3,9 +3,10 @@ import React from 'react';
 import VideoIcon from './video-icon.js';
 import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class VideoInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -35,13 +36,11 @@ class VideoInfo {
 
   getDefaultContent() {
     return {
-      sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       copyrightNotice: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       posterImage: {
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     };
@@ -49,13 +48,11 @@ class VideoInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
       posterImage: joi.object({
-        sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
         sourceUrl: joi.string().allow('').required()
       }).required()
     });
@@ -75,17 +72,11 @@ class VideoInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (
-      redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal
-      && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)
-    ) {
+    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
-    if (
-      redactedContent.posterImage.sourceType === IMAGE_SOURCE_TYPE.internal
-      && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)
-    ) {
+    if (!isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)) {
       redactedContent.posterImage.sourceUrl = '';
     }
 
@@ -97,11 +88,11 @@ class VideoInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
-    if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
+    if (isInternalSourceType({ url: content.sourceUrl })) {
       cdnResources.push(content.sourceUrl);
     }
 
-    if (content.posterImage.sourceType === IMAGE_SOURCE_TYPE.internal && content.posterImage.sourceUrl) {
+    if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
       cdnResources.push(content.posterImage.sourceUrl);
     }
 
