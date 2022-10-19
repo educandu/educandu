@@ -6,6 +6,7 @@ import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
+import { isBrowser } from '../ui/browser-helper.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
@@ -20,7 +21,6 @@ import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import IntervalTrainerInfo from './interval-trainer/interval-trainer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
-import { isBrowser } from '../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
 
