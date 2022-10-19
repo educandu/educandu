@@ -1,5 +1,10 @@
 import { DEFAULT_COLOR_SWATCHES, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 
+export const DISPLAY_MODE = {
+  static: 'static',
+  interactive: 'interactive'
+};
+
 export const DEFAULT_WAVEFORM_WIDTH = IMAGE_OPTIMIZATION_THRESHOLD_WIDTH;
 export const DEFAULT_WAVEFORM_HEIGHT = Math.round(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH / 2.5);
 export const DEFAULT_WAVEFORM_PEN_WIDTH = 2;

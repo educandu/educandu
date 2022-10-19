@@ -476,3 +476,6 @@ defaultVolumePreset:
 volumePreset:
   en: Volumes preset
   de: Lautstärke-Voreinstellung
+displayMode:
+  en: Display mode
+  de: Anzeigemodus
