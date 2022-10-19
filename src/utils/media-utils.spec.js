@@ -1,5 +1,5 @@
-import { RESOURCE_TYPE } from '../domain/constants.js';
-import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration } from './media-utils.js';
+import { RESOURCE_TYPE, SOURCE_TYPE } from '../domain/constants.js';
+import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration, getSourceType } from './media-utils.js';
 
 describe('media-utils', () => {
 
@@ -158,6 +158,31 @@ describe('media-utils', () => {
       describe(`when called with position = ${position} and duration = ${duration}`, () => {
         it(`should return '${expectedResult}'`, () => {
           expect(formatMediaPosition({ formatPercentage, position, duration })).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('getSourceType', () => {
+    const cdnRootUrl = 'http://cdn-root';
+    const testCases = [
+      { sourceUrl: '', expectedResult: SOURCE_TYPE.none },
+      { sourceUrl: 'cdn://resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { sourceUrl: 'cdn://media/resource.jpeg', expectedResult: SOURCE_TYPE.internalPublic },
+      { sourceUrl: 'cdn://rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.internalPrivate },
+      { sourceUrl: 'http://cdn-root/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { sourceUrl: 'http://cdn-root/media/resource.jpeg', expectedResult: SOURCE_TYPE.internalPublic },
+      { sourceUrl: 'http://cdn-root/rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.internalPrivate },
+      { sourceUrl: 'https://www.youtube.com/resource', expectedResult: SOURCE_TYPE.youtube },
+      { sourceUrl: 'https://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.external },
+      { sourceUrl: 'http://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { sourceUrl: 'other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported }
+    ];
+
+    testCases.forEach(({ sourceUrl, expectedResult }) => {
+      describe(`when called with url = ${sourceUrl}`, () => {
+        it(`should return '${expectedResult}'`, () => {
+          expect(getSourceType({ sourceUrl, cdnRootUrl })).toBe(expectedResult);
         });
       });
     });
