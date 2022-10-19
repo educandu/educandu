@@ -1,4 +1,3 @@
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -17,7 +16,6 @@ describe('interactive-media-info', () => {
   describe('redactContent', () => {
     it('redacts the copyrightNotice', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         copyrightNotice: `[Click me](cdn://rooms/${currentRoomId}/media/my-file.pdf)`
       };
@@ -27,7 +25,6 @@ describe('interactive-media-info', () => {
 
     it('redacts the media source url', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: `rooms/${currentRoomId}/media/my-video.mp4`,
         copyrightNotice: ''
       };
@@ -37,7 +34,6 @@ describe('interactive-media-info', () => {
 
     it('leaves accessible paths intact', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: `rooms/${currentRoomId}/media/my-video.mp4`,
         copyrightNotice: `[Click me](cdn://rooms/${currentRoomId}/media/my-file.pdf)`
       };
@@ -49,7 +45,6 @@ describe('interactive-media-info', () => {
   describe('getCdnResources', () => {
     it('returns CDN resources from copyrightNotice', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
       };
@@ -59,7 +54,6 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for a YouTube resource', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: 'https://youtube.com/something',
         copyrightNotice: ''
       };
@@ -69,7 +63,6 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for an external resource', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/video.mp4',
         copyrightNotice: ''
       };
@@ -79,7 +72,6 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for an internal resource without url', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: null,
         copyrightNotice: ''
       };
@@ -87,14 +79,22 @@ describe('interactive-media-info', () => {
       expect(result).toHaveLength(0);
     });
 
-    it('returns a list with the url for an internal resource', () => {
+    it('returns a list with the url for an internal public resource', () => {
       content = {
-        sourceType: MEDIA_SOURCE_TYPE.internal,
-        sourceUrl: 'media/some-video.mp4',
+        sourceUrl: 'media/12345/some-video.mp4',
         copyrightNotice: ''
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['media/some-video.mp4']);
+      expect(result).toEqual(['media/12345/some-video.mp4']);
+    });
+
+    it('returns a list with the url for an internal private resource', () => {
+      content = {
+        sourceUrl: 'rooms/12345/media/some-video.mp4',
+        copyrightNotice: ''
+      };
+      result = sut.getCdnResources(content);
+      expect(result).toEqual(['rooms/12345/media/some-video.mp4']);
     });
   });
 });

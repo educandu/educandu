@@ -180,6 +180,13 @@ export const FORM_ITEM_LAYOUT = {
   wrapperCol: { span: 14 }
 };
 
+export const TAIL_FORM_ITEM_LAYOUT = {
+  wrapperCol: {
+    xs: { span: 18, offset: 0 },
+    sm: { span: 14, offset: 4 }
+  }
+};
+
 export const FORM_ITEM_LAYOUT_VERTICAL = {
   labelCol: { span: 24 },
   wrapperCol: { span: 24 }

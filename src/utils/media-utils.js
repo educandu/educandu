@@ -1,10 +1,10 @@
 import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
-import urlUtils from './url-utils.js';
 import reactPlayerNs from 'react-player';
-import validation from '../ui/validation.js';
 import { getResourceType } from './resource-utils.js';
+import validation, { URL_VALIDATION_STATUS } from '../ui/validation.js';
+import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
 import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -12,9 +12,14 @@ const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 const MEDIA_TIMEOUT_IN_MS = 5000;
 
 export function analyzeMediaUrl(url) {
-  const parsedUrl = new URL(url);
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    parsedUrl = null;
+  }
 
-  if (parsedUrl.origin === 'https://www.youtube.com' && parsedUrl.pathname === '/watch' && parsedUrl.searchParams.has('v')) {
+  if (parsedUrl?.origin === 'https://www.youtube.com' && parsedUrl?.pathname === '/watch' && parsedUrl?.searchParams.has('v')) {
     const videoId = parsedUrl.searchParams.get('v');
     const startSecond = Number.parseInt(parsedUrl.searchParams.get('start'), 10);
     const endSecond = Number.parseInt(parsedUrl.searchParams.get('end'), 10);
@@ -28,7 +33,7 @@ export function analyzeMediaUrl(url) {
     };
   }
 
-  if (parsedUrl.origin === 'https://youtu.be' && parsedUrl.pathname && !parsedUrl.pathname.slice(1).includes('/')) {
+  if (parsedUrl?.origin === 'https://youtu.be' && parsedUrl?.pathname && !parsedUrl?.pathname.slice(1).includes('/')) {
     const videoId = parsedUrl.pathname.slice(1);
     const startSecond = Number.parseInt(parsedUrl.searchParams.get('t'), 10);
 
@@ -42,7 +47,7 @@ export function analyzeMediaUrl(url) {
   }
 
   return {
-    sanitizedUrl: parsedUrl.href,
+    sanitizedUrl: parsedUrl?.href || url,
     isYoutube: false,
     startTimecode: null,
     stopTimecode: null,
@@ -162,7 +167,7 @@ export function getMediaSourceType({ sourceUrl, cdnRootUrl }) {
   return MEDIA_SOURCE_TYPE.external;
 }
 
-export async function getMediaInformation({ url, sourceType, playbackRange, cdnRootUrl, t }) {
+export async function getMediaInformation({ url, playbackRange, cdnRootUrl }) {
   const defaultResult = {
     sanitizedUrl: url,
     duration: 0,
@@ -176,12 +181,14 @@ export async function getMediaInformation({ url, sourceType, playbackRange, cdnR
   }
 
   try {
-    const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+    const isInvalidSourceUrl = !isInternalSourceType({ url, cdnRootUrl })
+      && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+
     if (isInvalidSourceUrl) {
       return defaultResult;
     }
 
-    const completeUrl = urlUtils.getMediaUrl({ sourceUrl: url, sourceType, cdnRootUrl });
+    const completeUrl = getAccessibleUrl({ url, cdnRootUrl });
 
     const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
     const duration = await determineMediaDuration(completeUrl);

@@ -3,10 +3,11 @@ import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import InteractiveMediaDisplay from './interactive-media-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class InteractiveMediaInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -47,7 +48,6 @@ class InteractiveMediaInfo {
 
   getDefaultContent(t) {
     return {
-      sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       copyrightNotice: '',
       playbackRange: [0, 1],
@@ -60,7 +60,6 @@ class InteractiveMediaInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
@@ -92,7 +91,7 @@ class InteractiveMediaInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
@@ -104,7 +103,7 @@ class InteractiveMediaInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
-    if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
+    if (isInternalSourceType({ url: content.sourceUrl })) {
       cdnResources.push(content.sourceUrl);
     }
 

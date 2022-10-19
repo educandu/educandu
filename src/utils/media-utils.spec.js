@@ -4,14 +4,19 @@ import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration } fr
 describe('media-utils', () => {
 
   describe('analyzeMediaUrl', () => {
+    const getDefaultResult = url => ({
+      sanitizedUrl: url,
+      isYoutube: false,
+      startTimecode: null,
+      stopTimecode: null,
+      resourceType: RESOURCE_TYPE.none
+    });
+
+    const negativeTestCases = [null, '', 'not a URL', 'https://'].map(url => ({ url, expectedResult: getDefaultResult(url) }));
     const testCases = [
-      { url: null, expectedError: 'Invalid URL', expectedResult: null },
-      { url: '', expectedError: 'Invalid URL', expectedResult: null },
-      { url: 'not a URL', expectedError: 'Invalid URL', expectedResult: null },
-      { url: 'https://', expectedError: 'Invalid URL', expectedResult: null },
+      ...negativeTestCases,
       {
         url: 'https://a',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://a/',
           isYoutube: false,
@@ -22,7 +27,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://a.com/abc.mp3',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://a.com/abc.mp3',
           isYoutube: false,
@@ -33,7 +37,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://www.youtube.com/watch?v=4cn8439c2',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           isYoutube: true,
@@ -44,7 +47,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           isYoutube: true,
@@ -55,7 +57,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5&end=20',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           isYoutube: true,
@@ -66,7 +67,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://youtu.be/j440-D5JhjI',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
           isYoutube: true,
@@ -77,7 +77,6 @@ describe('media-utils', () => {
       },
       {
         url: 'https://youtu.be/j440-D5JhjI?t=804',
-        expectedError: null,
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
           isYoutube: true,
@@ -88,17 +87,11 @@ describe('media-utils', () => {
       }
     ];
 
-    testCases.forEach(({ url, expectedError, expectedResult }) => {
+    testCases.forEach(({ url, expectedResult }) => {
       describe(`when called with url ${JSON.stringify(url)}`, () => {
-        if (expectedError) {
-          it('should throw the expected error', () => {
-            expect(() => analyzeMediaUrl(url)).toThrowError(expectedError);
-          });
-        } else {
-          it('should return the expected result', () => {
-            expect(analyzeMediaUrl(url)).toStrictEqual(expectedResult);
-          });
-        }
+        it('should return the expected result', () => {
+          expect(analyzeMediaUrl(url)).toStrictEqual(expectedResult);
+        });
       });
     });
   });
