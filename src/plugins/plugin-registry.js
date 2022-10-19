@@ -20,6 +20,7 @@ import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import IntervalTrainerInfo from './interval-trainer/interval-trainer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
+import { isBrowser } from '../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -67,7 +68,10 @@ class PluginRegistry {
         throw new Error(`Plugin type "${typeName}" is not available`);
       }
 
-      logger.info(`Registering plugin type ${infoType.typeName}`);
+      if (!isBrowser()) {
+        logger.info(`Registering plugin type ${infoType.typeName}`);
+      }
+
       map.set(infoType.typeName, new RegisteredPlugin(container.get(infoType)));
       return map;
     }, new Map());
