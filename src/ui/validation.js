@@ -88,5 +88,6 @@ export function validateMarkdown(markdown, t) {
 
 export default {
   validateUrl,
-  validateMarkdown
+  validateMarkdown,
+  getUrlValidationStatus
 };

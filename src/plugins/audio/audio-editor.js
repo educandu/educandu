@@ -1,49 +1,39 @@
 import React from 'react';
-import { Form, Input, Radio } from 'antd';
+import { Form } from 'antd';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
+import UrlInput from '../../components/url-input.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
+import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 
 function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
+  const clientConfig = useService(ClientConfig);
 
-  const { sourceType, sourceUrl, copyrightNotice } = content;
-
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
+  const { sourceUrl, copyrightNotice } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidSourceUrl = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
-    onContentChanged(newContent, isInvalidSourceUrl);
+    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const isInvalid = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
+
+    onContentChanged(newContent, isInvalid);
   };
 
-  const handleSourceTypeValueChange = event => {
-    const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '', copyrightNotice: '' });
-  };
+  const handleSourceUrlChange = url => {
+    const newSourceType = getSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl });
 
-  const handleSourceUrlValueChange = event => {
-    const { value } = event.target;
-    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
-      ? t('common:youtubeCopyrightNotice', { link: value })
-      : copyrightNotice;
+    const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: url })
+      : '';
 
-    changeContent({ sourceUrl: value, copyrightNotice: newCopyrightNotice });
-  };
-
-  const handleInternalUrlFileNameChange = value => {
-    changeContent({ sourceUrl: value });
+    changeContent({ sourceUrl: url, copyrightNotice: newCopyrightNotice });
   };
 
   const handleCopyrightNoticeChange = event => {
@@ -51,42 +41,20 @@ function AudioEditor({ content, onContentChanged }) {
     changeContent({ copyrightNotice: newValue });
   };
 
+  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    ? {}
+    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+
   return (
     <div>
       <Form layout="horizontal">
-        <FormItem label={t('common:source')} {...formItemLayout}>
-          <RadioGroup value={sourceType} onChange={handleSourceTypeValueChange}>
-            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
-          </RadioGroup>
+        <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+          <UrlInput
+            value={sourceUrl}
+            onChange={handleSourceUrlChange}
+            />
         </FormItem>
-        {sourceType === 'external' && (
-          <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
-          </FormItem>
-        )}
-        {sourceType === 'internal' && (
-          <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-            <div className="u-input-and-button">
-              <Input
-                addonBefore={CDN_URL_PREFIX}
-                value={sourceUrl}
-                onChange={handleSourceUrlValueChange}
-                />
-              <ResourcePicker
-                url={storageLocationPathToUrl(sourceUrl)}
-                onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
-                />
-            </div>
-          </FormItem>
-        )}
-        {sourceType === MEDIA_SOURCE_TYPE.youtube && (
-          <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
-          </FormItem>
-        )}
-        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
         </Form.Item>
       </Form>

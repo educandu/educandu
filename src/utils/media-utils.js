@@ -3,10 +3,9 @@ import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
 import urlUtils from './url-utils.js';
 import reactPlayerNs from 'react-player';
+import validation from '../ui/validation.js';
 import { getResourceType } from './resource-utils.js';
-import { getCdnPath, isCdnUrl } from './storage-utils.js';
-import validation, { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
-import { CDN_URL_PREFIX, INTERNAL_PRIVATE_STORAGE_PATH_PATTERN, INTERNAL_PUBLIC_STORAGE_PATH_PATTERN, MEDIA_SOURCE_TYPE, RESOURCE_TYPE, SOURCE_TYPE } from '../domain/constants.js';
+import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -161,33 +160,6 @@ export function getMediaSourceType({ sourceUrl, cdnRootUrl }) {
   }
 
   return MEDIA_SOURCE_TYPE.external;
-}
-
-export function getSourceType({ sourceUrl, cdnRootUrl }) {
-  if (!sourceUrl) {
-    return SOURCE_TYPE.none;
-  }
-
-  if (isCdnUrl({ sourceUrl, cdnRootUrl })) {
-    const cdnPath = getCdnPath({ sourceUrl, cdnRootUrl });
-
-    if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPublic;
-    }
-    if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPrivate;
-    }
-  }
-
-  if (sourceUrl.startsWith('https://www.youtube.com/')) {
-    return SOURCE_TYPE.youtube;
-  }
-
-  if (getUrlValidationStatus(sourceUrl) === URL_VALIDATION_STATUS.valid) {
-    return SOURCE_TYPE.external;
-  }
-
-  return SOURCE_TYPE.unsupported;
 }
 
 export async function getMediaInformation({ url, sourceType, playbackRange, cdnRootUrl, t }) {

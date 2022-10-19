@@ -175,6 +175,11 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
   none: 'none'
 };
 
+export const FORM_ITEM_LAYOUT = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
+};
+
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 
 export const CDN_URL_PREFIX = 'cdn://';

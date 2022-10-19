@@ -1,26 +1,30 @@
+import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Input, Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import DebouncedInput from './debounced-input.js';
 import { useService } from './container-context.js';
 import { SOURCE_TYPE } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
-import { getSourceType } from '../utils/media-utils.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
-import { ensurePortableUrlIfStorageUrl, storageLocationPathToUrl } from '../utils/storage-utils.js';
+import { getSourceType, getPortableUrl, getPersistableUrl } from '../utils/source-utils.js';
 
-function UrlInput({ value, onChange }) {
+function UrlInput({ value, allowedSourceTypes, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
 
-  const sourceType = useMemo(
-    () => getSourceType({ sourceUrl: value, cdnRootUrl: clientConfig.cdnRootUrl })
-    , [clientConfig.cdnRootUrl, value]
-  );
+  const portableUrl = useMemo(() => {
+    return getPortableUrl({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
+  }, [value, clientConfig]);
+
+  const sourceType = useMemo(() => {
+    const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
+    return allowedSourceTypes.includes(newSourceType) ? newSourceType : SOURCE_TYPE.unsupported;
+  }, [clientConfig.cdnRootUrl, value, allowedSourceTypes]);
 
   const inputPrefixIcon = useMemo(() => {
     switch (sourceType) {
@@ -39,17 +43,8 @@ function UrlInput({ value, onChange }) {
     }
   }, [sourceType]);
 
-  const handleUrlChange = selectedPortableUrl => {
-    onChange(selectedPortableUrl);
-  };
-
-  const handleInputValueChange = event => {
-    onChange(event.target.value);
-  };
-
-  const handleInputBlur = () => {
-    const url = ensurePortableUrlIfStorageUrl({ sourceUrl: value, cdnRootUrl: clientConfig.cdnRootUrl });
-    onChange(url);
+  const handleInputValueChange = newValue => {
+    onChange(getPersistableUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl }));
   };
 
   const renderInputPrefix = () => {
@@ -65,26 +60,24 @@ function UrlInput({ value, onChange }) {
 
   return (
     <div className="UrlInput u-input-and-button">
-      <Input
-        value={value}
+      <DebouncedInput
+        value={portableUrl}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
-        onBlur={handleInputBlur}
         />
-      <ResourcePicker
-        url={storageLocationPathToUrl(value)}
-        onUrlChange={handleUrlChange}
-        />
+      <ResourcePicker url={portableUrl} onUrlChange={handleInputValueChange} />
     </div>
   );
 }
 
 UrlInput.propTypes = {
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string
 };
 
 UrlInput.defaultProps = {
+  allowedSourceTypes: Object.values(SOURCE_TYPE),
   value: ''
 };
 
