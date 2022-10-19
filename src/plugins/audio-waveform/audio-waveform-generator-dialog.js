@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button, Modal, Spin } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import * as reactDropzoneNs from 'react-dropzone';
-import { Button, Modal, Spin, Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
@@ -169,13 +168,6 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
               >
               {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
             </div>
-            {!isGeneratingPeaks && (
-            <div className="AudioWaveformGeneratorDialog-dropzoneInfo">
-              <Tooltip title={t('dialogDropzoneInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-            </div>
-            )}
           </div>
         </Spin>
         <div className="AudioWaveformGeneratorDialog-controls">
