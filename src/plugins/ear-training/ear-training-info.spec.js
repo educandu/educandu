@@ -1,6 +1,4 @@
-import { SOUND_SOURCE_TYPE } from './constants.js';
 import EarTrainingInfo from './ear-training-info.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('ear-training-info', () => {
@@ -14,17 +12,17 @@ describe('ear-training-info', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         tests: [
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' } },
-          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' } },
-          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
+          { sound: { useMidi: false, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
         ]
       }, '67890');
       expect(result).toStrictEqual({
         title: '[Click here]()',
         tests: [
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: '', copyrightNotice: '' } },
-          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: '', copyrightNotice: '' } },
-          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: '', copyrightNotice: '' } }
+          { sound: { useMidi: false, sourceUrl: '', copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { sourceUrl: '', copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { sourceUrl: '', copyrightNotice: '' } }
         ]
       });
     });
@@ -32,17 +30,17 @@ describe('ear-training-info', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         tests: [
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' } },
-          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' } },
-          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
+          { sound: { useMidi: false, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
         ]
       }, '12345');
       expect(result).toStrictEqual({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         tests: [
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' } },
-          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' } },
-          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
+          { sound: { useMidi: false, sourceUrl: 'rooms/12345/media/some-sound.mp3', copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { sourceUrl: 'rooms/12345/media/some-image.jpeg', copyrightNotice: '' }, answerImage: { copyrightNotice: '' } },
+          { sound: { copyrightNotice: '' }, questionImage: { copyrightNotice: '' }, answerImage: { sourceUrl: 'rooms/12345/media/some-other-image.jpeg', copyrightNotice: '' } }
         ]
       });
     });
@@ -54,43 +52,39 @@ describe('ear-training-info', () => {
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
     it('returns resources from the sound copyrightNotice', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' }, questionImage: {}, answerImage: {} }] });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
     it('returns resources from the questionImage copyrightNotice', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ questionImage: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: {}, questionImage: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' }, answerImage: {} }] });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
     it('returns resources from the answerImage copyrightNotice', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ answerImage: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: {}, questionImage: {}, answerImage: { copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
-    it('returns empty list if there is no sound, questionImage or questionAnswer specified', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: null, questionImage: null, questionAnswer: null }] });
-      expect(result).toHaveLength(0);
-    });
     it('returns empty list for a MIDI resource', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.midi, copyrightNotice: '' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { useMidi: true, copyrightNotice: '' }, questionImage: {}, answerImage: {} }] });
       expect(result).toHaveLength(0);
     });
     it('returns empty list for an external resource', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.external, sourceUrl: 'https://someplace.com/sound.mp3', copyrightNotice: '' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { useMidi: false, sourceUrl: 'https://someplace.com/sound.mp3', copyrightNotice: '' }, questionImage: {}, answerImage: {} }] });
       expect(result).toHaveLength(0);
     });
     it('returns empty list for an internal resource without url', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.external, sourceUrl: null, copyrightNotice: '' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { useMidi: false, sourceUrl: null, copyrightNotice: '' }, questionImage: {}, answerImage: {} }] });
       expect(result).toHaveLength(0);
     });
     it('returns a list with the url for an internal resource', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'media/some-sound.mp3', copyrightNotice: '' } }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { useMidi: false, sourceUrl: 'media/some-sound.mp3', copyrightNotice: '' }, questionImage: {}, answerImage: {} }] });
       expect(result).toStrictEqual(['media/some-sound.mp3']);
     });
     it('returns a list with all urls for all internal resources', () => {
       const result = sut.getCdnResources({
         tests: [
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'media/some-sound-1.mp3', copyrightNotice: '' } },
-          { sound: { sourceType: SOUND_SOURCE_TYPE.external, sourceUrl: 'https://someplace.com/some-sound-2.mp3', copyrightNotice: '' } },
-          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'media/some-sound-3.mp3' }, copyrightNotice: '' }
+          { sound: { useMidi: false, sourceUrl: 'media/some-sound-1.mp3', copyrightNotice: '' }, questionImage: {}, answerImage: {} },
+          { sound: { useMidi: false, sourceUrl: 'https://someplace.com/some-sound-2.mp3', copyrightNotice: '' }, questionImage: {}, answerImage: {} },
+          { sound: { useMidi: false, sourceUrl: 'media/some-sound-3.mp3', copyrightNotice: '' }, questionImage: {}, answerImage: {} }
         ]
       });
       expect(result).toEqual(['media/some-sound-1.mp3', 'media/some-sound-3.mp3']);

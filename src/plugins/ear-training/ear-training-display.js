@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
+import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -15,7 +15,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
-import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -65,29 +65,19 @@ function EarTrainingDisplay({ content }) {
   };
 
   const renderSoundPlayer = () => {
-    let soundUrl = null;
-    let sourceType = SOUND_SOURCE_TYPE.midi;
-
-    if (currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
-      sourceType = SOUND_SOURCE_TYPE.internal;
-      soundUrl = currentTest.sound.sourceUrl ? `${clientConfig.cdnRootUrl}/${currentTest.sound.sourceUrl}` : null;
-    }
-
-    if (currentTest.sound.sourceType === SOUND_SOURCE_TYPE.external) {
-      sourceType = SOUND_SOURCE_TYPE.external;
-      soundUrl = currentTest.sound.sourceUrl || null;
-    }
+    const url = getAccessibleUrl({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const canDownload = isInternalSourceType({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
-        {sourceType === SOUND_SOURCE_TYPE.midi && (
+        {currentTest.sound.useMidi && (
           <AbcNotation abcCode={currentTest.answerAbcCode} displayMidi hideNotes />
         )}
-        {sourceType !== SOUND_SOURCE_TYPE.midi && soundUrl && (
+        {!currentTest.sound.useMidi && url && (
           <MediaPlayer
-            source={soundUrl}
+            source={url}
+            canDownload={canDownload}
             screenMode={MEDIA_SCREEN_MODE.none}
-            canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
         <CopyrightNotice value={currentTest.sound.copyrightNotice} />
@@ -138,22 +128,14 @@ function EarTrainingDisplay({ content }) {
                       'EarTrainingDisplay-image': true,
                       'EarTrainingDisplay-image--visible': isCurrentTestAnswerVisible
                     })}
-                    src={urlUtils.getImageUrl({
-                      cdnRootUrl: clientConfig.cdnRootUrl,
-                      sourceType: currentTest.answerImage.sourceType,
-                      sourceUrl: currentTest.answerImage.sourceUrl
-                    })}
+                    src={getAccessibleUrl({ url: currentTest.answerImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
                     />
                   <img
                     className={classNames({
                       'EarTrainingDisplay-image': true,
                       'EarTrainingDisplay-image--visible': !isCurrentTestAnswerVisible
                     })}
-                    src={urlUtils.getImageUrl({
-                      cdnRootUrl: clientConfig.cdnRootUrl,
-                      sourceType: currentTest.questionImage.sourceType,
-                      sourceUrl: currentTest.questionImage.sourceUrl
-                    })}
+                    src={getAccessibleUrl({ url: currentTest.questionImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
                     />
                 </div>
                 <CopyrightNotice

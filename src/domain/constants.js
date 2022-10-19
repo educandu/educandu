@@ -180,6 +180,11 @@ export const FORM_ITEM_LAYOUT = {
   wrapperCol: { span: 14 }
 };
 
+export const FORM_ITEM_LAYOUT_VERTICAL = {
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 }
+};
+
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 
 export const CDN_URL_PREFIX = 'cdn://';
