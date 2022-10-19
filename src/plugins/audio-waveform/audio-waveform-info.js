@@ -1,12 +1,12 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import AudioDisplay from './audio-waveform-display.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import AudioWaveformDisplay from './audio-waveform-display.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
-class AudioInfo {
+class AudioWaveformInfo {
   static get inject() { return []; }
 
   static get typeName() { return 'audio-waveform'; }
@@ -24,7 +24,7 @@ class AudioInfo {
   }
 
   getDisplayComponent() {
-    return AudioDisplay;
+    return AudioWaveformDisplay;
   }
 
   async resolveEditorComponent() {
@@ -74,4 +74,4 @@ class AudioInfo {
   }
 }
 
-export default AudioInfo;
+export default AudioWaveformInfo;
