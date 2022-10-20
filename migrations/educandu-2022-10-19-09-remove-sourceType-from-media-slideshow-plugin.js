@@ -10,7 +10,7 @@ export default class Educandu_2022_10_19_09_remove_sourceType_from_media_slidesh
       {
         $unset: {
           'sections.$[sectionElement].content.sourceType': null,
-          'sections.$[sectionElement].content.chapters.$[].sourceType': null
+          'sections.$[sectionElement].content.chapters.$[].image.sourceType': null
         }
       },
       {

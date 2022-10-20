@@ -121,7 +121,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
         // Ensure object
         if (!test.sound) {
           test.sound = {
-            sourceType: 'interal',
+            sourceType: 'internal',
             sourceUrl: '',
             copyrightNotice: ''
           };

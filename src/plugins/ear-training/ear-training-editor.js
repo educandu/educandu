@@ -39,8 +39,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const newContent = { ...content, ...newContentValues };
 
     const hasInvalidSourceUrl = (newContent.tests || [])
-      .some(test => isInvalidUrl(test.questionImage?.sourceUrl)
-        || isInvalidUrl(test.answerImage?.sourceUrl)
+      .some(test => isInvalidUrl(test.questionImage.sourceUrl)
+        || isInvalidUrl(test.answerImage.sourceUrl)
         || isInvalidUrl(test.sound.sourceUrl));
 
     onContentChanged(newContent, hasInvalidSourceUrl);
