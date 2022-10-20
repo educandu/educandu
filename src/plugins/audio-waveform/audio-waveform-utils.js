@@ -1,3 +1,28 @@
+import {
+  DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+  DEFAULT_WAVEFORM_BASELINE_COLOR,
+  DEFAULT_WAVEFORM_PEN_COLOR,
+  DISPLAY_MODE
+} from './constants.js';
+
+export function getDefaultInteractivityConfig() {
+  return {
+    penColor: DEFAULT_WAVEFORM_PEN_COLOR,
+    baselineColor: DEFAULT_WAVEFORM_BASELINE_COLOR,
+    backgroundColor: DEFAULT_WAVEFORM_BACKGROUND_COLOR,
+    opacityWhenResolved: 0.5
+  };
+}
+
+export function getDefaultContent() {
+  return {
+    sourceUrl: '',
+    width: 100,
+    displayMode: DISPLAY_MODE.static,
+    interactivityConfig: getDefaultInteractivityConfig()
+  };
+}
+
 export function drawWaveform({ canvas, peaks, width, height, penColor, baselineColor, backgroundColor }) {
   const context = canvas.getContext('2d');
 

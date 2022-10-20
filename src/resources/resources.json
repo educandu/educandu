@@ -1812,13 +1812,18 @@
       "generateImageDividerText": "or generate an image from an audio file",
       "generalSettingsDividerText": "General settings",
       "generateWaveformFromAudioFile": "Generate waveform from audio file",
+      "displayMode_static": "static",
+      "displayMode_interactive": "interactive",
+      "penColor": "Waveform color",
+      "baselineColor": "Baseline color",
+      "backgroundColor": "Background color",
+      "opacityWhenResolved": "Opacity (resolved)",
+      "showResolution": "Show resolution",
+      "hideResolution": "Hide resolution",
       "dialogTitle": "Generate waveform image",
       "dialogDropzoneInfo": "Drag an audio file into this box",
       "dialogLocalFilePickerButtonText": "Select an audio file from my machine",
-      "dialogCdnFilePickerButtonText": "Select an audio file from the CDN",
-      "dialogLocalFilePickerPenColorLabel": "Waveform",
-      "dialogLocalFilePickerBaselineColorLabel": "Baseline",
-      "dialogLocalFilePickerBackgroundColorLabel": "Background"
+      "dialogCdnFilePickerButtonText": "Select an audio file from the CDN"
     }
   },
   {
@@ -1830,13 +1835,18 @@
       "generateImageDividerText": "oder erstelle ein Bild aus einer Audio-Datei",
       "generalSettingsDividerText": "Generelle Einstellungen",
       "generateWaveformFromAudioFile": "Wellenform aus Audio-Datei erstellen",
+      "displayMode_static": "statisch",
+      "displayMode_interactive": "interaktiv",
+      "penColor": "Wellenformfarbe",
+      "baselineColor": "Grundlinienfarbe",
+      "backgroundColor": "Hintergrundfarbe",
+      "opacityWhenResolved": "Deckkraft (aufgelöst)",
+      "showResolution": "Auflösung anzeigen",
+      "hideResolution": "Auflösung ausblenden",
       "dialogTitle": "Wellenform-Bild erstellen",
       "dialogDropzoneInfo": "Ziehe eine Audio-Datei in diese Box",
       "dialogLocalFilePickerButtonText": "Audio-Datei vom lokalen Computer auswählen",
-      "dialogCdnFilePickerButtonText": "Audio-Datei vom CDN auswählen",
-      "dialogLocalFilePickerPenColorLabel": "Wellenform",
-      "dialogLocalFilePickerBaselineColorLabel": "Grundlinie",
-      "dialogLocalFilePickerBackgroundColorLabel": "Hintergrund"
+      "dialogCdnFilePickerButtonText": "Audio-Datei vom CDN auswählen"
     }
   },
   {
@@ -1859,7 +1869,6 @@
     "resources": {
       "name": "Catalog",
       "noTitle": "No title",
-      "displayMode": "Display mode",
       "displayMode_linkList": "link list",
       "displayMode_imageTiles": "image tiles",
       "tilesPerRow": "Tiles per row",
@@ -1879,7 +1888,6 @@
     "resources": {
       "name": "Katalog",
       "noTitle": "Kein Titel",
-      "displayMode": "Anzeigemodus",
       "displayMode_linkList": "Link-Liste",
       "displayMode_imageTiles": "Bildkacheln",
       "tilesPerRow": "Kacheln pro Zeile",
@@ -2478,7 +2486,8 @@
       "trackMixer": "Track mixer",
       "caption": "Caption",
       "defaultVolumePreset": "Default",
-      "volumePreset": "Volumes preset"
+      "volumePreset": "Volumes preset",
+      "displayMode": "Display mode"
     }
   },
   {
@@ -2640,7 +2649,8 @@
       "trackMixer": "Spur-Mixer",
       "caption": "Legende",
       "defaultVolumePreset": "Standard",
-      "volumePreset": "Lautstärke-Voreinstellung"
+      "volumePreset": "Lautstärke-Voreinstellung",
+      "displayMode": "Anzeigemodus"
     }
   },
   {

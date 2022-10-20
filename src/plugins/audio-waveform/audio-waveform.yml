@@ -13,6 +13,30 @@ generalSettingsDividerText:
 generateWaveformFromAudioFile:
   en: Generate waveform from audio file
   de: Wellenform aus Audio-Datei erstellen
+displayMode_static:
+  en: static
+  de: statisch
+displayMode_interactive:
+  en: interactive
+  de: interaktiv
+penColor:
+  en: Waveform color
+  de: Wellenformfarbe
+baselineColor:
+  en: Baseline color
+  de: Grundlinienfarbe
+backgroundColor:
+  en: Background color
+  de: Hintergrundfarbe
+opacityWhenResolved:
+  en: Opacity (resolved)
+  de: Deckkraft (aufgelöst)
+showResolution:
+  en: Show resolution
+  de: Auflösung anzeigen
+hideResolution:
+  en: Hide resolution
+  de: Auflösung ausblenden
 dialogTitle:
   en: Generate waveform image
   de: Wellenform-Bild erstellen
@@ -25,12 +49,3 @@ dialogLocalFilePickerButtonText:
 dialogCdnFilePickerButtonText:
   en: Select an audio file from the CDN
   de: Audio-Datei vom CDN auswählen
-dialogLocalFilePickerPenColorLabel:
-  en: Waveform
-  de: Wellenform
-dialogLocalFilePickerBaselineColorLabel:
-  en: Baseline
-  de: Grundlinie
-dialogLocalFilePickerBackgroundColorLabel:
-  en: Background
-  de: Hintergrund

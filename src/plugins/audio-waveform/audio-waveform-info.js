@@ -1,7 +1,9 @@
 import joi from 'joi';
 import React from 'react';
+import { DISPLAY_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
+import { getDefaultContent } from './audio-waveform-utils.js';
 import AudioWaveformDisplay from './audio-waveform-display.js';
 import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
@@ -32,16 +34,20 @@ class AudioWaveformInfo {
   }
 
   getDefaultContent() {
-    return {
-      sourceUrl: '',
-      width: 100
-    };
+    return getDefaultContent();
   }
 
   validateContent(content) {
     const schema = joi.object({
       sourceUrl: joi.string().allow('').required(),
-      width: joi.number().min(0).max(100).required()
+      width: joi.number().min(0).max(100).required(),
+      displayMode: joi.string().valid(...Object.values(DISPLAY_MODE)).required(),
+      interactivityConfig: joi.object({
+        penColor: joi.string().required(),
+        baselineColor: joi.string().required(),
+        backgroundColor: joi.string().required(),
+        opacityWhenResolved: joi.number().min(0).max(1).required()
+      }).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

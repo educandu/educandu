@@ -4,9 +4,6 @@ name:
 noTitle:
   en: No title
   de: Kein Titel
-displayMode:
-  en: Display mode
-  de: Anzeigemodus
 displayMode_linkList:
   en: link list
   de: Link-Liste

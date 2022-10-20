@@ -98,7 +98,7 @@ function CatalogEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
-        <FormItem label={t('displayMode')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:displayMode')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
             <RadioButton value={DISPLAY_MODE.linkList}>{t('displayMode_linkList')}</RadioButton>
             <RadioButton value={DISPLAY_MODE.imageTiles}>{t('displayMode_imageTiles')}</RadioButton>
