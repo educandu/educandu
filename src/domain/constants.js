@@ -192,6 +192,10 @@ export const FORM_ITEM_LAYOUT_VERTICAL = {
   wrapperCol: { span: 24 }
 };
 
+export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
+  wrapperCol: { span: 14, offset: 4 }
+};
+
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 
 export const CDN_URL_PREFIX = 'cdn://';

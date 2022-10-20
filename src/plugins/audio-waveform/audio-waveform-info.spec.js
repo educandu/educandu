@@ -1,5 +1,4 @@
 import AudioWaveformInfo from './audio-waveform-info.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 
 describe('audio-waveform-info', () => {
   let sut;
@@ -10,24 +9,20 @@ describe('audio-waveform-info', () => {
   describe('redactContent', () => {
     it('redacts inaccessible recources', () => {
       const result = sut.redactContent({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-image.png',
         width: 100
       }, '67890');
       expect(result).toStrictEqual({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: '',
         width: 100
       });
     });
     it('leaves accessible recources intact', () => {
       const result = sut.redactContent({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-image.png',
         width: 100
       }, '12345');
       expect(result).toStrictEqual({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-image.png',
         width: 100
       });
@@ -37,7 +32,6 @@ describe('audio-waveform-info', () => {
   describe('getCdnResources', () => {
     it('returns empty list for an external resource', () => {
       const result = sut.getCdnResources({
-        sourceType: IMAGE_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/image.png',
         width: 100
       });
@@ -45,19 +39,24 @@ describe('audio-waveform-info', () => {
     });
     it('returns empty list for an internal resource without url', () => {
       const result = sut.getCdnResources({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
         sourceUrl: '',
         width: 100
       });
       expect(result).toHaveLength(0);
     });
-    it('returns a list with the url for an internal resource', () => {
+    it('returns a list with the url for an internal public resource', () => {
       const result = sut.getCdnResources({
-        sourceType: IMAGE_SOURCE_TYPE.internal,
-        sourceUrl: 'media/some-image.png',
+        sourceUrl: 'media/12345/some-image.png',
         width: 100
       });
-      expect(result).toEqual(['media/some-image.png']);
+      expect(result).toEqual(['media/12345/some-image.png']);
+    });
+    it('returns a list with the url for an internal private resource', () => {
+      const result = sut.getCdnResources({
+        sourceUrl: 'rooms/12345/media/some-image.png',
+        width: 100
+      });
+      expect(result).toEqual(['rooms/12345/media/some-image.png']);
     });
   });
 });
