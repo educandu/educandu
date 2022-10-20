@@ -31,6 +31,12 @@ backgroundColor:
 opacityWhenResolved:
   en: Opacity (resolved)
   de: Deckkraft (aufgelöst)
+showResolution:
+  en: Show resolution
+  de: Auflösung anzeigen
+hideResolution:
+  en: Hide resolution
+  de: Auflösung ausblenden
 dialogTitle:
   en: Generate waveform image
   de: Wellenform-Bild erstellen

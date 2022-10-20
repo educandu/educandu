@@ -1,9 +1,42 @@
 .AudioWaveformDisplay {}
 
+.AudioWaveformDisplay-dimensionsWrapper {
+  position: relative;
+  margin: 0 auto;
+}
+
 .AudioWaveformDisplay-image {
   display: block;
-  margin: 0 auto;
   max-width: 100%;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 300ms ease, visibility 300ms step-start;
+
+
+
+  &.AudioWaveformDisplay-image--hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 300ms step-end;
+  }
+}
+
+.AudioWaveformDisplay-userLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+
+  &.AudioWaveformDisplay-userLayer--active {
+    display: block;
+    transition: opacity 300ms ease;
+  }
+}
+
+.AudioWaveformDisplay-controls {
+  display: flex;
+  justify-content: space-between;
+  margin: @edu-control-spacing-wide auto 0 auto;
 }
 
 .AudioWaveformGeneratorDialog-dropzone {
