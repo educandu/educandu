@@ -4,6 +4,7 @@ import ItemPanel from '../../components/item-panel.js';
 import CatalogItemEditor from './catalog-item-editor.js';
 import { Form, Radio, Slider, Button, Tooltip } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -25,11 +26,6 @@ const maxTilesPerRowSliderMarks = maxTilesPerRowPossibleValues.reduce((all, val)
   return { ...all, [val]: node };
 }, {});
 const maxTilesPerRowSliderTipFormatter = val => `${val}`;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
@@ -86,7 +82,7 @@ function CatalogEditor({ content, onContentChanged }) {
   return (
     <div className="CatalogEditor">
       <Form layout="horizontal">
-        <FormItem label={t('common:title')} {...formItemLayout}>
+        <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={title} onChange={handleTitleChange} />
         </FormItem>
         <FormItem
@@ -98,11 +94,11 @@ function CatalogEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
-        <FormItem label={t('displayMode')} {...formItemLayout}>
+        <FormItem label={t('displayMode')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
             <RadioButton value={DISPLAY_MODE.linkList}>{t('displayMode_linkList')}</RadioButton>
             <RadioButton value={DISPLAY_MODE.imageTiles}>{t('displayMode_imageTiles')}</RadioButton>
@@ -110,7 +106,7 @@ function CatalogEditor({ content, onContentChanged }) {
         </FormItem>
         {displayMode === DISPLAY_MODE.imageTiles && (
           <Fragment>
-            <FormItem label={t('tilesPerRow')} {...formItemLayout}>
+            <FormItem label={t('tilesPerRow')} {...FORM_ITEM_LAYOUT}>
               <Slider
                 step={null}
                 marks={maxTilesPerRowSliderMarks}
@@ -121,7 +117,7 @@ function CatalogEditor({ content, onContentChanged }) {
                 onChange={handleMaxTilesPerRowChange}
                 />
             </FormItem>
-            <FormItem label={t('hoverEffect')} {...formItemLayout}>
+            <FormItem label={t('hoverEffect')} {...FORM_ITEM_LAYOUT}>
               <RadioGroup value={imageTilesConfig.hoverEffect} onChange={handleHoverEffectChange}>
                 <RadioButton value={TILES_HOVER_EFFECT.none}>{t('hoverEffect_none')}</RadioButton>
                 <RadioButton value={TILES_HOVER_EFFECT.colorizeZoom}>{t('hoverEffect_colorizeZoom')}</RadioButton>
