@@ -1,5 +1,4 @@
 import MultitrackMediaInfo from './multitrack-media-info.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('multitrack-media-info', () => {
@@ -34,13 +33,11 @@ describe('multitrack-media-info', () => {
     it('redacts the media source url', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: `rooms/${currentRoomId}/media/my-video-1.mp4`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
             sourceUrl: `rooms/${currentRoomId}/media/my-video-2.mp4`,
             copyrightNotice: ''
           }
@@ -54,13 +51,11 @@ describe('multitrack-media-info', () => {
     it('leaves accessible paths intact', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: `rooms/${currentRoomId}/media/my-file-1.pdf`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
             sourceUrl: `rooms/${currentRoomId}/media/my-file-2.pdf`,
             copyrightNotice: ''
           }
@@ -75,13 +70,11 @@ describe('multitrack-media-info', () => {
     it('returns CDN resources from copyrightNotice', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.external,
           sourceUrl: '',
           copyrightNotice: 'This [hyperlink](cdn://media/my-file-1.pdf) and [another one](https://google.com)'
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.external,
             sourceUrl: '',
             copyrightNotice: 'This [hyperlink](cdn://media/my-file-2.pdf) and [another one](https://google.com)'
           }
@@ -94,13 +87,11 @@ describe('multitrack-media-info', () => {
     it('returns empty list for a YouTube resource', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.youtube,
           sourceUrl: 'https://youtube.com/something',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.youtube,
             sourceUrl: 'https://youtube.com/something',
             copyrightNotice: ''
           }
@@ -113,13 +104,11 @@ describe('multitrack-media-info', () => {
     it('returns empty list for an external resource', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.external,
           sourceUrl: 'https://someplace.com/video.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.external,
             sourceUrl: 'https://someplace.com/video.mp4',
             copyrightNotice: ''
           }
@@ -132,13 +121,11 @@ describe('multitrack-media-info', () => {
     it('returns empty list for an internal resource without url', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.internal,
           sourceUrl: null,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
             sourceUrl: null,
             copyrightNotice: ''
           }
@@ -148,23 +135,38 @@ describe('multitrack-media-info', () => {
       expect(result).toHaveLength(0);
     });
 
-    it('returns a list with the url for an internal resource', () => {
+    it('returns a list with the url for an internal public resource', () => {
       content = {
         mainTrack: {
-          sourceType: MEDIA_SOURCE_TYPE.internal,
-          sourceUrl: 'media/some-video-1.mp4',
+          sourceUrl: 'media/12345/some-video-1.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceType: MEDIA_SOURCE_TYPE.internal,
-            sourceUrl: 'media/some-video-2.mp4',
+            sourceUrl: 'media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
         ]
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['media/some-video-1.mp4', 'media/some-video-2.mp4']);
+      expect(result).toEqual(['media/12345/some-video-1.mp4', 'media/12345/some-video-2.mp4']);
+    });
+
+    it('returns a list with the url for an internal private resource', () => {
+      content = {
+        mainTrack: {
+          sourceUrl: 'rooms/12345/media/some-video-1.mp4',
+          copyrightNotice: ''
+        },
+        secondaryTracks: [
+          {
+            sourceUrl: 'rooms/12345/media/some-video-2.mp4',
+            copyrightNotice: ''
+          }
+        ]
+      };
+      result = sut.getCdnResources(content);
+      expect(result).toEqual(['rooms/12345/media/some-video-1.mp4', 'rooms/12345/media/some-video-2.mp4']);
     });
   });
 });

@@ -7,7 +7,7 @@ import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -76,18 +76,15 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'image',
             content: {
-              sourceType: IMAGE_SOURCE_TYPE.internal,
               sourceUrl: 'media/image-1.png',
               copyrightNotice: '',
               width: 100,
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
-                sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: 'media/image-2.png',
                 copyrightNotice: ''
               },
               revealEffect: {
-                sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: '',
                 copyrightNotice: '',
                 startPosition: 0,
@@ -107,12 +104,10 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               copyrightNotice: '',
               posterImage: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: ''
               },
               width: 100
@@ -243,18 +238,15 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'image',
             content: {
-              sourceType: IMAGE_SOURCE_TYPE.internal,
               sourceUrl: 'media/image-1.png',
               copyrightNotice: '',
               width: 100,
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
-                sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: 'media/image-2.png',
                 copyrightNotice: ''
               },
               revealEffect: {
-                sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: '',
                 copyrightNotice: '',
                 startPosition: 0,
@@ -274,12 +266,10 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
               copyrightNotice: '',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               posterImage: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: ''
               },
               width: 100
@@ -305,12 +295,10 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-2.mp4',
               copyrightNotice: '',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               posterImage: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: ''
               },
               width: 100
@@ -481,12 +469,10 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100
@@ -515,12 +501,10 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 copyrightNotice: '',
                 aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
                 posterImage: {
-                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: ''
                 },
                 width: 100

@@ -1,11 +1,10 @@
 import joi from 'joi';
-import validation from '../../ui/validation.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { DISPLAY_MODE, DEFAULT_MAX_TILES_PER_ROW, TILES_HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 
 function createDefaultItemImage() {
   return {
-    sourceType: IMAGE_SOURCE_TYPE.internal,
     sourceUrl: ''
   };
 }
@@ -47,7 +46,6 @@ export function validateContent(content) {
     items: joi.array().items(joi.object({
       title: joi.string().allow('').required(),
       image: joi.object({
-        sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
         sourceUrl: joi.string().allow('').required()
       }).required(),
       link: joi.object({
@@ -77,18 +75,18 @@ export function consolidateForDisplayMode(content) {
   return content;
 }
 
-export function isItemInvalid(item, t) {
+export function isItemInvalid(item, cdnRootUrl) {
   const isInvalidImageSourceUrl
-    = item.image.sourceType === IMAGE_SOURCE_TYPE.external
-    && validation.validateUrl(item.image.sourceUrl, t).validateStatus === 'error';
+    = !isInternalSourceType({ url: item.image.sourceUrl, cdnRootUrl })
+    && validation.getUrlValidationStatus(item.image.sourceUrl) === URL_VALIDATION_STATUS.error;
 
   const isInvalidLinkSourceUrl
     = item.link.sourceType === LINK_SOURCE_TYPE.external
-    && validation.validateUrl(item.link.sourceUrl, t, { allowHttp: true, allowMailto: true }).validateStatus === 'error';
+    && validation.getUrlValidationStatus(item.link.sourceUrl, { allowHttp: true, allowMailto: true }) === URL_VALIDATION_STATUS.error;
 
   return isInvalidImageSourceUrl || isInvalidLinkSourceUrl;
 }
 
-export function isContentInvalid(content, t) {
-  return content.items.some(item => isItemInvalid(item, t));
+export function isContentInvalid(content, cdnRootUrl) {
+  return content.items.some(item => isItemInvalid(item, cdnRootUrl));
 }

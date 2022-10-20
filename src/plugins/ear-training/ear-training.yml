@@ -7,9 +7,9 @@ nextExercise:
 abcCode:
   en: ABC code
   de: ABC-Code
-midi:
-  en: MIDI (auto)
-  de: MIDI (auto)
+useMidi:
+  en: Use MIDI (auto)
+  de: MIDI benutzen (auto)
 testsOrder:
   en: Display order
   de: Anzeigereihenfolge

@@ -130,17 +130,6 @@ export const SOURCE_TYPE = {
   unsupported: 'unsupported'
 };
 
-export const MEDIA_SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external',
-  youtube: 'youtube'
-};
-
-export const IMAGE_SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external'
-};
-
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
   public: 'public',
@@ -178,6 +167,22 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
 export const FORM_ITEM_LAYOUT = {
   labelCol: { span: 4 },
   wrapperCol: { span: 14 }
+};
+
+export const TAIL_FORM_ITEM_LAYOUT = {
+  wrapperCol: {
+    xs: { span: 18, offset: 0 },
+    sm: { span: 14, offset: 4 }
+  }
+};
+
+export const FORM_ITEM_LAYOUT_VERTICAL = {
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 }
+};
+
+export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
+  wrapperCol: { span: 14, offset: 4 }
 };
 
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;

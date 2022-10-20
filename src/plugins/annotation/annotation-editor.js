@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { BEHAVIOR, INTENT } from './constants.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -40,28 +41,23 @@ export default function AnnotationEditor({ content, onContentChanged }) {
     updateContent({ width: value });
   };
 
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
-
   return (
     <div>
       <Form>
-        <FormItem label={t('common:title')} {...formItemLayout}>
+        <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={title} onChange={handleTitleChange} inline />
         </FormItem>
-        <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
+        <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} />
         </FormItem>
-        <FormItem label={t('behavior')} {...formItemLayout}>
+        <FormItem label={t('behavior')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={behavior} onChange={handleBehaviorChange}>
             <RadioButton value={BEHAVIOR.expandable}>{t('behavior_expandable')}</RadioButton>
             <RadioButton value={BEHAVIOR.collapsible}>{t('behavior_collapsible')}</RadioButton>
             <RadioButton value={BEHAVIOR.static}>{t('behavior_static')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        <FormItem label={t('intent')} {...formItemLayout}>
+        <FormItem label={t('intent')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={intent} onChange={handleIntentChange}>
             <RadioButton value={INTENT.neutral}>{t('intent_neutral')}</RadioButton>
             <RadioButton value={INTENT.confirm}>{t('intent_confirm')}</RadioButton>
@@ -79,7 +75,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>

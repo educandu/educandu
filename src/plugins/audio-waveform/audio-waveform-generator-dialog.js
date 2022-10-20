@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { Button, Modal, Spin } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import * as reactDropzoneNs from 'react-dropzone';
 import HttpClient from '../../api-clients/http-client.js';
@@ -11,14 +10,14 @@ import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { getMediaSourceType } from '../../utils/media-utils.js';
 import { useStorage } from '../../components/storage-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { useService } from '../../components/container-context.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { createWaveformImageUrl, extractPeaks } from './audio-waveform-utils.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import ResourcePickerDialog from '../../components/resource-picker/resource-picker-dialog.js';
-import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { DEFAULT_WAVEFORM_BACKGROUND_COLOR, DEFAULT_WAVEFORM_BASELINE_COLOR, DEFAULT_WAVEFORM_PEN_COLOR } from './constants.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -124,12 +123,11 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
   const handleCdnResourcePickerSelect = sourceUrl => {
     setIsCdnResourcePickerVisible(false);
     generatePeaks(async () => {
-      const sourceType = getMediaSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-      const resolvedUrl = urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl });
+      const url = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
-      const response = await httpClient.get(resolvedUrl, {
+      const response = await httpClient.get(url, {
         responseType: 'blob',
-        withCredentials: sourceType === MEDIA_SOURCE_TYPE.internal
+        withCredentials: isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
       });
 
       return response.data;

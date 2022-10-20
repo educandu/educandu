@@ -3,7 +3,6 @@ import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
 import { getResourceExtension } from './resource-utils.js';
 import {
-  CDN_URL_PREFIX,
   CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
@@ -145,14 +144,6 @@ export function isAccessibleStoragePath(storagePath, fromRoomId) {
   return storagePath && getStorageLocationTypeForPath(storagePath) === STORAGE_LOCATION_TYPE.private
     ? getRoomIdFromPrivateStoragePath(storagePath) === fromRoomId
     : true;
-}
-
-export function urlToStorageLocationPath(url) {
-  return url ? url.replace(/^cdn:\/\//, '') : '';
-}
-
-export function storageLocationPathToUrl(path) {
-  return path ? `${CDN_URL_PREFIX}${path}` : '';
 }
 
 export function componseUniqueFileName(fileName, parentPath = null) {

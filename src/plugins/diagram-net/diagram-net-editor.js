@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Form, Button, Modal, Spin, Tooltip } from 'antd';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { useLocale } from '../../components/locale-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -41,11 +42,6 @@ const iframeOverlayStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: '#fff'
-};
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
 };
 
 function DiagramNetEditor({ content, onContentChanged }) {
@@ -126,11 +122,11 @@ function DiagramNetEditor({ content, onContentChanged }) {
     <div className="DiagramNetEditor">
       <Form layout="horizontal">
         {image && (
-          <Form.Item label={t('name')} {...formItemLayout}>
+          <Form.Item label={t('name')} {...FORM_ITEM_LAYOUT}>
             <img className="DiagramNetEditor-preview" src={image} />
           </Form.Item>
         )}
-        <Form.Item label={image ? '\u00A0' : t('name')} {...formItemLayout} colon={!image}>
+        <Form.Item label={image ? '\u00A0' : t('name')} {...FORM_ITEM_LAYOUT} colon={!image}>
           <Button type="primary" size="small" onClick={handleEditClick}>{t('editExternally')}</Button>
         </Form.Item>
         <Form.Item
@@ -142,7 +138,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>

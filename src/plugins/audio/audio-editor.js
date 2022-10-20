@@ -49,10 +49,7 @@ function AudioEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
-          <UrlInput
-            value={sourceUrl}
-            onChange={handleSourceUrlChange}
-            />
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
         </FormItem>
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />

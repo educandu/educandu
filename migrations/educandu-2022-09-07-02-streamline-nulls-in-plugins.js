@@ -1,8 +1,8 @@
 /* eslint-disable camelcase, no-console, no-await-in-loop, complexity */
 
 import { EFFECT_TYPE } from '../src/plugins/image/constants.js';
-import { IMAGE_SOURCE_TYPE, MEDIA_ASPECT_RATIO } from '../src/domain/constants.js';
-import { SOUND_SOURCE_TYPE, TEST_MODE } from '../src/plugins/ear-training/constants.js';
+import { MEDIA_ASPECT_RATIO } from '../src/domain/constants.js';
+import { TEST_MODE } from '../src/plugins/ear-training/constants.js';
 
 export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
   constructor(db) {
@@ -121,7 +121,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
         // Ensure object
         if (!test.sound) {
           test.sound = {
-            sourceType: SOUND_SOURCE_TYPE.internal,
+            sourceType: 'internal',
             sourceUrl: '',
             copyrightNotice: ''
           };
@@ -130,7 +130,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
         // Ensure object
         if (!test.questionImage) {
           test.questionImage = {
-            sourceType: IMAGE_SOURCE_TYPE.internal,
+            sourceType: 'internal',
             sourceUrl: '',
             copyrightNotice: ''
           };
@@ -139,7 +139,7 @@ export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
         // Ensure object
         if (!test.answerImage) {
           test.answerImage = {
-            sourceType: IMAGE_SOURCE_TYPE.internal,
+            sourceType: 'internal',
             sourceUrl: '',
             copyrightNotice: ''
           };

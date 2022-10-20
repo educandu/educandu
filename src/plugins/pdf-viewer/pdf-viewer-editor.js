@@ -1,21 +1,14 @@
 import React, { Fragment } from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { CDN_URL_PREFIX } from '../../domain/constants.js';
+import { Form, InputNumber, Switch, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
-import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 function PdfViewerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('pdfViewer');
@@ -26,12 +19,8 @@ function PdfViewerEditor({ content, onContentChanged }) {
     onContentChanged({ ...content, ...newContentValues }, false);
   };
 
-  const handleSourceUrlChange = event => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value, initialPageNumber: 1 });
-  };
-
-  const handleCdnFileNameChange = newValue => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue, initialPageNumber: 1 });
+  const handleSourceUrlChange = value => {
+    triggerContentChanged({ sourceUrl: value, initialPageNumber: 1 });
   };
 
   const handleInitialPageNumberChange = newInitialPageNumber => {
@@ -50,23 +39,15 @@ function PdfViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
+  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.internalPublic];
+
   return (
     <div className="PdfViewerEditor">
       <Form layout="horizontal">
-        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-          <div className="u-input-and-button">
-            <Input
-              addonBefore={CDN_URL_PREFIX}
-              value={sourceUrl}
-              onChange={handleSourceUrlChange}
-              />
-            <ResourcePicker
-              url={storageLocationPathToUrl(sourceUrl)}
-              onUrlChange={url => handleCdnFileNameChange(urlToStorageLocationPath(url))}
-              />
-          </div>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
-        <Form.Item label={t('initialPageNumber')} {...formItemLayout}>
+        <Form.Item label={t('initialPageNumber')} {...FORM_ITEM_LAYOUT}>
           <InputNumber min={1} step={1} value={initialPageNumber} onChange={handleInitialPageNumberChange} />
         </Form.Item>
         <Form.Item
@@ -78,7 +59,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
               <span>{t('showTextOverlay')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <Switch size="small" checked={showTextOverlay} onChange={handleShowTextOverlayChange} />
         </Form.Item>
@@ -91,11 +72,11 @@ function PdfViewerEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <Form.Item label={t('common:caption')} {...formItemLayout}>
+        <Form.Item label={t('common:caption')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
         </Form.Item>
       </Form>

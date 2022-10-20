@@ -1,6 +1,5 @@
 import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
 import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -11,13 +10,14 @@ import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, replaceItemAt } from '../../utils/array-utils.js';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { sourceType, aspectRatio, showVideo, width, playbackRange, copyrightNotice, chapters } = content;
+  const { aspectRatio, showVideo, width, playbackRange, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -38,11 +38,7 @@ function InteractiveMediaDisplay({ content }) {
     tooltip: chapter.title
   })), [chapters]);
 
-  const sourceUrl = urlUtils.getMediaUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType: content.sourceType,
-    sourceUrl: content.sourceUrl
-  });
+  const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   const handleMediaReady = () => {
     setIsMediaReady(true);
@@ -143,6 +139,8 @@ function InteractiveMediaDisplay({ content }) {
     );
   };
 
+  const canDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
   return (
     <div className="InteractiveMediaDisplay">
       <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
@@ -159,7 +157,7 @@ function InteractiveMediaDisplay({ content }) {
           onPlayStateChange={handlePlayStateChange}
           onReady={handleMediaReady}
           onSeek={handleSeek}
-          canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
+          canDownload={canDownload}
           />
         {sourceUrl && (
           <div className="InteractiveMediaDisplay-progressBar">

@@ -1,8 +1,8 @@
 import joi from 'joi';
 import uniqueId from '../../utils/unique-id.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { csvToObjects, objectsToCsv } from '../../utils/csv-utils.js';
 import { hexCodeValidationPattern } from '../../domain/validation-constants.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const chapterSchema = joi.object({
   key: joi.string().required(),
@@ -15,7 +15,6 @@ const chapterSchema = joi.object({
 export function createDefaultSecondaryTrack(index, t) {
   return {
     name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
-    sourceType: MEDIA_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: ''
   };
@@ -24,7 +23,6 @@ export function createDefaultSecondaryTrack(index, t) {
 export function createDefaultMainTrack(t) {
   return {
     name: `[${t('common:mainTrack')}]`,
-    sourceType: MEDIA_SOURCE_TYPE.internal,
     sourceUrl: '',
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -109,7 +107,6 @@ export function validateContent(content) {
     width: joi.number().min(0).max(100).required(),
     mainTrack: joi.object({
       name: joi.string().allow('').required(),
-      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
@@ -118,7 +115,6 @@ export function validateContent(content) {
     }).required(),
     secondaryTracks: joi.array().items(joi.object({
       name: joi.string().allow('').required(),
-      sourceType: joi.string().valid(...Object.values(MEDIA_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required()
     })).required(),
