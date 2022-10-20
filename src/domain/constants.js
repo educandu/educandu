@@ -130,17 +130,6 @@ export const SOURCE_TYPE = {
   unsupported: 'unsupported'
 };
 
-export const MEDIA_SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external',
-  youtube: 'youtube'
-};
-
-export const IMAGE_SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external'
-};
-
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
   public: 'public',

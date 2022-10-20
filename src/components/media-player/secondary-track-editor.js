@@ -47,7 +47,7 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
 
     const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: value })
-      : copyrightNotice;
+      : '';
 
     changeContent({
       sourceUrl: newSourceType === SOURCE_TYPE.unsupported || isNewSourceTypeInternal ? value : sanitizedUrl,

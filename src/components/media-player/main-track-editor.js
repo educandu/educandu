@@ -15,7 +15,7 @@ import { getResourceType } from '../../utils/resource-utils.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
 import { getAccessibleUrl, getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
-import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -56,9 +56,9 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
     const isNewSourceTypeInternal = isInternalSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    const newCopyrightNotice = newSourceType === MEDIA_SOURCE_TYPE.youtube
+    const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: value })
-      : copyrightNotice;
+      : '';
 
     const newContent = {
       sourceUrl: newSourceType === SOURCE_TYPE.unsupported || isNewSourceTypeInternal ? value : sanitizedUrl,

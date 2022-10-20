@@ -3,9 +3,9 @@ import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
 import { getResourceType } from './resource-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 import validation, { URL_VALIDATION_STATUS } from '../ui/validation.js';
 import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
-import { CDN_URL_PREFIX, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -153,18 +153,6 @@ export function getSourcePositionFromTrackPosition(trackPosition, playbackRange)
 
 export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange) {
   return (playbackRange[1] - playbackRange[0]) * sourceDuration;
-}
-
-export function getMediaSourceType({ sourceUrl, cdnRootUrl }) {
-  if (sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX)) {
-    return MEDIA_SOURCE_TYPE.internal;
-  }
-
-  if (sourceUrl.startsWith('https://www.youtube.com/')) {
-    return MEDIA_SOURCE_TYPE.youtube;
-  }
-
-  return MEDIA_SOURCE_TYPE.external;
 }
 
 export async function getMediaInformation({ url, playbackRange, cdnRootUrl }) {

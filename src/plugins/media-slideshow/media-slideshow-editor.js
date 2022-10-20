@@ -1,6 +1,5 @@
 import by from 'thenby';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
@@ -151,10 +150,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
       fit: imageFit
     } = chapters[playingChapterIndex].image;
 
-    const imageUrl = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceUrl: imageSourceUrl
-    });
+    const imageUrl = getAccessibleUrl({ url: imageSourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     if (!imageUrl) {
       return null;

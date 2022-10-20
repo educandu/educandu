@@ -5,8 +5,8 @@ import MediaPlayerTrack from './media-player-track.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { useOnComponentUnmount } from '../../ui/hooks.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { getMediaSourceType } from '../../utils/media-utils.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 function PreloadingMediaPlayerTrack({
   sourceUrl,
@@ -42,11 +42,8 @@ function PreloadingMediaPlayerTrack({
     setLastLoadingSourceUrl(sourceUrl);
 
     (async () => {
-      const sourceType = getMediaSourceType({ sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-      const response = await httpClient.get(sourceUrl, {
-        responseType: 'blob',
-        withCredentials: sourceType === MEDIA_SOURCE_TYPE.internal
-      });
+      const withCredentials = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      const response = await httpClient.get(sourceUrl, { responseType: 'blob', withCredentials });
 
       const newObjectUrl = URL.createObjectURL(response.data);
 

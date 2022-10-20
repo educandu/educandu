@@ -23,7 +23,7 @@ import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-can
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
@@ -272,11 +272,11 @@ function Tests({ PageTemplate }) {
       title: 'Corelli (manipulated)',
       content: {
         ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Gb (ext)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, playbackRange: [0.14, 0.82] },
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, playbackRange: [0.14, 0.82] },
         secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3 }
         ],
         volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
       }
@@ -285,11 +285,11 @@ function Tests({ PageTemplate }) {
       title: 'Corelli',
       content: {
         ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Generalbass', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0 },
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0 },
         secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Violine 1', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_1 },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Violine 2', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_2 },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_3 }
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1 },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2 },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3 }
         ],
         volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
       }
@@ -298,15 +298,15 @@ function Tests({ PageTemplate }) {
       title: 'Groove',
       content: {
         ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Dubstep', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_0 },
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Dubstep', sourceUrl: MULTITRACK_GROOVE_URL_0 },
         secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Bass growls', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_1 },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Bass sub', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_2 },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Chords', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_3 },
-          { ...createDefaultSecondaryTrack(3, mmpTranslation), name: 'Drums', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_4 },
-          { ...createDefaultSecondaryTrack(4, mmpTranslation), name: 'FX', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_5 },
-          { ...createDefaultSecondaryTrack(5, mmpTranslation), name: 'Lead bell', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_6 },
-          { ...createDefaultSecondaryTrack(6, mmpTranslation), name: 'Lead synth', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_GROOVE_URL_7 }
+          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1 },
+          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2 },
+          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3 },
+          { ...createDefaultSecondaryTrack(3, mmpTranslation), name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4 },
+          { ...createDefaultSecondaryTrack(4, mmpTranslation), name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5 },
+          { ...createDefaultSecondaryTrack(5, mmpTranslation), name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6 },
+          { ...createDefaultSecondaryTrack(6, mmpTranslation), name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7 }
         ],
         volumePresets: [createDefaultVolumePreset(mmpTranslation, 7)]
       }
@@ -315,8 +315,8 @@ function Tests({ PageTemplate }) {
       title: 'Youtube',
       content: {
         ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Youtube', sourceType: MEDIA_SOURCE_TYPE.youtube, sourceUrl: YOUTUBE_VIDEO_URL, showVideo: true },
-        secondaryTracks: [{ ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'External', sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: MULTITRACK_CORELLI_URL_0 }],
+        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Youtube', sourceUrl: YOUTUBE_VIDEO_URL, showVideo: true },
+        secondaryTracks: [{ ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'External', sourceUrl: MULTITRACK_CORELLI_URL_0 }],
         volumePresets: [createDefaultVolumePreset(mmpTranslation, 1)]
       }
     }

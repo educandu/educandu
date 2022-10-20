@@ -8,16 +8,15 @@ import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MediaPlayerControls from './media-player-controls.js';
-import { getMediaSourceType } from '../../utils/media-utils.js';
 import MediaPlayerTrackGroup from './media-player-track-group.js';
 import MediaPlayerTrackMixer from './media-player-track-mixer.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import {
   MEDIA_ASPECT_RATIO,
   MEDIA_PLAY_STATE,
   MEDIA_SCREEN_MODE,
-  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS,
-  MEDIA_SOURCE_TYPE
+  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS
 } from '../../domain/constants.js';
 
 const SOURCE_TYPE = {
@@ -204,11 +203,7 @@ function MultitrackMediaPlayer({
     if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
       await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
     } else {
-      const mainTrackMediaSourceType = getMediaSourceType({
-        sourceUrl: loadedSources.mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      });
-      const withCredentials = mainTrackMediaSourceType === MEDIA_SOURCE_TYPE.internal;
+      const withCredentials = isInternalSourceType({ url: loadedSources.mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
       httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName, withCredentials);
     }
   };
