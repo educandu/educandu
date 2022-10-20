@@ -13,7 +13,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
-import { getPersistableUrl, isInternalSourceType } from '../../utils/source-utils.js';
+import { getPortableUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_WITHOUT_LABEL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -51,7 +51,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
 
   const handleWaveformGeneratorDialogSelect = selectedUrl => {
     setIsWaveformGeneratorDialogVisible(false);
-    changeContent({ sourceUrl: getPersistableUrl({ url: selectedUrl, cdnRootUrl: clientConfig.cdnRootUrl }) });
+    changeContent({ sourceUrl: getPortableUrl({ url: selectedUrl, cdnRootUrl: clientConfig.cdnRootUrl }) });
   };
 
   const handleWaveformGeneratorDialogCancel = () => {
