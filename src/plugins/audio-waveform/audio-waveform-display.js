@@ -14,7 +14,7 @@ function AudioWaveformDisplay({ content }) {
   const waveformApiRef = useRef();
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
-  const [showResolution, setShowResolution] = useState(false);
+  const [isResolved, setIsResolved] = useState(false);
 
   const { sourceUrl, width, displayMode, interactivityConfig } = content;
   const { penColor, baselineColor, backgroundColor, opacityWhenResolved } = interactivityConfig;
@@ -23,7 +23,7 @@ function AudioWaveformDisplay({ content }) {
 
   const imageClasses = classNames({
     'AudioWaveformDisplay-image': true,
-    'AudioWaveformDisplay-image--hidden': displayMode === DISPLAY_MODE.interactive && !showResolution
+    'AudioWaveformDisplay-image--hidden': displayMode === DISPLAY_MODE.interactive && !isResolved
   });
 
   const userLayerClasses = classNames({
@@ -31,14 +31,14 @@ function AudioWaveformDisplay({ content }) {
     'AudioWaveformDisplay-userLayer--active': displayMode === DISPLAY_MODE.interactive
   });
 
-  const userLayerOpacity = showResolution ? opacityWhenResolved : 1;
+  const userLayerOpacity = isResolved ? opacityWhenResolved : 1;
 
   const handleToggleResolutionClick = () => {
-    setShowResolution(oldValue => !oldValue);
+    setIsResolved(oldValue => !oldValue);
   };
 
   const handleResetClick = () => {
-    setShowResolution(false);
+    setIsResolved(false);
     waveformApiRef.current.clear();
   };
 
@@ -69,7 +69,7 @@ function AudioWaveformDisplay({ content }) {
             {t('common:reset')}
           </Button>
           <Button onClick={handleToggleResolutionClick}>
-            {t(showResolution ? 'hideResolution' : 'showResolution')}
+            {t(isResolved ? 'hideResolution' : 'showResolution')}
           </Button>
         </div>
       )}

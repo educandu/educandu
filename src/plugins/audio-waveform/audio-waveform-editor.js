@@ -63,10 +63,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   };
 
   const handleDisplayModeChange = event => {
-    changeContent({
-      displayMode: event.target.value,
-      interactivityConfig: getDefaultInteractivityConfig()
-    });
+    changeContent({ displayMode: event.target.value, interactivityConfig: getDefaultInteractivityConfig() });
   };
 
   const handlePenColorChange = color => {
