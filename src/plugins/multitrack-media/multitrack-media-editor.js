@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -13,16 +12,12 @@ import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
+import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 const FormItem = Form.Item;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
   const playerRef = useRef(null);
@@ -36,9 +31,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: mainTrack.sourceUrl,
-        sourceType: mainTrack.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: mainTrack.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].mainTrack,
@@ -46,9 +40,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     },
     secondaryTracks: secondaryTracks.map((track, index) => ({
       name: track.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: track.sourceUrl,
-        sourceType: track.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: track.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
@@ -124,7 +117,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal">
         <ItemPanel header={t('common:mainTrack')}>
-          <FormItem label={t('common:name')} {...formItemLayout}>
+          <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
             <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
           </FormItem>
           <MainTrackEditor
@@ -184,7 +177,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>

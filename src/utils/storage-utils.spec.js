@@ -7,8 +7,7 @@ import {
   getPathForPrivateRoom,
   getRoomIdFromPrivateStoragePath,
   componseUniqueFileName,
-  composeHumanReadableDisplayName,
-  ensurePortableUrlIfStorageUrl
+  composeHumanReadableDisplayName
 } from './storage-utils.js';
 
 describe('storage-utils', () => {
@@ -198,24 +197,6 @@ describe('storage-utils', () => {
 
       it('should return the composed display name', () => {
         expect(result).toBe('Private document [ch5zqo897tzo8f3]');
-      });
-    });
-  });
-
-  describe('ensurePortableUrlIfStorageUrl', () => {
-    const testCases = [
-      { sourceUrl: '', cdnRootUrl: 'http://cdn-root', expectedResult: '' },
-      { sourceUrl: 'http://cdn-root/resource.jpeg', cdnRootUrl: 'http://cdn-root', expectedResult: 'cdn://resource.jpeg' },
-      { sourceUrl: 'http://cdn-root/resource.jpeg', cdnRootUrl: 'http://cdn-root/', expectedResult: 'cdn://resource.jpeg' },
-      { sourceUrl: 'cdn://resource.jpeg', cdnRootUrl: 'http://cdn-root/', expectedResult: 'cdn://resource.jpeg' },
-      { sourceUrl: 'http://other-domain/resource.jpeg', cdnRootUrl: 'http://cdn-root/', expectedResult: 'http://other-domain/resource.jpeg' }
-    ];
-
-    testCases.forEach(({ sourceUrl, cdnRootUrl, expectedResult }) => {
-      describe(`when sourceUrl = '${sourceUrl}' and cdnRoutUrl = '${cdnRootUrl}'`, () => {
-        it(`should return ${expectedResult}`, () => {
-          expect(ensurePortableUrlIfStorageUrl({ sourceUrl, cdnRootUrl })).toBe(expectedResult);
-        });
       });
     });
   });

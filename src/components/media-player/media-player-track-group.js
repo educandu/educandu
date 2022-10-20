@@ -5,10 +5,10 @@ import MediaPlayerTrack from './media-player-track.js';
 import { useDedupedCallback } from '../../ui/hooks.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import { getMediaSourceType } from '../../utils/media-utils.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import PreloadingMediaPlayerTrack from './preloading-media-player-track.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 const createInitialTrackStates = sources => ({
   mainTrack: {
@@ -270,7 +270,7 @@ function MediaPlayerTrackGroup({
 
   const getTrackComponent = sourceUrl => {
     const isAudioFile = getResourceType(sourceUrl) === RESOURCE_TYPE.audio;
-    const isInternalFile = getMediaSourceType({ sourceUrl, cdnRootUrl }) === MEDIA_SOURCE_TYPE.internal;
+    const isInternalFile = isInternalSourceType({ url: sourceUrl, cdnRootUrl });
     return isMultitrack && isInternalFile && isAudioFile ? PreloadingMediaPlayerTrack : MediaPlayerTrack;
   };
 

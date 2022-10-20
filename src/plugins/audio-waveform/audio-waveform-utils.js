@@ -1,4 +1,3 @@
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
   DEFAULT_WAVEFORM_BASELINE_COLOR,
@@ -17,7 +16,6 @@ export function getDefaultInteractivityConfig() {
 
 export function getDefaultContent() {
   return {
-    sourceType: IMAGE_SOURCE_TYPE.internal,
     sourceUrl: '',
     width: 100,
     displayMode: DISPLAY_MODE.static,

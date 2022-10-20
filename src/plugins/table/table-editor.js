@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import TableDesigner from './table-designer.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { COLUMN_DISTRIBUTION } from './table-utils.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 
@@ -24,15 +25,10 @@ function TableEditor({ content, onContentChanged }) {
     updateContent({ width: newValue });
   };
 
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
-
   return (
     <div className="TableEditor">
       <Form>
-        <Form.Item label={t('columnDistribution')} {...formItemLayout}>
+        <Form.Item label={t('columnDistribution')} {...FORM_ITEM_LAYOUT}>
           <Radio.Group value={columnDistribution} onChange={handleColumnDistributionChange}>
             <Radio.Button value={COLUMN_DISTRIBUTION.automatic}>{t('columnDistribution_automatic')}</Radio.Button>
             <Radio.Button value={COLUMN_DISTRIBUTION.even}>{t('columnDistribution_even')}</Radio.Button>
@@ -47,7 +43,7 @@ function TableEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>

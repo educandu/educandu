@@ -1,22 +1,16 @@
 import React, { Fragment } from 'react';
+import { Form, Slider, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { range } from '../../utils/array-utils.js';
-import { Form, Input, Slider, Tooltip } from 'antd';
+import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { CDN_URL_PREFIX } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE, SOURCE_TYPE } from './constants.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
 
 const possibleZoomSliderValues = range({ from: MIN_ZOOM_VALUE * 100, to: MAX_ZOOM_VALUE * 100, step: 5 });
 
@@ -37,12 +31,8 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
     onContentChanged({ ...content, ...newContentValues }, false);
   };
 
-  const handleSourceUrlChange = event => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value });
-  };
-
-  const handleCdnFileNameChange = newValue => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue });
+  const handleSourceUrlChange = value => {
+    triggerContentChanged({ sourceUrl: value });
   };
 
   const handleZoomChange = newValue => {
@@ -57,23 +47,15 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
+  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.internalPublic];
+
   return (
     <div className="MusicXmlViewerEditor">
       <Form layout="horizontal">
-        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-          <div className="u-input-and-button">
-            <Input
-              addonBefore={CDN_URL_PREFIX}
-              value={sourceUrl}
-              onChange={handleSourceUrlChange}
-              />
-            <ResourcePicker
-              url={storageLocationPathToUrl(sourceUrl)}
-              onUrlChange={url => handleCdnFileNameChange(urlToStorageLocationPath(url))}
-              />
-          </div>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
-        <Form.Item label={t('zoom')} {...formItemLayout}>
+        <Form.Item label={t('zoom')} {...FORM_ITEM_LAYOUT}>
           <Slider
             min={MIN_ZOOM_VALUE * 100}
             max={MAX_ZOOM_VALUE * 100}
@@ -93,11 +75,11 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <Form.Item label={t('common:caption')} {...formItemLayout}>
+        <Form.Item label={t('common:caption')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
         </Form.Item>
       </Form>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MusicXmlDocument from '../../components/music-xml-document.js';
@@ -9,13 +9,10 @@ import MusicXmlDocument from '../../components/music-xml-document.js';
 function MusicXmlViewerDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const { sourceType, sourceUrl, zoom, width, caption } = content;
-
-  if (sourceType !== SOURCE_TYPE.internal) {
-    throw new Error(`Invalid source type '${sourceType}'`);
-  }
-
-  const actualUrl = sourceUrl ? `${clientConfig.cdnRootUrl}/${sourceUrl}` : null;
+  const { sourceUrl, zoom, width, caption } = content;
+  const actualUrl = sourceUrl
+    ? getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    : null;
 
   return (
     <div className="MusicXmlViewerDisplay">

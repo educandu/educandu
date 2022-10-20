@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
+import UrlInput from '../url-input.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
-import validation from '../../ui/validation.js';
 import MarkdownInput from '../markdown-input.js';
 import React, { Fragment, useState } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
-import DebouncedInput from '../debounced-input.js';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import { useNumberFormat } from '../locale-context.js';
@@ -14,10 +12,10 @@ import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaRangeSelector from './media-range-selector.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import ResourcePicker from '../resource-picker/resource-picker.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
-import { CDN_URL_PREFIX, MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
+import { getAccessibleUrl, getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -25,27 +23,16 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
-
 function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
   const clientConfig = useService(ClientConfig);
   const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mainTrackEditor');
+
   const [sourceDuration, setSourceDuration] = useState(0);
-  const { sourceType, sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
+  const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
 
   const determineMediaInformationFromUrl = async url => {
-    const result = await getMediaInformation({
-      t,
-      url,
-      sourceType,
-      playbackRange,
-      cdnRootUrl: clientConfig.cdnRootUrl
-    });
-
+    const result = await getMediaInformation({ url, playbackRange, cdnRootUrl: clientConfig.cdnRootUrl });
     setSourceDuration(result.duration);
 
     return result;
@@ -58,36 +45,23 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
 
-    const isInvalidSourceUrl
-      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
-      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const isInvalidSourceUrl = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
-  const handleSourceTypeChange = event => {
-    const { value } = event.target;
-    const newContent = {
-      sourceType: value,
-      sourceUrl: '',
-      playbackRange: [0, 1],
-      copyrightNotice: ''
-    };
-    if (useShowVideo) {
-      newContent.showVideo = false;
-    }
-    changeContent(newContent);
-  };
-
-  const handleSourceUrlChangeComplete = async value => {
+  const handleSourceUrlChange = async value => {
     const { sanitizedUrl, range, resourceType, error } = await determineMediaInformationFromUrl(value);
+    const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
+    const isNewSourceTypeInternal = isInternalSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+    const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: value })
-      : copyrightNotice;
+      : '';
 
     const newContent = {
-      sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : value,
+      sourceUrl: newSourceType === SOURCE_TYPE.unsupported || isNewSourceTypeInternal ? value : sanitizedUrl,
       playbackRange: range,
       copyrightNotice: newCopyrightNotice
     };
@@ -101,14 +75,6 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     if (error) {
       handleError({ error, logger, t });
     }
-  };
-
-  const handleDebouncedSourceUrlChange = value => {
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleSourceUrlBlur = event => {
-    handleSourceUrlChangeComplete(event.target.value);
   };
 
   const handlePlaybackRangeChange = newRange => {
@@ -139,43 +105,17 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     return t('playbackRangeInfo', { from, to });
   };
 
+  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    ? {}
+    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+
   return (
     <Fragment>
-      <FormItem label={t('common:source')} {...formItemLayout}>
-        <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
-          <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-          <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-          <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
-        </RadioGroup>
+      <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+        <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
       </FormItem>
-      {sourceType === MEDIA_SOURCE_TYPE.external && (
-      <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
-      </FormItem>
-      )}
-      {sourceType === MEDIA_SOURCE_TYPE.internal && (
-      <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-        <div className="u-input-and-button">
-          <DebouncedInput
-            addonBefore={CDN_URL_PREFIX}
-            value={sourceUrl}
-            onChange={handleDebouncedSourceUrlChange}
-            onBlur={handleSourceUrlBlur}
-            />
-          <ResourcePicker
-            url={storageLocationPathToUrl(sourceUrl)}
-            onUrlChange={url => handleSourceUrlChangeComplete(urlToStorageLocationPath(url))}
-            />
-        </div>
-      </FormItem>
-      )}
-      {sourceType === MEDIA_SOURCE_TYPE.youtube && (
-      <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-        <DebouncedInput value={sourceUrl} onChange={handleDebouncedSourceUrlChange} onBlur={handleSourceUrlBlur} />
-      </FormItem>
-      )}
       {useAspectRatio && (
-        <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
+        <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup
             size="small"
             defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
@@ -190,7 +130,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
         </FormItem>
       )}
       {useShowVideo && (
-        <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
+        <FormItem label={t('common:videoDisplay')} {...FORM_ITEM_LAYOUT}>
           <Switch
             size="small"
             checked={showVideo}
@@ -199,17 +139,17 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
             />
         </FormItem>
       )}
-      <FormItem label={t('playbackRange')} {...formItemLayout}>
+      <FormItem label={t('playbackRange')} {...FORM_ITEM_LAYOUT}>
         <div className="u-input-and-button">
           <Input value={renderPlaybackRangeInfo()} readOnly />
           <MediaRangeSelector
             range={playbackRange}
             onRangeChange={handlePlaybackRangeChange}
-            sourceUrl={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
+            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
             />
         </div>
       </FormItem>
-      <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
+      <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
         <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
       </FormItem>
     </Fragment>
@@ -218,7 +158,6 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
 
 MainTrackEditor.propTypes = {
   content: PropTypes.shape({
-    sourceType: PropTypes.oneOf(Object.values(MEDIA_SOURCE_TYPE)),
     sourceUrl: PropTypes.string,
     showVideo: PropTypes.bool,
     aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),

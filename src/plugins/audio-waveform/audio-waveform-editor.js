@@ -1,31 +1,24 @@
 import { DISPLAY_MODE } from './constants.js';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
 import React, { Fragment, useState } from 'react';
-import { range } from '../../utils/array-utils.js';
+import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { ensureIsExcluded, range } from '../../utils/array-utils.js';
+import { Button, Divider, Form, Radio, Slider, Tooltip } from 'antd';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
-import { Button, Divider, Form, Input, Radio, Slider, Tooltip } from 'antd';
-import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { getPersistableUrl, isInternalSourceType } from '../../utils/source-utils.js';
+import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_WITHOUT_LABEL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
-
-const formItemLayoutWithoutLabel = {
-  wrapperCol: { span: 14, offset: 4 }
-};
 
 const opacityWhenResolvedSliderMarks = range({ from: 0, to: 100, step: 25 })
   .reduce((all, val) => ({ ...all, [val]: <span>{val}%</span> }), {});
@@ -34,39 +27,31 @@ const opacityWhenResolvedTipFormatter = val => `${val}%`;
 
 function AudioWaveformEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audioWaveform');
+  const clientConfig = useService(ClientConfig);
   const [isWaveformGeneratorDialogVisible, setIsWaveformGeneratorDialogVisible] = useState(false);
 
-  const { sourceType, sourceUrl, width, displayMode, interactivityConfig } = content;
+  const { sourceUrl, width, displayMode, interactivityConfig } = content;
   const { penColor, baselineColor, backgroundColor, opacityWhenResolved } = interactivityConfig;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidSourceUrl = newContent.sourceType !== IMAGE_SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
-    onContentChanged(newContent, isInvalidSourceUrl);
+    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const isInvalid = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
+
+    onContentChanged(newContent, isInvalid);
   };
 
-  const handleSourceTypeChange = event => {
-    changeContent({ sourceType: event.target.value, sourceUrl: '' });
-  };
-
-  const handleSourceUrlChange = event => {
-    changeContent({ sourceUrl: event.target.value });
-  };
-
-  const handleInternalUrlChange = url => {
-    changeContent({ sourceUrl: urlToStorageLocationPath(url) });
+  const handleSourceUrlChange = value => {
+    changeContent({ sourceUrl: value });
   };
 
   const handleGenerateWaveform = () => {
     setIsWaveformGeneratorDialogVisible(true);
   };
 
-  const handleWaveformGeneratorDialogSelect = newInternalSourceUrl => {
+  const handleWaveformGeneratorDialogSelect = selectedUrl => {
     setIsWaveformGeneratorDialogVisible(false);
-    changeContent({
-      sourceType: IMAGE_SOURCE_TYPE.internal,
-      sourceUrl: urlToStorageLocationPath(newInternalSourceUrl)
-    });
+    changeContent({ sourceUrl: getPersistableUrl({ url: selectedUrl, cdnRootUrl: clientConfig.cdnRootUrl }) });
   };
 
   const handleWaveformGeneratorDialogCancel = () => {
@@ -100,38 +85,20 @@ function AudioWaveformEditor({ content, onContentChanged }) {
     changeContent({ interactivityConfig: { ...interactivityConfig, opacityWhenResolved: value / 100 } });
   };
 
+  const allowedSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
+  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    ? {}
+    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+
   return (
     <div>
       <Form layout="horizontal">
         <Divider plain>{t('chooseImageDividerText')}</Divider>
-        <FormItem label={t('common:source')} {...formItemLayout}>
-          <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
-            <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-          </RadioGroup>
+        <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
-        {sourceType === 'external' && (
-          <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleSourceUrlChange} />
-          </FormItem>
-        )}
-        {sourceType === 'internal' && (
-          <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-            <div className="u-input-and-button">
-              <Input
-                addonBefore={CDN_URL_PREFIX}
-                value={sourceUrl}
-                onChange={handleSourceUrlChange}
-                />
-              <ResourcePicker
-                url={storageLocationPathToUrl(sourceUrl)}
-                onUrlChange={handleInternalUrlChange}
-                />
-            </div>
-          </FormItem>
-        )}
         <Divider plain>{t('generateImageDividerText')}</Divider>
-        <FormItem {...formItemLayoutWithoutLabel}>
+        <FormItem {...FORM_ITEM_LAYOUT_WITHOUT_LABEL}>
           <Button type="primary" onClick={handleGenerateWaveform}>
             {t('generateWaveformFromAudioFile')}
           </Button>
@@ -146,11 +113,11 @@ function AudioWaveformEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <FormItem label={t('common:displayMode')} {...formItemLayout}>
+        <FormItem label={t('common:displayMode')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
             <RadioButton value={DISPLAY_MODE.static}>{t('displayMode_static')}</RadioButton>
             <RadioButton value={DISPLAY_MODE.interactive}>{t('displayMode_interactive')}</RadioButton>
@@ -159,16 +126,16 @@ function AudioWaveformEditor({ content, onContentChanged }) {
         {displayMode === DISPLAY_MODE.interactive && (
           <div className="Panel">
             <div className="Panel-content">
-              <FormItem label={t('penColor')} {...formItemLayout}>
+              <FormItem label={t('penColor')} {...FORM_ITEM_LAYOUT}>
                 <ColorPicker color={penColor} onChange={handlePenColorChange} />
               </FormItem>
-              <FormItem label={t('baselineColor')} {...formItemLayout}>
+              <FormItem label={t('baselineColor')} {...FORM_ITEM_LAYOUT}>
                 <ColorPicker color={baselineColor} onChange={handleBaselineColorChange} />
               </FormItem>
-              <FormItem label={t('backgroundColor')} {...formItemLayout}>
+              <FormItem label={t('backgroundColor')} {...FORM_ITEM_LAYOUT}>
                 <ColorPicker color={backgroundColor} onChange={handleBackgroundColorChange} />
               </FormItem>
-              <FormItem label={t('opacityWhenResolved')} {...formItemLayout}>
+              <FormItem label={t('opacityWhenResolved')} {...FORM_ITEM_LAYOUT}>
                 <Slider
                   min={0}
                   max={100}

@@ -1,10 +1,8 @@
 import uniqueId from './unique-id.js';
 import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
-import escapeStringRegexp from 'escape-string-regexp';
 import { getResourceExtension } from './resource-utils.js';
 import {
-  CDN_URL_PREFIX,
   CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
@@ -148,14 +146,6 @@ export function isAccessibleStoragePath(storagePath, fromRoomId) {
     : true;
 }
 
-export function urlToStorageLocationPath(url) {
-  return url ? url.replace(/^cdn:\/\//, '') : '';
-}
-
-export function storageLocationPathToUrl(path) {
-  return path ? `${CDN_URL_PREFIX}${path}` : '';
-}
-
 export function componseUniqueFileName(fileName, parentPath = null) {
   const id = uniqueId.create();
   const extension = getResourceExtension(fileName);
@@ -178,22 +168,4 @@ export function composeHumanReadableDisplayName({ cdnObject, t }) {
   return cdnObject.documentMetadata.isAccessibleToUser
     ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
     : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
-}
-
-export function isCdnUrl({ sourceUrl, cdnRootUrl }) {
-  return sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX);
-}
-
-export function getCdnPath({ sourceUrl, cdnRootUrl }) {
-  return sourceUrl
-    .replace(new RegExp(`^${escapeStringRegexp(cdnRootUrl)}/?`), '')
-    .replace(new RegExp(`^${escapeStringRegexp(CDN_URL_PREFIX)}/?`), '');
-}
-
-export function ensurePortableUrlIfStorageUrl({ sourceUrl, cdnRootUrl }) {
-  if (!isCdnUrl({ sourceUrl, cdnRootUrl })) {
-    return sourceUrl;
-  }
-
-  return `${CDN_URL_PREFIX}${getCdnPath({ sourceUrl, cdnRootUrl })}`;
 }

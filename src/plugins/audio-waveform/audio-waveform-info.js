@@ -3,9 +3,9 @@ import React from 'react';
 import { DISPLAY_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { getDefaultContent } from './audio-waveform-utils.js';
 import AudioWaveformDisplay from './audio-waveform-display.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
 class AudioWaveformInfo {
@@ -39,7 +39,6 @@ class AudioWaveformInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
       displayMode: joi.string().valid(...Object.values(DISPLAY_MODE)).required(),
@@ -61,7 +60,7 @@ class AudioWaveformInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (redactedContent.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
@@ -71,7 +70,7 @@ class AudioWaveformInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    if (content.sourceType === IMAGE_SOURCE_TYPE.internal && content.sourceUrl) {
+    if (isInternalSourceType({ url: content.sourceUrl })) {
       cdnResources.push(content.sourceUrl);
     }
 

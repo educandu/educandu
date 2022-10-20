@@ -1,21 +1,25 @@
 import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
-import urlUtils from './url-utils.js';
 import reactPlayerNs from 'react-player';
 import { getResourceType } from './resource-utils.js';
-import { getCdnPath, isCdnUrl } from './storage-utils.js';
-import validation, { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
-import { CDN_URL_PREFIX, INTERNAL_PRIVATE_STORAGE_PATH_PATTERN, INTERNAL_PUBLIC_STORAGE_PATH_PATTERN, MEDIA_SOURCE_TYPE, RESOURCE_TYPE, SOURCE_TYPE } from '../domain/constants.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
+import validation, { URL_VALIDATION_STATUS } from '../ui/validation.js';
+import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const MEDIA_TIMEOUT_IN_MS = 5000;
 
 export function analyzeMediaUrl(url) {
-  const parsedUrl = new URL(url);
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    parsedUrl = null;
+  }
 
-  if (parsedUrl.origin === 'https://www.youtube.com' && parsedUrl.pathname === '/watch' && parsedUrl.searchParams.has('v')) {
+  if (parsedUrl?.origin === 'https://www.youtube.com' && parsedUrl?.pathname === '/watch' && parsedUrl?.searchParams.has('v')) {
     const videoId = parsedUrl.searchParams.get('v');
     const startSecond = Number.parseInt(parsedUrl.searchParams.get('start'), 10);
     const endSecond = Number.parseInt(parsedUrl.searchParams.get('end'), 10);
@@ -29,7 +33,7 @@ export function analyzeMediaUrl(url) {
     };
   }
 
-  if (parsedUrl.origin === 'https://youtu.be' && parsedUrl.pathname && !parsedUrl.pathname.slice(1).includes('/')) {
+  if (parsedUrl?.origin === 'https://youtu.be' && parsedUrl?.pathname && !parsedUrl?.pathname.slice(1).includes('/')) {
     const videoId = parsedUrl.pathname.slice(1);
     const startSecond = Number.parseInt(parsedUrl.searchParams.get('t'), 10);
 
@@ -43,7 +47,7 @@ export function analyzeMediaUrl(url) {
   }
 
   return {
-    sanitizedUrl: parsedUrl.href,
+    sanitizedUrl: parsedUrl?.href || url,
     isYoutube: false,
     startTimecode: null,
     stopTimecode: null,
@@ -151,46 +155,7 @@ export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange
   return (playbackRange[1] - playbackRange[0]) * sourceDuration;
 }
 
-export function getMediaSourceType({ sourceUrl, cdnRootUrl }) {
-  if (sourceUrl.startsWith(cdnRootUrl) || sourceUrl.startsWith(CDN_URL_PREFIX)) {
-    return MEDIA_SOURCE_TYPE.internal;
-  }
-
-  if (sourceUrl.startsWith('https://www.youtube.com/')) {
-    return MEDIA_SOURCE_TYPE.youtube;
-  }
-
-  return MEDIA_SOURCE_TYPE.external;
-}
-
-export function getSourceType({ sourceUrl, cdnRootUrl }) {
-  if (!sourceUrl) {
-    return SOURCE_TYPE.none;
-  }
-
-  if (isCdnUrl({ sourceUrl, cdnRootUrl })) {
-    const cdnPath = getCdnPath({ sourceUrl, cdnRootUrl });
-
-    if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPublic;
-    }
-    if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPrivate;
-    }
-  }
-
-  if (sourceUrl.startsWith('https://www.youtube.com/')) {
-    return SOURCE_TYPE.youtube;
-  }
-
-  if (getUrlValidationStatus(sourceUrl) === URL_VALIDATION_STATUS.valid) {
-    return SOURCE_TYPE.external;
-  }
-
-  return SOURCE_TYPE.unsupported;
-}
-
-export async function getMediaInformation({ url, sourceType, playbackRange, cdnRootUrl, t }) {
+export async function getMediaInformation({ url, playbackRange, cdnRootUrl }) {
   const defaultResult = {
     sanitizedUrl: url,
     duration: 0,
@@ -204,12 +169,14 @@ export async function getMediaInformation({ url, sourceType, playbackRange, cdnR
   }
 
   try {
-    const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+    const isInvalidSourceUrl = !isInternalSourceType({ url, cdnRootUrl })
+      && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+
     if (isInvalidSourceUrl) {
       return defaultResult;
     }
 
-    const completeUrl = urlUtils.getMediaUrl({ sourceUrl: url, sourceType, cdnRootUrl });
+    const completeUrl = getAccessibleUrl({ url, cdnRootUrl });
 
     const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
     const duration = await determineMediaDuration(completeUrl);

@@ -6,6 +6,7 @@ import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
+import { isBrowser } from '../ui/browser-helper.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
@@ -69,7 +70,10 @@ class PluginRegistry {
         throw new Error(`Plugin type "${typeName}" is not available`);
       }
 
-      logger.info(`Registering plugin type ${infoType.typeName}`);
+      if (!isBrowser()) {
+        logger.info(`Registering plugin type ${infoType.typeName}`);
+      }
+
       map.set(infoType.typeName, new RegisteredPlugin(container.get(infoType)));
       return map;
     }, new Map());

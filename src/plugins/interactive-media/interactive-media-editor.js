@@ -1,8 +1,6 @@
 import by from 'thenby';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
-import validation from '../../ui/validation.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -18,25 +16,15 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
-import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
+import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, TAIL_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
-
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: { span: 18, offset: 0 },
-    sm: { span: 14, offset: 4 }
-  }
-};
 
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
@@ -47,9 +35,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const { sourceType, sourceUrl, playbackRange, chapters, width, showVideo } = content;
+  const { sourceUrl, playbackRange, chapters, width, showVideo } = content;
 
-  const [mediaDuration] = useMediaDurations([urlUtils.getMediaUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })]);
+  const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
@@ -62,9 +50,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
 
-    const isInvalidSourceUrl
-      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
-      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const isInvalidSourceUrl = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalidSourceUrl);
   };
@@ -207,7 +194,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
@@ -217,7 +204,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <MediaPlayer
           parts={chapters}
           playbackRange={playbackRange}
-          source={urlUtils.getMediaUrl({ sourceUrl, sourceType, cdnRootUrl: clientConfig.cdnRootUrl })}
+          source={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           screenWidth={50}
           />
@@ -240,24 +227,24 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
               onChapterIndexChange={handleChapterIndexChange}
               />
 
-            <FormItem label={t('common:startTimecode')} {...formItemLayout}>
+            <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="InteractiveMediaEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('common:duration')} {...formItemLayout}>
+            <FormItem label={t('common:duration')} {...FORM_ITEM_LAYOUT}>
               <span className="InteractiveMediaEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
               </span>
             </FormItem>
-            <FormItem label={t('common:title')} {...formItemLayout}>
+            <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
               <Input
                 disabled={!selectedChapterFraction}
                 onChange={handleChapterTitleChange}
                 value={chapters[selectedChapterIndex].title}
                 />
             </FormItem>
-            <FormItem label={t('common:text')} {...formItemLayout}>
+            <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
               <MarkdownInput
                 preview
                 disabled={!selectedChapterFraction}
@@ -265,10 +252,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 value={chapters?.[selectedChapterIndex].text || ''}
                 />
             </FormItem>
-            <FormItem {...tailFormItemLayout}>
+            <FormItem {...TAIL_FORM_ITEM_LAYOUT}>
               <div>{t('addAnswerInfo')}</div>
             </FormItem>
-            <FormItem label={t('answers')} {...formItemLayout}>
+            <FormItem label={t('answers')} {...FORM_ITEM_LAYOUT}>
               {(chapters?.[selectedChapterIndex].answers || []).map(renderAnswer)}
               <Tooltip title={t('addAnswer')}>
                 <Button

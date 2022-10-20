@@ -1,5 +1,4 @@
 import { CHAPTER_TYPE } from './constants.js';
-import urlUtils from '../../utils/url-utils.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import { preloadImage } from '../../utils/image-utils.js';
@@ -9,29 +8,22 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 function MediaSlideshowDisplay({ content }) {
-  const { sourceType, width, playbackRange, copyrightNotice, chapters } = content;
+  const { width, playbackRange, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
   const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
 
-  const sourceUrl = urlUtils.getMediaUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType: content.sourceType,
-    sourceUrl: content.sourceUrl
-  });
+  const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   useEffect(() => {
     (async () => {
       const imageUrls = chapters
-        .map(chapter => urlUtils.getImageUrl({
-          cdnRootUrl: clientConfig.cdnRootUrl,
-          sourceType: chapter.image.sourceType,
-          sourceUrl: chapter.image.sourceUrl
-        }))
+        .map(chapter => getAccessibleUrl({ url: chapter.image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl }))
         .filter(url => url);
       await Promise.all(imageUrls.map(url => preloadImage(url)));
     })();
@@ -42,17 +34,8 @@ function MediaSlideshowDisplay({ content }) {
   };
 
   const renderPlayingChapterImage = () => {
-    const {
-      sourceType: imageSourceType,
-      sourceUrl: imageSourceUrl,
-      fit: imageFit
-    } = chapters[playingChapterIndex].image;
-
-    const imageUrl = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: imageSourceType,
-      sourceUrl: imageSourceUrl
-    });
+    const { sourceUrl: imageSourceUrl, fit: imageFit } = chapters[playingChapterIndex].image;
+    const imageUrl = getAccessibleUrl({ url: imageSourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     if (!imageUrl) {
       return null;
@@ -82,6 +65,8 @@ function MediaSlideshowDisplay({ content }) {
       : renderPlayingChapterText();
   };
 
+  const canDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
   return (
     <div className="MediaSlideshowDisplay">
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
@@ -92,7 +77,7 @@ function MediaSlideshowDisplay({ content }) {
           screenMode={MEDIA_SCREEN_MODE.overlay}
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
           playbackRange={playbackRange}
-          canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
+          canDownload={canDownload}
           screenOverlay={renderPlayingChapter()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />

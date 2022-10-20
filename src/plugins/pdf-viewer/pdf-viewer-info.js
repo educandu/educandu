@@ -1,9 +1,9 @@
 import joi from 'joi';
 import React from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import PdfViewerDisplay from './pdf-viewer-display.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
 class PdfViewerInfo {
@@ -31,7 +31,6 @@ class PdfViewerInfo {
 
   getDefaultContent() {
     return {
-      sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
       initialPageNumber: 1,
       showTextOverlay: true,
@@ -42,7 +41,6 @@ class PdfViewerInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      sourceType: joi.string().valid(...Object.values(SOURCE_TYPE)).required(),
       sourceUrl: joi.string().allow('').required(),
       initialPageNumber: joi.number().min(1).required(),
       showTextOverlay: joi.boolean().required(),
@@ -60,7 +58,7 @@ class PdfViewerInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
@@ -68,7 +66,7 @@ class PdfViewerInfo {
   }
 
   getCdnResources(content) {
-    return content.sourceType === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
+    return isInternalSourceType({ url: content.sourceUrl }) ? [content.sourceUrl] : [];
   }
 }
 

@@ -8,20 +8,11 @@ import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
+import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL } from '../../domain/constants.js';
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
   const { abcCode, width, displayMidi, copyrightNotice } = content;
-
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
-
-  const formItemLayoutVertical = {
-    labelCol: { span: 24 },
-    wrapperCol: { span: 24 }
-  };
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -48,13 +39,13 @@ function AbcNotationEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form layout="horizontal">
-        <Form.Item label={t('abcCode')} {...formItemLayoutVertical}>
+        <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
           <InputAndPreview
             input={<NeverScrollingTextArea minRows={6} value={abcCode} onChange={handleCurrentAbcCodeChanged} />}
             preview={<AbcNotation abcCode={abcCode} />}
             />
         </Form.Item>
-        <Form.Item label={t('midiSound')} {...formItemLayout}>
+        <Form.Item label={t('midiSound')} {...FORM_ITEM_LAYOUT}>
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
         </Form.Item>
         <Form.Item
@@ -66,11 +57,11 @@ function AbcNotationEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCurrentCopyrightNoticeChanged} />
         </Form.Item>
       </Form>

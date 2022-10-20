@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import Markdown from '../../components/markdown.js';
 import Collapsible from '../../components/collapsible.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { TILES_HOVER_EFFECT, LINK_SOURCE_TYPE, DISPLAY_MODE } from './constants.js';
@@ -42,12 +42,7 @@ function CatalogDisplay({ content }) {
 
   const renderImageTileItem = (item, index) => {
     const itemLinkUrl = getItemLinkUrl(item);
-
-    const itemImageUrl = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: item.image.sourceType,
-      sourceUrl: item.image.sourceUrl
-    });
+    const itemImageUrl = getAccessibleUrl({ url: item.image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     const itemClasses = classNames({
       'CatalogDisplay-imageTile': true,

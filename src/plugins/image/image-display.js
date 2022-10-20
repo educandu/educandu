@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -19,8 +19,8 @@ function ImageDisplay({ content }) {
   const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
-  const { copyrightNotice, sourceType, sourceUrl, effectType, hoverEffect, revealEffect, clipEffect, width } = content;
-  const src = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
+  const { copyrightNotice, sourceUrl, effectType, hoverEffect, revealEffect, clipEffect, width } = content;
+  const src = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   useEffect(() => {
     const mainImage = mainImageRef.current;
@@ -48,11 +48,7 @@ function ImageDisplay({ content }) {
     canvas.height = mainImage.height;
 
     const hoverImage = new Image();
-    hoverImage.src = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: hoverEffect.sourceType,
-      sourceUrl: hoverEffect.sourceUrl
-    });
+    hoverImage.src = getAccessibleUrl({ url: hoverEffect.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     hoverImage.onload = () => {
       const widthFactor = canvas.width / hoverImage.naturalWidth;
@@ -100,12 +96,8 @@ function ImageDisplay({ content }) {
   );
 
   const renderRevealEffect = () => {
-    const imageUrl = urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
-    const effectImageUrl = urlUtils.getImageUrl({
-      cdnRootUrl: clientConfig.cdnRootUrl,
-      sourceType: revealEffect.sourceType,
-      sourceUrl: revealEffect.sourceUrl
-    });
+    const imageUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const effectImageUrl = getAccessibleUrl({ url: revealEffect.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     return (
       <ReactCompareSlider
@@ -150,7 +142,7 @@ function ImageDisplay({ content }) {
           ref={mainImageRef}
           className={mainImageClasses}
           onMouseEnter={handleMainImageMouseEnter}
-          src={urlUtils.getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })}
+          src={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
       )}
       {effectType === EFFECT_TYPE.hover && renderHoverEffect()}

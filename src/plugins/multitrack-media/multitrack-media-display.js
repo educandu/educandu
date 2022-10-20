@@ -1,7 +1,7 @@
-import urlUtils from '../../utils/url-utils.js';
 import React, { useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -18,9 +18,8 @@ function MultitrackMediaDisplay({ content }) {
   const sources = {
     mainTrack: {
       name: mainTrack.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: mainTrack.sourceUrl,
-        sourceType: mainTrack.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: mainTrack.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].mainTrack,
@@ -28,9 +27,8 @@ function MultitrackMediaDisplay({ content }) {
     },
     secondaryTracks: secondaryTracks.map((track, index) => ({
       name: track.name,
-      sourceUrl: urlUtils.getMediaUrl({
-        sourceUrl: track.sourceUrl,
-        sourceType: track.sourceType,
+      sourceUrl: getAccessibleUrl({
+        url: track.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
       }),
       volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]

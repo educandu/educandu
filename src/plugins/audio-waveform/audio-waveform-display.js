@@ -2,10 +2,10 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 import { DISPLAY_MODE } from './constants.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import AudioWaveformCanvas from './audio-waveform-canvas.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import DimensionsProvider from '../../components/dimensions-provider.js';
@@ -16,14 +16,10 @@ function AudioWaveformDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
   const [showResolution, setShowResolution] = useState(false);
 
-  const { sourceType, sourceUrl, width, displayMode, interactivityConfig } = content;
+  const { sourceUrl, width, displayMode, interactivityConfig } = content;
   const { penColor, baselineColor, backgroundColor, opacityWhenResolved } = interactivityConfig;
 
-  const resolvedUrl = urlUtils.getImageUrl({
-    cdnRootUrl: clientConfig.cdnRootUrl,
-    sourceType,
-    sourceUrl
-  });
+  const url = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   const imageClasses = classNames({
     'AudioWaveformDisplay-image': true,
@@ -52,7 +48,7 @@ function AudioWaveformDisplay({ content }) {
         <DimensionsProvider>
           {({ containerHeight, containerWidth }) => (
             <Fragment>
-              <img className={imageClasses} src={resolvedUrl} />
+              <img className={imageClasses} src={url} />
               <div className={userLayerClasses} style={{ opacity: userLayerOpacity }}>
                 <AudioWaveformCanvas
                   apiRef={waveformApiRef}

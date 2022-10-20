@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { Form, Input, Slider, Checkbox, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -18,10 +19,6 @@ function IframeEditor({ content, onContentChanged }) {
   const { t } = useTranslation('iframe');
 
   const { url, width } = content;
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -51,7 +48,7 @@ function IframeEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <FormItem
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           label={t('common:url')}
           {...validation.validateUrl(url, t)}
           hasFeedback
@@ -67,11 +64,11 @@ function IframeEditor({ content, onContentChanged }) {
               <span>{t('common:width')}</span>
             </Fragment>
           }
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
-        <Form.Item label={t('height')} {...formItemLayout}>
+        <Form.Item label={t('height')} {...FORM_ITEM_LAYOUT}>
           <Slider
             min={100}
             max={1000}
@@ -82,7 +79,7 @@ function IframeEditor({ content, onContentChanged }) {
             tipFormatter={tipFormatter}
             />
         </Form.Item>
-        <Form.Item label={t('frame')} {...formItemLayout}>
+        <Form.Item label={t('frame')} {...FORM_ITEM_LAYOUT}>
           <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
         </Form.Item>
       </Form>

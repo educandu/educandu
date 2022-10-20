@@ -2,10 +2,10 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
+import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import EarTrainingDisplay from './ear-training-display.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
-import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class EarTrainingInfo {
@@ -36,7 +36,6 @@ class EarTrainingInfo {
 
   getDefaultImage() {
     return {
-      sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: '',
       copyrightNotice: ''
     };
@@ -44,7 +43,7 @@ class EarTrainingInfo {
 
   getDefaultSound() {
     return {
-      sourceType: SOUND_SOURCE_TYPE.internal,
+      useMidi: false,
       sourceUrl: '',
       copyrightNotice: ''
     };
@@ -78,7 +77,6 @@ class EarTrainingInfo {
         mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
         questionImage: joi.alternatives().try(
           joi.object({
-            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
             sourceUrl: joi.string().allow('').required(),
             copyrightNotice: joi.string().allow('').required()
           }),
@@ -86,7 +84,6 @@ class EarTrainingInfo {
         ).required(),
         answerImage: joi.alternatives().try(
           joi.object({
-            sourceType: joi.string().valid(...Object.values(IMAGE_SOURCE_TYPE)).required(),
             sourceUrl: joi.string().allow('').required(),
             copyrightNotice: joi.string().allow('').required()
           }),
@@ -95,7 +92,7 @@ class EarTrainingInfo {
         questionAbcCode: joi.string().allow('').required(),
         answerAbcCode: joi.string().allow('').required(),
         sound: joi.object({
-          sourceType: joi.string().valid(...Object.values(SOUND_SOURCE_TYPE)).required(),
+          useMidi: joi.boolean().required(),
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required()
         }).required()
@@ -138,13 +135,13 @@ class EarTrainingInfo {
         );
       }
 
-      if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
+      if (!isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
         test.sound.sourceUrl = '';
       }
-      if (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.questionImage.sourceUrl, targetRoomId)) {
+      if (!isAccessibleStoragePath(test.questionImage.sourceUrl, targetRoomId)) {
         test.questionImage.sourceUrl = '';
       }
-      if (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.answerImage.sourceUrl, targetRoomId)) {
+      if (!isAccessibleStoragePath(test.answerImage.sourceUrl, targetRoomId)) {
         test.answerImage.sourceUrl = '';
       }
     }
@@ -158,17 +155,17 @@ class EarTrainingInfo {
     cdnResources.push(...this.gfm.extractCdnResources(content.title));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.copyrightNotice));
-      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.copyrightNotice));
-      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.sound.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage.copyrightNotice));
 
-      if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && test.sound.sourceUrl) {
+      if (isInternalSourceType({ url: test.sound.sourceUrl })) {
         cdnResources.push(test.sound.sourceUrl);
       }
-      if (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.internal && test.questionImage.sourceUrl) {
+      if (isInternalSourceType({ url: test.questionImage.sourceUrl })) {
         cdnResources.push(test.questionImage.sourceUrl);
       }
-      if (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.internal && test.answerImage.sourceUrl) {
+      if (isInternalSourceType({ url: test.answerImage.sourceUrl })) {
         cdnResources.push(test.answerImage.sourceUrl);
       }
     }

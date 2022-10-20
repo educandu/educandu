@@ -4,6 +4,7 @@ import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -15,10 +16,6 @@ const RadioButton = Radio.Button;
 function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
 
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
   const { tests, testsOrder, teaser, title } = content;
 
   const changeContent = newContentValues => {
@@ -73,13 +70,13 @@ function QuickTesterEditor({ content, onContentChanged }) {
   return (
     <div className="QuickTesterEditor">
       <Form layout="horizontal">
-        <FormItem label={`${t('teaser')}:`} {...formItemLayout}>
+        <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
         </FormItem>
-        <FormItem label={`${t('common:title')}:`} {...formItemLayout}>
+        <FormItem label={`${t('common:title')}:`} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
         </FormItem>
-        <FormItem label={t('testsOrder')} {...formItemLayout}>
+        <FormItem label={t('testsOrder')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>
             <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
