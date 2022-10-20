@@ -4,23 +4,22 @@ import validation from '../../ui/validation.js';
 import { LINK_SOURCE_TYPE } from './constants.js';
 import React, { Fragment, useState } from 'react';
 import { Button, Form, Input, Radio } from 'antd';
+import UrlInput from '../../components/url-input.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { useService } from '../../components/container-context.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import DocumentSelector from '../../components/document-selector.js';
-import { CDN_URL_PREFIX, IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
-import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
-};
-
 function CatalogItemEditor({ item, enableImageEditing, onChange }) {
   const { t } = useTranslation('catalog');
+  const clientConfig = useService(ClientConfig);
   const [currentDocumentTitle, setCurrentDocumentTitle] = useState('');
 
   const { title, link, image } = item;
@@ -29,20 +28,8 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
     onChange({ ...item, ...newItemContentValues });
   };
 
-  const handleExternalImageUrlChange = event => {
-    triggerChange({ image: { ...image, sourceUrl: event.target.value } });
-  };
-
-  const handleInternalImageUrlChange = event => {
-    triggerChange({ image: { ...image, sourceUrl: event.target.value } });
-  };
-
-  const handleInternalImageResourceUrlChange = value => {
+  const handleInternalImageUrlChange = value => {
     triggerChange({ image: { ...image, sourceUrl: value } });
-  };
-
-  const handleImageSourceTypeChange = event => {
-    triggerChange({ image: { sourceType: event.target.value, sourceUrl: '' } });
   };
 
   const handleTitleChange = event => {
@@ -69,12 +56,18 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
     triggerChange({ title: currentDocumentTitle });
   };
 
+  const getImageValidationProps = url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
+    ? {}
+    : validation.validateUrl(url, t, { allowEmpty: true });
+
+  const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
+
   return (
     <Fragment>
-      <FormItem label={t('common:title')} {...formItemLayout}>
+      <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
         <MarkdownInput inline value={title} onChange={handleTitleChange} />
       </FormItem>
-      <FormItem label={t('linkSource')} {...formItemLayout}>
+      <FormItem label={t('linkSource')} {...FORM_ITEM_LAYOUT}>
         <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeChange}>
           <RadioButton value={LINK_SOURCE_TYPE.document}>{t('documentLink')}</RadioButton>
           <RadioButton value={LINK_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
@@ -83,7 +76,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       {link.sourceType === LINK_SOURCE_TYPE.external && (
         <FormItem
           label={t('common:externalUrl')}
-          {...formItemLayout}
+          {...FORM_ITEM_LAYOUT}
           {...validation.validateUrl(link.sourceUrl, t, { allowHttp: true, allowMailto: true })}
           hasFeedback
           >
@@ -91,7 +84,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
         </FormItem>
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (
-        <FormItem label={t('common:document')} {...formItemLayout}>
+        <FormItem label={t('common:document')} {...FORM_ITEM_LAYOUT}>
           <div className="u-input-and-button">
             <DocumentSelector
               documentId={link.documentId}
@@ -109,39 +102,9 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
         </FormItem>
       )}
       {enableImageEditing && (
-        <Fragment>
-          <FormItem label={t('common:imageSource')} {...formItemLayout}>
-            <RadioGroup value={image.sourceType} onChange={handleImageSourceTypeChange}>
-              <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
-              <RadioButton value="external">{t('common:externalLink')}</RadioButton>
-            </RadioGroup>
-          </FormItem>
-          {image.sourceType === IMAGE_SOURCE_TYPE.external && (
-            <FormItem
-              label={t('common:externalUrl')}
-              {...formItemLayout}
-              {...validation.validateUrl(image.sourceUrl, t)}
-              hasFeedback
-              >
-              <Input value={image.sourceUrl} onChange={handleExternalImageUrlChange} />
-            </FormItem>
-          )}
-          {image.sourceType === IMAGE_SOURCE_TYPE.internal && (
-            <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-              <div className="u-input-and-button">
-                <Input
-                  addonBefore={CDN_URL_PREFIX}
-                  value={image.sourceUrl}
-                  onChange={handleInternalImageUrlChange}
-                  />
-                <ResourcePicker
-                  url={storageLocationPathToUrl(image.sourceUrl)}
-                  onUrlChange={url => handleInternalImageResourceUrlChange(urlToStorageLocationPath(url))}
-                  />
-              </div>
-            </FormItem>
-          )}
-        </Fragment>
+        <FormItem {...FORM_ITEM_LAYOUT} {...getImageValidationProps(image.sourceUrl)} label={t('common:imageSource')}>
+          <UrlInput value={image.sourceUrl} onChange={handleInternalImageUrlChange} allowedSourceTypes={allowedImageSourceTypes} />
+        </FormItem>
       )}
     </Fragment>
   );
@@ -157,7 +120,6 @@ CatalogItemEditor.propTypes = {
       documentId: PropTypes.string
     }).isRequired,
     image: PropTypes.shape({
-      sourceType: PropTypes.string.isRequired,
       sourceUrl: PropTypes.string
     }).isRequired
   }).isRequired,

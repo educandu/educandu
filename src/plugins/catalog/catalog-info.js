@@ -2,7 +2,7 @@ import React from 'react';
 import CatalogIcon from './catalog-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import CatalogDisplay from './catalog-display.js';
-import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import { createDefaultContent, validateContent } from './catalog-utils.js';
 
@@ -45,7 +45,7 @@ export default class Catalog {
     const redactedContent = cloneDeep(content);
 
     for (const item of redactedContent.items) {
-      if (item.image.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(item.image.sourceUrl, targetRoomId)) {
+      if (!isAccessibleStoragePath(item.image.sourceUrl, targetRoomId)) {
         item.image.sourceUrl = '';
       }
     }
@@ -55,7 +55,7 @@ export default class Catalog {
 
   getCdnResources(content) {
     return content.items
-      .filter(item => item.image.sourceType === IMAGE_SOURCE_TYPE.internal && item.image.sourceUrl)
-      .map(item => item.image.sourceUrl);
+      .map(item => item.image.sourceUrl)
+      .filter(url => isInternalSourceType({ url }));
   }
 }

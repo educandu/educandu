@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import ItemPanel from '../../components/item-panel.js';
 import CatalogItemEditor from './catalog-item-editor.js';
 import { Form, Radio, Slider, Button, Tooltip } from 'antd';
+import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -31,12 +33,13 @@ const formItemLayout = {
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
+  const clientConfig = useService(ClientConfig);
 
   const { title, displayMode, width, items, imageTilesConfig } = content;
 
   const triggerChange = newContentValues => {
     const newContent = consolidateForDisplayMode({ ...content, ...newContentValues });
-    const isInvalid = isContentInvalid(newContent, t);
+    const isInvalid = isContentInvalid(newContent, clientConfig.cdnRootUrl);
     onContentChanged(newContent, isInvalid);
   };
 
