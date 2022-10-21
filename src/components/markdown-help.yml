@@ -135,7 +135,7 @@ blockHelpMarkdown:
 
     > ### Dies ist ein Blockzitat
     >
-    > Um es zu erzeugen, starte die Zeichen mit dem Zeihen **>**
+    > Um es zu erzeugen, starte die Zeile mit dem Zeichen **>**
     >
     > *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*
 
@@ -160,5 +160,5 @@ blockHelpMarkdown:
 
     Darüberhinaus kannst du auf die gleiche Weise anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
 
-    Wie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, musst du durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
+    Wie du siehst, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, müssen sie durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
 

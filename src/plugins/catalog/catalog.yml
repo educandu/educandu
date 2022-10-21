@@ -34,6 +34,12 @@ linkSource:
 documentLink:
   en: document link
   de: Dokument-Link
+externalLink:
+  en: external link
+  de: Externer Link
+externalUrl:
+  en: external URL
+  de: Externe URL
 adoptDocumentTitle:
   en: Adopt as title
   de: Als Titel übernehmen

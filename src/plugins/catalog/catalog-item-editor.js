@@ -70,7 +70,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       <FormItem label={t('linkSource')} {...FORM_ITEM_LAYOUT}>
         <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeChange}>
           <RadioButton value={LINK_SOURCE_TYPE.document}>{t('documentLink')}</RadioButton>
-          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
         </RadioGroup>
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
