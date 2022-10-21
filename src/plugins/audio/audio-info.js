@@ -3,9 +3,8 @@ import React from 'react';
 import AudioIcon from './audio-icon.js';
 import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -58,10 +57,10 @@ class AudioInfo {
 
     redactedContent.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
-    if (!isAccessibleStoragePath(content.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(content.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 

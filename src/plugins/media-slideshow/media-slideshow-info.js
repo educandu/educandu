@@ -5,9 +5,8 @@ import cloneDeep from '../../utils/clone-deep.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
 import MediaSlideshowDisplay from './media-slideshow-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MediaSlideshowInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -94,20 +93,20 @@ class MediaSlideshowInfo {
 
     redactedContent.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
     redactedContent.chapters.forEach(chapter => {
       chapter.image.copyrightNotice = this.gfm.redactCdnResources(
         chapter.image.copyrightNotice,
-        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
 
-      if (!isAccessibleStoragePath(chapter.image.sourceUrl, targetRoomId)) {
+      if (!couldAccessUrlFromRoom(chapter.image.sourceUrl, targetRoomId)) {
         chapter.image.sourceUrl = '';
       }
     });

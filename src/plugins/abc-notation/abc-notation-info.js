@@ -3,7 +3,7 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
 import AbcNotationDisplay from './abc-notation-display.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AbcNotationInfo {
@@ -61,7 +61,7 @@ class AbcNotationInfo {
 
     redactedContent.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     return redactedContent;

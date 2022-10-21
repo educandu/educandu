@@ -73,3 +73,9 @@ export function isInternalSourceType({ url, cdnRootUrl }) {
   const sourceType = getSourceType({ url, cdnRootUrl });
   return sourceType === SOURCE_TYPE.internalPrivate || sourceType === SOURCE_TYPE.internalPublic;
 }
+
+export function couldAccessUrlFromRoom(url, targetRoomId) {
+  const urlOrCdnPath = getCdnPath({ url });
+  const sourceRoomId = urlOrCdnPath.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN)?.[1];
+  return !sourceRoomId || sourceRoomId === targetRoomId;
+}

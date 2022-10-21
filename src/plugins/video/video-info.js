@@ -4,9 +4,8 @@ import VideoIcon from './video-icon.js';
 import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class VideoInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -69,14 +68,14 @@ class VideoInfo {
 
     redactedContent.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
-    if (!isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.posterImage.sourceUrl, targetRoomId)) {
       redactedContent.posterImage.sourceUrl = '';
     }
 

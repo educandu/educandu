@@ -2,10 +2,9 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MediaAnalysisIcon from './media-analysis-icon.js';
 import MediaAnalysisDisplay from './media-analysis-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './media-analysis-utils.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MediaAnalysisInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -50,20 +49,20 @@ class MediaAnalysisInfo {
 
     redactedContent.mainTrack.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.mainTrack.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
-    if (!isAccessibleStoragePath(redactedContent.mainTrack.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.mainTrack.sourceUrl, targetRoomId)) {
       redactedContent.mainTrack.sourceUrl = '';
     }
 
     redactedContent.secondaryTracks.forEach(secondaryTrack => {
       secondaryTrack.copyrightNotice = this.gfm.redactCdnResources(
         secondaryTrack.copyrightNotice,
-        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
 
-      if (!isAccessibleStoragePath(secondaryTrack.sourceUrl, targetRoomId)) {
+      if (!couldAccessUrlFromRoom(secondaryTrack.sourceUrl, targetRoomId)) {
         secondaryTrack.sourceUrl = '';
       }
     });

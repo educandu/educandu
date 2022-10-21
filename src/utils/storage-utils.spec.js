@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import uniqueId from './unique-id.js';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
-  isAccessibleStoragePath,
   getStorageLocationTypeForPath,
   getPathForPrivateRoom,
   getRoomIdFromPrivateStoragePath,
@@ -37,31 +36,6 @@ describe('storage-utils', () => {
         });
 
         it(`should return '${expectedResult}'`, () => {
-          expect(result).toBe(expectedResult);
-        });
-      });
-    });
-  });
-
-  describe('isAccessibleStoragePath', () => {
-    const testCases = [
-      { path: null, roomId: '12345', expectedResult: true },
-      { path: 'media/12345/my-file.png', roomId: null, expectedResult: true },
-      { path: 'media/12345/my-file.png', roomId: '12345', expectedResult: true },
-      { path: 'media/67890/my-file.png', roomId: '12345', expectedResult: true },
-      { path: null, roomId: '12345', expectedResult: true },
-      { path: 'rooms/12345/media/my-file.png', roomId: null, expectedResult: false },
-      { path: 'rooms/12345/media/my-file.png', roomId: '12345', expectedResult: true },
-      { path: 'rooms/67890/media/my-file.png', roomId: '12345', expectedResult: false }
-    ];
-
-    testCases.forEach(({ path, roomId, expectedResult }) => {
-      describe(`when called with path ${JSON.stringify(path)} and room ID ${JSON.stringify(roomId)}`, () => {
-        beforeEach(() => {
-          result = isAccessibleStoragePath(path, roomId);
-        });
-
-        it(`should return ${expectedResult}`, () => {
           expect(result).toBe(expectedResult);
         });
       });

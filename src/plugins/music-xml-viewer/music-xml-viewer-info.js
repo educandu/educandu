@@ -3,9 +3,8 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MusicXmlViewerIcon from './music-xml-viewer-icon.js';
 import MusicXmlViewerDisplay from './music-xml-viewer-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import { DEFAULT_ZOOM_VALUE, MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MusicXmlViewerInfo {
   static get typeName() { return 'music-xml-viewer'; }
@@ -57,7 +56,7 @@ class MusicXmlViewerInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 

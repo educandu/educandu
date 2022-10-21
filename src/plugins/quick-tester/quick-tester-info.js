@@ -4,7 +4,7 @@ import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
 import QuickTesterDisplay from './quick-tester-display.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class QuickTesterInfo {
@@ -70,22 +70,22 @@ class QuickTesterInfo {
 
     redactedContent.title = this.gfm.redactCdnResources(
       redactedContent.title,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     redactedContent.teaser = this.gfm.redactCdnResources(
       redactedContent.teaser,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     for (const test of redactedContent.tests) {
       test.question = this.gfm.redactCdnResources(
         test.question,
-        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
       test.answer = this.gfm.redactCdnResources(
         test.answer,
-        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
     }
 

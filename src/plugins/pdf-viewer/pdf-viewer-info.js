@@ -3,8 +3,7 @@ import React from 'react';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import PdfViewerDisplay from './pdf-viewer-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class PdfViewerInfo {
   static get typeName() { return 'pdf-viewer'; }
@@ -58,7 +57,7 @@ class PdfViewerInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
