@@ -8,7 +8,6 @@ import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import MetadataTitle from '../metadata-title.js';
 import roomUtils from '../../utils/room-utils.js';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
@@ -361,10 +360,12 @@ export default function Room({ PageTemplate, initialState }) {
           <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
           <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
         </Breadcrumb>
-        <MetadataTitle
-          text={room.name}
-          extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
-          />
+        <div className="RoomPage-title">
+          <h1 className="RoomPage-titleText">{room.name}</h1>
+          <div className="RoomPage-titleExtra">
+            <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
+          </div>
+        </div>
         <div className="RoomPage-subtitle">
           <div>{documentsModeText} | {renderOwnerLink()}</div>
           {!isRoomOwner && (

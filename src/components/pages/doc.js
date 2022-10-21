@@ -11,7 +11,6 @@ import ControlPanel from '../control-panel.js';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import CommentsPanel from '../comments-panel.js';
-import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -510,31 +509,26 @@ function Doc({ initialState, PageTemplate }) {
               <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
             </Breadcrumb>
           )}
-          <MetadataTitle
-            text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
-            extra={
-              <div className="DocPage-badges">
-                {!!doc.verified && (
-                <Tooltip title={t('common:verifiedDocumentBadge')}>
-                  <LikeOutlined className="u-verified-badge" />
-                </Tooltip>
-                )}
-                {!room && (
-                <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
-                  <div className="u-allowed-open-contribution-badge">
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
-                      && <AllowedOpenContributionNoneIcon />}
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
-                      && <AllowedOpenContributionContentIcon />}
-                    {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-                      && <AllowedOpenContributionMetadataAndContentIcon />}
-                  </div>
-                </Tooltip>
-                )}
-                <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
-              </div>
-            }
-            />
+          <div className="DocPage-badges">
+            {!!doc.verified && (
+              <Tooltip title={t('common:verifiedDocumentBadge')}>
+                <LikeOutlined className="u-verified-badge" />
+              </Tooltip>
+            )}
+            {!room && (
+              <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
+                <div className="u-allowed-open-contribution-badge">
+                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+                    && <AllowedOpenContributionNoneIcon />}
+                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+                    && <AllowedOpenContributionContentIcon />}
+                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+                    && <AllowedOpenContributionMetadataAndContentIcon />}
+                </div>
+              </Tooltip>
+            )}
+            <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
+          </div>
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
