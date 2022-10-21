@@ -327,24 +327,9 @@ copySlugSuffix:
 roomsBreadcrumbPart:
   en: rooms
   de: Räume
-internalCdn:
-  en: internal CDN
-  de: Internes CDN
-externalLink:
-  en: external link
-  de: Externer Link
 youtube:
   en: Youtube
   de: Youtube
-externalUrl:
-  en: external URL
-  de: Externe URL
-internalUrl:
-  en: Internal URL
-  de: Interne URL
-youtubeUrl:
-  en: Youtube URL
-  de: Youtube URL
 aspectRatio:
   en: Aspect ratio
   de: Seitenverhältnis

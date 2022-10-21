@@ -47,5 +47,5 @@ dialogLocalFilePickerButtonText:
   en: Select an audio file from my machine
   de: Audio-Datei vom lokalen Computer auswählen
 dialogCdnFilePickerButtonText:
-  en: Select an audio file from the CDN
-  de: Audio-Datei vom CDN auswählen
+  en: Select an audio file from the internal storage
+  de: Audio-Datei vom internen Speicher auswählen

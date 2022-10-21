@@ -11,11 +11,11 @@ batchTypeDocumentRegeneration:
   en: Document regeneration
   de: Dokumentwiederherstellung
 batchTypeCdnResourcesConsolidation:
-  en: CDN resources consolidation
-  de: Konsolidierung der CDN-Ressourcen
+  en: Consolidation of resources within the internal storage
+  de: Konsolidierung der Ressourcen auf dem internen Speicher
 batchTypeCdnUploadDirectoryCreation:
-  en: CDN upload directory creation
-  de: Erstellung der CDN-Upload-Verzichnisse
+  en: Creation of upload directories within the internal storage
+  de: Erstellung der Upload-Verzichnisse auf dem internen Speicher
 documentImportType:
   en: Import type
   de: Import-Typ
