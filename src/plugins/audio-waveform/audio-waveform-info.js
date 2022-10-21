@@ -5,8 +5,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
 import { getDefaultContent } from './audio-waveform-utils.js';
 import AudioWaveformDisplay from './audio-waveform-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioWaveformInfo {
   static get inject() { return []; }
@@ -60,7 +59,7 @@ class AudioWaveformInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 

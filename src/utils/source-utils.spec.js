@@ -1,5 +1,5 @@
 import { SOURCE_TYPE } from '../domain/constants.js';
-import { getSourceType, getPortableUrl, getAccessibleUrl, isInternalSourceType } from './source-utils.js';
+import { getSourceType, getPortableUrl, getAccessibleUrl, isInternalSourceType, couldAccessUrlFromRoom } from './source-utils.js';
 
 describe('source-utils', () => {
   describe('getSourceType', () => {
@@ -94,6 +94,31 @@ describe('source-utils', () => {
       describe(`when url = '${url}' and cdnRoutUrl = '${cdnRootUrl}'`, () => {
         it(`should return ${expectedResult}`, () => {
           expect(getAccessibleUrl({ url, cdnRootUrl })).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('couldAccessUrlFromRoom', () => {
+    const testCases = [
+      { url: '', targetRoomId: null, expectedResult: true },
+      { url: 'rooms/11111/media/resource.jpeg', targetRoomId: '22222', expectedResult: false },
+      { url: 'cdn://rooms/11111/media/resource.jpeg', targetRoomId: '22222', expectedResult: false },
+      { url: 'rooms/22222/media/resource.jpeg', targetRoomId: '22222', expectedResult: true },
+      { url: 'cdn://rooms/22222/media/resource.jpeg', targetRoomId: '22222', expectedResult: true },
+      { url: 'media/33333/resource.jpeg', targetRoomId: '22222', expectedResult: true },
+      { url: 'cdn://media/33333/resource.jpeg', targetRoomId: '22222', expectedResult: true },
+      { url: 'https://www.youtube.com/resource', targetRoomId: '22222', expectedResult: true },
+      { url: 'cdn://other/22222/path/resource.jpeg', targetRoomId: '22222', expectedResult: true },
+      { url: 'rooms/11111/media/resource.jpeg', targetRoomId: null, expectedResult: false },
+      { url: 'cdn://rooms/11111/media/resource.jpeg', targetRoomId: null, expectedResult: false },
+      { url: 'media/33333/resource.jpeg', targetRoomId: null, expectedResult: true }
+    ];
+
+    testCases.forEach(({ url, targetRoomId, expectedResult }) => {
+      describe(`when called with url = ${url} and targetRoomId = '${targetRoomId}'`, () => {
+        it(`should return '${expectedResult}'`, () => {
+          expect(couldAccessUrlFromRoom(url, targetRoomId)).toBe(expectedResult);
         });
       });
     });

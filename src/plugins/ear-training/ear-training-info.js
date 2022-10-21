@@ -4,9 +4,8 @@ import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import EarTrainingDisplay from './ear-training-display.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class EarTrainingInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -112,36 +111,36 @@ class EarTrainingInfo {
 
     redactedContent.title = this.gfm.redactCdnResources(
       redactedContent.title,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     for (const test of redactedContent.tests) {
       if (test.sound) {
         test.sound.copyrightNotice = this.gfm.redactCdnResources(
           test.sound.copyrightNotice,
-          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
         );
       }
       if (test.questionImage) {
         test.questionImage.copyrightNotice = this.gfm.redactCdnResources(
           test.questionImage.copyrightNotice,
-          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
         );
       }
       if (test.answerImage) {
         test.answerImage.copyrightNotice = this.gfm.redactCdnResources(
           test.answerImage.copyrightNotice,
-          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
         );
       }
 
-      if (!isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
+      if (!couldAccessUrlFromRoom(test.sound.sourceUrl, targetRoomId)) {
         test.sound.sourceUrl = '';
       }
-      if (!isAccessibleStoragePath(test.questionImage.sourceUrl, targetRoomId)) {
+      if (!couldAccessUrlFromRoom(test.questionImage.sourceUrl, targetRoomId)) {
         test.questionImage.sourceUrl = '';
       }
-      if (!isAccessibleStoragePath(test.answerImage.sourceUrl, targetRoomId)) {
+      if (!couldAccessUrlFromRoom(test.answerImage.sourceUrl, targetRoomId)) {
         test.answerImage.sourceUrl = '';
       }
     }

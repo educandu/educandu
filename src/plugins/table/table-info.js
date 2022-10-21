@@ -3,7 +3,7 @@ import React from 'react';
 import TableIcon from './table-icon.js';
 import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { CELL_TYPE, COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
@@ -78,7 +78,7 @@ class TableInfo {
     for (const cell of redactedContent.cells) {
       cell.text = this.gfm.redactCdnResources(
         cell.text,
-        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
     }
 

@@ -140,12 +140,6 @@ export function getRoomIdFromPrivateStoragePath(path) {
   return match ? match[1] : null;
 }
 
-export function isAccessibleStoragePath(storagePath, fromRoomId) {
-  return storagePath && getStorageLocationTypeForPath(storagePath) === STORAGE_LOCATION_TYPE.private
-    ? getRoomIdFromPrivateStoragePath(storagePath) === fromRoomId
-    : true;
-}
-
 export function componseUniqueFileName(fileName, parentPath = null) {
   const id = uniqueId.create();
   const extension = getResourceExtension(fileName);

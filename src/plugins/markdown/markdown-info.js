@@ -3,7 +3,7 @@ import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MarkdownDisplay from './markdown-display.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class MarkdownInfo {
@@ -55,7 +55,7 @@ class MarkdownInfo {
 
     redactedContent.text = this.gfm.redactCdnResources(
       redactedContent.text,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     return redactedContent;

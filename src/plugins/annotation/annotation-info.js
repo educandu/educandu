@@ -4,7 +4,7 @@ import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
 import AnnotationDisplay from './annotation-display.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AnnotationInfo {
@@ -64,12 +64,12 @@ class AnnotationInfo {
 
     redactedContent.title = this.gfm.redactCdnResources(
       redactedContent.title,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     redactedContent.text = this.gfm.redactCdnResources(
       redactedContent.text,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     return redactedContent;

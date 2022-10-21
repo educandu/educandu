@@ -4,9 +4,8 @@ import ImageIcon from './image-icon.js';
 import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect } from './image-utils.js';
 
 class ImageInfo {
@@ -85,27 +84,27 @@ class ImageInfo {
 
     redactedContent.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
     redactedContent.hoverEffect.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.hoverEffect.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
     redactedContent.revealEffect.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.revealEffect.copyrightNotice,
-      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
     );
 
-    if (!isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
-    if (!isAccessibleStoragePath(redactedContent.hoverEffect.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.hoverEffect.sourceUrl, targetRoomId)) {
       redactedContent.hoverEffect.sourceUrl = '';
     }
 
-    if (!isAccessibleStoragePath(redactedContent.revealEffect.sourceUrl, targetRoomId)) {
+    if (!couldAccessUrlFromRoom(redactedContent.revealEffect.sourceUrl, targetRoomId)) {
       redactedContent.revealEffect.sourceUrl = '';
     }
 
