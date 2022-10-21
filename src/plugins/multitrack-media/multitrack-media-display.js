@@ -49,7 +49,7 @@ function MultitrackMediaDisplay({ content }) {
           aspectRatio={mainTrack.aspectRatio}
           screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           mediaPlayerRef={playerRef}
-          showTrackMixer
+          showTrackMixer={secondaryTracks.length > 0}
           selectedVolumePreset={selectedVolumePresetIndex}
           onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
           volumePresetOptions={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}

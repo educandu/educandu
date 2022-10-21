@@ -29,7 +29,7 @@ export function createDefaultVolumePreset(t, secondaryTracksCount) {
 }
 
 export function createDefaultContent(t) {
-  const secondaryTracks = [createDefaultSecondaryTrack(0, t)];
+  const secondaryTracks = [];
   return {
     width: 100,
     mainTrack: createDefaultMainTrack(t),
