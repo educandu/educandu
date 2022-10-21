@@ -52,7 +52,7 @@ function Admin({ initialState, PageTemplate }) {
           <Tabs
             className="Tabs"
             type="line"
-            size="large"
+            size="middle"
             activeKey={currentTab}
             onChange={handleTabChange}
             destroyInactiveTabPane

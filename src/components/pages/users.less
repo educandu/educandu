@@ -1,5 +1,15 @@
 .UsersPage {}
 
+.UsersPage-filter {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
 .UsersPage-storagePlanSelect {
   width: 100%;
 }

@@ -64,3 +64,6 @@ reminders:
 accountClosedOn:
   en: Account closing date
   de: Kontoschlussdatum
+filterPlaceholder:
+  en: Filter by display name or email
+  de: Nach Anzeigename oder E-Mail filtern

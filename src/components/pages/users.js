@@ -1,14 +1,15 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import { Table, Tabs, Select } from 'antd';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
+import { Table, Tabs, Select, Input } from 'antd';
 import errorHelper from '../../ui/error-helper.js';
+import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
@@ -23,6 +24,7 @@ import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js'
 const logger = new Logger(import.meta.url);
 
 const { TabPane } = Tabs;
+const { Search } = Input;
 const { Option } = Select;
 
 const availableRoles = Object.values(ROLE);
@@ -75,6 +77,7 @@ function Users({ initialState, PageTemplate }) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [users, setUsers] = useState(initialState.users);
+  const [filterText, setFilterText] = useState('');
   const [usersById, setUsersById] = useState(new Map());
   const [internalUsers, setInternalUsers] = useState([]);
   const [externalUsers, setExternalUsers] = useState([]);
@@ -82,13 +85,21 @@ function Users({ initialState, PageTemplate }) {
   const [closedAccountUsers, setClosedAccountUsers] = useState([]);
 
   useEffect(() => {
-    const subsets = createUserSubsets(users, initialState.storagePlans);
     setUsersById(new Map(users.map(user => [user._id, user])));
+
+    const filteredUsers = filterText
+      ? users.filter(user => {
+        const text = filterText.toLowerCase();
+        return user.displayName.toLowerCase().includes(text) || user.email.toLowerCase().includes(text);
+      })
+      : users;
+
+    const subsets = createUserSubsets(filteredUsers, initialState.storagePlans);
     setInternalUsers(subsets.internalUsers);
     setExternalUsers(subsets.externalUsers);
     setStorageUsers(subsets.storageUsers);
     setClosedAccountUsers(subsets.closedAccountUsers);
-  }, [users, initialState.storagePlans]);
+  }, [users, filterText, initialState.storagePlans]);
 
   const handleRoleChange = async (user, newRoles) => {
     const oldRoles = user.roles;
@@ -222,6 +233,10 @@ function Users({ initialState, PageTemplate }) {
         setIsSaving(false);
       }
     });
+  };
+
+  const handleFilterTextChange = event => {
+    setFilterText(event.target.value);
   };
 
   const renderDisplayName = (displayName, user) => {
@@ -445,7 +460,15 @@ function Users({ initialState, PageTemplate }) {
     <PageTemplate>
       <div className="UsersPage">
         <h1>{t('pageNames:users')}</h1>
-        <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="middle" disabled={isSaving}>
+        <Search
+          size="large"
+          className="UsersPage-filter"
+          value={filterText}
+          enterButton={<SearchOutlined />}
+          onChange={handleFilterTextChange}
+          placeholder={t('filterPlaceholder')}
+          />
+        <Tabs className="Tabs Tabs--smallPadding" defaultActiveKey={TABS.internalUsers} type="line" size="middle" disabled={isSaving}>
           <TabPane className="Tabs-tabPane" tab={t('internalUsers')} key={TABS.internalUsers}>
             <Table
               dataSource={internalUsers}
@@ -456,6 +479,7 @@ function Users({ initialState, PageTemplate }) {
               bordered
               />
           </TabPane>
+          {!!externalUsers.length && (
           <TabPane className="Tabs-tabPane" tab={t('externalUsers')} key={TABS.externalUsers}>
             <Table
               dataSource={externalUsers}
@@ -465,6 +489,7 @@ function Users({ initialState, PageTemplate }) {
               bordered
               />
           </TabPane>
+          )}
           <TabPane className="Tabs-tabPane" tab={t('storageUsers')} key={TABS.storageUsers}>
             <Table
               dataSource={storageUsers}
