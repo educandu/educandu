@@ -1280,7 +1280,8 @@
       "deleteAllPrivateRooms": "Delete private rooms",
       "storageSpace": "Storage space",
       "reminders": "Reminders",
-      "accountClosedOn": "Account closing date"
+      "accountClosedOn": "Account closing date",
+      "filterPlaceholder": "Filter by display name or email"
     }
   },
   {
@@ -1308,7 +1309,8 @@
       "deleteAllPrivateRooms": "Private Räume löschen",
       "storageSpace": "Speicherplatz",
       "reminders": "Erinnerungen",
-      "accountClosedOn": "Kontoschlussdatum"
+      "accountClosedOn": "Kontoschlussdatum",
+      "filterPlaceholder": "Nach Anzeigename oder E-Mail filtern"
     }
   },
   {
