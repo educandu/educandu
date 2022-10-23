@@ -8,8 +8,7 @@ class MidiPianoInfo {
 
   static get typeName() { return 'midi-piano'; }
 
-  constructor(gfm) {
-    this.gfm = gfm;
+  constructor() {
     this.type = 'midi-piano';
   }
 

@@ -4,11 +4,12 @@ import React, { useEffect, useState, useRef } from 'react';
 
 export default function PianoComponent(props) {
 
+  const [activeNotes, setActiveNotes] = useState([]);
   const defaultKeyWidth = 29.2;
   const pianoContainer = useRef(null);
   const containerWidth = useRef(null);
   const pianoWrapperWidth = useRef(null);
-  const { noteRange, playNote, stopNote, keys } = props;
+  const { noteRange, playNote, stopNote, keys, updateActiveNotesRef } = props;
   const [canRenderPiano, setCanRenderPiano] = useState(false);
   const [pianoWrapperDimensions, setPianoWrapperDimensions] = useState({});
 
@@ -19,6 +20,37 @@ export default function PianoComponent(props) {
   const numberOfKeysRendered = getNumberOfKeysRendered();
 
   console.log('Render PIANO COMPONENT');
+
+  const updateActiveNotes = (eventType, midiValue) => {
+    switch (eventType) {
+      case 'Note on':
+        setActiveNotes(prev => {
+          const array = [...prev, midiValue];
+          return array;
+        });
+        break;
+      case 'Note off':
+        setActiveNotes(prev => {
+          const array = [...prev];
+          array.splice(array.indexOf(midiValue), 1);
+          return array;
+        });
+        break;
+      case 'Pause from button':
+        setActiveNotes([]);
+        break;
+      case 'Stop from button':
+        setActiveNotes([]);
+        break;
+      default:
+        break;
+    }
+  };
+
+  if (!updateActiveNotesRef.current) {
+    updateActiveNotesRef.current = updateActiveNotes;
+    console.log('set activeNotes method');
+  }
 
   const getPianoWrapperDimensions = clientWidth => {
     let width;
@@ -75,15 +107,15 @@ export default function PianoComponent(props) {
     };
   }, []);
 
-  useEffect(() => {
-    const keyElems = document.querySelectorAll('.ReactPiano__Key');
-    const midiValueStart = noteRange.first;
-    let index = midiValueStart;
-    for (const elem of keyElems) {
-      keys.current[index] = elem;
-      index += 1;
-    }
-  });
+  // useEffect(() => {
+  //   const keyElems = document.querySelectorAll('.ReactPiano__Key');
+  //   const midiValueStart = noteRange.first;
+  //   let index = midiValueStart;
+  //   for (const elem of keyElems) {
+  //     keys.current[index] = elem;
+  //     index += 1;
+  //   }
+  // });
 
   return (
     <div ref={pianoContainer} className="MidiPiano-pianoContainer">
@@ -93,6 +125,7 @@ export default function PianoComponent(props) {
           noteRange={noteRange}
           playNote={playNote}
           stopNote={stopNote}
+          activeNotes={activeNotes}
           />)}
       </div>
     </div>
@@ -100,7 +133,7 @@ export default function PianoComponent(props) {
 }
 
 PianoComponent.propTypes = {
-  keys: PropTypes.object.isRequired,
+  // keys: PropTypes.object.isRequired,
   noteRange: PropTypes.object.isRequired,
   playNote: PropTypes.func.isRequired,
   stopNote: PropTypes.func.isRequired
