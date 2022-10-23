@@ -1,8 +1,8 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MidiPianoDisplay from './midi-piano-display.js';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { MIDI_SOURCE_TYPE } from '../../domain/constants.js';
+import MidiPianoIcon from './midi-piano-icon.js';
 
 class MidiPianoInfo {
 
@@ -18,7 +18,7 @@ class MidiPianoInfo {
   }
 
   getIcon() {
-    return <QuestionCircleOutlined />;
+    return <MidiPianoIcon />;
   }
 
   getDisplayComponent() {

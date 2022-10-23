@@ -1,47 +1,51 @@
-import axios from 'axios';
 import * as Tone from 'tone';
 import { Button } from 'antd';
+import StopIcon from './stop-icon.js';
 import midiPlayerNs from 'midi-player-js';
+import Logger from '../../common/logger.js';
+import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
-import React, { useEffect, useRef } from 'react';
 import PianoComponent from './piano-component.js';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { MIDI_COMMANDS } from '../../domain/constants.js';
+import { handleApiError } from '../../ui/error-helper.js';
+import HttpClient from '../../api-clients/http-client.js';
+import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import PlayIcon from '../../components/icons/media-player/play-icon.js';
 import PauseIcon from '../../components/icons/media-player/pause-icon.js';
 
+const logger = new Logger(import.meta.url);
+
 export default function MidiPianoDisplay({ content }) {
 
   const keys = useRef([]);
   const player = useRef(null);
   const sampler = useRef(null);
-  const midiData = useRef(null);
   const midiAccessObj = useRef(null);
-  const samplerHasLoaded = useRef(false);
+  const httpClient = new HttpClient();
   const { NOTES } = midiPlayerNs.Constants;
-  const { sourceType, sourceUrl, midiTrackTitle, noteRange } = content;
-  const hasMidiFile = sourceUrl !== '';
-  const hasMidiTrackTitle = midiTrackTitle !== '';
+  const { t } = useTranslation('midiPiano');
   const clientConfig = useService(ClientConfig);
+  const [midiData, setMidiData] = useState(null);
+  const [samplerHasLoaded, setSamplerHasLoaded] = useState(false);
+  const { sourceType, sourceUrl, midiTrackTitle, noteRange } = content;
   const src = urlUtils.getMidiUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   const getNoteNameFromMidiValue = midiValue => {
     return NOTES[midiValue];
   };
 
-  const getEventTypefromMidiCommand = (command, velocity) => {
+  const getEventTypeFromMidiCommand = (command, velocity) => {
     switch (command) {
-      case 144:
+      case MIDI_COMMANDS.noteOn:
         if (velocity > 0) {
           return 'Note on';
         }
         return 'Note off';
-      case 128:
+      case MIDI_COMMANDS.noteOff:
         return 'Note off';
-      case 176:
-        return 'Sustain off';
       default:
         return '';
     }
@@ -77,7 +81,7 @@ export default function MidiPianoDisplay({ content }) {
     const noteName = getNoteNameFromMidiValue(message.data[1]);
     const velocity = message.data.length > 2 ? message.data[2] : 0;
     const command = message.data[0];
-    const eventType = getEventTypefromMidiCommand(command, velocity);
+    const eventType = getEventTypeFromMidiCommand(command, velocity);
     const midiValue = message.data[1];
     updateKeyVisualization(eventType, midiValue);
     handleSamplerEvent(eventType, noteName);
@@ -90,9 +94,8 @@ export default function MidiPianoDisplay({ content }) {
     }
   }
 
-  function onMIDIFailure() {
-    // eslint-disable-next-line no-console
-    console.log('Could not access your MIDI devices.');
+  function onMIDIFailure(error) {
+    handleApiError({ error, logger, t });
   }
 
   function handleMidiPlayerEvent(message) {
@@ -112,17 +115,16 @@ export default function MidiPianoDisplay({ content }) {
     if (player.current) {
       return;
     }
+
     player.current = new midiPlayerNs.Player();
+
     player.current.on('midiEvent', message => {
       handleMidiPlayerEvent(message);
-    });
-    player.current.on('playing', () => {
-
     });
     player.current.on('endOfFile', () => {
       player.current.stop();
     });
-    player.current.loadArrayBuffer(midiData.current);
+    player.current.loadArrayBuffer(midiData);
   }
 
   const removeActiveClassFromKeys = () => {
@@ -134,16 +136,12 @@ export default function MidiPianoDisplay({ content }) {
   };
 
   const startMidiPlayer = () => {
-
-    if (player.current !== null && player.current.isPlaying()) {
-      return;
-    }
     if (player.current === null) {
       instantiatePlayer();
-      player.current.play();
-      return;
     }
-    player.current.play();
+    if (!player.current.isPlaying()) {
+      player.current.play();
+    }
   };
 
   const pauseMidiPlayer = () => {
@@ -162,7 +160,7 @@ export default function MidiPianoDisplay({ content }) {
   };
 
   const playNote = midiValue => {
-    if (!samplerHasLoaded.current) {
+    if (!samplerHasLoaded) {
       return;
     }
     sampler.current.triggerAttack(getNoteNameFromMidiValue(midiValue));
@@ -175,27 +173,22 @@ export default function MidiPianoDisplay({ content }) {
   };
 
   const getData = () => {
-    try {
-      axios.get(src, { responseType: 'arraybuffer' })
-        .then(response => {
-          midiData.current = response.data;
-        });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
+    httpClient.get(src, { responseType: 'arraybuffer' })
+      .then(response => {
+        setMidiData(response.data);
+      });
   };
 
   const renderControls = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '1rem' }}>
+    <div className="MidiPiano-midiPlayerControls" >
       <Button onClick={startMidiPlayer} icon={<PlayIcon />} />
       <Button onClick={pauseMidiPlayer} icon={<PauseIcon />} />
-      <Button onClick={stopMidiPlayer} icon={<QuestionCircleOutlined />} />
+      <Button onClick={stopMidiPlayer} icon={<StopIcon />} />
     </div>
   );
 
   const renderMidiTrackTitle = () => (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>{midiTrackTitle}</div>
+    <div className="MidiPiano-midiTrackTitle">{midiTrackTitle}</div>
   );
 
   useEffect(() => {
@@ -203,11 +196,17 @@ export default function MidiPianoDisplay({ content }) {
   });
 
   useEffect(() => {
+    if (!src) {
+      return;
+    }
+    getData();
+  }, []);
+
+  useEffect(() => {
     if (sampler.current) {
       return;
     }
-    // eslint-disable-next-line no-console
-    console.log('instantiating sampler');
+
     sampler.current = new Tone.Sampler({
       urls: {
         'A0': 'A0.mp3',
@@ -242,18 +241,11 @@ export default function MidiPianoDisplay({ content }) {
         'C8': 'C8.mp3'
       },
       onload: () => {
-        samplerHasLoaded.current = true;
+        setSamplerHasLoaded(true);
       },
       baseUrl: 'https://tonejs.github.io/audio/salamander/' // Samples better be hosted in project.
     }).toDestination();
   });
-
-  useEffect(() => {
-    if (!src) {
-      return;
-    }
-    getData();
-  }, []);
 
   useEffect(() => {
     return function cleanup() {
@@ -278,10 +270,8 @@ export default function MidiPianoDisplay({ content }) {
         keys={keys}
         />
       <div style={{ paddingTop: '1.5rem' }}>
-        {hasMidiFile
-          && renderControls()}
-        {hasMidiTrackTitle && hasMidiFile
-          && renderMidiTrackTitle()}
+        {!!sourceUrl && renderControls()}
+        {!!sourceUrl && !!midiTrackTitle && renderMidiTrackTitle()}
       </div>
     </React.Fragment>
   );

@@ -1,8 +1,7 @@
-import { Piano } from 'react-piano';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import React, { Fragment, useState } from 'react';
-import { Form, Input, Radio, Button } from 'antd';
+import React from 'react';
+import { Form, Input, Radio } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { CDN_URL_PREFIX, MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
@@ -14,8 +13,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   const RadioGroup = Radio.Group;
   const RadioButton = Radio.Button;
   const { t } = useTranslation('midiPiano');
-  const { sourceType, sourceUrl, midiTrackTitle, activeNotes } = content;
-  const [keyRangeSelectorPianoOpened, setKeyRangeSelectorOpened] = useState(false);
+  const { sourceType, sourceUrl, midiTrackTitle } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -54,42 +52,6 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
     changeContent({ midiTrackTitle: value });
   };
 
-  const handleActiveNotesChanged = midiValue => {
-    let validNoteRange;
-    let array = [...activeNotes];
-
-    if (array.includes(midiValue)) {
-      const index = array.indexOf(midiValue);
-      array.splice(index, 1);
-      if (array.length === 2) {
-        array.sort((a, b) => {
-          return a - b;
-        });
-        validNoteRange = {
-          first: array[0],
-          last: array[1]
-        };
-        changeContent({ activeNotes: array, noteRange: validNoteRange });
-        return;
-      }
-      changeContent({ activeNotes: array });
-      return;
-    }
-    array = [...activeNotes, midiValue];
-    if (array.length === 2) {
-      array.sort((a, b) => {
-        return a - b;
-      });
-      validNoteRange = {
-        first: array[0],
-        last: array[1]
-      };
-      changeContent({ activeNotes: array, noteRange: validNoteRange });
-      return;
-    }
-    changeContent({ activeNotes: array, noteRange: validNoteRange });
-  };
-
   const renderSourceTypeInput = (value, onChangeHandler) => (
     <FormItem label={t('common:source')} {...formItemLayout}>
       <RadioGroup value={value} onChange={onChangeHandler}>
@@ -122,60 +84,13 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   );
 
   const renderMidiTrackTitleInput = (value, onChangeHandler) => (
-    <FormItem label={t('midiPiano:midiTrackTitle')} {...formItemLayout} hasFeedback>
+    <FormItem label={t('common:title')} {...formItemLayout} hasFeedback>
       <Input value={value} onChange={onChangeHandler} />
     </FormItem>
   );
 
-  const toggleKeyRangeSelectorPiano = () => {
-    setKeyRangeSelectorOpened(!keyRangeSelectorPianoOpened);
-  };
-
-  const renderKeyRangeSelectorPiano = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <div style={{ backgroundColor: 'white',
-        position: 'absolute',
-        padding: '1.3rem',
-        margin: 'auto',
-        zIndex: '10',
-        width: '95vw',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1rem',
-        aspectRatio: '10/1',
-        border: '1px solid darkgrey',
-        borderRadius: '8px',
-        transformOrigin: 'center' }}
-        >
-        <div style={{ width: 'fit-content', fontSize: '14px' }}>{t('midiPiano:keyRangeSelectionNote')}</div>
-        <Piano
-          playNote={() => {}}
-          stopNote={() => {}}
-          onPlayNoteInput={handleActiveNotesChanged}
-          onStopNoteInput={() => {}}
-          noteRange={{ first: 21, last: 108 }}
-          activeNotes={activeNotes}
-          />
-        <Button style={{ width: 'fit-content' }} onClick={toggleKeyRangeSelectorPiano}>{t('midiPiano:confirm')}</Button>
-      </div>
-    </div>
-  );
-
-  const renderKeyRangeSelector = () => (
-    <Fragment>
-      <FormItem label={t('midiPiano:pianoKeyRange')} {...formItemLayout} hasFeedback>
-        <Button onClick={toggleKeyRangeSelectorPiano} >...</Button>
-      </FormItem>
-      {keyRangeSelectorPianoOpened
-        && renderKeyRangeSelectorPiano()}
-    </Fragment>
-  );
-
   return (
     <div className="MidiPianoEditor">
-
-      {renderKeyRangeSelector()}
 
       {renderMidiTrackTitleInput(midiTrackTitle, handleMidiTrackTitleValueChanged)}
 

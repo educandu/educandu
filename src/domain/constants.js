@@ -188,3 +188,9 @@ export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
+
+export const MIDI_COMMANDS = {
+  noteOn: 144,
+  noteOff: 128,
+  sustainOff: 176
+};

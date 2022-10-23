@@ -1,16 +1,6 @@
 name:
   en: Midi piano
   de: Midi-Klavier
-midiTrackTitle:
-  en: Track title
-  de: Stück-Titel
 pianoKeyRange:
   en: Key range
   de: Tastenumfang
-confirm:
-  en: Confirm
-  de: Bestätigen
-keyRangeSelectionNote:
-  en: Please select the two outermost white keys to be displayed.
-  de: Bitte wählen Sie die beiden äußersten anzuzeigenden weißen Tasten aus.
-

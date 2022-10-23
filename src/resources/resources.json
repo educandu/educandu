@@ -1936,10 +1936,7 @@
     "language": "en",
     "resources": {
       "name": "Midi piano",
-      "midiTrackTitle": "Track title",
-      "pianoKeyRange": "Key range",
-      "confirm": "Confirm",
-      "keyRangeSelectionNote": "Please select the two outermost white keys to be displayed."
+      "pianoKeyRange": "Key range"
     }
   },
   {
@@ -1947,10 +1944,7 @@
     "language": "de",
     "resources": {
       "name": "Midi-Klavier",
-      "midiTrackTitle": "Stück-Titel",
-      "pianoKeyRange": "Tastenumfang",
-      "confirm": "Bestätigen",
-      "keyRangeSelectionNote": "Bitte wählen Sie die beiden äußersten anzuzeigenden weißen Tasten aus."
+      "pianoKeyRange": "Tastenumfang"
     }
   },
   {

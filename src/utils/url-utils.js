@@ -1,5 +1,5 @@
 import gravatar from 'gravatar';
-import { AVATAR_SIZE, IMAGE_SOURCE_TYPE } from '../domain/constants.js';
+import { AVATAR_SIZE, IMAGE_SOURCE_TYPE, MIDI_SOURCE_TYPE } from '../domain/constants.js';
 
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
@@ -65,9 +65,9 @@ function getGravatarUrl(userEmail) {
 
 function getMidiUrl({ cdnRootUrl, sourceType, sourceUrl }) {
   switch (sourceType) {
-    case IMAGE_SOURCE_TYPE.external:
+    case MIDI_SOURCE_TYPE.external:
       return sourceUrl || null;
-    case IMAGE_SOURCE_TYPE.internal:
+    case MIDI_SOURCE_TYPE.internal:
       return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
     default:
       return null;
