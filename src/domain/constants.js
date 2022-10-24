@@ -23,9 +23,7 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
   document: 'document'
 };
 
-export const FEATURE_TOGGLES = {
-  comments: 'comments'
-};
+export const FEATURE_TOGGLES = {};
 
 export const ROOM_USER_ROLE = {
   owner: 'owner',
