@@ -1,5 +1,8 @@
 import MarkdownIt from 'markdown-it';
+import slugify from '@sindresorhus/slugify';
+import markdownItAnchor from 'markdown-it-anchor';
 import { escapeHtml } from '../utils/string-utils.js';
+
 import { getResourceType } from '../utils/resource-utils.js';
 import { CDN_URL_PREFIX, RESOURCE_TYPE } from '../domain/constants.js';
 
@@ -52,17 +55,36 @@ function educanduFeatures(md) {
 const markdownBlock = new MarkdownIt()
   .use(educanduFeatures);
 
+const markdownBlockWithAnchors = new MarkdownIt()
+  .use(markdownItAnchor, {
+    slugify,
+    tabIndex: false,
+    callback: token => {
+      token.attrSet('data-header', 'true');
+    },
+    permalink: markdownItAnchor.permalink.linkInsideHeader({
+      space: '',
+      symbol: '',
+      class: 'u-hidden',
+      placement: 'before',
+      renderAttrs: () => ({ 'data-header-anchor': 'true' })
+    })
+  })
+  .use(educanduFeatures);
+
 const markdownInline = new MarkdownIt('zero')
   .enable(['text', 'escape', 'emphasis', 'link', 'autolink'])
   .use(educanduFeatures);
 
 class GithubFlavoredMarkdown {
-  render(markdown, { cdnRootUrl, renderMedia } = {}) {
-    return markdownBlock.render(markdown, { cdnRootUrl, renderMedia });
+  render(markdown, { cdnRootUrl, renderMedia, renderAnchors } = {}) {
+    return renderAnchors
+      ? markdownBlockWithAnchors.render(markdown, { cdnRootUrl, renderMedia })
+      : markdownBlock.render(markdown, { cdnRootUrl, renderMedia });
   }
 
-  renderInline(markdown, { cdnRootUrl, renderMedia } = {}) {
-    return markdownInline.renderInline(markdown, { cdnRootUrl, renderMedia });
+  renderInline(markdown, { cdnRootUrl } = {}) {
+    return markdownInline.renderInline(markdown, { cdnRootUrl });
   }
 
   extractCdnResources(markdown) {

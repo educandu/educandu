@@ -2116,7 +2116,7 @@
       "exportAsCsv": "Export as CSV file",
       "importFromCsv": "Import from CSV file",
       "segmentsDropzoneInfo": "You can drop a CSV file in this box in order to import segments",
-      "startPlaybackFromHere": "Click here to start the playback beginning with this part"
+      "startPlaybackFromHere": "Click here to play from this part"
     }
   },
   {
