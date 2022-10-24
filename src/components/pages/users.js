@@ -90,7 +90,8 @@ function Users({ initialState, PageTemplate }) {
     const filteredUsers = filterText
       ? users.filter(user => {
         const text = filterText.toLowerCase();
-        return user.displayName.toLowerCase().includes(text) || user.email.toLowerCase().includes(text);
+        return user.displayName.toLowerCase().includes(text)
+        || user.email?.toLowerCase().includes(text);
       })
       : users;
 
