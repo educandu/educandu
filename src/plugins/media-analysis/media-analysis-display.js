@@ -82,12 +82,14 @@ function MediaAnalysisDisplay({ content }) {
     const title = (
       <div
         key={chapter.key}
-        className="MediaAnalysisDisplay-chapterTitle"
+        className={classNames({
+          'MediaAnalysisDisplay-chapterTitle': true,
+          'MediaAnalysisDisplay-chapterTitle--interactive': canRenderMediaPlayer
+        })}
         style={{
           width: `${widthInPercentage}%`,
           backgroundColor: `${chapter.color}`,
-          color: `${getContrastColor(chapter.color)}`,
-          cursor: canRenderMediaPlayer ? 'pointer' : 'default'
+          color: `${getContrastColor(chapter.color)}`
         }}
         onClick={canRenderMediaPlayer ? () => handleChapterClick(index) : null}
         >
