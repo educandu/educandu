@@ -294,20 +294,6 @@
     }
   },
   {
-    "namespace": "documentImportTable",
-    "language": "en",
-    "resources": {
-      "importType": "Import type"
-    }
-  },
-  {
-    "namespace": "documentImportTable",
-    "language": "de",
-    "resources": {
-      "importType": "Import-Typ"
-    }
-  },
-  {
     "namespace": "documentInfoCell",
     "language": "en",
     "resources": {
@@ -533,24 +519,6 @@
       "rotateLeft": "Gegen den Uhrzeigersinn drehen",
       "scaleX": "Horizontal spiegeln",
       "scaleY": "Vertikal spiegeln"
-    }
-  },
-  {
-    "namespace": "importTypeIcon",
-    "language": "en",
-    "resources": {
-      "add": "Add",
-      "update": "Update",
-      "reimport": "Reimport"
-    }
-  },
-  {
-    "namespace": "importTypeIcon",
-    "language": "de",
-    "resources": {
-      "add": "Hinzufügen",
-      "update": "Aktualisieren",
-      "reimport": "Erneut importieren"
     }
   },
   {
@@ -844,13 +812,10 @@
     "language": "en",
     "resources": {
       "batchType": "Batch type",
-      "batchTypeDocumentImport": "Document import",
       "batchTypeDocumentValidation": "Document validation",
       "batchTypeDocumentRegeneration": "Document regeneration",
       "batchTypeCdnResourcesConsolidation": "Consolidation of resources within the internal storage",
       "batchTypeCdnUploadDirectoryCreation": "Creation of upload directories within the internal storage",
-      "documentImportType": "Import type",
-      "documentImportSource": "Import source",
       "errors": "Errors",
       "errorsCount": "Errors count",
       "attemptsHeader": "Attempt details",
@@ -871,13 +836,10 @@
     "language": "de",
     "resources": {
       "batchType": "Chargentyp",
-      "batchTypeDocumentImport": "Dokumentimport",
       "batchTypeDocumentValidation": "Dokumentvalidierung",
       "batchTypeDocumentRegeneration": "Dokumentwiederherstellung",
       "batchTypeCdnResourcesConsolidation": "Konsolidierung der Ressourcen auf dem internen Speicher",
       "batchTypeCdnUploadDirectoryCreation": "Erstellung der Upload-Verzichnisse auf dem internen Speicher",
-      "documentImportType": "Import-Typ",
-      "documentImportSource": "Importquelle",
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
       "attemptsHeader": "Versuchsdetails",
@@ -949,24 +911,6 @@
       "registrationFailure": "Der Registrierungs-Code ist ungültig oder abgelaufen.",
       "homeLink": "Home",
       "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
-    }
-  },
-  {
-    "namespace": "createImport",
-    "language": "en",
-    "resources": {
-      "importButton": "Start import",
-      "backToImports": "Back to the overview",
-      "nativeImportPlaceholder": "Text for native import"
-    }
-  },
-  {
-    "namespace": "createImport",
-    "language": "de",
-    "resources": {
-      "importButton": "Import starten",
-      "backToImports": "Zurück zur Übersicht",
-      "nativeImportPlaceholder": "Text für Schlussimport"
     }
   },
   {
@@ -1043,40 +987,6 @@
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "en",
-    "resources": {
-      "batchId": "Batch",
-      "batchType": "Batch type",
-      "batchStatus": "Batch status",
-      "batchStatusPending": "Pending",
-      "batchStatusDone": "Done",
-      "batchStatusProcessing": "{progress, number, percent} completed",
-      "viewBatch": "View batch",
-      "batchTypeImportDocument": "Document import",
-      "createImport": "Create import",
-      "importsHeaderPrefix": "Source",
-      "noImportSourcesConfigured": "No import sources configured"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "de",
-    "resources": {
-      "batchId": "Chargen",
-      "batchType": "Chargentyp",
-      "batchStatus": "Chargenstatus",
-      "batchStatusPending": "Ausstehend",
-      "batchStatusDone": "Abgeschlossen",
-      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
-      "viewBatch": "Chargen ansehen",
-      "batchTypeImportDocument": "Dokumentenimport",
-      "createImport": "Import erstellen",
-      "importsHeaderPrefix": "Quelle",
-      "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
     }
   },
   {
@@ -2116,7 +2026,7 @@
       "exportAsCsv": "Export as CSV file",
       "importFromCsv": "Import from CSV file",
       "segmentsDropzoneInfo": "You can drop a CSV file in this box in order to import segments",
-      "startPlaybackFromHere": "Click here to start the playback beginning with this part"
+      "startPlaybackFromHere": "Click here to play from this part"
     }
   },
   {
@@ -2659,8 +2569,6 @@
       "users": "Users",
       "dashboard": "Dashboard",
       "admin": "Administration",
-      "createImport": "Create import",
-      "imports": "Imports",
       "batches": "Batch details",
       "docs": "Documents"
     }
@@ -2673,8 +2581,6 @@
       "users": "Benutzer",
       "dashboard": "Dashboard",
       "admin": "Verwaltung",
-      "createImport": "Import erstellen",
-      "imports": "Importe",
       "batches": "Chargen-Details",
       "docs": "Dokumente"
     }

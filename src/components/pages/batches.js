@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
-import { Table, List, Checkbox } from 'antd';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
+import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
-import ImportTypeIcon from '../import-type-icon.js';
 import { useDateFormat } from '../locale-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
@@ -12,7 +11,6 @@ import BatchApiClient from '../../api-clients/batch-api-client.js';
 import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
-  documentImportBatchDetailsShape,
   documentValidationBatchDetailsShape,
   documentRegenerationBatchDetailsShape,
   cdnResourcesConsolidationBatchDetailsShape,
@@ -150,8 +148,7 @@ function Batches({ initialState, PageTemplate }) {
 
   const renderBatchType = batchType => {
     switch (batchType) {
-      case BATCH_TYPE.documentImport:
-        return t('batchTypeDocumentImport');
+
       case BATCH_TYPE.documentValidation:
         return t('batchTypeDocumentValidation');
       case BATCH_TYPE.documentRegeneration:
@@ -200,17 +197,6 @@ function Batches({ initialState, PageTemplate }) {
 
   const renderDate = date => formatDate(date);
 
-  const renderDocumentTitle = taskParams => {
-    const docUrl = routes.getImportedDocUrl({
-      hostName: batch.batchParams.hostName,
-      allowUnsecure: batch.batchParams.allowUnsecure,
-      id: taskParams.documentId,
-      slug: taskParams.slug
-    });
-
-    return <a target="_blank" href={docUrl} rel="noreferrer noopener">{taskParams.title}</a>;
-  };
-
   const renderDocumentEntityId = taskParams => (
     <a target="_blank" href={routes.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
       {taskParams.documentId}
@@ -254,8 +240,6 @@ function Batches({ initialState, PageTemplate }) {
     }
   };
 
-  const renderDocumentImportType = taskParams => <ImportTypeIcon importType={taskParams.importType} />;
-
   const renderErrorCount = attempt => <span>{attempt.errors?.length || 0} {t('errors')}</span>;
 
   const renderErrors = attempt => (
@@ -287,20 +271,6 @@ function Batches({ initialState, PageTemplate }) {
 
   const taskTableColumns = [];
   switch (batch.batchType) {
-    case BATCH_TYPE.documentImport:
-      taskTableColumns.push({
-        title: t('documentImportType'),
-        key: 'documentImportType',
-        dataIndex: 'taskParams',
-        render: renderDocumentImportType
-      });
-      taskTableColumns.push({
-        title: t('common:document'),
-        key: 'documentTitle',
-        dataIndex: 'taskParams',
-        render: renderDocumentTitle
-      });
-      break;
     case BATCH_TYPE.documentValidation:
     case BATCH_TYPE.documentRegeneration:
       taskTableColumns.push({
@@ -350,9 +320,6 @@ function Batches({ initialState, PageTemplate }) {
   });
 
   const batchInfos = [<span key="batch-type">{t('batchType')}: {renderBatchType(batch.batchType)}</span>];
-  if (batch.batchType === BATCH_TYPE.documentImport) {
-    batchInfos.push(<span key="document-input-source">{t('documentImportSource')}: {batch.batchParams.name}</span>);
-  }
 
   return (
     <PageTemplate>
@@ -410,7 +377,6 @@ Batches.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     batch: PropTypes.oneOfType([
-      documentImportBatchDetailsShape,
       documentValidationBatchDetailsShape,
       documentRegenerationBatchDetailsShape,
       cdnResourcesConsolidationBatchDetailsShape,

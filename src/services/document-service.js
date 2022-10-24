@@ -424,38 +424,6 @@ class DocumentService {
     }
   }
 
-  async importDocumentRevisions({ documentId, revisions, origin, originUrl }) {
-    let lock;
-
-    await this.createUploadDirectoryMarkerForDocument(documentId);
-
-    try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
-
-      let newDocument;
-      await this.transactionRunner.run(async session => {
-        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length);
-        const newDocumentRevisions = revisions.map((revision, index) => {
-          return this._buildDocumentRevision({ ...revision, documentId, order: nextOrders[index], origin, originUrl });
-        });
-
-        newDocument = this._buildDocumentFromRevisions(newDocumentRevisions);
-
-        await this.documentRevisionStore.saveDocumentRevisions(newDocumentRevisions, { session });
-        await this.documentStore.saveDocument(newDocument, { session });
-      });
-
-      return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
-    } catch (error) {
-      await this.deleteUploadDirectoryMarkerForDocument(documentId);
-      throw error;
-    } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
-      }
-    }
-  }
-
   async regenerateDocument(documentId) {
     let lock;
 

@@ -4,7 +4,6 @@ import TaskStore from '../stores/task-store.js';
 import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
@@ -17,7 +16,6 @@ export default class TaskProcessor {
     return [
       TaskStore,
       LockStore,
-      DocumentImportTaskProcessor,
       DocumentValidationTaskProcessor,
       DocumentRegenerationTaskProcessor,
       CdnResourcesConsolidationTaskProcessor,
@@ -29,7 +27,6 @@ export default class TaskProcessor {
   constructor(
     taskStore,
     lockStore,
-    documentImportTaskProcessor,
     documentValidationTaskProcessor,
     documentRegenerationTaskProcessor,
     cdnResourcesConsolidationTaskProcessor,
@@ -41,7 +38,6 @@ export default class TaskProcessor {
     this.serverConfig = serverConfig;
 
     this.taskProcessors = {
-      [TASK_TYPE.documentImport]: documentImportTaskProcessor,
       [TASK_TYPE.documentValidation]: documentValidationTaskProcessor,
       [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor,
       [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor,

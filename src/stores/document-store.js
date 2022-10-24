@@ -100,13 +100,6 @@ class DocumentStore {
     return this.collection.aggregate(this._getTagsQuery(text)).toArray();
   }
 
-  getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
-    return this.collection.find(
-      { archived: false, origin, roomId: null },
-      { projection: documentMetadataProjection, session }
-    ).toArray();
-  }
-
   getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
     return this.collection.find(
       { createdBy },

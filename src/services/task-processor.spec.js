@@ -5,7 +5,6 @@ import TaskProcessor from './task-processor.js';
 import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 
@@ -20,7 +19,6 @@ describe('task-processor', () => {
   let taskStore;
   let lockStore;
   let serverConfig;
-  let documentImportTaskProcessor;
   let documentValidationTaskProcessor;
 
   beforeAll(async () => {
@@ -28,7 +26,6 @@ describe('task-processor', () => {
     taskStore = container.get(TaskStore);
     lockStore = container.get(LockStore);
     serverConfig = container.get(ServerConfig);
-    documentImportTaskProcessor = container.get(DocumentImportTaskProcessor);
     documentValidationTaskProcessor = container.get(DocumentValidationTaskProcessor);
     sut = container.get(TaskProcessor);
   });
@@ -39,7 +36,6 @@ describe('task-processor', () => {
     sandbox.stub(taskStore, 'saveTask');
     sandbox.stub(lockStore, 'takeTaskLock');
     sandbox.stub(lockStore, 'releaseLock');
-    sandbox.stub(documentImportTaskProcessor, 'process');
     sandbox.stub(documentValidationTaskProcessor, 'process');
     sandbox.stub(serverConfig, 'taskProcessing').value({ maxAttempts: 2 });
   });
@@ -75,8 +71,8 @@ describe('task-processor', () => {
         sinon.assert.notCalled(taskStore.getUnprocessedTaskById);
       });
 
-      it('should not call documentImportTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentImportTaskProcessor.process);
+      it('should not call documentValidationTaskProcessor.process', () => {
+        sinon.assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
@@ -105,8 +101,8 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should not call documentImportTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentImportTaskProcessor.process);
+      it('should not call documentValidationTaskProcessor.process', () => {
+        sinon.assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
@@ -143,8 +139,8 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should not call documentImportTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentImportTaskProcessor.process);
+      it('should not call documentValidationTaskProcessor.process', () => {
+        sinon.assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
@@ -215,12 +211,12 @@ describe('task-processor', () => {
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
 
-        nextTask = { _id: taskId, taskType: TASK_TYPE.documentImport, processed: false, attempts: [] };
+        nextTask = { _id: taskId, taskType: TASK_TYPE.documentValidation, processed: false, attempts: [] };
 
         lockStore.takeTaskLock.resolves(lock);
         taskStore.getUnprocessedTaskById.resolves(nextTask);
         expectedError = new Error('Processing failure 1');
-        documentImportTaskProcessor.process.rejects(expectedError);
+        documentValidationTaskProcessor.process.rejects(expectedError);
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -233,14 +229,14 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should call documentImportTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentImportTaskProcessor.process, nextTask, batchParams, ctx);
+      it('should call documentValidationTaskProcessor.process', () => {
+        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
         sinon.assert.calledWith(taskStore.saveTask, {
           _id: taskId,
-          taskType: TASK_TYPE.documentImport,
+          taskType: TASK_TYPE.documentValidation,
           processed: false,
           attempts: [
             {
@@ -267,7 +263,7 @@ describe('task-processor', () => {
 
         nextTask = {
           _id: taskId,
-          taskType: TASK_TYPE.documentImport,
+          taskType: TASK_TYPE.documentValidation,
           processed: false,
           attempts: [
             {
@@ -281,7 +277,7 @@ describe('task-processor', () => {
 
         lockStore.takeTaskLock.resolves(lock);
         taskStore.getUnprocessedTaskById.resolves(nextTask);
-        documentImportTaskProcessor.process.rejects(expectedErrors[1]);
+        documentValidationTaskProcessor.process.rejects(expectedErrors[1]);
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -294,14 +290,14 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should call documentImportTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentImportTaskProcessor.process, nextTask, batchParams, ctx);
+      it('should call documentValidationTaskProcessor.process', () => {
+        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
         sinon.assert.calledWith(taskStore.saveTask, {
           _id: taskId,
-          taskType: TASK_TYPE.documentImport,
+          taskType: TASK_TYPE.documentValidation,
           processed: true,
           attempts: [
             {
@@ -328,14 +324,14 @@ describe('task-processor', () => {
         ctx = { cancellationRequested: false };
         nextTask = {
           _id: taskId,
-          taskType: TASK_TYPE.documentImport,
+          taskType: TASK_TYPE.documentValidation,
           processed: false,
           attempts: []
         };
 
         lockStore.takeTaskLock.resolves(lock);
         taskStore.getUnprocessedTaskById.resolves(nextTask);
-        documentImportTaskProcessor.process.resolves();
+        documentValidationTaskProcessor.process.resolves();
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -348,14 +344,14 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should call documentImportTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentImportTaskProcessor.process, nextTask, batchParams, ctx);
+      it('should call documentValidationTaskProcessor.process', () => {
+        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
         sinon.assert.calledWith(taskStore.saveTask, {
           _id: taskId,
-          taskType: TASK_TYPE.documentImport,
+          taskType: TASK_TYPE.documentValidation,
           processed: true,
           attempts: [
             {
@@ -379,7 +375,7 @@ describe('task-processor', () => {
 
         lockStore.takeTaskLock.resolves(lock);
         taskStore.getUnprocessedTaskById.resolves(nextTask);
-        documentImportTaskProcessor.process.resolves();
+        documentValidationTaskProcessor.process.resolves();
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -392,8 +388,8 @@ describe('task-processor', () => {
         sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
-      it('should not call documentImportTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentImportTaskProcessor.process);
+      it('should not call documentValidationTaskProcessor.process', () => {
+        sinon.assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {

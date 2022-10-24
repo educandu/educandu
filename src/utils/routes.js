@@ -9,10 +9,8 @@ const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
 const batchesPath = '/batches';
-const importsPath = '/imports';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
-const createImportPath = '/create-import';
 const resetPasswordPath = '/reset-password';
 
 const docsPrefix = '/docs/';
@@ -52,14 +50,6 @@ function getDocumentRevisionUrl(revisionId) {
 function getAdminUrl({ tab } = {}) {
   const queryString = urlUtils.composeQueryString({ tab });
   return queryString ? `${adminPath}?${queryString}` : adminPath;
-}
-
-function getImportsUrl() {
-  return importsPath;
-}
-
-function getCreateImportUrl(sourceName) {
-  return `${createImportPath}?source=${encodeURIComponent(sourceName)}`;
 }
 
 function getBatchUrl(id) {
@@ -115,14 +105,6 @@ function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
 
-function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
-  return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
-}
-
-function getImportedDocUrl({ allowUnsecure, hostName, id, slug }) {
-  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ id, slug }));
-}
-
 function getRoomUrl(id, slug) {
   return urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 }
@@ -140,8 +122,6 @@ export default {
   getDocumentRevisionUrl,
   getRoomUrl,
   getAdminUrl,
-  getImportsUrl,
-  getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
   getRoomMembershipConfirmationUrl,
@@ -155,7 +135,5 @@ export default {
   getResetPasswordUrl,
   getSearchUrl,
   getBatchUrl,
-  getImportedDocUrl,
-  getImportSourceBaseUrl,
   getDocIdIfDocUrl
 };

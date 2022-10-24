@@ -19,9 +19,9 @@ import ServerConfig from '../bootstrap/server-config.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
+import { ambMetadataUser } from '../domain/built-in-users.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
-import { ambMetadataUser, exportUser } from '../domain/built-in-users.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -355,11 +355,7 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { exportApiKey, ambConfig } = this.serverConfig;
-
-      if (exportApiKey && apikey === exportApiKey) {
-        return cb(null, exportUser);
-      }
+      const { ambConfig } = this.serverConfig;
 
       if (ambConfig?.apiKey && apikey === ambConfig.apiKey) {
         return cb(null, ambMetadataUser);

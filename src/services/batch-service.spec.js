@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
 import BatchService from './batch-service.js';
-import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -40,163 +39,6 @@ describe('batch-service', () => {
   afterEach(async () => {
     await pruneTestEnvironment(container);
     sandbox.restore();
-  });
-
-  describe('createImportBatch', () => {
-    let importSource;
-    let documentsToImport;
-
-    beforeEach(() => {
-      importSource = {
-        name: 'source-1',
-        hostName: 'source1.com',
-        allowUnsecure: false,
-        apiKey: 'DFGRDB553dscfVDSv'
-      };
-      documentsToImport = [
-        {
-          _id: 'v5NSMktadhzquVUAEdzAKg',
-          title: 'doc-1',
-          slug: 'doc-1',
-          language: 'en',
-          updatedOn: '2021-11-24T16:00:32.200Z',
-          importType: 'add'
-        },
-        {
-          _id: 'sueoX7WCUtSUHT9cWE6UMq',
-          title: 'doc-2',
-          slug: 'doc-2',
-          language: 'en',
-          updatedOn: '2021-11-24T16:05:27.800Z',
-          importType: 'update'
-        }
-      ];
-    });
-
-    describe('when creating a new batch', () => {
-      let result;
-      beforeEach(async () => {
-        result = await sut.createImportBatch({ importSource, documentsToImport, user });
-      });
-
-      it('creates a new batch in the database', async () => {
-        const dbEntries = await db.batches.find({}).toArray();
-        expect(dbEntries).toEqual([
-          {
-            _id: expect.stringMatching(/\w+/),
-            createdBy: user._id,
-            createdOn: expect.any(Date),
-            completedOn: null,
-            batchType: BATCH_TYPE.documentImport,
-            batchParams: {
-              name: 'source-1',
-              hostName: 'source1.com',
-              allowUnsecure: false,
-              nativeImport: false
-            },
-            errors: []
-          }
-        ]);
-      });
-
-      it('creates all tasks of the new batch in the database', async () => {
-        const dbEntries = await db.tasks.find({}).toArray();
-        const expectedTasks = [
-          {
-            _id: expect.stringMatching(/\w+/),
-            batchId: expect.stringMatching(/\w+/),
-            taskType: TASK_TYPE.documentImport,
-            processed: false,
-            attempts: [],
-            taskParams: {
-              ...documentsToImport[0],
-              documentId: documentsToImport[0]._id,
-              updatedOn: new Date(documentsToImport[0].updatedOn)
-            }
-          },
-          {
-            _id: expect.stringMatching(/\w+/),
-            batchId: expect.stringMatching(/\w+/),
-            taskType: TASK_TYPE.documentImport,
-            processed: false,
-            attempts: [],
-            taskParams: {
-              ...documentsToImport[1],
-              documentId: documentsToImport[1]._id,
-              updatedOn: new Date(documentsToImport[1].updatedOn)
-            }
-          }
-        ];
-        delete expectedTasks[0].taskParams._id;
-        delete expectedTasks[1].taskParams._id;
-
-        expect(dbEntries).toEqual(expectedTasks);
-      });
-
-      it('returns the created batch object', async () => {
-        const dbEntries = await db.batches.find({}).toArray();
-        expect(dbEntries).toEqual([result]);
-      });
-    });
-
-    describe('when creating a new batch with nativeImport', () => {
-      beforeEach(async () => {
-        await sut.createImportBatch({ importSource, documentsToImport, user, nativeImport: true });
-      });
-
-      it('creates a new batch in the database', async () => {
-        const dbEntries = await db.batches.find({}).toArray();
-        expect(dbEntries).toEqual([
-          {
-            _id: expect.stringMatching(/\w+/),
-            createdBy: user._id,
-            createdOn: expect.any(Date),
-            completedOn: null,
-            batchType: BATCH_TYPE.documentImport,
-            batchParams: {
-              name: 'source-1',
-              hostName: 'source1.com',
-              allowUnsecure: false,
-              nativeImport: true
-            },
-            errors: []
-          }
-        ]);
-      });
-    });
-
-    describe('when there is an existing lock for the same import source', () => {
-      let lock;
-      let lockStore;
-
-      beforeEach(async () => {
-        lockStore = container.get(LockStore);
-        lock = await lockStore.takeBatchLock(importSource.hostName);
-      });
-
-      afterEach(async () => {
-        await lockStore.releaseLock(lock);
-      });
-
-      it('should fail the concurrency check', async () => {
-        await expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
-          .rejects
-          .toThrowError(BadRequest);
-      });
-    });
-
-    describe('when there is an existing batch that is not yet completely processed', () => {
-      beforeEach(async () => {
-        await sut.createImportBatch({ importSource, documentsToImport, user });
-      });
-
-      it('should fail the unique check', async () => {
-        await expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
-          .rejects
-          .toThrowError(BadRequest);
-      });
-    });
-
   });
 
   describe('createDocumentRegenerationBatch', () => {
@@ -310,45 +152,31 @@ describe('batch-service', () => {
 
   describe('getBatchesWithProgress', () => {
     let result;
-    let importSource;
-    let documentsToImport;
+    let documents;
 
-    beforeEach(() => {
-      importSource = {
-        name: 'source-1',
-        hostName: 'source1.com',
-        allowUnsecure: false,
-        apiKey: 'DFGRDB553dscfVDSv'
-      };
-      documentsToImport = [
-        {
+    beforeEach(async () => {
+      documents = [
+        await createTestDocument(container, user, {
           _id: 'v5NSMktadhzquVUAEdzAKg',
           title: 'doc-1',
           slug: 'doc-1',
           language: 'en',
-          updatedOn: '2021-11-24T16:00:32.200Z',
-          importType: 'add'
-        },
-        {
+          sections: [],
+          tags: ['tag-1']
+        }),
+        await createTestDocument(container, user, {
           _id: 'sueoX7WCUtSUHT9cWE6UMq',
           title: 'doc-2',
           slug: 'doc-2',
           language: 'en',
-          updatedOn: '2021-11-24T16:05:27.800Z',
-          importType: 'update'
-        }
+          sections: [],
+          tags: ['tag-2']
+        })
       ];
-    });
 
-    beforeEach(async () => {
-      result = await sut.createImportBatch({ importSource, documentsToImport, user });
-      result = await sut.createImportBatch({
-        importSource: { ...importSource, hostName: 'source2' },
-        documentsToImport,
-        user
-      });
-      await db.tasks.updateOne({ 'taskParams.documentId': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
-      result = await sut.getBatchesWithProgress(BATCH_TYPE.documentImport);
+      await sut.createDocumentRegenerationBatch(user);
+      await db.tasks.update({ taskParams: { documentId: documents[0]._id } }, { $set: { processed: true } });
+      result = await sut.getBatchesWithProgress(BATCH_TYPE.documentRegeneration);
     });
 
     it('should return the batch', () => {
@@ -359,74 +187,46 @@ describe('batch-service', () => {
           createdBy: user._id,
           createdOn: expect.any(Date),
           completedOn: null,
-          batchType: BATCH_TYPE.documentImport,
-          batchParams: {
-            name: 'source-1',
-            hostName: 'source1.com',
-            allowUnsecure: false,
-            nativeImport: false
-          },
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
           errors: [],
           progress: 0.5
-        },
-        {
-          _id: expect.stringMatching(/\w+/),
-          createdBy: user._id,
-          createdOn: expect.any(Date),
-          completedOn: null,
-          batchType: BATCH_TYPE.documentImport,
-          batchParams: {
-            name: 'source-1',
-            hostName: 'source2',
-            allowUnsecure: false,
-            nativeImport: false
-          },
-          errors: [],
-          progress: 0
         }
       ]);
     });
 
     it('should add the correct progress', () => {
       expect(result[0].progress).toEqual(0.5);
-      expect(result[1].progress).toEqual(0);
     });
   });
 
   describe('getBatchDetails', () => {
     let result;
+    let documents;
     let createdBatchId;
-    let importSource;
-    let documentsToImport;
 
     beforeEach(async () => {
-      importSource = {
-        name: 'source-1',
-        hostName: 'source1.com',
-        allowUnsecure: false,
-        apiKey: 'DFGRDB553dscfVDSv'
-      };
-      documentsToImport = [
-        {
+      documents = [
+        await createTestDocument(container, user, {
           _id: 'v5NSMktadhzquVUAEdzAKg',
           title: 'doc-1',
           slug: 'doc-1',
           language: 'en',
-          updatedOn: '2021-11-24T16:00:32.200Z',
-          importType: 'add'
-        },
-        {
+          sections: [],
+          tags: ['tag-1']
+        }),
+        await createTestDocument(container, user, {
           _id: 'sueoX7WCUtSUHT9cWE6UMq',
           title: 'doc-2',
           slug: 'doc-2',
           language: 'en',
-          updatedOn: '2021-11-24T16:05:27.800Z',
-          importType: 'update'
-        }
+          sections: [],
+          tags: ['tag-2']
+        })
       ];
 
-      await sut.createImportBatch({ importSource, documentsToImport, user });
-      await db.tasks.updateOne({ 'taskParams.documentId': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      await sut.createDocumentRegenerationBatch(user);
+      await db.tasks.updateOne({ 'taskParams.documentId': documents[0]._id }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();
       createdBatchId = dbEntries[0]._id;
       result = await sut.getBatchDetails(createdBatchId);
@@ -438,13 +238,8 @@ describe('batch-service', () => {
         createdBy: user._id,
         createdOn: expect.any(Date),
         completedOn: null,
-        batchType: BATCH_TYPE.documentImport,
-        batchParams: {
-          name: 'source-1',
-          hostName: 'source1.com',
-          allowUnsecure: false,
-          nativeImport: false
-        },
+        batchType: BATCH_TYPE.documentRegeneration,
+        batchParams: {},
         errors: [],
         progress: 0.5,
         tasks: expect.arrayContaining([
@@ -454,14 +249,9 @@ describe('batch-service', () => {
             batchId: createdBatchId,
             processed: true,
             taskParams: {
-              importType: 'add',
-              documentId: documentsToImport[0]._id,
-              language: 'en',
-              slug: 'doc-1',
-              title: 'doc-1',
-              updatedOn: expect.any(Date)
+              documentId: documents[0]._id
             },
-            taskType: 'document-import'
+            taskType: 'document-regeneration'
           },
           {
             _id: expect.stringMatching(/\w+/),
@@ -469,14 +259,9 @@ describe('batch-service', () => {
             batchId: createdBatchId,
             processed: false,
             taskParams: {
-              importType: 'update',
-              documentId: documentsToImport[1]._id,
-              language: 'en',
-              slug: 'doc-2',
-              title: 'doc-2',
-              updatedOn: expect.any(Date)
+              documentId: documents[1]._id
             },
-            taskType: 'document-import'
+            taskType: 'document-regeneration'
           }
         ])
       });

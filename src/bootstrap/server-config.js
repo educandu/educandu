@@ -39,13 +39,6 @@ const configSchema = joi.object({
     displayName: joi.string().required()
   }).allow(null),
   exposeErrorDetails: joi.boolean().default(false),
-  exportApiKey: joi.string(),
-  importSources: joi.array().items(joi.object({
-    name: joi.string().required(),
-    hostName: joi.string().required(),
-    allowUnsecure: joi.boolean().default(false),
-    apiKey: joi.string().required()
-  })).default([]),
   disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   taskProcessing: joi.object({
     isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
@@ -90,7 +83,6 @@ class ServerConfig {
       appName: this.appName,
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
-      importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
       areRoomsEnabled: this.areRoomsEnabled,
