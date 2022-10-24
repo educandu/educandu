@@ -4,11 +4,6 @@ export const ROLE = {
   admin: 'admin'
 };
 
-export const DOCUMENT_ORIGIN = {
-  internal: 'internal',
-  external: 'external'
-};
-
 export const BATCH_TYPE = {
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',

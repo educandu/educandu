@@ -198,9 +198,6 @@ slug:
 tags:
   en: Tags
   de: Tags
-origin:
-  en: Origin
-  de: Quelle
 archived:
   en: Archived
   de: Archiviert
@@ -300,9 +297,6 @@ sortedByType:
 sortedByUser:
   en: Sorted by user
   de: Nach Benutzer sortiert
-sortedByOrigin:
-  en: Sorted by origin
-  de: Nach Quelle sortiert
 sortedByArchived:
   en: Sorted by archived status
   de: Nach Archivierungsstatus sortiert

@@ -5,9 +5,9 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
+import { MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
-import { DOCUMENT_ORIGIN, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -154,8 +154,7 @@ describe('document-service', () => {
         createdBy: user._id,
         order: 1,
         restoredFrom: null,
-        archived: false,
-        origin: DOCUMENT_ORIGIN.internal
+        archived: false
       });
     });
 
@@ -199,7 +198,6 @@ describe('document-service', () => {
         updatedBy: user._id,
         order: 1,
         archived: false,
-        origin: DOCUMENT_ORIGIN.internal,
         contributors: [user._id]
       });
     });
@@ -342,8 +340,7 @@ describe('document-service', () => {
         createdBy: secondUser._id,
         order: 2,
         restoredFrom: null,
-        archived: false,
-        origin: DOCUMENT_ORIGIN.internal
+        archived: false
       };
       delete expectedResult.appendTo;
       expect(persistedSecondRevision).toMatchObject(expectedResult);
@@ -384,7 +381,6 @@ describe('document-service', () => {
         updatedBy: secondUser._id,
         order: 2,
         archived: false,
-        origin: DOCUMENT_ORIGIN.internal,
         contributors: [user._id, secondUser._id]
       };
       delete expectedResult.appendTo;

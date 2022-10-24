@@ -12,7 +12,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { isRoomOwnerOrCollaborator, isRoomOwnerOrMember } from '../utils/room-utils.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
+import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
 import {
   documentIdParamsOrQuerySchema,
   updateDocumentMetadataBodySchema,
@@ -256,19 +256,13 @@ class DocumentController {
       throw new NotFound();
     }
 
-    if (document.origin.startsWith(DOCUMENT_ORIGIN.external) && !hasUserPermission(req.user, permissions.MANAGE_IMPORT)) {
-      throw new Forbidden('The user does not have permission to delete external documents');
-    }
-
-    if (document.origin === DOCUMENT_ORIGIN.internal && !document.roomId) {
+    if (!document.roomId) {
       throw new Forbidden('Public documents can not be deleted');
     }
 
-    if (document.origin === DOCUMENT_ORIGIN.internal && document.roomId) {
-      const room = await this.roomService.getRoomById(document.roomId);
-      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
-        throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
-      }
+    const room = await this.roomService.getRoomById(document.roomId);
+    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
     }
 
     await this.documentService.hardDeleteDocument(documentId);

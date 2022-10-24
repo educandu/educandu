@@ -86,7 +86,6 @@ export const documentRevisionDBSchema = joi.object({
   verified: joi.boolean().required(),
   allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required(),
   archived: joi.boolean().required(),
-  origin: joi.string().required(),
   cdnResources: joi.array().items(joi.string()).required()
 });
 
@@ -110,7 +109,6 @@ export const documentDBSchema = joi.object({
   verified: joi.boolean().required(),
   allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required(),
   archived: joi.boolean().required(),
-  origin: joi.string().required(),
   cdnResources: joi.array().items(joi.string()).required()
 });
 

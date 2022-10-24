@@ -10,12 +10,10 @@ import errorHelper from '../../ui/error-helper.js';
 import SortingSelector from '../sorting-selector.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
 import DocumentInfoCell from '../document-info-cell.js';
-import DeleteIcon from '../icons/general/delete-icon.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -23,9 +21,9 @@ import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 
 const { Search } = Input;
@@ -48,19 +46,6 @@ function getDocumentMetadataModalState({ t, documentToClone = null, isVisible = 
   };
 }
 
-const getOriginTranslated = ({ t, origin }) => {
-  if (origin === DOCUMENT_ORIGIN.internal) {
-    return t('originInternal');
-  }
-
-  if (origin.startsWith(DOCUMENT_ORIGIN.external)) {
-    const nameOfOrigin = origin.split(DOCUMENT_ORIGIN.external)[1];
-    return `${t('originExternal')}${nameOfOrigin}`;
-  }
-
-  return origin || '';
-};
-
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
   const { t } = useTranslation('docs');
@@ -77,12 +62,10 @@ function Docs({ initialState, PageTemplate }) {
       createdBy: doc.createdBy,
       language: doc.language,
       user: doc.user,
-      origin: doc.origin,
-      originTranslated: getOriginTranslated({ t, origin: doc.origin }),
       archived: doc.archived,
       verified: doc.verified,
       allowedOpenContribution: doc.allowedOpenContribution
-    })), [t]);
+    })), []);
 
   const [filterText, setFilterText] = useState('');
   const [displayedRows, setDisplayedRows] = useState([]);
@@ -95,8 +78,7 @@ function Docs({ initialState, PageTemplate }) {
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
     { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-    { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' },
-    { label: t('common:origin'), appliedLabel: t('common:sortedByOrigin'), value: 'origin' }
+    { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' }
   ];
 
   if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
@@ -109,7 +91,6 @@ function Docs({ initialState, PageTemplate }) {
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
     language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction)),
     user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.displayName, { direction: sorting.direction, ignoreCase: true })),
-    origin: rowsToSort => rowsToSort.sort(by(row => row.origin, { direction: sorting.direction, ignoreCase: true })),
     archived: rowsToSort => rowsToSort.sort(by(row => row.archived, sorting.direction))
   }), [sorting.direction]);
 
@@ -158,19 +139,6 @@ function Docs({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
-  const handleDocumentDelete = async documentId => {
-    try {
-      await documentApiClient.hardDeleteDocument(documentId);
-      setDocuments(documents.filter(doc => doc._id !== documentId));
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-    }
-  };
-
-  const handleDeleteClick = row => {
-    confirmDocumentDelete(t, row.title, () => handleDocumentDelete(row._id));
-  };
-
   const handleArchivedSwitchChange = async (archived, row) => {
     try {
       const { doc } = archived
@@ -188,7 +156,6 @@ function Docs({ initialState, PageTemplate }) {
     }
   };
 
-  const renderOrigin = originTranslated => <span>{originTranslated}</span>;
   const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
   const renderTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
@@ -213,28 +180,16 @@ function Docs({ initialState, PageTemplate }) {
             intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handleCloneClick(row)}
             />
-          {row.origin.startsWith(DOCUMENT_ORIGIN.external) && (
-            <Restricted to={permissions.MANAGE_IMPORT}>
-              <ActionButton
-                title={t('common:delete')}
-                icon={<DeleteIcon />}
-                intent={ACTION_BUTTON_INTENT.error}
-                onClick={() => handleDeleteClick(row)}
-                />
-            </Restricted>
-          )}
         </ActionButtonGroup>
       </div>
     );
   };
 
   const renderArchived = (archived, row) => {
-    const disableArchiving = row.origin !== DOCUMENT_ORIGIN.internal;
     return (
       <Switch
         size="small"
         checked={row.archived}
-        disabled={disableArchiving}
         onChange={() => handleArchivedSwitchChange(archived, row)}
         />
     );
@@ -283,14 +238,6 @@ function Docs({ initialState, PageTemplate }) {
       key: 'user',
       render: renderCreatedBy,
       responsive: ['md'],
-      width: '200px'
-    },
-    {
-      title: t('common:origin'),
-      dataIndex: 'originTranslated',
-      key: 'originTranslated',
-      render: renderOrigin,
-      responsive: ['lg'],
       width: '200px'
     },
     {

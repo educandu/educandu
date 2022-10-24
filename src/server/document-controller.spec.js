@@ -7,7 +7,7 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -56,7 +56,6 @@ describe('document-controller', () => {
       roomId: null,
       slug: '',
       sections: [],
-      origin: DOCUMENT_ORIGIN.internal,
       allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
     };
 
@@ -938,46 +937,10 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the document is external but the user does not have the right permissions', () => {
+    describe('when the document is public (does not belong to a room)', () => {
       beforeEach(() => {
         req = { user, body: { documentId: doc._id } };
 
-        doc.origin = `${DOCUMENT_ORIGIN.external}/educandu`;
-        user.permissions = [];
-
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the document is external and the user has the right permissions', () => {
-      beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, body: { documentId: doc._id } };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
-
-        doc.origin = `${DOCUMENT_ORIGIN.external}/educandu`;
-        user.permissions = [permissions.MANAGE_IMPORT];
-
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-        documentService.hardDeleteDocument.resolves();
-
-        sut.handleDeleteDoc(req, res).catch(reject);
-      }));
-
-      it('should call documentService.hardDeleteDocument', () => {
-        sinon.assert.calledWith(documentService.hardDeleteDocument, doc._id);
-      });
-    });
-
-    describe('when the document is internal and public (does not belong to a room)', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        doc.origin = DOCUMENT_ORIGIN.internal;
         user.permissions = [permissions.MANAGE_IMPORT];
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
@@ -993,7 +956,6 @@ describe('document-controller', () => {
         req = { user, body: { documentId: doc._id } };
 
         doc.roomId = room._id;
-        doc.origin = DOCUMENT_ORIGIN.internal;
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
 
@@ -1013,7 +975,6 @@ describe('document-controller', () => {
         res.on('end', resolve);
 
         doc.roomId = room._id;
-        doc.origin = DOCUMENT_ORIGIN.internal;
 
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
@@ -1037,7 +998,6 @@ describe('document-controller', () => {
         res.on('end', resolve);
 
         doc.roomId = room._id;
-        doc.origin = DOCUMENT_ORIGIN.internal;
 
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];

@@ -229,7 +229,6 @@
     "resources": {
       "citation": "Article “{title}”",
       "license": "License",
-      "originalSource": "Original source",
       "contributionsBy": "Contributions by",
       "revisionBy": "Revision created by"
     }
@@ -240,7 +239,6 @@
     "resources": {
       "citation": "Artikel »{title}«",
       "license": "Lizenz",
-      "originalSource": "Originalquelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
     }
@@ -969,8 +967,6 @@
     "resources": {
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
-      "originInternal": "internal",
-      "originExternal": "external",
       "initialAuthor": "Initial author",
       "filterPlaceholder": "Filter by title or initial author",
       "badges": "Badges"
@@ -982,8 +978,6 @@
     "resources": {
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
-      "originInternal": "intern",
-      "originExternal": "extern",
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen"
@@ -2284,7 +2278,6 @@
       "room": "Room",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
-      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
       "copySectionToClipboardError": "Error copying the section to the clipboard due to missing access permissions.",
       "pasteSectionFromClipboardError": "Error pasting the section from the clipboard. Either the clipboard contains content that cannot\nbe pasted as a new section or the browser denies access to the clipboard.\n",
       "sectionCopiedToClipboard": "The section was copied to the clipboard",
@@ -2314,7 +2307,6 @@
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
-      "origin": "Origin",
       "archived": "Archived",
       "id": "ID",
       "user": "User",
@@ -2348,7 +2340,6 @@
       "sortedByUpdatedOn": "Sorted by update date",
       "sortedByType": "Sorted by type",
       "sortedByUser": "Sorted by user",
-      "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
       "search": "Search",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
@@ -2442,7 +2433,6 @@
       "room": "Raum",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
-      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
       "copySectionToClipboardError": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
       "pasteSectionFromClipboardError": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht\nals neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n",
       "sectionCopiedToClipboard": "Der Abschnitt wurde in die Zwischenablage kopiert",
@@ -2472,7 +2462,6 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",
-      "origin": "Quelle",
       "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
@@ -2506,7 +2495,6 @@
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
       "sortedByType": "Nach Typ sortiert",
       "sortedByUser": "Nach Benutzer sortiert",
-      "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "search": "Suche",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",

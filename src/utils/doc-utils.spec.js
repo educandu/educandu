@@ -1,6 +1,6 @@
 import uniqueId from './unique-id.js';
 import { canEditDocContent, canEditDocMetadata } from './doc-utils.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 describe('doc-utils', () => {
   let doc;
@@ -11,7 +11,7 @@ describe('doc-utils', () => {
     beforeEach(() => {
       user = { _id: uniqueId.create(), roles: [] };
       room = { owner: user._id, members: [], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
-      doc = { origin: DOCUMENT_ORIGIN.internal, archived: false, allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent };
+      doc = { archived: false, allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent };
     });
 
     it('should return false when the user is not provided', () => {
@@ -21,11 +21,6 @@ describe('doc-utils', () => {
 
     it('should return false when the document is archived', () => {
       doc.archived = true;
-      expect(canEditDocContent({ user, doc, room })).toBe(false);
-    });
-
-    it('should return false when the document is external', () => {
-      doc.origin = `${DOCUMENT_ORIGIN.external}/test`;
       expect(canEditDocContent({ user, doc, room })).toBe(false);
     });
 
@@ -75,7 +70,7 @@ describe('doc-utils', () => {
     beforeEach(() => {
       user = { _id: uniqueId.create(), roles: [] };
       room = { owner: user._id, members: [], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
-      doc = { origin: DOCUMENT_ORIGIN.internal, archived: false, allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent };
+      doc = { archived: false, allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent };
     });
 
     it('should return false when the user is not provided', () => {
@@ -85,11 +80,6 @@ describe('doc-utils', () => {
 
     it('should return false when the document is archived', () => {
       doc.archived = true;
-      expect(canEditDocMetadata({ user, doc, room })).toBe(false);
-    });
-
-    it('should return false when the document is external', () => {
-      doc.origin = `${DOCUMENT_ORIGIN.external}/test`;
       expect(canEditDocMetadata({ user, doc, room })).toBe(false);
     });
 

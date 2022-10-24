@@ -30,7 +30,6 @@ const documentExtendedMetadataProjection = {
   review: 1,
   verified: 1,
   archived: 1,
-  origin: 1,
   contributors: 1,
   allowedOpenContribution: 1
 };

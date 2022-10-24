@@ -5,9 +5,8 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import CommentController from './comment-controller.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 
-const { NotFound, BadRequest, Forbidden } = httpErrors;
+const { NotFound, BadRequest } = httpErrors;
 
 describe('comment-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -113,20 +112,6 @@ describe('comment-controller', () => {
       });
     });
 
-    describe('when the request contains an external document id', () => {
-      beforeEach(() => {
-        documentId = uniqueId.create();
-        documentService.getDocumentById.withArgs(documentId).resolves({ origin: `${DOCUMENT_ORIGIN.external}/educandu` });
-
-        req = { user, body: { documentId } };
-        res = {};
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(() => sut.handlePutComment(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
     describe('when the payload is correct', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         documentId = uniqueId.create();
@@ -138,7 +123,7 @@ describe('comment-controller', () => {
         comment = cloneDeep(data);
         mappedComment = cloneDeep(comment);
 
-        documentService.getDocumentById.resolves({ origin: DOCUMENT_ORIGIN.internal });
+        documentService.getDocumentById.resolves({});
         commentService.createComment.resolves(comment);
         clientDataMappingService.mapComment.resolves(mappedComment);
 

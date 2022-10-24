@@ -39,8 +39,8 @@ import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contr
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
 import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -483,7 +483,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const showHistoryPanel = view === VIEW.display || view === VIEW.history;
   const showCommentsPanel = !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments)
-    && doc.origin === DOCUMENT_ORIGIN.internal && (view === VIEW.display || view === VIEW.comments);
+   && (view === VIEW.display || view === VIEW.comments);
   const showEditPanel = userCanEditDocContent && (view === VIEW.display || view === VIEW.edit);
 
   return (

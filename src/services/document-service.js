@@ -23,7 +23,7 @@ import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -231,9 +231,6 @@ class DocumentService {
         }
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-        if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-        }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
@@ -325,10 +322,6 @@ class DocumentService {
         throw new NotFound(`Could not find existing revisions for document ${documentId}`);
       }
 
-      if (revisionsBeforeDelete[revisionsBeforeDelete.length - 1].origin !== DOCUMENT_ORIGIN.internal) {
-        throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-      }
-
       const revisionsAfterDelete = [];
       const revisionsToUpdateById = new Map();
 
@@ -385,9 +378,6 @@ class DocumentService {
         }
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-        if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-        }
 
         if (revisionToRestore._id === ancestorRevision._id) {
           throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
@@ -570,7 +560,6 @@ class DocumentService {
       verified: data.verified || false,
       allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
       archived: data.archived || false,
-      origin: data.origin || DOCUMENT_ORIGIN.internal,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
@@ -612,7 +601,6 @@ class DocumentService {
       verified: lastRevision.verified,
       allowedOpenContribution: lastRevision.allowedOpenContribution,
       archived: lastRevision.archived,
-      origin: lastRevision.origin,
       cdnResources: lastRevision.cdnResources
     };
   }

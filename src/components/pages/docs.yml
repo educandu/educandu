@@ -4,12 +4,6 @@ defaultDocumentTitle:
 newDocument:
   en: New document
   de: Neues Dokument
-originInternal:
-  en: internal
-  de: intern
-originExternal:
-  en: external
-  de: extern
 initialAuthor:
   en: Initial author
   de: Erstautor
