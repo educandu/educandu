@@ -7,6 +7,7 @@ import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
 import React, { Fragment, useState } from 'react';
+import HelpIcon from './icons/general/help-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
@@ -19,7 +20,6 @@ import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
-import InformationIcon from './icons/general/information-icon.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 
@@ -140,7 +140,7 @@ function SectionDisplay({
     {
       type: 'openHelp',
       tooltip: renderActionTooltip('openHelp'),
-      icon: <InformationIcon key="openHelp" />,
+      icon: <HelpIcon key="openHelp" />,
       handleAction: () => setIsHelpModalVisible(true),
       isVisible: !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
       isEnabled: true
