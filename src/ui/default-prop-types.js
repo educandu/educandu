@@ -238,8 +238,7 @@ export const documentRevisionShape = PropTypes.shape({
   verified: PropTypes.bool,
   allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).isRequired,
   archived: PropTypes.bool.isRequired,
-  origin: PropTypes.string.isRequired,
-  originUrl: PropTypes.string.isRequred
+  origin: PropTypes.string.isRequired
 });
 
 const formItemDimensionShape = PropTypes.shape({

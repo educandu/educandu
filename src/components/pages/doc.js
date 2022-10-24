@@ -8,6 +8,7 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import ControlPanel from '../control-panel.js';
+import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import CommentsPanel from '../comments-panel.js';
@@ -18,7 +19,6 @@ import { useRequest } from '../request-context.js';
 import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
@@ -64,18 +64,6 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
 
   if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
-  }
-
-  if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
-    alerts.push({
-      message: (
-        <Trans
-          t={t}
-          i18nKey="common:externalDocumentWarning"
-          components={[<a key="external-document-warning" href={doc.originUrl} />]}
-          />
-      )
-    });
   }
 
   if (view === VIEW.edit && hasPendingTemplateSectionKeys) {

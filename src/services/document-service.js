@@ -571,7 +571,6 @@ class DocumentService {
       allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
-      originUrl: data.originUrl || null,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
@@ -614,7 +613,6 @@ class DocumentService {
       allowedOpenContribution: lastRevision.allowedOpenContribution,
       archived: lastRevision.archived,
       origin: lastRevision.origin,
-      originUrl: lastRevision.originUrl,
       cdnResources: lastRevision.cdnResources
     };
   }

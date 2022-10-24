@@ -13,8 +13,6 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import ProfileHeader from '../profile-header.js';
 import { useRequest } from '../request-context.js';
-import { useService } from '../container-context.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
 import { invitationBasicShape, roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
 
@@ -25,7 +23,6 @@ function Dashboard({ initialState, PageTemplate }) {
   const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
-  const clientConfig = useService(ClientConfig);
 
   const initialTab = request.query.tab || '';
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);

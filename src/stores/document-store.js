@@ -31,7 +31,6 @@ const documentExtendedMetadataProjection = {
   verified: 1,
   archived: 1,
   origin: 1,
-  originUrl: 1,
   contributors: 1,
   allowedOpenContribution: 1
 };
