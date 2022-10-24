@@ -25,3 +25,6 @@ importFromCsv:
 segmentsDropzoneInfo:
   en: You can drop a CSV file in this box in order to import segments
   de: Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren
+startPlaybackFromHere:
+  en: Click here to play from this part
+  de: Klicke hier, um die Wiedergabe ab diesem Teil zu starten
