@@ -21,10 +21,8 @@ class DashboardController {
     const { user } = req;
     let rooms = [];
     let invitations = [];
-    if (this.serverConfig.areRoomsEnabled) {
-      rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
-      invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
-    }
+    rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
+    invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
     const activities = await this.dashboardService.getUserActivities({ userId: user._id, limit: 10 });
 
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));

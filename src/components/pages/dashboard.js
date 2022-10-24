@@ -52,10 +52,9 @@ function Dashboard({ initialState, PageTemplate }) {
           <TabPane className="Tabs-tabPane" tab={t('favoritesTabTitle')} key="favorites">
             <FavoritesTab />
           </TabPane>
-          {clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="rooms">
-              <RoomsTab rooms={rooms} invitations={invitations} />
-            </TabPane>)}
+          <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="rooms">
+            <RoomsTab rooms={rooms} invitations={invitations} />
+          </TabPane>
           <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="profile">
             <ProfileTab />
           </TabPane>

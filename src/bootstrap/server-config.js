@@ -48,7 +48,6 @@ const configSchema = joi.object({
   additionalControllers: joi.array().items(joi.function().class()).default([]),
   consentCookieNamePrefix: joi.string().required(),
   uploadLiabilityCookieName: joi.string().required(),
-  areRoomsEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default(''),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
   basicAuthUsers: joi.object().default({}),
@@ -85,7 +84,6 @@ class ServerConfig {
       disabledFeatures: this.disabledFeatures,
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
-      areRoomsEnabled: this.areRoomsEnabled,
       plugins: this.plugins
     };
   }

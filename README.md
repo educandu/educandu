@@ -40,7 +40,6 @@ The educandu framework
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
- | areRoomsEnabled | Enables rooms | `boolean` | no, defaults to `false` |
  | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
