@@ -63,11 +63,11 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const handleChapterClick = chapterIndex => {
-    if (playState !== MEDIA_PLAY_STATE.playing) {
+    if (playState === MEDIA_PLAY_STATE.playing) {
+      playerRef.current.seekToPart(chapterIndex);
+    } else {
       playerRef.current.play();
       setTimeout(() => playerRef.current.seekToPart(chapterIndex), 0);
-    } else {
-      playerRef.current.seekToPart(chapterIndex);
     }
   };
 
