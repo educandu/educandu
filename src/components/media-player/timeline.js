@@ -277,6 +277,12 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     );
   };
 
+  const renderNewSegmentStart = () => {
+    return (
+      <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />
+    );
+  };
+
   const renderDeleteSegment = (segment, index) => {
     const style = { width: `${segment.width}px` };
     const classes = classNames(
@@ -307,8 +313,8 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}
       </div>
-      <div className="Timeline-segmentsWrapper">
-        {!!newMarkerState && <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />}
+      <div className="Timeline-segmentsBarWrapper">
+        {!!newMarkerState && renderNewSegmentStart()}
         <div className="Timeline-segmentsBar">
           {timelineState.segments.map(renderSegment)}
         </div>
