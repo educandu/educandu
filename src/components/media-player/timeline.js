@@ -238,7 +238,13 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         className="Timeline-marker Timeline-marker--new"
         style={{ left: `${newMarkerState.left - (MARKER_WIDTH_IN_PX / 2)}px` }}
         >
-        <div className={`Timeline-markerTimecode ${newMarkerState.isInBounds ? 'Timeline-markerTimecode--valid' : 'Timeline-markerTimecode--invalid'}`}>
+        <div
+          className={classNames(
+            'Timeline-markerTimecode',
+            { 'Timeline-markerTimecode--valid': newMarkerState.isInBounds },
+            { 'Timeline-markerTimecode--invalid': !newMarkerState.isInBounds }
+          )}
+          >
           {markerText}
         </div>
         {newMarkerState.isInBounds && <PinIcon />}
