@@ -21,6 +21,7 @@ import MediaSlideshowInfo from './media-slideshow/media-slideshow-info.js';
 import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import IntervalTrainerInfo from './interval-trainer/interval-trainer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
+import TableOfContentsInfo from './table-of-contents/table-of-contents-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
 
 const logger = new Logger(import.meta.url);
@@ -43,6 +44,7 @@ const allPossibleInfoTypes = [
   MediaAnalysisInfo,
   MediaSlideshowInfo,
   MusicXmlViewerInfo,
+  TableOfContentsInfo,
   IntervalTrainerInfo,
   MultitrackMediaInfo,
   InteractiveMediaInfo

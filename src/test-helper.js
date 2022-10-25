@@ -84,6 +84,7 @@ export async function setupTestEnvironment() {
       'table',
       'pdf-viewer',
       'diagram-net',
+      'table-of-contents',
       'iframe',
       'abc-notation',
       'music-xml-viewer',

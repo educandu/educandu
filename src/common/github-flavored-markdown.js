@@ -2,7 +2,6 @@ import MarkdownIt from 'markdown-it';
 import slugify from '@sindresorhus/slugify';
 import markdownItAnchor from 'markdown-it-anchor';
 import { escapeHtml } from '../utils/string-utils.js';
-
 import { getResourceType } from '../utils/resource-utils.js';
 import { CDN_URL_PREFIX, RESOURCE_TYPE } from '../domain/constants.js';
 
@@ -66,8 +65,7 @@ const markdownBlockWithAnchors = new MarkdownIt()
       space: '',
       symbol: '',
       class: 'u-hidden',
-      placement: 'before',
-      renderAttrs: () => ({ 'data-header-anchor': 'true' })
+      placement: 'before'
     })
   })
   .use(educanduFeatures);
