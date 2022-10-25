@@ -1,10 +1,9 @@
-@timeline-bar-height: 25px;
-@timeline-marker-bottom: 6px;
-@timeline-markers-bar-height: 36px;
+@timeline-bar-height: 30px;
 @timeline-segments-bar-color: @edu-white;
 
 .Timeline {
   display: flex;
+  margin: 20px 0;
   user-select: none;
   flex-direction: column;
 }
@@ -12,15 +11,16 @@
 .Timeline-markersBar {
   display: flex;
   position: relative;
-  height: @timeline-markers-bar-height;
+  height: @timeline-bar-height;
+
+  &:hover {
+    background-color: @edu-background-color-light;
+  }
 }
 
 .Timeline-marker {
   position: absolute;
-  bottom: @timeline-marker-bottom;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  bottom: 2px;
 
   &.Timeline-marker--draggable {
     color: @edu-primary-color-light;
@@ -44,9 +44,12 @@
   }
 }
 
+.Timeline-segmentsBarWrapper {
+  position: relative;
+}
+
 .Timeline-segmentsBar {
   display: flex;
-  position: relative;
   height: @timeline-bar-height;
   color: @timeline-segments-bar-color;
   background-color: @edu-primary-color-light;
@@ -55,7 +58,7 @@
 .Timeline-segment {
   .m-overflow-ellipsis;
   text-align: center;
-  padding: 0 5px;
+  line-height: @timeline-bar-height;
   border-left: 1px dotted @timeline-segments-bar-color;
   border-right: 1px dotted @edu-border-color-dark;
 
@@ -69,6 +72,11 @@
 
   &:last-of-type {
     border-right: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0px -2px 2px @edu-border-color-base;
   }
 }
 
@@ -97,18 +105,5 @@
 
   &:last-of-type {
     border-right: none;
-  }
-}
-
-.Timeline-deleteButton {
-  color: @edu-error-color;
-
-  &:hover {
-    color: @edu-error-color;
-  }
-
-  &:disabled {
-    border: none;
-    height: @timeline-bar-height;
   }
 }

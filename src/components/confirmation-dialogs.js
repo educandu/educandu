@@ -90,6 +90,18 @@ export function confirmRoomInvitationDelete(t, invitationEmail, onOk, onCancel =
   });
 }
 
+export function confirmDelete(t, title, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:genericDeleteConfirmation', { title }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmLeaveRoom(t, roomName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),

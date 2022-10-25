@@ -2,9 +2,12 @@
   .m-icon-button;
   color: @edu-error-color;
 
-  &:hover,
   &:active,
   &:visited {
     color: @edu-error-color;
+  }
+
+  &:hover {
+    color: lighten(@edu-error-color, 15%);
   }
 }

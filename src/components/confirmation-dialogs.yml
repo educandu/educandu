@@ -20,10 +20,10 @@ deleteRoomConfirmation:
   en: Do you really want to delete room "{roomName}"?
   de: Möchtest du den Raum "{roomName}" wirklich löschen?
 deleteRoomMemberConfirmation:
-  en: Do you really want remove member "{memberDisplayName}" from the room?
+  en: Do you really want to remove member "{memberDisplayName}" from the room?
   de: Möchtest du das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
 deleteRoomInvitationConfirmation:
-  en: Do you really want revoke room invitation send to "{invitationEmail}"?
+  en: Do you really want to revoke the room invitation sent to "{invitationEmail}"?
   de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
 leaveRoomConfirmation:
   en: Do you really want to cancel your membership in room "{roomName}"?
@@ -76,3 +76,6 @@ exitFileEditor:
 deleteCommentConfirmation:
   en: Do you really want to delete this comment from "{author}" posted on "{timestamp}"?
   de: Möchtest du den Kommentar von "{author}", geschrieben am "{timestamp}", wirklich löschen?
+genericDeleteConfirmation:
+  en: Do you really want to delete "{title}"?
+  de: Möchtest du "{title}" wirklich löschen?
