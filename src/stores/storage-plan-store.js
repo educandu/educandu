@@ -43,7 +43,7 @@ class StoragePlanStore {
         $lookup: {
           from: 'users',
           localField: '_id',
-          foreignField: 'storage.plan',
+          foreignField: 'storage.planId',
           as: '_tmpAssignedUserCountObject_',
           pipeline: [
             {
