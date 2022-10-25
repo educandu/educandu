@@ -304,10 +304,6 @@ export default class RoomController {
   }
 
   registerApi(router) {
-    if (!this.serverConfig.areRoomsEnabled) {
-      return;
-    }
-
     router.get(
       '/api/v1/rooms',
       [needsPermission(permissions.OWN_ROOMS), validateQuery(getRoomsQuerySchema)],
@@ -376,10 +372,6 @@ export default class RoomController {
   }
 
   registerPages(router) {
-    if (!this.serverConfig.areRoomsEnabled) {
-      return;
-    }
-
     router.get(
       '/rooms/:roomId*',
       validateParams(getRoomParamsSchema),

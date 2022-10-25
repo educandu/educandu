@@ -1,9 +1,6 @@
 batchType:
   en: Batch type
   de: Chargentyp
-batchTypeDocumentImport:
-  en: Document import
-  de: Dokumentimport
 batchTypeDocumentValidation:
   en: Document validation
   de: Dokumentvalidierung
@@ -16,12 +13,6 @@ batchTypeCdnResourcesConsolidation:
 batchTypeCdnUploadDirectoryCreation:
   en: Creation of upload directories within the internal storage
   de: Erstellung der Upload-Verzichnisse auf dem internen Speicher
-documentImportType:
-  en: Import type
-  de: Import-Typ
-documentImportSource:
-  en: Import source
-  de: Importquelle
 errors:
   en: Errors
   de: Fehler

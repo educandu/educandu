@@ -1,8 +1,5 @@
 import { ROLE } from './constants.js';
-import { exportUser } from './built-in-users.js';
 import permissions, { hasUserPermission, getAllUserPermissions } from './permissions.js';
-
-const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER;
 
 describe('permissions', () => {
 
@@ -16,24 +13,9 @@ describe('permissions', () => {
       Object.values(permissions).forEach(permission => {
         beforeEach(() => {
           result = hasUserPermission(adminUser, permission);
-          expected = !isTechnicalPermission(permission);
         });
         it(`should be ${expected} for permission '${permission}'`, () => {
-          expect(result).toBe(expected);
-        });
-      });
-    });
-
-    describe('when user is builtin user "export"', () => {
-      const adminUser = exportUser;
-
-      Object.values(permissions).forEach(permission => {
-        beforeEach(() => {
-          result = hasUserPermission(adminUser, permission);
-          expected = isTechnicalPermission(permission);
-        });
-        it(`should be ${expected} for permission '${permission}'`, () => {
-          expect(result).toBe(expected);
+          expect(result).toBe(true);
         });
       });
     });
@@ -138,7 +120,6 @@ describe('permissions', () => {
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
           permissions.MIGRATE_DATA,
-          permissions.MANAGE_IMPORT,
           permissions.MANAGE_SETTINGS,
           permissions.MANAGE_STORAGE_PLANS,
           permissions.DELETE_FOREIGN_ROOMS

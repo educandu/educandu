@@ -15,7 +15,7 @@ export const CLONING_STRATEGY = {
   crossCloneIntoPublicArea: 'crossCloneIntoPublicArea'
 };
 
-export function getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t }) {
+export function getCloningOptions({ mode, documentToClone, availableRooms, t }) {
   if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
     return {
       strategyOptions: [{ label: '', value: CLONING_STRATEGY.none }],
@@ -23,12 +23,10 @@ export function getCloningOptions({ mode, documentToClone, availableRooms, clien
     };
   }
 
-  const roomOptions = clientConfig.areRoomsEnabled
-    ? availableRooms.filter(room => room._id !== documentToClone.roomId).map(room => ({
-      label: room.name,
-      value: room._id
-    }))
-    : [];
+  const roomOptions = availableRooms.filter(room => room._id !== documentToClone.roomId).map(room => ({
+    label: room.name,
+    value: room._id
+  }));
 
   const strategyOptions = [
     {
@@ -39,14 +37,12 @@ export function getCloningOptions({ mode, documentToClone, availableRooms, clien
     }
   ];
 
-  if (clientConfig.areRoomsEnabled) {
-    strategyOptions.push({
-      label: documentToClone.roomId
-        ? t('cloningStrategy_crossCloneIntoRoom_fromRoom')
-        : t('cloningStrategy_crossCloneIntoRoom_fromPublicArea'),
-      value: CLONING_STRATEGY.crossCloneIntoRoom
-    });
-  }
+  strategyOptions.push({
+    label: documentToClone.roomId
+      ? t('cloningStrategy_crossCloneIntoRoom_fromRoom')
+      : t('cloningStrategy_crossCloneIntoRoom_fromPublicArea'),
+    value: CLONING_STRATEGY.crossCloneIntoRoom
+  });
 
   if (documentToClone.roomId) {
     strategyOptions.push({

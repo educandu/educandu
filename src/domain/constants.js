@@ -4,19 +4,7 @@ export const ROLE = {
   admin: 'admin'
 };
 
-export const DOCUMENT_ORIGIN = {
-  internal: 'internal',
-  external: 'external'
-};
-
-export const DOCUMENT_IMPORT_TYPE = {
-  add: 'add',
-  update: 'update',
-  reimport: 'reimport'
-};
-
 export const BATCH_TYPE = {
-  documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',
   cdnResourcesConsolidation: 'cdn-resources-consolidation',
@@ -24,7 +12,6 @@ export const BATCH_TYPE = {
 };
 
 export const TASK_TYPE = {
-  documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',
   cdnResourcesConsolidation: 'cdn-resources-consolidation',
@@ -36,10 +23,7 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
   document: 'document'
 };
 
-export const FEATURE_TOGGLES = {
-  import: 'import',
-  comments: 'comments'
-};
+export const FEATURE_TOGGLES = {};
 
 export const ROOM_USER_ROLE = {
   owner: 'owner',

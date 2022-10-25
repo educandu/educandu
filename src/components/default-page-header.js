@@ -6,17 +6,13 @@ import { useUser } from './user-context.js';
 import { Button, Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
-import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { QuestionOutlined } from '@ant-design/icons';
 import MenuIcon from './icons/main-menu/menu-icon.js';
 import HomeIcon from './icons/main-menu/home-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
-import ClientConfig from '../bootstrap/client-config.js';
-import { FEATURE_TOGGLES } from '../domain/constants.js';
 import DefaultHeaderLogo from './default-header-logo.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
-import ImportsIcon from './icons/main-menu/imports-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import DocumentsIcon from './icons/main-menu/documents-icon.js';
@@ -28,7 +24,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('page');
-  const clientConfig = useService(ClientConfig);
   const helpPage = settings?.helpPage?.[uiLanguage];
 
   const pageMenuItems = [
@@ -66,13 +61,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       icon: <SettingsIcon />,
       onClick: () => { window.location = routes.getAdminUrl(); },
       showWhen: hasUserPermission(user, permissions.ADMIN)
-    },
-    {
-      key: 'import',
-      label: t('pageNames:imports'),
-      icon: <ImportsIcon />,
-      onClick: () => { window.location = routes.getImportsUrl(); },
-      showWhen: hasUserPermission(user, permissions.MANAGE_IMPORT) && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
     },
     {
       key: 'help',

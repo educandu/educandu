@@ -229,7 +229,6 @@
     "resources": {
       "citation": "Article “{title}”",
       "license": "License",
-      "originalSource": "Original source",
       "contributionsBy": "Contributions by",
       "revisionBy": "Revision created by"
     }
@@ -240,7 +239,6 @@
     "resources": {
       "citation": "Artikel »{title}«",
       "license": "Lizenz",
-      "originalSource": "Originalquelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
     }
@@ -291,20 +289,6 @@
     "resources": {
       "coauthors": "Mitautoren",
       "toDocument": "Zum Dokument"
-    }
-  },
-  {
-    "namespace": "documentImportTable",
-    "language": "en",
-    "resources": {
-      "importType": "Import type"
-    }
-  },
-  {
-    "namespace": "documentImportTable",
-    "language": "de",
-    "resources": {
-      "importType": "Import-Typ"
     }
   },
   {
@@ -533,24 +517,6 @@
       "rotateLeft": "Gegen den Uhrzeigersinn drehen",
       "scaleX": "Horizontal spiegeln",
       "scaleY": "Vertikal spiegeln"
-    }
-  },
-  {
-    "namespace": "importTypeIcon",
-    "language": "en",
-    "resources": {
-      "add": "Add",
-      "update": "Update",
-      "reimport": "Reimport"
-    }
-  },
-  {
-    "namespace": "importTypeIcon",
-    "language": "de",
-    "resources": {
-      "add": "Hinzufügen",
-      "update": "Aktualisieren",
-      "reimport": "Erneut importieren"
     }
   },
   {
@@ -844,13 +810,10 @@
     "language": "en",
     "resources": {
       "batchType": "Batch type",
-      "batchTypeDocumentImport": "Document import",
       "batchTypeDocumentValidation": "Document validation",
       "batchTypeDocumentRegeneration": "Document regeneration",
       "batchTypeCdnResourcesConsolidation": "Consolidation of resources within the internal storage",
       "batchTypeCdnUploadDirectoryCreation": "Creation of upload directories within the internal storage",
-      "documentImportType": "Import type",
-      "documentImportSource": "Import source",
       "errors": "Errors",
       "errorsCount": "Errors count",
       "attemptsHeader": "Attempt details",
@@ -871,13 +834,10 @@
     "language": "de",
     "resources": {
       "batchType": "Chargentyp",
-      "batchTypeDocumentImport": "Dokumentimport",
       "batchTypeDocumentValidation": "Dokumentvalidierung",
       "batchTypeDocumentRegeneration": "Dokumentwiederherstellung",
       "batchTypeCdnResourcesConsolidation": "Konsolidierung der Ressourcen auf dem internen Speicher",
       "batchTypeCdnUploadDirectoryCreation": "Erstellung der Upload-Verzichnisse auf dem internen Speicher",
-      "documentImportType": "Import-Typ",
-      "documentImportSource": "Importquelle",
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
       "attemptsHeader": "Versuchsdetails",
@@ -952,24 +912,6 @@
     }
   },
   {
-    "namespace": "createImport",
-    "language": "en",
-    "resources": {
-      "importButton": "Start import",
-      "backToImports": "Back to the overview",
-      "nativeImportPlaceholder": "Text for native import"
-    }
-  },
-  {
-    "namespace": "createImport",
-    "language": "de",
-    "resources": {
-      "importButton": "Import starten",
-      "backToImports": "Zurück zur Übersicht",
-      "nativeImportPlaceholder": "Text für Schlussimport"
-    }
-  },
-  {
     "namespace": "dashboard",
     "language": "en",
     "resources": {
@@ -1025,8 +967,6 @@
     "resources": {
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
-      "originInternal": "internal",
-      "originExternal": "external",
       "initialAuthor": "Initial author",
       "filterPlaceholder": "Filter by title or initial author",
       "badges": "Badges"
@@ -1038,45 +978,9 @@
     "resources": {
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
-      "originInternal": "intern",
-      "originExternal": "extern",
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "en",
-    "resources": {
-      "batchId": "Batch",
-      "batchType": "Batch type",
-      "batchStatus": "Batch status",
-      "batchStatusPending": "Pending",
-      "batchStatusDone": "Done",
-      "batchStatusProcessing": "{progress, number, percent} completed",
-      "viewBatch": "View batch",
-      "batchTypeImportDocument": "Document import",
-      "createImport": "Create import",
-      "importsHeaderPrefix": "Source",
-      "noImportSourcesConfigured": "No import sources configured"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "de",
-    "resources": {
-      "batchId": "Chargen",
-      "batchType": "Chargentyp",
-      "batchStatus": "Chargenstatus",
-      "batchStatusPending": "Ausstehend",
-      "batchStatusDone": "Abgeschlossen",
-      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
-      "viewBatch": "Chargen ansehen",
-      "batchTypeImportDocument": "Dokumentenimport",
-      "createImport": "Import erstellen",
-      "importsHeaderPrefix": "Quelle",
-      "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
     }
   },
   {
@@ -2374,7 +2278,6 @@
       "room": "Room",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
-      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
       "copySectionToClipboardError": "Error copying the section to the clipboard due to missing access permissions.",
       "pasteSectionFromClipboardError": "Error pasting the section from the clipboard. Either the clipboard contains content that cannot\nbe pasted as a new section or the browser denies access to the clipboard.\n",
       "sectionCopiedToClipboard": "The section was copied to the clipboard",
@@ -2404,7 +2307,6 @@
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
-      "origin": "Origin",
       "archived": "Archived",
       "id": "ID",
       "user": "User",
@@ -2438,7 +2340,6 @@
       "sortedByUpdatedOn": "Sorted by update date",
       "sortedByType": "Sorted by type",
       "sortedByUser": "Sorted by user",
-      "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
       "search": "Search",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
@@ -2532,7 +2433,6 @@
       "room": "Raum",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
-      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
       "copySectionToClipboardError": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
       "pasteSectionFromClipboardError": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht\nals neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n",
       "sectionCopiedToClipboard": "Der Abschnitt wurde in die Zwischenablage kopiert",
@@ -2562,7 +2462,6 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",
-      "origin": "Quelle",
       "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
@@ -2596,7 +2495,6 @@
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
       "sortedByType": "Nach Typ sortiert",
       "sortedByUser": "Nach Benutzer sortiert",
-      "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "search": "Suche",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
@@ -2659,8 +2557,6 @@
       "users": "Users",
       "dashboard": "Dashboard",
       "admin": "Administration",
-      "createImport": "Create import",
-      "imports": "Imports",
       "batches": "Batch details",
       "docs": "Documents"
     }
@@ -2673,8 +2569,6 @@
       "users": "Benutzer",
       "dashboard": "Dashboard",
       "admin": "Verwaltung",
-      "createImport": "Import erstellen",
-      "imports": "Importe",
       "batches": "Chargen-Details",
       "docs": "Dokumente"
     }

@@ -5,7 +5,6 @@ import {
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
-  DOCUMENT_IMPORT_TYPE,
   ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
@@ -47,22 +46,12 @@ export const sectionEditorProps = {
   onContentChanged: PropTypes.func.isRequired
 };
 
-export const importSourceProps = {
-  name: PropTypes.string.isRequired,
-  hostName: PropTypes.string.isRequired,
-  allowUnsecure: PropTypes.bool
-};
-
-export const importSourceShape = PropTypes.shape(importSourceProps);
-
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
     cdnRootUrl: PropTypes.string.isRequired,
     disabledFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
-    importSources: PropTypes.arrayOf(importSourceShape).isRequired,
     consentCookieNamePrefix: PropTypes.string.isRequired,
-    uploadLiabilityCookieName: PropTypes.string.isRequired,
-    areRoomsEnabled: PropTypes.bool.isRequired
+    uploadLiabilityCookieName: PropTypes.string.isRequired
   }).isRequired
 };
 
@@ -248,9 +237,7 @@ export const documentRevisionShape = PropTypes.shape({
   review: PropTypes.string,
   verified: PropTypes.bool,
   allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).isRequired,
-  archived: PropTypes.bool.isRequired,
-  origin: PropTypes.string.isRequired,
-  originUrl: PropTypes.string.isRequred
+  archived: PropTypes.bool.isRequired
 });
 
 const formItemDimensionShape = PropTypes.shape({
@@ -284,19 +271,6 @@ export const commonTaskProps = {
     errors: PropTypes.arrayOf(PropTypes.any).isRequired
   })).isRequired
 };
-
-export const documentImportTaskShape = PropTypes.shape({
-  ...commonTaskProps,
-  taskType: PropTypes.oneOf([TASK_TYPE.documentImport]),
-  taskParams: PropTypes.shape({
-    documentId: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired,
-    language: PropTypes.string.isRequired,
-    updatedOn: PropTypes.string,
-    importType: PropTypes.oneOf(Object.values(DOCUMENT_IMPORT_TYPE))
-  }).isRequired
-});
 
 export const documentValidationTaskShape = PropTypes.shape({
   ...commonTaskProps,
@@ -348,13 +322,6 @@ export const commonBatchProps = {
 };
 
 export const batchShape = PropTypes.shape(commonBatchProps);
-
-export const documentImportBatchDetailsShape = PropTypes.shape({
-  ...commonBatchProps,
-  batchType: PropTypes.oneOf([BATCH_TYPE.documentImport]).isRequired,
-  batchParams: importSourceShape.isRequired,
-  tasks: PropTypes.arrayOf(documentImportTaskShape).isRequired
-});
 
 export const documentValidationBatchDetailsShape = PropTypes.shape({
   ...commonBatchProps,

@@ -13,7 +13,6 @@ const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
 const MIGRATE_DATA = 'migrate-data';
 const VIEW_BATCHES = 'view-batches';
-const MANAGE_IMPORT = 'manage-import';
 const SEE_USER_EMAIL = 'see-user-email';
 const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
@@ -27,7 +26,6 @@ const CREATE_DOCUMENT_COMMENTS = 'create-document-comments';
 const MANAGE_DOCUMENT_COMMENTS = 'manage-document-comments';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const RESTRICT_OPEN_CONTRIBUTION = 'restrict-open-contribution';
-const MANAGE_EXPORT_WITH_BUILT_IN_USER = 'manage-export-with-built-in-user';
 const REQUEST_AMB_METADATA_WITH_BUILT_IN_USER = 'request-amb-metadata-with-built-in-user';
 
 const userPermissions = [
@@ -66,7 +64,6 @@ const adminPermissions = [
     EDIT_USERS,
     VIEW_BATCHES,
     MIGRATE_DATA,
-    MANAGE_IMPORT,
     MANAGE_SETTINGS,
     MANAGE_STORAGE_PLANS,
     DELETE_FOREIGN_ROOMS
@@ -112,8 +109,6 @@ export default {
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
   RESTORE_DOC_REVISIONS,
-  MANAGE_IMPORT,
-  MANAGE_EXPORT_WITH_BUILT_IN_USER,
   REQUEST_AMB_METADATA_WITH_BUILT_IN_USER,
   DELETE_ANY_STORAGE_FILE,
   OWN_ROOMS,

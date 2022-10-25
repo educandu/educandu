@@ -273,11 +273,6 @@ class ClientDataMappingService {
 
   _mapTaskParams(rawTaskParams, taskType) {
     switch (taskType) {
-      case TASK_TYPE.documentImport:
-        return {
-          ...rawTaskParams,
-          updatedOn: rawTaskParams.updatedOn && rawTaskParams.updatedOn.toISOString()
-        };
       case TASK_TYPE.documentValidation:
       case TASK_TYPE.documentRegeneration:
       case TASK_TYPE.cdnResourcesConsolidation:
@@ -314,7 +309,6 @@ class ClientDataMappingService {
 
   _mapBatchParams(rawBatchParams, batchType) {
     switch (batchType) {
-      case BATCH_TYPE.documentImport:
       case BATCH_TYPE.documentValidation:
       case BATCH_TYPE.documentRegeneration:
       case BATCH_TYPE.cdnResourcesConsolidation:

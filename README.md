@@ -35,14 +35,11 @@ The educandu framework
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
- | exportApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
- | importSources | The system from which data can be imported | `[{ name, hostName, allowUnsecure, apiKey }]` | no, if not specified then `allowUnsecure` defaults to `false` |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
- | areRoomsEnabled | Enables rooms | `boolean` | no, defaults to `false` |
  | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
@@ -81,12 +78,6 @@ educandu({
     displayName: 'Testibus'
   },
   exposeErrorDetails: true,
-  exportApiKey: 'GSD54GDFgDGesdfs4'
-  importSources: [{
-    name: 'otherSystem',
-    hostName: 'othersystem.com',
-    apiKey: 'FSERFSF56Ggsdfg6FGED'
-  }],
   additionalControllers: [],
   consentCookieNamePrefix 'APP_CONSENT_COOKIE_NAME'
   uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME'

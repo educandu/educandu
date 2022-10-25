@@ -6,17 +6,13 @@ import routes from '../../../src/utils/routes.js';
 import Login from '../../../src/components/login.js';
 import { QuestionOutlined } from '@ant-design/icons';
 import { useUser } from '../../../src/components/user-context.js';
-import ClientConfig from '../../../src/bootstrap/client-config.js';
-import { FEATURE_TOGGLES } from '../../../src/domain/constants.js';
 import { useLocale } from '../../../src/components/locale-context.js';
-import { useService } from '../../../src/components/container-context.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import HomeIcon from '../../../src/components/icons/main-menu/home-icon.js';
 import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
 import UsersIcon from '../../../src/components/icons/main-menu/users-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
 import LogoutIcon from '../../../src/components/icons/main-menu/logout-icon.js';
-import ImportsIcon from '../../../src/components/icons/main-menu/imports-icon.js';
 import LanguageIcon from '../../../src/components/icons/main-menu/language-icon.js';
 import SettingsIcon from '../../../src/components/icons/main-menu/settings-icon.js';
 import permissions, { hasUserPermission } from '../../../src/domain/permissions.js';
@@ -28,7 +24,6 @@ function PageHeader({ onUiLanguageClick }) {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('page');
-  const clientConfig = useService(ClientConfig);
   const helpPage = settings?.helpPage?.[uiLanguage];
 
   const pageMenuItems = [
@@ -66,13 +61,6 @@ function PageHeader({ onUiLanguageClick }) {
       icon: <SettingsIcon />,
       onClick: () => { window.location = routes.getAdminUrl(); },
       showWhen: hasUserPermission(user, permissions.ADMIN)
-    },
-    {
-      key: 'import',
-      label: t('pageNames:imports'),
-      icon: <ImportsIcon />,
-      onClick: () => { window.location = routes.getImportsUrl(); },
-      showWhen: hasUserPermission(user, permissions.MANAGE_IMPORT) && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
     },
     {
       key: 'help',

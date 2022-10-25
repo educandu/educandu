@@ -10,8 +10,6 @@ import AdminController from './admin-controller.js';
 import BatchController from './batch-controller.js';
 import SearchController from './search-controller.js';
 import StaticController from './static-controller.js';
-import ImportController from './import-controller.js';
-import ExportController from './export-controller.js';
 import StorageController from './storage-controller.js';
 import CommentController from './comment-controller.js';
 import SettingsController from './settings-controller.js';
@@ -31,8 +29,6 @@ const controllerTypes = [
   UserController,
   DocumentController,
   StorageController,
-  ExportController,
-  ImportController,
   BatchController,
   ErrorController,
   RoomController,

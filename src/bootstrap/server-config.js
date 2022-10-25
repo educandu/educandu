@@ -39,13 +39,6 @@ const configSchema = joi.object({
     displayName: joi.string().required()
   }).allow(null),
   exposeErrorDetails: joi.boolean().default(false),
-  exportApiKey: joi.string(),
-  importSources: joi.array().items(joi.object({
-    name: joi.string().required(),
-    hostName: joi.string().required(),
-    allowUnsecure: joi.boolean().default(false),
-    apiKey: joi.string().required()
-  })).default([]),
   disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   taskProcessing: joi.object({
     isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
@@ -55,7 +48,6 @@ const configSchema = joi.object({
   additionalControllers: joi.array().items(joi.function().class()).default([]),
   consentCookieNamePrefix: joi.string().required(),
   uploadLiabilityCookieName: joi.string().required(),
-  areRoomsEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default(''),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
   basicAuthUsers: joi.object().default({}),
@@ -90,10 +82,8 @@ class ServerConfig {
       appName: this.appName,
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
-      importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
-      areRoomsEnabled: this.areRoomsEnabled,
       plugins: this.plugins
     };
   }

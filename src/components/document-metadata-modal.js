@@ -4,10 +4,8 @@ import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
-import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import ClientConfig from '../bootstrap/client-config.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -51,7 +49,6 @@ function DocumentMetadataModal({
   const formRef = useRef(null);
   const settings = useSettings();
   const { uiLanguage } = useLocale();
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('documentMetadataModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
@@ -95,7 +92,7 @@ function DocumentMetadataModal({
     ...initialQualityMetadataValues
   };
 
-  const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, clientConfig, t });
+  const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, t });
 
   const allowedOpenContributionOptions = getAllowedOpenContributionOptions({ t });
 
@@ -121,10 +118,8 @@ function DocumentMetadataModal({
     if (formRef.current) {
       formRef.current.resetFields();
     }
-    if (clientConfig.areRoomsEnabled) {
-      loadRooms();
-    }
-  }, [isVisible, clientConfig.areRoomsEnabled, loadRooms]);
+    loadRooms();
+  }, [isVisible, loadRooms]);
 
   const handleTagSearch = async typedInTag => {
     const sanitizedTypedInTag = (typedInTag || '').trim();

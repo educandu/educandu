@@ -1,7 +1,6 @@
 import express from 'express';
 import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import CommentService from '../services/comment-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -11,7 +10,7 @@ import { validateBody, validateParams, validateQuery } from '../domain/validatio
 import { commentIdParamsOrQuerySchema, postCommentsTopicBodySchema, putCommentBodySchema } from '../domain/schemas/comment-schemas.js';
 
 const jsonParser = express.json();
-const { BadRequest, NotFound, Forbidden } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 class CommentController {
   static get inject() { return [CommentService, DocumentService, ClientDataMappingService]; }
@@ -39,10 +38,6 @@ class CommentController {
 
     if (!document) {
       throw new BadRequest(`Unknown document id '${data.documentId}'`);
-    }
-
-    if (document.origin !== DOCUMENT_ORIGIN.internal) {
-      throw new Forbidden('Comments on external documents can not be edited.');
     }
 
     const comment = await this.commentService.createComment({ data, user });

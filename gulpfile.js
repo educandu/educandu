@@ -44,8 +44,6 @@ const testAppEnv = {
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
-  TEST_APP_ARE_ROOMS_ENABLED: true.toString(),
-  TEST_APP_IMPORT_SOURCES: JSON.stringify([{ name: 'ELMU - Integration', hostName: 'integration.elmu.online', apiKey: '03a026b939154f41bb1dabf578a33e11' }]),
   TEST_APP_SKIP_MAINTENANCE: false.toString(),
   TEST_APP_AMB_API_KEY: '4985nvcz56v1'
 };

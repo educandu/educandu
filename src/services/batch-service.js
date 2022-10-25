@@ -1,5 +1,4 @@
 import httpErrors from 'http-errors';
-import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
@@ -10,10 +9,6 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
-
-const logger = new Logger(import.meta.url);
-
-const CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE = 'Cannot create a new import batch while another import for the same source is still active';
 
 class BatchService {
   static get inject() {
@@ -27,51 +22,6 @@ class BatchService {
     this.lockStore = lockStore;
     this.documentStore = documentStore;
     this.roomStore = roomStore;
-  }
-
-  async createImportBatch({ importSource, documentsToImport, user, nativeImport = false }) {
-    const batchParams = { ...importSource, nativeImport };
-    delete batchParams.apiKey;
-
-    const batch = this._createBatchObject(user._id, BATCH_TYPE.documentImport, batchParams);
-
-    const tasks = documentsToImport.map(doc => this._createTaskObject(batch._id, TASK_TYPE.documentImport, {
-      documentId: doc._id,
-      title: doc.title,
-      slug: doc.slug,
-      language: doc.language,
-      updatedOn: new Date(doc.updatedOn),
-      importType: doc.importType
-    }));
-
-    let lock;
-    try {
-      lock = await this.lockStore.takeBatchLock(importSource.hostName);
-    } catch (error) {
-      throw new BadRequest(CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE);
-    }
-
-    try {
-      const existingActiveBatch = await this.batchStore.getUncompletedBatchByTypeAndHost({
-        batchType: BATCH_TYPE.documentImport,
-        hostName: importSource.hostName
-      });
-
-      if (existingActiveBatch) {
-        throw new BadRequest(CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE);
-      }
-
-      logger.info(`Creating new import batch for source '${importSource.name}' containing ${tasks.length} tasks`);
-      await this.transactionRunner.run(async session => {
-        await this.batchStore.createBatch(batch, { session });
-        await this.taskStore.addTasks(tasks, { session });
-      });
-
-    } finally {
-      await this.lockStore.releaseLock(lock);
-    }
-
-    return batch;
   }
 
   async createDocumentRegenerationBatch(user) {

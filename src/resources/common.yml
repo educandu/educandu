@@ -107,9 +107,6 @@ viewRevisions:
 viewDocument:
   en: View document
   de: Dokument ansehen
-externalDocumentWarning:
-  en: This document is a copy. The original can be edited <0>here</0>.
-  de: Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.
 copySectionToClipboardError:
   en: Error copying the section to the clipboard due to missing access permissions.
   de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
@@ -201,9 +198,6 @@ slug:
 tags:
   en: Tags
   de: Tags
-origin:
-  en: Origin
-  de: Quelle
 archived:
   en: Archived
   de: Archiviert
@@ -303,9 +297,6 @@ sortedByType:
 sortedByUser:
   en: Sorted by user
   de: Nach Benutzer sortiert
-sortedByOrigin:
-  en: Sorted by origin
-  de: Nach Quelle sortiert
 sortedByArchived:
   en: Sorted by archived status
   de: Nach Archivierungsstatus sortiert

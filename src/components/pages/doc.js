@@ -8,6 +8,7 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import ControlPanel from '../control-panel.js';
+import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import CommentsPanel from '../comments-panel.js';
@@ -18,8 +19,6 @@ import { useRequest } from '../request-context.js';
 import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { Trans, useTranslation } from 'react-i18next';
-import ClientConfig from '../../bootstrap/client-config.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
@@ -37,10 +36,10 @@ import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-pan
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, FEATURE_TOGGLES } from '../../domain/constants.js';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -64,18 +63,6 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
 
   if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
-  }
-
-  if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
-    alerts.push({
-      message: (
-        <Trans
-          t={t}
-          i18nKey="common:externalDocumentWarning"
-          components={[<a key="external-document-warning" href={doc.originUrl} />]}
-          />
-      )
-    });
   }
 
   if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
@@ -102,7 +89,6 @@ function Doc({ initialState, PageTemplate }) {
 
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
-  const clientConfig = useService(ClientConfig);
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
@@ -494,8 +480,7 @@ function Doc({ initialState, PageTemplate }) {
   }
 
   const showHistoryPanel = view === VIEW.display || view === VIEW.history;
-  const showCommentsPanel = !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.comments)
-    && doc.origin === DOCUMENT_ORIGIN.internal && (view === VIEW.display || view === VIEW.comments);
+  const showCommentsPanel = view === VIEW.display || view === VIEW.comments;
   const showEditPanel = userCanEditDocContent && (view === VIEW.display || view === VIEW.edit);
 
   return (

@@ -30,8 +30,6 @@ const documentExtendedMetadataProjection = {
   review: 1,
   verified: 1,
   archived: 1,
-  origin: 1,
-  originUrl: 1,
   contributors: 1,
   allowedOpenContribution: 1
 };
@@ -98,13 +96,6 @@ class DocumentStore {
 
   getDocumentTagsMatchingText(text) {
     return this.collection.aggregate(this._getTagsQuery(text)).toArray();
-  }
-
-  getPublicNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
-    return this.collection.find(
-      { archived: false, origin, roomId: null },
-      { projection: documentMetadataProjection, session }
-    ).toArray();
   }
 
   getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {

@@ -23,7 +23,7 @@ import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_ORIGIN, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -231,9 +231,6 @@ class DocumentService {
         }
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-        if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-        }
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
@@ -325,10 +322,6 @@ class DocumentService {
         throw new NotFound(`Could not find existing revisions for document ${documentId}`);
       }
 
-      if (revisionsBeforeDelete[revisionsBeforeDelete.length - 1].origin !== DOCUMENT_ORIGIN.internal) {
-        throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-      }
-
       const revisionsAfterDelete = [];
       const revisionsToUpdateById = new Map();
 
@@ -385,9 +378,6 @@ class DocumentService {
         }
 
         const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-        if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
-          throw new BadRequest(`Document ${documentId} cannot be updated because it is not internal`);
-        }
 
         if (revisionToRestore._id === ancestorRevision._id) {
           throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
@@ -417,38 +407,6 @@ class DocumentService {
       });
 
       return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
-    } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
-      }
-    }
-  }
-
-  async importDocumentRevisions({ documentId, revisions, origin, originUrl }) {
-    let lock;
-
-    await this.createUploadDirectoryMarkerForDocument(documentId);
-
-    try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
-
-      let newDocument;
-      await this.transactionRunner.run(async session => {
-        const nextOrders = await this.documentOrderStore.getNextOrders(revisions.length);
-        const newDocumentRevisions = revisions.map((revision, index) => {
-          return this._buildDocumentRevision({ ...revision, documentId, order: nextOrders[index], origin, originUrl });
-        });
-
-        newDocument = this._buildDocumentFromRevisions(newDocumentRevisions);
-
-        await this.documentRevisionStore.saveDocumentRevisions(newDocumentRevisions, { session });
-        await this.documentStore.saveDocument(newDocument, { session });
-      });
-
-      return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
-    } catch (error) {
-      await this.deleteUploadDirectoryMarkerForDocument(documentId);
-      throw error;
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -602,8 +560,6 @@ class DocumentService {
       verified: data.verified || false,
       allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
       archived: data.archived || false,
-      origin: data.origin || DOCUMENT_ORIGIN.internal,
-      originUrl: data.originUrl || null,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
@@ -645,8 +601,6 @@ class DocumentService {
       verified: lastRevision.verified,
       allowedOpenContribution: lastRevision.allowedOpenContribution,
       archived: lastRevision.archived,
-      origin: lastRevision.origin,
-      originUrl: lastRevision.originUrl,
       cdnResources: lastRevision.cdnResources
     };
   }

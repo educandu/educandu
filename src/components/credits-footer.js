@@ -18,7 +18,6 @@ function CreditsFooter({ doc, revision }) {
   const { formatDate } = useDateFormat();
 
   const title = doc?.title || revision?.title;
-  const originalUrl = doc?.originUrl || revision?.originUrl;
 
   const currentHost = request.hostInfo.host;
   const citation = t('citation', { title });
@@ -29,7 +28,6 @@ function CreditsFooter({ doc, revision }) {
   const date = formatDate(request.timestamp);
 
   const renderUrl = () => <LiteralUrlLink href={url} targetBlank />;
-  const renderOriginalUrl = () => <LiteralUrlLink href={originalUrl} targetBlank />;
 
   const renderUser = user => {
     return <a href={routes.getUserUrl(user._id)}>{user.displayName}</a>;
@@ -65,12 +63,6 @@ function CreditsFooter({ doc, revision }) {
         )}
         <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
         <br />
-        {originalUrl && (
-          <Fragment>
-            <b>{t('originalSource')}:</b> {renderOriginalUrl()}
-            <br />
-          </Fragment>
-        )}
         {doc && renderDocumentContributors()}
         {revision && renderRevisionAuthor()}
       </p>

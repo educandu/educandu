@@ -63,9 +63,6 @@ describe('room-controller', () => {
       _id: uniqueId.create(),
       displayName: 'dagobert-the-third'
     };
-    serverConfig = {
-      areRoomsEnabled: true
-    };
 
     clientDataMappingService = {
       mapRoom: sandbox.stub(),

@@ -55,8 +55,6 @@ const config = {
   smtpOptions: processEnv.TEST_APP_SMTP_OPTIONS,
   initialUser: processEnv.TEST_APP_INITIAL_USER ? JSON.parse(processEnv.TEST_APP_INITIAL_USER) : null,
   exposeErrorDetails: parseBool(processEnv.TEST_APP_EXPOSE_ERROR_DETAILS || false.toString()),
-  exportApiKey: processEnv.TEST_APP_EXPORT_API_KEY,
-  importSources: JSON.parse(processEnv.TEST_APP_IMPORT_SOURCES || '[]'),
   taskProcessing: {
     isEnabled: true,
     idlePollIntervalInMs: 10000,
@@ -65,7 +63,6 @@ const config = {
   additionalControllers: [TestsController],
   consentCookieNamePrefix: 'CONSENT_TEST_APP',
   uploadLiabilityCookieName: 'UPLOAD_LIABILITY_TEST_APP',
-  areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
   plugins,
   basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}'),
   ambConfig: {
