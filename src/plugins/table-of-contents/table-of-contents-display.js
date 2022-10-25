@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 export default function TableOfContentsDisplay({ content }) {
   const [nodes, setNodes] = useState([]);
 
-  const { minLevel, maxLevel } = content;
+  const { minLevel, maxLevel, caption } = content;
 
   useEffect(() => {
     const nodeList = [...window.document.querySelectorAll('[data-header="true"]')]
@@ -18,21 +19,26 @@ export default function TableOfContentsDisplay({ content }) {
     setNodes(nodeList);
   }, [minLevel, maxLevel]);
 
-  if (!nodes.length) {
-    return null;
-  }
-
   return (
-    <ul className="TableOfContentsDisplay">
-      {nodes.map(node => (
-        <li
-          key={node.id}
-          className={`TableOfContentsDisplay-node TableOfContentsDisplay-node--indent${node.level - minLevel}`}
-          >
-          <a href={`#${node.id}`}>{node.text}</a>
-        </li>
-      ))}
-    </ul>
+    <div className="TableOfContentsDisplay">
+      {!!caption && (
+        <h1 className="TableOfContentsDisplay-caption">
+          <Markdown inline>{caption}</Markdown>
+        </h1>
+      )}
+      {!!nodes.length && (
+        <ul className="TableOfContentsDisplay-nodeList">
+          {nodes.map(node => (
+            <li
+              key={node.id}
+              className={`TableOfContentsDisplay-node TableOfContentsDisplay-node--indent${node.level - minLevel}`}
+              >
+              <a href={`#${node.id}`}>{node.text}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

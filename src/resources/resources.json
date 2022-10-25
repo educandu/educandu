@@ -2146,6 +2146,7 @@
     "language": "en",
     "resources": {
       "name": "Table of contents",
+      "defaultCaption": "Table of contents",
       "levelRange": "Level range"
     }
   },
@@ -2154,6 +2155,7 @@
     "language": "de",
     "resources": {
       "name": "Inhalts­verzeichnis",
+      "defaultCaption": "Inhaltsverzeichnis",
       "levelRange": "Ebenen-Umfang"
     }
   },
@@ -2559,7 +2561,7 @@
       "secondaryTrack": "Spur {number}",
       "addTrack": "Spur hinzufügen",
       "trackMixer": "Spur-Mixer",
-      "caption": "Legende",
+      "caption": "Titelzeile",
       "defaultVolumePreset": "Standard",
       "volumePreset": "Lautstärke-Voreinstellung",
       "displayMode": "Anzeigemodus"

@@ -29,17 +29,19 @@ class TableOfContentsInfo {
     return (await import('./table-of-contents-editor.js')).default;
   }
 
-  getDefaultContent() {
+  getDefaultContent(t) {
     return {
       minLevel: 1,
-      maxLevel: 6
+      maxLevel: 6,
+      caption: t('tableOfContents:defaultCaption')
     };
   }
 
   validateContent(content) {
     const schema = joi.object({
       minLevel: joi.number().min(1).max(6).required(),
-      maxLevel: joi.number().min(1).max(6).required()
+      maxLevel: joi.number().min(1).max(6).required(),
+      caption: joi.string().allow('').required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

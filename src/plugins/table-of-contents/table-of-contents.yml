@@ -1,6 +1,9 @@
 name:
   en: Table of contents
   de: "Inhalts\u00ADverzeichnis"
+defaultCaption:
+  en: Table of contents
+  de: Inhaltsverzeichnis
 levelRange:
   en: Level range
   de: Ebenen-Umfang

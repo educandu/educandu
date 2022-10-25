@@ -445,7 +445,7 @@ trackMixer:
   de: Spur-Mixer
 caption:
   en: Caption
-  de: Legende
+  de: Titelzeile
 defaultVolumePreset:
   en: Default
   de: Standard
