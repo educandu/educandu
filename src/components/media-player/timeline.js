@@ -10,6 +10,7 @@ import { getContrastColor } from '../../ui/color-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
+const MARKER_WIDTH_IN_PX = 14;
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 
@@ -106,6 +107,15 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     }
 
     const currentLeft = event.clientX - timelineBounds.left;
+
+    const isOverlappingPin = timelineState.markers
+      .some(marker => currentLeft >= marker.left - (MARKER_WIDTH_IN_PX / 2) && currentLeft <= marker.left + (MARKER_WIDTH_IN_PX / 2));
+
+    if (isOverlappingPin) {
+      handleMarkersBarMouseLeave();
+      return;
+    }
+
     const isInBounds = newMarkerBounds.some(bounds => bounds.leftMin <= currentLeft && currentLeft <= bounds.leftMax);
     setNewMarkerState({ left: currentLeft, isInBounds });
   };
@@ -192,7 +202,11 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     const markerText = formatMediaPosition({ position: percentage, duration: durationInMilliseconds, formatPercentage });
 
     return (
-      <div key={marker.key} className="Timeline-marker Timeline-marker--draggable" style={{ left: `${marker.left}px` }}>
+      <div
+        key={marker.key}
+        style={{ left: `${marker.left - (MARKER_WIDTH_IN_PX / 2)}px` }}
+        className="Timeline-marker Timeline-marker--draggable"
+        >
         {!!dragState && (
           <div className="Timeline-markerTimecode">{markerText}</div>
         )}
@@ -208,12 +222,15 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
       return null;
     }
 
-    const offset = newMarkerState.isInBounds ? 0 : -5;
     const percentage = newMarkerState.left / timelineState.currentTimelineWidth;
     const markerText = formatMediaPosition({ position: percentage, duration: durationInMilliseconds, formatPercentage });
 
     return (
-      <div key="new-marker" className="Timeline-marker Timeline-marker--new" style={{ left: `${newMarkerState.left + offset}px` }}>
+      <div
+        key="new-marker"
+        className="Timeline-marker Timeline-marker--new"
+        style={{ left: `${newMarkerState.left - (MARKER_WIDTH_IN_PX / 2)}px` }}
+        >
         <div className={`Timeline-markerTimecode ${newMarkerState.isInBounds ? 'Timeline-markerTimecode--valid' : 'Timeline-markerTimecode--invalid'}`}>
           {markerText}
         </div>
