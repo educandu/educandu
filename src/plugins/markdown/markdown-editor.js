@@ -22,7 +22,7 @@ export default function MarkdownEditor({ content, onContentChanged }) {
     <div>
       <Form>
         <Form.Item label={t('common:text')} {...validation.validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput value={text} onChange={handleTextChanged} />
+          <MarkdownInput value={text} onChange={handleTextChanged} renderAnchors />
         </Form.Item>
       </Form>
     </div>

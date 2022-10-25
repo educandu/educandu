@@ -14,7 +14,7 @@ import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
 
 const URL_INSERT_EVENT = 'urlInsert';
 
-function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, embeddable, maxLength, ...rest }) {
+function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChange, preview, embeddable, maxLength, ...rest }) {
   const { locations } = useStorage();
   const { t } = useTranslation('markdownInput');
   const [currentCaretPosition, setCurrentCaretPosition] = useState(-1);
@@ -140,6 +140,7 @@ function MarkdownInput({ minRows, disabled, inline, value, onChange, preview, em
     <div className="MarkdownInput-previewContainer">
       <Markdown
         inline={inline}
+        renderAnchors={renderAnchors}
         className={classNames('MarkdownInput-preview', { 'MarkdownInput-preview--inline': inline })}
         >
         {value}
@@ -165,6 +166,7 @@ MarkdownInput.propTypes = {
   minRows: PropTypes.number,
   onChange: PropTypes.func,
   preview: PropTypes.bool,
+  renderAnchors: PropTypes.bool,
   value: PropTypes.string
 };
 
@@ -176,6 +178,7 @@ MarkdownInput.defaultProps = {
   minRows: 3,
   onChange: () => {},
   preview: false,
+  renderAnchors: false,
   value: ''
 };
 

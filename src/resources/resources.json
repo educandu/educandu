@@ -2142,6 +2142,22 @@
     }
   },
   {
+    "namespace": "tableOfContents",
+    "language": "en",
+    "resources": {
+      "name": "Table of contents",
+      "levelRange": "Level range"
+    }
+  },
+  {
+    "namespace": "tableOfContents",
+    "language": "de",
+    "resources": {
+      "name": "Inhalts­verzeichnis",
+      "levelRange": "Ebenen-Umfang"
+    }
+  },
+  {
     "namespace": "table",
     "language": "en",
     "resources": {

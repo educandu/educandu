@@ -1,0 +1,35 @@
+.TableOfContentsDisplay {
+  padding: 0;
+  list-style: none;
+}
+
+.TableOfContentsDisplay-node {
+
+  .indent(@factor) {
+    padding-left: @factor * @edu-content-padding;
+  }
+
+  &.TableOfContentsDisplay-node--indent0 {
+    .indent(0);
+  }
+
+  &.TableOfContentsDisplay-node--indent1 {
+    .indent(1);
+  }
+
+  &.TableOfContentsDisplay-node--indent2 {
+    .indent(2);
+  }
+
+  &.TableOfContentsDisplay-node--indent3 {
+    .indent(3);
+  }
+
+  &.TableOfContentsDisplay-node--indent4 {
+    .indent(4);
+  }
+
+  &.TableOfContentsDisplay-node--indent5 {
+    .indent(5);
+  }
+}

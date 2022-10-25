@@ -4,7 +4,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 export default function MarkdownDisplay({ content }) {
   return (
-    <Markdown>{content.text}</Markdown>
+    <Markdown renderAnchors>{content.text}</Markdown>
   );
 }
 

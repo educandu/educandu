@@ -20,6 +20,7 @@ const plugins = [
   'table',
   'pdf-viewer',
   'diagram-net',
+  'table-of-contents',
   'iframe',
   'abc-notation',
   'music-xml-viewer',
