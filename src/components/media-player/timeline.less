@@ -1,4 +1,4 @@
-@timeline-bar-height: 25px;
+@timeline-bar-height: 30px;
 @timeline-segments-bar-color: @edu-white;
 
 .Timeline {
@@ -44,9 +44,12 @@
   }
 }
 
+.Timeline-segmentsBarWrapper {
+  position: relative;
+}
+
 .Timeline-segmentsBar {
   display: flex;
-  position: relative;
   height: @timeline-bar-height;
   color: @timeline-segments-bar-color;
   background-color: @edu-primary-color-light;
@@ -56,6 +59,7 @@
   .m-overflow-ellipsis;
   text-align: center;
   padding: 0 5px;
+  line-height: @timeline-bar-height;
   border-left: 1px dotted @timeline-segments-bar-color;
   border-right: 1px dotted @edu-border-color-dark;
 
@@ -102,18 +106,5 @@
 
   &:last-of-type {
     border-right: none;
-  }
-}
-
-.Timeline-deleteButton {
-  color: @edu-error-color;
-
-  &:hover {
-    color: @edu-error-color;
-  }
-
-  &:disabled {
-    border: none;
-    height: @timeline-bar-height;
   }
 }

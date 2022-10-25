@@ -1,11 +1,12 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import DeleteButton from '../delete-button.js';
+import { useTranslation } from 'react-i18next';
 import PinIcon from '../icons/general/pin-icon.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { useNumberFormat } from '../locale-context.js';
-import DeleteIcon from '../icons/general/delete-icon.js';
 import { isTouchDevice } from '../../ui/browser-helper.js';
+import { confirmDelete } from '../confirmation-dialogs.js';
 import { getContrastColor } from '../../ui/color-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
@@ -16,6 +17,7 @@ const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 
 function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange, onPartClick }) {
   const timelineRef = useRef(null);
+  const { t } = useTranslation('');
   const { formatPercentage } = useNumberFormat();
 
   const [dragState, setDragState] = useState(null);
@@ -23,7 +25,11 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   const [newMarkerBounds, setNewMarkerBounds] = useState([]);
   const [timelineState, setTimelineState] = useState({ markers: [], segments: [], currentTimelineWidth: 0 });
 
-  const handleSegmentDelete = key => () => onPartDelete(key);
+  const handleSegmentDelete = segment => {
+    confirmDelete(t, segment.title, () => {
+      onPartDelete(segment.key);
+    });
+  };
 
   const handleMarkerMouseDown = (marker, index) => () => {
     const prevMarker = timelineState.markers[index - 1];
@@ -101,7 +107,8 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     const segmentsBarMaxTop = timelineBounds.top + timelineBarHeight;
 
     const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
-    if (isExceedingVerticalBounds) {
+    const isExceedingHorizontalBounds = event.clientX < timelineBounds.x || event.clientX > timelineBounds.x + timelineBounds.width;
+    if (isExceedingVerticalBounds || isExceedingHorizontalBounds) {
       handleMarkersBarMouseLeave();
       return;
     }
@@ -274,12 +281,8 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     return (
       <div key={segment.key} className={classes} style={style}>
         {segment.width >= MIN_PART_WIDTH_IN_PX && (
-          <Button
-            className="Timeline-deleteButton"
-            type="link"
-            size="small"
-            icon={<DeleteIcon />}
-            onClick={handleSegmentDelete(segment.key)}
+          <DeleteButton
+            onClick={() => handleSegmentDelete(segment)}
             disabled={timelineState.segments.length === 1}
             />
         )}
@@ -298,9 +301,11 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}
       </div>
-      <div className="Timeline-segmentsBar">
+      <div className="Timeline-segmentsWrapper">
         {!!newMarkerState && <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />}
-        {timelineState.segments.map(renderSegment)}
+        <div className="Timeline-segmentsBar">
+          {timelineState.segments.map(renderSegment)}
+        </div>
       </div>
       <div className="Timeline-deletionBar">
         {timelineState.segments.map(renderDeleteSegment)}

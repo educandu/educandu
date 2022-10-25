@@ -170,8 +170,8 @@
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
-      "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberDisplayName}\" from the room?",
-      "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
+      "deleteRoomMemberConfirmation": "Do you really want to remove member \"{memberDisplayName}\" from the room?",
+      "deleteRoomInvitationConfirmation": "Do you really want to revoke room invitation send to \"{invitationEmail}\"?",
       "leaveRoomConfirmation": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the file \"{fileName}\" from the internal storage?",
       "thisActionIsIrreversible": "This action is irreversible!",
@@ -188,7 +188,8 @@
       "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.",
       "closeAccountConfirmation": "Do you really want to close your account?",
       "exitFileEditor": "Do you really want to exit the editor? Your current changes will be lost.",
-      "deleteCommentConfirmation": "Do you really want to delete this comment from \"{author}\" posted on \"{timestamp}\"?"
+      "deleteCommentConfirmation": "Do you really want to delete this comment from \"{author}\" posted on \"{timestamp}\"?",
+      "genericDeleteConfirmation": "Do you really want to delete \"{title}\"?"
     }
   },
   {
@@ -220,7 +221,8 @@
       "confirmPublicUploadLiability": "Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.",
       "closeAccountConfirmation": "Möchtest du wirklich dein Konto schließen?",
       "exitFileEditor": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.",
-      "deleteCommentConfirmation": "Möchtest du den Kommentar von \"{author}\", geschrieben am \"{timestamp}\", wirklich löschen?"
+      "deleteCommentConfirmation": "Möchtest du den Kommentar von \"{author}\", geschrieben am \"{timestamp}\", wirklich löschen?",
+      "genericDeleteConfirmation": "Möchtest du \"{title}\" wirklich löschen?"
     }
   },
   {
