@@ -21,7 +21,6 @@ import { useNumberFormat } from '../../components/locale-context.js';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
@@ -243,10 +242,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterIndexChange = newSelectedChapterIndex => {
-    setSelectedChapterIndex(newSelectedChapterIndex);
-  };
-
   const handleChapterTitleChange = event => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
@@ -358,12 +353,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               />
             {!!chapters.length && (
             <Fragment>
-              <ChapterSelector
-                chaptersCount={chapters.length}
-                selectedChapterIndex={selectedChapterIndex}
-                selectedChapterTitle={chapters[selectedChapterIndex].title}
-                onChapterIndexChange={handleChapterIndexChange}
-                />
               <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
                 <span className="InteractiveMediaEditor-readonlyValue">
                   {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}

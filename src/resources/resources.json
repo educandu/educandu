@@ -614,22 +614,6 @@
     }
   },
   {
-    "namespace": "chapterSelector",
-    "language": "en",
-    "resources": {
-      "selectPreviousChapter": "Select previous chapter",
-      "selectNextChapter": "Select next chapter"
-    }
-  },
-  {
-    "namespace": "chapterSelector",
-    "language": "de",
-    "resources": {
-      "selectPreviousChapter": "Vorheriges Kapitel auswählen",
-      "selectNextChapter": "Nächstes Kapitel wählen"
-    }
-  },
-  {
     "namespace": "mainTrackEditor",
     "language": "en",
     "resources": {

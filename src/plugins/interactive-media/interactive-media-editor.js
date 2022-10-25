@@ -17,7 +17,6 @@ import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
-import ChapterSelector from '../../components/media-player/chapter-selector.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -94,10 +93,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const handleChapterClick = key => {
     const chapterIndex = chapters.findIndex(p => p.key === key);
     setSelectedChapterIndex(chapterIndex);
-  };
-
-  const handleChapterIndexChange = newSelectedChapterIndex => {
-    setSelectedChapterIndex(newSelectedChapterIndex);
   };
 
   const handleChapterTitleChange = event => {
@@ -226,13 +221,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         {chapters.length && (
           <Fragment>
-            <ChapterSelector
-              chaptersCount={chapters.length}
-              selectedChapterIndex={selectedChapterIndex}
-              selectedChapterTitle={chapters[selectedChapterIndex].title}
-              onChapterIndexChange={handleChapterIndexChange}
-              />
-
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="InteractiveMediaEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
