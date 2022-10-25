@@ -1960,40 +1960,6 @@
     }
   },
   {
-    "namespace": "intervalTrainer",
-    "language": "en",
-    "resources": {
-      "name": "Interval trainer",
-      "oneAttemptSuccesses": "Tasks solved on the first attempt",
-      "multipleAttemptSuccesses": "Tasks solved after multiple attempts",
-      "failures": "Unsolved tasks",
-      "taskNumber": "Task {number}",
-      "noTests": "There are no tests",
-      "next": "Next",
-      "solve": "Solve",
-      "statistics": "Statistics",
-      "restart": "Restart",
-      "invalidJson": "Invalid JSON"
-    }
-  },
-  {
-    "namespace": "intervalTrainer",
-    "language": "de",
-    "resources": {
-      "name": "Intervall-Trainer",
-      "oneAttemptSuccesses": "Aufgaben gelöst nach nur einem Versuch",
-      "multipleAttemptSuccesses": "Aufgaben gelöst nach mehreren Versuchen",
-      "failures": "Nicht gelöste Aufgaben",
-      "taskNumber": "Aufgabe {number}",
-      "noTests": "Keine Tests vorhanden",
-      "next": "Weiter",
-      "solve": "Auflösen",
-      "statistics": "Auswertung",
-      "restart": "Nochmal üben",
-      "invalidJson": "Ungültiges JSON"
-    }
-  },
-  {
     "namespace": "markdown",
     "language": "en",
     "resources": {

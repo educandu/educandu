@@ -90,7 +90,6 @@ export async function setupTestEnvironment() {
       'music-xml-viewer',
       'quick-tester',
       'ear-training',
-      'interval-trainer',
       'audio-waveform',
       'media-slideshow',
       'interactive-media',
