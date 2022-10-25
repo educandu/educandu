@@ -972,7 +972,7 @@ describe('document-service', () => {
         description: 'Description 1',
         slug: 'doc-1',
         sections: [],
-        tags: ['music', 'instructor', 'Dj.D', 'Cretu'],
+        tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
         verified: false,
         archived: false,
         language: 'en'
@@ -983,7 +983,7 @@ describe('document-service', () => {
         description: 'Description 2',
         slug: 'doc-2',
         sections: [],
-        tags: ['Music', 'Instructor', 'Goga'],
+        tags: ['Music', 'Instructor', 'Goga', '2'],
         verified: false,
         archived: false,
         language: 'en'
@@ -1025,14 +1025,14 @@ describe('document-service', () => {
       });
     });
 
-    describe('when I search for something that should not match', () => {
+    describe('when the query does not match any tag', () => {
       it('should return an empty array', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('I can not find anything in this db');
         expect(results).toHaveLength(0);
       });
     });
 
-    describe('when I search for something that should be escaped', () => {
+    describe('when the query has characters that have to be escaped', () => {
       const testCases = [
         { query: 'Dj.', resultLength: 1 },
         { query: '...', resultLength: 0 },
@@ -1040,7 +1040,7 @@ describe('document-service', () => {
       ];
 
       testCases.forEach(test => {
-        it(`should return ${test.resultLength} documents for ${test.query} `, async () => {
+        it(`should return ${test.resultLength} documents for query '${test.query}'`, async () => {
           const results = await sut.getSearchableDocumentsMetadataByTags(test.query);
           expect(results).toHaveLength(test.resultLength);
         });
@@ -1048,14 +1048,14 @@ describe('document-service', () => {
 
     });
 
-    describe('when I search for a string that leads no valid tags', () => {
-      it('should return an empty array', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('to o sh or t');
-        expect(results).toHaveLength(0);
+    describe('when the query consists of tokens with a length less than 3 that require tags to match exactly', () => {
+      it('should return only documents that have exactly matching tags', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('1 or 2');
+        expect(results).toHaveLength(2);
       });
     });
 
-    describe('when I search with a query that returns a single document', () => {
+    describe('when the query matches a single document', () => {
       it('should project the data correctly', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('Wolf   gang \t beat Oven');
 
@@ -1071,7 +1071,7 @@ describe('document-service', () => {
       });
     });
 
-    describe('when I search with a query that returns multiple documents', () => {
+    describe('when the query matches multiple documents', () => {
       it('does not contain archived documents', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('music');
         expect(results.map(result => result.title)).not.toContain('Doc 4');
@@ -1093,8 +1093,8 @@ describe('document-service', () => {
       });
     });
 
-    describe('when I search using the minus search operators', () => {
-      it('excludes all documents containing a tag entirely matched by the minus search operator', async () => {
+    describe('when the query contains the minus search operators', () => {
+      it('excludes all documents containing a tag exactly matched by the minus search operator', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cretu');
 
         expect(results).toHaveLength(1);

@@ -6,8 +6,6 @@ import { SearchOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 
-const MIN_CHAR_COUNT = 3;
-
 export default function SearchBar({ initialValue, autoFocus, onSearch }) {
   const inputRef = useRef();
   const { t } = useTranslation('searchBar');
@@ -18,10 +16,10 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
   };
 
   const handleSearch = value => {
-    if (value.length < MIN_CHAR_COUNT) {
+    if (!value.length) {
       Modal.error({
         title: t('common:error'),
-        content: t('common:searchTextTooShort', { minCharCount: MIN_CHAR_COUNT }),
+        content: t('common:searchTextTooShort', { minCharCount: 1 }),
         onOk: () => inputRef.current.focus()
       });
     } else {
