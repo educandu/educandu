@@ -1950,6 +1950,20 @@
     }
   },
   {
+    "namespace": "markdownWithImage",
+    "language": "en",
+    "resources": {
+      "name": "Markdown with image"
+    }
+  },
+  {
+    "namespace": "markdownWithImage",
+    "language": "de",
+    "resources": {
+      "name": "Markdown mit Bild"
+    }
+  },
+  {
     "namespace": "markdown",
     "language": "en",
     "resources": {
