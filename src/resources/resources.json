@@ -171,7 +171,7 @@
       "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteRoomMemberConfirmation": "Do you really want to remove member \"{memberDisplayName}\" from the room?",
-      "deleteRoomInvitationConfirmation": "Do you really want to revoke room invitation send to \"{invitationEmail}\"?",
+      "deleteRoomInvitationConfirmation": "Do you really want to revoke the room invitation sent to \"{invitationEmail}\"?",
       "leaveRoomConfirmation": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the file \"{fileName}\" from the internal storage?",
       "thisActionIsIrreversible": "This action is irreversible!",
