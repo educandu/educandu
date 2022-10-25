@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { FlagOutlined } from '@ant-design/icons';
+import PinIcon from '../icons/general/pin-icon.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { useNumberFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
@@ -13,7 +13,7 @@ import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 
-function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange }) {
+function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange, onPartClick }) {
   const timelineRef = useRef(null);
   const { formatPercentage } = useNumberFormat();
 
@@ -73,7 +73,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     onStartPositionChange(dragState.marker.key, newStartPosition);
   }, [dragState, timelineState, onStartPositionChange]);
 
-  const handleSegmentsBarClick = () => {
+  const handleMarkersBarClick = () => {
     if (!timelineState.currentTimelineWidth || isTouchDevice()) {
       return;
     }
@@ -85,29 +85,33 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     }
   };
 
-  const handleSegmentsBarMouseLeave = () => {
+  const handleMarkersBarMouseLeave = () => {
     setNewMarkerState(null);
   };
 
-  const handleSegmentsBarMouseMove = event => {
+  const handleMarkersBarMouseMove = event => {
     if (dragState || isTouchDevice()) {
       return;
     }
     const timelineBounds = timelineRef.current.getBoundingClientRect();
 
     const timelineBarHeight = timelineBounds.height / 3;
-    const segmentsBarMinTop = timelineBounds.top + timelineBarHeight;
-    const segmentsBarMaxTop = timelineBounds.top + (timelineBarHeight * 2);
+    const segmentsBarMinTop = timelineBounds.top;
+    const segmentsBarMaxTop = timelineBounds.top + timelineBarHeight;
 
     const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
     if (isExceedingVerticalBounds) {
-      handleSegmentsBarMouseLeave();
+      handleMarkersBarMouseLeave();
       return;
     }
 
     const currentLeft = event.clientX - timelineBounds.left;
     const isInBounds = newMarkerBounds.some(bounds => bounds.leftMin <= currentLeft && currentLeft <= bounds.leftMax);
     setNewMarkerState({ left: currentLeft, isInBounds });
+  };
+
+  const handleSegmentClick = (event, segment) => {
+    onPartClick(segment.key);
   };
 
   const updateStates = useCallback(() => {
@@ -192,7 +196,9 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {!!dragState && (
           <div className="Timeline-markerTimecode">{markerText}</div>
         )}
-        <FlagOutlined onMouseDown={handleMarkerMouseDown(marker, index)} />
+        <div onMouseDown={handleMarkerMouseDown(marker, index)}>
+          <PinIcon />
+        </div>
       </div>
     );
   };
@@ -211,7 +217,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         <div className={`Timeline-markerTimecode ${newMarkerState.isInBounds ? 'Timeline-markerTimecode--valid' : 'Timeline-markerTimecode--invalid'}`}>
           {markerText}
         </div>
-        {newMarkerState.isInBounds && <FlagOutlined />}
+        {newMarkerState.isInBounds && <PinIcon />}
         {!newMarkerState.isInBounds && <CloseIcon />}
       </div>
     );
@@ -230,7 +236,14 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     }
 
     return (
-      <div key={segment.key} className={classes} style={style}>{segment.title}</div>
+      <div
+        key={segment.key}
+        style={style}
+        className={classes}
+        onClick={event => handleSegmentClick(event, segment)}
+        >
+        {segment.title}
+      </div>
     );
   };
 
@@ -247,6 +260,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
           <Button
             className="Timeline-deleteButton"
             type="link"
+            size="small"
             icon={<DeleteIcon />}
             onClick={handleSegmentDelete(segment.key)}
             disabled={timelineState.segments.length === 1}
@@ -258,16 +272,16 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 
   return (
     <div className={classNames('Timeline', { 'is-dragging': !!dragState })} ref={timelineRef}>
-      <div className="Timeline-markersBar">
+      <div
+        className="Timeline-markersBar"
+        onClick={handleMarkersBarClick}
+        onMouseMove={handleMarkersBarMouseMove}
+        onMouseLeave={handleMarkersBarMouseLeave}
+        >
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}
       </div>
-      <div
-        className="Timeline-segmentsBar"
-        onClick={handleSegmentsBarClick}
-        onMouseMove={handleSegmentsBarMouseMove}
-        onMouseLeave={handleSegmentsBarMouseLeave}
-        >
+      <div className="Timeline-segmentsBar">
         {!!newMarkerState && <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />}
         {timelineState.segments.map(renderSegment)}
       </div>
@@ -281,6 +295,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 Timeline.propTypes = {
   durationInMilliseconds: PropTypes.number,
   onPartAdd: PropTypes.func,
+  onPartClick: PropTypes.func,
   onPartDelete: PropTypes.func,
   onStartPositionChange: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
@@ -295,6 +310,7 @@ Timeline.propTypes = {
 Timeline.defaultProps = {
   durationInMilliseconds: 0,
   onPartAdd: () => { },
+  onPartClick: () => { },
   onPartDelete: () => { },
   onStartPositionChange: () => { },
   selectedPartIndex: -1

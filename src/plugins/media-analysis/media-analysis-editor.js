@@ -231,6 +231,11 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const handleChapterClick = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    setSelectedChapterIndex(chapterIndex);
+  };
+
   const handleChapterStartPositionChange = (key, newStartPosition) => {
     const chapter = chapters.find(p => p.key === key);
     chapter.startPosition = newStartPosition;
@@ -347,6 +352,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               parts={chapters}
               selectedPartIndex={selectedChapterIndex}
               onPartAdd={handleChapterAdd}
+              onPartClick={handleChapterClick}
               onPartDelete={handleChapterDelete}
               onStartPositionChange={handleChapterStartPositionChange}
               />

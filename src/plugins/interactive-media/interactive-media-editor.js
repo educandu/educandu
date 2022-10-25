@@ -91,6 +91,11 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const handleChapterClick = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    setSelectedChapterIndex(chapterIndex);
+  };
+
   const handleChapterIndexChange = newSelectedChapterIndex => {
     setSelectedChapterIndex(newSelectedChapterIndex);
   };
@@ -214,6 +219,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           parts={chapters}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
+          onPartClick={handleChapterClick}
           onPartDelete={handleChapterDelete}
           onStartPositionChange={handleChapterStartPositionChange}
           />

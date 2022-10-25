@@ -96,6 +96,11 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const handleChapterClick = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    setSelectedChapterIndex(chapterIndex);
+  };
+
   const handleSelectedChapterIndexChange = newSelectedChapterIndex => {
     setSelectedChapterIndex(newSelectedChapterIndex);
   };
@@ -217,6 +222,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           durationInMilliseconds={playbackDuration}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
+          onPartClick={handleChapterClick}
           onPartDelete={handleChapterDelete}
           onStartPositionChange={handleChapterStartPositionChange}
           />
