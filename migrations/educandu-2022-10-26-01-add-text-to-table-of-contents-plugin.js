@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-await-in-loop, no-console */
-export default class Educandu_2022_10_25_01_add_caption_to_table_of_contents_plugin {
+export default class Educandu_2022_10_26_01_add_text_to_table_of_contents_plugin {
   constructor(db) {
     this.db = db;
   }
@@ -9,7 +9,7 @@ export default class Educandu_2022_10_25_01_add_caption_to_table_of_contents_plu
       {},
       {
         $set: {
-          'sections.$[sectionElement].content.caption': ''
+          'sections.$[sectionElement].content.text': ''
         }
       },
       {
@@ -31,7 +31,7 @@ export default class Educandu_2022_10_25_01_add_caption_to_table_of_contents_plu
       {},
       {
         $unset: {
-          'sections.$[sectionElement].content.caption': null
+          'sections.$[sectionElement].content.text': null
         }
       },
       {

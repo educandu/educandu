@@ -5,7 +5,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 export default function TableOfContentsDisplay({ content }) {
   const [nodes, setNodes] = useState([]);
 
-  const { minLevel, maxLevel, caption } = content;
+  const { minLevel, maxLevel, text } = content;
 
   useEffect(() => {
     const nodeList = [...window.document.querySelectorAll('[data-header="true"]')]
@@ -21,10 +21,8 @@ export default function TableOfContentsDisplay({ content }) {
 
   return (
     <div className="TableOfContentsDisplay">
-      {!!caption && (
-        <h1 className="TableOfContentsDisplay-caption">
-          <Markdown inline>{caption}</Markdown>
-        </h1>
+      {!!text && (
+        <Markdown className="TableOfContentsDisplay-text">{text}</Markdown>
       )}
       {!!nodes.length && (
         <ul className="TableOfContentsDisplay-nodeList">
