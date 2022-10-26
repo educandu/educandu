@@ -1055,6 +1055,13 @@ describe('document-service', () => {
       });
     });
 
+    describe('when the query consists of multiple tokens so that both partial and exact matching logic has to be applied', () => {
+      it('should return documents both matching partially as well as exactly', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('structor 1');
+        expect(results).toHaveLength(2);
+      });
+    });
+
     describe('when the query matches a single document', () => {
       it('should project the data correctly', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('Wolf   gang \t beat Oven');
