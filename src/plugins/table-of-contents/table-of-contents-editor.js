@@ -3,6 +3,7 @@ import { Form, Slider } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { range } from '../../utils/array-utils.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 
 const levelRangeSliderMarks = range({ from: 1, to: 6, step: 1 })
@@ -10,14 +11,18 @@ const levelRangeSliderMarks = range({ from: 1, to: 6, step: 1 })
 
 export default function TableOfContentsEditor({ content, onContentChanged }) {
   const { t } = useTranslation('tableOfContents');
-  const { minLevel, maxLevel } = content;
+  const { minLevel, maxLevel, text } = content;
 
-  const updateContent = newContentValues => {
+  const triggerContentChanged = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleLevelRangeChange = ([newMinLevel, newMaxLevel]) => {
-    updateContent({ minLevel: newMinLevel, maxLevel: newMaxLevel });
+    triggerContentChanged({ minLevel: newMinLevel, maxLevel: newMaxLevel });
+  };
+
+  const handleTextChange = event => {
+    triggerContentChanged({ text: event.target.value });
   };
 
   return (
@@ -33,6 +38,9 @@ export default function TableOfContentsEditor({ content, onContentChanged }) {
             value={[minLevel, maxLevel]}
             onChange={handleLevelRangeChange}
             />
+        </Form.Item>
+        <Form.Item label={t('common:text')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput value={text} onChange={handleTextChange} />
         </Form.Item>
       </Form>
     </div>

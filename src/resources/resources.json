@@ -2102,6 +2102,7 @@
     "language": "en",
     "resources": {
       "name": "Table of contents",
+      "defaultTextMarkdown": "# Table of contents",
       "levelRange": "Level range"
     }
   },
@@ -2110,6 +2111,7 @@
     "language": "de",
     "resources": {
       "name": "Inhalts­verzeichnis",
+      "defaultTextMarkdown": "# Inhaltsverzeichnis",
       "levelRange": "Ebenen-Umfang"
     }
   },
