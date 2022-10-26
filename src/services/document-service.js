@@ -96,16 +96,17 @@ class DocumentService {
       const rawToken = token.substr(isNegative ? 1 : 0).toLowerCase();
       if (isNegative) {
         allNegativeTokens.add(rawToken);
-      } else if (rawToken.length < DOCUMENT_PARTIAL_SEARCH_THRESHOLD) {
-        allPositiveTokens.add(rawToken);
-        positiveExactTokens.add(rawToken);
       } else {
         allPositiveTokens.add(rawToken);
-        positivePartialTokens.add(rawToken);
+        if (rawToken.length < DOCUMENT_PARTIAL_SEARCH_THRESHOLD) {
+          positiveExactTokens.add(rawToken);
+        } else {
+          positivePartialTokens.add(rawToken);
+        }
       }
     }
 
-    if (!positiveExactTokens.size && !positivePartialTokens.size) {
+    if (!allPositiveTokens.size) {
       return [];
     }
 
