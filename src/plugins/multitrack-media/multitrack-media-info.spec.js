@@ -33,12 +33,12 @@ describe('multitrack-media-info', () => {
     it('redacts the media source url', () => {
       content = {
         mainTrack: {
-          sourceUrl: `rooms/${currentRoomId}/media/my-video-1.mp4`,
+          sourceUrl: `cdn://rooms/${currentRoomId}/media/my-video-1.mp4`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: `rooms/${currentRoomId}/media/my-video-2.mp4`,
+            sourceUrl: `cdn://rooms/${currentRoomId}/media/my-video-2.mp4`,
             copyrightNotice: ''
           }
         ]
@@ -51,12 +51,12 @@ describe('multitrack-media-info', () => {
     it('leaves accessible paths intact', () => {
       content = {
         mainTrack: {
-          sourceUrl: `rooms/${currentRoomId}/media/my-file-1.pdf`,
+          sourceUrl: `cdn://rooms/${currentRoomId}/media/my-file-1.pdf`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: `rooms/${currentRoomId}/media/my-file-2.pdf`,
+            sourceUrl: `cdn://rooms/${currentRoomId}/media/my-file-2.pdf`,
             copyrightNotice: ''
           }
         ]
@@ -81,7 +81,10 @@ describe('multitrack-media-info', () => {
         ]
       };
       result = sut.getCdnResources(content);
-      expect(result).toStrictEqual(['media/my-file-1.pdf', 'media/my-file-2.pdf']);
+      expect(result).toStrictEqual([
+        'cdn://media/my-file-1.pdf',
+        'cdn://media/my-file-2.pdf'
+      ]);
     });
 
     it('returns empty list for a YouTube resource', () => {
@@ -138,35 +141,41 @@ describe('multitrack-media-info', () => {
     it('returns a list with the url for an internal public resource', () => {
       content = {
         mainTrack: {
-          sourceUrl: 'media/12345/some-video-1.mp4',
+          sourceUrl: 'cdn://media/12345/some-video-1.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: 'media/12345/some-video-2.mp4',
+            sourceUrl: 'cdn://media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
         ]
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['media/12345/some-video-1.mp4', 'media/12345/some-video-2.mp4']);
+      expect(result).toEqual([
+        'cdn://media/12345/some-video-1.mp4',
+        'cdn://media/12345/some-video-2.mp4'
+      ]);
     });
 
     it('returns a list with the url for an internal private resource', () => {
       content = {
         mainTrack: {
-          sourceUrl: 'rooms/12345/media/some-video-1.mp4',
+          sourceUrl: 'cdn://rooms/12345/media/some-video-1.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: 'rooms/12345/media/some-video-2.mp4',
+            sourceUrl: 'cdn://rooms/12345/media/some-video-2.mp4',
             copyrightNotice: ''
           }
         ]
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['rooms/12345/media/some-video-1.mp4', 'rooms/12345/media/some-video-2.mp4']);
+      expect(result).toEqual([
+        'cdn://rooms/12345/media/some-video-1.mp4',
+        'cdn://rooms/12345/media/some-video-2.mp4'
+      ]);
     });
   });
 });

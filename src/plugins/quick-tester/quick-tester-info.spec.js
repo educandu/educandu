@@ -73,7 +73,7 @@ describe('quick-tester-info', () => {
         tests: [],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
     });
 
     it('returns CDN resources from the teaser', () => {
@@ -83,7 +83,7 @@ describe('quick-tester-info', () => {
         tests: [],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
     });
 
     it('returns CDN resources from the questions', () => {
@@ -93,7 +93,7 @@ describe('quick-tester-info', () => {
         tests: [{ question: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)', answer: '[Answer]' }],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
     });
 
     it('returns CDN resources from the answers', () => {
@@ -103,7 +103,7 @@ describe('quick-tester-info', () => {
         tests: [{ question: '[Question]', answer: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)' }],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
     });
   });
 });

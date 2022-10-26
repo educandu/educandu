@@ -49,7 +49,7 @@ describe('interactive-media-info', () => {
         copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
       };
       result = sut.getCdnResources(content);
-      expect(result).toStrictEqual(['media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
     });
 
     it('returns empty list for a YouTube resource', () => {
@@ -81,20 +81,20 @@ describe('interactive-media-info', () => {
 
     it('returns a list with the url for an internal public resource', () => {
       content = {
-        sourceUrl: 'media/12345/some-video.mp4',
+        sourceUrl: 'cdn://media/12345/some-video.mp4',
         copyrightNotice: ''
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['media/12345/some-video.mp4']);
+      expect(result).toEqual(['cdn://media/12345/some-video.mp4']);
     });
 
     it('returns a list with the url for an internal private resource', () => {
       content = {
-        sourceUrl: 'rooms/12345/media/some-video.mp4',
+        sourceUrl: 'cdn://rooms/12345/media/some-video.mp4',
         copyrightNotice: ''
       };
       result = sut.getCdnResources(content);
-      expect(result).toEqual(['rooms/12345/media/some-video.mp4']);
+      expect(result).toEqual(['cdn://rooms/12345/media/some-video.mp4']);
     });
   });
 });

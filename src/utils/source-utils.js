@@ -7,16 +7,16 @@ import {
   INTERNAL_PRIVATE_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
-function isCdnUrl({ url = '', cdnRootUrl = '' }) {
-  return url.startsWith(cdnRootUrl) || url.startsWith(CDN_URL_PREFIX);
+export function isCdnUrl({ url = '', cdnRootUrl = '' }) {
+  return (cdnRootUrl && url.startsWith(cdnRootUrl)) || url.startsWith(CDN_URL_PREFIX);
 }
 
-function isCdnPath(url = '') {
+export function isCdnPath(url = '') {
   return INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(url)
     || INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(url);
 }
 
-function getCdnPath({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
+export function getCdnPath({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
   return url
     .replace(new RegExp(`^${escapeStringRegexp(cdnRootUrl)}/?`), '')
     .replace(new RegExp(`^${escapeStringRegexp(CDN_URL_PREFIX)}/?`), '');

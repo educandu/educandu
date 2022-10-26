@@ -4,6 +4,7 @@ import markdownItAnchor from 'markdown-it-anchor';
 import { escapeHtml } from '../utils/string-utils.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import { CDN_URL_PREFIX, RESOURCE_TYPE } from '../domain/constants.js';
+import { isCdnUrl, getPortableUrl, getAccessibleUrl, getCdnPath } from '../utils/source-utils.js';
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
 const imageInsideOfLinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
@@ -24,10 +25,14 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
     const nextToken = tokens[idx + 1];
 
     let targetUrl = token.attrGet(targetAttributeName) || '';
-    if (targetUrl.startsWith(CDN_URL_PREFIX)) {
-      const targetUrlPath = targetUrl.slice(CDN_URL_PREFIX.length);
-      env.collectCdnUrl?.(targetUrlPath);
-      targetUrl = (env.cdnRootUrl ? `${env.cdnRootUrl}/` : CDN_URL_PREFIX) + targetUrlPath;
+    if (isCdnUrl({ url: targetUrl, cdnRootUrl: env.cdnRootUrl })) {
+      const portableUrl = getPortableUrl({ url: targetUrl, cdnRootUrl: env.cdnRootUrl });
+
+      if (getCdnPath({ url: targetUrl, cdnRootUrl: env.cdnRootUrl })) {
+        env.collectCdnUrl?.(portableUrl);
+      }
+
+      targetUrl = getAccessibleUrl({ url: targetUrl, cdnRootUrl: env.cdnRootUrl });
       token.attrSet(targetAttributeName, targetUrl);
       if (token.markup === 'autolink') {
         nextToken.content = targetUrl;
