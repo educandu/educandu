@@ -16,10 +16,10 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
   };
 
   const handleSearch = value => {
-    if (!value.length) {
+    if (!value) {
       Modal.error({
         title: t('common:error'),
-        content: t('common:searchTextTooShort', { minCharCount: 1 }),
+        content: t('searchTermRequired'),
         onOk: () => inputRef.current.focus()
       });
     } else {
