@@ -89,7 +89,7 @@ function StorageLocation({
     if (value.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
-        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
+        content: t('searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
       });
 
       return;

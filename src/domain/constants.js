@@ -169,6 +169,8 @@ export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
   wrapperCol: { span: 14, offset: 4 }
 };
 
+export const DOCUMENT_PARTIAL_SEARCH_THRESHOLD = 3;
+
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 
 export const CDN_URL_PREFIX = 'cdn://';

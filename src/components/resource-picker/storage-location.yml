@@ -7,6 +7,9 @@ filesView_grid:
 publicStorageWarning:
   en: This directory is publicly accessible
   de: Dieses Verzeichnis ist öffentlich zugänglich
+searchTextTooShort:
+  en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
+  de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein
 searchOngoing:
   en: Searching …
   de: Suche …

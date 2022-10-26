@@ -1382,6 +1382,7 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "This directory is publicly accessible",
+      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
       "searchOngoing": "Searching …",
       "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "backToDirectoryView": "Back to directory view",
@@ -1395,6 +1396,7 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
       "searchOngoing": "Suche …",
       "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "backToDirectoryView": "Zurück zur Verzeichnisansicht",
@@ -1507,14 +1509,16 @@
     "namespace": "searchBar",
     "language": "en",
     "resources": {
-      "searchPlaceholder": "Search terms"
+      "searchPlaceholder": "Search terms",
+      "searchTermRequired": "Please specify at least one search term"
     }
   },
   {
     "namespace": "searchBar",
     "language": "de",
     "resources": {
-      "searchPlaceholder": "Suchbegriffe"
+      "searchPlaceholder": "Suchbegriffe",
+      "searchTermRequired": "Bitte gib mindestens einen Suchbegriff an"
     }
   },
   {
@@ -2310,7 +2314,6 @@
       "sortedByUser": "Sorted by user",
       "sortedByArchived": "Sorted by archived status",
       "search": "Search",
-      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
       "capacity": "Capacity",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
@@ -2465,7 +2468,6 @@
       "sortedByUser": "Nach Benutzer sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "search": "Suche",
-      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
       "capacity": "Kapazität",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",

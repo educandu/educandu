@@ -36,7 +36,9 @@ describe('input-validators', () => {
 
     const testCases = [
       { tag: null, expectedResult: false },
-      { tag: 'ta', expectedResult: false },
+      { tag: '', expectedResult: false },
+      { tag: 't', expectedResult: true },
+      { tag: 'ta', expectedResult: true },
       { tag: 'tag', expectedResult: true },
       { tag: ' tag ', expectedResult: true },
       { tag: 't a g', expectedResult: false },
