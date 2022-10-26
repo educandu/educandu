@@ -47,8 +47,8 @@ describe('markdown-info', () => {
         ].join('\n')
       });
       expect(result).toStrictEqual([
-        'media/JgTaqob5vqosBiHsZZoh1/some-image.png',
-        'rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png'
+        'cdn://media/JgTaqob5vqosBiHsZZoh1/some-image.png',
+        'cdn://rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png'
       ]);
     });
   });
