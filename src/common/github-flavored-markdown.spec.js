@@ -98,6 +98,8 @@ describe('GithubFlavoredMarkdown', () => {
       const result = sut.extractCdnResources([
         '[Click here](cdn://media/12345/file-1.png)',
         '[Click here](cdn://rooms/12345/media/file-2.png)',
+        '[Click here](https://cdn.my-domain.com/media/12345/file-x.png)',
+        '[Click here](https://cdn.my-domain.com/rooms/12345/media/file-x.png)',
         'Download this: <cdn://media/12345/file-3.pdf>',
         'Download this: <cdn://rooms/12345/media/file-4.pdf>',
         '* Image inside a **bold section ![Alt text](cdn://media/12345/file-5.png) within** a list item',

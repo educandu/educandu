@@ -11,6 +11,10 @@ export function isCdnUrl({ url = '', cdnRootUrl = '' }) {
   return (cdnRootUrl && url.startsWith(cdnRootUrl)) || url.startsWith(CDN_URL_PREFIX);
 }
 
+export function isPortableCdnUrl(url) {
+  return url.startsWith(CDN_URL_PREFIX);
+}
+
 export function isCdnPath(url = '') {
   return INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(url)
     || INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(url);
