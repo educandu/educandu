@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
+import EditIcon from '../icons/general/edit-icon.js';
+import FileIcon from '../icons/general/file-icon.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -14,7 +16,7 @@ import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
-import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, EditOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const ITEM_STATUS = {
   pristine: 'pristine',
@@ -50,7 +52,7 @@ function FilesUploadScreen({
   const [uploadItems, setUploadItems] = useState(uploadQueue.map(({ file, isPristine }) => ({
     file,
     status: isPristine ? ITEM_STATUS.pristine : ITEM_STATUS.preprocessed,
-    uploadedFile: null,
+    isEditable: isEditableImageFile(file),
     errorMessage: null
   })));
 
@@ -145,7 +147,7 @@ function FilesUploadScreen({
     setPreviewedFileIndex(itemIndex === previewedFileIndex ? -1 : itemIndex);
   };
 
-  const renderUploadMessage = () => {
+  const getUploadMessage = () => {
     switch (currentStage) {
       case STAGE.uploadNotStarted:
         return t('stage_uploadNotStarted', { fileCount: uploadItems.length });
@@ -158,6 +160,22 @@ function FilesUploadScreen({
     }
   };
 
+  const renderUploadMessage = () => {
+    const shouldRenderMessageDetails = currentStage === STAGE.uploadNotStarted && uploadItems.some(item => item.isEditable);
+
+    return (
+      <div className="FilesUploadScreen-message">
+        {getUploadMessage()}
+        {shouldRenderMessageDetails && (
+          <div className="FilesUploadScreen-messageDetails">
+            <InfoCircleOutlined className="u-info-icon FilesUploadScreen-messageDetailsIcon" />
+            {t('stageDetails_uploadNotStarted')}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderUploadItemName = (item, itemIndex) => {
     if (item.status === ITEM_STATUS.succeeded && uploadItems.length > 1) {
       return <a onClick={() => handleUploadItemClick(itemIndex)}>{item.file.name}</a>;
@@ -166,29 +184,28 @@ function FilesUploadScreen({
   };
 
   const renderUploadItem = (item, itemIndex) => {
-    const itemIsEditable = isEditableImageFile(item.file);
     return (
       <div className="FilesUploadScreen-fileStatus">
         <div className="FilesUploadScreen-fileStatusRow">
-          {item.status === ITEM_STATUS.pristine && itemIsEditable && (
+          {item.status === ITEM_STATUS.pristine && item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
-              <EditOutlined className="FilesUploadScreen-fileStatusIcon" />
+              <EditIcon className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--pristine" />
             </a>
           </Tooltip>
           )}
-          {item.status === ITEM_STATUS.pristine && !itemIsEditable && (
-          <FileOutlined className="FilesUploadScreen-fileStatusIcon" />
+          {item.status === ITEM_STATUS.pristine && !item.isEditable && (
+          <FileIcon className="FilesUploadScreen-fileStatusIcon" />
           )}
-          {item.status === ITEM_STATUS.preprocessed && itemIsEditable && (
+          {item.status === ITEM_STATUS.preprocessed && item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)}>
-              <EditOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
+              <EditIcon className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
             </a>
           </Tooltip>
           )}
-          {item.status === ITEM_STATUS.preprocessed && !itemIsEditable && (
-          <FileOutlined className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
+          {item.status === ITEM_STATUS.preprocessed && !item.isEditable && (
+            <FileIcon className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
           )}
           {item.status === ITEM_STATUS.uploading && (
           <LoadingOutlined className="FilesUploadScreen-fileStatusIcon" />
@@ -229,9 +246,7 @@ function FilesUploadScreen({
               <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
             </div>
           )}
-          <div className="FilesUploadScreen-message" >
-            {renderUploadMessage()}
-          </div>
+          {renderUploadMessage()}
           <div className="FilesUploadScreen-fileStatusContainer">
             {uploadItems.map((item, index) => (
               <div key={index.toString()}>
