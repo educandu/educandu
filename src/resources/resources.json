@@ -1953,14 +1953,24 @@
     "namespace": "markdownWithImage",
     "language": "en",
     "resources": {
-      "name": "Markdown with image"
+      "name": "Markdown with image",
+      "imageUrl": "Image URL",
+      "imageWidth": "Image width",
+      "imagePosition": "Image position",
+      "left": "left",
+      "right": "right"
     }
   },
   {
     "namespace": "markdownWithImage",
     "language": "de",
     "resources": {
-      "name": "Markdown mit Bild"
+      "name": "Markdown mit Bild",
+      "imageUrl": "Bild-URL",
+      "imageWidth": "Bildbreite",
+      "imagePosition": "Bildstelle",
+      "left": "Links",
+      "right": "Rechts"
     }
   },
   {
