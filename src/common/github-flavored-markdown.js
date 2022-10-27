@@ -2,9 +2,9 @@ import MarkdownIt from 'markdown-it';
 import slugify from '@sindresorhus/slugify';
 import markdownItAnchor from 'markdown-it-anchor';
 import { escapeHtml } from '../utils/string-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceType } from '../utils/resource-utils.js';
-import { CDN_URL_PREFIX, RESOURCE_TYPE } from '../domain/constants.js';
-import { getAccessibleUrl, getCdnPath, isPortableCdnUrl } from '../utils/source-utils.js';
+import { getAccessibleUrl, isPortableCdnUrl, getCdnPath } from '../utils/source-utils.js';
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
 const imageInsideOfLinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
@@ -26,9 +26,9 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
 
     let targetUrl = token.attrGet(targetAttributeName) || '';
     if (isPortableCdnUrl(targetUrl)) {
-      const cdnPath = getCdnPath({ url: targetUrl, cdnRootUrl: env.cdnRootUrl });
+      const isNonEmptyCdnUrl = !!getCdnPath({ url: targetUrl });
 
-      if (cdnPath) {
+      if (isNonEmptyCdnUrl) {
         env.collectCdnUrl?.(targetUrl);
       }
 
@@ -104,18 +104,15 @@ class GithubFlavoredMarkdown {
     return [...linkSet];
   }
 
-  redactCdnResources(markdown, cb) {
+  redactCdnResources(markdown, redactionCallback) {
     if (!markdown) {
       return markdown;
     }
 
     const redact = url => {
-      if (url.startsWith(CDN_URL_PREFIX)) {
-        const pathOnly = url.slice(CDN_URL_PREFIX.length);
-        if (pathOnly) {
-          const redactedPath = cb(pathOnly);
-          return redactedPath ? `${CDN_URL_PREFIX}${redactedPath}` : '';
-        }
+      const isRedactableUrl = isPortableCdnUrl(url) && !!getCdnPath({ url });
+      if (isRedactableUrl) {
+        return redactionCallback(url);
       }
 
       return url;

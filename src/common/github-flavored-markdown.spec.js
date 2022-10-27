@@ -75,6 +75,7 @@ describe('GithubFlavoredMarkdown', () => {
         'this is an image: ![](cdn://media/12345/example.png  ) and',
         'this is an image: ![alt](cdn://media/12345/example.png  "") and',
         'this is an image: ![alt](cdn://media/12345/example.png "image title") and',
+        'this is a path and not an URL: ![alt](media/12345/example.png "path") and',
         'this is an image inside a hyperlink: [![alt](cdn://example.png "image title")](cdn://example-target);',
         'this, too: [![alt](https://example.com/file.png "image title")](cdn://example-target);',
         'this, too: [![alt](cdn://example.png "image title")](https://example.com/example-target);'
@@ -86,6 +87,7 @@ describe('GithubFlavoredMarkdown', () => {
         'this is an image: ![](cdn://media/12345/redacted.png  ) and',
         'this is an image: ![alt](cdn://media/12345/redacted.png  "") and',
         'this is an image: ![alt](cdn://media/12345/redacted.png "image title") and',
+        'this is a path and not an URL: ![alt](media/12345/example.png "path") and',
         'this is an image inside a hyperlink: [![alt](cdn://redacted.png "image title")](cdn://redacted-target);',
         'this, too: [![alt](https://example.com/file.png "image title")](cdn://redacted-target);',
         'this, too: [![alt](cdn://redacted.png "image title")](https://example.com/example-target);'
@@ -98,6 +100,8 @@ describe('GithubFlavoredMarkdown', () => {
       const result = sut.extractCdnResources([
         '[Click here](cdn://media/12345/file-1.png)',
         '[Click here](cdn://rooms/12345/media/file-2.png)',
+        '[Click here](media/12345/file-x.png)',
+        '[Click here](rooms/12345/media/file-x.png)',
         '[Click here](https://cdn.my-domain.com/media/12345/file-x.png)',
         '[Click here](https://cdn.my-domain.com/rooms/12345/media/file-x.png)',
         'Download this: <cdn://media/12345/file-3.pdf>',
