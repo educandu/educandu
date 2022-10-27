@@ -13,20 +13,18 @@ export default function MarkdownWithImageDisplay({ content }) {
   const { text, image } = content;
 
   const imageSrc = getAccessibleUrl({ url: image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-  const imageWrapperStyle = { float: image.position };
-  if (image.position === IMAGE_POSITION.left) {
-    imageWrapperStyle.paddingLeft = 0;
-  } else {
-    imageWrapperStyle.paddingRight = 0;
-  }
+
+  const imageWrapperClasses = classNames(
+    'MarkdownWithImageDisplay-imageWrapper',
+    `u-width-${image.width}`,
+    { 'MarkdownWithImageDisplay-imageWrapper--left': image.position === IMAGE_POSITION.left },
+    { 'MarkdownWithImageDisplay-imageWrapper--right': image.position === IMAGE_POSITION.right }
+  );
 
   return (
     <div className="MarkdownWithImageDisplay">
       <div className="MarkdownWithImageDisplay-verticallyStretchedContent">
-        <div
-          style={imageWrapperStyle}
-          className={classNames('MarkdownWithImageDisplay-imageWrapper', `u-width-${image.width}`)}
-          >
+        <div className={imageWrapperClasses}>
           <img src={imageSrc} className="MarkdownWithImageDisplay-image" />
           {!!image.copyrightNotice && <CopyrightNotice value={image.copyrightNotice} />}
         </div>
