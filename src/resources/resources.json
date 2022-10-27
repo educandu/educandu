@@ -1338,7 +1338,7 @@
       "insufficientPrivateStorge": "Not enough storage space available for file",
       "startUpload": "Start upload",
       "preprocessed": "edited",
-      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded..",
+      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
       "stageDetails_uploadNotStarted": "You can edit images before upload by clicking on the pen icon.",
       "stage_uploading": "Uploading ...",
       "stage_uploadFinished": "Upload finished.",
