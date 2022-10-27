@@ -23,13 +23,11 @@ export default function MarkdownWithImageDisplay({ content }) {
 
   return (
     <div className="MarkdownWithImageDisplay">
-      <div className="MarkdownWithImageDisplay-verticallyStretchedContent">
-        <div className={imageWrapperClasses}>
-          <img src={imageSrc} className="MarkdownWithImageDisplay-image" />
-          {!!image.copyrightNotice && <CopyrightNotice value={image.copyrightNotice} />}
-        </div>
-        <Markdown renderAnchors>{text}</Markdown>
+      <div className={imageWrapperClasses}>
+        <img src={imageSrc} className="MarkdownWithImageDisplay-image" />
+        {!!image.copyrightNotice && <CopyrightNotice value={image.copyrightNotice} />}
       </div>
+      <Markdown renderAnchors>{text}</Markdown>
     </div>
   );
 }
