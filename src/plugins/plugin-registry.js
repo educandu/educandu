@@ -22,6 +22,7 @@ import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import TableOfContentsInfo from './table-of-contents/table-of-contents-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
+import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-info.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -45,7 +46,8 @@ const allPossibleInfoTypes = [
   MusicXmlViewerInfo,
   TableOfContentsInfo,
   MultitrackMediaInfo,
-  InteractiveMediaInfo
+  InteractiveMediaInfo,
+  MarkdownWithImageInfo
 ];
 
 class RegisteredPlugin {

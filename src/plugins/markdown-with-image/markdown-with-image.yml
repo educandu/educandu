@@ -1,0 +1,18 @@
+name:
+  en: Markdown with image
+  de: Markdown mit Bild
+imageUrl:
+  en: Image URL
+  de: Bild-URL
+imageWidth:
+  en: Image width
+  de: Bildbreite
+imagePosition:
+  en: Image position
+  de: Bildstelle
+left:
+  en: left
+  de: Links
+right:
+  en: right
+  de: Rechts

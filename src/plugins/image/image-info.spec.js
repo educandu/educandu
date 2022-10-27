@@ -10,7 +10,7 @@ describe('image-info', () => {
   describe('redactContent', () => {
     it('redacts inaccessible recources', () => {
       const result = sut.redactContent({
-        sourceUrl: 'rooms/12345/media/some-image.jpeg',
+        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
         revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
@@ -24,13 +24,13 @@ describe('image-info', () => {
     });
     it('leaves accessible recources intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'rooms/12345/media/some-image.jpeg',
+        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
         revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'rooms/12345/media/some-image.jpeg',
+        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
         revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
@@ -46,7 +46,11 @@ describe('image-info', () => {
         hoverEffect: { copyrightNotice: '[Hyperlink](cdn://media/my-hover-file.pdf)' },
         revealEffect: { copyrightNotice: '[Hyperlink](cdn://media/my-reveal-file.pdf)' }
       });
-      expect(result).toStrictEqual(['media/my-file.pdf', 'media/my-hover-file.pdf', 'media/my-reveal-file.pdf']);
+      expect(result).toStrictEqual([
+        'cdn://media/my-file.pdf',
+        'cdn://media/my-hover-file.pdf',
+        'cdn://media/my-reveal-file.pdf'
+      ]);
     });
 
     it('returns empty list for external resources', () => {
@@ -69,11 +73,15 @@ describe('image-info', () => {
 
     it('returns a list with the urls for internal resources', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'media/some-image.png',
-        hoverEffect: { sourceUrl: 'media/some-hover-image.png' },
-        revealEffect: { sourceUrl: 'media/some-reveal-image.png' }
+        sourceUrl: 'cdn://media/some-image.png',
+        hoverEffect: { sourceUrl: 'cdn://media/some-hover-image.png' },
+        revealEffect: { sourceUrl: 'cdn://media/some-reveal-image.png' }
       });
-      expect(result).toEqual(['media/some-image.png', 'media/some-hover-image.png', 'media/some-reveal-image.png']);
+      expect(result).toEqual([
+        'cdn://media/some-image.png',
+        'cdn://media/some-hover-image.png',
+        'cdn://media/some-reveal-image.png'
+      ]);
     });
   });
 });

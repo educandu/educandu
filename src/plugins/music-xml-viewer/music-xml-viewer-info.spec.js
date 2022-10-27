@@ -9,7 +9,7 @@ describe('music-xml-viewer-info', () => {
   describe('redactContent', () => {
     it('redacts the XML source url', () => {
       const input = {
-        sourceUrl: 'rooms/12345/media/my-song.xml'
+        sourceUrl: 'cdn://rooms/12345/media/my-song.xml'
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -17,7 +17,7 @@ describe('music-xml-viewer-info', () => {
 
     it('leaves accessible paths intact', () => {
       const input = {
-        sourceUrl: 'rooms/12345/media/my-song.xml'
+        sourceUrl: 'cdn://rooms/12345/media/my-song.xml'
       };
       const result = sut.redactContent(input, '12345');
       expect(result).toStrictEqual(input);
@@ -31,13 +31,13 @@ describe('music-xml-viewer-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'media/12345/some-song.xml' });
-      expect(result).toEqual(['media/12345/some-song.xml']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://media/12345/some-song.xml' });
+      expect(result).toEqual(['cdn://media/12345/some-song.xml']);
     });
 
     it('returns a list with the url for an internal private resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'rooms/12345/media/some-song.xml' });
-      expect(result).toEqual(['rooms/12345/media/some-song.xml']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://rooms/12345/media/some-song.xml' });
+      expect(result).toEqual(['cdn://rooms/12345/media/some-song.xml']);
     });
   });
 });
