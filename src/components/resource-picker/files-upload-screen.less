@@ -35,11 +35,24 @@
   margin-bottom: 15px;
 }
 
+.FilesUploadScreen-messageDetails {
+  padding-top: 5px;
+  font-size: 12px;
+}
+
+.FilesUploadScreen-messageDetailsIcon {
+  margin: 0 10px;
+}
+
 .FilesUploadScreen-fileStatusContainer {
   overflow: auto;
 }
 
 .FilesUploadScreen-fileStatusIcon {
+  &.FilesUploadScreen-fileStatusIcon--pristine {
+    color: @edu-success-color;
+  }
+
   &.FilesUploadScreen-fileStatusIcon--processed {
     color: @edu-secondary-color-dark;
   }

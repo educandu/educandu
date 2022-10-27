@@ -1338,9 +1338,10 @@
       "insufficientPrivateStorge": "Not enough storage space available for file",
       "startUpload": "Start upload",
       "preprocessed": "edited",
-      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded. You can edit images before upload by clicking on the pen icon.",
+      "stage_uploadNotStarted": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded..",
+      "stageDetails_uploadNotStarted": "You can edit images before upload by clicking on the pen icon.",
       "stage_uploading": "Uploading ...",
-      "stage_uploadFinished": "Upload finished",
+      "stage_uploadFinished": "Upload finished.",
       "optimizeImages": "Optimize images for web display"
     }
   },
@@ -1353,9 +1354,10 @@
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar",
       "startUpload": "Upload starten",
       "preprocessed": "bearbeitet",
-      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen. Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
+      "stage_uploadNotStarted": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen.",
+      "stageDetails_uploadNotStarted": "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten.",
       "stage_uploading": "Hochladen ...",
-      "stage_uploadFinished": "Upload beendet",
+      "stage_uploadFinished": "Upload beendet.",
       "optimizeImages": "Bilder für Web optimieren"
     }
   },
