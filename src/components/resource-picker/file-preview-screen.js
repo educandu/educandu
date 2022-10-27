@@ -12,7 +12,7 @@ function FilePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) 
   return (
     <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
-      <div className="u-resource-picker-screen-content u-resource-picker-screen-content-centered u-resource-picker-screen-content-scrollable">
+      <div className="u-resource-picker-screen-content u-resource-picker-screen-content-fit u-resource-picker-screen-content-scrollable">
         <FilePreview url={file.url} size={file.size} createdOn={file.createdOn} />
       </div>
       <div className="u-resource-picker-screen-footer">
