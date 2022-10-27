@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
+import { useService } from '../container-context.js';
 import MusicXmlDocument from '../music-xml-document.js';
 import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
@@ -23,6 +24,7 @@ import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-can
 import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
+import WikimediaCommonsApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-commons-api-client.js';
 import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import {
@@ -72,6 +74,19 @@ function Tests({ PageTemplate }) {
   const handleCopyToClipboard = async clipboardText => {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
+  };
+
+  // WikimediaCommonsApiClient
+  const [wcacQuery, setWcacQuery] = useState('');
+  const [wcacResult, setWcacResult] = useState('');
+  const wcacApiClient = useService(WikimediaCommonsApiClient);
+  const [wcacFileTypes, setWcacFileTypes] = useState(Object.values(FILE_TYPE));
+  const handleWcacSearchClick = async () => {
+    const data = await wcacApiClient.queryMediaFiles({ searchText: wcacQuery, fileTypes: wcacFileTypes });
+    setWcacResult(JSON.stringify(data, null, 2));
+    // For future reference: `data.continue.gsroffset` (if set) gives us the next offset to load even more results:
+    const canLoadMore = Number.isFinite(data.continue?.gsroffset);
+    console.log('canLoadMore', canLoadMore);
   };
 
   // AudioWaveformCanvas
@@ -341,6 +356,18 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
+          <TabPane tab="WikimediaCommonsApiClient" key="WikimediaCommonsApiClient">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
+              File types:
+              <Checkbox.Group options={Object.values(FILE_TYPE)} value={wcacFileTypes} onChange={setWcacFileTypes} />
+              Search text:
+              <Input value={wcacQuery} onChange={event => setWcacQuery(event.target.value)} />
+              <Button type="primary" onClick={handleWcacSearchClick}>Search</Button>
+            </div>
+            <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
+              {wcacResult}
+            </pre>
+          </TabPane>
           <TabPane tab="UrlInput" key="UrlInput">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
