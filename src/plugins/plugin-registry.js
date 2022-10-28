@@ -5,6 +5,7 @@ import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
+import MemoryInfo from './memory/memory-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
 import { isBrowser } from '../ui/browser-helper.js';
 import MarkdownInfo from './markdown/markdown-info.js';
@@ -32,6 +33,7 @@ const allPossibleInfoTypes = [
   ImageInfo,
   TableInfo,
   IframeInfo,
+  MemoryInfo,
   CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,

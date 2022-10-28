@@ -2048,6 +2048,20 @@
     }
   },
   {
+    "namespace": "memory",
+    "language": "en",
+    "resources": {
+      "name": "Memory"
+    }
+  },
+  {
+    "namespace": "memory",
+    "language": "de",
+    "resources": {
+      "name": "Memory"
+    }
+  },
+  {
     "namespace": "multitrackMedia",
     "language": "en",
     "resources": {
