@@ -1616,6 +1616,7 @@
     "language": "en",
     "resources": {
       "tooltip_youtube": "Youtube",
+      "tooltip_wikimedia-commons": "Wikimedia Commons",
       "tooltip_internal-public": "internal public storage",
       "tooltip_internal-private": "internal private storage",
       "tooltip_external": "external",
@@ -1627,6 +1628,7 @@
     "language": "de",
     "resources": {
       "tooltip_youtube": "Youtube",
+      "tooltip_wikimedia-commons": "Wikimedia Commons",
       "tooltip_internal-public": "interner öffentlicher Speicher",
       "tooltip_internal-private": "interner privater Speicher",
       "tooltip_external": "extern",
