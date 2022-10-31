@@ -157,7 +157,7 @@ function MediaPlayerProgressBar({
   };
 
   const classes = classNames('MediaPlayerProgressBar', { 'is-enabled': isMediaLoaded });
-  const currentProgressInPx = (playedMilliseconds / durationInMilliseconds) * progressBarWidthInPx;
+  const currentProgressInPx = isMediaLoaded ? (playedMilliseconds / durationInMilliseconds) * progressBarWidthInPx : 0;
 
   return (
     <div className={classes} ref={progressBarRef}>
