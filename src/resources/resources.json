@@ -2051,14 +2051,20 @@
     "namespace": "memory",
     "language": "en",
     "resources": {
-      "name": "Memory"
+      "name": "Memory",
+      "tilePairs": "Tile pairs",
+      "tileA": "Tile A",
+      "tileB": "Tile B"
     }
   },
   {
     "namespace": "memory",
     "language": "de",
     "resources": {
-      "name": "Memory"
+      "name": "Memory",
+      "tilePairs": "Kachelpaare",
+      "tileA": "Kachel A",
+      "tileB": "Kachel B"
     }
   },
   {

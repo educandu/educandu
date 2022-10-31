@@ -1,3 +1,12 @@
 name:
   en: Memory
   de: Memory
+tilePairs:
+  en: Tile pairs
+  de: Kachelpaare
+tileA:
+  en: Tile A
+  de: Kachel A
+tileB:
+  en: Tile B
+  de: Kachel B
