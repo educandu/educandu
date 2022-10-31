@@ -9,7 +9,7 @@ describe('audio-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts private recources from different rooms', () => {
+    it('redacts private resources from different rooms', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
@@ -20,7 +20,7 @@ describe('audio-info', () => {
       });
     });
 
-    it('leaves private recources from the same room intact', () => {
+    it('leaves private resources from the same room intact', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
@@ -31,7 +31,7 @@ describe('audio-info', () => {
       });
     });
 
-    it('leaves public recources intact', () => {
+    it('leaves public resources intact', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://media/12345/some-sound.mp3',
         copyrightNotice: '[Click here](cdn://media/12345/some-doc.pdf)'

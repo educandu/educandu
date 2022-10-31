@@ -9,7 +9,7 @@ describe('markdown-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts private recources from different rooms', () => {
+    it('redacts private resources from different rooms', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png)'
       }, 'rebhjf4MLq7yjeoCnYfn7E');
@@ -18,7 +18,7 @@ describe('markdown-info', () => {
       });
     });
 
-    it('leaves private recources from the same room intact', () => {
+    it('leaves private resources from the same room intact', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png)'
       }, '63cHjt3BAhGnNxzJGrTsN1');
@@ -27,7 +27,7 @@ describe('markdown-info', () => {
       });
     });
 
-    it('leaves public recources intact', () => {
+    it('leaves public resources intact', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://media/JgTaqob5vqosBiHsZZoh1/some-image.png)'
       }, 'rebhjf4MLq7yjeoCnYfn7E');

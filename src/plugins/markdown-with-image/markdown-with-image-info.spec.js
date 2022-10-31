@@ -8,7 +8,7 @@ describe('markdown-with-image-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts inaccessible recources', () => {
+    it('redacts inaccessible resources', () => {
       const roomId = '12345';
       const targetRoomId = '67890';
 
