@@ -1,12 +1,18 @@
 .FlipCard {
-  border: 1px solid black;
-  min-width: 15px;
-  padding: 5px;
   display: flex;
   align-items: center;
   overflow: auto;
+  background-color: @edu-white;
+  border: 1px solid @edu-border-color-light;
+  border-radius: @edu-border-radius-sm;
+
+  &:hover {
+    cursor: pointer;
+    border-color: @edu-border-color-dark;
+  }
 }
 
 .FlipCard-frontContent {
+  padding: 8px;
   margin: auto;
 }
