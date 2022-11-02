@@ -1,16 +1,26 @@
-import { DIMENSION } from './constants.js';
+import { SIZE } from './constants.js';
 
 export const createDefaultTile = () => ({
   text: ''
 });
 
-export const getTilePairCountByDimension = dimension => {
-  switch (dimension) {
-    case DIMENSION.threeByThree:
+export const getTilePairCountBySize = size => {
+  switch (size) {
+    case SIZE.threeByThree:
       return 4;
-    case DIMENSION.fourByFour:
+    case SIZE.fourByFour:
       return 8;
     default:
-      throw Error(`Unsupported dimension '${dimension}'`);
+      throw Error(`Unsupported size '${size}'`);
   }
+};
+
+export const resizeTilePairs = (oldTilePairs, newSize) => {
+  const length = getTilePairCountBySize(newSize);
+  const newTilePairs = Array.from(
+    { length },
+    (_, index) => oldTilePairs[index] || [createDefaultTile(), createDefaultTile()]
+  );
+
+  return newTilePairs;
 };

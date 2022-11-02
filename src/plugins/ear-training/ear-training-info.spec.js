@@ -8,7 +8,7 @@ describe('ear-training-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts inaccessible recources', () => {
+    it('redacts inaccessible resources', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         tests: [
@@ -26,7 +26,7 @@ describe('ear-training-info', () => {
         ]
       });
     });
-    it('leaves accessible recources intact', () => {
+    it('leaves accessible resources intact', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
         tests: [

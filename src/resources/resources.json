@@ -2051,14 +2051,20 @@
     "namespace": "memory",
     "language": "en",
     "resources": {
-      "name": "Memory"
+      "name": "Memory",
+      "tilePairs": "Card pairs",
+      "tileA": "Card A",
+      "tileB": "Card B"
     }
   },
   {
     "namespace": "memory",
     "language": "de",
     "resources": {
-      "name": "Memory"
+      "name": "Memory",
+      "tilePairs": "Kartenpaare",
+      "tileA": "Karte A",
+      "tileB": "Karte B"
     }
   },
   {

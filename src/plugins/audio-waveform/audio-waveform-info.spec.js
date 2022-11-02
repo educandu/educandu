@@ -7,7 +7,7 @@ describe('audio-waveform-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts inaccessible recources', () => {
+    it('redacts inaccessible resources', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-image.png',
         width: 100
@@ -17,7 +17,7 @@ describe('audio-waveform-info', () => {
         width: 100
       });
     });
-    it('leaves accessible recources intact', () => {
+    it('leaves accessible resources intact', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-image.png',
         width: 100

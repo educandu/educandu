@@ -8,7 +8,7 @@ describe('image-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts inaccessible recources', () => {
+    it('redacts inaccessible resources', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
@@ -22,7 +22,7 @@ describe('image-info', () => {
         revealEffect: { copyrightNotice: '[Click here]()' }
       });
     });
-    it('leaves accessible recources intact', () => {
+    it('leaves accessible resources intact', () => {
       const result = sut.redactContent({
         sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
         copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
