@@ -2,11 +2,11 @@ name:
   en: Memory
   de: Memory
 tilePairs:
-  en: Tile pairs
-  de: Kachelpaare
+  en: Card pairs
+  de: Kartenpaare
 tileA:
-  en: Tile A
-  de: Kachel A
+  en: Card A
+  de: Karte A
 tileB:
-  en: Tile B
-  de: Kachel B
+  en: Card B
+  de: Karte B

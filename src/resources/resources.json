@@ -2052,9 +2052,9 @@
     "language": "en",
     "resources": {
       "name": "Memory",
-      "tilePairs": "Tile pairs",
-      "tileA": "Tile A",
-      "tileB": "Tile B"
+      "tilePairs": "Card pairs",
+      "tileA": "Card A",
+      "tileB": "Card B"
     }
   },
   {
@@ -2062,9 +2062,9 @@
     "language": "de",
     "resources": {
       "name": "Memory",
-      "tilePairs": "Kachelpaare",
-      "tileA": "Kachel A",
-      "tileB": "Kachel B"
+      "tilePairs": "Kartenpaare",
+      "tileA": "Karte A",
+      "tileB": "Karte B"
     }
   },
   {
