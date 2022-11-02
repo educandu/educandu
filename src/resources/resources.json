@@ -1405,30 +1405,24 @@
     "namespace": "wikimediaCommonsSearch",
     "language": "en",
     "resources": {
-      "filesView_list": "List",
-      "filesView_grid": "Grid",
-      "publicStorageWarning": "This directory is publicly accessible",
-      "backToDirectoryView": "Back to directory view",
-      "uploadFiles": "Upload files",
+      "searchFileTypeLabel": "Search for",
       "searchFileType_image": "Image",
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
-      "searchFileType_pdf": "PDF"
+      "searchFileType_pdf": "PDF",
+      "loadMoreSearchResults": "load more"
     }
   },
   {
     "namespace": "wikimediaCommonsSearch",
     "language": "de",
     "resources": {
-      "filesView_list": "Liste",
-      "filesView_grid": "Grid",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "backToDirectoryView": "Zurück zur Verzeichnisansicht",
-      "uploadFiles": "Dateien hochladen",
+      "searchFileTypeLabel": "Suche nach",
       "searchFileType_image": "Bild",
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
-      "searchFileType_pdf": "PDF"
+      "searchFileType_pdf": "PDF",
+      "loadMoreSearchResults": "mehr laden"
     }
   },
   {
@@ -2421,7 +2415,7 @@
       "displayMode": "Display mode",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
       "searchOngoing": "Searching …",
-      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>"
+      "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n"
     }
   },
   {
@@ -2578,7 +2572,7 @@
       "displayMode": "Anzeigemodus",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
       "searchOngoing": "Suche …",
-      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>"
+      "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n"
     }
   },
   {

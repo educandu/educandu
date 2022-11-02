@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import DebouncedInput from '../debounced-input.js';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Alert, Button, Modal, Input, Checkbox } from 'antd';
 import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
@@ -19,10 +19,12 @@ const createSearchFileTypeOptions = t => {
 function WikimediaCommonsSearch({
   files,
   isLoading,
+  canLoadMore,
   searchParams,
   highlightedFile,
   onFileClick,
   onCancelClick,
+  onLoadMoreClick,
   onFileDoubleClick,
   onPreviewFileClick,
   onSearchParamsChange,
@@ -62,7 +64,7 @@ function WikimediaCommonsSearch({
     setTypedInSearchTerm(newValue);
   };
 
-  const handleSelectedFileTypesChange = newValues => {
+  const handleSelectedSearchFileTypesChange = newValues => {
     setSelectedSearchFileTypes(newValues);
   };
 
@@ -82,18 +84,30 @@ function WikimediaCommonsSearch({
   };
 
   const renderSearchInfo = () => {
-    const searchMessage = isLoading
-      ? t('common:searchOngoing')
-      : (
-        <Trans
-          t={t}
-          i18nKey="common:searchResultInfo"
-          values={{ searchTerm: searchParams.searchTerm }}
-          components={[<i key="0" />]}
-          />
+    let searchMessage;
+    if (isLoading) {
+      searchMessage = t('common:searchOngoing');
+    } else if (searchParams.searchTerm) {
+      searchMessage = (
+        <Fragment>
+          <Trans
+            t={t}
+            i18nKey="common:searchResultInfo"
+            values={{ resultCount: files.length, searchTerm: searchParams.searchTerm }}
+            components={[<i key="0" />]}
+            />
+          {canLoadMore && (
+            <span>
+              &nbsp;&nbsp;&nbsp;(<a onClick={onLoadMoreClick}>{t('loadMoreSearchResults')}</a>)
+            </span>
+          )}
+        </Fragment>
       );
+    } else {
+      searchMessage = null;
+    }
 
-    return <Alert type="info" message={searchMessage} showIcon />;
+    return searchMessage ? <Alert type="info" message={searchMessage} showIcon /> : null;
   };
 
   return (
@@ -110,10 +124,13 @@ function WikimediaCommonsSearch({
             />
         </div>
         <div className="WikimediaCommonsSearch-buttonsLineItem">
+          <span className="WikimediaCommonsSearch-searchFileTypeLabel">
+            {t('searchFileTypeLabel')}:
+          </span>
           <CheckboxGroup
             options={searchFileTypeOptions}
             value={selectedSearchFileTypes}
-            onChange={handleSelectedFileTypesChange}
+            onChange={handleSelectedSearchFileTypesChange}
             disabled={isLoading}
             />
         </div>
@@ -130,7 +147,7 @@ function WikimediaCommonsSearch({
             />
         </div>
       </div>
-      <div className="WikimediaCommonsSearch-locationInfo">
+      <div className="WikimediaCommonsSearch-searchInfo">
         {renderSearchInfo()}
       </div>
       <div className="u-resource-picker-screen-footer-right-aligned">
@@ -144,12 +161,14 @@ function WikimediaCommonsSearch({
 }
 
 WikimediaCommonsSearch.propTypes = {
+  canLoadMore: PropTypes.bool.isRequired,
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   highlightedFile: wikimediaFileShape,
   isLoading: PropTypes.bool.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
+  onLoadMoreClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,
   onSelectHighlightedFileClick: PropTypes.func.isRequired,

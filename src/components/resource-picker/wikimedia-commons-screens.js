@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import PreviewScreen from './resource-preview-screen.js';
+import { ensureIsUnique } from '../../utils/array-utils.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import WikimediaCommonsSearch from './wikimedia-commons-search.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';
@@ -19,6 +20,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
   const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [nextSearchOffset, setNextSearchOffset] = useState(0);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
@@ -28,7 +30,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
-  const fetchWikimediaFiles = useCallback(async ({ searchTerm, searchFileTypes }) => {
+  const fetchWikimediaFiles = useCallback(async ({ searchTerm, searchFileTypes }, searchOffset) => {
     if (!isMounted.current) {
       return;
     }
@@ -36,9 +38,20 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     try {
       setIsLoading(true);
       const fileTypes = mapSearchFileTypesToWikimediaCommonsFileTypes(searchFileTypes);
-      const result = await wikimediaCommonsApiClient.queryMediaFiles({ searchText: searchTerm, fileTypes });
+      const response = await wikimediaCommonsApiClient.queryMediaFiles({
+        searchText: searchTerm,
+        offset: searchOffset,
+        fileTypes
+      });
+
+      const result = processWikimediaResponse(response);
       if (isMounted.current) {
-        setFiles(processWikimediaResponse(result).files);
+        setNextSearchOffset(result.canContinue ? result.nextOffset : 0);
+        setFiles(previousFiles => {
+          return searchOffset !== 0
+            ? ensureIsUnique([...previousFiles, ...result.files], file => file.url)
+            : result.files;
+        });
       }
     } catch (err) {
       message.error(err.message);
@@ -46,6 +59,10 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
       setIsLoading(false);
     }
   }, [wikimediaCommonsApiClient, isMounted]);
+
+  const handleLoadMoreClick = () => {
+    fetchWikimediaFiles(searchParams, nextSearchOffset);
+  };
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -102,7 +119,8 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     }
 
     setFiles([]);
-    fetchWikimediaFiles(searchParams);
+    setNextSearchOffset(0);
+    fetchWikimediaFiles(searchParams, 0);
   }, [fetchWikimediaFiles, searchParams]);
 
   useEffect(() => {
@@ -117,11 +135,13 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.search && (
         <WikimediaCommonsSearch
           files={files}
+          canLoadMore={nextSearchOffset !== 0}
           isLoading={isLoading}
           searchParams={searchParams}
           highlightedFile={highlightedFile}
           onCancelClick={onCancel}
           onFileClick={handleFileClick}
+          onLoadMoreClick={handleLoadMoreClick}
           onFileDoubleClick={handleFileDoubleClick}
           onPreviewFileClick={handlePreviewFileClick}
           onSearchParamsChange={handleSearchParamsChange}

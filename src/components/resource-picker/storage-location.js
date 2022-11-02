@@ -109,7 +109,7 @@ function StorageLocation({
         <Trans
           t={t}
           i18nKey="common:searchResultInfo"
-          values={{ searchTerm }}
+          values={{ resultCount: files.length, searchTerm }}
           components={[<i key="0" />]}
           />
       );

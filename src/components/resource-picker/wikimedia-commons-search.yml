@@ -1,18 +1,6 @@
-filesView_list:
-  en: List
-  de: Liste
-filesView_grid:
-  en: Grid
-  de: Grid
-publicStorageWarning:
-  en: This directory is publicly accessible
-  de: Dieses Verzeichnis ist öffentlich zugänglich
-backToDirectoryView:
-  en: Back to directory view
-  de: Zurück zur Verzeichnisansicht
-uploadFiles:
-  en: Upload files
-  de: Dateien hochladen
+searchFileTypeLabel:
+  en: Search for
+  de: Suche nach
 searchFileType_image:
   en: Image
   de: Bild
@@ -25,3 +13,6 @@ searchFileType_audio:
 searchFileType_pdf:
   en: PDF
   de: PDF
+loadMoreSearchResults:
+  en: load more
+  de: mehr laden
