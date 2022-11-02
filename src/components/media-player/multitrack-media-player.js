@@ -120,7 +120,12 @@ function MultitrackMediaPlayer({
         setLoadedSources(sources);
         break;
       case SOURCE_TYPE.lazy:
-        // The loaded sources will be set after lazy loading below
+        setLoadedSources(null);
+        setDurationInMilliseconds(0);
+        setLastReachedPartEndIndex(-1);
+        setPlayState(MEDIA_PLAY_STATE.initializing);
+        setLazyLoadCompletedAction(LAZY_LOAD_COMPLETED_ACTION.none);
+        // The loaded sources will be set (or re-set) after lazy loading is triggered on the current sources
         break;
       case SOURCE_TYPE.none:
         setLoadedSources(null);
