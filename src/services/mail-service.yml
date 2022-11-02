@@ -42,7 +42,7 @@ passwordResetEmail.html:
     <p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href="{completionLink}">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
 roomInvitationEmail.subject:
   en: You have been invited to a room
-  de: Du warst in einen Raum eingeladen.
+  de: Du wurdest in einen Raum eingeladen.
 roomInvitationEmail.text:
   en: |
     Hello!
@@ -60,7 +60,7 @@ roomInvitationEmail.html:
   en: |
     <p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href="{invitationLink}">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>
   de: |
-    <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folge bitte diesem Link: <a href="{invitationLink}">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>
+    <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung anzunehmen, folge bitte diesem Link: <a href="{invitationLink}">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>
 roomDeletionNotificationEmail.subject:
   en: A room you were a member of has been deleted
   de: Ein Raum, in dem du Mitglied warst, wurde gelöscht
