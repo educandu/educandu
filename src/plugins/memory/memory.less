@@ -1,3 +1,37 @@
+.MemoryDisplay {
+  display: grid;
+  gap: 10px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+
+  &.MemoryDisplay--3x3 {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+
+  &.MemoryDisplay--4x4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+  }
+}
+
+.MemoryDisplay-tile {
+  border: 1px solid black;
+  min-width: 15px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  overflow: auto;
+
+  &.MemoryDisplay-tile--empty {
+    border: none;
+  }
+}
+
+.MemoryDisplay-tileContent {
+  margin: auto;
+}
+
 .MemoryEditor {}
 
 .MemoryEditor-tileButtonGroup {

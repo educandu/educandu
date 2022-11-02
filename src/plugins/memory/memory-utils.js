@@ -1,4 +1,5 @@
 import { SIZE } from './constants.js';
+import { shuffleItems } from '../../utils/array-utils.js';
 
 export const createDefaultTile = () => ({
   text: ''
@@ -23,4 +24,9 @@ export const resizeTilePairs = (oldTilePairs, newSize) => {
   );
 
   return newTilePairs;
+};
+
+export const getRandomizedTilesFromPairs = tilePairs => {
+  const tiles = tilePairs.flat();
+  return shuffleItems(tiles);
 };
