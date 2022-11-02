@@ -37,6 +37,7 @@ export const cdnObjectShape = PropTypes.shape({
 
 export const wikimediaFileShape = PropTypes.shape({
   pageId: PropTypes.number.isRequired,
+  pageUrl: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   thumbnailUrl: PropTypes.string,

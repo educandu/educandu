@@ -81,6 +81,10 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     pushScreen(SCREEN.filePreview);
   };
 
+  const handleOpenWikimediaCommonsPageClick = file => {
+    window.open(file.pageUrl, '_blank');
+  };
+
   const handleScreenBackClick = () => {
     popScreen();
   };
@@ -146,6 +150,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
           onPreviewFileClick={handlePreviewFileClick}
           onSearchParamsChange={handleSearchParamsChange}
           onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
+          onOpenWikimediaCommonsPageClick={handleOpenWikimediaCommonsPageClick}
           />
       )}
 

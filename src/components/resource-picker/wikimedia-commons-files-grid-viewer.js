@@ -5,6 +5,7 @@ import { Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
+import WikimediaCommonsIcon from '../icons/wikimedia-commons/wikimedia-commons-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
 function WikimediaCommonsFilesGridViewer({
@@ -13,9 +14,15 @@ function WikimediaCommonsFilesGridViewer({
   selectedFileUrl,
   onFileClick,
   onFileDoubleClick,
-  onPreviewFileClick
+  onPreviewFileClick,
+  onOpenWikimediaCommonsPageClick
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('wikimediaCommonsFilesGridViewer');
+
+  const handleOpenWikimediaCommonsPageClick = (event, file) => {
+    event.stopPropagation();
+    onOpenWikimediaCommonsPageClick(file);
+  };
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
@@ -38,6 +45,13 @@ function WikimediaCommonsFilesGridViewer({
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
           <ActionButtonGroup>
+            <ActionButton
+              title={t('openWikimediaCommonsPage')}
+              icon={<WikimediaCommonsIcon />}
+              intent={ACTION_BUTTON_INTENT.default}
+              onClick={event => handleOpenWikimediaCommonsPageClick(event, file)}
+              overlay
+              />
             <ActionButton
               title={t('common:preview')}
               icon={<PreviewIcon />}
@@ -67,17 +81,15 @@ function WikimediaCommonsFilesGridViewer({
 WikimediaCommonsFilesGridViewer.propTypes = {
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   isLoading: PropTypes.bool,
-  onFileClick: PropTypes.func,
-  onFileDoubleClick: PropTypes.func,
-  onPreviewFileClick: PropTypes.func,
+  onFileClick: PropTypes.func.isRequired,
+  onFileDoubleClick: PropTypes.func.isRequired,
+  onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
+  onPreviewFileClick: PropTypes.func.isRequired,
   selectedFileUrl: PropTypes.string
 };
 
 WikimediaCommonsFilesGridViewer.defaultProps = {
   isLoading: false,
-  onFileClick: () => {},
-  onFileDoubleClick: () => {},
-  onPreviewFileClick: () => {},
   selectedFileUrl: null
 };
 

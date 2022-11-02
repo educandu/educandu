@@ -58,11 +58,13 @@ describe('wikimedia-commons-utils', () => {
             pages: {
               121637360: {
                 pageid: 121637360,
+                canonicalurl: 'https://commons.wikimedia.org/wiki/File:1962_proposed_atmospheric_test_program.pdf',
                 title: 'File:1962 proposed atmospheric test program.pdf',
                 touched: '2022-09-22T01:01:52Z'
               },
               1819832: {
                 pageid: 1819832,
+                canonicalurl: 'https://commons.wikimedia.org/wiki/File:Www_usda_gov_Acceptence_Test_for_Digital.pdf',
                 title: 'File:Www usda gov Acceptence Test for Digital.pdf',
                 touched: '2022-10-25T14:27:10Z',
                 imageinfo: [
@@ -85,6 +87,7 @@ describe('wikimedia-commons-utils', () => {
       it('should map the remaining files correctly', () => {
         expect(result.files[0]).toStrictEqual({
           pageId: 1819832,
+          pageUrl: 'https://commons.wikimedia.org/wiki/File:Www_usda_gov_Acceptence_Test_for_Digital.pdf',
           displayName: 'Www usda gov Acceptence Test for Digital.pdf',
           url: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Www_usda_gov_Acceptence_Test_for_Digital.pdf',
           thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Www_usda_gov_Acceptence_Test_for_Digital.pdf/page1-139px-Www_usda_gov_Acceptence_Test_for_Digital.pdf.jpg',

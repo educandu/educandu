@@ -28,7 +28,8 @@ function WikimediaCommonsSearch({
   onFileDoubleClick,
   onPreviewFileClick,
   onSearchParamsChange,
-  onSelectHighlightedFileClick
+  onSelectHighlightedFileClick,
+  onOpenWikimediaCommonsPageClick
 }) {
   const { t } = useTranslation('wikimediaCommonsSearch');
 
@@ -47,14 +48,6 @@ function WikimediaCommonsSearch({
   useEffect(() => {
     setSelectedSearchFileTypes(searchParams.searchFileTypes);
   }, [searchParams.searchFileTypes]);
-
-  const handleFileClick = file => {
-    onFileClick(file);
-  };
-
-  const handleFileDoubleClick = file => {
-    onFileDoubleClick(file);
-  };
 
   const handleSelectHighlightedFileClick = () => {
     onSelectHighlightedFileClick(highlightedFile.url);
@@ -140,10 +133,11 @@ function WikimediaCommonsSearch({
           <WikimediaCommonsFilesGridViewer
             files={files}
             isLoading={isLoading}
-            onFileClick={handleFileClick}
-            onFileDoubleClick={handleFileDoubleClick}
+            onFileClick={onFileClick}
+            onFileDoubleClick={onFileDoubleClick}
             onPreviewFileClick={onPreviewFileClick}
             selectedFileUrl={highlightedFile?.url}
+            onOpenWikimediaCommonsPageClick={onOpenWikimediaCommonsPageClick}
             />
         </div>
       </div>
@@ -169,6 +163,7 @@ WikimediaCommonsSearch.propTypes = {
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onLoadMoreClick: PropTypes.func.isRequired,
+  onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,
   onSelectHighlightedFileClick: PropTypes.func.isRequired,

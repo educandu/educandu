@@ -41,18 +41,16 @@ export function processWikimediaResponse(responseData) {
 
   const files = Object.values(responseData.query?.pages || {})
     .filter(page => page.imageinfo?.length)
-    .map(page => {
-
-      return {
-        pageId: page.pageid,
-        displayName: page.title.replace(/^File:/, ''),
-        url: page.imageinfo[0].url,
-        thumbnailUrl: page.imageinfo[0].thumburl,
-        updatedOn: page.touched,
-        size: page.imageinfo[0].size,
-        mimeType: page.imageinfo[0].mime
-      };
-    });
+    .map(page => ({
+      pageId: page.pageid,
+      pageUrl: page.canonicalurl,
+      displayName: page.title.replace(/^File:/, ''),
+      url: page.imageinfo[0].url,
+      thumbnailUrl: page.imageinfo[0].thumburl,
+      updatedOn: page.touched,
+      size: page.imageinfo[0].size,
+      mimeType: page.imageinfo[0].mime
+    }));
 
   return {
     canContinue,
