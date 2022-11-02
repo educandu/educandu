@@ -2,19 +2,19 @@ import by from 'thenby';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
+import cloneDeep from '../../utils/clone-deep.js';
 import React, { useEffect, useState } from 'react';
-import DeleteIcon from './icons/general/delete-icon.js';
-import { isTouchDevice } from '../ui/browser-helper.js';
-import PreviewIcon from './icons/general/preview-icon.js';
-import { cdnObjectShape } from '../ui/default-prop-types.js';
-import { confirmCdnFileDelete } from './confirmation-dialogs.js';
-import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
-import { composeHumanReadableDisplayName } from '../utils/storage-utils.js';
-import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
-import FolderFilledNavigateIcon from './icons/files/folder-filled-navigate-icon.js';
-import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from './action-button.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
+import PreviewIcon from '../icons/general/preview-icon.js';
+import { cdnObjectShape } from '../../ui/default-prop-types.js';
+import { confirmCdnFileDelete } from '../confirmation-dialogs.js';
+import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
+import { composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
+import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
+import FolderFilledNavigateIcon from '../icons/files/folder-filled-navigate-icon.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
 const mapDisplayFiles = (files, t) => {
   return files

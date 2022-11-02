@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import UsedStorage from '../used-storage.js';
-import FilePreview from '../file-preview.js';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../../utils/clone-deep.js';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
+import cloneDeep from '../../utils/clone-deep.js';
+import ResourcePreview from './resource-preview.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
@@ -224,7 +224,7 @@ function FilesUploadScreen({
         {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
         <div className="FilesUploadScreen-fileStatusPreview">
-          <FilePreview
+          <ResourcePreview
             url={item.uploadedFile.url}
             size={item.uploadedFile.size}
             createdOn={item.uploadedFile.createdOn}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import FilesViewer from './files-viewer.js';
 import UsedStorage from '../used-storage.js';
-import FilesViewer from '../files-viewer.js';
 import reactDropzoneNs from 'react-dropzone';
 import DebouncedInput from '../debounced-input.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';

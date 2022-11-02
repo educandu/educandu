@@ -1,28 +1,28 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
-import MiniPager from './mini-pager.js';
+import MiniPager from '../mini-pager.js';
 import { message, Tooltip } from 'antd';
-import Logger from '../common/logger.js';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import LiteralUrlLink from './literal-url-link.js';
-import { useService } from './container-context.js';
-import { handleError } from '../ui/error-helper.js';
-import { useDateFormat } from './locale-context.js';
-import mimeTypeHelper from '../ui/mime-type-helper.js';
-import MediaPlayer from './media-player/media-player.js';
-import ClientConfig from '../bootstrap/client-config.js';
-import { getResourceType } from '../utils/resource-utils.js';
-import FileTextFilledIcon from './icons/files/file-text-filled-icon.js';
-import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../domain/constants.js';
-import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+import LiteralUrlLink from '../literal-url-link.js';
+import { useService } from '../container-context.js';
+import { handleError } from '../../ui/error-helper.js';
+import { useDateFormat } from '../locale-context.js';
+import mimeTypeHelper from '../../ui/mime-type-helper.js';
+import MediaPlayer from '../media-player/media-player.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getResourceType } from '../../utils/resource-utils.js';
+import FileTextFilledIcon from '../icons/files/file-text-filled-icon.js';
+import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
+import CopyToClipboardIcon from '../icons/general/copy-to-clipboard-icon.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import FileUnknownFilledIcon from './icons/files/file-unknown-filled-icon.js';
-import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
+import FileUnknownFilledIcon from '../icons/files/file-unknown-filled-icon.js';
+import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../pdf-document.js';
 
 const logger = new Logger(import.meta.url);
 
-function FilePreview({ createdOn, updatedOn, size, url, compact }) {
+function ResourcePreview({ createdOn, updatedOn, size, url, compact }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -218,7 +218,7 @@ function FilePreview({ createdOn, updatedOn, size, url, compact }) {
   );
 }
 
-FilePreview.propTypes = {
+ResourcePreview.propTypes = {
   compact: PropTypes.bool,
   createdOn: PropTypes.string,
   size: PropTypes.number.isRequired,
@@ -226,10 +226,10 @@ FilePreview.propTypes = {
   url: PropTypes.string.isRequired
 };
 
-FilePreview.defaultProps = {
+ResourcePreview.defaultProps = {
   compact: false,
   createdOn: null,
   updatedOn: null
 };
 
-export default FilePreview;
+export default ResourcePreview;

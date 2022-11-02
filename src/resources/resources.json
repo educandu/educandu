@@ -466,20 +466,6 @@
     }
   },
   {
-    "namespace": "filesGridViewer",
-    "language": "en",
-    "resources": {
-      "navigateToParent": "Navigate to parent directory"
-    }
-  },
-  {
-    "namespace": "filesGridViewer",
-    "language": "de",
-    "resources": {
-      "navigateToParent": "Zum übergeordneten Verzeichnis navigieren"
-    }
-  },
-  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {
@@ -1313,6 +1299,20 @@
     "resources": {
       "headline": "Datei-Editor",
       "applyChanges": "Änderungen übernehmen"
+    }
+  },
+  {
+    "namespace": "filesGridViewer",
+    "language": "en",
+    "resources": {
+      "navigateToParent": "Navigate to parent directory"
+    }
+  },
+  {
+    "namespace": "filesGridViewer",
+    "language": "de",
+    "resources": {
+      "navigateToParent": "Zum übergeordneten Verzeichnis navigieren"
     }
   },
   {

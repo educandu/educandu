@@ -5,17 +5,17 @@ import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
-import DeleteIcon from './icons/general/delete-icon.js';
-import { isTouchDevice } from '../ui/browser-helper.js';
-import { CDN_OBJECT_TYPE } from '../domain/constants.js';
-import PreviewIcon from './icons/general/preview-icon.js';
-import DimensionsProvider from './dimensions-provider.js';
-import { cdnObjectShape } from '../ui/default-prop-types.js';
-import { useDateFormat, useLocale } from './locale-context.js';
-import { confirmCdnFileDelete } from './confirmation-dialogs.js';
-import FolderNavigateIcon from './icons/files/folder-navigate-icon.js';
-import { composeHumanReadableDisplayName } from '../utils/storage-utils.js';
-import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
+import PreviewIcon from '../icons/general/preview-icon.js';
+import DimensionsProvider from '../dimensions-provider.js';
+import { CDN_OBJECT_TYPE } from '../../domain/constants.js';
+import { cdnObjectShape } from '../../ui/default-prop-types.js';
+import { useDateFormat, useLocale } from '../locale-context.js';
+import { confirmCdnFileDelete } from '../confirmation-dialogs.js';
+import FolderNavigateIcon from '../icons/files/folder-navigate-icon.js';
+import { composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
+import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
 
 const HEADER_ROW_HEIGHT_IN_PX = 47;
 
