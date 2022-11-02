@@ -1,18 +1,47 @@
 .FlipCard {
+  perspective: 600px;
+}
+
+.FlipCard-content {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+
+  &.is-flipped {
+    transform: rotateY(180deg);
+  }
+}
+
+.FlipCard-face {
+  position: absolute;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
   display: flex;
   align-items: center;
   overflow: auto;
-  background-color: @edu-white;
+  backface-visibility: hidden;
   border: 1px solid @edu-border-color-light;
   border-radius: @edu-border-radius-sm;
 
   &:hover {
-    cursor: pointer;
     border-color: @edu-border-color-dark;
+  }
+
+  &.FlipCard-face--front {
+    background-color: @edu-white;
+  }
+
+  &.FlipCard-face--back {
+    background-color: lighten(@edu-primary-color-light, 15%);
+    transform: rotateY(180deg);
   }
 }
 
-.FlipCard-frontContent {
-  padding: 8px;
+.FlipCard-faceContent {
   margin: auto;
 }
