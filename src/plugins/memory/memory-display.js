@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { SIZE } from './constants.js';
 import React, { useEffect, useState } from 'react';
 import Markdown from '../../components/markdown.js';
+import FlipCard from '../../components/flip-card.js';
 import { getRandomizedTilesFromPairs } from './memory-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
@@ -21,21 +22,15 @@ function MemoryDisplay({ content }) {
   );
 
   const renderTile = (tile, index) => {
-    const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
     const elementsToRender = [];
+    const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
     if (reserveCentralSpace) {
-      elementsToRender.push((
-        <div key="emptyTile" className="MemoryDisplay-tile--empty" />
-      ));
+      elementsToRender.push(<div key="emptyTile" />);
     }
 
     elementsToRender.push((
-      <div key={index} className="MemoryDisplay-tile">
-        <div className="MemoryDisplay-tileContent">
-          <Markdown>{tile.text}</Markdown>
-        </div>
-      </div>
+      <FlipCard key={index} frontContent={<Markdown>{tile.text}</Markdown>} />
     ));
 
     return elementsToRender;
