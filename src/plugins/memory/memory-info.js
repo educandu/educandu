@@ -43,9 +43,9 @@ class MemoryInfo {
     );
 
     return {
-      title: '',
       size,
-      tilePairs
+      tilePairs,
+      width: 100
     };
   }
 
@@ -57,9 +57,9 @@ class MemoryInfo {
     const allowedTilePairs = getTilePairCountBySize(content.size);
 
     const schema = joi.object({
-      title: joi.string().allow('').required(),
       size: joi.string().valid(...Object.values(SIZE)).required(),
-      tilePairs: joi.array().items(tilePairSchema).length(allowedTilePairs).required()
+      tilePairs: joi.array().items(tilePairSchema).length(allowedTilePairs).required(),
+      width: joi.number().min(0).max(100).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

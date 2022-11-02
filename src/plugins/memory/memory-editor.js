@@ -1,12 +1,14 @@
 import { SIZE } from './constants.js';
-import React, { useState } from 'react';
-import { Button, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
+import React, { Fragment, useState } from 'react';
+import { Button, Form, Radio, Tooltip } from 'antd';
 import { resizeTilePairs } from './memory-utils.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -15,7 +17,7 @@ const RadioButton = Radio.Button;
 function MemoryEditor({ content, onContentChanged }) {
   const { t } = useTranslation('memory');
 
-  const { title, size, tilePairs } = content;
+  const { size, tilePairs, width } = content;
   const [selectedTilesPairIndex, setSelectedTilesPairIndex] = useState(0);
 
   const renderTileButton = index => {
@@ -39,9 +41,8 @@ function MemoryEditor({ content, onContentChanged }) {
     onContentChanged(newContent, false);
   };
 
-  const handleTitleValueChanged = event => {
-    const { value } = event.target;
-    changeContent({ title: value });
+  const handleWidthChange = value => {
+    changeContent({ width: value });
   };
 
   const handleSizeChange = event => {
@@ -63,9 +64,6 @@ function MemoryEditor({ content, onContentChanged }) {
   return (
     <div className="MemoryEditor">
       <Form>
-        <FormItem label={`${t('common:title')}:`} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
-        </FormItem>
         <FormItem label={t('common:size')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={size} onChange={handleSizeChange}>
             <RadioButton value={SIZE.threeByThree}>3 x 3</RadioButton>
@@ -90,6 +88,20 @@ function MemoryEditor({ content, onContentChanged }) {
             value={tilePairs[selectedTilesPairIndex][1].text}
             onChange={event => handleTileTextChange(event, 1)}
             />
+        </Form.Item>
+        <Form.Item
+          className="ImageEditor-widthInput"
+          label={
+            <Fragment>
+              <Tooltip title={t('common:widthInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('common:width')}</span>
+            </Fragment>
+          }
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>
     </div>
