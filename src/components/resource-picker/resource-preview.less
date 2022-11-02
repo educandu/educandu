@@ -15,6 +15,10 @@
   &.FilePreview--compact {
     grid-template-columns: 1fr 2fr;
   }
+
+  &.FilePreview--thumbnailOnly {
+    grid-template-columns: auto;
+  }
 }
 
 .FilePreview-previewArea {
@@ -32,6 +36,15 @@
 
   &.FilePreview-previewArea--compact {
     height: 280px;
+  }
+
+  &.FilePreview-previewArea--thumbnailOnly {
+    width: 100%;
+    max-width: 360px;
+    max-height: 280px;
+    height: fit-content;
+    border: none;
+    padding: 0;
   }
 }
 

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
 import cloneDeep from '../../utils/clone-deep.js';
-import ResourcePreview from './resource-preview.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
@@ -13,6 +12,7 @@ import { useSetStorageLocation } from '../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
+import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
@@ -228,7 +228,7 @@ function FilesUploadScreen({
             url={item.uploadedFile.url}
             size={item.uploadedFile.size}
             createdOn={item.uploadedFile.createdOn}
-            compact
+            layout={RESOURCE_PREVIEW_LAYOUT.compact}
             />
         </div>
         )}

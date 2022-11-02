@@ -73,6 +73,10 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     onSelect(newFile.url);
   };
 
+  const handleSelectInitialUrlClick = () => {
+    onSelect(initialUrl);
+  };
+
   const handleSelectHighlightedFileClick = () => {
     onSelect(highlightedFile.url);
   };
@@ -139,6 +143,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.search && (
         <WikimediaCommonsSearch
           files={files}
+          initialUrl={initialUrl}
           canLoadMore={nextSearchOffset !== 0}
           isLoading={isLoading}
           searchParams={searchParams}
@@ -149,6 +154,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
           onFileDoubleClick={handleFileDoubleClick}
           onPreviewFileClick={handlePreviewFileClick}
           onSearchParamsChange={handleSearchParamsChange}
+          onSelectInitialUrlClick={handleSelectInitialUrlClick}
           onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
           onOpenWikimediaCommonsPageClick={handleOpenWikimediaCommonsPageClick}
           />

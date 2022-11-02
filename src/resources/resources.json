@@ -1424,6 +1424,8 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
+      "initialFilePreviewHeader": "Currently selected file",
+      "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above",
       "loadMoreSearchResults": "load more"
     }
   },
@@ -1436,6 +1438,8 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
+      "initialFilePreviewHeader": "Momentan ausgewählte Datei",
+      "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben",
       "loadMoreSearchResults": "mehr laden"
     }
   },

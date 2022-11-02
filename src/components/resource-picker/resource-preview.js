@@ -22,7 +22,13 @@ import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../pdf-document.js'
 
 const logger = new Logger(import.meta.url);
 
-function ResourcePreview({ createdOn, updatedOn, size, url, compact }) {
+export const RESOURCE_PREVIEW_LAYOUT = {
+  default: 'default',
+  compact: 'compact',
+  thumbnailOnly: 'thumbnail-only'
+};
+
+function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -139,12 +145,9 @@ function ResourcePreview({ createdOn, updatedOn, size, url, compact }) {
       renderPreview = renderGenericFile;
   }
 
-  return (
-    <div className={classNames('FilePreview', { 'FilePreview--compact': compact })}>
-      <div className={classNames('FilePreview-previewArea', { 'FilePreview-previewArea--compact': compact })}>
-        {renderPreview()}
-      </div>
-      <div className={classNames('FilePreview-detailsArea', { 'FilePreview-detailsArea--compact': compact })}>
+  const renderDetails = () => {
+    return (
+      <Fragment>
         <div className="FilePreview-detailLabel">
           {t('common:name')}
         </div>
@@ -157,12 +160,16 @@ function ResourcePreview({ createdOn, updatedOn, size, url, compact }) {
         <div className="FilePreview-detailValue">
           {mimeTypeHelper.localizeCategory(category, t)}
         </div>
-        <div className="FilePreview-detailLabel">
-          {t('common:size')}
-        </div>
-        <div className="FilePreview-detailValue">
-          {prettyBytes(size)}
-        </div>
+        {typeof size === 'number' && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:size')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {prettyBytes(size)}
+            </div>
+          </Fragment>
+        )}
         {createdOn && (
           <Fragment>
             <div className="FilePreview-detailLabel">
@@ -213,22 +220,53 @@ function ResourcePreview({ createdOn, updatedOn, size, url, compact }) {
         <div className="FilePreview-detailValue">
           <LiteralUrlLink href={url} targetBlank />
         </div>
+      </Fragment>
+    );
+  };
+
+  return (
+    <div
+      className={classNames({
+        'FilePreview': true,
+        'FilePreview--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
+        'FilePreview--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
+      })}
+      >
+      <div
+        className={classNames({
+          'FilePreview-previewArea': true,
+          'FilePreview-previewArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
+          'FilePreview-previewArea--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
+        })}
+        >
+        {renderPreview()}
       </div>
+      {layout !== RESOURCE_PREVIEW_LAYOUT.thumbnailOnly && (
+        <div
+          className={classNames({
+            'FilePreview-detailsArea': true,
+            'FilePreview-detailsArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact
+          })}
+          >
+          {renderDetails()}
+        </div>
+      )}
     </div>
   );
 }
 
 ResourcePreview.propTypes = {
-  compact: PropTypes.bool,
   createdOn: PropTypes.string,
-  size: PropTypes.number.isRequired,
+  layout: PropTypes.oneOf(Object.values(RESOURCE_PREVIEW_LAYOUT)),
+  size: PropTypes.number,
   updatedOn: PropTypes.string,
   url: PropTypes.string.isRequired
 };
 
 ResourcePreview.defaultProps = {
-  compact: false,
   createdOn: null,
+  layout: RESOURCE_PREVIEW_LAYOUT.default,
+  size: null,
   updatedOn: null
 };
 

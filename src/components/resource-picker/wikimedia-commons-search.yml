@@ -13,6 +13,12 @@ searchFileType_audio:
 searchFileType_pdf:
   en: PDF
   de: PDF
+initialFilePreviewHeader:
+  en: Currently selected file
+  de: Momentan ausgewählte Datei
+initialFilePreviewFooter:
+  en: In order to select a different file, start a new search using the search field above
+  de: Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben
 loadMoreSearchResults:
   en: load more
   de: mehr laden
