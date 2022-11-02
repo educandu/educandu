@@ -82,7 +82,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
             />
         );
       default:
-        throw new Error(`Invalid location type: ${sourceType.type}`);
+        throw new Error(`Invalid location type: ${sourceType}`);
     }
   };
 

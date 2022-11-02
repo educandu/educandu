@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
-import PreviewScreen from './resource-preview-screen.js';
+import ResourcePreviewScreen from './resource-preview-screen.js';
 import { ensureIsUnique } from '../../utils/array-utils.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import WikimediaCommonsSearch from './wikimedia-commons-search.js';
@@ -155,7 +155,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
       )}
 
       {screen === SCREEN.filePreview && (
-        <PreviewScreen
+        <ResourcePreviewScreen
           file={highlightedFile}
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}

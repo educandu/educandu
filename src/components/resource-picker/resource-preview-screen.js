@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ResourcePreview from './resource-preview.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
-function PreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
+function ResourcePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
   const { t } = useTranslation('resourcePreviewScreen');
 
   return (
@@ -25,7 +25,7 @@ function PreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
   );
 }
 
-PreviewScreen.propTypes = {
+ResourcePreviewScreen.propTypes = {
   file: PropTypes.shape({
     url: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired,
@@ -37,4 +37,4 @@ PreviewScreen.propTypes = {
   onSelectClick: PropTypes.func.isRequired
 };
 
-export default PreviewScreen;
+export default ResourcePreviewScreen;
