@@ -25,7 +25,7 @@ import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-med
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import WikimediaCommonsApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-commons-api-client.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
@@ -598,7 +598,7 @@ function Tests({ PageTemplate }) {
           </TabPane>
           <TabPane tab="ResourceSelector" key="ResourceSelector">
             <ResourceSelector
-              allowedLocationTypes={Object.values(STORAGE_LOCATION_TYPE)}
+              allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
               onSelect={ev => console.log('select', ev)}
               onCancel={ev => console.log('cancel', ev)}
               />

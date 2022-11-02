@@ -5,16 +5,15 @@ import cloneDeep from '../../utils/clone-deep.js';
 import StorageLocation from './storage-location.js';
 import { useService } from '../container-context.js';
 import FileEditorScreen from './file-editor-screen.js';
-import FilePreviewScreen from './file-preview-screen.js';
 import FilesUploadScreen from './files-upload-screen.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { useSetStorageLocation } from '../storage-context.js';
+import ResourcePreviewScreen from './resource-preview-screen.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
-import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
+import { useSetStorageLocation, useStorage } from '../storage-context.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../../utils/storage-utils.js';
@@ -26,8 +25,9 @@ const SCREEN = {
   filesUpload: 'files-upload'
 };
 
-function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCancel }) {
+function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
+  const { locations } = useStorage();
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
@@ -45,12 +45,14 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
   const [contentFetchingProps, setContentFetchingProps] = useState({ searchTerm: '', currentDirectoryPath: null });
 
+  const storageLocation = locations.find(loc => loc.type === storageLocationType);
+
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
   const fetchStorageContent = useCallback(async (searchTerm, parentPath) => {
-    if (!parentPath || !isMounted.current) {
+    if (!storageLocation || !parentPath || !isMounted.current) {
       return;
     }
 
@@ -205,10 +207,10 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
     const initialResourceParentDirectoryPath = getParentPathForStorageLocationPath(initialResourcePath);
-
-    const newPath = initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath) ? initialResourceParentDirectoryPath : storageLocation.homePath;
+    const canUseInitialResourceParentDirectoryPath = storageLocation?.rootPath && initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath);
+    const newPath = canUseInitialResourceParentDirectoryPath ? initialResourceParentDirectoryPath : storageLocation?.homePath || '';
     setContentFetchingProps(prevState => ({ ...prevState, currentDirectoryPath: newPath }));
-  }, [initialUrl, storageLocation.homePath, storageLocation.rootPath]);
+  }, [initialUrl, storageLocation?.homePath, storageLocation?.rootPath]);
 
   useEffect(() => {
     setFiles([]);
@@ -226,6 +228,10 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
     const newCurrentDirectoryPath = getParentPathForStorageLocationPath(currentDirectory.path);
     setContentFetchingProps({ searchTerm: '', currentDirectoryPath: newCurrentDirectoryPath });
   };
+
+  if (!storageLocation) {
+    return null;
+  }
 
   return (
     <Fragment>
@@ -254,7 +260,7 @@ function StorageLocationScreens({ storageLocation, initialUrl, onSelect, onCance
       )}
 
       {screen === SCREEN.filePreview && (
-        <FilePreviewScreen
+        <ResourcePreviewScreen
           file={highlightedFile}
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
@@ -290,7 +296,7 @@ StorageLocationScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
-  storageLocation: storageLocationShape.isRequired
+  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]).isRequired
 };
 
 StorageLocationScreens.defaultProps = {

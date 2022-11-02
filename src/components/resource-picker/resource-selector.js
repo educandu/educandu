@@ -3,52 +3,86 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
-import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { useService } from '../container-context.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getSourceType } from '../../utils/source-utils.js';
 import StorageLocationScreens from './storage-location-screens.js';
-import { getStorageLocationTypeForUrl } from '../../utils/storage-utils.js';
+import WikimediaCommonsScreens from './wikimedia-commons-screens.js';
+import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
-function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect }) {
-  const { locations } = useStorage();
+function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('resourceSelector');
-  const [visibleLocations, setVisibleLocations] = useState([]);
-  const [currentLocationType, setCurrentLocationType] = useState(null);
+  const { locations: availableStorageLocations } = useStorage();
+  const [visibleSourceTypes, setVisibleSourceTypes] = useState([]);
+  const [selectedSourceType, setSelectedSourceType] = useState(null);
 
   useEffect(() => {
-    const newVisibleLocations = allowedLocationTypes
-      .map(locationType => locations.find(location => location.type === locationType))
-      .filter(location => location);
-
-    setVisibleLocations(newVisibleLocations);
-
-    setCurrentLocationType(oldCurrentLocationType => {
-      const desiredLocationType = oldCurrentLocationType || getStorageLocationTypeForUrl(initialUrl);
-      const desiredLocation = newVisibleLocations.find(location => location.type === desiredLocationType);
-      const defaultLocation = newVisibleLocations.find(location => location.type === STORAGE_LOCATION_TYPE.private) || newVisibleLocations[0];
-
-      return desiredLocation?.type || defaultLocation?.type || null;
+    const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
+      switch (sourceType) {
+        case SOURCE_TYPE.internalPublic:
+          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.public);
+        case SOURCE_TYPE.internalPrivate:
+          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.private);
+        default:
+          return true;
+      }
     });
-  }, [allowedLocationTypes, initialUrl, locations]);
 
-  const handleLocationTabChange = newLocationType => {
-    setCurrentLocationType(visibleLocations.find(location => location.type === newLocationType)?.type || null);
+    setVisibleSourceTypes(newVisibleSourceTypes);
+
+    setSelectedSourceType(oldSelectedSourceType => {
+      const sourceTypeMatchedByInitialUrl = getSourceType({ url: initialUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      const preferredInitialSourceType = SOURCE_TYPE.internalPrivate;
+      const firstVisibleSourceType = newVisibleSourceTypes[0];
+
+      const newSourceTypePriorityList = [
+        oldSelectedSourceType,
+        sourceTypeMatchedByInitialUrl,
+        preferredInitialSourceType,
+        firstVisibleSourceType
+      ];
+
+      return newSourceTypePriorityList.filter(sourceType => newVisibleSourceTypes.includes(sourceType))[0] || null;
+    });
+  }, [allowedSourceTypes, initialUrl, availableStorageLocations, clientConfig]);
+
+  const handleSourceTypeTabChange = newSourceType => {
+    setSelectedSourceType(newSourceType);
   };
 
-  const renderLocation = location => {
-    switch (location.type) {
-      case STORAGE_LOCATION_TYPE.private:
-      case STORAGE_LOCATION_TYPE.public:
+  const renderSourceType = sourceType => {
+    switch (sourceType) {
+      case SOURCE_TYPE.internalPublic:
         return (
           <StorageLocationScreens
-            storageLocation={location}
+            storageLocationType={STORAGE_LOCATION_TYPE.public}
+            initialUrl={initialUrl}
+            onSelect={onSelect}
+            onCancel={onCancel}
+            />
+        );
+      case SOURCE_TYPE.internalPrivate:
+        return (
+          <StorageLocationScreens
+            storageLocationType={STORAGE_LOCATION_TYPE.private}
+            initialUrl={initialUrl}
+            onSelect={onSelect}
+            onCancel={onCancel}
+            />
+        );
+      case SOURCE_TYPE.wikimediaCommons:
+        return (
+          <WikimediaCommonsScreens
             initialUrl={initialUrl}
             onSelect={onSelect}
             onCancel={onCancel}
             />
         );
       default:
-        throw new Error(`Invalid location type: ${location.type}`);
+        throw new Error(`Invalid location type: ${sourceType.type}`);
     }
   };
 
@@ -56,13 +90,13 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
     <div className="ResourceSelector">
       <Tabs
         size="small"
-        activeKey={currentLocationType || visibleLocations[0]?.type || null}
-        onChange={handleLocationTabChange}
+        activeKey={selectedSourceType || visibleSourceTypes[0] || null}
+        onChange={handleSourceTypeTabChange}
         destroyInactiveTabPane
         >
-        {visibleLocations.map(location => (
-          <TabPane key={location.type} tab={t(`storage_${location.type}`)}>
-            {renderLocation(location)}
+        {visibleSourceTypes.map(sourceType => (
+          <TabPane key={sourceType} tab={t(`sourceType_${sourceType}`)}>
+            {renderSourceType(sourceType)}
           </TabPane>
         ))}
       </Tabs>
@@ -71,14 +105,14 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
 }
 
 ResourceSelector.propTypes = {
-  allowedLocationTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE))),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons])),
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func
 };
 
 ResourceSelector.defaultProps = {
-  allowedLocationTypes: [],
+  allowedSourceTypes: [],
   initialUrl: '',
   onCancel: () => {},
   onSelect: () => {}

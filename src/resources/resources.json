@@ -1316,20 +1316,6 @@
     }
   },
   {
-    "namespace": "filePreviewScreen",
-    "language": "en",
-    "resources": {
-      "headline": "File preview"
-    }
-  },
-  {
-    "namespace": "filePreviewScreen",
-    "language": "de",
-    "resources": {
-      "headline": "Datei-Vorschau"
-    }
-  },
-  {
     "namespace": "filesUploadScreen",
     "language": "en",
     "resources": {
@@ -1362,19 +1348,35 @@
     }
   },
   {
+    "namespace": "resourcePreviewScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File preview"
+    }
+  },
+  {
+    "namespace": "resourcePreviewScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Vorschau"
+    }
+  },
+  {
     "namespace": "resourceSelector",
     "language": "en",
     "resources": {
-      "storage_public": "Public storage",
-      "storage_private": "Private storage"
+      "sourceType_internal-public": "Public storage",
+      "sourceType_internal-private": "Private storage",
+      "sourceType_wikimedia-commons": "Wikimedia Commons"
     }
   },
   {
     "namespace": "resourceSelector",
     "language": "de",
     "resources": {
-      "storage_public": "Öffentlicher Speicher",
-      "storage_private": "Privater Speicher"
+      "sourceType_internal-public": "Öffentlicher Speicher",
+      "sourceType_internal-private": "Privater Speicher",
+      "sourceType_wikimedia-commons": "Wikimedia Commons"
     }
   },
   {
@@ -1384,9 +1386,6 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "This directory is publicly accessible",
-      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
-      "searchOngoing": "Searching …",
-      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "backToDirectoryView": "Back to directory view",
       "uploadFiles": "Upload files"
     }
@@ -1395,14 +1394,41 @@
     "namespace": "storageLocation",
     "language": "de",
     "resources": {
-      "filesView_list": "List",
+      "filesView_list": "Liste",
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
-      "searchOngoing": "Suche …",
-      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "backToDirectoryView": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsSearch",
+    "language": "en",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "This directory is publicly accessible",
+      "backToDirectoryView": "Back to directory view",
+      "uploadFiles": "Upload files",
+      "searchFileType_image": "Image",
+      "searchFileType_video": "Video",
+      "searchFileType_audio": "Audio",
+      "searchFileType_pdf": "PDF"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsSearch",
+    "language": "de",
+    "resources": {
+      "filesView_list": "Liste",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "backToDirectoryView": "Zurück zur Verzeichnisansicht",
+      "uploadFiles": "Dateien hochladen",
+      "searchFileType_image": "Bild",
+      "searchFileType_video": "Video",
+      "searchFileType_audio": "Audio",
+      "searchFileType_pdf": "PDF"
     }
   },
   {
@@ -2392,7 +2418,10 @@
       "caption": "Caption",
       "defaultVolumePreset": "Default",
       "volumePreset": "Volumes preset",
-      "displayMode": "Display mode"
+      "displayMode": "Display mode",
+      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
+      "searchOngoing": "Searching …",
+      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>"
     }
   },
   {
@@ -2546,7 +2575,10 @@
       "caption": "Legende",
       "defaultVolumePreset": "Standard",
       "volumePreset": "Lautstärke-Voreinstellung",
-      "displayMode": "Anzeigemodus"
+      "displayMode": "Anzeigemodus",
+      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
+      "searchOngoing": "Suche …",
+      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>"
     }
   },
   {

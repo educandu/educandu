@@ -89,7 +89,7 @@ function StorageLocation({
     if (value.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
-        content: t('searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
+        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
       });
 
       return;
@@ -104,11 +104,11 @@ function StorageLocation({
 
   const renderSearchInfo = () => {
     const searchMessage = isLoading
-      ? t('searchOngoing')
+      ? t('common:searchOngoing')
       : (
         <Trans
           t={t}
-          i18nKey="searchResultInfo"
+          i18nKey="common:searchResultInfo"
           values={{ searchTerm }}
           components={[<i key="0" />]}
           />

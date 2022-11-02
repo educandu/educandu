@@ -2,11 +2,9 @@ import React from 'react';
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
 import ResourceSelector from './resource-selector.js';
-import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { SOURCE_TYPE } from '../../domain/constants.js';
 
-// This can later be made configurable by individual plugins
-// (when we have more locations than just from the public/private CDN).
-const allowedLocationTypes = [STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private];
+const allowedSourceTypes = [SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons];
 
 function ResourcePickerDialog({ isVisible, url, onSelect, onClose }) {
   const handleCancel = event => {
@@ -29,10 +27,10 @@ function ResourcePickerDialog({ isVisible, url, onSelect, onClose }) {
       modalRender={modalRender}
       >
       <ResourceSelector
-        allowedLocationTypes={allowedLocationTypes}
         initialUrl={url}
         onSelect={onSelect}
         onCancel={handleCancel}
+        allowedSourceTypes={allowedSourceTypes}
         />
     </Modal>
   );

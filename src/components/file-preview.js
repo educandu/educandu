@@ -22,7 +22,7 @@ import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
 
 const logger = new Logger(import.meta.url);
 
-function FilePreview({ createdOn, size, url, compact }) {
+function FilePreview({ createdOn, updatedOn, size, url, compact }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -163,12 +163,26 @@ function FilePreview({ createdOn, size, url, compact }) {
         <div className="FilePreview-detailValue">
           {prettyBytes(size)}
         </div>
-        <div className="FilePreview-detailLabel">
-          {t('common:createdOn')}
-        </div>
-        <div className="FilePreview-detailValue">
-          {formatDate(createdOn)}
-        </div>
+        {createdOn && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:createdOn')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {formatDate(createdOn)}
+            </div>
+          </Fragment>
+        )}
+        {updatedOn && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:updatedOn')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {formatDate(updatedOn)}
+            </div>
+          </Fragment>
+        )}
         {imageDimensions && (
           <Fragment>
             <div className="FilePreview-detailLabel">
@@ -206,13 +220,16 @@ function FilePreview({ createdOn, size, url, compact }) {
 
 FilePreview.propTypes = {
   compact: PropTypes.bool,
-  createdOn: PropTypes.string.isRequired,
+  createdOn: PropTypes.string,
   size: PropTypes.number.isRequired,
+  updatedOn: PropTypes.string,
   url: PropTypes.string.isRequired
 };
 
 FilePreview.defaultProps = {
-  compact: false
+  compact: false,
+  createdOn: null,
+  updatedOn: null
 };
 
 export default FilePreview;

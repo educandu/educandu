@@ -4,16 +4,15 @@ import PropTypes from 'prop-types';
 import FilePreview from '../file-preview.js';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { fileShape } from '../../ui/default-prop-types.js';
 
-function FilePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
-  const { t } = useTranslation('filePreviewScreen');
+function PreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
+  const { t } = useTranslation('resourcePreviewScreen');
 
   return (
     <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
       <div className="u-resource-picker-screen-content u-resource-picker-screen-content-fit u-resource-picker-screen-content-scrollable">
-        <FilePreview url={file.url} size={file.size} createdOn={file.createdOn} />
+        <FilePreview url={file.url} size={file.size} createdOn={file.createdOn || null} updatedOn={file.updatedOn || null} />
       </div>
       <div className="u-resource-picker-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
@@ -26,11 +25,16 @@ function FilePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) 
   );
 }
 
-FilePreviewScreen.propTypes = {
-  file: fileShape.isRequired,
+PreviewScreen.propTypes = {
+  file: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+    size: PropTypes.number.isRequired,
+    createdOn: PropTypes.string,
+    updatedOn: PropTypes.string
+  }).isRequired,
   onBackClick: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onSelectClick: PropTypes.func.isRequired
 };
 
-export default FilePreviewScreen;
+export default PreviewScreen;

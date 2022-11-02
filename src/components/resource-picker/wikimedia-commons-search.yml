@@ -13,3 +13,15 @@ backToDirectoryView:
 uploadFiles:
   en: Upload files
   de: Dateien hochladen
+searchFileType_image:
+  en: Image
+  de: Bild
+searchFileType_video:
+  en: Video
+  de: Video
+searchFileType_audio:
+  en: Audio
+  de: Audio
+searchFileType_pdf:
+  en: PDF
+  de: PDF
