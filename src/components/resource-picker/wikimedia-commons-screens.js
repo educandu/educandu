@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
-import ResourcePreviewScreen from './resource-preview-screen.js';
 import { ensureIsUnique } from '../../utils/array-utils.js';
+import ResourcePreviewScreen from './resource-preview-screen.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import WikimediaCommonsSearch from './wikimedia-commons-search.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';

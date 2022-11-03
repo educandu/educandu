@@ -1,19 +1,24 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
-import DebouncedInput from '../debounced-input.js';
-import React, { useEffect, useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
-import { Alert, Button, Modal, Input, Checkbox } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
 import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
+import { Alert, Button, Modal, Input, Checkbox, Empty } from 'antd';
 import WikimediaCommonsFilesViewer from './wikimedia-commons-files-viewer.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 
-const { Search } = Input;
 const CheckboxGroup = Checkbox.Group;
 
 const MIN_SEARCH_TERM_LENGTH = 3;
+
+const SCREEN = {
+  search: 'search',
+  searchInvitation: 'search-invitation',
+  initialUrlPreview: 'initial-url-preview'
+};
 
 const createSearchFileTypeOptions = t => {
   return Object.values(SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
@@ -39,12 +44,27 @@ function WikimediaCommonsSearch({
 }) {
   const { t } = useTranslation('wikimediaCommonsSearch');
 
+  const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchParams.searchTerm);
   const [searchFileTypeOptions, setSearchFileTypeOptions] = useState(createSearchFileTypeOptions(t));
   const [selectedSearchFileTypes, setSelectedSearchFileTypes] = useState(searchParams.searchFileTypes);
 
-  const shouldUseInitialUrl = !isLoading && !searchParams.searchTerm && initialUrl;
-  const canSelectUrl = shouldUseInitialUrl || (!isLoading && highlightedFile);
+  let currentScreen;
+  let canSelectUrl;
+  if (hasSearchedAtLeastOnce) {
+    currentScreen = SCREEN.search;
+    canSelectUrl = !!highlightedFile;
+  } else if (initialUrl) {
+    currentScreen = SCREEN.initialUrlPreview;
+    canSelectUrl = true;
+  } else {
+    currentScreen = SCREEN.searchInvitation;
+    canSelectUrl = false;
+  }
+
+  const canStartSearch = !isLoading
+    && typedInSearchTerm.length >= MIN_SEARCH_TERM_LENGTH
+    && selectedSearchFileTypes.length > 0;
 
   useEffect(() => {
     setSearchFileTypeOptions(createSearchFileTypeOptions(t));
@@ -59,25 +79,26 @@ function WikimediaCommonsSearch({
   }, [searchParams.searchFileTypes]);
 
   const handleSelectClick = () => {
-    if (shouldUseInitialUrl) {
-      onSelectInitialUrlClick();
-    } else {
-      onSelectHighlightedFileClick();
+    switch (currentScreen) {
+      case SCREEN.search:
+        return onSelectHighlightedFileClick();
+      case SCREEN.initialUrlPreview:
+        return onSelectInitialUrlClick();
+      default:
+        throw new Error('No file selected');
     }
   };
 
-  const handleSearchTermChange = newValue => {
-    setTypedInSearchTerm(newValue);
+  const handleSearchTermChange = event => {
+    setTypedInSearchTerm(event.target.value);
   };
 
   const handleSelectedSearchFileTypesChange = newValues => {
     setSelectedSearchFileTypes(newValues);
   };
 
-  const handleSearchClick = async value => {
-    setTypedInSearchTerm(value);
-
-    if (value.length < MIN_SEARCH_TERM_LENGTH) {
+  const handleSearchClick = () => {
+    if (typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
         content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
@@ -86,7 +107,8 @@ function WikimediaCommonsSearch({
       return;
     }
 
-    await onSearchParamsChange({ searchTerm: value, searchFileTypes: selectedSearchFileTypes });
+    setHasSearchedAtLeastOnce(true);
+    onSearchParamsChange({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const renderSearchInfo = () => {
@@ -113,19 +135,15 @@ function WikimediaCommonsSearch({
     <div className={classNames('WikimediaCommonsSearch', { 'is-hidden': isHidden })}>
       <div className="WikimediaCommonsSearch-buttonsLine">
         <div className="WikimediaCommonsSearch-buttonsLineItem">
-          <DebouncedInput
-            elementType={Search}
-            placeholder={t('common:search')}
+          <Input
+            placeholder={t('searchTerm')}
             value={typedInSearchTerm}
-            onSearch={handleSearchClick}
+            onPressEnter={handleSearchClick}
             onChange={handleSearchTermChange}
-            disabled={isLoading || !selectedSearchFileTypes.length}
+            disabled={isLoading}
             />
         </div>
         <div className="WikimediaCommonsSearch-buttonsLineItem">
-          <span className="WikimediaCommonsSearch-searchFileTypeLabel">
-            {t('searchFileTypeLabel')}:
-          </span>
           <CheckboxGroup
             options={searchFileTypeOptions}
             value={selectedSearchFileTypes}
@@ -133,9 +151,60 @@ function WikimediaCommonsSearch({
             disabled={isLoading}
             />
         </div>
+        <div className="WikimediaCommonsSearch-buttonsLineItem">
+          <Button
+            type="primary"
+            icon={<SearchOutlined />}
+            disabled={!canStartSearch}
+            onClick={handleSearchClick}
+            >
+            {t('common:search')}
+          </Button>
+        </div>
       </div>
-      {shouldUseInitialUrl && (
-        <div className="WikimediaCommonsSearch-initialFilePreview">
+      {currentScreen === SCREEN.search && (
+        <Fragment>
+          <div className="WikimediaCommonsSearch-filesViewer">
+            <div className="WikimediaCommonsSearch-filesViewerContent">
+              <WikimediaCommonsFilesViewer
+                files={files}
+                isLoading={isLoading}
+                onLoadMore={onLoadMore}
+                canLoadMore={canLoadMore}
+                onFileClick={onFileClick}
+                onFileDoubleClick={onFileDoubleClick}
+                selectedFileUrl={highlightedFile?.url}
+                onPreviewFileClick={onPreviewFileClick}
+                onOpenWikimediaCommonsPageClick={onOpenWikimediaCommonsPageClick}
+                />
+            </div>
+          </div>
+          <div className="WikimediaCommonsSearch-searchInfo">
+            {renderSearchInfo()}
+          </div>
+        </Fragment>
+      )}
+      {currentScreen === SCREEN.searchInvitation && (
+        <div className="WikimediaCommonsSearch-noSearch">
+          <Empty
+            image={(
+              <SearchOutlined className="WikimediaCommonsSearch-searchInvitationIcon" />
+            )}
+            description={(
+              <Fragment>
+                <div className="WikimediaCommonsSearch-searchInvitationHeader">
+                  {t('searchInvitationHeader')}
+                </div>
+                <div className="WikimediaCommonsSearch-searchInvitationDescription">
+                  {t('searchInvitationDescription')}
+                </div>
+              </Fragment>
+            )}
+            />
+        </div>
+      )}
+      {currentScreen === SCREEN.initialUrlPreview && (
+        <div className="WikimediaCommonsSearch-noSearch">
           <div className="WikimediaCommonsSearch-initialFilePreviewHeader">
             <b>{t('initialFilePreviewHeader')}:</b>
             <br />
@@ -148,28 +217,6 @@ function WikimediaCommonsSearch({
           <div className="WikimediaCommonsSearch-initialFilePreviewFooter">
             {t('initialFilePreviewFooter')}
           </div>
-        </div>
-      )}
-      {!shouldUseInitialUrl && (
-        <div className="WikimediaCommonsSearch-filesViewer">
-          <div className="WikimediaCommonsSearch-filesViewerContent">
-            <WikimediaCommonsFilesViewer
-              files={files}
-              isLoading={isLoading}
-              onLoadMore={onLoadMore}
-              canLoadMore={canLoadMore}
-              onFileClick={onFileClick}
-              onFileDoubleClick={onFileDoubleClick}
-              selectedFileUrl={highlightedFile?.url}
-              onPreviewFileClick={onPreviewFileClick}
-              onOpenWikimediaCommonsPageClick={onOpenWikimediaCommonsPageClick}
-              />
-          </div>
-        </div>
-      )}
-      {!shouldUseInitialUrl && (
-        <div className="WikimediaCommonsSearch-searchInfo">
-          {renderSearchInfo()}
         </div>
       )}
       <div className="u-resource-picker-screen-footer-right-aligned">

@@ -9,13 +9,27 @@
   }
 }
 
-.WikimediaCommonsSearch-initialFilePreview {
+.WikimediaCommonsSearch-noSearch {
   margin: 20px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+.WikimediaCommonsSearch-searchInvitationIcon {
+  font-size: 60px;
+}
+
+.WikimediaCommonsSearch-searchInvitationHeader {
+  font-size: 110%;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.WikimediaCommonsSearch-searchInvitationDescription {
+  font-size: 90%;
 }
 
 .WikimediaCommonsSearch-initialFilePreviewHeader {
@@ -42,12 +56,18 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+
+  @media @edu-media-phone {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .WikimediaCommonsSearch-buttonsLineItem {
   white-space: nowrap;
-  margin-top: @edu-control-spacing-base;
+  margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
 }
 
 .WikimediaCommonsSearch-searchFileTypeLabel {

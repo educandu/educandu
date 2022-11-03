@@ -1417,11 +1417,13 @@
     "namespace": "wikimediaCommonsSearch",
     "language": "en",
     "resources": {
-      "searchFileTypeLabel": "Search for",
+      "searchTerm": "Search term",
       "searchFileType_image": "Image",
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
+      "searchInvitationHeader": "Search in the Wikimedia Commons Database",
+      "searchInvitationDescription": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
       "initialFilePreviewHeader": "Currently selected file",
       "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above"
     }
@@ -1430,11 +1432,13 @@
     "namespace": "wikimediaCommonsSearch",
     "language": "de",
     "resources": {
-      "searchFileTypeLabel": "Suche nach",
+      "searchTerm": "Suchbegriff",
       "searchFileType_image": "Bild",
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
+      "searchInvitationHeader": "Suche in der Wikimedia-Commons-Datenbank",
+      "searchInvitationDescription": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest",
       "initialFilePreviewHeader": "Momentan ausgewählte Datei",
       "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
     }
