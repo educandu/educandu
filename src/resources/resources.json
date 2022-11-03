@@ -1118,8 +1118,7 @@
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
-      "documentsHeadline": "Recently created documents",
-      "loadMore": "more ..."
+      "documentsHeadline": "Recently created documents"
     }
   },
   {
@@ -1127,8 +1126,7 @@
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
-      "documentsHeadline": "Letzte erstellte Dokumente",
-      "loadMore": "mehr ..."
+      "documentsHeadline": "Letzte erstellte Dokumente"
     }
   },
   {
@@ -1425,8 +1423,7 @@
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
       "initialFilePreviewHeader": "Currently selected file",
-      "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above",
-      "loadMoreSearchResults": "load more"
+      "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above"
     }
   },
   {
@@ -1439,8 +1436,7 @@
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
       "initialFilePreviewHeader": "Momentan ausgewählte Datei",
-      "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben",
-      "loadMoreSearchResults": "mehr laden"
+      "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
     }
   },
   {
@@ -2037,8 +2033,6 @@
       "segmentsPanelHeader": "Segments",
       "chapterColorLabel": "Color",
       "chapterTextLabel": "Annotation",
-      "more": "more ...",
-      "less": "less ...",
       "exportAsCsv": "Export as CSV file",
       "importFromCsv": "Import from CSV file",
       "segmentsDropzoneInfo": "You can drop a CSV file in this box in order to import segments",
@@ -2053,8 +2047,6 @@
       "segmentsPanelHeader": "Segmente",
       "chapterColorLabel": "Farbe",
       "chapterTextLabel": "Anmerkung",
-      "more": "mehr ...",
-      "less": "weniger ...",
       "exportAsCsv": "Als CSV-Datei exportieren",
       "importFromCsv": "Aus CSV-Datei importieren",
       "segmentsDropzoneInfo": "Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren",
@@ -2432,8 +2424,10 @@
       "volumePreset": "Volumes preset",
       "displayMode": "Display mode",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
-      "searchOngoing": "Searching …",
-      "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n"
+      "searchOngoing": "Searching ...",
+      "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n",
+      "more": "more ...",
+      "less": "less ..."
     }
   },
   {
@@ -2589,8 +2583,10 @@
       "volumePreset": "Lautstärke-Voreinstellung",
       "displayMode": "Anzeigemodus",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
-      "searchOngoing": "Suche …",
-      "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n"
+      "searchOngoing": "Suche ...",
+      "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n",
+      "more": "mehr ...",
+      "less": "weniger ..."
     }
   },
   {

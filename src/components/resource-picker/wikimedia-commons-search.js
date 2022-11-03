@@ -102,7 +102,7 @@ function WikimediaCommonsSearch({
             />
           {canLoadMore && (
             <span>
-              &nbsp;&nbsp;&nbsp;(<a onClick={onLoadMoreClick}>{t('loadMoreSearchResults')}</a>)
+              &nbsp;&nbsp;&nbsp;(<a onClick={onLoadMoreClick}>{t('common:more')}</a>)
             </span>
           )}
         </Fragment>
