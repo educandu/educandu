@@ -1,4 +1,6 @@
 import { SIZE } from './constants.js';
+import uniqueId from '../../utils/unique-id.js';
+import { shuffleItems } from '../../utils/array-utils.js';
 
 export const createDefaultTile = () => ({
   text: ''
@@ -23,4 +25,26 @@ export const resizeTilePairs = (oldTilePairs, newSize) => {
   );
 
   return newTilePairs;
+};
+
+export const getRandomizedTilesFromPairs = tilePairs => {
+  const tilesWithKeys = tilePairs
+    .map(tilePair => {
+      const pairKey = uniqueId.create();
+      return [
+        {
+          ...tilePair[0],
+          key: uniqueId.create(),
+          pairKey
+        },
+        {
+          ...tilePair[1],
+          key: uniqueId.create(),
+          pairKey
+        }
+      ];
+    })
+    .flat();
+
+  return shuffleItems(tilesWithKeys);
 };

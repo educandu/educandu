@@ -1,3 +1,23 @@
+.MemoryDisplay {
+  display: grid;
+  gap: 10px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: @edu-border-radius-sm;
+  background-color: @edu-background-color-light;
+
+  &.MemoryDisplay--3x3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  &.MemoryDisplay--4x4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+}
+
 .MemoryEditor {}
 
 .MemoryEditor-tileButtonGroup {
