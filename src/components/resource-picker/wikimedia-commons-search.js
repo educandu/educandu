@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
 import DebouncedInput from '../debounced-input.js';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ const createSearchFileTypeOptions = t => {
 
 function WikimediaCommonsSearch({
   files,
+  isHidden,
   isLoading,
   initialUrl,
   canLoadMore,
@@ -108,7 +110,7 @@ function WikimediaCommonsSearch({
   };
 
   return (
-    <div className="WikimediaCommonsSearch">
+    <div className={classNames('WikimediaCommonsSearch', { 'is-hidden': isHidden })}>
       <div className="WikimediaCommonsSearch-buttonsLine">
         <div className="WikimediaCommonsSearch-buttonsLineItem">
           <DebouncedInput
@@ -187,6 +189,7 @@ WikimediaCommonsSearch.propTypes = {
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   highlightedFile: wikimediaFileShape,
   initialUrl: PropTypes.string,
+  isHidden: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,

@@ -140,25 +140,24 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
 
   return (
     <Fragment>
-      {screen === SCREEN.search && (
-        <WikimediaCommonsSearch
-          files={files}
-          isLoading={isLoading}
-          initialUrl={initialUrl}
-          onCancelClick={onCancel}
-          onLoadMore={handleLoadMore}
-          searchParams={searchParams}
-          onFileClick={handleFileClick}
-          highlightedFile={highlightedFile}
-          canLoadMore={nextSearchOffset !== 0}
-          onFileDoubleClick={handleFileDoubleClick}
-          onPreviewFileClick={handlePreviewFileClick}
-          onSearchParamsChange={handleSearchParamsChange}
-          onSelectInitialUrlClick={handleSelectInitialUrlClick}
-          onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
-          onOpenWikimediaCommonsPageClick={handleOpenWikimediaCommonsPageClick}
-          />
-      )}
+      <WikimediaCommonsSearch
+        files={files}
+        isLoading={isLoading}
+        initialUrl={initialUrl}
+        onCancelClick={onCancel}
+        onLoadMore={handleLoadMore}
+        searchParams={searchParams}
+        onFileClick={handleFileClick}
+        highlightedFile={highlightedFile}
+        isHidden={screen !== SCREEN.search}
+        canLoadMore={nextSearchOffset !== 0}
+        onFileDoubleClick={handleFileDoubleClick}
+        onPreviewFileClick={handlePreviewFileClick}
+        onSearchParamsChange={handleSearchParamsChange}
+        onSelectInitialUrlClick={handleSelectInitialUrlClick}
+        onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
+        onOpenWikimediaCommonsPageClick={handleOpenWikimediaCommonsPageClick}
+        />
 
       {screen === SCREEN.filePreview && (
         <ResourcePreviewScreen
