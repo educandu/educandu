@@ -6,8 +6,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Modal, Input, Checkbox } from 'antd';
 import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
+import WikimediaCommonsFilesViewer from './wikimedia-commons-files-viewer.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
-import WikimediaCommonsFilesGridViewer from './wikimedia-commons-files-grid-viewer.js';
 
 const { Search } = Input;
 const CheckboxGroup = Checkbox.Group;
@@ -158,7 +158,7 @@ function WikimediaCommonsSearch({
       {!shouldUseInitialUrl && (
         <div className="WikimediaCommonsSearch-filesViewer">
           <div className="WikimediaCommonsSearch-filesViewerContent">
-            <WikimediaCommonsFilesGridViewer
+            <WikimediaCommonsFilesViewer
               files={files}
               isLoading={isLoading}
               onFileClick={onFileClick}

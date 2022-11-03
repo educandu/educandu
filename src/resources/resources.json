@@ -1400,14 +1400,14 @@
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesGridViewer",
+    "namespace": "wikimediaCommonsFilesViewer",
     "language": "en",
     "resources": {
       "openWikimediaCommonsPage": "Open Wikimedia Commons page"
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesGridViewer",
+    "namespace": "wikimediaCommonsFilesViewer",
     "language": "de",
     "resources": {
       "openWikimediaCommonsPage": "Seite auf Wikimedia Commons öffnen"

@@ -8,7 +8,7 @@ import { wikimediaFileShape } from '../../ui/default-prop-types.js';
 import WikimediaCommonsIcon from '../icons/wikimedia-commons/wikimedia-commons-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
-function WikimediaCommonsFilesGridViewer({
+function WikimediaCommonsFilesViewer({
   files,
   isLoading,
   selectedFileUrl,
@@ -17,7 +17,7 @@ function WikimediaCommonsFilesGridViewer({
   onPreviewFileClick,
   onOpenWikimediaCommonsPageClick
 }) {
-  const { t } = useTranslation('wikimediaCommonsFilesGridViewer');
+  const { t } = useTranslation('wikimediaCommonsFilesViewer');
 
   const handleOpenWikimediaCommonsPageClick = (event, file) => {
     event.stopPropagation();
@@ -30,17 +30,17 @@ function WikimediaCommonsFilesGridViewer({
   };
 
   const renderFile = file => {
-    const classes = classNames('WikimediaCommonsFilesGridViewer-fileContainer', { 'is-selected': file.url === selectedFileUrl });
-    const actionsClasses = classNames('WikimediaCommonsFilesGridViewer-actions', { 'are-visible': file.url === selectedFileUrl });
+    const classes = classNames('WikimediaCommonsFilesViewer-fileContainer', { 'is-selected': file.url === selectedFileUrl });
+    const actionsClasses = classNames('WikimediaCommonsFilesViewer-actions', { 'are-visible': file.url === selectedFileUrl });
 
     return (
       <div className={classes} key={file.url}>
         <Tooltip title={file.displayName} placement="bottom">
-          <a className="WikimediaCommonsFilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
-            <div className="WikimediaCommonsFilesGridViewer-fileDisplay">
-              <img className="WikimediaCommonsFilesGridViewer-fileDisplayImage" src={file.thumbnailUrl} />
+          <a className="WikimediaCommonsFilesViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
+            <div className="WikimediaCommonsFilesViewer-fileDisplay">
+              <img className="WikimediaCommonsFilesViewer-fileDisplayImage" src={file.thumbnailUrl} />
             </div>
-            <span className="WikimediaCommonsFilesGridViewer-fileName">{file.displayName}</span>
+            <span className="WikimediaCommonsFilesViewer-fileName">{file.displayName}</span>
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
@@ -66,11 +66,11 @@ function WikimediaCommonsFilesGridViewer({
   };
 
   return (
-    <div className="WikimediaCommonsFilesGridViewer">
-      <div className="WikimediaCommonsFilesGridViewer-files">
+    <div className="WikimediaCommonsFilesViewer">
+      <div className="WikimediaCommonsFilesViewer-files">
         {files.map(file => renderFile(file))}
       </div>
-      <div className={classNames('WikimediaCommonsFilesGridViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
+      <div className={classNames('WikimediaCommonsFilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
         <Spin size="large" />
       </div>
     </div>
@@ -78,7 +78,7 @@ function WikimediaCommonsFilesGridViewer({
   );
 }
 
-WikimediaCommonsFilesGridViewer.propTypes = {
+WikimediaCommonsFilesViewer.propTypes = {
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   isLoading: PropTypes.bool,
   onFileClick: PropTypes.func.isRequired,
@@ -88,9 +88,9 @@ WikimediaCommonsFilesGridViewer.propTypes = {
   selectedFileUrl: PropTypes.string
 };
 
-WikimediaCommonsFilesGridViewer.defaultProps = {
+WikimediaCommonsFilesViewer.defaultProps = {
   isLoading: false,
   selectedFileUrl: null
 };
 
-export default WikimediaCommonsFilesGridViewer;
+export default WikimediaCommonsFilesViewer;
