@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import LiteralUrl from '../literal-url.js';
 import DebouncedInput from '../debounced-input.js';
+import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import React, { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Modal, Input, Checkbox } from 'antd';
 import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
@@ -25,9 +25,9 @@ function WikimediaCommonsSearch({
   canLoadMore,
   searchParams,
   highlightedFile,
+  onLoadMore,
   onFileClick,
   onCancelClick,
-  onLoadMoreClick,
   onFileDoubleClick,
   onPreviewFileClick,
   onSearchParamsChange,
@@ -93,19 +93,12 @@ function WikimediaCommonsSearch({
       searchMessage = t('common:searchOngoing');
     } else if (searchParams.searchTerm) {
       searchMessage = (
-        <Fragment>
-          <Trans
-            t={t}
-            i18nKey="common:searchResultInfo"
-            values={{ resultCount: files.length, searchTerm: searchParams.searchTerm }}
-            components={[<i key="0" />]}
-            />
-          {canLoadMore && (
-            <span>
-              &nbsp;&nbsp;&nbsp;(<a onClick={onLoadMoreClick}>{t('common:more')}</a>)
-            </span>
-          )}
-        </Fragment>
+        <Trans
+          t={t}
+          i18nKey="common:searchResultInfo"
+          values={{ resultCount: files.length, searchTerm: searchParams.searchTerm }}
+          components={[<i key="0" />]}
+          />
       );
     } else {
       searchMessage = null;
@@ -161,10 +154,12 @@ function WikimediaCommonsSearch({
             <WikimediaCommonsFilesViewer
               files={files}
               isLoading={isLoading}
+              onLoadMore={onLoadMore}
+              canLoadMore={canLoadMore}
               onFileClick={onFileClick}
               onFileDoubleClick={onFileDoubleClick}
-              onPreviewFileClick={onPreviewFileClick}
               selectedFileUrl={highlightedFile?.url}
+              onPreviewFileClick={onPreviewFileClick}
               onOpenWikimediaCommonsPageClick={onOpenWikimediaCommonsPageClick}
               />
           </div>
@@ -196,7 +191,7 @@ WikimediaCommonsSearch.propTypes = {
   onCancelClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
-  onLoadMoreClick: PropTypes.func.isRequired,
+  onLoadMore: PropTypes.func.isRequired,
   onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,

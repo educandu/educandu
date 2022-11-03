@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import PreviewIcon from '../icons/general/preview-icon.js';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
 import WikimediaCommonsIcon from '../icons/wikimedia-commons/wikimedia-commons-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
@@ -11,13 +12,23 @@ import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action
 function WikimediaCommonsFilesViewer({
   files,
   isLoading,
+  canLoadMore,
   selectedFileUrl,
+  onLoadMore,
   onFileClick,
   onFileDoubleClick,
   onPreviewFileClick,
   onOpenWikimediaCommonsPageClick
 }) {
   const { t } = useTranslation('wikimediaCommonsFilesViewer');
+
+  const [sentryRef, { rootRef }] = useInfiniteScroll({
+    loading: isLoading,
+    hasNextPage: canLoadMore,
+    onLoadMore,
+    disabled: false,
+    rootMargin: '0px 0px 100px 0px'
+  });
 
   const handleOpenWikimediaCommonsPageClick = (event, file) => {
     event.stopPropagation();
@@ -30,8 +41,16 @@ function WikimediaCommonsFilesViewer({
   };
 
   const renderFile = file => {
-    const classes = classNames('WikimediaCommonsFilesViewer-fileContainer', { 'is-selected': file.url === selectedFileUrl });
-    const actionsClasses = classNames('WikimediaCommonsFilesViewer-actions', { 'are-visible': file.url === selectedFileUrl });
+    const classes = classNames({
+      'WikimediaCommonsFilesViewer-itemContainer': true,
+      'WikimediaCommonsFilesViewer-itemContainer--file': true,
+      'is-selected': file.url === selectedFileUrl
+    });
+
+    const actionsClasses = classNames({
+      'WikimediaCommonsFilesViewer-actions': true,
+      'are-visible': file.url === selectedFileUrl
+    });
 
     return (
       <div className={classes} key={file.url}>
@@ -65,10 +84,25 @@ function WikimediaCommonsFilesViewer({
     );
   };
 
+  const renderSentry = () => {
+    const classes = classNames({
+      'WikimediaCommonsFilesViewer-itemContainer': true,
+      'WikimediaCommonsFilesViewer-itemContainer--sentry': true,
+      'is-disabled': !canLoadMore
+    });
+
+    return (
+      <div ref={sentryRef} className={classes} key="sentry">
+        <Spin size="large" spinning={isLoading && files.length} />
+      </div>
+    );
+  };
+
   return (
-    <div className="WikimediaCommonsFilesViewer">
+    <div ref={rootRef} className="WikimediaCommonsFilesViewer">
       <div className="WikimediaCommonsFilesViewer-files">
         {files.map(file => renderFile(file))}
+        {renderSentry()}
       </div>
       <div className={classNames('WikimediaCommonsFilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
         <Spin size="large" />
@@ -79,10 +113,12 @@ function WikimediaCommonsFilesViewer({
 }
 
 WikimediaCommonsFilesViewer.propTypes = {
+  canLoadMore: PropTypes.bool.isRequired,
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   isLoading: PropTypes.bool,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
+  onLoadMore: PropTypes.func.isRequired,
   onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   selectedFileUrl: PropTypes.string

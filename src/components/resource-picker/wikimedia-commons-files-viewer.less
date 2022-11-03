@@ -29,19 +29,32 @@
   padding: 5px;
 }
 
-.WikimediaCommonsFilesViewer-fileContainer {
+.WikimediaCommonsFilesViewer-itemContainer {
   width: 80px;
   padding: 5px;
   margin: 10px;
   position: relative;
-  border-radius: @edu-border-radius-base;
 
-  &.is-selected {
-    background-color: @edu-selection-background-color;
+  &.WikimediaCommonsFilesViewer-itemContainer--file {
+    border-radius: @edu-border-radius-base;
+
+    &.is-selected {
+      background-color: @edu-selection-background-color;
+    }
+    &:hover {
+      .m-box-shadow;
+    }
   }
 
-  &:hover {
-    .m-box-shadow;
+  &.WikimediaCommonsFilesViewer-itemContainer--sentry {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.is-disabled {
+      display: none;
+    }
   }
 }
 

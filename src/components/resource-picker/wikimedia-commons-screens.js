@@ -60,7 +60,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     }
   }, [wikimediaCommonsApiClient, isMounted]);
 
-  const handleLoadMoreClick = () => {
+  const handleLoadMore = () => {
     fetchWikimediaFiles(searchParams, nextSearchOffset);
   };
 
@@ -143,14 +143,14 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.search && (
         <WikimediaCommonsSearch
           files={files}
-          initialUrl={initialUrl}
-          canLoadMore={nextSearchOffset !== 0}
           isLoading={isLoading}
-          searchParams={searchParams}
-          highlightedFile={highlightedFile}
+          initialUrl={initialUrl}
           onCancelClick={onCancel}
+          onLoadMore={handleLoadMore}
+          searchParams={searchParams}
           onFileClick={handleFileClick}
-          onLoadMoreClick={handleLoadMoreClick}
+          highlightedFile={highlightedFile}
+          canLoadMore={nextSearchOffset !== 0}
           onFileDoubleClick={handleFileDoubleClick}
           onPreviewFileClick={handlePreviewFileClick}
           onSearchParamsChange={handleSearchParamsChange}
