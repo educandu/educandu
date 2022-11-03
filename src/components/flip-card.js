@@ -1,28 +1,28 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useState } from 'react';
 
-function FlipCard({ frontContent, frontColor, backContent, backColor }) {
-  const [isFrontVisible, setIsFrontVisible] = useState(false);
-
-  const handleClick = () => {
-    setIsFrontVisible(prevState => !prevState);
-  };
-
+function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, onClick, disabled }) {
   const frontFaceStyle = frontColor ? { backgroundColor: frontColor } : null;
   const backFaceStyle = backColor ? { backgroundColor: backColor } : null;
 
+  const handleClick = () => {
+    if (!disabled) {
+      onClick();
+    }
+  };
+
   return (
     <div className="FlipCard" onClick={handleClick}>
-      <div className={classNames('FlipCard-content', { 'is-flipped': isFrontVisible })}>
-        <div className="FlipCard-face FlipCard-face--front" style={frontFaceStyle}>
-          <div className="FlipCard-faceContent">
-            {frontContent}
-          </div>
-        </div>
-        <div className="FlipCard-face FlipCard-face--back" style={backFaceStyle}>
+      <div className={classNames('FlipCard-content', { 'is-flipped': flipped })}>
+        <div className={classNames('FlipCard-face', 'FlipCard-face--back', { 'is-disabled': disabled })} style={backFaceStyle}>
           <div className="FlipCard-faceContent">
             {backContent}
+          </div>
+        </div>
+        <div className={classNames('FlipCard-face', 'FlipCard-face--front', { 'is-disabled': disabled })} style={frontFaceStyle}>
+          <div className="FlipCard-faceContent">
+            {frontContent}
           </div>
         </div>
       </div>
@@ -33,15 +33,21 @@ function FlipCard({ frontContent, frontColor, backContent, backColor }) {
 FlipCard.propTypes = {
   backColor: PropTypes.string,
   backContent: PropTypes.any,
+  disabled: PropTypes.bool,
+  flipped: PropTypes.bool,
   frontColor: PropTypes.string,
-  frontContent: PropTypes.any
+  frontContent: PropTypes.any,
+  onClick: PropTypes.func
 };
 
 FlipCard.defaultProps = {
   backColor: '',
   backContent: null,
+  disabled: false,
+  flipped: false,
   frontColor: '',
-  frontContent: null
+  frontContent: null,
+  onClick: () => {}
 };
 
 export default FlipCard;

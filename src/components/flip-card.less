@@ -4,7 +4,6 @@
 
 .FlipCard-content {
   position: relative;
-  cursor: pointer;
   width: 100%;
   height: 100%;
   transition: transform 0.8s;
@@ -18,6 +17,7 @@
 .FlipCard-face {
   position: absolute;
   user-select: none;
+  cursor: pointer;
   width: 100%;
   height: 100%;
   padding: 8px;
@@ -34,11 +34,21 @@
 
   &.FlipCard-face--front {
     background-color: @edu-white;
+    transform: rotateY(180deg);
   }
 
   &.FlipCard-face--back {
     background-color: lighten(@edu-primary-color-light, 15%);
-    transform: rotateY(180deg);
+  }
+
+  &.is-disabled {
+    cursor: default;
+    background-color: @edu-disabled-color;
+
+    &:hover {
+      border-color: @edu-border-color-light;
+      background-color: @edu-disabled-color;
+    }
   }
 }
 
