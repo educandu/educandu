@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
+import DebouncedInput from '../debounced-input.js';
 import { SearchOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { Fragment, useEffect, useState } from 'react';
+import { Alert, Button, Modal, Checkbox, Empty } from 'antd';
 import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
-import { Alert, Button, Modal, Input, Checkbox, Empty } from 'antd';
 import WikimediaCommonsFilesViewer from './wikimedia-commons-files-viewer.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 
@@ -62,10 +63,6 @@ function WikimediaCommonsSearch({
     canSelectUrl = false;
   }
 
-  const canStartSearch = !isLoading
-    && typedInSearchTerm.length >= MIN_SEARCH_TERM_LENGTH
-    && selectedSearchFileTypes.length > 0;
-
   useEffect(() => {
     setSearchFileTypeOptions(createSearchFileTypeOptions(t));
   }, [t]);
@@ -89,16 +86,16 @@ function WikimediaCommonsSearch({
     }
   };
 
-  const handleSearchTermChange = event => {
-    setTypedInSearchTerm(event.target.value);
+  const handleSearchTermChange = value => {
+    setTypedInSearchTerm(value);
   };
 
   const handleSelectedSearchFileTypesChange = newValues => {
     setSelectedSearchFileTypes(newValues);
   };
 
-  const handleSearchClick = () => {
-    if (typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH) {
+  const tryStartSearch = newSearchParams => {
+    if (newSearchParams.searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
         content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
@@ -108,7 +105,19 @@ function WikimediaCommonsSearch({
     }
 
     setHasSearchedAtLeastOnce(true);
-    onSearchParamsChange({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
+
+    // This will trigger search in the parent component:
+    onSearchParamsChange(newSearchParams);
+  };
+
+  const handleSearchEnterKey = event => {
+    const newSearchTerm = event.target.value;
+    setTypedInSearchTerm(newSearchTerm);
+    tryStartSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
+  };
+
+  const handleSearchButtonClick = () => {
+    tryStartSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const renderSearchInfo = () => {
@@ -135,12 +144,11 @@ function WikimediaCommonsSearch({
     <div className={classNames('WikimediaCommonsSearch', { 'is-hidden': isHidden })}>
       <div className="WikimediaCommonsSearch-buttonsLine">
         <div className="WikimediaCommonsSearch-buttonsLineItem">
-          <Input
-            placeholder={t('searchTerm')}
+          <DebouncedInput
+            placeholder={t('common:search')}
             value={typedInSearchTerm}
-            onPressEnter={handleSearchClick}
+            onPressEnter={handleSearchEnterKey}
             onChange={handleSearchTermChange}
-            disabled={isLoading}
             />
         </div>
         <div className="WikimediaCommonsSearch-buttonsLineItem">
@@ -155,8 +163,8 @@ function WikimediaCommonsSearch({
           <Button
             type="primary"
             icon={<SearchOutlined />}
-            disabled={!canStartSearch}
-            onClick={handleSearchClick}
+            disabled={!selectedSearchFileTypes.length || isLoading}
+            onClick={handleSearchButtonClick}
             >
             {t('common:search')}
           </Button>

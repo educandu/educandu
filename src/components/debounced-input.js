@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useDebouncedCallback } from '../ui/hooks.js';
 
-function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onChange, onSearch, ...props }) {
+function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onChange, onSearch, onPressEnter, ...props }) {
   const [actualValue, setActualValue] = useState(value);
   const debouncedOnChange = useDebouncedCallback(onChange, timeLimit);
 
@@ -29,6 +29,13 @@ function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onCh
     };
   }
 
+  if (onPressEnter) {
+    componentProps.onPressEnter = (...args) => {
+      debouncedOnChange.flush();
+      onPressEnter(...args);
+    };
+  }
+
   return <Component {...componentProps} value={actualValue} onChange={handleChange} />;
 }
 
@@ -36,6 +43,7 @@ DebouncedInput.propTypes = {
   apiRef: PropTypes.object,
   elementType: PropTypes.elementType,
   onChange: PropTypes.func,
+  onPressEnter: PropTypes.func,
   onSearch: PropTypes.func,
   timeLimit: PropTypes.number,
   value: PropTypes.string
@@ -45,6 +53,7 @@ DebouncedInput.defaultProps = {
   apiRef: { current: null },
   elementType: Input,
   onChange: () => {},
+  onPressEnter: null,
   onSearch: null,
   timeLimit: 250,
   value: ''
