@@ -66,6 +66,10 @@ export function getSourceType({ url, cdnRootUrl }) {
     return SOURCE_TYPE.youtube;
   }
 
+  if (url.startsWith('https://upload.wikimedia.org/')) {
+    return SOURCE_TYPE.wikimediaCommons;
+  }
+
   if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.valid) {
     return SOURCE_TYPE.external;
   }

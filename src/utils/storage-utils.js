@@ -114,11 +114,6 @@ export function getParentPathForStorageLocationPath(pathname) {
   return (pathname || '').split('/').slice(0, -1).join('/');
 }
 
-export function getStorageLocationTypeForUrl(url) {
-  const storageLocationPath = getStorageLocationPathForUrl(url);
-  return storageLocationPath ? getStorageLocationTypeForPath(storageLocationPath) : STORAGE_LOCATION_TYPE.unknown;
-}
-
 export function getPublicRootPath() {
   return 'media';
 }

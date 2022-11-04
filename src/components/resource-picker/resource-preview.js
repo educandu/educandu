@@ -1,28 +1,34 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
-import MiniPager from './mini-pager.js';
+import MiniPager from '../mini-pager.js';
 import { message, Tooltip } from 'antd';
-import Logger from '../common/logger.js';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import LiteralUrlLink from './literal-url-link.js';
-import { useService } from './container-context.js';
-import { handleError } from '../ui/error-helper.js';
-import { useDateFormat } from './locale-context.js';
-import mimeTypeHelper from '../ui/mime-type-helper.js';
-import MediaPlayer from './media-player/media-player.js';
-import ClientConfig from '../bootstrap/client-config.js';
-import { getResourceType } from '../utils/resource-utils.js';
-import FileTextFilledIcon from './icons/files/file-text-filled-icon.js';
-import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../domain/constants.js';
-import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+import LiteralUrlLink from '../literal-url-link.js';
+import { useService } from '../container-context.js';
+import { handleError } from '../../ui/error-helper.js';
+import { useDateFormat } from '../locale-context.js';
+import mimeTypeHelper from '../../ui/mime-type-helper.js';
+import MediaPlayer from '../media-player/media-player.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { getResourceType } from '../../utils/resource-utils.js';
+import FileTextFilledIcon from '../icons/files/file-text-filled-icon.js';
+import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
+import CopyToClipboardIcon from '../icons/general/copy-to-clipboard-icon.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import FileUnknownFilledIcon from './icons/files/file-unknown-filled-icon.js';
-import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
+import FileUnknownFilledIcon from '../icons/files/file-unknown-filled-icon.js';
+import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../pdf-document.js';
 
 const logger = new Logger(import.meta.url);
 
-function FilePreview({ createdOn, size, url, compact }) {
+export const RESOURCE_PREVIEW_LAYOUT = {
+  default: 'default',
+  compact: 'compact',
+  thumbnailOnly: 'thumbnail-only'
+};
+
+function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -139,12 +145,9 @@ function FilePreview({ createdOn, size, url, compact }) {
       renderPreview = renderGenericFile;
   }
 
-  return (
-    <div className={classNames('FilePreview', { 'FilePreview--compact': compact })}>
-      <div className={classNames('FilePreview-previewArea', { 'FilePreview-previewArea--compact': compact })}>
-        {renderPreview()}
-      </div>
-      <div className={classNames('FilePreview-detailsArea', { 'FilePreview-detailsArea--compact': compact })}>
+  const renderDetails = () => {
+    return (
+      <Fragment>
         <div className="FilePreview-detailLabel">
           {t('common:name')}
         </div>
@@ -157,18 +160,36 @@ function FilePreview({ createdOn, size, url, compact }) {
         <div className="FilePreview-detailValue">
           {mimeTypeHelper.localizeCategory(category, t)}
         </div>
-        <div className="FilePreview-detailLabel">
-          {t('common:size')}
-        </div>
-        <div className="FilePreview-detailValue">
-          {prettyBytes(size)}
-        </div>
-        <div className="FilePreview-detailLabel">
-          {t('common:createdOn')}
-        </div>
-        <div className="FilePreview-detailValue">
-          {formatDate(createdOn)}
-        </div>
+        {typeof size === 'number' && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:size')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {prettyBytes(size)}
+            </div>
+          </Fragment>
+        )}
+        {createdOn && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:createdOn')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {formatDate(createdOn)}
+            </div>
+          </Fragment>
+        )}
+        {updatedOn && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:updatedOn')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {formatDate(updatedOn)}
+            </div>
+          </Fragment>
+        )}
         {imageDimensions && (
           <Fragment>
             <div className="FilePreview-detailLabel">
@@ -199,20 +220,54 @@ function FilePreview({ createdOn, size, url, compact }) {
         <div className="FilePreview-detailValue">
           <LiteralUrlLink href={url} targetBlank />
         </div>
+      </Fragment>
+    );
+  };
+
+  return (
+    <div
+      className={classNames({
+        'FilePreview': true,
+        'FilePreview--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
+        'FilePreview--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
+      })}
+      >
+      <div
+        className={classNames({
+          'FilePreview-previewArea': true,
+          'FilePreview-previewArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
+          'FilePreview-previewArea--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
+        })}
+        >
+        {renderPreview()}
       </div>
+      {layout !== RESOURCE_PREVIEW_LAYOUT.thumbnailOnly && (
+        <div
+          className={classNames({
+            'FilePreview-detailsArea': true,
+            'FilePreview-detailsArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact
+          })}
+          >
+          {renderDetails()}
+        </div>
+      )}
     </div>
   );
 }
 
-FilePreview.propTypes = {
-  compact: PropTypes.bool,
-  createdOn: PropTypes.string.isRequired,
-  size: PropTypes.number.isRequired,
+ResourcePreview.propTypes = {
+  createdOn: PropTypes.string,
+  layout: PropTypes.oneOf(Object.values(RESOURCE_PREVIEW_LAYOUT)),
+  size: PropTypes.number,
+  updatedOn: PropTypes.string,
   url: PropTypes.string.isRequired
 };
 
-FilePreview.defaultProps = {
-  compact: false
+ResourcePreview.defaultProps = {
+  createdOn: null,
+  layout: RESOURCE_PREVIEW_LAYOUT.default,
+  size: null,
+  updatedOn: null
 };
 
-export default FilePreview;
+export default ResourcePreview;

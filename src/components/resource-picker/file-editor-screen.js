@@ -4,7 +4,6 @@ import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { fileShape } from '../../ui/default-prop-types.js';
 import { confirmExitFileEditor } from '../confirmation-dialogs.js';
 import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 
@@ -54,7 +53,7 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
 }
 
 FileEditorScreen.propTypes = {
-  file: fileShape.isRequired,
+  file: PropTypes.object.isRequired,
   onApplyClick: PropTypes.func.isRequired,
   onBackClick: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired

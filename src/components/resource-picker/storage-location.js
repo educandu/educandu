@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import FilesViewer from './files-viewer.js';
 import UsedStorage from '../used-storage.js';
-import FilesViewer from '../files-viewer.js';
 import reactDropzoneNs from 'react-dropzone';
 import DebouncedInput from '../debounced-input.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
@@ -89,7 +89,7 @@ function StorageLocation({
     if (value.length < MIN_SEARCH_TERM_LENGTH) {
       Modal.error({
         title: t('common:error'),
-        content: t('searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
+        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
       });
 
       return;
@@ -104,12 +104,12 @@ function StorageLocation({
 
   const renderSearchInfo = () => {
     const searchMessage = isLoading
-      ? t('searchOngoing')
+      ? t('common:searchOngoing')
       : (
         <Trans
           t={t}
-          i18nKey="searchResultInfo"
-          values={{ searchTerm }}
+          i18nKey="common:searchResultInfo"
+          values={{ resultCount: files.length, searchTerm }}
           components={[<i key="0" />]}
           />
       );

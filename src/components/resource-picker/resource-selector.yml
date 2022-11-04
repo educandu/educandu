@@ -1,6 +1,9 @@
-storage_public:
+sourceType_internal-public:
   en: Public storage
   de: Öffentlicher Speicher
-storage_private:
+sourceType_internal-private:
   en: Private storage
   de: Privater Speicher
+sourceType_wikimedia-commons:
+  en: Wikimedia Commons
+  de: Wikimedia Commons

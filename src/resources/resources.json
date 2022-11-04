@@ -466,20 +466,6 @@
     }
   },
   {
-    "namespace": "filesGridViewer",
-    "language": "en",
-    "resources": {
-      "navigateToParent": "Navigate to parent directory"
-    }
-  },
-  {
-    "namespace": "filesGridViewer",
-    "language": "de",
-    "resources": {
-      "navigateToParent": "Zum übergeordneten Verzeichnis navigieren"
-    }
-  },
-  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {
@@ -1132,8 +1118,7 @@
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
-      "documentsHeadline": "Recently created documents",
-      "loadMore": "more ..."
+      "documentsHeadline": "Recently created documents"
     }
   },
   {
@@ -1141,8 +1126,7 @@
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
-      "documentsHeadline": "Letzte erstellte Dokumente",
-      "loadMore": "mehr ..."
+      "documentsHeadline": "Letzte erstellte Dokumente"
     }
   },
   {
@@ -1316,17 +1300,17 @@
     }
   },
   {
-    "namespace": "filePreviewScreen",
+    "namespace": "filesGridViewer",
     "language": "en",
     "resources": {
-      "headline": "File preview"
+      "navigateToParent": "Navigate to parent directory"
     }
   },
   {
-    "namespace": "filePreviewScreen",
+    "namespace": "filesGridViewer",
     "language": "de",
     "resources": {
-      "headline": "Datei-Vorschau"
+      "navigateToParent": "Zum übergeordneten Verzeichnis navigieren"
     }
   },
   {
@@ -1362,19 +1346,35 @@
     }
   },
   {
+    "namespace": "resourcePreviewScreen",
+    "language": "en",
+    "resources": {
+      "headline": "File preview"
+    }
+  },
+  {
+    "namespace": "resourcePreviewScreen",
+    "language": "de",
+    "resources": {
+      "headline": "Datei-Vorschau"
+    }
+  },
+  {
     "namespace": "resourceSelector",
     "language": "en",
     "resources": {
-      "storage_public": "Public storage",
-      "storage_private": "Private storage"
+      "sourceType_internal-public": "Public storage",
+      "sourceType_internal-private": "Private storage",
+      "sourceType_wikimedia-commons": "Wikimedia Commons"
     }
   },
   {
     "namespace": "resourceSelector",
     "language": "de",
     "resources": {
-      "storage_public": "Öffentlicher Speicher",
-      "storage_private": "Privater Speicher"
+      "sourceType_internal-public": "Öffentlicher Speicher",
+      "sourceType_internal-private": "Privater Speicher",
+      "sourceType_wikimedia-commons": "Wikimedia Commons"
     }
   },
   {
@@ -1384,9 +1384,6 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "This directory is publicly accessible",
-      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
-      "searchOngoing": "Searching …",
-      "searchResultInfo": "You are seeing results for the search term <0>{searchTerm}</0>",
       "backToDirectoryView": "Back to directory view",
       "uploadFiles": "Upload files"
     }
@@ -1395,14 +1392,55 @@
     "namespace": "storageLocation",
     "language": "de",
     "resources": {
-      "filesView_list": "List",
+      "filesView_list": "Liste",
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
-      "searchOngoing": "Suche …",
-      "searchResultInfo": "Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>",
       "backToDirectoryView": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsFilesViewer",
+    "language": "en",
+    "resources": {
+      "openWikimediaCommonsPage": "Open Wikimedia Commons page"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsFilesViewer",
+    "language": "de",
+    "resources": {
+      "openWikimediaCommonsPage": "Seite auf Wikimedia Commons öffnen"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsSearch",
+    "language": "en",
+    "resources": {
+      "searchTerm": "Search term",
+      "searchFileType_image": "Image",
+      "searchFileType_video": "Video",
+      "searchFileType_audio": "Audio",
+      "searchFileType_pdf": "PDF",
+      "searchInvitationHeader": "Search in the Wikimedia Commons Database",
+      "searchInvitationDescription": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
+      "initialFilePreviewHeader": "Currently selected file",
+      "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above"
+    }
+  },
+  {
+    "namespace": "wikimediaCommonsSearch",
+    "language": "de",
+    "resources": {
+      "searchTerm": "Suchbegriff",
+      "searchFileType_image": "Bild",
+      "searchFileType_video": "Video",
+      "searchFileType_audio": "Audio",
+      "searchFileType_pdf": "PDF",
+      "searchInvitationHeader": "Suche in der Wikimedia-Commons-Datenbank",
+      "searchInvitationDescription": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest",
+      "initialFilePreviewHeader": "Momentan ausgewählte Datei",
+      "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
     }
   },
   {
@@ -1616,6 +1654,7 @@
     "language": "en",
     "resources": {
       "tooltip_youtube": "Youtube",
+      "tooltip_wikimedia-commons": "Wikimedia Commons",
       "tooltip_internal-public": "internal public storage",
       "tooltip_internal-private": "internal private storage",
       "tooltip_external": "external",
@@ -1627,6 +1666,7 @@
     "language": "de",
     "resources": {
       "tooltip_youtube": "Youtube",
+      "tooltip_wikimedia-commons": "Wikimedia Commons",
       "tooltip_internal-public": "interner öffentlicher Speicher",
       "tooltip_internal-private": "interner privater Speicher",
       "tooltip_external": "extern",
@@ -1997,8 +2037,6 @@
       "segmentsPanelHeader": "Segments",
       "chapterColorLabel": "Color",
       "chapterTextLabel": "Annotation",
-      "more": "more ...",
-      "less": "less ...",
       "exportAsCsv": "Export as CSV file",
       "importFromCsv": "Import from CSV file",
       "segmentsDropzoneInfo": "You can drop a CSV file in this box in order to import segments",
@@ -2013,8 +2051,6 @@
       "segmentsPanelHeader": "Segmente",
       "chapterColorLabel": "Farbe",
       "chapterTextLabel": "Anmerkung",
-      "more": "mehr ...",
-      "less": "weniger ...",
       "exportAsCsv": "Als CSV-Datei exportieren",
       "importFromCsv": "Aus CSV-Datei importieren",
       "segmentsDropzoneInfo": "Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren",
@@ -2410,7 +2446,12 @@
       "caption": "Caption",
       "defaultVolumePreset": "Default",
       "volumePreset": "Volumes preset",
-      "displayMode": "Display mode"
+      "displayMode": "Display mode",
+      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
+      "searchOngoing": "Searching ...",
+      "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n",
+      "more": "more ...",
+      "less": "less ..."
     }
   },
   {
@@ -2564,7 +2605,12 @@
       "caption": "Legende",
       "defaultVolumePreset": "Standard",
       "volumePreset": "Lautstärke-Voreinstellung",
-      "displayMode": "Anzeigemodus"
+      "displayMode": "Anzeigemodus",
+      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein",
+      "searchOngoing": "Suche ...",
+      "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n",
+      "more": "mehr ...",
+      "less": "weniger ..."
     }
   },
   {

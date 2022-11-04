@@ -35,6 +35,17 @@ export const cdnObjectShape = PropTypes.shape({
   })
 });
 
+export const wikimediaFileShape = PropTypes.shape({
+  pageId: PropTypes.number.isRequired,
+  pageUrl: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
+  thumbnailUrl: PropTypes.string,
+  updatedOn: PropTypes.string,
+  size: PropTypes.number.isRequired,
+  mimeType: PropTypes.string.isRequired
+});
+
 export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
 export const sectionDisplayProps = {
@@ -408,12 +419,6 @@ export const userActivitiesShape = PropTypes.shape({
     name: PropTypes.string
   }).isRequired,
   isDeprecated: PropTypes.bool.isRequired
-});
-
-export const fileShape = PropTypes.shape({
-  url: PropTypes.string,
-  size: PropTypes.number,
-  createdOn: PropTypes.string
 });
 
 export const commentShape = PropTypes.shape({

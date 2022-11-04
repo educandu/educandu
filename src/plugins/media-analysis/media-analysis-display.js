@@ -127,7 +127,7 @@ function MediaAnalysisDisplay({ content }) {
               {chapters.map(renderChapterText)}
             </div>
             <a onClick={handleChaptersTextsToggleClick} className="MediaAnalysisDisplay-chaptersTextsToggle">
-              {areTextsExpanded ? t('less') : t('more')}
+              {areTextsExpanded ? t('common:less') : t('common:more')}
             </a>
           </Fragment>
         )}

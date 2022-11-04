@@ -1,21 +1,12 @@
 filesView_list:
   en: List
-  de: List
+  de: Liste
 filesView_grid:
   en: Grid
   de: Grid
 publicStorageWarning:
   en: This directory is publicly accessible
   de: Dieses Verzeichnis ist öffentlich zugänglich
-searchTextTooShort:
-  en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
-  de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein
-searchOngoing:
-  en: Searching …
-  de: Suche …
-searchResultInfo:
-  en: You are seeing results for the search term <0>{searchTerm}</0>
-  de: Du siehst Ergebnisse für den Suchbegriff <0>{searchTerm}</0>
 backToDirectoryView:
   en: Back to directory view
   de: Zurück zur Verzeichnisansicht

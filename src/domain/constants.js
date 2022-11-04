@@ -111,6 +111,7 @@ export const SOURCE_TYPE = {
   external: 'external',
   internalPublic: 'internal-public',
   internalPrivate: 'internal-private',
+  wikimediaCommons: 'wikimedia-commons',
   unsupported: 'unsupported'
 };
 

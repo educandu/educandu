@@ -12,6 +12,7 @@ import PrivateIcon from './icons/general/private-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
 import { getSourceType, getPortableUrl } from '../utils/source-utils.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
+import WikimediaCommonsIcon from './icons/wikimedia-commons/wikimedia-commons-icon.js';
 
 function UrlInput({ value, allowedSourceTypes, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -28,6 +29,8 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
         return null;
       case SOURCE_TYPE.youtube:
         return <YoutubeOutlined />;
+      case SOURCE_TYPE.wikimediaCommons:
+        return <WikimediaCommonsIcon />;
       case SOURCE_TYPE.internalPublic:
         return <PublicIcon />;
       case SOURCE_TYPE.internalPrivate:

@@ -65,7 +65,7 @@ export default function User({ PageTemplate, initialState }) {
               {documents.map(renderDocumentCard)}
             </div>
             {visibleDocumentsCount < documents.length && (
-              <a className="UserPage-sectionLink" onClick={handleMoreDocumentsClick}>{t('loadMore')}</a>
+              <a className="UserPage-sectionLink" onClick={handleMoreDocumentsClick}>{t('common:more')}</a>
             )}
           </section>
         )}

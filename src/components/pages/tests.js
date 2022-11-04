@@ -25,7 +25,7 @@ import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-med
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
 import WikimediaCommonsApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-commons-api-client.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, STORAGE_LOCATION_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
@@ -341,10 +341,12 @@ function Tests({ PageTemplate }) {
   // UrlInput
   const [urlInputValue, setUrlInputValue] = useState('');
   const handleUrlInputCopyYoutubeClick = () => handleCopyToClipboard('https://www.youtube.com/watch?v=221F55VPp2M');
+  const handleUrlInputCopyWikimediaCommonsClick = () => handleCopyToClipboard('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputCopyExternalClick = () => handleCopyToClipboard('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
   const handleUrlInputCopyPrivateCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
   const handleUrlInputCopyPublicCdnClick = () => handleCopyToClipboard('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputSetYoutubeClick = () => setUrlInputValue('https://www.youtube.com/watch?v=221F55VPp2M');
+  const handleUrlInputSetWikimediaCommonsClick = () => setUrlInputValue('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
   const handleUrlInputSetPrivateCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
   const handleUrlInputSetPublicCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
@@ -371,12 +373,14 @@ function Tests({ PageTemplate }) {
           <TabPane tab="UrlInput" key="UrlInput">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
+              <Button onClick={handleUrlInputCopyWikimediaCommonsClick}>Copy Wikimedia Commons URL</Button>
               <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
               <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
               <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
+              <Button onClick={handleUrlInputSetWikimediaCommonsClick}>Set Wikimedia Commons URL</Button>
               <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
               <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
               <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
@@ -594,7 +598,7 @@ function Tests({ PageTemplate }) {
           </TabPane>
           <TabPane tab="ResourceSelector" key="ResourceSelector">
             <ResourceSelector
-              allowedLocationTypes={Object.values(STORAGE_LOCATION_TYPE)}
+              allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
               onSelect={ev => console.log('select', ev)}
               onCancel={ev => console.log('cancel', ev)}
               />
