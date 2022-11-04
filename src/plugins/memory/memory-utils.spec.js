@@ -11,20 +11,20 @@ describe('memory-utils', () => {
     describe('when resizing to a bigger count', () => {
       beforeEach(() => {
         tilePairs = [
-          [{ text: '1a' }, { text: '1b' }],
-          [{ text: '2a' }, { text: '2b' }],
-          [{ text: '3a' }, { text: '3b' }],
-          [{ text: '4a' }, { text: '4b' }]
+          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
+          [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
+          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
+          [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
         ];
         result = resizeTilePairs(tilePairs, SIZE.fourByFour);
       });
 
       it('copies over the existing content', () => {
         expect(result).toStrictEqual([
-          [{ text: '1a' }, { text: '1b' }], [{ text: '2a' }, { text: '2b' }],
-          [{ text: '3a' }, { text: '3b' }], [{ text: '4a' }, { text: '4b' }],
-          [{ text: '' }, { text: '' }], [{ text: '' }, { text: '' }],
-          [{ text: '' }, { text: '' }], [{ text: '' }, { text: '' }]
+          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }], [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
+          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }], [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }],
+          [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }], [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }],
+          [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }], [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }]
         ]);
       });
     });
@@ -32,20 +32,20 @@ describe('memory-utils', () => {
     describe('when resizing to a smaller count', () => {
       beforeEach(() => {
         tilePairs = [
-          [{ text: '1a' }, { text: '1b' }], [{ text: '2a' }, { text: '2b' }],
-          [{ text: '3a' }, { text: '3b' }], [{ text: '4a' }, { text: '4b' }],
-          [{ text: '5a' }, { text: '5b' }], [{ text: '6a' }, { text: '6b' }],
-          [{ text: '7a' }, { text: '7b' }], [{ text: '8a' }, { text: '8b' }]
+          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }], [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
+          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }], [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }],
+          [{ text: '5a', sourceUrl: 'url' }, { text: '5b', sourceUrl: 'url' }], [{ text: '6a', sourceUrl: 'url' }, { text: '6b', sourceUrl: 'url' }],
+          [{ text: '7a', sourceUrl: 'url' }, { text: '7b', sourceUrl: 'url' }], [{ text: '8a', sourceUrl: 'url' }, { text: '8b', sourceUrl: 'url' }]
         ];
         result = resizeTilePairs(tilePairs, SIZE.threeByThree);
       });
 
       it('copies over the existing content', () => {
         expect(result).toStrictEqual([
-          [{ text: '1a' }, { text: '1b' }],
-          [{ text: '2a' }, { text: '2b' }],
-          [{ text: '3a' }, { text: '3b' }],
-          [{ text: '4a' }, { text: '4b' }]
+          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
+          [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
+          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
+          [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
         ]);
       });
     });
@@ -56,10 +56,10 @@ describe('memory-utils', () => {
 
     beforeEach(() => {
       tilePairs = [
-        [{ text: '1a' }, { text: '1b' }],
-        [{ text: '2a' }, { text: '2b' }],
-        [{ text: '3a' }, { text: '3b' }],
-        [{ text: '4a' }, { text: '4b' }]
+        [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
+        [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
+        [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
+        [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
       ];
       result = getRandomizedTilesFromPairs(tilePairs, SIZE.threeByThree);
     });

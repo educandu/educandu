@@ -51,7 +51,8 @@ class MemoryInfo {
 
   validateContent(content) {
     const tileSchema = joi.object({
-      text: joi.string().allow('').required()
+      text: joi.string().allow('').required(),
+      sourceUrl: joi.string().allow('').required()
     });
     const tilePairSchema = joi.array().items(tileSchema).length(2);
     const allowedTilePairs = getTilePairCountBySize(content.size);
