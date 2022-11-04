@@ -105,8 +105,6 @@ function WikimediaCommonsSearch({
     }
 
     setHasSearchedAtLeastOnce(true);
-
-    // This will trigger search in the parent component:
     onSearchParamsChange(newSearchParams);
   };
 
