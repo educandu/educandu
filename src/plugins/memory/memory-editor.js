@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { SIZE } from './constants.js';
 import MemoryTile from './memory-tile.js';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +71,13 @@ function MemoryEditor({ content, onContentChanged }) {
     changeContent({ tilePairs: newTilePairs });
   };
 
+  const previewClasses = classNames(
+    'MemoryEditor-preview',
+    `u-width-${width}`,
+    { 'MemoryEditor-preview--3x3': size === SIZE.threeByThree },
+    { 'MemoryEditor-preview--4x4': size === SIZE.fourByFour }
+  );
+
   return (
     <div className="MemoryEditor">
       <Form>
@@ -129,7 +137,8 @@ function MemoryEditor({ content, onContentChanged }) {
       </Form>
 
       <Divider plain>{t('preview')}</Divider>
-      <div className="MemoryEditor-preview">
+      <div className={previewClasses}>
+        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
         <div className="MemoryEditor-previewTile">
           <div className="MemoryEditor-previewTileFace">
             <FlipCardFace
@@ -154,6 +163,7 @@ function MemoryEditor({ content, onContentChanged }) {
               />
           </div>
         </div>
+        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
       </div>
     </div>
   );

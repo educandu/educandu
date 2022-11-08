@@ -32,7 +32,15 @@
 .MemoryEditor-preview {
   display: grid;
   gap: 10px;
-  grid-template-columns: 1fr 1fr;
+  margin: 0 auto;
+
+  &.MemoryEditor-preview--3x3 {
+    grid-template-columns: 0.5fr 1fr 1fr 0.5fr;
+  }
+
+  &.MemoryEditor-preview--4x4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .MemoryEditor-previewTile {
