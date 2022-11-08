@@ -25,7 +25,7 @@ function MemoryEditor({ content, onContentChanged }) {
   const [selectedTilesPairIndex, setSelectedTilesPairIndex] = useState(0);
 
   const renderTileButton = index => {
-    const isTileDataMissing = tilePairs[index].some(tile => !tile.text);
+    const isTileDataMissing = tilePairs[index].some(tile => !tile.text && !tile.sourceUrl);
     return (
       <Button
         size="small"
