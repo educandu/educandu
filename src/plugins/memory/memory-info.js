@@ -4,9 +4,9 @@ import { SIZE } from './constants.js';
 import MemoryIcon from './memory-icon.js';
 import MemoryDisplay from './memory-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultTile, getTilePairCountBySize } from './memory-utils.js';
+import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class MemoryInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -76,6 +76,14 @@ class MemoryInfo {
     redactedContent.tilePairs.forEach(tilePair => {
       tilePair[0].text = this._redactTileText(tilePair[0].text, targetRoomId);
       tilePair[1].text = this._redactTileText(tilePair[1].text, targetRoomId);
+
+      if (!couldAccessUrlFromRoom(tilePair[0].sourceUrl, targetRoomId)) {
+        tilePair[0].sourceUrl = '';
+      }
+
+      if (!couldAccessUrlFromRoom(tilePair[1].sourceUrl, targetRoomId)) {
+        tilePair[1].sourceUrl = '';
+      }
     });
 
     return redactedContent;
@@ -89,10 +97,22 @@ class MemoryInfo {
   }
 
   getCdnResources(content) {
-    const cdnResources = content.tilePairs.map(tilePair => [
-      ...this.gfm.extractCdnResources(tilePair[0].text),
-      ...this.gfm.extractCdnResources(tilePair[1].text)
-    ]).flat();
+    const cdnResources = content.tilePairs.map(tilePair => {
+      const pairResources = [
+        ...this.gfm.extractCdnResources(tilePair[0].text),
+        ...this.gfm.extractCdnResources(tilePair[1].text)
+      ];
+
+      if (isInternalSourceType({ url: tilePair[0].sourceUrl })) {
+        pairResources.push(tilePair[0].sourceUrl);
+      }
+
+      if (isInternalSourceType({ url: tilePair[1].sourceUrl })) {
+        pairResources.push(tilePair[1].sourceUrl);
+      }
+
+      return pairResources;
+    }).flat();
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
