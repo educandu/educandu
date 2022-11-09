@@ -55,7 +55,7 @@ function MemoryDisplay({ content }) {
         flipped={isFlipped}
         disabled={matchedTilePairKeys.includes(tile.pairKey)}
         frontContent={(
-          <MemoryTile text={tile.text} sourceUrl={tile.sourceUrl} isFlipped={isFlipped} />
+          <MemoryTile text={tile.text} sourceUrl={tile.sourceUrl} playMedia={isFlipped} />
         )}
         onClick={() => handleTileClick(tile)}
         />

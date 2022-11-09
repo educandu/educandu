@@ -9,9 +9,10 @@ import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
+let timeoutToPlayMedia;
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
-function MemoryTile({ text, sourceUrl, isFlipped }) {
+function MemoryTile({ text, sourceUrl, playMedia }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const clientConfig = useService(ClientConfig);
@@ -19,7 +20,7 @@ function MemoryTile({ text, sourceUrl, isFlipped }) {
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const { resourceType } = sourceUrl ? analyzeMediaUrl(sourceUrl) : { resourceType: RESOURCE_TYPE.none };
 
-  const [isPlaying, setIsPlaying] = useState(isFlipped);
+  const [isPlaying, setIsPlaying] = useState(playMedia);
 
   useEffect(() => {
     isMounted.current = true;
@@ -29,17 +30,22 @@ function MemoryTile({ text, sourceUrl, isFlipped }) {
   }, []);
 
   useEffect(() => {
-    if (isFlipped) {
-      playerRef.current?.seekTo(0);
-      setTimeout(() => {
-        if (isMounted.current) {
-          setIsPlaying(true);
-        }
-      }, 500);
-    } else {
+    if (!playMedia) {
       setIsPlaying(false);
+      if (timeoutToPlayMedia) {
+        clearTimeout(timeoutToPlayMedia);
+      }
+      return;
     }
-  }, [playerRef, isFlipped]);
+
+    playerRef.current?.seekTo(0);
+    timeoutToPlayMedia = setTimeout(() => {
+      if (isMounted.current && playMedia) {
+        setIsPlaying(true);
+      }
+    }, 500);
+
+  }, [playerRef, playMedia]);
 
   const renderReactPlayer = () => (
     <ReactPlayer width="100%" height="100%" ref={playerRef} url={accessibleUrl} playing={isPlaying} />
@@ -72,13 +78,13 @@ function MemoryTile({ text, sourceUrl, isFlipped }) {
 }
 
 MemoryTile.propTypes = {
-  isFlipped: PropTypes.bool,
+  playMedia: PropTypes.bool,
   sourceUrl: PropTypes.string,
   text: PropTypes.string
 };
 
 MemoryTile.defaultProps = {
-  isFlipped: false,
+  playMedia: false,
   sourceUrl: '',
   text: ''
 };
