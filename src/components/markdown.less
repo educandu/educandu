@@ -6,42 +6,34 @@
 
 .Markdown {
   blockquote {
-    display:block;
+    display: block;
     background: @edu-white;
     padding: 15px 20px 15px 45px;
     margin: 40px 80px;
     position: relative;
+    clear: both;
+    border-left: 15px solid @markdown-blockquote-color;
+    border-right: 2px solid @markdown-blockquote-color;
+    box-shadow: 2px 2px 15px @edu-border-color-base;
 
     @media only screen and (max-width: 576px) {
       margin: 40px 0;
     }
-
-    /*Borders - (Optional)*/
-    border-left: 15px solid @markdown-blockquote-color;
-    border-right: 2px solid @markdown-blockquote-color;
-
-    /*Box Shadow - (Optional)*/
-    box-shadow: 2px 2px 15px @edu-border-color-base;
   }
 
   blockquote::before{
-    content: "\201C"; /*Unicode for Left Double Quote*/
-
-    /*Font*/
+    content: "\201C";
     line-height: 60px;
     font-family: Georgia, serif;
     font-size: 60px;
     font-weight: bold;
     color: @markdown-blockquote-quotations-color;
-
-    /*Positioning*/
     position: absolute;
     left: 10px;
     top:5px;
   }
 
   blockquote::after{
-    /*Reset to make sure*/
     content: "";
   }
 
