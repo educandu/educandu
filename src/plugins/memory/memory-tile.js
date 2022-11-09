@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useRef } from 'react';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
@@ -9,6 +9,7 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 function MemoryTile({ text, sourceUrl }) {
+  const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
   const resourceType = sourceUrl ? getResourceType(sourceUrl) : RESOURCE_TYPE.none;
 
@@ -17,9 +18,24 @@ function MemoryTile({ text, sourceUrl }) {
 
     switch (resourceType) {
       case RESOURCE_TYPE.audio:
-        return <MediaPlayer source={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />;
+        return (
+          <MediaPlayer
+            source={url}
+            showControls={false}
+            showProgressBar={false}
+            mediaPlayerRef={mediaPlayerRef}
+            screenMode={MEDIA_SCREEN_MODE.audio}
+            />
+        );
       case RESOURCE_TYPE.video:
-        return <MediaPlayer source={url} canDownload />;
+        return (
+          <MediaPlayer
+            source={url}
+            showControls={false}
+            showProgressBar={false}
+            mediaPlayerRef={mediaPlayerRef}
+            />
+        );
       case RESOURCE_TYPE.image:
         return <img className="MemoryTile-image" src={url} />;
       default:

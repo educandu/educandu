@@ -28,6 +28,8 @@ function MediaPlayer({
   screenMode,
   screenWidth,
   screenOverlay,
+  showControls,
+  showProgressBar,
   canDownload,
   downloadFileName,
   posterImageUrl,
@@ -55,6 +57,8 @@ function MediaPlayer({
       screenMode={screenMode}
       screenWidth={screenWidth}
       screenOverlay={screenOverlay}
+      showControls={showControls}
+      showProgressBar={showProgressBar}
       canDownload={canDownload}
       downloadFileName={downloadFileName}
       posterImageUrl={posterImageUrl}
@@ -93,6 +97,8 @@ MediaPlayer.propTypes = {
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   screenOverlay: PropTypes.node,
   screenWidth: PropTypes.number,
+  showControls: PropTypes.bool,
+  showProgressBar: PropTypes.bool,
   source: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
@@ -116,6 +122,8 @@ MediaPlayer.defaultProps = {
   screenMode: MEDIA_SCREEN_MODE.video,
   screenOverlay: null,
   screenWidth: 100,
+  showControls: true,
+  showProgressBar: true,
   source: null
 };
 

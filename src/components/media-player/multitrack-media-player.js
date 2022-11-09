@@ -78,6 +78,8 @@ function MultitrackMediaPlayer({
   screenWidth,
   screenOverlay,
   showTrackMixer,
+  showControls,
+  showProgressBar,
   canDownload,
   downloadFileName,
   posterImageUrl,
@@ -298,7 +300,7 @@ function MultitrackMediaPlayer({
 
   return (
     <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      {loadedSources && (
+      {!!loadedSources && (
         <MediaPlayerTrackGroup
           sources={loadedSources}
           trackRef={trackRef}
@@ -316,28 +318,32 @@ function MultitrackMediaPlayer({
           loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
           />
       )}
-      {extraCustomContent && (<div>{extraCustomContent}</div>)}
-      <MediaPlayerProgressBar
-        parts={parts}
-        onSeek={handleSeek}
-        onSeekStart={handleSeekStart}
-        onSeekEnd={handleSeekEnd}
-        playedMilliseconds={playedMilliseconds}
-        durationInMilliseconds={durationInMilliseconds}
-        />
-      <MediaPlayerControls
-        playState={playState}
-        screenMode={screenMode}
-        durationInMilliseconds={durationInMilliseconds}
-        playedMilliseconds={playedMilliseconds}
-        volume={volume}
-        onPlayClick={handlePlayClick}
-        onPauseClick={handlePauseClick}
-        onPlaybackRateChange={handlePlaybackRateChange}
-        onVolumeChange={setVolume}
-        onDownloadClick={canDownload ? handleDownloadClick : null}
-        />
-      {loadedSources && showTrackMixer && (
+      {!!extraCustomContent && (<div>{extraCustomContent}</div>)}
+      {showProgressBar && (
+        <MediaPlayerProgressBar
+          parts={parts}
+          onSeek={handleSeek}
+          onSeekStart={handleSeekStart}
+          onSeekEnd={handleSeekEnd}
+          playedMilliseconds={playedMilliseconds}
+          durationInMilliseconds={durationInMilliseconds}
+          />
+      )}
+      {showControls && (
+        <MediaPlayerControls
+          playState={playState}
+          screenMode={screenMode}
+          durationInMilliseconds={durationInMilliseconds}
+          playedMilliseconds={playedMilliseconds}
+          volume={volume}
+          onPlayClick={handlePlayClick}
+          onPauseClick={handlePauseClick}
+          onPlaybackRateChange={handlePlaybackRateChange}
+          onVolumeChange={setVolume}
+          onDownloadClick={canDownload ? handleDownloadClick : null}
+          />
+      )}
+      {!!loadedSources && showTrackMixer && (
         <div className="MultitrackMediaPlayer-trackMixer">
           <MediaPlayerTrackMixer
             mainTrack={loadedSources.mainTrack}
@@ -377,6 +383,8 @@ MultitrackMediaPlayer.propTypes = {
   screenOverlay: PropTypes.node,
   screenWidth: PropTypes.number,
   selectedVolumePreset: PropTypes.number,
+  showControls: PropTypes.bool,
+  showProgressBar: PropTypes.bool,
   showTrackMixer: PropTypes.bool,
   sources: PropTypes.oneOfType([
     PropTypes.shape({
@@ -421,6 +429,8 @@ MultitrackMediaPlayer.defaultProps = {
   screenOverlay: null,
   screenWidth: 100,
   selectedVolumePreset: -1,
+  showControls: true,
+  showProgressBar: true,
   showTrackMixer: false,
   sources: null,
   volumePresetOptions: []
