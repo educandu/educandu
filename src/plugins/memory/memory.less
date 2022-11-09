@@ -1,9 +1,12 @@
+@memory-board-padding: 10px;
+@memory-board-tiles-gap: 10px;
+
 .MemoryDisplay {
   display: grid;
-  gap: 10px;
+  gap: @memory-board-tiles-gap;
   aspect-ratio: 1;
   margin: 0 auto;
-  padding: 10px;
+  padding: @memory-board-padding;
   border-radius: @edu-border-radius-sm;
   background-color: @edu-background-color-light;
 
@@ -31,8 +34,9 @@
 
 .MemoryEditor-preview {
   display: grid;
-  gap: 10px;
+  gap: @memory-board-tiles-gap;
   margin: 0 auto;
+  padding: @memory-board-padding;
 
   &.MemoryEditor-preview--3x3 {
     grid-template-columns: 0.5fr 1fr 1fr 0.5fr;
