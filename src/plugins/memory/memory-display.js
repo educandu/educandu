@@ -42,6 +42,7 @@ function MemoryDisplay({ content }) {
 
   const renderTile = (tile, index) => {
     const elementsToRender = [];
+    const isFlipped = tile.key === flippedTile?.key;
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
     if (reserveCentralSpace) {
@@ -51,9 +52,11 @@ function MemoryDisplay({ content }) {
     elementsToRender.push((
       <FlipCard
         key={tile.key}
-        flipped={tile.key === flippedTile?.key}
+        flipped={isFlipped}
         disabled={matchedTilePairKeys.includes(tile.pairKey)}
-        frontContent={<MemoryTile text={tile.text} sourceUrl={tile.sourceUrl} />}
+        frontContent={(
+          <MemoryTile text={tile.text} sourceUrl={tile.sourceUrl} isFlipped={isFlipped} />
+        )}
         onClick={() => handleTileClick(tile)}
         />
     ));

@@ -1,53 +1,63 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import reactPlayerNs from 'react-player';
 import Markdown from '../../components/markdown.js';
+import { RESOURCE_TYPE } from '../../domain/constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
-import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
+import AudioIcon from '../../components/icons/general/audio-icon.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+
+const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 function MemoryTile({ text, sourceUrl, isFlipped }) {
-  const mediaPlayerRef = useRef();
+  const playerRef = useRef();
+  const isMounted = useRef(false);
   const clientConfig = useService(ClientConfig);
+
+  const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const { resourceType } = sourceUrl ? analyzeMediaUrl(sourceUrl) : { resourceType: RESOURCE_TYPE.none };
 
+  const [isPlaying, setIsPlaying] = useState(isFlipped);
+
   useEffect(() => {
-    if (mediaPlayerRef?.current) {
-      if (isFlipped) {
-        mediaPlayerRef.current.play?.();
-      } else {
-        mediaPlayerRef.current.stop?.();
-      }
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isFlipped) {
+      playerRef.current?.seekTo(0);
+      setTimeout(() => {
+        if (isMounted.current) {
+          setIsPlaying(true);
+        }
+      }, 500);
+    } else {
+      setIsPlaying(false);
     }
-  }, [isFlipped]);
+  }, [playerRef, isFlipped]);
+
+  const renderReactPlayer = () => (
+    <ReactPlayer width="100%" height="100%" ref={playerRef} url={accessibleUrl} playing={isPlaying} />
+  );
 
   const renderMedia = () => {
-    const url = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-
     switch (resourceType) {
       case RESOURCE_TYPE.audio:
         return (
-          <MediaPlayer
-            source={url}
-            showControls={false}
-            showProgressBar={false}
-            mediaPlayerRef={mediaPlayerRef}
-            screenMode={MEDIA_SCREEN_MODE.audio}
-            />
+          <Fragment>
+            {renderReactPlayer()}
+            <div className="MemoryTile-audio"><AudioIcon /></div>
+          </Fragment>
         );
       case RESOURCE_TYPE.video:
-        return (
-          <MediaPlayer
-            source={url}
-            showControls={false}
-            showProgressBar={false}
-            mediaPlayerRef={mediaPlayerRef}
-            />
-        );
+        return renderReactPlayer();
       case RESOURCE_TYPE.image:
-        return <img className="MemoryTile-image" src={url} />;
+        return <img className="MemoryTile-image" src={accessibleUrl} />;
       default:
         return null;
     }
@@ -55,7 +65,7 @@ function MemoryTile({ text, sourceUrl, isFlipped }) {
 
   return (
     <div className="MemoryTile">
-      {!!text && (<Markdown>{text}</Markdown>)}
+      {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
       {!!sourceUrl && renderMedia()}
     </div>
   );
