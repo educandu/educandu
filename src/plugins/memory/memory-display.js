@@ -1,20 +1,30 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
 import MemoryTile from './memory-tile.js';
-import React, { useEffect, useState } from 'react';
 import FlipCard from '../../components/flip-card.js';
+import React, { useEffect, useRef, useState } from 'react';
 import { getRandomizedTilesFromPairs } from './memory-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function MemoryDisplay({ content }) {
   const { size, tilePairs, width } = content;
 
+  const isMounted = useRef(false);
   const [tiles, setTiles] = useState([]);
-  const [flippedTile, setFlippedTile] = useState(null);
   const [matchedTilePairKeys, setMatchedTilePairKeys] = useState([]);
+  const [currentlyFlippedTile, setCurrentlyFlippedTile] = useState(null);
+  const [currentlyMatchedTile, setCurrentlyMatchedTile] = useState(null);
 
   useEffect(() => {
-    setFlippedTile(null);
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    setCurrentlyFlippedTile(null);
+    setCurrentlyMatchedTile(null);
     setMatchedTilePairKeys([]);
     setTiles(getRandomizedTilesFromPairs(tilePairs));
   }, [tilePairs]);
@@ -27,23 +37,32 @@ function MemoryDisplay({ content }) {
   );
 
   const handleTileClick = tile => {
-    if (flippedTile?.key === tile.key) {
-      setFlippedTile(null);
+    if (currentlyFlippedTile?.key === tile.key) {
+      setCurrentlyFlippedTile(null);
+      setCurrentlyMatchedTile(null);
       return;
     }
 
-    setFlippedTile(tile);
+    if (currentlyFlippedTile?.pairKey === tile.pairKey) {
+      setCurrentlyMatchedTile(currentlyFlippedTile);
+      setCurrentlyFlippedTile(tile);
 
-    if (flippedTile?.pairKey === tile.pairKey) {
-      setFlippedTile(null);
-      setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+      setTimeout(() => {
+        setCurrentlyMatchedTile(null);
+        setCurrentlyFlippedTile(null);
+        setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+      }, 500);
+    } else {
+      setCurrentlyFlippedTile(tile);
+      setCurrentlyMatchedTile(null);
     }
   };
 
   const renderTile = (tile, index) => {
     const elementsToRender = [];
-    const isFlipped = tile.key === flippedTile?.key;
-    const isMatched = matchedTilePairKeys.includes(tile.pairKey);
+    const isFlipped = tile.key === currentlyFlippedTile?.key;
+    const isMatched = tile.key === currentlyMatchedTile?.key;
+    const wasMatched = matchedTilePairKeys.includes(tile.pairKey);
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
     if (reserveCentralSpace) {
@@ -53,14 +72,14 @@ function MemoryDisplay({ content }) {
     elementsToRender.push((
       <FlipCard
         key={tile.key}
-        flipped={isFlipped || isMatched}
-        disabled={isMatched}
+        flipped={isFlipped || isMatched || wasMatched}
+        disabled={wasMatched}
         frontContent={(
           <MemoryTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
-            playMedia={isFlipped && !isMatched}
-            showAsMatched={isMatched}
+            playMedia={isFlipped}
+            showMatched={wasMatched}
             />
         )}
         onClick={() => handleTileClick(tile)}
