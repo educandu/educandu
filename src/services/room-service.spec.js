@@ -86,7 +86,7 @@ describe('room-service', () => {
     });
   });
 
-  describe('createOrUpdateInvitation', () => {
+  describe('createOrUpdateInvitations', () => {
     let myPublicRoom = null;
     let myPrivateRoom = null;
 
@@ -106,38 +106,38 @@ describe('room-service', () => {
     });
 
     it('should create a new invitation for a private room if it does not exist', async () => {
-      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
-      expect(invitation.token).toBeDefined();
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
+      expect(invitations[0].token).toBeDefined();
     });
 
     it('should create a new invitation for a public room if it does not exist', async () => {
-      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
-      expect(invitation.token).toBeDefined();
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: myPublicRoom._id, emails: ['invited-user@test.com'], user: myUser });
+      expect(invitations[0].token).toBeDefined();
     });
 
     it('should throw a bad request if the owner invites themselves', async () => {
-      await expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
+      await expect(() => sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: [myUser.email], user: myUser })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {
-      const { invitation: originalInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitations: originalInvitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
       sandbox.clock.tick(1000);
-      const { invitation: updatedInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
-      expect(updatedInvitation._id).toBe(originalInvitation._id);
-      expect(updatedInvitation.token).not.toBe(originalInvitation.token);
-      expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
-      expect(updatedInvitation.expires.getTime()).toBeGreaterThan(originalInvitation.expires.getTime());
+      const { invitations: updatedInvitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
+      expect(updatedInvitations[0]._id).toBe(originalInvitations[0]._id);
+      expect(updatedInvitations[0].token).toBe(originalInvitations[0].token);
+      expect(updatedInvitations[0].sentOn).not.toBe(originalInvitations[0].sentOn);
+      expect(updatedInvitations[0].expires.getTime()).toBeGreaterThan(originalInvitations[0].expires.getTime());
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: myUser });
+        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], user: myUser });
       }).rejects.toThrow(NotFound);
     });
 
     it('should throw a NotFound error when the room exists, but belongs to a different user', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
+        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], user: { _id: 'xyzxyzxyzxyzxyz' } });
       }).rejects.toThrow(NotFound);
     });
   });
@@ -153,7 +153,8 @@ describe('room-service', () => {
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      invitation = invitations[0];
     });
 
     it('should be valid if user and token are valid', async () => {
@@ -191,7 +192,8 @@ describe('room-service', () => {
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      invitation = invitations[0];
     });
 
     it('should throw NotFound if invitation does not exist', async () => {
@@ -243,7 +245,8 @@ describe('room-service', () => {
         let existingMemberJoinedOn;
 
         beforeEach(async () => {
-          ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+          const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+          invitation = invitations[0];
 
           const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
           existingMemberJoinedOn = roomFromDb.members[0].joinedOn;
@@ -280,7 +283,8 @@ describe('room-service', () => {
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
         user: myUser
       });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      invitation = invitations[0];
     });
 
     it('should retrieve the invitation', async () => {

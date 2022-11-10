@@ -222,17 +222,10 @@ export default class RoomController {
   async handlePostRoomInvitations(req, res) {
     const { user } = req;
     const { roomId, emails } = req.body;
+    const { origin } = requestUtils.getHostInfo(req);
 
-    const invitations = [];
-    for (const email of emails) {
-      // eslint-disable-next-line no-await-in-loop
-      const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
-      invitations.push(invitation);
-      const { origin } = requestUtils.getHostInfo(req);
-      const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
-      // eslint-disable-next-line no-await-in-loop
-      await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.displayName, email, invitationLink });
-    }
+    const { room, owner, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, emails, user });
+    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: owner.displayName, origin });
 
     return res.status(201).send(invitations);
   }

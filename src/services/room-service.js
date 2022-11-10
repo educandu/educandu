@@ -154,9 +154,9 @@ export default class RoomService {
     return this.roomInvitationStore.getRoomInvitationMetadataByRoomId(roomId);
   }
 
-  async createOrUpdateInvitation({ roomId, email, user }) {
+  async createOrUpdateInvitations({ roomId, emails, user }) {
     const now = new Date();
-    const lowerCasedEmail = email.toLowerCase();
+    const lowerCasedEmails = [...new Set(emails.map(email => email.toLowerCase()))];
 
     const room = await this.roomStore.getRoomByIdAndOwnerId({ roomId, ownerId: user._id });
     if (!room) {
@@ -164,28 +164,31 @@ export default class RoomService {
     }
 
     const owner = await this.userStore.getUserById(room.owner);
-
-    if (owner.email.toLowerCase() === lowerCasedEmail) {
+    const lowerCasedOwnerEmail = owner.email.toLowerCase();
+    if (lowerCasedEmails.some(email => email === lowerCasedOwnerEmail)) {
       throw new BadRequest('Invited user is the same as room owner');
     }
 
-    let invitation = await this.roomInvitationStore.getRoomInvitationByRoomIdAndEmail({ roomId, email: lowerCasedEmail });
-    if (!invitation) {
-      invitation = {
-        _id: uniqueId.create(),
-        roomId,
-        email: lowerCasedEmail
-      };
-    }
+    const invitations = await Promise.all(lowerCasedEmails.map(async email => {
+      let invitation = await this.roomInvitationStore.getRoomInvitationByRoomIdAndEmail({ roomId, email });
+      if (!invitation) {
+        invitation = {
+          _id: uniqueId.create(),
+          token: uniqueId.create(),
+          roomId,
+          email
+        };
+      }
 
-    invitation.sentOn = now;
-    invitation.token = uniqueId.create();
-    invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
+      invitation.sentOn = now;
+      invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
 
-    logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
-    await this.roomInvitationStore.saveRoomInvitation(invitation);
+      logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
+      await this.roomInvitationStore.saveRoomInvitation(invitation);
+      return invitation;
+    }));
 
-    return { room, owner, invitation };
+    return { room, owner, invitations };
   }
 
   async verifyInvitationToken({ token, user }) {
