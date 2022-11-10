@@ -7,8 +7,8 @@ import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
+import CheckIcon from '../../components/icons/general/check-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import ConfirmationIcon from '../../components/icons/general/confirmation-icon.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -77,7 +77,7 @@ function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
         {!!accessibleUrl && renderMedia()}
       </div>
       {showMatched && (
-      <div className="MemoryTile-match"><ConfirmationIcon /></div>
+      <div className="MemoryTile-match"><CheckIcon /></div>
       )}
     </div>
   );
