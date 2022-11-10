@@ -4,6 +4,9 @@ sendRoomInvitations:
 emailAddresses:
   en: Email addresses
   de: E-Mail-Adressen
+emailAddressesInfo:
+  en: Separate multiple Email addresses using line breaks, commas or semicola
+  de: Trenne mehrere E-Mail-Adressen durch Zeilenumbrüche, Kommas oder Semikola
 emailsRequired:
   en: Please specify an email address
   de: Bitte gib eine E-Mail-Adresse an
