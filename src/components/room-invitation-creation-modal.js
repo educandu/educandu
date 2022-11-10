@@ -92,14 +92,13 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
         onFinish={handleFormFinish}
         >
         <FormItem
-          required
           name="emails"
           label={
             <Fragment>
+              <span>{t('emailAddresses')}</span>
               <Tooltip title={t('emailAddressesInfo')}>
                 <InfoCircleOutlined className="u-info-icon" />
               </Tooltip>
-              <span>{t('emailAddresses')}</span>
             </Fragment>
           }
           rules={emailsValidationRules}
