@@ -2091,8 +2091,7 @@
       "tilePairs": "Card pairs",
       "tileA": "Card A",
       "tileB": "Card B",
-      "text": "text",
-      "url": "media URL",
+      "url": "Media URL",
       "preview": "Card pairs preview"
     }
   },
@@ -2104,7 +2103,6 @@
       "tilePairs": "Kartenpaare",
       "tileA": "Karte A",
       "tileB": "Karte B",
-      "text": "Text",
       "url": "Medien-URL",
       "preview": "Kartenpaarevorschau"
     }

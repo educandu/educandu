@@ -108,7 +108,7 @@ function MemoryEditor({ content, onContentChanged }) {
         </FormItem>
 
         <Divider plain>{t('tileA')}</Divider>
-        <FormItem label={t('text')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput
             value={tilePairs[selectedTilesPairIndex][0].text}
             onChange={event => handleTileTextChange(event, 0)}
@@ -122,7 +122,7 @@ function MemoryEditor({ content, onContentChanged }) {
         </FormItem>
 
         <Divider plain>{t('tileB')}</Divider>
-        <FormItem label={t('text')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput
             value={tilePairs[selectedTilesPairIndex][1].text}
             onChange={event => handleTileTextChange(event, 1)}
