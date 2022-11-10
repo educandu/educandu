@@ -2092,7 +2092,7 @@
       "tileA": "Card A",
       "tileB": "Card B",
       "url": "Media URL",
-      "preview": "Card pairs preview"
+      "preview": "Card pair preview"
     }
   },
   {
@@ -2104,7 +2104,7 @@
       "tileA": "Karte A",
       "tileB": "Karte B",
       "url": "Medien-URL",
-      "preview": "Kartenpaarevorschau"
+      "preview": "Kartenpaarvorschau"
     }
   },
   {
