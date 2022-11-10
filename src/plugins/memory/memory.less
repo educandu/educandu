@@ -83,15 +83,15 @@
 }
 
 .MemoryTile-match {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  .m-mask;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 40px;
   color: @edu-success-color;
   z-index: @edu-z-index-overlay-layer;
+}
+
+.MemoryTile-noInnerClickMask {
+  .m-mask;
 }

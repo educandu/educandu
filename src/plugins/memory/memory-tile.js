@@ -16,6 +16,7 @@ function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const timeoutToPlayMedia = useRef();
+  const playerHandlersRef = useRef({});
   const clientConfig = useService(ClientConfig);
 
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -31,25 +32,45 @@ function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
   }, []);
 
   useEffect(() => {
-    if (!playMedia) {
-      setIsPlaying(false);
-      if (timeoutToPlayMedia.current) {
-        clearTimeout(timeoutToPlayMedia.current);
-      }
-      return;
+    setIsPlaying(false);
+    clearTimeout(timeoutToPlayMedia.current);
+
+    if (playMedia) {
+      playerRef.current?.seekTo(0);
+      timeoutToPlayMedia.current = setTimeout(() => {
+        if (isMounted.current) {
+          setIsPlaying(playMedia);
+        }
+      }, 500);
     }
-
-    playerRef.current?.seekTo(0);
-    timeoutToPlayMedia.current = setTimeout(() => {
-      if (isMounted.current && playMedia) {
-        setIsPlaying(true);
-      }
-    }, 500);
-
   }, [playerRef, playMedia]);
 
+  const ensureStopStateIsRegistered = () => {
+    setIsPlaying(true);
+    setIsPlaying(false);
+  };
+
+  playerHandlersRef.current.handleBufferEnd = () => {
+    if (!playMedia) {
+      clearTimeout(timeoutToPlayMedia.current);
+      ensureStopStateIsRegistered();
+    }
+  };
+
+  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
+  const handleBufferEnd = () => {
+    playerHandlersRef.current.handleBufferEnd();
+  };
+
   const renderReactPlayer = () => (
-    <ReactPlayer width="100%" height="100%" ref={playerRef} url={accessibleUrl} playing={isPlaying} />
+    <ReactPlayer
+      width="100%"
+      height="100%"
+      ref={playerRef}
+      url={accessibleUrl}
+      playing={isPlaying}
+      onBufferEnd={handleBufferEnd}
+      />
   );
 
   const renderMedia = () => {
@@ -76,9 +97,8 @@ function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
         {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
         {!!accessibleUrl && renderMedia()}
       </div>
-      {showMatched && (
-      <div className="MemoryTile-match"><CheckIcon /></div>
-      )}
+      <div className="MemoryTile-noInnerClickMask" />
+      {showMatched && <div className="MemoryTile-match"><CheckIcon /></div>}
     </div>
   );
 }
