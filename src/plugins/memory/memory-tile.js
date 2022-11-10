@@ -20,7 +20,7 @@ function MemoryTile({ text, sourceUrl, playMedia }) {
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const { resourceType } = sourceUrl ? analyzeMediaUrl(sourceUrl) : { resourceType: RESOURCE_TYPE.none };
 
-  const [isPlaying, setIsPlaying] = useState(playMedia);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     isMounted.current = true;
