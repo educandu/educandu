@@ -3,7 +3,8 @@ import uniqueId from '../../utils/unique-id.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 
 export const createDefaultTile = () => ({
-  text: ''
+  text: '',
+  sourceUrl: ''
 });
 
 export const getTilePairCountBySize = size => {

@@ -2090,7 +2090,9 @@
       "name": "Memory",
       "tilePairs": "Card pairs",
       "tileA": "Card A",
-      "tileB": "Card B"
+      "tileB": "Card B",
+      "url": "Media URL",
+      "preview": "Card pair preview"
     }
   },
   {
@@ -2100,7 +2102,9 @@
       "name": "Memory",
       "tilePairs": "Kartenpaare",
       "tileA": "Karte A",
-      "tileB": "Karte B"
+      "tileB": "Karte B",
+      "url": "Medien-URL",
+      "preview": "Kartenpaarvorschau"
     }
   },
   {

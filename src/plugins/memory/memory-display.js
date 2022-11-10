@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
+import MemoryTile from './memory-tile.js';
 import React, { useEffect, useState } from 'react';
-import Markdown from '../../components/markdown.js';
 import FlipCard from '../../components/flip-card.js';
 import { getRandomizedTilesFromPairs } from './memory-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -42,6 +42,7 @@ function MemoryDisplay({ content }) {
 
   const renderTile = (tile, index) => {
     const elementsToRender = [];
+    const isFlipped = tile.key === flippedTile?.key;
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
     if (reserveCentralSpace) {
@@ -51,9 +52,11 @@ function MemoryDisplay({ content }) {
     elementsToRender.push((
       <FlipCard
         key={tile.key}
-        flipped={tile.key === flippedTile?.key}
+        flipped={isFlipped}
         disabled={matchedTilePairKeys.includes(tile.pairKey)}
-        frontContent={<Markdown>{tile.text}</Markdown>}
+        frontContent={(
+          <MemoryTile text={tile.text} sourceUrl={tile.sourceUrl} playMedia={isFlipped} />
+        )}
         onClick={() => handleTileClick(tile)}
         />
     ));

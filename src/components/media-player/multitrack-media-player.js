@@ -298,7 +298,7 @@ function MultitrackMediaPlayer({
 
   return (
     <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      {loadedSources && (
+      {!!loadedSources && (
         <MediaPlayerTrackGroup
           sources={loadedSources}
           trackRef={trackRef}
@@ -316,7 +316,7 @@ function MultitrackMediaPlayer({
           loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
           />
       )}
-      {extraCustomContent && (<div>{extraCustomContent}</div>)}
+      {!!extraCustomContent && (<div>{extraCustomContent}</div>)}
       <MediaPlayerProgressBar
         parts={parts}
         onSeek={handleSeek}
@@ -337,7 +337,7 @@ function MultitrackMediaPlayer({
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />
-      {loadedSources && showTrackMixer && (
+      {!!loadedSources && showTrackMixer && (
         <div className="MultitrackMediaPlayer-trackMixer">
           <MediaPlayerTrackMixer
             mainTrack={loadedSources.mainTrack}

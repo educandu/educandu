@@ -1,11 +1,15 @@
+import classNames from 'classnames';
 import { SIZE } from './constants.js';
+import MemoryTile from './memory-tile.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import React, { Fragment, useState } from 'react';
-import { Button, Form, Radio, Tooltip } from 'antd';
 import { resizeTilePairs } from './memory-utils.js';
+import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { FlipCardFace } from '../../components/flip-card.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import { Button, Divider, Form, Radio, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -21,7 +25,7 @@ function MemoryEditor({ content, onContentChanged }) {
   const [selectedTilesPairIndex, setSelectedTilesPairIndex] = useState(0);
 
   const renderTileButton = index => {
-    const isTileDataMissing = tilePairs[index].some(tile => !tile.text);
+    const isTileDataMissing = tilePairs[index].some(tile => !tile.text && !tile.sourceUrl);
     return (
       <Button
         size="small"
@@ -61,6 +65,19 @@ function MemoryEditor({ content, onContentChanged }) {
     changeContent({ tilePairs: newTilePairs });
   };
 
+  const handleTileSourceUrlChange = (value, tileIndex) => {
+    const newTilePairs = cloneDeep(tilePairs);
+    newTilePairs[selectedTilesPairIndex][tileIndex].sourceUrl = value;
+    changeContent({ tilePairs: newTilePairs });
+  };
+
+  const previewClasses = classNames(
+    'MemoryEditor-preview',
+    `u-width-${width}`,
+    { 'MemoryEditor-preview--3x3': size === SIZE.threeByThree },
+    { 'MemoryEditor-preview--4x4': size === SIZE.fourByFour }
+  );
+
   return (
     <div className="MemoryEditor">
       <Form>
@@ -70,26 +87,7 @@ function MemoryEditor({ content, onContentChanged }) {
             <RadioButton value={SIZE.fourByFour}>4 x 4</RadioButton>
           </RadioGroup>
         </FormItem>
-        <FormItem label={t('tilePairs')} {...FORM_ITEM_LAYOUT}>
-          <div className="MemoryEditor-tileButtonGroup">
-            {tilePairs.map((pair, index) => renderTileButton(index))}
-          </div>
-        </FormItem>
-        <Form.Item label={t('tileA')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput
-            preview
-            value={tilePairs[selectedTilesPairIndex][0].text}
-            onChange={event => handleTileTextChange(event, 0)}
-            />
-        </Form.Item>
-        <Form.Item label={t('tileB')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput
-            preview
-            value={tilePairs[selectedTilesPairIndex][1].text}
-            onChange={event => handleTileTextChange(event, 1)}
-            />
-        </Form.Item>
-        <Form.Item
+        <FormItem
           className="ImageEditor-widthInput"
           label={
             <Fragment>
@@ -102,8 +100,71 @@ function MemoryEditor({ content, onContentChanged }) {
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
+        </FormItem>
+        <FormItem label={t('tilePairs')} {...FORM_ITEM_LAYOUT}>
+          <div className="MemoryEditor-tileButtonGroup">
+            {tilePairs.map((pair, index) => renderTileButton(index))}
+          </div>
+        </FormItem>
+
+        <Divider plain>{t('tileA')}</Divider>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput
+            value={tilePairs[selectedTilesPairIndex][0].text}
+            onChange={event => handleTileTextChange(event, 0)}
+            />
+        </FormItem>
+        <FormItem label={t('url')} {...FORM_ITEM_LAYOUT}>
+          <UrlInput
+            value={tilePairs[selectedTilesPairIndex][0].sourceUrl}
+            onChange={event => handleTileSourceUrlChange(event, 0)}
+            />
+        </FormItem>
+
+        <Divider plain>{t('tileB')}</Divider>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput
+            value={tilePairs[selectedTilesPairIndex][1].text}
+            onChange={event => handleTileTextChange(event, 1)}
+            />
+        </FormItem>
+        <FormItem label={t('url')} {...FORM_ITEM_LAYOUT}>
+          <UrlInput
+            value={tilePairs[selectedTilesPairIndex][1].sourceUrl}
+            onChange={event => handleTileSourceUrlChange(event, 1)}
+            />
+        </FormItem>
       </Form>
+
+      <Divider plain>{t('preview')}</Divider>
+      <div className={previewClasses}>
+        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
+        <div className="MemoryEditor-previewTile">
+          <div className="MemoryEditor-previewTileFace">
+            <FlipCardFace
+              content={(
+                <MemoryTile
+                  text={tilePairs[selectedTilesPairIndex][0].text}
+                  sourceUrl={tilePairs[selectedTilesPairIndex][0].sourceUrl}
+                  />
+              )}
+              />
+          </div>
+        </div>
+        <div className="MemoryEditor-previewTile">
+          <div className="MemoryEditor-previewTileFace">
+            <FlipCardFace
+              content={(
+                <MemoryTile
+                  text={tilePairs[selectedTilesPairIndex][1].text}
+                  sourceUrl={tilePairs[selectedTilesPairIndex][1].sourceUrl}
+                  />
+              )}
+              />
+          </div>
+        </div>
+        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
+      </div>
     </div>
   );
 }

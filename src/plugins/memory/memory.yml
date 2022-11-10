@@ -10,3 +10,9 @@ tileA:
 tileB:
   en: Card B
   de: Karte B
+url:
+  en: Media URL
+  de: Medien-URL
+preview:
+  en: Card pair preview
+  de: Kartenpaarvorschau
