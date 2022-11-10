@@ -111,12 +111,12 @@ export default function Room({ PageTemplate, initialState }) {
     confirmLeaveRoom(t, room.name, handleLeaveRoom);
   };
 
-  const handleInvitationModalClose = newInvitation => {
+  const handleInvitationModalClose = newInvitations => {
     setIsRoomInvitationModalVisible(false);
-    if (newInvitation) {
+    if (newInvitations) {
       setInvitations(currentInvitations => {
         const invitationsByEmail = new Map(currentInvitations.map(x => [x.email, x]));
-        invitationsByEmail.set(newInvitation.email, newInvitation);
+        newInvitations.forEach(newInvitation => invitationsByEmail.set(newInvitation.email, newInvitation));
         return [...invitationsByEmail.values()].sort(by(x => x.sentOn));
       });
     }

@@ -1,6 +1,6 @@
 import { validate } from '../validation.js';
 import { ROOM_DOCUMENTS_MODE } from '../constants.js';
-import { postRoomBodySchema, patchRoomMetadataBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
+import { postRoomBodySchema, patchRoomMetadataBodySchema, postRoomInvitationsBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
   describe('when the body contains the required data', () => {
@@ -109,19 +109,25 @@ describe('patchRoomMetadataBodySchema', () => {
 describe('postRoomInvitationBodySchema', () => {
   describe('when the body contains the required data', () => {
     it('should pass validation', () => {
-      expect(() => validate({ roomId: '29c29c78n8uih9cqh9huhf324', email: 'x@y.com' }, postRoomInvitationBodySchema)).not.toThrow();
+      expect(() => validate({ roomId: '29c29c78n8uih9cqh9huhf324', emails: ['x@y.com'] }, postRoomInvitationsBodySchema)).not.toThrow();
     });
   });
 
   describe('when the body does not contain the id', () => {
     it('should throw', () => {
-      expect(() => validate({ email: 'x@y.com', roomId: '' }, postRoomBodySchema)).toThrow();
+      expect(() => validate({ emails: ['x@y.com'], roomId: '' }, postRoomBodySchema)).toThrow();
     });
   });
 
-  describe('when the body does not contain the email', () => {
+  describe('when the body does not contain any email', () => {
     it('should throw', () => {
-      expect(() => validate({ email: '', roomId: '29c29c78n8uih9cqh9huhf324' }, postRoomBodySchema)).toThrow();
+      expect(() => validate({ emails: [], roomId: '29c29c78n8uih9cqh9huhf324' }, postRoomBodySchema)).toThrow();
+    });
+  });
+
+  describe('when the body contains an invalid email', () => {
+    it('should throw', () => {
+      expect(() => validate({ emails: ['x@y.com', 'not@valid'], roomId: '29c29c78n8uih9cqh9huhf324' }, postRoomBodySchema)).toThrow();
     });
   });
 });

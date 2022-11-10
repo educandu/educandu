@@ -1,4 +1,4 @@
-import { slugValidationPattern, passwordValidationPattern, minPasswordLength, tagValidationPattern } from '../domain/validation-constants.js';
+import { slugValidationPattern, passwordValidationPattern, minPasswordLength, tagValidationPattern, emailValidationPattern } from '../domain/validation-constants.js';
 
 function isValidPassword(password) {
   const sanitizedPassword = (password || '').trim();
@@ -23,8 +23,13 @@ function isValidSlug(slug) {
   return slugValidationPattern.test(slug);
 }
 
+function isValidEmail(email) {
+  return emailValidationPattern.test(email);
+}
+
 export default {
   isValidPassword,
   isValidTag,
-  isValidSlug
+  isValidSlug,
+  isValidEmail
 };

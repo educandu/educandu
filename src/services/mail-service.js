@@ -1,6 +1,8 @@
 import htmlescape from 'htmlescape';
 import nodemailer from 'nodemailer';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
+import urlUtils from '../utils/url-utils.js';
 import UserStore from '../stores/user-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ResourceManager from '../resources/resource-manager.js';
@@ -79,33 +81,10 @@ class MailService {
     return this._sendMail(message);
   }
 
-  sendRoomInvitationEmail({ email, ownerName, roomName, invitationLink }) {
-    logger.info(`Creating email with room invitation link ${invitationLink}`);
-
-    const subject = this.translators
-      .map(t => t('mailService:roomInvitationEmail.subject'))
-      .join(' / ');
-
-    const text = this.translators
-      .map(t => t('mailService:roomInvitationEmail.text', {
-        ownerName,
-        roomName,
-        invitationLink,
-        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
-      }))
-      .join('\n\n');
-
-    const html = this.translators
-      .map(t => t('mailService:roomInvitationEmail.html', {
-        ownerName: htmlescape(ownerName),
-        roomName: htmlescape(roomName),
-        invitationLink,
-        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
-      }))
-      .join('\n');
-
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
-    return this._sendMail(message);
+  async sendRoomInvitationEmails({ invitations, ownerName, roomName, origin }) {
+    await Promise.all(invitations.map(({ email, token }) => {
+      return this._sendRoomInvitationEmail({ ownerName, roomName, email, token, origin });
+    }));
   }
 
   async sendRoomDeletionNotificationEmails({ roomName, ownerName, roomMembers }) {
@@ -152,6 +131,37 @@ class MailService {
     const html = this.translators
       .map(t => t('mailService:roomInvitationDeletionNotificationEmail.html', {
         ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+      }))
+      .join('\n');
+
+    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    return this._sendMail(message);
+  }
+
+  _sendRoomInvitationEmail({ ownerName, roomName, email, token, origin }) {
+    const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(token));
+
+    logger.info(`Creating email with room invitation link ${invitationLink}`);
+
+    const subject = this.translators
+      .map(t => t('mailService:roomInvitationEmail.subject'))
+      .join(' / ');
+
+    const text = this.translators
+      .map(t => t('mailService:roomInvitationEmail.text', {
+        ownerName,
+        roomName,
+        invitationLink,
+        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
+      }))
+      .join('\n\n');
+
+    const html = this.translators
+      .map(t => t('mailService:roomInvitationEmail.html', {
+        ownerName: htmlescape(ownerName),
+        roomName: htmlescape(roomName),
+        invitationLink,
+        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
       }))
       .join('\n');
 

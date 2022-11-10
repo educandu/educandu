@@ -29,7 +29,7 @@ describe('room-controller', () => {
 
   beforeEach(() => {
     roomService = {
-      createOrUpdateInvitation: sandbox.stub(),
+      createOrUpdateInvitations: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomsOwnedByUser: sandbox.stub(),
       getRoomsByOwnerOrCollaboratorUser: sandbox.stub(),
@@ -54,7 +54,7 @@ describe('room-controller', () => {
       updateUserUsedBytes: sandbox.stub()
     };
     mailService = {
-      sendRoomInvitationEmail: sandbox.stub(),
+      sendRoomInvitationEmails: sandbox.stub(),
       sendRoomDeletionNotificationEmails: sandbox.stub(),
       sendRoomMemberRemovalNotificationEmail: sandbox.stub(),
       sendRoomInvitationDeletionNotificationEmail: sandbox.stub()
@@ -377,67 +377,68 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handlePostRoomInvitation', () => {
+  describe('handlePostRoomInvitations', () => {
 
-    describe('when the request data is valid', () => {
+    describe('when the request data has two valid email addresses', () => {
       const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
-      const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
+      const invitation1 = { email: 'invited-1@user.com', token: '94zv87nt2zztc8m3zt2z3845z8txc' };
+      const invitation2 = { email: 'invited-2@user.com', token: '483ztn72c837nco47n7to484878dh' };
 
       beforeEach(() => new Promise((resolve, reject) => {
-        roomService.createOrUpdateInvitation.resolves({
+        roomService.createOrUpdateInvitations.resolves({
           room,
           owner: user,
-          invitation
+          invitations: [invitation1, invitation2]
         });
-        mailService.sendRoomInvitationEmail.resolves();
+        mailService.sendRoomInvitationEmails.resolves();
 
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          body: { roomId: '843zvnzn2vw', email: 'invited@user.com' }
+          body: { roomId: '843zvnzn2vw', emails: ['invited-1@user.com', 'invited-2@user.com'] }
         });
         req.user = user;
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        sut.handlePostRoomInvitation(req, res).catch(reject);
+        sut.handlePostRoomInvitations(req, res).catch(reject);
       }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should respond with the created/updated invitation', () => {
-        expect(res._getData()).toEqual(invitation);
+      it('should respond with the created/updated invitations', () => {
+        expect(res._getData()).toEqual([invitation1, invitation2]);
       });
 
-      it('should have called roomService.createOrUpdateInvitation', () => {
-        sinon.assert.calledWith(roomService.createOrUpdateInvitation, {
+      it('should have called roomService.createOrUpdateInvitations', () => {
+        sinon.assert.calledWith(roomService.createOrUpdateInvitations, {
           roomId: '843zvnzn2vw',
-          email: 'invited@user.com',
+          emails: ['invited-1@user.com', 'invited-2@user.com'],
           user
         });
       });
 
-      it('should have called mailService.sendRoomInvitationEmail', () => {
-        sinon.assert.calledWith(mailService.sendRoomInvitationEmail, {
+      it('should have called mailService.sendRoomInvitationEmails', () => {
+        sinon.assert.calledWith(mailService.sendRoomInvitationEmails, {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
-          email: 'invited@user.com',
-          invitationLink: 'https://educandu.dev/room-membership-confirmation/94zv87nt2zztc8m3zt2z3845z8txc'
+          invitations: [invitation1, invitation2],
+          origin: 'https://educandu.dev'
         });
       });
     });
 
     describe('when the request data is invalid and causes a BadRequest', () => {
       beforeEach(() => {
-        roomService.createOrUpdateInvitation.returns(Promise.reject(new BadRequest()));
+        roomService.createOrUpdateInvitations.returns(Promise.reject(new BadRequest()));
 
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          body: { roomId: '843zvnzn2vw', email: 'invited@user.com' }
+          body: { roomId: '843zvnzn2vw', emails: ['invited@user.com'] }
         });
         req.user = user;
 
@@ -445,7 +446,7 @@ describe('room-controller', () => {
       });
 
       it('should propagate the error', async () => {
-        await expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(BadRequest);
+        await expect(() => sut.handlePostRoomInvitations(req, res)).rejects.toThrow(BadRequest);
       });
     });
 
@@ -456,12 +457,12 @@ describe('room-controller', () => {
     const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
     beforeEach(() => new Promise((resolve, reject) => {
-      roomService.createOrUpdateInvitation.resolves({
+      roomService.createOrUpdateInvitations.resolves({
         room,
         owner: user,
-        invitation
+        invitations: [invitation]
       });
-      mailService.sendRoomInvitationEmail.resolves();
+      mailService.sendRoomInvitationEmails.resolves();
 
       req = { user, body: { token: invitation.token } };
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });

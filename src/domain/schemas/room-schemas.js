@@ -1,6 +1,6 @@
 import joi from 'joi';
-import { idOrKeySchema, slugSchema } from './shared-schemas.js';
 import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../constants.js';
+import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
   token: idOrKeySchema.required()
@@ -16,9 +16,9 @@ export const postRoomBodySchema = joi.object({
   documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
 });
 
-export const postRoomInvitationBodySchema = joi.object({
+export const postRoomInvitationsBodySchema = joi.object({
   roomId: idOrKeySchema.required(),
-  email: joi.string().required()
+  emails: joi.array().items(emailSchema).min(1).required()
 });
 
 export const postRoomInvitationConfirmBodySchema = joi.object({

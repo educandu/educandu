@@ -1,5 +1,5 @@
 import { validate } from '../validation.js';
-import { slugSchema } from './shared-schemas.js';
+import { slugSchema, emailSchema } from './shared-schemas.js';
 
 describe('slugSchema', () => {
   const testCases = [
@@ -21,3 +21,24 @@ describe('slugSchema', () => {
   });
 });
 
+describe('emailSchema', () => {
+  const testCases = [
+    { description: 'null value', email: null, shouldSucceed: false },
+    { description: 'empty string', email: '', shouldSucceed: false },
+    { description: 'a invalid email', email: 't:st@test.com', shouldSucceed: false },
+    { description: 'a valid email containing only ASCII characters', email: 'test@test.com', shouldSucceed: true },
+    { description: 'a valid email containing also non-ASCII characters', email: 'Täst@test.com', shouldSucceed: true }
+  ];
+
+  testCases.forEach(({ description, email, shouldSucceed }) => {
+    describe(description, () => {
+      it(`should ${shouldSucceed ? 'not throw' : 'throw'}`, () => {
+        if (shouldSucceed) {
+          expect(() => validate(email, emailSchema)).not.toThrow();
+        } else {
+          expect(() => validate(email, emailSchema)).toThrow();
+        }
+      });
+    });
+  });
+});

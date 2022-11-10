@@ -1,14 +1,21 @@
 import PropTypes from 'prop-types';
-import { Form, Modal } from 'antd';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import EmailFormItem from './email-form-item.js';
-import React, { useEffect, useState } from 'react';
+import { Form, Input, Modal, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import inputValidators from '../utils/input-validators.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
+const FormItem = Form.Item;
+const { TextArea } = Input;
+
 const logger = new Logger(import.meta.url);
+
+const normalizeEmails = value => value.toLowerCase();
+const extractEmails = value => value.match(/[^\s;,]+/g) || [];
 
 function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
   const [form] = Form.useForm();
@@ -21,14 +28,39 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
     }
   }, [form, isVisible]);
 
-  const initialFormValues = { email: null };
+  const initialFormValues = { emails: '' };
   const [isLoading, setIsLoading] = useState(false);
+
+  const emailsValidationRules = [
+    {
+      validator: (_rule, value) => {
+        const emails = extractEmails(value);
+        if (!emails.length) {
+          return Promise.reject(new Error(t('emailsRequired')));
+        }
+        if (emails.some(token => !inputValidators.isValidEmail(token))) {
+          return Promise.reject(new Error(t('notAllEmailsValid')));
+        }
+        return Promise.resolve();
+      }
+    }
+  ];
+
+  const handleOnEmailsChange = event => {
+    const element = event.target;
+    const caret = element.selectionStart;
+    window.requestAnimationFrame(() => {
+      element.selectionStart = caret;
+      element.selectionEnd = caret;
+    });
+  };
 
   const handleFormFinish = async values => {
     try {
       setIsLoading(true);
-      const invitation = await roomApiClient.addRoomInvitation({ email: values.email, roomId });
-      onOk(invitation);
+      const emails = extractEmails(values.emails);
+      const invitations = await roomApiClient.addRoomInvitations({ emails, roomId });
+      onOk(invitations);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     } finally {
@@ -46,16 +78,34 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
 
   return (
     <Modal
-      title={t('newRoomInvitation')}
+      title={t('sendRoomInvitations')}
       onCancel={handleModalCancel}
       onOk={handleModalOk}
-      maskClosable={false}
       visible={isVisible}
       okButtonProps={{ loading: isLoading }}
       forceRender
       >
-      <Form form={form} name="new-room-invitation-form" initialValues={initialFormValues} onFinish={handleFormFinish} layout="vertical">
-        <EmailFormItem name="email" />
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={initialFormValues}
+        onFinish={handleFormFinish}
+        >
+        <FormItem
+          name="emails"
+          label={
+            <Fragment>
+              <span>{t('emailAddresses')}</span>
+              <Tooltip title={t('emailAddressesInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+            </Fragment>
+          }
+          rules={emailsValidationRules}
+          normalize={normalizeEmails}
+          >
+          <TextArea onChange={handleOnEmailsChange} autoSize={{ minRows: 3, maxRows: 12 }} />
+        </FormItem>
       </Form>
     </Modal>
   );
