@@ -10,9 +10,9 @@ import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { isRoomOwnerOrCollaborator, isRoomOwnerOrMember } from '../utils/room-utils.js';
+import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_ERROR_MESSAGE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE } from '../domain/constants.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   documentIdParamsOrQuerySchema,
   updateDocumentMetadataBodySchema,
@@ -83,7 +83,7 @@ class DocumentController {
 
         const templateDocumentRoom = await this.roomService.getRoomById(templateDocument.roomId);
 
-        if (!isRoomOwnerOrMember({ room: templateDocumentRoom, userId: user._id })) {
+        if (!isRoomOwnerOrInvitedMember({ room: templateDocumentRoom, userId: user._id })) {
           throw new Forbidden();
         }
       }
@@ -99,7 +99,7 @@ class DocumentController {
 
       room = await this.roomService.getRoomById(doc.roomId);
 
-      if (!isRoomOwnerOrMember({ room, userId: user._id })) {
+      if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
         throw new Forbidden();
       }
     } else {
@@ -128,7 +128,7 @@ class DocumentController {
         throw new BadRequest(`Unknown room id '${data.roomId}'`);
       }
 
-      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
         throw new Forbidden();
       }
     }
@@ -261,8 +261,8 @@ class DocumentController {
     }
 
     const room = await this.roomService.getRoomById(document.roomId);
-    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
-      throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
+    if (!isRoomOwner({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
     await this.documentService.hardDeleteDocument(documentId);
@@ -290,7 +290,7 @@ class DocumentController {
     if (document.roomId) {
       const room = await this.roomService.getRoomById(document.roomId);
 
-      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
         throw new Forbidden();
       }
     }

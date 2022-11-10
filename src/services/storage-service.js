@@ -12,10 +12,10 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { CDN_OBJECT_TYPE, CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
@@ -322,7 +322,7 @@ export default class StorageService {
             maxBytes: roomOwnerStoragePlan.maxBytes,
             rootPath: rootAndHomePath,
             homePath: rootAndHomePath,
-            isDeletionEnabled: isRoomOwnerOrCollaborator({ room, userId: user._id })
+            isDeletionEnabled: isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })
           });
         }
       }

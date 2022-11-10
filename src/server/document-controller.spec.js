@@ -992,10 +992,8 @@ describe('document-controller', () => {
     });
 
     describe('when the document belongs to a room of which the user is collaborator', () => {
-      beforeEach(() => new Promise((resolve, reject) => {
+      beforeEach(() => {
         req = { user, body: { documentId: doc._id } };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
 
         doc.roomId = room._id;
 
@@ -1005,13 +1003,10 @@ describe('document-controller', () => {
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-        documentService.hardDeleteDocument.resolves();
+      });
 
-        sut.handleDeleteDoc(req, res).catch(reject);
-      }));
-
-      it('should call documentService.hardDeleteDocument', () => {
-        sinon.assert.calledWith(documentService.hardDeleteDocument, doc._id);
+      it('should throw Forbidden', async () => {
+        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });
