@@ -98,7 +98,7 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
           rules={emailsValidationRules}
           normalize={normalizeEmails}
           >
-          <TextArea onChange={handleOnEmailsChange} />
+          <TextArea onChange={handleOnEmailsChange} autoSize={{ minRows: 3, maxRows: 12 }} />
         </FormItem>
       </Form>
     </Modal>
