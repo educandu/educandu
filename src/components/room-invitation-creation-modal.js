@@ -87,7 +87,6 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
       <Form
         form={form}
         layout="vertical"
-        name="send-room-invitations-form"
         initialValues={initialFormValues}
         onFinish={handleFormFinish}
         >
