@@ -72,7 +72,7 @@ function MemoryTile({ text, sourceUrl, playMedia }) {
   return (
     <div className="MemoryTile">
       {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
-      {!!sourceUrl && renderMedia()}
+      {!!accessibleUrl && renderMedia()}
     </div>
   );
 }
