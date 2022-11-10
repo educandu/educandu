@@ -8,10 +8,11 @@ import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import ConfirmationIcon from '../../components/icons/general/confirmation-icon.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
-function MemoryTile({ text, sourceUrl, playMedia }) {
+function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const timeoutToPlayMedia = useRef();
@@ -71,20 +72,27 @@ function MemoryTile({ text, sourceUrl, playMedia }) {
 
   return (
     <div className="MemoryTile">
-      {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
-      {!!accessibleUrl && renderMedia()}
+      <div>
+        {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
+        {!!accessibleUrl && renderMedia()}
+      </div>
+      {showMatched && (
+      <div className="MemoryTile-match"><ConfirmationIcon /></div>
+      )}
     </div>
   );
 }
 
 MemoryTile.propTypes = {
   playMedia: PropTypes.bool,
+  showMatched: PropTypes.bool,
   sourceUrl: PropTypes.string,
   text: PropTypes.string
 };
 
 MemoryTile.defaultProps = {
   playMedia: false,
+  showMatched: false,
   sourceUrl: '',
   text: ''
 };

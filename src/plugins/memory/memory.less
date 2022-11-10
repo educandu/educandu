@@ -70,10 +70,28 @@
   color: @edu-text-color-secondary;
   font-size: 80px;
   aspect-ratio: 16/9;
+
+  @media @edu-media-phone {
+    font-size: 50px;
+  }
 }
 
 .MemoryTile-markdown {
   padding: 8px;
   display: flex;
   justify-content: center;
+}
+
+.MemoryTile-match {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  color: @edu-success-color;
+  z-index: @edu-z-index-overlay-layer;
 }

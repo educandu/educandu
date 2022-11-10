@@ -45,14 +45,12 @@
     }
   }
 
-
   &.is-disabled {
     cursor: default;
-    background-color: @edu-disabled-color;
+    overflow: hidden;
 
     &:hover {
       border-color: @edu-border-color-light;
-      background-color: @edu-disabled-color;
     }
   }
 }
@@ -60,4 +58,14 @@
 .FlipCard-faceContent {
   width: 100%;
   margin: auto;
+}
+
+.FlipCard-disabledOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: darken(@edu-background-color-base, 5%);
+  opacity: 0.8;
 }
