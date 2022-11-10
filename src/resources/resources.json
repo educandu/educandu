@@ -1485,16 +1485,20 @@
     "namespace": "roomInvitationCreationModal",
     "language": "en",
     "resources": {
-      "newRoomInvitation": "New invitation",
-      "emailRequired": "Please specify an email address"
+      "sendRoomInvitations": "Send invitations",
+      "emailAddresses": "Email addresses",
+      "emailsRequired": "Please specify an email address",
+      "notAllEmailsValid": "Not all specified email addresses are valid"
     }
   },
   {
     "namespace": "roomInvitationCreationModal",
     "language": "de",
     "resources": {
-      "newRoomInvitation": "Neue Einladung",
-      "emailRequired": "Bitte gib eine E-Mail-Adresse an"
+      "sendRoomInvitations": "Einladungen versenden",
+      "emailAddresses": "E-Mail-Adressen",
+      "emailsRequired": "Bitte gib eine E-Mail-Adresse an",
+      "notAllEmailsValid": "Nicht alle angegebenen E-Mail-Adressen sind gültig"
     }
   },
   {

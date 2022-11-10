@@ -377,7 +377,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handlePostRoomInvitation', () => {
+  describe('handlePostRoomInvitations', () => {
 
     describe('when the request data is valid', () => {
       const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
@@ -394,22 +394,22 @@ describe('room-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          body: { roomId: '843zvnzn2vw', email: 'invited@user.com' }
+          body: { roomId: '843zvnzn2vw', emails: ['invited@user.com'] }
         });
         req.user = user;
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        sut.handlePostRoomInvitation(req, res).catch(reject);
+        sut.handlePostRoomInvitations(req, res).catch(reject);
       }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should respond with the created/updated invitation', () => {
-        expect(res._getData()).toEqual(invitation);
+      it('should respond with the created/updated invitations', () => {
+        expect(res._getData()).toEqual([invitation]);
       });
 
       it('should have called roomService.createOrUpdateInvitation', () => {
@@ -437,7 +437,7 @@ describe('room-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          body: { roomId: '843zvnzn2vw', email: 'invited@user.com' }
+          body: { roomId: '843zvnzn2vw', emails: ['invited@user.com'] }
         });
         req.user = user;
 
@@ -445,7 +445,7 @@ describe('room-controller', () => {
       });
 
       it('should propagate the error', async () => {
-        await expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(BadRequest);
+        await expect(() => sut.handlePostRoomInvitations(req, res)).rejects.toThrow(BadRequest);
       });
     });
 

@@ -29,7 +29,7 @@ import {
   deleteRoomsQuerySchema,
   patchRoomMetadataBodySchema,
   deleteRoomMemberParamsSchema,
-  postRoomInvitationBodySchema,
+  postRoomInvitationsBodySchema,
   patchRoomDocumentsBodySchema,
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
@@ -219,16 +219,22 @@ export default class RoomController {
     return res.send({ invitations: mappedInvitations });
   }
 
-  async handlePostRoomInvitation(req, res) {
+  async handlePostRoomInvitations(req, res) {
     const { user } = req;
-    const { roomId, email } = req.body;
-    const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
+    const { roomId, emails } = req.body;
 
-    const { origin } = requestUtils.getHostInfo(req);
-    const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
-    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.displayName, email, invitationLink });
+    const invitations = [];
+    for (const email of emails) {
+      // eslint-disable-next-line no-await-in-loop
+      const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
+      invitations.push(invitation);
+      const { origin } = requestUtils.getHostInfo(req);
+      const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
+      // eslint-disable-next-line no-await-in-loop
+      await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.displayName, email, invitationLink });
+    }
 
-    return res.status(201).send(invitation);
+    return res.status(201).send(invitations);
   }
 
   async handlePostRoomInvitationConfirm(req, res) {
@@ -348,8 +354,8 @@ export default class RoomController {
 
     router.post(
       '/api/v1/room-invitations',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
-      (req, res) => this.handlePostRoomInvitation(req, res)
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationsBodySchema)],
+      (req, res) => this.handlePostRoomInvitations(req, res)
     );
 
     router.delete(

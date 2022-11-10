@@ -1,6 +1,12 @@
-newRoomInvitation:
-  en: New invitation
-  de: Neue Einladung
-emailRequired:
+sendRoomInvitations:
+  en: Send invitations
+  de: Einladungen versenden
+emailAddresses:
+  en: Email addresses
+  de: E-Mail-Adressen
+emailsRequired:
   en: Please specify an email address
   de: Bitte gib eine E-Mail-Adresse an
+notAllEmailsValid:
+  en: Not all specified email addresses are valid
+  de: Nicht alle angegebenen E-Mail-Adressen sind gültig
