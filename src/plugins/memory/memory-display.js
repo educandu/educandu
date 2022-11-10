@@ -43,19 +43,20 @@ function MemoryDisplay({ content }) {
       return;
     }
 
-    if (currentlyFlippedTile?.pairKey === tile.pairKey) {
-      setCurrentlyMatchedTile(currentlyFlippedTile);
-      setCurrentlyFlippedTile(tile);
-
-      setTimeout(() => {
-        setCurrentlyMatchedTile(null);
-        setCurrentlyFlippedTile(null);
-        setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
-      }, 500);
-    } else {
+    if (currentlyFlippedTile?.pairKey !== tile.pairKey) {
       setCurrentlyFlippedTile(tile);
       setCurrentlyMatchedTile(null);
+      return;
     }
+
+    setCurrentlyMatchedTile(currentlyFlippedTile);
+    setCurrentlyFlippedTile(tile);
+
+    setTimeout(() => {
+      setCurrentlyMatchedTile(null);
+      setCurrentlyFlippedTile(null);
+      setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+    }, 500);
   };
 
   const renderTile = (tile, index) => {
