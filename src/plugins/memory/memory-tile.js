@@ -9,12 +9,12 @@ import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
-let timeoutToPlayMedia;
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 function MemoryTile({ text, sourceUrl, playMedia }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
+  const timeoutToPlayMedia = useRef();
   const clientConfig = useService(ClientConfig);
 
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -32,14 +32,14 @@ function MemoryTile({ text, sourceUrl, playMedia }) {
   useEffect(() => {
     if (!playMedia) {
       setIsPlaying(false);
-      if (timeoutToPlayMedia) {
-        clearTimeout(timeoutToPlayMedia);
+      if (timeoutToPlayMedia.current) {
+        clearTimeout(timeoutToPlayMedia.current);
       }
       return;
     }
 
     playerRef.current?.seekTo(0);
-    timeoutToPlayMedia = setTimeout(() => {
+    timeoutToPlayMedia.current = setTimeout(() => {
       if (isMounted.current && playMedia) {
         setIsPlaying(true);
       }
