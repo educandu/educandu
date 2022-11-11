@@ -7,8 +7,8 @@ import routes from '../utils/routes.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
-import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
@@ -97,7 +97,7 @@ class StorageController {
         throw new BadRequest(`Unknown room id '${roomId}'`);
       }
 
-      if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
         throw new Unauthorized(`User is not authorized to access room '${roomId}'`);
       }
 

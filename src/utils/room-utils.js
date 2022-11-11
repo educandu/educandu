@@ -1,18 +1,24 @@
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
-export const isRoomOwnerOrMember = ({ room, userId }) => {
-  const isOwner = (room.owner._id || room.owner) === userId;
-  const isMember = room.members.some(m => m.userId === userId);
-  return isOwner || isMember;
+const getRoomOwnerId = room => {
+  const isClientDataMappedOwner = typeof room.owner === 'object';
+  return isClientDataMappedOwner ? room.owner._id : room.owner;
 };
 
-export const isRoomOwnerOrCollaborator = ({ room, userId }) => {
-  const isOwner = (room.owner._id || room.owner) === userId;
-  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === userId);
+export const isRoomOwner = ({ room, userId }) => {
+  return getRoomOwnerId(room) === userId;
+};
+
+const isInvitedRoomMember = ({ room, userId }) => {
+  return room.members.some(m => m.userId === userId);
+};
+
+export const isRoomOwnerOrInvitedMember = ({ room, userId }) => {
+  return isRoomOwner({ room, userId }) || isInvitedRoomMember({ room, userId });
+};
+
+export const isRoomOwnerOrInvitedCollaborator = ({ room, userId }) => {
+  const isOwner = isRoomOwner({ room, userId });
+  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && isInvitedRoomMember({ room, userId });
   return isOwner || isCollaborator;
-};
-
-export default {
-  isRoomOwnerOrMember,
-  isRoomOwnerOrCollaborator
 };

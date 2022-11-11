@@ -1,4 +1,4 @@
-import { isRoomOwnerOrCollaborator } from './room-utils.js';
+import { isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 
@@ -9,7 +9,7 @@ function canEditDocPart({ user, doc, room, validContributionParts }) {
     return false;
   }
 
-  if (room && !isRoomOwnerOrCollaborator({ room, userId: user?._id })) {
+  if (room && !isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id })) {
     return false;
   }
 

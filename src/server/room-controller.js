@@ -13,6 +13,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -37,7 +38,6 @@ import {
   getRoomMembershipConfirmationParamsSchema,
   getRoomsQuerySchema
 } from '../domain/schemas/room-schemas.js';
-import { isRoomOwnerOrCollaborator } from '../utils/room-utils.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
@@ -125,7 +125,7 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+    if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
     }
 

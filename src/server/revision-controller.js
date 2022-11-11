@@ -2,8 +2,8 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import { isRoomOwnerOrMember } from '../utils/room-utils.js';
 import DocumentService from '../services/document-service.js';
+import { isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 const { NotFound, Forbidden } = httpErrors;
@@ -28,7 +28,7 @@ class RevisionController {
 
     const room = revision.roomId ? await this.roomService.getRoomById(revision.roomId) : null;
 
-    if (room && !isRoomOwnerOrMember({ room, userId: user?._id })) {
+    if (room && !isRoomOwnerOrInvitedMember({ room, userId: user?._id })) {
       throw new Forbidden();
     }
 

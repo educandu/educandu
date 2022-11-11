@@ -8,7 +8,6 @@ import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import roomUtils from '../../utils/room-utils.js';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
@@ -27,6 +26,7 @@ import { ensureIsExcluded, swapItemsAt } from '../../utils/array-utils.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Menu, Dropdown } from 'antd';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
@@ -73,8 +73,8 @@ export default function Room({ PageTemplate, initialState }) {
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
-  const isRoomOwner = user?._id === room.owner._id;
-  const isRoomOwnerOrCollaborator = roomUtils.isRoomOwnerOrCollaborator({ room, userId: user?._id });
+  const isUserRoomOwner = isRoomOwner({ room, userId: user?._id });
+  const isUserRoomOwnerOrInvitedCollaborator = isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
@@ -237,14 +237,18 @@ export default function Room({ PageTemplate, initialState }) {
         label: t('common:moveDown'),
         icon: <MoveDownIcon className="u-dropdown-icon" />,
         disabled: index === documents.length - 1
-      },
-      {
+      }
+    ];
+
+    if (isUserRoomOwner) {
+      items.push({
         key: 'delete',
         label: t('common:delete'),
         icon: <DeleteIcon className="u-dropdown-icon" />,
         danger: true
-      }
-    ];
+      });
+    }
+
     const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, index, menuItem)} />;
     return (
       <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
@@ -261,13 +265,13 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-documentRowTitle">
           <a href={url}>{doc.title}</a>
         </div>
-        {isRoomOwnerOrCollaborator && renderDocumentMenu(doc, index)}
+        {isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index)}
       </div>
     );
   };
 
   const renderRoomMembers = () => {
-    const title = isRoomOwner && t('roomMembersHeader', { count: room.members.length });
+    const title = isUserRoomOwner && t('roomMembersHeader', { count: room.members.length });
     return (
       <Card className="RoomPage-card" title={title}>
         <List
@@ -308,7 +312,7 @@ export default function Room({ PageTemplate, initialState }) {
         renderItem={invitation => (
           <List.Item className="RoomPage-membersRow">
             <Space>
-              {isRoomOwner && (
+              {isUserRoomOwner && (
                 <Tooltip title={t('revokeInvitation')}>
                   <DeleteButton className="RoomPage-deleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
                 </Tooltip>
@@ -329,7 +333,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomDocumentsCard = () => (
     <Card
       className="RoomPage-card"
-      actions={isRoomOwnerOrCollaborator && [
+      actions={isUserRoomOwnerOrInvitedCollaborator && [
         <Button
           className="RoomPage-cardButton"
           key="createDocument"
@@ -368,14 +372,14 @@ export default function Room({ PageTemplate, initialState }) {
         </div>
         <div className="RoomPage-subtitle">
           <div>{documentsModeText} | {renderOwnerLink()}</div>
-          {!isRoomOwner && (
+          {!isUserRoomOwner && (
             <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
           )}
         </div>
 
-        {!isRoomOwner && renderRoomDocumentsCard()}
+        {!isUserRoomOwner && renderRoomDocumentsCard()}
 
-        {isRoomOwner && (
+        {isUserRoomOwner && (
           <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
             <TabPane className="Tabs-tabPane" tab={t('documentsTabTitle')} key="1">
               {renderRoomDocumentsCard()}
