@@ -8,14 +8,15 @@ const FACE_TYPE = {
   standalone: 'standalone'
 };
 
-export function FlipCardFace({ content, color, faceType, disabled }) {
+export function FlipCardFace({ content, color, faceType, locked, disabled }) {
   const faceStyle = color ? { backgroundColor: color } : null;
 
   const classes = classNames(
     'FlipCard-face',
     { 'FlipCard-face--front': faceType === FACE_TYPE.front },
     { 'FlipCard-face--back': faceType === FACE_TYPE.back },
-    { 'is-disabled': disabled }
+    { 'is-disabled': disabled },
+    { 'is-locked': locked }
   );
 
   return (
@@ -28,9 +29,9 @@ export function FlipCardFace({ content, color, faceType, disabled }) {
   );
 }
 
-function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, onClick, disabled }) {
+function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, onClick, locked, disabled }) {
   const handleClick = () => {
-    if (!disabled) {
+    if (!locked && !disabled) {
       onClick();
     }
   };
@@ -38,8 +39,8 @@ function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, o
   return (
     <div className="FlipCard" onClick={handleClick}>
       <div className={classNames('FlipCard-content', { 'is-flipped': flipped })}>
-        <FlipCardFace content={backContent} color={backColor} disabled={disabled} faceType={FACE_TYPE.back} />
-        <FlipCardFace content={frontContent} color={frontColor} disabled={disabled} faceType={FACE_TYPE.front} />
+        <FlipCardFace content={backContent} color={backColor} locked={locked} disabled={disabled} faceType={FACE_TYPE.back} />
+        <FlipCardFace content={frontContent} color={frontColor} locked={locked} disabled={disabled} faceType={FACE_TYPE.front} />
       </div>
     </div>
   );
@@ -49,14 +50,16 @@ FlipCardFace.propTypes = {
   color: PropTypes.string,
   content: PropTypes.any,
   disabled: PropTypes.bool,
-  faceType: PropTypes.oneOf(Object.values(FACE_TYPE))
+  faceType: PropTypes.oneOf(Object.values(FACE_TYPE)),
+  locked: PropTypes.bool
 };
 
 FlipCardFace.defaultProps = {
   color: '',
   content: null,
   disabled: false,
-  faceType: FACE_TYPE.standalone
+  faceType: FACE_TYPE.standalone,
+  locked: false
 };
 
 FlipCard.propTypes = {
@@ -66,6 +69,7 @@ FlipCard.propTypes = {
   flipped: PropTypes.bool,
   frontColor: PropTypes.string,
   frontContent: PropTypes.any,
+  locked: PropTypes.bool,
   onClick: PropTypes.func
 };
 
@@ -76,6 +80,7 @@ FlipCard.defaultProps = {
   flipped: false,
   frontColor: '',
   frontContent: null,
+  locked: false,
   onClick: () => {}
 };
 

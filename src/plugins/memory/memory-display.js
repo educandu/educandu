@@ -12,8 +12,7 @@ function MemoryDisplay({ content }) {
   const isMounted = useRef(false);
   const [tiles, setTiles] = useState([]);
   const [matchedTilePairKeys, setMatchedTilePairKeys] = useState([]);
-  const [currentlyFlippedTile, setCurrentlyFlippedTile] = useState(null);
-  const [currentlyMatchedTile, setCurrentlyMatchedTile] = useState(null);
+  const [currentlyFlippedTiles, setCurrentlyFlippedTiles] = useState([]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -23,9 +22,8 @@ function MemoryDisplay({ content }) {
   }, []);
 
   useEffect(() => {
-    setCurrentlyFlippedTile(null);
-    setCurrentlyMatchedTile(null);
     setMatchedTilePairKeys([]);
+    setCurrentlyFlippedTiles([]);
     setTiles(getRandomizedTilesFromPairs(tilePairs));
   }, [tilePairs]);
 
@@ -37,32 +35,25 @@ function MemoryDisplay({ content }) {
   );
 
   const handleTileClick = tile => {
-    if (currentlyFlippedTile?.key === tile.key) {
-      setCurrentlyFlippedTile(null);
-      setCurrentlyMatchedTile(null);
-      return;
+    let hasJustMatched;
+    if (currentlyFlippedTiles.length === 1) {
+      setCurrentlyFlippedTiles([currentlyFlippedTiles[0], tile]);
+      hasJustMatched = currentlyFlippedTiles[0].pairKey === tile.pairKey;
+    } else {
+      setCurrentlyFlippedTiles([tile]);
+      hasJustMatched = false;
     }
 
-    if (currentlyFlippedTile?.pairKey !== tile.pairKey) {
-      setCurrentlyFlippedTile(tile);
-      setCurrentlyMatchedTile(null);
-      return;
+    if (hasJustMatched) {
+      setTimeout(() => {
+        setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+      }, 500);
     }
-
-    setCurrentlyMatchedTile(currentlyFlippedTile);
-    setCurrentlyFlippedTile(tile);
-
-    setTimeout(() => {
-      setCurrentlyMatchedTile(null);
-      setCurrentlyFlippedTile(null);
-      setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
-    }, 500);
   };
 
   const renderTile = (tile, index) => {
     const elementsToRender = [];
-    const isFlipped = tile.key === currentlyFlippedTile?.key;
-    const isMatched = tile.key === currentlyMatchedTile?.key;
+    const isFlipped = currentlyFlippedTiles.includes(tile);
     const wasMatched = matchedTilePairKeys.includes(tile.pairKey);
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
@@ -73,7 +64,8 @@ function MemoryDisplay({ content }) {
     elementsToRender.push((
       <FlipCard
         key={tile.key}
-        flipped={isFlipped || isMatched || wasMatched}
+        flipped={isFlipped || wasMatched}
+        locked={isFlipped}
         disabled={wasMatched}
         frontContent={(
           <MemoryTile
