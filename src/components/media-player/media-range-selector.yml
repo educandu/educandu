@@ -4,6 +4,15 @@ modalTitle:
 playbackRange:
   en: "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
   de: "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+selectRangeLabel:
+  en: Set current playback timecode
+  de: Setz den aktuellen Wiedergabe Time-Code
+setAsStart:
+  en: as start time
+  de: als Anfangszeit
+setAsEnd:
+  en: as end time
+  de: als Endezeit
 loadingMessage:
   en: Determining media information ...
   de: Medieninformationen werden ermittelt ...

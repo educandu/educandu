@@ -33,6 +33,7 @@ function MediaPlayer({
   posterImageUrl,
   extraCustomContent,
   onPartEndReached,
+  onProgress,
   onEndReached,
   onPlayStateChange,
   onPlayingPartIndexChange,
@@ -60,6 +61,7 @@ function MediaPlayer({
       posterImageUrl={posterImageUrl}
       extraCustomContent={extraCustomContent}
       onPartEndReached={onPartEndReached}
+      onProgress={onProgress}
       onEndReached={onEndReached}
       onPlayStateChange={onPlayStateChange}
       onPlayingPartIndexChange={onPlayingPartIndexChange}
@@ -83,6 +85,7 @@ MediaPlayer.propTypes = {
   onPartEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onPlayingPartIndexChange: PropTypes.func,
+  onProgress: PropTypes.func,
   onReady: PropTypes.func,
   onSeek: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
@@ -108,6 +111,7 @@ MediaPlayer.defaultProps = {
   onPartEndReached: () => {},
   onPlayStateChange: () => {},
   onPlayingPartIndexChange: () => {},
+  onProgress: () => {},
   onReady: () => {},
   onSeek: () => {},
   parts: [{ startPosition: 0 }],

@@ -87,6 +87,7 @@ function MultitrackMediaPlayer({
   onSelectedVolumePresetChange,
   onPartEndReached,
   onEndReached,
+  onProgress,
   onPlayStateChange,
   onPlayingPartIndexChange,
   onReady,
@@ -244,6 +245,11 @@ function MultitrackMediaPlayer({
     });
   };
 
+  const handleProgress = progressInMilliseconds => {
+    setPlayedMilliseconds(progressInMilliseconds);
+    onProgress(progressInMilliseconds);
+  };
+
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
@@ -310,7 +316,7 @@ function MultitrackMediaPlayer({
           playbackRate={playbackRate}
           onDuration={handleDuration}
           onEndReached={handleEndReached}
-          onProgress={setPlayedMilliseconds}
+          onProgress={handleProgress}
           onPlayStateChange={handlePlayStateChange}
           posterImageUrl={posterImageUrl}
           loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
@@ -366,6 +372,7 @@ MultitrackMediaPlayer.propTypes = {
   onPartEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onPlayingPartIndexChange: PropTypes.func,
+  onProgress: PropTypes.func,
   onReady: PropTypes.func,
   onSeek: PropTypes.func,
   onSelectedVolumePresetChange: PropTypes.func,
@@ -412,6 +419,7 @@ MultitrackMediaPlayer.defaultProps = {
   onPartEndReached: () => {},
   onPlayStateChange: () => {},
   onPlayingPartIndexChange: () => {},
+  onProgress: () => {},
   onReady: () => {},
   onSeek: () => {},
   onSelectedVolumePresetChange: () => {},
