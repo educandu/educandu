@@ -10,6 +10,9 @@ imageWidth:
 imagePosition:
   en: Image position
   de: Bildstelle
+imageBorder:
+  en: Image border
+  de: Bildrahmen
 left:
   en: left
   de: Links

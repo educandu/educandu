@@ -3,21 +3,26 @@
 }
 
 .MarkdownWithImageDisplay-imageWrapper {
-  padding: 10px 15px;
+  margin: 5px 15px 10px 15px;
 
   @media @edu-media-phone {
-    padding-left: 0;
-    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  &.MarkdownWithImageDisplay-imageWrapper--bordered {
+    border: 1px solid @edu-border-color-base;
+    padding: 5px;
   }
 
   &.MarkdownWithImageDisplay-imageWrapper--left {
     float: left;
-    padding-left: 0;
+    margin-left: 0;
   }
 
   &.MarkdownWithImageDisplay-imageWrapper--right {
     float: right;
-    padding-right: 0;
+    margin-right: 0;
   }
 }
 

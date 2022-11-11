@@ -40,6 +40,7 @@ class MarkdownWithImageInfo {
         sourceUrl: '',
         width: 50,
         position: IMAGE_POSITION.left,
+        border: false,
         copyrightNotice: ''
       }
     };
@@ -52,6 +53,7 @@ class MarkdownWithImageInfo {
         sourceUrl: joi.string().allow('').required(),
         width: joi.number().min(0).max(100).required(),
         position: joi.string().valid(...Object.values(IMAGE_POSITION)).required(),
+        border: joi.boolean().required(),
         copyrightNotice: joi.string().allow('').required()
       }).required()
     });

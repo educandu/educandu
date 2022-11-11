@@ -2005,6 +2005,7 @@
       "imageUrl": "Image URL",
       "imageWidth": "Image width",
       "imagePosition": "Image position",
+      "imageBorder": "Image border",
       "left": "left",
       "right": "right"
     }
@@ -2017,6 +2018,7 @@
       "imageUrl": "Bild-URL",
       "imageWidth": "Bildbreite",
       "imagePosition": "Bildstelle",
+      "imageBorder": "Bildrahmen",
       "left": "Links",
       "right": "Rechts"
     }

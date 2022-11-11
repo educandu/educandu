@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import { Form, Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_POSITION } from './constants.js';
 import UrlInput from '../../components/url-input.js';
+import { Checkbox, Form, Radio, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
@@ -50,6 +50,11 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
     changeContent({ image: { ...image, width: value } });
   };
 
+  const handleImageBorderChange = event => {
+    const { checked } = event.target;
+    changeContent({ image: { ...image, border: checked } });
+  };
+
   const handleImagePositionChange = event => {
     const { value } = event.target;
     changeContent({ image: { ...image, position: value } });
@@ -93,6 +98,9 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
             <RadioButton value={IMAGE_POSITION.right}>{t('right')}</RadioButton>
           </RadioGroup>
         </FormItem>
+        <Form.Item label={t('imageBorder')} {...FORM_ITEM_LAYOUT}>
+          <Checkbox checked={image.border} onChange={handleImageBorderChange} />
+        </Form.Item>
       </Form>
     </div>
   );

@@ -17,6 +17,7 @@ export default function MarkdownWithImageDisplay({ content }) {
   const imageWrapperClasses = classNames(
     'MarkdownWithImageDisplay-imageWrapper',
     `u-width-${image.width}`,
+    { 'MarkdownWithImageDisplay-imageWrapper--bordered': image.border },
     { 'MarkdownWithImageDisplay-imageWrapper--left': image.position === IMAGE_POSITION.left },
     { 'MarkdownWithImageDisplay-imageWrapper--right': image.position === IMAGE_POSITION.right }
   );
