@@ -23,6 +23,7 @@ export function FlipCardFace({ content, color, faceType, disabled }) {
       <div className="FlipCard-faceContent">
         {content}
       </div>
+      {disabled && <div className="FlipCard-disabledOverlay" />}
     </div>
   );
 }
