@@ -659,7 +659,8 @@
       "setAsStart": "as start time",
       "setAsEnd": "as end time",
       "loadingMessage": "Determining media information ...",
-      "errorMessage": "An error occurred while retrieving the media file"
+      "errorMessage": "An error occurred while retrieving the media file",
+      "setMaxRange": "Set maximum range"
     }
   },
   {
@@ -672,7 +673,8 @@
       "setAsStart": "als Anfangszeit",
       "setAsEnd": "als Endezeit",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
-      "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
+      "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten",
+      "setMaxRange": "Maximaler Abspielbereich setzen"
     }
   },
   {

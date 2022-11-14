@@ -47,6 +47,10 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     setCurrentMediaInfo(null);
   };
 
+  const handleSetMaxRange = () => {
+    setCurrentRange([0, 1]);
+  };
+
   const modalRender = modal => <div onClick={event => event.stopPropagation()}>{modal}</div>;
 
   const handleSetAsStartClick = () => {
@@ -77,6 +81,22 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     });
   };
 
+  const renderFooter = () => (
+    <div className="MediaRangeSelector-footer">
+      <Button onClick={handleSetMaxRange}>
+        {t('setMaxRange')}
+      </Button>
+      <div>
+        <Button onClick={handleCancel}>
+          {t('common:cancel')}
+        </Button>
+        <Button type="primary" onClick={handleApply}>
+          {t('common:apply')}
+        </Button>
+      </div>
+    </div>
+  );
+
   const getScreenMode = () => {
     return currentMediaInfo?.resourceType === RESOURCE_TYPE.video ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none;
   };
@@ -94,6 +114,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         onCancel={handleCancel}
         cancelText={t('common:cancel')}
         modalRender={modalRender}
+        footer={renderFooter()}
         destroyOnClose
         centered
         >

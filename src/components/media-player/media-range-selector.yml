@@ -19,3 +19,6 @@ loadingMessage:
 errorMessage:
   en: An error occurred while retrieving the media file
   de: Beim Laden der Mediendatei ist ein Fehler aufgetreten
+setMaxRange:
+  en: Set maximum range
+  de: Maximaler Abspielbereich setzen
