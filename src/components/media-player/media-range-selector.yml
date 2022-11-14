@@ -5,8 +5,8 @@ playbackRange:
   en: "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
   de: "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
 selectRangeLabel:
-  en: Set current playback timecode
-  de: Setz den aktuellen Wiedergabe Time-Code
+  en: Set current playback position
+  de: Setze die aktuelle Wiedergabeposition
 setAsStart:
   en: as start time
   de: als Anfangszeit
@@ -19,6 +19,6 @@ loadingMessage:
 errorMessage:
   en: An error occurred while retrieving the media file
   de: Beim Laden der Mediendatei ist ein Fehler aufgetreten
-setMaxRange:
-  en: Set maximum range
-  de: Maximaler Abspielbereich setzen
+clearRange:
+  en: Clear range
+  de: Bereich löschen

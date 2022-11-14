@@ -84,7 +84,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const renderFooter = () => (
     <div className="MediaRangeSelector-footer">
       <Button onClick={handleSetMaxRange}>
-        {t('setMaxRange')}
+        {t('clearRange')}
       </Button>
       <div>
         <Button onClick={handleCancel}>

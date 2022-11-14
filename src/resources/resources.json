@@ -655,12 +655,12 @@
     "resources": {
       "modalTitle": "Select playback range",
       "playbackRange": "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
-      "selectRangeLabel": "Set current playback timecode",
+      "selectRangeLabel": "Set current playback position",
       "setAsStart": "as start time",
       "setAsEnd": "as end time",
       "loadingMessage": "Determining media information ...",
       "errorMessage": "An error occurred while retrieving the media file",
-      "setMaxRange": "Set maximum range"
+      "clearRange": "Clear range"
     }
   },
   {
@@ -669,12 +669,12 @@
     "resources": {
       "modalTitle": "Abspielbereich auswählen",
       "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
-      "selectRangeLabel": "Setz den aktuellen Wiedergabe Time-Code",
+      "selectRangeLabel": "Setze die aktuelle Wiedergabeposition",
       "setAsStart": "als Anfangszeit",
       "setAsEnd": "als Endezeit",
       "loadingMessage": "Medieninformationen werden ermittelt ...",
       "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten",
-      "setMaxRange": "Maximaler Abspielbereich setzen"
+      "clearRange": "Bereich löschen"
     }
   },
   {
