@@ -2036,6 +2036,30 @@
     }
   },
   {
+    "namespace": "matchingCards",
+    "language": "en",
+    "resources": {
+      "name": "Matching Cards",
+      "tilePairs": "Card pairs",
+      "tileA": "Card A",
+      "tileB": "Card B",
+      "url": "Media URL",
+      "preview": "Card pair preview"
+    }
+  },
+  {
+    "namespace": "matchingCards",
+    "language": "de",
+    "resources": {
+      "name": "Matching Cards",
+      "tilePairs": "Kartenpaare",
+      "tileA": "Karte A",
+      "tileB": "Karte B",
+      "url": "Medien-URL",
+      "preview": "Kartenpaarvorschau"
+    }
+  },
+  {
     "namespace": "mediaAnalysis",
     "language": "en",
     "resources": {
@@ -2087,30 +2111,6 @@
       "imageFit_cover": "Abdecken",
       "imageFit_contain": "Umfassen",
       "imageFitInfoMarkdown": "__Abdecken__\n\nSkaliert das Bild (unter Beibehaltung der Proportionen) auf die kleinstmögliche\nGröße, um den Anzeigebereich so auszufüllen, dass kein Leerraum bleibt.\n\n__Umfassen__\n\nSkaliert das Bild so groß wie möglich innerhalb des Anzeigebereichs,\nohne das Bild zu beschneiden oder zu strecken.\n"
-    }
-  },
-  {
-    "namespace": "memory",
-    "language": "en",
-    "resources": {
-      "name": "Memory",
-      "tilePairs": "Card pairs",
-      "tileA": "Card A",
-      "tileB": "Card B",
-      "url": "Media URL",
-      "preview": "Card pair preview"
-    }
-  },
-  {
-    "namespace": "memory",
-    "language": "de",
-    "resources": {
-      "name": "Memory",
-      "tilePairs": "Kartenpaare",
-      "tileA": "Karte A",
-      "tileB": "Karte B",
-      "url": "Medien-URL",
-      "preview": "Kartenpaarvorschau"
     }
   },
   {

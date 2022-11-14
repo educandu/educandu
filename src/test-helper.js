@@ -85,7 +85,7 @@ export async function setupTestEnvironment() {
       'table',
       'pdf-viewer',
       'table-of-contents',
-      'memory',
+      'matching-cards',
       'diagram-net',
       'iframe',
       'abc-notation',

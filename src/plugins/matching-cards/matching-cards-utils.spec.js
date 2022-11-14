@@ -1,8 +1,8 @@
 import { SIZE } from './constants.js';
-import { getRandomizedTilesFromPairs, resizeTilePairs } from './memory-utils.js';
 import { ensureIsUnique, getSymmetricalDifference } from '../../utils/array-utils.js';
+import { getRandomizedTilesFromPairs, resizeTilePairs } from './matching-cards-utils.js';
 
-describe('memory-utils', () => {
+describe('matching-cards-utils', () => {
   let result;
 
   describe('resizeTilePairs', () => {

@@ -1,69 +1,69 @@
-@memory-board-padding: 10px;
-@memory-board-tiles-gap: 10px;
+@matching-cards-board-padding: 10px;
+@matching-cards-board-tiles-gap: 10px;
 
-.MemoryDisplay {
+.MatchingCardsDisplay {
   display: grid;
-  gap: @memory-board-tiles-gap;
+  gap: @matching-cards-board-tiles-gap;
   aspect-ratio: 1;
   margin: 0 auto;
-  padding: @memory-board-padding;
+  padding: @matching-cards-board-padding;
   border-radius: @edu-border-radius-sm;
   background-color: @edu-background-color-light;
 
-  &.MemoryDisplay--3x3 {
+  &.MatchingCardsDisplay--3x3 {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
   }
 
-  &.MemoryDisplay--4x4 {
+  &.MatchingCardsDisplay--4x4 {
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
   }
 }
 
-.MemoryEditor {}
+.MatchingCardsEditor {}
 
-.MemoryEditor-tileButtonGroup {
+.MatchingCardsEditor-tileButtonGroup {
   display: flex;
   flex-wrap: wrap;
 }
 
-.MemoryEditor-tileButton {
+.MatchingCardsEditor-tileButton {
   margin-right: 10px;
 }
 
-.MemoryEditor-preview {
+.MatchingCardsEditor-preview {
   display: grid;
-  gap: @memory-board-tiles-gap;
+  gap: @matching-cards-board-tiles-gap;
   margin: 0 auto;
-  padding: @memory-board-padding;
+  padding: @matching-cards-board-padding;
 
-  &.MemoryEditor-preview--3x3 {
+  &.MatchingCardsEditor-preview--3x3 {
     grid-template-columns: 0.5fr 1fr 1fr 0.5fr;
   }
 
-  &.MemoryEditor-preview--4x4 {
+  &.MatchingCardsEditor-preview--4x4 {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-.MemoryEditor-previewTile {
+.MatchingCardsEditor-previewTile {
   aspect-ratio: 1;
 }
 
-.MemoryEditor-previewTileFace {
+.MatchingCardsEditor-previewTileFace {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-.MemoryTile {}
+.MatchingCardsTile {}
 
-.MemoryTile-image {
+.MatchingCardsTile-image {
   max-width: 100%;
 }
 
-.MemoryTile-audio {
+.MatchingCardsTile-audio {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,13 +76,13 @@
   }
 }
 
-.MemoryTile-markdown {
+.MatchingCardsTile-markdown {
   padding: 8px;
   display: flex;
   justify-content: center;
 }
 
-.MemoryTile-match {
+.MatchingCardsTile-match {
   .m-mask;
   display: flex;
   align-items: center;
@@ -92,6 +92,6 @@
   z-index: @edu-z-index-overlay-layer;
 }
 
-.MemoryTile-noInnerClickMask {
+.MatchingCardsTile-noInnerClickMask {
   .m-mask;
 }

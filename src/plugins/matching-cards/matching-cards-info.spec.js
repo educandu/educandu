@@ -1,7 +1,7 @@
-import MemoryInfo from './memory-info.js';
+import MatchingCardsInfo from './matching-cards-info.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
-describe('memory-info', () => {
+describe('matching-cards-info', () => {
   let sut;
   let result;
   let content;
@@ -9,7 +9,7 @@ describe('memory-info', () => {
   const roomId2 = '67890';
 
   beforeEach(() => {
-    sut = new MemoryInfo(new GithubFlavoredMarkdown());
+    sut = new MatchingCardsInfo(new GithubFlavoredMarkdown());
   });
 
   describe('redactContent', () => {
