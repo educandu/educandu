@@ -36,6 +36,7 @@ class MarkdownWithImageInfo {
   getDefaultContent() {
     return {
       text: '',
+      textOffsetInEm: 0,
       image: {
         sourceUrl: '',
         width: 50,
@@ -48,6 +49,7 @@ class MarkdownWithImageInfo {
   validateContent(content) {
     const schema = joi.object({
       text: joi.string().allow('').required(),
+      textOffsetInEm: joi.number().min(0).max(2).required(),
       image: joi.object({
         sourceUrl: joi.string().allow('').required(),
         width: joi.number().min(0).max(100).required(),

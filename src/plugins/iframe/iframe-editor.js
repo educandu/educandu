@@ -6,11 +6,12 @@ import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { Form, Input, Slider, Checkbox, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { range } from '../../utils/array-utils.js';
 
 const FormItem = Form.Item;
 
 const tipFormatter = val => `${val}px`;
-const marks = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].reduce((all, val) => {
+const marks = range({ from: 100, to: 1000, step: 100 }).reduce((all, val) => {
   const node = <span>{`${val}px`}</span>;
   return { ...all, [val]: node };
 }, {});

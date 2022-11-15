@@ -217,7 +217,9 @@ describe('array-utils', () => {
       { from: 1, to: -3, step: 1, expectedResult: [1, 0, -1, -2, -3] },
       { from: 1, to: -3, step: -1, expectedResult: [1, 0, -1, -2, -3] },
       { from: 0, to: 20, step: 5, expectedResult: [0, 5, 10, 15, 20] },
-      { from: 0, to: 20, step: -5, expectedResult: [0, 5, 10, 15, 20] }
+      { from: 0, to: 20, step: -5, expectedResult: [0, 5, 10, 15, 20] },
+      { from: 0, to: 1, step: 0.1, expectedResult: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] },
+      { from: 0, to: 2, step: 0.25, expectedResult: [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] }
     ];
 
     testCases.forEach(({ from, to, step, expectedResult }) => {

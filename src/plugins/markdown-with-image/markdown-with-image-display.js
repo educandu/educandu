@@ -10,7 +10,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 export default function MarkdownWithImageDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
-  const { text, image } = content;
+  const { text, textOffsetInEm, image } = content;
 
   const imageSrc = getAccessibleUrl({ url: image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
@@ -27,7 +27,7 @@ export default function MarkdownWithImageDisplay({ content }) {
         <img src={imageSrc} className="MarkdownWithImageDisplay-image" />
         {!!image.copyrightNotice && <CopyrightNotice value={image.copyrightNotice} />}
       </div>
-      <Markdown renderAnchors>{text}</Markdown>
+      <Markdown style={{ paddingTop: `${textOffsetInEm}em` }} renderAnchors>{text}</Markdown>
     </div>
   );
 }
