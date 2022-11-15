@@ -217,15 +217,20 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
+export const documentPublicAttributesShape = PropTypes.shape({
+  archived: PropTypes.bool,
+  verified: PropTypes.bool,
+  review: PropTypes.string,
+  allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION))
+});
+
 export const documentMetadataEditShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  review: PropTypes.string,
-  verified: PropTypes.bool,
-  allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).isRequired
+  publicAttributes: documentPublicAttributesShape
 });
 
 export const documentShape = PropTypes.shape({
@@ -245,10 +250,7 @@ export const documentRevisionShape = PropTypes.shape({
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  review: PropTypes.string,
-  verified: PropTypes.bool,
-  allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).isRequired,
-  archived: PropTypes.bool.isRequired
+  publicAttributes: documentPublicAttributesShape
 });
 
 const formItemDimensionShape = PropTypes.shape({

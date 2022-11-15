@@ -67,7 +67,7 @@ class DocumentService {
   async getAllPublicDocumentsMetadata({ includeArchived } = {}) {
     const conditions = [{ roomId: null }];
     if (includeArchived === false) {
-      conditions.push({ archived: false });
+      conditions.push({ 'publicAttributes.archived': false });
     }
     const documentsMetadata = await this.documentStore.getDocumentsExtendedMetadataByConditions(conditions);
     return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
@@ -120,7 +120,7 @@ class DocumentService {
 
     const queryConditions = [
       { roomId: null },
-      { archived: false },
+      { 'publicAttributes.archived': false },
       { tags: { $regex: positiveRegexpParts.join('|'), $options: 'i' } }
     ];
 
@@ -133,7 +133,7 @@ class DocumentService {
 
     return documents.map(document => {
       const tagMatchCount = document.tags.filter(tag => allPositiveTokens.has(tag.toLowerCase())).length;
-      const verifiedPoints = document.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
+      const verifiedPoints = document.publicAttributes.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
       const relevance = tagMatchCount + verifiedPoints;
       return { ...document, relevance };
     });
@@ -173,7 +173,7 @@ class DocumentService {
 
     const queryConditions = [
       { roomId: null },
-      { archived: false }
+      { 'publicAttributes.archived': false }
     ];
 
     if (sanitizedQuery) {
@@ -295,7 +295,7 @@ class DocumentService {
   }
 
   updateArchivedState({ documentId, user, archived }) {
-    const data = { archived };
+    const data = { publicAttributes: { archived } };
     return this.updateDocument({ documentId, data, user });
   }
 
@@ -579,10 +579,14 @@ class DocumentService {
       language: data.language || '',
       sections: mappedSections,
       tags: data.tags || [],
-      review: data.review || '',
-      verified: data.verified || false,
-      allowedOpenContribution: data.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
-      archived: data.archived || false,
+      publicAttributes: data.roomId
+        ? null
+        : {
+          archived: data.publicAttributes?.archived || false,
+          verified: data.publicAttributes?.verified || false,
+          review: data.publicAttributes?.review || '',
+          allowedOpenContribution: data.publicAttributes?.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        },
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
@@ -620,10 +624,7 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
-      review: lastRevision.review,
-      verified: lastRevision.verified,
-      allowedOpenContribution: lastRevision.allowedOpenContribution,
-      archived: lastRevision.archived,
+      publicAttributes: lastRevision.publicAttributes ? { ...lastRevision.publicAttributes } : null,
       cdnResources: lastRevision.cdnResources
     };
   }

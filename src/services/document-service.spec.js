@@ -5,9 +5,9 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import { MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -71,6 +71,7 @@ describe('document-service', () => {
         slug: 'my-doc',
         language: 'en',
         roomId: room._id,
+        publicAttributes: null,
         sections: [
           {
             ...createDefaultSection(),
@@ -153,8 +154,7 @@ describe('document-service', () => {
         createdOn: now,
         createdBy: user._id,
         order: 1,
-        restoredFrom: null,
-        archived: false
+        restoredFrom: null
       });
     });
 
@@ -197,7 +197,6 @@ describe('document-service', () => {
         updatedOn: now,
         updatedBy: user._id,
         order: 1,
-        archived: false,
         contributors: [user._id]
       });
     });
@@ -274,7 +273,14 @@ describe('document-service', () => {
             }
           }
         ],
-        tags: ['tag-1']
+        tags: ['tag-1'],
+        roomId: null,
+        publicAttributes: {
+          archived: false,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        }
       };
 
       const initialData = { ...data };
@@ -339,8 +345,7 @@ describe('document-service', () => {
         createdOn: secondTick,
         createdBy: secondUser._id,
         order: 2,
-        restoredFrom: null,
-        archived: false
+        restoredFrom: null
       };
       delete expectedResult.appendTo;
       expect(persistedSecondRevision).toMatchObject(expectedResult);
@@ -380,7 +385,6 @@ describe('document-service', () => {
         updatedOn: secondTick,
         updatedBy: secondUser._id,
         order: 2,
-        archived: false,
         contributors: [user._id, secondUser._id]
       };
       delete expectedResult.appendTo;
@@ -470,16 +474,19 @@ describe('document-service', () => {
           {
             title: 'Revision 1',
             slug: 'rev-1',
+            roomId: 'room-1',
             sections: [cloneDeep(section1)]
           },
           {
             title: 'Revision 2',
             slug: 'rev-2',
+            roomId: 'room-1',
             sections: [cloneDeep(section1), cloneDeep(section2)]
           },
           {
             title: 'Revision 3',
             slug: 'rev-3',
+            roomId: 'room-1',
             sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text' } }]
           }
         ]);
@@ -689,7 +696,13 @@ describe('document-service', () => {
           slug: 'my-doc',
           language: 'en',
           sections: [],
-          archived: false
+          roomId: null,
+          publicAttributes: {
+            archived: false,
+            verified: true,
+            review: 'Review',
+            allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+          }
         });
 
         updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: true });
@@ -700,11 +713,19 @@ describe('document-service', () => {
       });
 
       it('should set archived to true', () => {
-        expect(updatedDocument.archived).toBe(true);
+        expect(updatedDocument.publicAttributes.archived).toBe(true);
       });
 
       it('should not change other static revision data', () => {
-        const expectedResult = { ...initialDocument, revision: updatedDocument.revision, archived: updatedDocument.archived, order: updatedDocument.order };
+        const expectedResult = {
+          ...initialDocument,
+          revision: updatedDocument.revision,
+          publicAttributes: {
+            ...updatedDocument.publicAttributes,
+            archived: true
+          },
+          order: updatedDocument.order
+        };
         expect(updatedDocument).toEqual(expectedResult);
       });
     });
@@ -716,7 +737,13 @@ describe('document-service', () => {
           slug: 'my-doc',
           language: 'en',
           sections: [],
-          archived: true
+          roomId: null,
+          publicAttributes: {
+            archived: true,
+            verified: true,
+            review: 'Review',
+            allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+          }
         });
 
         updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: false });
@@ -727,11 +754,19 @@ describe('document-service', () => {
       });
 
       it('should set archived to false', () => {
-        expect(updatedDocument.archived).toBe(false);
+        expect(updatedDocument.publicAttributes.archived).toBe(false);
       });
 
       it('should not change other static revision data', () => {
-        const expectedResult = { ...initialDocument, revision: updatedDocument.revision, archived: updatedDocument.archived, order: updatedDocument.order };
+        const expectedResult = {
+          ...initialDocument,
+          revision: updatedDocument.revision,
+          publicAttributes: {
+            ...updatedDocument.publicAttributes,
+            archived: false
+          },
+          order: updatedDocument.order
+        };
         expect(updatedDocument).toEqual(expectedResult);
       });
     });
@@ -973,9 +1008,14 @@ describe('document-service', () => {
         slug: 'doc-1',
         sections: [],
         tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
-        verified: false,
-        archived: false,
-        language: 'en'
+        language: 'en',
+        roomId: null,
+        publicAttributes: {
+          archived: false,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        }
       });
 
       doc2 = await createTestDocument(container, user, {
@@ -984,9 +1024,14 @@ describe('document-service', () => {
         slug: 'doc-2',
         sections: [],
         tags: ['Music', 'Instructor', 'Goga', '2'],
-        verified: false,
-        archived: false,
-        language: 'en'
+        language: 'en',
+        roomId: null,
+        publicAttributes: {
+          archived: false,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        }
       });
 
       doc3 = await createTestDocument(container, user, {
@@ -995,9 +1040,14 @@ describe('document-service', () => {
         slug: 'doc-3',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
-        verified: true,
-        archived: false,
-        language: 'en'
+        language: 'en',
+        roomId: null,
+        publicAttributes: {
+          archived: false,
+          verified: true,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        }
       });
 
       await createTestDocument(container, user, {
@@ -1006,22 +1056,26 @@ describe('document-service', () => {
         slug: 'doc-4',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
-        verified: false,
-        archived: true,
-        language: 'en'
+        language: 'en',
+        roomId: null,
+        publicAttributes: {
+          archived: true,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        }
       });
 
       const room = await createTestRoom(container);
       await createTestDocument(container, user, {
-        roomId: room._id,
         title: 'Doc 5',
         description: 'Description 5',
         slug: 'doc-5',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
-        verified: false,
-        archived: false,
-        language: 'en'
+        language: 'en',
+        roomId: room._id,
+        publicAttributes: null
       });
     });
 

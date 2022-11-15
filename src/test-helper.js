@@ -8,8 +8,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
-import { ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -192,13 +192,23 @@ export async function createTestRoom(container, roomValues = {}) {
 
 export function createTestDocument(container, user, data) {
   const documentService = container.get(DocumentService);
+
   return documentService.createDocument({
     data: {
       ...data,
       title: data.title ?? 'Title',
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
-      language: data.language ?? 'en'
+      language: data.language ?? 'en',
+      publicAttributes: data.roomId
+        ? null
+        : {
+          archived: false,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
+          ...data.publicAttributes
+        }
     },
     user
   });
@@ -223,7 +233,16 @@ export async function createTestRevisions(container, user, revisions) {
         key: s.key ?? uniqueId.create(),
         type: s.type ?? 'markdown',
         content: s.content ?? {}
-      }))
+      })),
+      publicAttributes: revision.roomId
+        ? null
+        : {
+          archived: false,
+          verified: false,
+          review: '',
+          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
+          ...revision.publicAttributes
+        }
     };
 
     lastCreatedDocument = lastCreatedDocument

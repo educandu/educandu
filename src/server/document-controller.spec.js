@@ -56,7 +56,9 @@ describe('document-controller', () => {
       roomId: null,
       slug: '',
       sections: [],
-      allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+      publicAttributes: {
+        allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+      }
     };
 
     sut = new DocumentController(documentService, roomService, clientDataMappingService, pageRenderer);
@@ -588,7 +590,7 @@ describe('document-controller', () => {
         res.on('end', resolve);
 
         doc.slug = 'doc-slug';
-        doc.archived = true;
+        doc.publicAttributes.archived = true;
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
 
