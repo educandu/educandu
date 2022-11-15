@@ -1,37 +1,37 @@
 import joi from 'joi';
 import React from 'react';
 import { SIZE } from './constants.js';
-import MemoryIcon from './memory-icon.js';
-import MemoryDisplay from './memory-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import MatchingCardsIcon from './matching-cards-icon.js';
+import MatchingCardsDisplay from './matching-cards-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { createDefaultTile, getTilePairCountBySize } from './memory-utils.js';
+import { createDefaultTile, getTilePairCountBySize } from './matching-cards-utils.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
-class MemoryInfo {
+class MatchingCardsInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
 
-  static get typeName() { return 'memory'; }
+  static get typeName() { return 'matching-cards'; }
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'memory';
+    this.type = 'matching-cards';
   }
 
   getName(t) {
-    return t('memory:name');
+    return t('matchingCards:name');
   }
 
   getIcon() {
-    return <MemoryIcon />;
+    return <MatchingCardsIcon />;
   }
 
   getDisplayComponent() {
-    return MemoryDisplay;
+    return MatchingCardsDisplay;
   }
 
   async resolveEditorComponent() {
-    return (await import('./memory-editor.js')).default;
+    return (await import('./matching-cards-editor.js')).default;
   }
 
   getDefaultContent() {
@@ -118,4 +118,4 @@ class MemoryInfo {
   }
 }
 
-export default MemoryInfo;
+export default MatchingCardsInfo;

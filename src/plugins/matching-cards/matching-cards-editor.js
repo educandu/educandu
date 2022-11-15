@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
-import MemoryTile from './memory-tile.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import React, { Fragment, useState } from 'react';
-import { resizeTilePairs } from './memory-utils.js';
 import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import MatchingCardsTile from './matching-cards-tile.js';
+import { resizeTilePairs } from './matching-cards-utils.js';
 import { FlipCardFace } from '../../components/flip-card.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { Button, Divider, Form, Radio, Tooltip } from 'antd';
@@ -18,8 +18,8 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function MemoryEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('memory');
+function MatchingCardsEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('matchingCards');
 
   const { size, tilePairs, width } = content;
   const [selectedTilesPairIndex, setSelectedTilesPairIndex] = useState(0);
@@ -31,7 +31,7 @@ function MemoryEditor({ content, onContentChanged }) {
         size="small"
         key={index}
         danger={isTileDataMissing}
-        className="MemoryEditor-tileButton"
+        className="MatchingCardsEditor-tileButton"
         type={selectedTilesPairIndex === index ? 'primary' : 'default'}
         onClick={() => setSelectedTilesPairIndex(index)}
         >
@@ -72,14 +72,14 @@ function MemoryEditor({ content, onContentChanged }) {
   };
 
   const previewClasses = classNames(
-    'MemoryEditor-preview',
+    'MatchingCardsEditor-preview',
     `u-width-${width}`,
-    { 'MemoryEditor-preview--3x3': size === SIZE.threeByThree },
-    { 'MemoryEditor-preview--4x4': size === SIZE.fourByFour }
+    { 'MatchingCardsEditor-preview--3x3': size === SIZE.threeByThree },
+    { 'MatchingCardsEditor-preview--4x4': size === SIZE.fourByFour }
   );
 
   return (
-    <div className="MemoryEditor">
+    <div className="MatchingCardsEditor">
       <Form>
         <FormItem label={t('common:size')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={size} onChange={handleSizeChange}>
@@ -102,7 +102,7 @@ function MemoryEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
         <FormItem label={t('tilePairs')} {...FORM_ITEM_LAYOUT}>
-          <div className="MemoryEditor-tileButtonGroup">
+          <div className="MatchingCardsEditor-tileButtonGroup">
             {tilePairs.map((pair, index) => renderTileButton(index))}
           </div>
         </FormItem>
@@ -138,12 +138,12 @@ function MemoryEditor({ content, onContentChanged }) {
 
       <Divider plain>{t('preview')}</Divider>
       <div className={previewClasses}>
-        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
-        <div className="MemoryEditor-previewTile">
-          <div className="MemoryEditor-previewTileFace">
+        <div className="MatchingCardsEditor-previewTile MatchingCardsEditor-previewTile--empty" />
+        <div className="MatchingCardsEditor-previewTile">
+          <div className="MatchingCardsEditor-previewTileFace">
             <FlipCardFace
               content={(
-                <MemoryTile
+                <MatchingCardsTile
                   text={tilePairs[selectedTilesPairIndex][0].text}
                   sourceUrl={tilePairs[selectedTilesPairIndex][0].sourceUrl}
                   />
@@ -151,11 +151,11 @@ function MemoryEditor({ content, onContentChanged }) {
               />
           </div>
         </div>
-        <div className="MemoryEditor-previewTile">
-          <div className="MemoryEditor-previewTileFace">
+        <div className="MatchingCardsEditor-previewTile">
+          <div className="MatchingCardsEditor-previewTileFace">
             <FlipCardFace
               content={(
-                <MemoryTile
+                <MatchingCardsTile
                   text={tilePairs[selectedTilesPairIndex][1].text}
                   sourceUrl={tilePairs[selectedTilesPairIndex][1].sourceUrl}
                   />
@@ -163,15 +163,15 @@ function MemoryEditor({ content, onContentChanged }) {
               />
           </div>
         </div>
-        <div className="MemoryEditor-previewTile MemoryEditor-previewTile--empty" />
+        <div className="MatchingCardsEditor-previewTile MatchingCardsEditor-previewTile--empty" />
       </div>
     </div>
   );
 }
 
-MemoryEditor.propTypes = {
+MatchingCardsEditor.propTypes = {
   ...sectionEditorProps
 };
 
-export default MemoryEditor;
+export default MatchingCardsEditor;
 

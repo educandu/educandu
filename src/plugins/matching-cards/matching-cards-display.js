@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
-import MemoryTile from './memory-tile.js';
 import FlipCard from '../../components/flip-card.js';
+import MatchingCardsTile from './matching-cards-tile.js';
 import React, { useEffect, useRef, useState } from 'react';
-import { getRandomizedTilesFromPairs } from './memory-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
 
-function MemoryDisplay({ content }) {
+function MatchingCardsDisplay({ content }) {
   const { size, tilePairs, width } = content;
 
   const isMounted = useRef(false);
@@ -28,10 +28,10 @@ function MemoryDisplay({ content }) {
   }, [tilePairs]);
 
   const mainClasses = classNames(
-    'MemoryDisplay',
+    'MatchingCardsDisplay',
     `u-width-${width}`,
-    { 'MemoryDisplay--3x3': size === SIZE.threeByThree },
-    { 'MemoryDisplay--4x4': size === SIZE.fourByFour }
+    { 'MatchingCardsDisplay--3x3': size === SIZE.threeByThree },
+    { 'MatchingCardsDisplay--4x4': size === SIZE.fourByFour }
   );
 
   const handleTileClick = tile => {
@@ -68,7 +68,7 @@ function MemoryDisplay({ content }) {
         locked={isFlipped}
         disabled={wasMatched}
         frontContent={(
-          <MemoryTile
+          <MatchingCardsTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
             playMedia={isFlipped}
@@ -89,8 +89,8 @@ function MemoryDisplay({ content }) {
   );
 }
 
-MemoryDisplay.propTypes = {
+MatchingCardsDisplay.propTypes = {
   ...sectionDisplayProps
 };
 
-export default MemoryDisplay;
+export default MatchingCardsDisplay;

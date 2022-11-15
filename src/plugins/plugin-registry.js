@@ -5,7 +5,6 @@ import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
-import MemoryInfo from './memory/memory-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
 import { isBrowser } from '../ui/browser-helper.js';
 import MarkdownInfo from './markdown/markdown-info.js';
@@ -18,6 +17,7 @@ import AbcNotationInfo from './abc-notation/abc-notation-info.js';
 import EarTrainingInfo from './ear-training/ear-training-info.js';
 import AudioWaveformInfo from './audio-waveform/audio-waveform-info.js';
 import MediaAnalysisInfo from './media-analysis/media-analysis-info.js';
+import MatchingCardsInfo from './matching-cards/matching-cards-info.js';
 import MediaSlideshowInfo from './media-slideshow/media-slideshow-info.js';
 import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
@@ -33,7 +33,6 @@ const allPossibleInfoTypes = [
   ImageInfo,
   TableInfo,
   IframeInfo,
-  MemoryInfo,
   CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,
@@ -44,6 +43,7 @@ const allPossibleInfoTypes = [
   EarTrainingInfo,
   AudioWaveformInfo,
   MediaAnalysisInfo,
+  MatchingCardsInfo,
   MediaSlideshowInfo,
   MusicXmlViewerInfo,
   TableOfContentsInfo,

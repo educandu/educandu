@@ -3,7 +3,7 @@ import iconNs from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function MemoryIconComponent() {
+export function MatchingCardsIconComponent() {
   return (
     <svg width="1em" height="1em" viewBox="0 0 1000 1000" style={{ enableBackground: 'new 0 0 1000 1000' }} role="img" >
       <path style={{ fill: '#f2f2f2', fillOpacity: 1, stroke: '#666', strokeWidth: 42.281, strokeLinecap: 'round', strokeLinejoin: 'round', strokeMiterlimit: 10, strokeDasharray: 'none', paintOrder: 'normal' }} d="M53.196 56.141h242.235v242.235H53.196z" />
@@ -24,10 +24,10 @@ export function MemoryIconComponent() {
   );
 }
 
-function MemoryIcon() {
+function MatchingCardsIcon() {
   return (
-    <Icon component={MemoryIconComponent} />
+    <Icon component={MatchingCardsIconComponent} />
   );
 }
 
-export default MemoryIcon;
+export default MatchingCardsIcon;

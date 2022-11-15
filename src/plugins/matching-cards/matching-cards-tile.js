@@ -12,7 +12,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
-function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
+function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const timeoutToPlayMedia = useRef();
@@ -79,42 +79,42 @@ function MemoryTile({ text, sourceUrl, playMedia, showMatched }) {
         return (
           <Fragment>
             {renderReactPlayer()}
-            <div className="MemoryTile-audio"><AudioIcon /></div>
+            <div className="MatchingCardsTile-audio"><AudioIcon /></div>
           </Fragment>
         );
       case RESOURCE_TYPE.video:
         return renderReactPlayer();
       case RESOURCE_TYPE.image:
-        return <img className="MemoryTile-image" src={accessibleUrl} />;
+        return <img className="MatchingCardsTile-image" src={accessibleUrl} />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="MemoryTile">
+    <div className="MatchingCardsTile">
       <div>
-        {!!text && (<div className="MemoryTile-markdown"><Markdown>{text}</Markdown></div>)}
+        {!!text && (<div className="MatchingCardsTile-markdown"><Markdown>{text}</Markdown></div>)}
         {!!accessibleUrl && renderMedia()}
       </div>
-      <div className="MemoryTile-noInnerClickMask" />
-      {showMatched && <div className="MemoryTile-match"><CheckIcon /></div>}
+      <div className="MatchingCardsTile-noInnerClickMask" />
+      {showMatched && <div className="MatchingCardsTile-match"><CheckIcon /></div>}
     </div>
   );
 }
 
-MemoryTile.propTypes = {
+MatchingCardsTile.propTypes = {
   playMedia: PropTypes.bool,
   showMatched: PropTypes.bool,
   sourceUrl: PropTypes.string,
   text: PropTypes.string
 };
 
-MemoryTile.defaultProps = {
+MatchingCardsTile.defaultProps = {
   playMedia: false,
   showMatched: false,
   sourceUrl: '',
   text: ''
 };
 
-export default MemoryTile;
+export default MatchingCardsTile;
