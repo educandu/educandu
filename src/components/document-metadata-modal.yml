@@ -101,6 +101,6 @@ targetRoom:
 noAvailableRooms:
   en: No available rooms
   de: Keine Räume verfügbar
-publicAttributesHeader:
+publicContextHeader:
   en: Advanced settings
   de: Erweiterte Einstellungen

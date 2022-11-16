@@ -3,7 +3,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 
 function canEditDocPart({ user, doc, room, validContributionParts }) {
-  if (doc.publicAttributes?.archived) {
+  if (doc.publicContext?.archived) {
     return false;
   }
 
@@ -11,7 +11,7 @@ function canEditDocPart({ user, doc, room, validContributionParts }) {
     return false;
   }
 
-  const docAllowsContributionToPart = validContributionParts.includes(doc.publicAttributes?.allowedOpenContribution);
+  const docAllowsContributionToPart = validContributionParts.includes(doc.publicContext?.allowedOpenContribution);
   if (!room && !hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION) && !docAllowsContributionToPart) {
     return false;
   }

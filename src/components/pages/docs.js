@@ -62,9 +62,9 @@ function Docs({ initialState, PageTemplate }) {
       createdBy: doc.createdBy,
       language: doc.language,
       user: doc.user,
-      archived: doc.publicAttributes.archived,
-      verified: doc.publicAttributes.verified,
-      allowedOpenContribution: doc.publicAttributes.allowedOpenContribution
+      archived: doc.publicContext.archived,
+      verified: doc.publicContext.verified,
+      allowedOpenContribution: doc.publicContext.allowedOpenContribution
     })), []);
 
   const [filterText, setFilterText] = useState('');
@@ -148,7 +148,7 @@ function Docs({ initialState, PageTemplate }) {
       const newDocuments = documents.slice();
       newDocuments
         .filter(document => document._id === doc._id)
-        .forEach(document => { document.publicAttributes.archived = doc.publicAttributes.archived; });
+        .forEach(document => { document.publicContext.archived = doc.publicContext.archived; });
 
       setDocuments(newDocuments);
     } catch (error) {

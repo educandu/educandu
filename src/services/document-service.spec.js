@@ -71,7 +71,7 @@ describe('document-service', () => {
         slug: 'my-doc',
         language: 'en',
         roomId: room._id,
-        publicAttributes: null,
+        publicContext: null,
         sections: [
           {
             ...createDefaultSection(),
@@ -275,7 +275,7 @@ describe('document-service', () => {
         ],
         tags: ['tag-1'],
         roomId: null,
-        publicAttributes: {
+        publicContext: {
           archived: false,
           verified: false,
           review: '',
@@ -697,7 +697,7 @@ describe('document-service', () => {
           language: 'en',
           sections: [],
           roomId: null,
-          publicAttributes: {
+          publicContext: {
             archived: false,
             verified: true,
             review: 'Review',
@@ -713,15 +713,15 @@ describe('document-service', () => {
       });
 
       it('should set archived to true', () => {
-        expect(updatedDocument.publicAttributes.archived).toBe(true);
+        expect(updatedDocument.publicContext.archived).toBe(true);
       });
 
       it('should not change other static revision data', () => {
         const expectedResult = {
           ...initialDocument,
           revision: updatedDocument.revision,
-          publicAttributes: {
-            ...updatedDocument.publicAttributes,
+          publicContext: {
+            ...updatedDocument.publicContext,
             archived: true
           },
           order: updatedDocument.order
@@ -738,7 +738,7 @@ describe('document-service', () => {
           language: 'en',
           sections: [],
           roomId: null,
-          publicAttributes: {
+          publicContext: {
             archived: true,
             verified: true,
             review: 'Review',
@@ -754,15 +754,15 @@ describe('document-service', () => {
       });
 
       it('should set archived to false', () => {
-        expect(updatedDocument.publicAttributes.archived).toBe(false);
+        expect(updatedDocument.publicContext.archived).toBe(false);
       });
 
       it('should not change other static revision data', () => {
         const expectedResult = {
           ...initialDocument,
           revision: updatedDocument.revision,
-          publicAttributes: {
-            ...updatedDocument.publicAttributes,
+          publicContext: {
+            ...updatedDocument.publicContext,
             archived: false
           },
           order: updatedDocument.order
@@ -1010,7 +1010,7 @@ describe('document-service', () => {
         tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
         language: 'en',
         roomId: null,
-        publicAttributes: {
+        publicContext: {
           archived: false,
           verified: false,
           review: '',
@@ -1026,7 +1026,7 @@ describe('document-service', () => {
         tags: ['Music', 'Instructor', 'Goga', '2'],
         language: 'en',
         roomId: null,
-        publicAttributes: {
+        publicContext: {
           archived: false,
           verified: false,
           review: '',
@@ -1042,7 +1042,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: null,
-        publicAttributes: {
+        publicContext: {
           archived: false,
           verified: true,
           review: '',
@@ -1058,7 +1058,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: null,
-        publicAttributes: {
+        publicContext: {
           archived: true,
           verified: false,
           review: '',
@@ -1075,7 +1075,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: room._id,
-        publicAttributes: null
+        publicContext: null
       });
     });
 

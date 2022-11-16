@@ -56,7 +56,7 @@ describe('document-controller', () => {
       roomId: null,
       slug: '',
       sections: [],
-      publicAttributes: {
+      publicContext: {
         allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
       }
     };
@@ -590,7 +590,7 @@ describe('document-controller', () => {
         res.on('end', resolve);
 
         doc.slug = 'doc-slug';
-        doc.publicAttributes.archived = true;
+        doc.publicContext.archived = true;
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
 

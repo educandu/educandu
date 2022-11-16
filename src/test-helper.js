@@ -200,14 +200,14 @@ export function createTestDocument(container, user, data) {
       description: data.description ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en',
-      publicAttributes: data.roomId
+      publicContext: data.roomId
         ? null
         : {
           archived: false,
           verified: false,
           review: '',
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
-          ...data.publicAttributes
+          ...data.publicContext
         }
     },
     user
@@ -234,14 +234,14 @@ export async function createTestRevisions(container, user, revisions) {
         type: s.type ?? 'markdown',
         content: s.content ?? {}
       })),
-      publicAttributes: revision.roomId
+      publicContext: revision.roomId
         ? null
         : {
           archived: false,
           verified: false,
           review: '',
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
-          ...revision.publicAttributes
+          ...revision.publicContext
         }
     };
 

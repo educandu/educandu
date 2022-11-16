@@ -217,7 +217,7 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
-export const documentPublicAttributesShape = PropTypes.shape({
+export const documentPublicContextShape = PropTypes.shape({
   archived: PropTypes.bool,
   verified: PropTypes.bool,
   review: PropTypes.string,
@@ -230,7 +230,7 @@ export const documentMetadataEditShape = PropTypes.shape({
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  publicAttributes: documentPublicAttributesShape
+  publicContext: documentPublicContextShape
 });
 
 export const documentShape = PropTypes.shape({
@@ -250,7 +250,7 @@ export const documentRevisionShape = PropTypes.shape({
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  publicAttributes: documentPublicAttributesShape
+  publicContext: documentPublicContextShape
 });
 
 const formItemDimensionShape = PropTypes.shape({

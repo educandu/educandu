@@ -12,7 +12,7 @@ describe('doc-utils', () => {
       user = { _id: uniqueId.create(), roles: [] };
       room = { owner: user._id, members: [], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
       doc = {
-        publicAttributes: {
+        publicContext: {
           archived: false,
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
         }
@@ -25,7 +25,7 @@ describe('doc-utils', () => {
     });
 
     it('should return false when the document is archived', () => {
-      doc.publicAttributes.archived = true;
+      doc.publicContext.archived = true;
       expect(canEditDocContent({ user, doc, room })).toBe(false);
     });
 
@@ -44,29 +44,29 @@ describe('doc-utils', () => {
     });
 
     it('should return false when the public document does not allow content or metadata editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       expect(canEditDocContent({ user, doc, room: null })).toBe(false);
     });
 
     it(`should return false when the public document does not allow content or metadata editing but the user is a ${ROLE.maintainer}`, () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       user.roles = [ROLE.maintainer];
       expect(canEditDocContent({ user, doc, room: null })).toBe(true);
     });
 
     it(`should return false when the public document does not allow content or metadata editing but the user is an ${ROLE.admin}`, () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       user.roles = [ROLE.admin];
       expect(canEditDocContent({ user, doc, room: null })).toBe(true);
     });
 
     it('should return true when the public document allows metadata and content editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
       expect(canEditDocContent({ user, doc, room: null })).toBe(true);
     });
 
     it('should return true when the public document allows content editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
       expect(canEditDocContent({ user, doc, room: null })).toBe(true);
     });
   });
@@ -76,7 +76,7 @@ describe('doc-utils', () => {
       user = { _id: uniqueId.create(), roles: [] };
       room = { owner: user._id, members: [], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
       doc = {
-        publicAttributes: {
+        publicContext: {
           archived: false,
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
         }
@@ -89,7 +89,7 @@ describe('doc-utils', () => {
     });
 
     it('should return false when the document is archived', () => {
-      doc.publicAttributes.archived = true;
+      doc.publicContext.archived = true;
       expect(canEditDocMetadata({ user, doc, room })).toBe(false);
     });
 
@@ -108,29 +108,29 @@ describe('doc-utils', () => {
     });
 
     it('should return false when the public document does not allow content or metadata editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       expect(canEditDocMetadata({ user, doc, room: null })).toBe(false);
     });
 
     it('should return false when the public document does not allow metadata editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content;
       expect(canEditDocMetadata({ user, doc, room: null })).toBe(false);
     });
 
     it(`should return false when the public document does not allow content or metadata editing but the user is a ${ROLE.maintainer}`, () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       user.roles = [ROLE.maintainer];
       expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
     });
 
     it(`should return false when the public document does not allow content or metadata editing but the user is an ${ROLE.admin}`, () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none;
       user.roles = [ROLE.admin];
       expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
     });
 
     it('should return true when the public document allows metadata and content editing', () => {
-      doc.publicAttributes.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
+      doc.publicContext.allowedOpenContribution = DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent;
       expect(canEditDocMetadata({ user, doc, room: null })).toBe(true);
     });
   });

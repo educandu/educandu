@@ -344,7 +344,7 @@
       "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
       "targetRoom": "Please select a room",
       "noAvailableRooms": "No available rooms",
-      "publicAttributesHeader": "Advanced settings"
+      "publicContextHeader": "Advanced settings"
     }
   },
   {
@@ -382,7 +382,7 @@
       "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
       "targetRoom": "Bitte wähle einen Raum aus",
       "noAvailableRooms": "Keine Räume verfügbar",
-      "publicAttributesHeader": "Erweiterte Einstellungen"
+      "publicContextHeader": "Erweiterte Einstellungen"
     }
   },
   {

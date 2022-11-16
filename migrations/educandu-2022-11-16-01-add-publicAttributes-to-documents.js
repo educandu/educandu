@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-console */
-export default class Educandu_2022_11_15_01_add_publicAttributes_to_documents {
+export default class Educandu_2022_11_16_01_add_publicContext_to_documents {
   constructor(db) {
     this.db = db;
   }
@@ -10,17 +10,17 @@ export default class Educandu_2022_11_15_01_add_publicAttributes_to_documents {
       [
         {
           $set: {
-            'publicAttributes.archived': '$archived',
-            'publicAttributes.verified': '$verified',
-            'publicAttributes.review': '$review',
-            'publicAttributes.allowedOpenContribution': '$allowedOpenContribution'
+            'publicContext.archived': '$archived',
+            'publicContext.verified': '$verified',
+            'publicContext.review': '$review',
+            'publicContext.allowedOpenContribution': '$allowedOpenContribution'
           }
         }
       ]
     );
     await this.db.collection(collectionName).updateMany(
       { roomId: { $ne: null } },
-      { $set: { publicAttributes: null } }
+      { $set: { publicContext: null } }
     );
 
     await this.db.collection(collectionName).updateMany(
@@ -42,10 +42,10 @@ export default class Educandu_2022_11_15_01_add_publicAttributes_to_documents {
       [
         {
           $set: {
-            archived: '$publicAttributes.archived',
-            verified: '$publicAttributes.verified',
-            review: '$publicAttributes.review',
-            allowedOpenContribution: '$publicAttributes.allowedOpenContribution'
+            archived: '$publicContext.archived',
+            verified: '$publicContext.verified',
+            review: '$publicContext.review',
+            allowedOpenContribution: '$publicContext.allowedOpenContribution'
           }
         }
       ]
@@ -67,7 +67,7 @@ export default class Educandu_2022_11_15_01_add_publicAttributes_to_documents {
       {},
       {
         $unset: {
-          publicAttributes: null
+          publicContext: null
         }
       }
     );

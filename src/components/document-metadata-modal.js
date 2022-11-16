@@ -65,7 +65,7 @@ function DocumentMetadataModal({
   const [slug, setSlug] = useState(initialDocumentMetadata.slug || '');
   const [tags, setTags] = useState(initialDocumentMetadata.tags || []);
   const [language, setLanguage] = useState(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
-  const [publicAttributes, setPublicAttributes] = useState(initialDocumentMetadata.publicAttributes
+  const [publicContext, setPublicContext] = useState(initialDocumentMetadata.publicContext
     || {
       archived: false,
       verified: false,
@@ -196,21 +196,21 @@ function DocumentMetadataModal({
 
   const handleArchivedChange = event => {
     const { checked } = event.target;
-    setPublicAttributes(prevState => ({ ...prevState, archived: checked }));
+    setPublicContext(prevState => ({ ...prevState, archived: checked }));
   };
 
   const handleVerifiedChange = event => {
     const { checked } = event.target;
-    setPublicAttributes(prevState => ({ ...prevState, verified: checked }));
+    setPublicContext(prevState => ({ ...prevState, verified: checked }));
   };
 
   const handleReviewChange = event => {
     const { value } = event.target;
-    setPublicAttributes(prevState => ({ ...prevState, review: value }));
+    setPublicContext(prevState => ({ ...prevState, review: value }));
   };
 
   const handleAllowedOpenContributionChange = value => {
-    setPublicAttributes(prevState => ({ ...prevState, allowedOpenContribution: value }));
+    setPublicContext(prevState => ({ ...prevState, allowedOpenContribution: value }));
   };
 
   const handleFinish = async () => {
@@ -230,7 +230,7 @@ function DocumentMetadataModal({
         description,
         language,
         tags,
-        publicAttributes: documentRoomId ? null : publicAttributes
+        publicContext: documentRoomId ? null : publicContext
       };
 
       const savedDocuments = [];
@@ -344,10 +344,10 @@ function DocumentMetadataModal({
         )}
         {!documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom && hasPublicContextPermissions && (
           <Collapse>
-            <CollapsePanel header={t('publicAttributesHeader')}>
+            <CollapsePanel header={t('publicContextHeader')}>
               {publicContextPermissions.canArchive && (
               <FormItem>
-                <Checkbox checked={publicAttributes.archived} onChange={handleArchivedChange}>
+                <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
                   <span className="u-label">{t('common:archived')}</span>
                   <Tooltip title={t('archivedInfo')}>
                     <InfoCircleOutlined className="u-info-icon" />
@@ -357,7 +357,7 @@ function DocumentMetadataModal({
               )}
               {publicContextPermissions.canVerify && (
               <FormItem>
-                <Checkbox checked={publicAttributes.verified} onChange={handleVerifiedChange}>
+                <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
                   <span className="u-label">{t('verified')}</span>
                   <Tooltip title={t('verifiedInfo')}>
                     <InfoCircleOutlined className="u-info-icon" />
@@ -376,7 +376,7 @@ function DocumentMetadataModal({
                     </Fragment>
                   }
                   >
-                  <NeverScrollingTextArea value={publicAttributes.review} onChange={handleReviewChange} />
+                  <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
                 </FormItem>
               )}
               {publicContextPermissions.canRestrictOpenContribution && (
@@ -390,7 +390,7 @@ function DocumentMetadataModal({
                     </Fragment>
                   }
                   >
-                  <Select value={publicAttributes.allowedOpenContribution} onChange={handleAllowedOpenContributionChange}>
+                  <Select value={publicContext.allowedOpenContribution} onChange={handleAllowedOpenContributionChange}>
                     {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
                   </Select>
                 </FormItem>

@@ -60,7 +60,7 @@ describe('amb-service', () => {
         document1 = await createTestDocument(container, creatorUser, {
           title: 'Archived document',
           roomId: null,
-          publicAttributes: { archived: true }
+          publicContext: { archived: true }
         });
 
         result = await sut.getDocumentsAmbMetadata({ origin });
@@ -78,7 +78,7 @@ describe('amb-service', () => {
           description: 'Concert for piano and orchestra',
           tags: ['Music', 'Bach', 'Piano', 'Orchestra'],
           language: 'en',
-          publicAttributes: { archived: false }
+          publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document1._id, user: contributorUser, data: { ...document1 } });
         document2 = await createTestDocument(container, creatorUser, {
@@ -87,7 +87,7 @@ describe('amb-service', () => {
           tags: [],
           language: 'en',
           roomId: null,
-          publicAttributes: { archived: false }
+          publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
       });

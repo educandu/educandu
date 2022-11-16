@@ -28,10 +28,10 @@ const documentExtendedMetadataProjection = {
   'updatedBy': 1,
   'tags': 1,
   'contributors': 1,
-  'publicAttributes.archived': 1,
-  'publicAttributes.verified': 1,
-  'publicAttributes.review': 1,
-  'publicAttributes.allowedOpenContribution': 1
+  'publicContext.archived': 1,
+  'publicContext.verified': 1,
+  'publicContext.review': 1,
+  'publicContext.allowedOpenContribution': 1
 };
 
 class DocumentStore {
@@ -63,7 +63,7 @@ class DocumentStore {
 
   getPublicDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
     return this.collection.find(
-      { createdBy, 'roomId': null, 'publicAttributes.archived': false },
+      { createdBy, 'roomId': null, 'publicContext.archived': false },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }
@@ -92,7 +92,7 @@ class DocumentStore {
   getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({
       'roomId': null,
-      'publicAttributes.archived': false,
+      'publicContext.archived': false,
       '$expr': { $gt: [{ $size: '$tags' }, 0] }
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
