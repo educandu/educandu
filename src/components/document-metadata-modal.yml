@@ -7,9 +7,6 @@ cloneDocument:
 editDocument:
   en: Edit document metadata
   de: Dokument-Metadaten bearbeiten
-roomRequired:
-  en: Please specify a room
-  de: Bitte gib einen Raum an
 titleRequired:
   en: Please specify a document title
   de: Bitte gib einen Dokument-Titel an

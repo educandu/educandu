@@ -61,56 +61,35 @@ export function getAllowedOpenContributionOptions({ t }) {
   }));
 }
 
-export function getValidationRules({ t }) {
-  const roomValidationRules = [
-    {
-      required: true,
-      message: t('roomRequired'),
-      whitespace: true
-    }
-  ];
-
-  const titleValidationRules = [
-    {
-      required: true,
-      message: t('titleRequired'),
-      whitespace: true
-    }
-  ];
-
-  const descriptionValidationRules = [
-    {
-      max: maxDocumentDescriptionLength,
-      message: t('descriptionTooLong', { maxChars: maxDocumentDescriptionLength })
-    }
-  ];
-
-  const slugValidationRules = [
-    {
-      validator: (_, value) => {
-        return value && !inputValidators.isValidSlug(value)
-          ? Promise.reject(new Error(t('common:invalidSlug')))
-          : Promise.resolve();
-      }
-    }
-  ];
-
-  const tagsValidationRules = [
-    {
-      validator: (_, value) => {
-        return value.length && value.some(tag => !inputValidators.isValidTag({ tag }))
-          ? Promise.reject(new Error(t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })))
-          : Promise.resolve();
-      }
-    }
-  ];
+export function getValidationState({ cloningStrategy, cloningTargetRoomId, title, description, slug, tags, t }) {
+  const isValidCloningTargetRoomId = cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom || !!cloningTargetRoomId;
+  const isValidTitle = !!title.trim();
+  const isValidDescription = description.length <= maxDocumentDescriptionLength;
+  const isValidSlug = !slug || inputValidators.isValidSlug(slug);
+  const areValidTags = tags.every(tag => inputValidators.isValidTag({ tag }));
 
   return {
-    roomValidationRules,
-    titleValidationRules,
-    descriptionValidationRules,
-    slugValidationRules,
-    tagsValidationRules
+    cloningTargetRoomId: {
+      required: true,
+      validateStatus: isValidCloningTargetRoomId ? 'success' : 'error'
+    },
+    title: {
+      required: true,
+      validateStatus: isValidTitle ? 'success' : 'error',
+      help: isValidTitle ? null : t('titleRequired')
+    },
+    description: {
+      validateStatus: isValidDescription ? 'success' : 'error',
+      help: isValidDescription ? null : t('descriptionTooLong', { maxChars: maxDocumentDescriptionLength })
+    },
+    slug: {
+      validateStatus: isValidSlug ? 'success' : 'error',
+      help: isValidSlug ? null : t('common:invalidSlug')
+    },
+    tags: {
+      validateStatus: areValidTags ? 'success' : 'error',
+      help: areValidTags ? null : t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })
+    }
   };
 }
 

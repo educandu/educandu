@@ -29,7 +29,7 @@ import {
   getDefaultLanguageFromUiLanguage,
   getDialogOkButtonText,
   getDialogTitle,
-  getValidationRules
+  getValidationState
 } from './document-metadata-modal-utils.js';
 
 const FormItem = Form.Item;
@@ -37,6 +37,15 @@ const Option = Select.Option;
 const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
+
+const getDefaultPublicContext = () => (
+  {
+    archived: false,
+    verified: false,
+    review: '',
+    allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+  }
+);
 
 function DocumentMetadataModal({
   isVisible,
@@ -65,13 +74,7 @@ function DocumentMetadataModal({
   const [slug, setSlug] = useState(initialDocumentMetadata.slug || '');
   const [tags, setTags] = useState(initialDocumentMetadata.tags || []);
   const [language, setLanguage] = useState(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
-  const [publicContext, setPublicContext] = useState(initialDocumentMetadata.publicContext
-    || {
-      archived: false,
-      verified: false,
-      review: '',
-      allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-    });
+  const [publicContext, setPublicContext] = useState(initialDocumentMetadata.publicContext || getDefaultPublicContext());
 
   const [generateSequence, setGenerateSequence] = useState(false);
   const [sequenceCount, setSequenceCount] = useState(2);
@@ -102,7 +105,10 @@ function DocumentMetadataModal({
   const canCreateSequence = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
   const canSelectCloningStrategy = mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningOptions.strategyOptions.length > 1;
 
-  const validationRules = getValidationRules({ t });
+  const validationState = useMemo(
+    () => getValidationState({ t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId }),
+    [t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId]
+  );
 
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
@@ -126,6 +132,10 @@ function DocumentMetadataModal({
     }
     loadRooms();
   }, [isVisible, loadRooms]);
+
+  useEffect(() => {
+    setPublicContext(getDefaultPublicContext());
+  }, [cloningStrategy]);
 
   const handleTagSearch = async typedInTag => {
     const sanitizedTypedInTag = (typedInTag || '').trim();
@@ -214,6 +224,11 @@ function DocumentMetadataModal({
   };
 
   const handleFinish = async () => {
+    const invalidFieldsExist = Object.values(validationState).some(field => field.validateStatus === 'error');
+    if (invalidFieldsExist) {
+      return;
+    }
+
     try {
       setIsSaving(true);
 
@@ -283,7 +298,7 @@ function DocumentMetadataModal({
           </FormItem>
         )}
         {canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
-          <FormItem label={t('targetRoom')} rules={validationRules.roomValidationRules}>
+          <FormItem label={t('targetRoom')} {...validationState.cloningTargetRoomId}>
             <Select
               value={cloningTargetRoomId}
               loading={isLoadingRooms}
@@ -293,19 +308,19 @@ function DocumentMetadataModal({
               />
           </FormItem>
         )}
-        <FormItem label={t('common:title')} rules={validationRules.titleValidationRules}>
+        <FormItem label={t('common:title')} {...validationState.title}>
           <Input value={title} onChange={handleTitleChange} />
         </FormItem>
-        <FormItem label={t('common:description')} rules={validationRules.descriptionValidationRules}>
+        <FormItem label={t('common:description')} {...validationState.description}>
           <NeverScrollingTextArea value={description} onChange={handleDescriptionChange} />
         </FormItem>
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />
         </FormItem>
-        <FormItem label={t('common:slug')} rules={validationRules.slugValidationRules}>
+        <FormItem label={t('common:slug')} {...validationState.slug}>
           <Input value={slug} onChange={handleSlugChange} />
         </FormItem>
-        <FormItem label={t('common:tags')} rules={validationRules.tagsValidationRules}>
+        <FormItem label={t('common:tags')} {...validationState.tags}>
           <Select
             mode="tags"
             value={tags}
