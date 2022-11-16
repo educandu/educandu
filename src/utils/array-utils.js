@@ -104,7 +104,16 @@ export function range({ from, to, step }) {
   let actualStep = Math.abs(step || 1);
   actualStep = from <= to ? actualStep : -actualStep;
 
-  return [...Array(Math.floor((to - from) / actualStep) + 1)].map((_, i) => from + (i * actualStep));
+  const stepDecimalPlaces = actualStep.toString().split('.')[1]?.length || 0;
+  const roundingCorrectionFactor = 10 ** stepDecimalPlaces;
+
+  const multipliedFrom = from * roundingCorrectionFactor;
+  const multipliedTo = to * roundingCorrectionFactor;
+  const multipliedStep = actualStep * roundingCorrectionFactor;
+
+  return Array.from({ length: Math.floor((multipliedTo - multipliedFrom) / multipliedStep) + 1 }, (_, i) => {
+    return (multipliedFrom + (i * multipliedStep)) / roundingCorrectionFactor;
+  });
 }
 
 export function ensureIsUnique(items, keyFunc = item => item) {

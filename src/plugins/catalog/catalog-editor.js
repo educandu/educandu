@@ -10,7 +10,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { swapItemsAt, removeItemAt, replaceItemAt, range } from '../../utils/array-utils.js';
 import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
 import { createDefaultItem, consolidateForDisplayMode, isContentInvalid } from './catalog-utils.js';
 
@@ -18,7 +18,7 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-const maxTilesPerRowPossibleValues = Array.from({ length: MAX_ALLOWED_TILES_PER_ROW }, (_, index) => index + 1);
+const maxTilesPerRowPossibleValues = range({ from: 1, to: MAX_ALLOWED_TILES_PER_ROW });
 const maxTilesPerRowMinValue = maxTilesPerRowPossibleValues[0];
 const maxTilesPerRowMaxValue = maxTilesPerRowPossibleValues[maxTilesPerRowPossibleValues.length - 1];
 const maxTilesPerRowSliderMarks = maxTilesPerRowPossibleValues.reduce((all, val) => {

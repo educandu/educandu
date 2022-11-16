@@ -1,15 +1,16 @@
-import React, { Fragment } from 'react';
-import { Form, Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_POSITION } from './constants.js';
+import React, { Fragment, useMemo } from 'react';
+import { Form, Radio, Slider, Tooltip } from 'antd';
 import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { ensureIsExcluded } from '../../utils/array-utils.js';
+import { ensureIsExcluded, range } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { isInternalSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { useNumberFormat } from '../../components/locale-context.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
@@ -18,11 +19,15 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
+const possibleTextOffsetValues = range({ from: 0, to: 2, step: 0.25 });
+const maxTextOffsetValue = possibleTextOffsetValues[possibleTextOffsetValues.length - 1];
+
 export default function MarkdownWithImageEditor({ content, onContentChanged }) {
+  const { formatNumber } = useNumberFormat();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('markdownWithImage');
 
-  const { text, image } = content;
+  const { text, textOffsetInEm, image } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -35,6 +40,10 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
 
   const handleTextChange = event => {
     changeContent({ text: event.target.value });
+  };
+
+  const handleTextOffsetInEmChange = value => {
+    changeContent({ textOffsetInEm: value });
   };
 
   const handleImageSourceUrlChange = value => {
@@ -55,6 +64,18 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
     changeContent({ image: { ...image, position: value } });
   };
 
+  const textOffsetSliderTipFormatter = useMemo(() => {
+    return val => `${formatNumber(val)}\u00A0em`;
+  }, [formatNumber]);
+
+  const textOffsetSliderMarks = useMemo(() => {
+    return possibleTextOffsetValues.reduce((all, val) => {
+      const markLabel = val % 0.5 === 0 ? textOffsetSliderTipFormatter(val) : '';
+      const node = <span>{markLabel}</span>;
+      return { ...all, [val]: node };
+    }, {});
+  }, [textOffsetSliderTipFormatter]);
+
   const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
 
   return (
@@ -62,6 +83,27 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
       <Form>
         <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
+        </FormItem>
+        <FormItem
+          label={
+            <Fragment>
+              <Tooltip title={t('textOffsetInfo')}>
+                <InfoCircleOutlined className="u-info-icon" />
+              </Tooltip>
+              <span>{t('textOffsetLabel')}</span>
+            </Fragment>
+          }
+          {...FORM_ITEM_LAYOUT}
+          >
+          <Slider
+            min={0}
+            max={maxTextOffsetValue}
+            marks={textOffsetSliderMarks}
+            step={null}
+            value={textOffsetInEm}
+            onChange={handleTextOffsetInEmChange}
+            tipFormatter={textOffsetSliderTipFormatter}
+            />
         </FormItem>
         <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
           <UrlInput
