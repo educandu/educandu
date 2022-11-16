@@ -332,7 +332,9 @@
       "allowedOpenContribution_content": "Content only",
       "allowedOpenContribution_none": "None",
       "sequenceInfo": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
-      "verifiedInfo": "As maintainer, you can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
+      "archivedInfo": "Archived documents can not be edited and can not be discovered through search.",
+      "verifiedInfo": "You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
+      "reviewInfo": "You can write a review of the document, if it does not meet quality requirements. The review will be shown on top of the document page.",
       "allowedOpenContributionInfo": "You can restrict the parts of the document the open community can contribute to.",
       "cloningStrategy": "Where should the cloned document be created?",
       "cloningStrategy_cloneWithinArea_fromRoom": "in the same room",
@@ -341,7 +343,8 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in a room",
       "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
       "targetRoom": "Please select a room",
-      "noAvailableRooms": "No available rooms"
+      "noAvailableRooms": "No available rooms",
+      "publicAttributesHeader": "Advanced settings"
     }
   },
   {
@@ -367,7 +370,9 @@
       "allowedOpenContribution_content": "Nur Inhalt",
       "allowedOpenContribution_none": "Keine",
       "sequenceInfo": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n",
-      "verifiedInfo": "Als Maintainer kannst du bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.",
+      "archivedInfo": "Archivierte Dokumente können nicht editiert werden und sind nicht suchbar.",
+      "verifiedInfo": "Du kannst bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.",
+      "reviewInfo": "Du kannst eine Review für das Dokument schreiben. Die Review wird auf der Dokumentseite angezeigt.",
       "allowedOpenContributionInfo": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.",
       "cloningStrategy": "Wo soll das geklonte Dokument erstellt werden?",
       "cloningStrategy_cloneWithinArea_fromRoom": "im selben Raum",
@@ -376,7 +381,8 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in einem Raum",
       "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
       "targetRoom": "Bitte wähle einen Raum aus",
-      "noAvailableRooms": "Keine Räume verfügbar"
+      "noAvailableRooms": "Keine Räume verfügbar",
+      "publicAttributesHeader": "Erweiterte Einstellungen"
     }
   },
   {
