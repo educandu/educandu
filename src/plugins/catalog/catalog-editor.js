@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Form, Radio, Button, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
+import StepSlider from '../../components/step-slider.js';
 import CatalogItemEditor from './catalog-item-editor.js';
-import { Form, Radio, Slider, Button, Tooltip } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -10,22 +11,13 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { swapItemsAt, removeItemAt, replaceItemAt, range } from '../../utils/array-utils.js';
+import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
 import { createDefaultItem, consolidateForDisplayMode, isContentInvalid } from './catalog-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
-
-const maxTilesPerRowPossibleValues = range({ from: 1, to: MAX_ALLOWED_TILES_PER_ROW });
-const maxTilesPerRowMinValue = maxTilesPerRowPossibleValues[0];
-const maxTilesPerRowMaxValue = maxTilesPerRowPossibleValues[maxTilesPerRowPossibleValues.length - 1];
-const maxTilesPerRowSliderMarks = maxTilesPerRowPossibleValues.reduce((all, val) => {
-  const node = <span>{val}</span>;
-  return { ...all, [val]: node };
-}, {});
-const maxTilesPerRowSliderTipFormatter = val => `${val}`;
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
@@ -107,13 +99,12 @@ function CatalogEditor({ content, onContentChanged }) {
         {displayMode === DISPLAY_MODE.imageTiles && (
           <Fragment>
             <FormItem label={t('tilesPerRow')} {...FORM_ITEM_LAYOUT}>
-              <Slider
-                step={null}
-                marks={maxTilesPerRowSliderMarks}
-                min={maxTilesPerRowMinValue}
-                max={maxTilesPerRowMaxValue}
+              <StepSlider
+                min={1}
+                step={1}
+                labelsStep={1}
+                max={MAX_ALLOWED_TILES_PER_ROW}
                 value={imageTilesConfig.maxTilesPerRow}
-                tipFormatter={maxTilesPerRowSliderTipFormatter}
                 onChange={handleMaxTilesPerRowChange}
                 />
             </FormItem>

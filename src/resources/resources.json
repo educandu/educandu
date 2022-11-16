@@ -2011,7 +2011,7 @@
     "resources": {
       "name": "Markdown with image",
       "textOffsetLabel": "Text offset",
-      "textOffsetInfo": "1 em corresponds to the current paragraph font size",
+      "textOffsetInfo": "1em corresponds to the current paragraph font size",
       "imageUrl": "Image URL",
       "imageWidth": "Image width",
       "imagePosition": "Image position",

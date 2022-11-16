@@ -13,9 +13,9 @@ import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { useNumberFormat } from '../../components/locale-context.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { usePercentageFormat } from '../../components/locale-context.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
@@ -29,9 +29,9 @@ const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.star
 
 function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
-  const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('interactiveMedia');
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
+  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const { sourceUrl, playbackRange, chapters, width, showVideo } = content;

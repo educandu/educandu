@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useNumberFormat } from '../locale-context.js';
 import { isTouchDevice } from '../../ui/browser-helper.js';
+import { usePercentageFormat } from '../locale-context.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
 
@@ -19,9 +19,9 @@ function MediaPlayerProgressBar({
   const progressBarRef = useRef(null);
   const isMediaLoaded = !!durationInMilliseconds;
 
-  const { formatPercentage } = useNumberFormat();
   const [isDragging, setIsDragging] = useState(false);
   const [tooltipState, setTooltipState] = useState(null);
+  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
   const [progressBarWidthInPx, setProgressBarWidthInPx] = useState(0);
 
   const stopDragging = () => {

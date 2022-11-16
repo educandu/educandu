@@ -28,9 +28,8 @@ function MediaPlayerControls({
   screenMode,
   onDownloadClick
 }) {
-  const { formatNumber } = useNumberFormat();
+  const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
-
   const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
 
   const isPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
