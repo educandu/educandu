@@ -7,9 +7,9 @@ import React, { Fragment, useState } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
-import { useNumberFormat } from '../locale-context.js';
 import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaRangeSelector from './media-range-selector.js';
+import { usePercentageFormat } from '../locale-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
@@ -25,8 +25,8 @@ const RadioButton = Radio.Button;
 
 function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
   const clientConfig = useService(ClientConfig);
-  const { formatPercentage } = useNumberFormat();
   const { t } = useTranslation('mainTrackEditor');
+  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const [sourceDuration, setSourceDuration] = useState(0);
   const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;

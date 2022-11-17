@@ -3,13 +3,15 @@ import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
 import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import StepSlider from '../../components/step-slider.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { Button, Divider, Form, Radio, Tooltip } from 'antd';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { ensureIsExcluded, range } from '../../utils/array-utils.js';
-import { Button, Divider, Form, Radio, Slider, Tooltip } from 'antd';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { usePercentageFormat } from '../../components/locale-context.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
@@ -20,14 +22,10 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-const opacityWhenResolvedSliderMarks = range({ from: 0, to: 100, step: 25 })
-  .reduce((all, val) => ({ ...all, [val]: <span>{val}%</span> }), {});
-
-const opacityWhenResolvedTipFormatter = val => `${val}%`;
-
 function AudioWaveformEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
+  const formatPercentage = usePercentageFormat();
   const [isWaveformGeneratorDialogVisible, setIsWaveformGeneratorDialogVisible] = useState(false);
 
   const { sourceUrl, width, displayMode, interactivityConfig } = content;
@@ -79,7 +77,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   };
 
   const handleOpacityWhenResolvedChange = value => {
-    changeContent({ interactivityConfig: { ...interactivityConfig, opacityWhenResolved: value / 100 } });
+    changeContent({ interactivityConfig: { ...interactivityConfig, opacityWhenResolved: value } });
   };
 
   const allowedSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
@@ -133,14 +131,14 @@ function AudioWaveformEditor({ content, onContentChanged }) {
                 <ColorPicker color={backgroundColor} onChange={handleBackgroundColorChange} />
               </FormItem>
               <FormItem label={t('opacityWhenResolved')} {...FORM_ITEM_LAYOUT}>
-                <Slider
+                <StepSlider
                   min={0}
-                  max={100}
-                  step={1}
-                  marks={opacityWhenResolvedSliderMarks}
-                  value={opacityWhenResolved * 100}
+                  max={1}
+                  step={0.01}
+                  labelsStep={0.25}
+                  value={opacityWhenResolved}
+                  formatter={formatPercentage}
                   onChange={handleOpacityWhenResolvedChange}
-                  tipFormatter={opacityWhenResolvedTipFormatter}
                   />
               </FormItem>
             </div>

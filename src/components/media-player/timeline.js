@@ -4,9 +4,9 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import PinIcon from '../icons/general/pin-icon.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import { useNumberFormat } from '../locale-context.js';
 import { isTouchDevice } from '../../ui/browser-helper.js';
 import { confirmDelete } from '../confirmation-dialogs.js';
+import { usePercentageFormat } from '../locale-context.js';
 import { getContrastColor } from '../../ui/color-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureValidMediaPosition, formatMediaPosition } from '../../utils/media-utils.js';
@@ -18,7 +18,7 @@ const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange, onPartClick }) {
   const timelineRef = useRef(null);
   const { t } = useTranslation('');
-  const { formatPercentage } = useNumberFormat();
+  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const [dragState, setDragState] = useState(null);
   const [newMarkerState, setNewMarkerState] = useState(null);

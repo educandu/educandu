@@ -17,10 +17,10 @@ import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useNumberFormat } from '../../components/locale-context.js';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { usePercentageFormat } from '../../components/locale-context.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
@@ -42,7 +42,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
-  const { formatPercentage } = useNumberFormat();
+  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 

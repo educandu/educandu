@@ -11,6 +11,7 @@ const HTML_ESCAPE_TEST_PATTERN = new RegExp(`[${Object.keys(HTML_REPLACEMENT_MAP
 
 const HTML_ESCAPE_REPLACEMENT_PATTERN = new RegExp(HTML_ESCAPE_TEST_PATTERN.source, 'g');
 
+export const NO_BREAK_SPACE = '\u00A0';
 export const ZERO_WIDTH_SPACE = '\u200B';
 
 export function escapeHtml(str) {

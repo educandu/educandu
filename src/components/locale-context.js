@@ -7,6 +7,7 @@ import enUSNs from 'antd/lib/locale/en_US.js';
 import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
 import { useService } from './container-context.js';
+import { NO_BREAK_SPACE } from '../utils/string-utils.js';
 import { setLongLastingCookie } from '../common/cookie.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { UI_LANGUAGE_COOKIE_NAME } from '../domain/constants.js';
@@ -113,19 +114,30 @@ export function useDateFormat() {
 
 export function useNumberFormat() {
   const { uiLocale } = useLocale();
-
   return useMemo(() => {
-    const percentageOptions = { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 };
-
-    const numberFormatter = new Intl.NumberFormat(uiLocale);
-    const percentageFormatter = new Intl.NumberFormat(uiLocale, percentageOptions);
-
-    const formatNumber = value => numberFormatter.format(value);
-    const formatPercentage = value => percentageFormatter.format(value);
-
-    return {
-      formatNumber,
-      formatPercentage
-    };
+    const numberFormatter = new Intl.NumberFormat(uiLocale, { useGrouping: true });
+    return value => numberFormatter.format(value);
   }, [uiLocale]);
+}
+
+export function useNumberWithUnitFormat({ unit, useGrouping = true }) {
+  const { uiLocale } = useLocale();
+  return useMemo(() => {
+    const unitSeparator = uiLocale === 'de' ? NO_BREAK_SPACE : '';
+    const numberFormatter = new Intl.NumberFormat(uiLocale, { useGrouping });
+    return value => `${numberFormatter.format(value)}${unitSeparator}${unit}`;
+  }, [uiLocale, unit, useGrouping]);
+}
+
+export function usePercentageFormat({ decimalPlaces = 0, integerMode = false } = { decimalPlaces: 0, integerMode: false }) {
+  const { uiLocale } = useLocale();
+  return useMemo(() => {
+    const formatter = new Intl.NumberFormat(uiLocale, {
+      style: 'percent',
+      useGrouping: true,
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces
+    });
+    return value => formatter.format(integerMode ? value / 100 : value);
+  }, [uiLocale, decimalPlaces, integerMode]);
 }

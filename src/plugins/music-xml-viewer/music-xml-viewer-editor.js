@@ -1,29 +1,21 @@
+import { Form, Tooltip } from 'antd';
 import React, { Fragment } from 'react';
-import { Form, Slider, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { range } from '../../utils/array-utils.js';
 import UrlInput from '../../components/url-input.js';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import StepSlider from '../../components/step-slider.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { usePercentageFormat } from '../../components/locale-context.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 
-const possibleZoomSliderValues = range({ from: MIN_ZOOM_VALUE * 100, to: MAX_ZOOM_VALUE * 100, step: 5 });
-
-const zoomSliderMarks = possibleZoomSliderValues.reduce((all, val) => {
-  const markLabel = val % 25 === 0 ? `${val}%` : '';
-  const node = <span>{markLabel}</span>;
-  return { ...all, [val]: node };
-}, {});
-
-const zoomTipFormatter = val => `${val}%`;
-
 function MusicXmlViewerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('musicXmlViewer');
+  const percentageFormatter = usePercentageFormat();
 
   const { sourceUrl, zoom, width, caption } = content;
 
@@ -36,7 +28,7 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
   };
 
   const handleZoomChange = newValue => {
-    triggerContentChanged({ zoom: newValue / 100 });
+    triggerContentChanged({ zoom: newValue });
   };
 
   const handleWidthChange = newValue => {
@@ -56,14 +48,15 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
         <Form.Item label={t('zoom')} {...FORM_ITEM_LAYOUT}>
-          <Slider
-            min={MIN_ZOOM_VALUE * 100}
-            max={MAX_ZOOM_VALUE * 100}
-            marks={zoomSliderMarks}
-            step={5}
-            value={zoom * 100}
+          <StepSlider
+            step={0.05}
+            value={zoom}
+            marksStep={0.05}
+            labelsStep={0.25}
+            min={MIN_ZOOM_VALUE}
+            max={MAX_ZOOM_VALUE}
             onChange={handleZoomChange}
-            tipFormatter={zoomTipFormatter}
+            formatter={percentageFormatter}
             />
         </Form.Item>
         <Form.Item

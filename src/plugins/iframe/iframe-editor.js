@@ -1,23 +1,19 @@
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import { Form, Input, Checkbox, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import StepSlider from '../../components/step-slider.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import { Form, Input, Slider, Checkbox, Tooltip } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { range } from '../../utils/array-utils.js';
+import { useNumberWithUnitFormat } from '../../components/locale-context.js';
 
 const FormItem = Form.Item;
 
-const tipFormatter = val => `${val}px`;
-const marks = range({ from: 100, to: 1000, step: 100 }).reduce((all, val) => {
-  const node = <span>{`${val}px`}</span>;
-  return { ...all, [val]: node };
-}, {});
-
 function IframeEditor({ content, onContentChanged }) {
   const { t } = useTranslation('iframe');
+  const pxFormatter = useNumberWithUnitFormat({ unit: 'px', useGrouping: false });
 
   const { url, width } = content;
 
@@ -70,14 +66,14 @@ function IframeEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
         <Form.Item label={t('height')} {...FORM_ITEM_LAYOUT}>
-          <Slider
+          <StepSlider
             min={100}
-            max={1000}
-            marks={marks}
             step={10}
+            max={1000}
+            labelsStep={100}
             value={content.height}
+            formatter={pxFormatter}
             onChange={handleHeightValueChanged}
-            tipFormatter={tipFormatter}
             />
         </Form.Item>
         <Form.Item label={t('frame')} {...FORM_ITEM_LAYOUT}>
