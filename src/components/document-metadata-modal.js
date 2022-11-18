@@ -67,20 +67,21 @@ function DocumentMetadataModal({
   const [isSaving, setIsSaving] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
-  const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata.tags));
 
-  const [title, setTitle] = useState(initialDocumentMetadata.title || t('newDocument'));
-  const [description, setDescription] = useState(initialDocumentMetadata.description || '');
-  const [slug, setSlug] = useState(initialDocumentMetadata.slug || '');
-  const [tags, setTags] = useState(initialDocumentMetadata.tags || []);
-  const [language, setLanguage] = useState(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
-  const [publicContext, setPublicContext] = useState(initialDocumentMetadata.publicContext || getDefaultPublicContext());
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [slug, setSlug] = useState('');
+  const [tags, setTags] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [language, setLanguage] = useState(null);
+  const [publicContext, setPublicContext] = useState(null);
 
   const [generateSequence, setGenerateSequence] = useState(false);
-  const [sequenceCount, setSequenceCount] = useState(2);
+  const [sequenceCount, setSequenceCount] = useState(0);
   const [useTemplateDocument, setUseTemplateDocument] = useState(false);
-  const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.cloneWithinArea);
+  const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.none);
   const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
+
   const documentRoomId = useMemo(() => determineDocumentRoomId({
     mode,
     initialDocumentMetadata,
@@ -110,6 +111,22 @@ function DocumentMetadataModal({
     [t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId]
   );
 
+  const resetStates = useCallback(() => {
+    setTitle(initialDocumentMetadata.title || t('newDocument'));
+    setDescription(initialDocumentMetadata.description || '');
+    setSlug(initialDocumentMetadata.slug || '');
+    setTags(initialDocumentMetadata.tags || []);
+    setTagOptions(composeTagOptions(initialDocumentMetadata.tags));
+    setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
+    setPublicContext(initialDocumentMetadata.publicContext || getDefaultPublicContext());
+
+    setGenerateSequence(false);
+    setSequenceCount(2);
+    setUseTemplateDocument(false);
+    setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
+    setCloningTargetRoomId('');
+  }, [initialDocumentMetadata, t, uiLanguage]);
+
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
       setAvailableRooms([]);
@@ -124,14 +141,9 @@ function DocumentMetadataModal({
   }, [mode, roomApiClient]);
 
   useEffect(() => {
-    if (!isVisible) {
-      return;
-    }
-    if (formRef.current) {
-      formRef.current.resetFields();
-    }
+    resetStates();
     loadRooms();
-  }, [isVisible, loadRooms]);
+  }, [isVisible, resetStates, loadRooms]);
 
   useEffect(() => {
     setPublicContext(getDefaultPublicContext());
@@ -281,6 +293,9 @@ function DocumentMetadataModal({
     }
   };
 
+  const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
+    && hasPublicContextPermissions && !!publicContext;
+
   return (
     <Modal
       title={getDialogTitle(mode, t)}
@@ -357,7 +372,7 @@ function DocumentMetadataModal({
             </Checkbox>
           </FormItem>
         )}
-        {!documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom && hasPublicContextPermissions && (
+        {isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
               {publicContextPermissions.canArchive && (
