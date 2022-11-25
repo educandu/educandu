@@ -1,15 +1,15 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
+import React, { useState } from 'react';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
-import React, { Fragment, useState } from 'react';
+import { Button, Divider, Form, Radio } from 'antd';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import MatchingCardsTile from './matching-cards-tile.js';
 import { resizeTilePairs } from './matching-cards-utils.js';
 import { FlipCardFace } from '../../components/flip-card.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import { Button, Divider, Form, Radio, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -89,14 +89,7 @@ function MatchingCardsEditor({ content, onContentChanged }) {
         </FormItem>
         <FormItem
           className="ImageEditor-widthInput"
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
+import { Form, Radio, Button } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import { Form, Radio, Button, Tooltip } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
 import CatalogItemEditor from './catalog-item-editor.js';
@@ -9,7 +11,6 @@ import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
@@ -78,14 +79,7 @@ function CatalogEditor({ content, onContentChanged }) {
           <MarkdownInput inline value={title} onChange={handleTitleChange} />
         </FormItem>
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

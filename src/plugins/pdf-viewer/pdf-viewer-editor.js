@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
+import { Form, InputNumber, Switch } from 'antd';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Form, InputNumber, Switch, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -51,27 +51,13 @@ function PdfViewerEditor({ content, onContentChanged }) {
           <InputNumber min={1} step={1} value={initialPageNumber} onChange={handleInitialPageNumberChange} />
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('showTextOverlayInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('showTextOverlay')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('showTextOverlayInfo')}>{t('showTextOverlay')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <Switch size="small" checked={showTextOverlay} onChange={handleShowTextOverlayChange} />
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

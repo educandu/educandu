@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
-import { Form, Switch, Tooltip } from 'antd';
+import React from 'react';
+import { Form, Switch } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import InputAndPreview from '../../components/input-and-preview.js';
@@ -49,14 +49,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />

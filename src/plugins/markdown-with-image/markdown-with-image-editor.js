@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
-import { Form, Radio, Tooltip } from 'antd';
+import React from 'react';
+import { Form, Radio } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_POSITION } from './constants.js';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import StepSlider from '../../components/step-slider.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
@@ -71,14 +71,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
         </FormItem>
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('textOffsetInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('textOffsetLabel')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('textOffsetInfo')}>{t('textOffsetLabel')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <StepSlider
@@ -104,14 +97,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
         </Form.Item>
         <FormItem
           className="ImageEditor-widthInput"
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('imageWidth')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={image.width} onChange={handleImageWidthChange} />

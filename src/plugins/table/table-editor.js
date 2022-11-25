@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
-import { Radio, Form, Tooltip } from 'antd';
+import React from 'react';
+import { Radio, Form } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import TableDesigner from './table-designer.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { COLUMN_DISTRIBUTION } from './table-utils.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -35,14 +35,7 @@ function TableEditor({ content, onContentChanged }) {
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

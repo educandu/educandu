@@ -1,6 +1,6 @@
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Form, Button, Modal, Spin, Tooltip } from 'antd';
+import { Form, Button, Modal, Spin } from 'antd';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { useLocale } from '../../components/locale-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -130,14 +130,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
           <Button type="primary" size="small" onClick={handleEditClick}>{t('editExternally')}</Button>
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
