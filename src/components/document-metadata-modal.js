@@ -118,14 +118,18 @@ function DocumentMetadataModal({
     setTags(initialDocumentMetadata.tags || []);
     setTagOptions(composeTagOptions(initialDocumentMetadata.tags));
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
-    setPublicContext(initialDocumentMetadata.publicContext || getDefaultPublicContext());
+    if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
+      setPublicContext(getDefaultPublicContext());
+    } else {
+      setPublicContext(cloneDeep(initialDocumentMetadata.publicContext) || getDefaultPublicContext());
+    }
 
     setGenerateSequence(false);
     setSequenceCount(2);
     setUseTemplateDocument(false);
     setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
     setCloningTargetRoomId('');
-  }, [initialDocumentMetadata, t, uiLanguage]);
+  }, [initialDocumentMetadata, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
