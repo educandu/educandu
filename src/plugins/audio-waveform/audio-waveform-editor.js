@@ -1,12 +1,12 @@
+import React, { useState } from 'react';
+import Info from '../../components/info.js';
 import { DISPLAY_MODE } from './constants.js';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useState } from 'react';
+import { Button, Divider, Form, Radio } from 'antd';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import StepSlider from '../../components/step-slider.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { Button, Divider, Form, Radio, Tooltip } from 'antd';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -100,14 +100,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
         </FormItem>
         <Divider plain>{t('generalSettingsDividerText')}</Divider>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

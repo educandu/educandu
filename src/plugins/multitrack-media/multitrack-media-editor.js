@@ -1,13 +1,14 @@
+import { Button, Form, Input } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
+import React, { useRef, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
-import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
-import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -170,14 +171,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         </ItemPanel>
 
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />

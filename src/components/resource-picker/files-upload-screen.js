@@ -1,3 +1,4 @@
+import Info from '../info.js';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import UsedStorage from '../used-storage.js';
@@ -16,7 +17,7 @@ import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js'
 import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
-import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const ITEM_STATUS = {
   pristine: 'pristine',
@@ -168,8 +169,7 @@ function FilesUploadScreen({
         {getUploadMessage()}
         {shouldRenderMessageDetails && (
           <div className="FilesUploadScreen-messageDetails">
-            <InfoCircleOutlined className="u-info-icon FilesUploadScreen-messageDetailsIcon" />
-            {t('stageDetails_uploadNotStarted')}
+            <Info>{t('stageDetails_uploadNotStarted')}</Info>
           </div>
         )}
       </div>

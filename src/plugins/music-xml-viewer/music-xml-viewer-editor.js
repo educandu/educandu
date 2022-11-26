@@ -1,8 +1,8 @@
-import { Form, Tooltip } from 'antd';
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Form } from 'antd';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import StepSlider from '../../components/step-slider.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
@@ -60,14 +60,7 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
             />
         </Form.Item>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

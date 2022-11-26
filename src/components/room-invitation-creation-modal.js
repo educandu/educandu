@@ -1,11 +1,11 @@
+import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
+import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import { Form, Input, Modal, Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import inputValidators from '../utils/input-validators.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
@@ -93,14 +93,7 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
         >
         <FormItem
           name="emails"
-          label={
-            <Fragment>
-              <span>{t('emailAddresses')}</span>
-              <Tooltip title={t('emailAddressesInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-            </Fragment>
-          }
+          label={<Info tooltip={t('emailAddressesInfo')} iconAfterContent>{t('emailAddresses')}</Info>}
           rules={emailsValidationRules}
           normalize={normalizeEmails}
           >

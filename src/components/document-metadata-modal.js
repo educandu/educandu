@@ -1,4 +1,5 @@
 /* eslint-disable complexity */
+import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
@@ -6,7 +7,6 @@ import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -14,9 +14,9 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Empty, Collapse } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
@@ -355,12 +355,7 @@ function DocumentMetadataModal({
         {canCreateSequence && (
           <FormItem>
             <Checkbox checked={generateSequence} onChange={handleGenerateSequenceChange}>
-              <Fragment>
-                <span className="u-label">{t('generateSequence')}</span>
-                <Tooltip title={t('sequenceInfo')}>
-                  <InfoCircleOutlined className="u-info-icon" />
-                </Tooltip>
-              </Fragment>
+              <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
             </Checkbox>
           </FormItem>
         )}
@@ -382,32 +377,21 @@ function DocumentMetadataModal({
               {publicContextPermissions.canArchive && (
               <FormItem>
                 <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
-                  <span className="u-label">{t('common:archived')}</span>
-                  <Tooltip title={t('archivedInfo')}>
-                    <InfoCircleOutlined className="u-info-icon" />
-                  </Tooltip>
+                  <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
                 </Checkbox>
               </FormItem>
               )}
               {publicContextPermissions.canVerify && (
               <FormItem>
                 <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
-                  <span className="u-label">{t('verified')}</span>
-                  <Tooltip title={t('verifiedInfo')}>
-                    <InfoCircleOutlined className="u-info-icon" />
-                  </Tooltip>
+                  <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
                 </Checkbox>
               </FormItem>
               )}
               {publicContextPermissions.canReview && (
                 <FormItem
                   label={
-                    <Fragment>
-                      {t('review')}
-                      <Tooltip title={t('reviewInfo')}>
-                        <InfoCircleOutlined className="u-info-icon" />
-                      </Tooltip>
-                    </Fragment>
+                    <Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>
                   }
                   >
                   <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
@@ -416,12 +400,7 @@ function DocumentMetadataModal({
               {publicContextPermissions.canRestrictOpenContribution && (
                 <FormItem
                   label={
-                    <Fragment>
-                      {t('allowedOpenContribution')}
-                      <Tooltip title={t('allowedOpenContributionInfo')}>
-                        <InfoCircleOutlined className="u-info-icon" />
-                      </Tooltip>
-                    </Fragment>
+                    <Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>
                   }
                   >
                   <Select value={publicContext.allowedOpenContribution} onChange={handleAllowedOpenContributionChange}>
