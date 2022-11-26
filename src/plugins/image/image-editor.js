@@ -1,8 +1,8 @@
+import Info from '../../components/info.js';
 import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
+import { Form, Radio, InputNumber } from 'antd';
 import UrlInput from '../../components/url-input.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Form, Radio, InputNumber, Tooltip } from 'antd';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
@@ -260,14 +260,7 @@ function ImageEditor({ content, onContentChanged }) {
 
         <Form.Item
           className="ImageEditor-widthInput"
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />

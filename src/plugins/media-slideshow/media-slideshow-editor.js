@@ -1,11 +1,11 @@
 import by from 'thenby';
+import Info from '../../components/info.js';
+import { Divider, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import UrlInput from '../../components/url-input.js';
-import { Divider, Form, Radio, Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -187,14 +187,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
@@ -254,14 +247,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                     />
                 </FormItem>
                 <FormItem
-                  label={
-                    <Fragment>
-                      <Tooltip title={<Markdown>{t('imageFitInfoMarkdown')}</Markdown>}>
-                        <InfoCircleOutlined className="u-info-icon" />
-                      </Tooltip>
-                      <span>{t('imageFit')}</span>
-                    </Fragment>
-                  }
+                  label={<Info tooltip={<Markdown>{t('imageFitInfoMarkdown')}</Markdown>}>{t('imageFit')}</Info>}
                   {...FORM_ITEM_LAYOUT}
                   >
                   <RadioGroup value={chapters[selectedChapterIndex].image.fit} onChange={handleChapterImageFitChange}>

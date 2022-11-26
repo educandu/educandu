@@ -1,3 +1,4 @@
+import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
@@ -5,17 +6,16 @@ import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Divider, Empty } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Tooltip, Divider, Empty } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
@@ -272,14 +272,7 @@ function DocumentMetadataModal({
     return (
       <FormItem
         name="allowedOpenContribution"
-        label={
-          <Fragment>
-            {t('allowedOpenContribution')}
-            <Tooltip title={t('allowedOpenContributionInfo')}>
-              <InfoCircleOutlined className="u-info-icon" />
-            </Tooltip>
-          </Fragment>
-        }
+        label={<Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>}
         >
         <Select>
           {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
@@ -345,12 +338,7 @@ function DocumentMetadataModal({
         </FormItem>
         <FormItem name="generateSequence" valuePropName="checked" hidden={!canCreateSequences}>
           <Checkbox>
-            <Fragment>
-              <span>{t('generateSequence')}</span>
-              <Tooltip title={t('sequenceInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-            </Fragment>
+            <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
           </Checkbox>
         </FormItem>
         <FormItem
@@ -382,10 +370,7 @@ function DocumentMetadataModal({
 
         <FormItem name="verified" valuePropName="checked" hidden={!canVerify}>
           <Checkbox>
-            {t('verified')}
-            <Tooltip title={t('verifiedInfo')}>
-              <InfoCircleOutlined className="u-info-icon" />
-            </Tooltip>
+            <Info tooltip={t('verifiedInfo')} iconAfterContent>{t('verified')}</Info>
           </Checkbox>
         </FormItem>
       </Form>

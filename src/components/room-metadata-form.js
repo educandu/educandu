@@ -1,9 +1,9 @@
+import React from 'react';
+import Info from './info.js';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
-import { Form, Input, Radio, Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import inputValidators from '../utils/input-validators.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
@@ -59,14 +59,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       <FormItem
         name="documentsMode"
         initialValue={room.documentsMode}
-        label={
-          <Fragment>
-            <span>{t('common:documentsMode')}</span>
-            <Tooltip title={t('documentsModeInfo')}>
-              <InfoCircleOutlined className="u-info-icon" />
-            </Tooltip>
-          </Fragment>
-        }
+        label={<Info tooltip={t('documentsModeInfo')} iconAfterContent>{t('common:documentsMode')}</Info>}
         >
         <RadioGroup>
           <RadioButton value={ROOM_DOCUMENTS_MODE.exclusive}>{t('common:documentsMode_exclusive')}</RadioButton>

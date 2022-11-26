@@ -1,5 +1,6 @@
 import by from 'thenby';
 import classNames from 'classnames';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { removeItemAt } from '../../utils/array-utils.js';
@@ -9,6 +10,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
+import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
@@ -19,7 +21,6 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { CheckOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, TAIL_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 
@@ -186,14 +187,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />

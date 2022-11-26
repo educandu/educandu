@@ -1,10 +1,11 @@
 import by from 'thenby';
 import classNames from 'classnames';
+import { Button, Form, Input } from 'antd';
+import Info from '../../components/info.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
-import { Button, Form, Input, Tooltip } from 'antd';
 import ItemPanel from '../../components/item-panel.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -24,9 +25,9 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
-import { ExportOutlined, ImportOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -388,20 +389,11 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             )}
           </ItemPanel>
           <div className="MediaAnalysisEditor-segmentsDropzoneInfo">
-            <Tooltip title={t('segmentsDropzoneInfo')}>
-              <InfoCircleOutlined className="u-info-icon" />
-            </Tooltip>
+            <Info tooltip={t('segmentsDropzoneInfo')} />
           </div>
         </div>
         <FormItem
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />

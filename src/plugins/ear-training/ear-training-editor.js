@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
+import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingInfo from './ear-training-info.js';
 import UrlInput from '../../components/url-input.js';
@@ -7,13 +9,12 @@ import ItemPanel from '../../components/item-panel.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { Form, Button, Radio, Divider, Tooltip, Checkbox } from 'antd';
+import { Form, Button, Radio, Divider, Checkbox } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { isInternalSourceType } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
@@ -183,14 +184,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
         <Form.Item
-          label={
-            <Fragment>
-              <Tooltip title={t('common:widthInfo')}>
-                <InfoCircleOutlined className="u-info-icon" />
-              </Tooltip>
-              <span>{t('common:width')}</span>
-            </Fragment>
-          }
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
