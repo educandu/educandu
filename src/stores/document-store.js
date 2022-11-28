@@ -14,24 +14,24 @@ const documentMetadataProjection = {
 };
 
 const documentExtendedMetadataProjection = {
-  _id: 1,
-  roomId: 1,
-  order: 1,
-  revision: 1,
-  title: 1,
-  description: 1,
-  slug: 1,
-  language: 1,
-  createdOn: 1,
-  createdBy: 1,
-  updatedOn: 1,
-  updatedBy: 1,
-  tags: 1,
-  review: 1,
-  verified: 1,
-  archived: 1,
-  contributors: 1,
-  allowedOpenContribution: 1
+  '_id': 1,
+  'roomId': 1,
+  'order': 1,
+  'revision': 1,
+  'title': 1,
+  'description': 1,
+  'slug': 1,
+  'language': 1,
+  'createdOn': 1,
+  'createdBy': 1,
+  'updatedOn': 1,
+  'updatedBy': 1,
+  'tags': 1,
+  'contributors': 1,
+  'publicContext.archived': 1,
+  'publicContext.verified': 1,
+  'publicContext.review': 1,
+  'publicContext.allowedOpenContribution': 1
 };
 
 class DocumentStore {
@@ -62,7 +62,10 @@ class DocumentStore {
   }
 
   getPublicDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
-    return this.collection.find({ createdBy, roomId: null, archived: false }, { projection: documentMetadataProjection, session }).toArray();
+    return this.collection.find(
+      { createdBy, 'roomId': null, 'publicContext.archived': false },
+      { projection: documentMetadataProjection, session }
+    ).toArray();
   }
 
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
@@ -88,9 +91,9 @@ class DocumentStore {
 
   getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({
-      archived: false,
-      roomId: null,
-      $expr: { $gt: [{ $size: '$tags' }, 0] }
+      'roomId': null,
+      'publicContext.archived': false,
+      '$expr': { $gt: [{ $size: '$tags' }, 0] }
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 

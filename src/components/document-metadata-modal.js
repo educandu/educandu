@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
@@ -12,9 +13,9 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Divider, Empty } from 'antd';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import {
@@ -28,13 +29,23 @@ import {
   getDefaultLanguageFromUiLanguage,
   getDialogOkButtonText,
   getDialogTitle,
-  getValidationRules
+  getValidationState
 } from './document-metadata-modal-utils.js';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
+
+const getDefaultPublicContext = () => (
+  {
+    archived: false,
+    verified: false,
+    review: '',
+    allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+  }
+);
 
 function DocumentMetadataModal({
   isVisible,
@@ -56,47 +67,69 @@ function DocumentMetadataModal({
   const [isSaving, setIsSaving] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
-  const [tagOptions, setTagOptions] = useState(composeTagOptions(initialDocumentMetadata.tags));
 
-  const canReview = hasUserPermission(user, permissions.REVIEW_DOC);
-  const canVerify = hasUserPermission(user, permissions.VERIFY_DOC);
-  const canRestrictOpenContribution = hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [slug, setSlug] = useState('');
+  const [tags, setTags] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [language, setLanguage] = useState(null);
+  const [publicContext, setPublicContext] = useState(null);
+
+  const [generateSequence, setGenerateSequence] = useState(false);
+  const [sequenceCount, setSequenceCount] = useState(0);
+  const [useTemplateDocument, setUseTemplateDocument] = useState(false);
+  const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.none);
+  const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
+
+  const documentRoomId = useMemo(() => determineDocumentRoomId({
+    mode,
+    initialDocumentMetadata,
+    documentToClone,
+    cloningStrategy,
+    cloningTargetRoomId
+  }), [mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId]);
+
+  const publicContextPermissions = {
+    canArchive: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS),
+    canVerify: hasUserPermission(user, permissions.VERIFY_DOC),
+    canReview: hasUserPermission(user, permissions.REVIEW_DOC),
+    canRestrictOpenContribution: hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION)
+  };
+  const hasPublicContextPermissions = Object.values(publicContextPermissions).some(value => value);
+
+  const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, t });
+  const allowedOpenContributionOptions = getAllowedOpenContributionOptions({ t });
 
   const defaultTemplateDocumentId = settings.templateDocument?.documentId || null;
   const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
-  const canCreateSequences = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
+  const canCreateSequence = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
+  const canSelectCloningStrategy = mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningOptions.strategyOptions.length > 1;
 
-  const initialQualityMetadataValues = mode === DOCUMENT_METADATA_MODAL_MODE.update
-    ? {
-      review: initialDocumentMetadata.review,
-      verified: initialDocumentMetadata.verified,
-      allowedOpenContribution: initialDocumentMetadata.allowedOpenContribution
+  const validationState = useMemo(
+    () => getValidationState({ t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId }),
+    [t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId]
+  );
+
+  const resetStates = useCallback(() => {
+    setTitle(initialDocumentMetadata.title || t('newDocument'));
+    setDescription(initialDocumentMetadata.description || '');
+    setSlug(initialDocumentMetadata.slug || '');
+    setTags(initialDocumentMetadata.tags || []);
+    setTagOptions(composeTagOptions(initialDocumentMetadata.tags));
+    setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
+    if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
+      setPublicContext(getDefaultPublicContext());
+    } else {
+      setPublicContext(cloneDeep(initialDocumentMetadata.publicContext) || getDefaultPublicContext());
     }
-    : {
-      review: '',
-      verified: false,
-      allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-    };
 
-  const initialValues = {
-    title: initialDocumentMetadata.title || t('newDocument'),
-    description: initialDocumentMetadata.description || '',
-    slug: initialDocumentMetadata.slug || '',
-    tags: initialDocumentMetadata.tags || [],
-    language: initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    generateSequence: false,
-    sequenceCount: 2,
-    useTemplateDocument: false,
-    cloningStrategy: CLONING_STRATEGY.cloneWithinArea,
-    cloningTargetRoomId: '',
-    ...initialQualityMetadataValues
-  };
-
-  const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, t });
-
-  const allowedOpenContributionOptions = getAllowedOpenContributionOptions({ t });
-
-  const validationRules = getValidationRules({ t });
+    setGenerateSequence(false);
+    setSequenceCount(2);
+    setUseTemplateDocument(false);
+    setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
+    setCloningTargetRoomId('');
+  }, [initialDocumentMetadata, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
@@ -112,14 +145,13 @@ function DocumentMetadataModal({
   }, [mode, roomApiClient]);
 
   useEffect(() => {
-    if (!isVisible) {
-      return;
-    }
-    if (formRef.current) {
-      formRef.current.resetFields();
-    }
+    resetStates();
     loadRooms();
-  }, [isVisible, loadRooms]);
+  }, [isVisible, resetStates, loadRooms]);
+
+  useEffect(() => {
+    setPublicContext(getDefaultPublicContext());
+  }, [cloningStrategy]);
 
   const handleTagSearch = async typedInTag => {
     const sanitizedTypedInTag = (typedInTag || '').trim();
@@ -143,39 +175,78 @@ function DocumentMetadataModal({
 
   const handleCancel = () => onClose();
 
-  const handleValuesChange = (_, { cloningStrategy, cloningTargetRoomId }) => {
-    const documentRoomId = determineDocumentRoomId({ mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId });
-    const noTargetRoomSelectedYet = cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && !cloningTargetRoomId;
-    if (documentRoomId || noTargetRoomSelectedYet) {
-      formRef.current.setFieldsValue({ allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent });
-    }
+  const handleCloningStrategyChange = value => {
+    setCloningStrategy(value);
   };
 
-  const handleFinish = async ({
-    title,
-    description,
-    slug,
-    language,
-    tags,
-    review,
-    verified,
-    allowedOpenContribution,
-    generateSequence,
-    sequenceCount,
-    useTemplateDocument,
-    cloningStrategy,
-    cloningTargetRoomId
-  }) => {
+  const handleCloningTargetRoomIdChange = value => {
+    setCloningTargetRoomId(value);
+  };
+
+  const handleTitleChange = event => {
+    const { value } = event.target;
+    setTitle(value);
+  };
+
+  const handleDescriptionChange = event => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+
+  const handleLanguageChange = value => {
+    setLanguage(value);
+  };
+
+  const handleSlugChange = event => {
+    const { value } = event.target;
+    setSlug(value);
+  };
+
+  const handleTagsChange = value => {
+    setTags(value);
+  };
+
+  const handleGenerateSequenceChange = event => {
+    const { checked } = event.target;
+    setGenerateSequence(checked);
+  };
+
+  const handleSequenceCountChange = value => {
+    setSequenceCount(value);
+  };
+
+  const handleUseTemplateDocumentChange = event => {
+    const { checked } = event.target;
+    setUseTemplateDocument(checked);
+  };
+
+  const handleArchivedChange = event => {
+    const { checked } = event.target;
+    setPublicContext(prevState => ({ ...prevState, archived: checked }));
+  };
+
+  const handleVerifiedChange = event => {
+    const { checked } = event.target;
+    setPublicContext(prevState => ({ ...prevState, verified: checked }));
+  };
+
+  const handleReviewChange = event => {
+    const { value } = event.target;
+    setPublicContext(prevState => ({ ...prevState, review: value }));
+  };
+
+  const handleAllowedOpenContributionChange = value => {
+    setPublicContext(prevState => ({ ...prevState, allowedOpenContribution: value }));
+  };
+
+  const handleFinish = async () => {
+    const invalidFieldsExist = Object.values(validationState).some(field => field.validateStatus === 'error');
+    if (invalidFieldsExist) {
+      return;
+    }
+
     try {
       setIsSaving(true);
-
-      const documentRoomId = determineDocumentRoomId({
-        mode,
-        initialDocumentMetadata,
-        documentToClone,
-        cloningStrategy,
-        cloningTargetRoomId
-      });
 
       const actualTemplateDocumentId = determineActualTemplateDocumentId({
         mode,
@@ -190,9 +261,7 @@ function DocumentMetadataModal({
         description,
         language,
         tags,
-        review,
-        verified,
-        allowedOpenContribution
+        publicContext: documentRoomId ? null : publicContext
       };
 
       const savedDocuments = [];
@@ -228,58 +297,8 @@ function DocumentMetadataModal({
     }
   };
 
-  const renderSequenceCountFormInput = generateSequence => {
-    if (!generateSequence) {
-      return null;
-    }
-    return (
-      <FormItem name="sequenceCount" label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
-        <InputNumber className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
-      </FormItem>
-    );
-  };
-
-  const renderCloningTargetRoomIdFormInput = cloningStrategy => {
-    if (cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom) {
-      return null;
-    }
-
-    return (
-      <FormItem name="cloningTargetRoomId" label={t('targetRoom')} rules={validationRules.roomValidationRules}>
-        <Select
-          loading={isLoadingRooms}
-          options={cloningOptions.roomOptions}
-          notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
-          />
-      </FormItem>
-    );
-  };
-
-  const renderAllowedOpenContributionFormItem = (cloningStrategy, cloningTargetRoomId) => {
-    const documentRoomId = determineDocumentRoomId({
-      mode,
-      initialDocumentMetadata,
-      documentToClone,
-      cloningStrategy,
-      cloningTargetRoomId
-    });
-    const noTargetRoomSelectedYet = cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && !cloningTargetRoomId;
-
-    if (documentRoomId || noTargetRoomSelectedYet) {
-      return null;
-    }
-
-    return (
-      <FormItem
-        name="allowedOpenContribution"
-        label={<Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>}
-        >
-        <Select>
-          {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
-        </Select>
-      </FormItem>
-    );
-  };
+  const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
+    && hasPublicContextPermissions && !!publicContext;
 
   return (
     <Modal
@@ -291,88 +310,107 @@ function DocumentMetadataModal({
       okButtonProps={{ loading: isSaving }}
       okText={getDialogOkButtonText(mode, t)}
       >
-      <Form
-        ref={formRef}
-        layout="vertical"
-        name="document-metadata-form"
-        initialValues={initialValues}
-        onValuesChange={handleValuesChange}
-        onFinish={handleFinish}
-        >
-        <FormItem
-          name="cloningStrategy"
-          label={t('cloningStrategy')}
-          hidden={mode !== DOCUMENT_METADATA_MODAL_MODE.clone || cloningOptions.strategyOptions.length <= 1}
-          >
-          <Select options={cloningOptions.strategyOptions} />
+      <Form ref={formRef} layout="vertical" onFinish={handleFinish} >
+        {canSelectCloningStrategy && (
+          <FormItem label={t('cloningStrategy')} >
+            <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
+          </FormItem>
+        )}
+        {canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
+          <FormItem label={t('common:room')} {...validationState.cloningTargetRoomId}>
+            <Select
+              value={cloningTargetRoomId}
+              loading={isLoadingRooms}
+              onChange={handleCloningTargetRoomIdChange}
+              options={cloningOptions.roomOptions}
+              notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
+              />
+          </FormItem>
+        )}
+        <FormItem label={t('common:title')} {...validationState.title}>
+          <Input value={title} onChange={handleTitleChange} />
         </FormItem>
-        <FormItem
-          noStyle
-          hidden={mode !== DOCUMENT_METADATA_MODAL_MODE.clone}
-          dependencies={['cloningStrategy']}
-          >
-          {({ getFieldValue }) => renderCloningTargetRoomIdFormInput(getFieldValue('cloningStrategy'))}
+        <FormItem label={t('common:description')} {...validationState.description}>
+          <NeverScrollingTextArea value={description} onChange={handleDescriptionChange} />
         </FormItem>
-        <FormItem name="title" label={t('common:title')} rules={validationRules.titleValidationRules}>
-          <Input />
+        <FormItem label={t('common:language')}>
+          <LanguageSelect value={language} onChange={handleLanguageChange} />
         </FormItem>
-        <FormItem name="description" label={t('common:description')} rules={validationRules.descriptionValidationRules}>
-          <NeverScrollingTextArea />
+        <FormItem label={t('common:slug')} {...validationState.slug}>
+          <Input value={slug} onChange={handleSlugChange} />
         </FormItem>
-        <FormItem name="language" label={t('common:language')}>
-          <LanguageSelect />
-        </FormItem>
-        <FormItem name="slug" label={t('common:slug')} rules={validationRules.slugValidationRules}>
-          <Input />
-        </FormItem>
-        <FormItem name="tags" label={t('common:tags')} rules={validationRules.tagsValidationRules}>
+        <FormItem label={t('common:tags')} {...validationState.tags}>
           <Select
             mode="tags"
-            tokenSeparators={[' ', '\t']}
-            onSearch={handleTagSearch}
-            notFoundContent={null}
-            options={tagOptions}
+            value={tags}
             autoComplete="none"
+            options={tagOptions}
+            notFoundContent={null}
+            onSearch={handleTagSearch}
+            onChange={handleTagsChange}
+            tokenSeparators={[' ', '\t']}
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        <FormItem name="generateSequence" valuePropName="checked" hidden={!canCreateSequences}>
-          <Checkbox>
-            <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
-          </Checkbox>
-        </FormItem>
-        <FormItem
-          noStyle
-          hidden={!canCreateSequences}
-          dependencies={['generateSequence']}
-          >
-          {({ getFieldValue }) => renderSequenceCountFormInput(getFieldValue('generateSequence'))}
-        </FormItem>
-        <FormItem name="useTemplateDocument" valuePropName="checked" hidden={!canUseTemplateDocument}>
-          <Checkbox>{t('useTemplateDocument')}</Checkbox>
-        </FormItem>
-        {(canReview || canVerify) && (
-          <Divider className="DocumentMetadataModal-divider" />
+        {canCreateSequence && (
+          <FormItem>
+            <Checkbox checked={generateSequence} onChange={handleGenerateSequenceChange}>
+              <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
+            </Checkbox>
+          </FormItem>
         )}
-        <FormItem name="review" label={t('review')} hidden={!canReview}>
-          <NeverScrollingTextArea />
-        </FormItem>
-        <FormItem
-          noStyle
-          hidden={!canRestrictOpenContribution}
-          dependencies={['cloningStrategy', 'cloningTargetRoomId']}
-          >
-          {({ getFieldValue }) => renderAllowedOpenContributionFormItem(
-            getFieldValue('cloningStrategy'),
-            getFieldValue('cloningTargetRoomId')
-          )}
-        </FormItem>
-
-        <FormItem name="verified" valuePropName="checked" hidden={!canVerify}>
-          <Checkbox>
-            <Info tooltip={t('verifiedInfo')} iconAfterContent>{t('verified')}</Info>
-          </Checkbox>
-        </FormItem>
+        {canCreateSequence && generateSequence && (
+          <FormItem label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
+            <InputNumber value={sequenceCount} onChange={handleSequenceCountChange} className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
+          </FormItem>
+        )}
+        {canUseTemplateDocument && (
+          <FormItem>
+            <Checkbox checked={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
+              <span className="u-label">{t('useTemplateDocument')}</span>
+            </Checkbox>
+          </FormItem>
+        )}
+        {isDocInPublicContext && (
+          <Collapse>
+            <CollapsePanel header={t('publicContextHeader')}>
+              {publicContextPermissions.canArchive && (
+              <FormItem>
+                <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
+                  <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
+                </Checkbox>
+              </FormItem>
+              )}
+              {publicContextPermissions.canVerify && (
+              <FormItem>
+                <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
+                  <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
+                </Checkbox>
+              </FormItem>
+              )}
+              {publicContextPermissions.canReview && (
+                <FormItem
+                  label={
+                    <Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>
+                  }
+                  >
+                  <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
+                </FormItem>
+              )}
+              {publicContextPermissions.canRestrictOpenContribution && (
+                <FormItem
+                  label={
+                    <Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>
+                  }
+                  >
+                  <Select value={publicContext.allowedOpenContribution} onChange={handleAllowedOpenContributionChange}>
+                    {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
+                  </Select>
+                </FormItem>
+              )}
+            </CollapsePanel>
+          </Collapse>
+        )}
       </Form>
     </Modal>
   );

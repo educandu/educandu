@@ -57,7 +57,11 @@ describe('amb-service', () => {
 
     describe('when there are no unarchived documents', () => {
       beforeEach(async () => {
-        document1 = await createTestDocument(container, creatorUser, { title: 'Archived document', archived: true });
+        document1 = await createTestDocument(container, creatorUser, {
+          title: 'Archived document',
+          roomId: null,
+          publicContext: { archived: true }
+        });
 
         result = await sut.getDocumentsAmbMetadata({ origin });
       });
@@ -73,14 +77,17 @@ describe('amb-service', () => {
           title: 'Bach concert',
           description: 'Concert for piano and orchestra',
           tags: ['Music', 'Bach', 'Piano', 'Orchestra'],
-          language: 'en'
+          language: 'en',
+          publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document1._id, user: contributorUser, data: { ...document1 } });
         document2 = await createTestDocument(container, creatorUser, {
           title: 'Beethoven concert',
           description: 'Draft document',
           tags: [],
-          language: 'en'
+          language: 'en',
+          roomId: null,
+          publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
       });

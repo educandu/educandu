@@ -15,17 +15,31 @@ export const patchDocSectionsBodySchema = joi.object({
   sections: joi.array().items(sectionSchema)
 });
 
+export const publicContextSchema = joi.object({
+  archived: joi.boolean().required(),
+  verified: joi.boolean().required(),
+  review: joi.string().allow(null).allow('').required(),
+  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required()
+});
+
+export const publicContextConditionalSchema = joi.alternatives().conditional(
+  'roomId',
+  {
+    is: idOrKeySchema,
+    then: null,
+    otherwise: publicContextSchema.required()
+  }
+);
+
 export const createDocumentDataBodySchema = joi.object({
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow(null).allow(''),
-  verified: joi.boolean(),
-  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)),
   sections: joi.array().items(sectionSchema),
-  roomId: idOrKeySchema.allow(null)
+  roomId: idOrKeySchema.allow(null).required(),
+  publicContext: publicContextConditionalSchema
 });
 
 export const updateDocumentMetadataBodySchema = joi.object({
@@ -34,9 +48,7 @@ export const updateDocumentMetadataBodySchema = joi.object({
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow(null).allow(''),
-  verified: joi.boolean(),
-  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION))
+  publicContext: publicContextSchema.allow(null).required()
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -82,10 +94,7 @@ export const documentRevisionDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   restoredFrom: joi.string().allow(null).required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow('').required(),
-  verified: joi.boolean().required(),
-  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required(),
-  archived: joi.boolean().required(),
+  publicContext: publicContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()
 });
 
@@ -105,10 +114,7 @@ export const documentDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   contributors: joi.array().items(joi.string()).required(),
   tags: joi.array().items(joi.string()).required(),
-  review: joi.string().allow('').required(),
-  verified: joi.boolean().required(),
-  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required(),
-  archived: joi.boolean().required(),
+  publicContext: publicContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()
 });
 

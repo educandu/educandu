@@ -58,8 +58,8 @@ const VIEW = {
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
-  const review = docRevision ? docRevision.review : doc.review;
-  const archived = docRevision ? docRevision.archived : doc.archived;
+  const review = docRevision ? docRevision.publicContext?.review : doc.publicContext?.review;
+  const archived = docRevision ? docRevision.publicContext?.archived : doc.publicContext?.archived;
 
   if (archived) {
     alerts.push({ message: t('common:archivedAlert') });
@@ -495,19 +495,19 @@ function Doc({ initialState, PageTemplate }) {
             </Breadcrumb>
           )}
           <div className="DocPage-badges">
-            {!!doc.verified && (
+            {!!doc.publicContext?.verified && (
               <Tooltip title={t('common:verifiedDocumentBadge')}>
                 <LikeOutlined className="u-verified-badge" />
               </Tooltip>
             )}
-            {!room && (
-              <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.allowedOpenContribution}`)}>
+            {!!doc.publicContext?.allowedOpenContribution && (
+              <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.publicContext.allowedOpenContribution}`)}>
                 <div className="u-allowed-open-contribution-badge">
-                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
+                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
                     && <AllowedOpenContributionNoneIcon />}
-                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
                     && <AllowedOpenContributionContentIcon />}
-                  {doc.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
                     && <AllowedOpenContributionMetadataAndContentIcon />}
                 </div>
               </Tooltip>
