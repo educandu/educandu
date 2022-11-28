@@ -4,6 +4,7 @@ import Database from '../stores/database.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import {
   createTestDocument,
+  createTestRoom,
   destroyTestEnvironment,
   pruneTestEnvironment,
   setupTestEnvironment,
@@ -55,7 +56,7 @@ describe('amb-service', () => {
       contributorUser = await setupTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor' });
     });
 
-    describe('when there are no unarchived documents', () => {
+    describe('when there are no unarchived public documents', () => {
       beforeEach(async () => {
         document1 = await createTestDocument(container, creatorUser, {
           title: 'Archived document',
@@ -71,7 +72,7 @@ describe('amb-service', () => {
       });
     });
 
-    describe('when there are unarchived documents', () => {
+    describe('when there are unarchived public documents', () => {
       beforeEach(async () => {
         document1 = await createTestDocument(container, creatorUser, {
           title: 'Bach concert',
@@ -90,6 +91,16 @@ describe('amb-service', () => {
           publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
+        const room = createTestRoom(container);
+        await createTestDocument(container, creatorUser, {
+          title: 'Private closed-doors concert',
+          description: 'Room document',
+          tags: [],
+          language: 'en',
+          roomId: room._id,
+          publicContext: null,
+          roomContext: { draft: false }
+        });
       });
 
       describe('and there are no settings or serverConfig', () => {

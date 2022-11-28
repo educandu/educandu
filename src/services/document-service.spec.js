@@ -71,6 +71,9 @@ describe('document-service', () => {
         slug: 'my-doc',
         language: 'en',
         roomId: room._id,
+        roomContext: {
+          draft: false
+        },
         publicContext: null,
         sections: [
           {
@@ -275,6 +278,7 @@ describe('document-service', () => {
         ],
         tags: ['tag-1'],
         roomId: null,
+        roomContext: null,
         publicContext: {
           archived: false,
           verified: false,
@@ -697,6 +701,7 @@ describe('document-service', () => {
           language: 'en',
           sections: [],
           roomId: null,
+          roomContext: null,
           publicContext: {
             archived: false,
             verified: true,
@@ -738,6 +743,7 @@ describe('document-service', () => {
           language: 'en',
           sections: [],
           roomId: null,
+          roomContext: null,
           publicContext: {
             archived: true,
             verified: true,
@@ -1010,6 +1016,7 @@ describe('document-service', () => {
         tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
         language: 'en',
         roomId: null,
+        roomContext: null,
         publicContext: {
           archived: false,
           verified: false,
@@ -1026,6 +1033,7 @@ describe('document-service', () => {
         tags: ['Music', 'Instructor', 'Goga', '2'],
         language: 'en',
         roomId: null,
+        roomContext: null,
         publicContext: {
           archived: false,
           verified: false,
@@ -1042,6 +1050,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: null,
+        roomContext: null,
         publicContext: {
           archived: false,
           verified: true,
@@ -1058,6 +1067,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: null,
+        roomContext: null,
         publicContext: {
           archived: true,
           verified: false,
@@ -1075,6 +1085,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: room._id,
+        roomContext: { draft: false },
         publicContext: null
       });
     });

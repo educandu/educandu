@@ -25,9 +25,22 @@ export const publicContextSchema = joi.object({
 export const publicContextConditionalSchema = joi.alternatives().conditional(
   'roomId',
   {
+    is: null,
+    then: publicContextSchema.required(),
+    otherwise: null
+  }
+);
+
+export const roomContextSchema = joi.object({
+  draft: joi.boolean().required()
+});
+
+export const roomContextConditionalSchema = joi.alternatives().conditional(
+  'roomId',
+  {
     is: idOrKeySchema,
-    then: null,
-    otherwise: publicContextSchema.required()
+    then: roomContextSchema.required(),
+    otherwise: null
   }
 );
 
@@ -39,7 +52,8 @@ export const createDocumentDataBodySchema = joi.object({
   tags: joi.array().items(joi.string()).required(),
   sections: joi.array().items(sectionSchema),
   roomId: idOrKeySchema.allow(null).required(),
-  publicContext: publicContextConditionalSchema
+  publicContext: publicContextConditionalSchema,
+  roomContext: roomContextConditionalSchema
 });
 
 export const updateDocumentMetadataBodySchema = joi.object({
@@ -48,7 +62,8 @@ export const updateDocumentMetadataBodySchema = joi.object({
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
-  publicContext: publicContextSchema.allow(null).required()
+  publicContext: publicContextSchema.allow(null).required(),
+  roomContext: roomContextSchema.allow(null).required()
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -95,6 +110,7 @@ export const documentRevisionDBSchema = joi.object({
   restoredFrom: joi.string().allow(null).required(),
   tags: joi.array().items(joi.string()).required(),
   publicContext: publicContextConditionalSchema,
+  roomContext: roomContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()
 });
 
@@ -115,6 +131,7 @@ export const documentDBSchema = joi.object({
   contributors: joi.array().items(joi.string()).required(),
   tags: joi.array().items(joi.string()).required(),
   publicContext: publicContextConditionalSchema,
+  roomContext: roomContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()
 });
 
