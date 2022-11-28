@@ -317,7 +317,7 @@ function DocumentMetadataModal({
           </FormItem>
         )}
         {canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
-          <FormItem label={t('targetRoom')} {...validationState.cloningTargetRoomId}>
+          <FormItem label={t('common:room')} {...validationState.cloningTargetRoomId}>
             <Select
               value={cloningTargetRoomId}
               loading={isLoadingRooms}

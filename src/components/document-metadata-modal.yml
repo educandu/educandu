@@ -7,6 +7,9 @@ cloneDocument:
 editDocument:
   en: Edit document metadata
   de: Dokument-Metadaten bearbeiten
+roomRequired:
+  en: Please specify a room
+  de: Bitte gib einen Raum an
 titleRequired:
   en: Please specify a document title
   de: Bitte gib einen Dokument-Titel an
@@ -92,9 +95,6 @@ cloningStrategy_crossCloneIntoRoom_fromPublicArea:
 cloningStrategy_crossCloneIntoPublicArea:
   en: in the public area
   de: im offenen Bereich
-targetRoom:
-  en: Please select a room
-  de: Bitte wähle einen Raum aus
 noAvailableRooms:
   en: No available rooms
   de: Keine Räume verfügbar

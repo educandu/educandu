@@ -71,7 +71,8 @@ export function getValidationState({ cloningStrategy, cloningTargetRoomId, title
   return {
     cloningTargetRoomId: {
       required: true,
-      validateStatus: isValidCloningTargetRoomId ? 'success' : 'error'
+      validateStatus: isValidCloningTargetRoomId ? 'success' : 'error',
+      help: isValidCloningTargetRoomId ? null : t('roomRequired')
     },
     title: {
       required: true,

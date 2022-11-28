@@ -316,6 +316,7 @@
       "newDocument": "New document",
       "cloneDocument": "Clone document",
       "editDocument": "Edit document metadata",
+      "roomRequired": "Please specify a room",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "invalidTags": "Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}",
@@ -341,7 +342,6 @@
       "cloningStrategy_crossCloneIntoRoom_fromRoom": "in another room",
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in a room",
       "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
-      "targetRoom": "Please select a room",
       "noAvailableRooms": "No available rooms",
       "publicContextHeader": "Advanced settings"
     }
@@ -353,6 +353,7 @@
       "newDocument": "Neues Dokument",
       "cloneDocument": "Dokument klonen",
       "editDocument": "Dokument-Metadaten bearbeiten",
+      "roomRequired": "Bitte gib einen Raum an",
       "titleRequired": "Bitte gib einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "invalidTags": "Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein",
@@ -378,7 +379,6 @@
       "cloningStrategy_crossCloneIntoRoom_fromRoom": "in einem anderen Raum",
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in einem Raum",
       "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
-      "targetRoom": "Bitte wähle einen Raum aus",
       "noAvailableRooms": "Keine Räume verfügbar",
       "publicContextHeader": "Erweiterte Einstellungen"
     }
