@@ -123,7 +123,7 @@ export function useNumberFormat() {
 export function useNumberWithUnitFormat({ unit, useGrouping = true }) {
   const { uiLocale } = useLocale();
   return useMemo(() => {
-    const unitSeparator = uiLocale === 'de' ? NO_BREAK_SPACE : '';
+    const unitSeparator = uiLocale === 'de-DE' ? NO_BREAK_SPACE : '';
     const numberFormatter = new Intl.NumberFormat(uiLocale, { useGrouping });
     return value => `${numberFormatter.format(value)}${unitSeparator}${unit}`;
   }, [uiLocale, unit, useGrouping]);
