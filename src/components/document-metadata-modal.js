@@ -47,6 +47,8 @@ const getDefaultPublicContext = () => (
   }
 );
 
+const getDefaultRoomContext = () => ({ draft: false });
+
 function DocumentMetadataModal({
   isVisible,
   mode,
@@ -75,6 +77,7 @@ function DocumentMetadataModal({
   const [tagOptions, setTagOptions] = useState([]);
   const [language, setLanguage] = useState(null);
   const [publicContext, setPublicContext] = useState(null);
+  const [roomContext, setRoomContext] = useState(null);
 
   const [generateSequence, setGenerateSequence] = useState(false);
   const [sequenceCount, setSequenceCount] = useState(0);
@@ -120,8 +123,10 @@ function DocumentMetadataModal({
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
     if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
       setPublicContext(getDefaultPublicContext());
+      setRoomContext(getDefaultRoomContext());
     } else {
       setPublicContext(cloneDeep(initialDocumentMetadata.publicContext) || getDefaultPublicContext());
+      setRoomContext(cloneDeep(initialDocumentMetadata.roomContext) || getDefaultRoomContext());
     }
 
     setGenerateSequence(false);
@@ -151,6 +156,7 @@ function DocumentMetadataModal({
 
   useEffect(() => {
     setPublicContext(getDefaultPublicContext());
+    setRoomContext(getDefaultRoomContext());
   }, [cloningStrategy]);
 
   const handleTagSearch = async typedInTag => {
@@ -239,6 +245,11 @@ function DocumentMetadataModal({
     setPublicContext(prevState => ({ ...prevState, allowedOpenContribution: value }));
   };
 
+  const handleDraftChange = event => {
+    const { checked } = event.target;
+    setRoomContext(prevState => ({ ...prevState, draft: checked }));
+  };
+
   const handleFinish = async () => {
     const invalidFieldsExist = Object.values(validationState).some(field => field.validateStatus === 'error');
     if (invalidFieldsExist) {
@@ -261,7 +272,8 @@ function DocumentMetadataModal({
         description,
         language,
         tags,
-        publicContext: documentRoomId ? null : publicContext
+        publicContext: documentRoomId ? null : publicContext,
+        roomContext: documentRoomId ? roomContext : null
       };
 
       const savedDocuments = [];
@@ -299,6 +311,7 @@ function DocumentMetadataModal({
 
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
+  const isDocInRoomContext = !!documentRoomId && !!roomContext;
 
   return (
     <Modal
@@ -410,6 +423,13 @@ function DocumentMetadataModal({
               )}
             </CollapsePanel>
           </Collapse>
+        )}
+        {!!isDocInRoomContext && (
+          <FormItem>
+            <Checkbox checked={roomContext.draft} onChange={handleDraftChange}>
+              <Info tooltip={t('draftInfo')} iconAfterContent> <span className="u-label">{t('draft')}</span></Info>
+            </Checkbox>
+          </FormItem>
         )}
       </Form>
     </Modal>

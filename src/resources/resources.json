@@ -343,7 +343,9 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in a room",
       "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
       "noAvailableRooms": "No available rooms",
-      "publicContextHeader": "Advanced settings"
+      "publicContextHeader": "Advanced settings",
+      "draft": "Mark as draft",
+      "draftInfo": "Draft documents can only be accessed and edited by the room owner"
     }
   },
   {
@@ -380,7 +382,9 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in einem Raum",
       "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
       "noAvailableRooms": "Keine Räume verfügbar",
-      "publicContextHeader": "Erweiterte Einstellungen"
+      "publicContextHeader": "Erweiterte Einstellungen",
+      "draft": "Als Entwurf markieren",
+      "draftInfo": "Entwurfsdokumente können nur vom Raumbesitzer zugegriffen und bearbeiten werden"
     }
   },
   {

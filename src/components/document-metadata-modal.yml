@@ -101,3 +101,9 @@ noAvailableRooms:
 publicContextHeader:
   en: Advanced settings
   de: Erweiterte Einstellungen
+draft:
+  en: Mark as draft
+  de: Als Entwurf markieren
+draftInfo:
+  en: Draft documents can only be accessed and edited by the room owner
+  de: Entwurfsdokumente können nur vom Raumbesitzer zugegriffen und bearbeiten werden
