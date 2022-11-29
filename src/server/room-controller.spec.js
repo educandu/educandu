@@ -489,7 +489,7 @@ describe('room-controller', () => {
         slug: 'room-slug',
         owner: 'owner',
         documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
-        documents: [uniqueId.create()]
+        documents: [uniqueId.create(), uniqueId.create()]
       };
       mappedRoom = { ...room };
     });
@@ -518,7 +518,10 @@ describe('room-controller', () => {
           user: { _id: 'owner' }
         };
 
-        documents = [{ _id: room.documents[0] }];
+        documents = [
+          { _id: room.documents[0], roomContext: { draft: false } },
+          { _id: room.documents[1], roomContext: { draft: true } }
+        ];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
         mappedDocuments = cloneDeep(documents);
@@ -557,7 +560,7 @@ describe('room-controller', () => {
         sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
-      it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
+      it('should call mapDocsOrRevisions with the documents returned by the service', () => {
         sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
       });
 
@@ -575,6 +578,7 @@ describe('room-controller', () => {
     describe('when the request is made by a room member', () => {
       let documents;
       let mappedInvitations;
+      let mappedNonDraftDocuments;
 
       beforeEach(async () => {
         request = {
@@ -582,8 +586,11 @@ describe('room-controller', () => {
           user: { _id: 'member' }
         };
 
-        documents = [{ _id: room.documents[0] }];
-        mappedDocuments = cloneDeep(documents);
+        documents = [
+          { _id: room.documents[0], roomContext: { draft: false } },
+          { _id: room.documents[1], roomContext: { draft: true } }
+        ];
+        mappedNonDraftDocuments = [cloneDeep(documents[0])];
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
@@ -591,7 +598,7 @@ describe('room-controller', () => {
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
-        clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
+        clientDataMappingService.mapDocsOrRevisions.returns(mappedNonDraftDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
         await sut.handleGetRoomPage(request, {});
@@ -613,8 +620,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
-      it('should call mapDocsOrRevisions with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
+      it('should call mapDocsOrRevisions with the non-draft documents returned by the service', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [documents[0]]);
       });
 
       it('should call pageRenderer with the right parameters', () => {
@@ -623,7 +630,7 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
+          { room: mappedRoom, documents: mappedNonDraftDocuments, invitations: mappedInvitations }
         );
       });
     });
