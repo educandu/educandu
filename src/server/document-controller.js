@@ -135,6 +135,10 @@ class DocumentController {
       if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
         throw new Forbidden();
       }
+
+      if (data.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
     }
 
     const newDocument = await this.documentService.createDocument({ data, user });
@@ -295,6 +299,10 @@ class DocumentController {
       const room = await this.roomService.getRoomById(document.roomId);
 
       if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+
+      if (document.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
         throw new Forbidden();
       }
     }
