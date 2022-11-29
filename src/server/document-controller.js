@@ -102,6 +102,10 @@ class DocumentController {
       if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
         throw new Forbidden();
       }
+
+      if (doc.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
     } else {
       room = null;
     }

@@ -400,6 +400,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = user._id;
         room.members = [];
 
@@ -425,6 +426,68 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        doc.roomContext = { draft: false };
+        room.owner = uniqueId.create();
+        room.members = [];
+
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument]);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document belongs to a room, is in draft state, and the user is a room member', () => {
+      beforeEach(() => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        doc.roomContext = { draft: true };
+        room.owner = uniqueId.create();
+        room.members = [{ userId: user._id }];
+
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument]);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document belongs to a room, is in draft state, and the user is the room owner', () => {
+      beforeEach(() => {
         templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
@@ -435,6 +498,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: true };
         room.owner = user._id;
         room.members = [];
 
@@ -472,6 +536,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = user._id;
         room.members = [];
 
@@ -509,6 +574,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
 
