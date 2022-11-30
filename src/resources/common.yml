@@ -477,3 +477,6 @@ more:
 less:
   en: less ...
   de: weniger ...
+draft:
+  en: Draft
+  de: Entwurf
