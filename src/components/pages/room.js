@@ -55,7 +55,9 @@ function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisi
 }
 
 function getSortedDocuments(room, documents) {
-  return room.documents.map(documentId => documents.find(doc => doc._id === documentId));
+  return room.documents
+    .map(documentId => documents.find(doc => doc._id === documentId))
+    .filter(doc => doc);
 }
 
 export default function Room({ PageTemplate, initialState }) {
