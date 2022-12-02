@@ -561,9 +561,24 @@ class DocumentService {
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 
+  // eslint-disable-next-line complexity
   _buildDocumentRevision(data) {
     const mappedSections = data.sections?.map(section => this._buildSection(section)) || [];
     validateSections(mappedSections, this.pluginRegistry);
+
+    const publicContext = data.roomId
+      ? null
+      : {
+        archived: data.publicContext?.archived || false,
+        verified: data.publicContext?.verified || false,
+        review: data.publicContext?.review || '',
+        allowedOpenContribution: data.publicContext?.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+      };
+    const roomContext = data.roomId
+      ? {
+        draft: data.roomContext?.draft || false
+      }
+      : null;
 
     return {
       _id: data._id || uniqueId.create(),
@@ -579,14 +594,8 @@ class DocumentService {
       language: data.language || '',
       sections: mappedSections,
       tags: data.tags || [],
-      publicContext: data.roomId
-        ? null
-        : {
-          archived: data.publicContext?.archived || false,
-          verified: data.publicContext?.verified || false,
-          review: data.publicContext?.review || '',
-          allowedOpenContribution: data.publicContext?.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-        },
+      publicContext,
+      roomContext,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
@@ -624,7 +633,8 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
-      publicContext: lastRevision.publicContext ? { ...lastRevision.publicContext } : null,
+      publicContext: cloneDeep(lastRevision.publicContext) || null,
+      roomContext: cloneDeep(lastRevision.roomContext) || null,
       cdnResources: lastRevision.cdnResources
     };
   }

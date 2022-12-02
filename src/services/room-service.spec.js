@@ -341,14 +341,12 @@ describe('room-service', () => {
     let roomId;
     let document1;
     let document2;
+    let document3;
 
     beforeEach(async () => {
       lock = { key: 'room' };
       roomId = uniqueId.create();
-      document1 = await createTestDocument(container, myUser, {});
-      document2 = await createTestDocument(container, myUser, {});
-
-      await roomStore.saveRoom({
+      const room = {
         _id: roomId,
         name: 'my room',
         slug: 'my-slug',
@@ -359,8 +357,14 @@ describe('room-service', () => {
         updatedOn: new Date(),
         owner: myUser._id,
         members: [],
-        documents: [document1._id, document2._id]
-      });
+        documents: []
+      };
+
+      await roomStore.saveRoom(room);
+      document1 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false } });
+      document2 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false } });
+      document3 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: true } });
+      await roomStore.saveRoom({ ...room, documents: [document1._id, document2._id, document3._id] });
 
       lockStore.takeRoomLock.resolves(lock);
       lockStore.releaseLock.resolves();
@@ -388,13 +392,31 @@ describe('room-service', () => {
       });
     });
 
-    describe('when the provided document ids are valid', () => {
+    describe('when the provided document ids is a reordered list of the ids of the non draft documents', () => {
       beforeEach(async () => {
         result = await sut.updateRoomDocumentsOrder(roomId, [document2._id, document1._id]);
       });
 
-      it('should update the room documents order', () => {
-        expect(result.documents).toEqual([document2._id, document1._id]);
+      it('should update the room documents order (having draft documents at the end)', () => {
+        expect(result.documents).toEqual([document2._id, document1._id, document3._id]);
+      });
+
+      it('should take a lock on the room', () => {
+        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+      });
+
+      it('should release the lock on the room', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
+      });
+    });
+
+    describe('when the provided document ids is a reordered list of the ids of the draft and non draft documents', () => {
+      beforeEach(async () => {
+        result = await sut.updateRoomDocumentsOrder(roomId, [document3._id, document2._id, document1._id]);
+      });
+
+      it('should update the room documents order (having draft documents at the end)', () => {
+        expect(result.documents).toEqual([document2._id, document1._id, document3._id]);
       });
 
       it('should take a lock on the room', () => {

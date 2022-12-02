@@ -208,7 +208,13 @@ export function createTestDocument(container, user, data) {
           review: '',
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
           ...data.publicContext
+        },
+      roomContext: data.roomId
+        ? {
+          draft: false,
+          ...data.roomContext
         }
+        : null
     },
     user
   });
@@ -242,7 +248,13 @@ export async function createTestRevisions(container, user, revisions) {
           review: '',
           allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
           ...revision.publicContext
+        },
+      roomContext: revision.roomId
+        ? {
+          draft: false,
+          ...revision.roomContext
         }
+        : null
     };
 
     lastCreatedDocument = lastCreatedDocument

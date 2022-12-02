@@ -343,7 +343,9 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in a room",
       "cloningStrategy_crossCloneIntoPublicArea": "in the public area",
       "noAvailableRooms": "No available rooms",
-      "publicContextHeader": "Advanced settings"
+      "publicContextHeader": "Advanced settings",
+      "draft": "Mark as draft",
+      "draftInfo": "Draft documents can only be accessed and edited by the room owner"
     }
   },
   {
@@ -380,7 +382,9 @@
       "cloningStrategy_crossCloneIntoRoom_fromPublicArea": "in einem Raum",
       "cloningStrategy_crossCloneIntoPublicArea": "im offenen Bereich",
       "noAvailableRooms": "Keine Räume verfügbar",
-      "publicContextHeader": "Erweiterte Einstellungen"
+      "publicContextHeader": "Erweiterte Einstellungen",
+      "draft": "Als Entwurf markieren",
+      "draftInfo": "Entwurfsdokumente können nur vom Raumbesitzer abgerufen und bearbeiten werden"
     }
   },
   {
@@ -2477,7 +2481,8 @@
       "searchOngoing": "Searching ...",
       "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n",
       "more": "more ...",
-      "less": "less ..."
+      "less": "less ...",
+      "draft": "Draft"
     }
   },
   {
@@ -2636,7 +2641,8 @@
       "searchOngoing": "Suche ...",
       "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n",
       "more": "mehr ...",
-      "less": "weniger ..."
+      "less": "weniger ...",
+      "draft": "Entwurf"
     }
   },
   {

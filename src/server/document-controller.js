@@ -102,6 +102,10 @@ class DocumentController {
       if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
         throw new Forbidden();
       }
+
+      if (doc.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
     } else {
       room = null;
     }
@@ -129,6 +133,10 @@ class DocumentController {
       }
 
       if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+
+      if (data.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
         throw new Forbidden();
       }
     }
@@ -291,6 +299,10 @@ class DocumentController {
       const room = await this.roomService.getRoomById(document.roomId);
 
       if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+        throw new Forbidden();
+      }
+
+      if (document.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
         throw new Forbidden();
       }
     }

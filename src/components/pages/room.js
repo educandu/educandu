@@ -55,7 +55,9 @@ function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisi
 }
 
 function getSortedDocuments(room, documents) {
-  return room.documents.map(documentId => documents.find(doc => doc._id === documentId));
+  return room.documents
+    .map(documentId => documents.find(doc => doc._id === documentId))
+    .filter(doc => doc);
 }
 
 export default function Room({ PageTemplate, initialState }) {
@@ -219,7 +221,7 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const renderDocumentMenu = (doc, index) => {
+  const renderDocumentMenu = (doc, index, documentsSubset) => {
     const items = [
       {
         key: 'clone',
@@ -230,13 +232,13 @@ export default function Room({ PageTemplate, initialState }) {
         key: 'moveUp',
         label: t('common:moveUp'),
         icon: <MoveUpIcon className="u-dropdown-icon" />,
-        disabled: index === 0
+        disabled: doc.roomContext.draft || index === 0
       },
       {
         key: 'moveDown',
         label: t('common:moveDown'),
         icon: <MoveDownIcon className="u-dropdown-icon" />,
-        disabled: index === documents.length - 1
+        disabled: doc.roomContext.draft || index === documentsSubset.length - 1
       }
     ];
 
@@ -257,7 +259,7 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderDocument = (doc, index) => {
+  const renderDocument = (doc, index, documentsSubset) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
 
     return (
@@ -265,7 +267,10 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-documentRowTitle">
           <a href={url}>{doc.title}</a>
         </div>
-        {isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index)}
+        <div className="RoomPage-documentRowMenu">
+          {doc.roomContext.draft && (<div className="RoomPage-documentRowDraftLabel">{t('common:draft')}</div>)}
+          {isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index, documentsSubset)}
+        </div>
       </div>
     );
   };
@@ -330,25 +335,32 @@ export default function Room({ PageTemplate, initialState }) {
     </Card>
   );
 
-  const renderRoomDocumentsCard = () => (
-    <Card
-      className="RoomPage-card"
-      actions={isUserRoomOwnerOrInvitedCollaborator && [
-        <Button
-          className="RoomPage-cardButton"
-          key="createDocument"
-          type="primary"
-          shape="circle"
-          icon={<PlusOutlined />}
-          size="medium"
-          onClick={() => handleNewDocumentClick()}
-          />
-      ]}
-      >
-      {room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
-      {documents.length ? documents.map(renderDocument) : t('documentsPlaceholder')}
-    </Card>
-  );
+  const renderRoomDocumentsCard = () => {
+    const nonDraftDocuments = documents.filter(doc => !doc.roomContext.draft);
+    const draftDocuments = documents.filter(doc => doc.roomContext.draft);
+
+    return (
+      <Card
+        className="RoomPage-card"
+        actions={isUserRoomOwnerOrInvitedCollaborator && [
+          <Button
+            className="RoomPage-cardButton"
+            key="createDocument"
+            type="primary"
+            shape="circle"
+            icon={<PlusOutlined />}
+            size="medium"
+            onClick={() => handleNewDocumentClick()}
+            />
+        ]}
+        >
+        {room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
+        {!documents.length && t('documentsPlaceholder')}
+        {nonDraftDocuments.map((doc, index) => renderDocument(doc, index, nonDraftDocuments))}
+        {draftDocuments.map((doc, index) => renderDocument(doc, index, draftDocuments))}
+      </Card>
+    );
+  };
 
   const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
   const renderOwnerLink = () => (

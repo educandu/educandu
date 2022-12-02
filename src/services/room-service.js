@@ -129,19 +129,27 @@ export default class RoomService {
     try {
       lock = await this.lockStore.takeRoomLock(roomId);
       const room = await this.roomStore.getRoomById(roomId);
-      const divergingDocumentIds = getSymmetricalDifference(documentIds, room.documents);
+      const roomDocuments = await this.documentStore.getDocumentsExtendedMetadataByIds(room.documents);
+      const draftDocumentIds = roomDocuments.filter(doc => doc.roomContext.draft).map(doc => doc._id);
+      const nonDraftDocumentIds = roomDocuments.filter(doc => !doc.roomContext.draft).map(doc => doc._id);
 
-      if (divergingDocumentIds.length) {
+      const allNonDraftDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, nonDraftDocumentIds).length === 0;
+      const allDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, room.documents).length === 0;
+
+      if (!allNonDraftDocumentIdsCorrectlyProvided && !allDocumentIdsCorrectlyProvided) {
         throw new BadRequest('Incorrect list of document ids was provided.');
       }
 
-      const documents = await this.documentStore.getDocumentsMetadataByIds(documentIds);
-      const invalidDocumentIdsCount = documentIds.length - documents.length;
-      if (invalidDocumentIdsCount) {
-        throw new BadRequest(`${invalidDocumentIdsCount} invalid document ids were provided.`);
-      }
+      const reorderedNonDraftDocumentIds = documentIds.map(docId => {
+        const document = roomDocuments.find(doc => doc._id === docId);
+        return document.roomContext.draft ? null : document._id;
+      }).filter(doc => doc);
+      const reorderedDocumentIds = [
+        ...reorderedNonDraftDocumentIds,
+        ...draftDocumentIds
+      ];
 
-      await this.roomStore.updateRoomDocuments(roomId, documentIds);
+      await this.roomStore.updateRoomDocuments(roomId, reorderedDocumentIds);
     } finally {
       await this.lockStore.releaseLock(lock);
     }

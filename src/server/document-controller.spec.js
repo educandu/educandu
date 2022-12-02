@@ -400,6 +400,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = user._id;
         room.members = [];
 
@@ -425,6 +426,68 @@ describe('document-controller', () => {
 
     describe('when the document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        doc.roomContext = { draft: false };
+        room.owner = uniqueId.create();
+        room.members = [];
+
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument]);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document belongs to a room, is in draft state, and the user is a room member', () => {
+      beforeEach(() => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.roomId = room._id;
+        doc.roomContext = { draft: true };
+        room.owner = uniqueId.create();
+        room.members = [{ userId: user._id }];
+
+        mappedRoom = { ...room };
+        mappedDocument = { ...doc };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument]);
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document belongs to a room, is in draft state, and the user is the room owner', () => {
+      beforeEach(() => {
         templateDocument = { _id: uniqueId.create(), roomId: null };
         req = {
           user,
@@ -435,6 +498,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: true };
         room.owner = user._id;
         room.members = [];
 
@@ -472,6 +536,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = user._id;
         room.members = [];
 
@@ -509,6 +574,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
 
@@ -700,6 +766,42 @@ describe('document-controller', () => {
         room.members = [{ userId: uniqueId.create() }];
 
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
+        newDoc = { ...doc };
+        mappedDoc = { ...doc };
+
+        req = { user, body: doc };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.createDocument.resolves(newDoc);
+        clientDataMappingService.mapDocOrRevision.resolves(mappedDoc);
+
+        sut.handlePostDocument(req, res).catch(reject);
+      }));
+
+      it('should create the document', () => {
+        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
+      });
+
+      it('should return the document', () => {
+        expect(res.statusCode).toBe(201);
+        expect(res._getData()).toBe(mappedDoc);
+      });
+    });
+
+    describe('when the user owns the room to contain the draft document', () => {
+      let newDoc;
+      let mappedDoc;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        room.owner = user._id;
+        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.members = [{ userId: uniqueId.create() }];
+
+        doc.roomId = room._id;
+        doc.roomContext = { draft: true };
         newDoc = { ...doc };
         mappedDoc = { ...doc };
 
@@ -734,6 +836,7 @@ describe('document-controller', () => {
         room.members = [{ userId: user._id }];
 
         doc.roomId = room._id;
+        doc.roomContext = { draft: false };
         newDoc = { ...doc };
         mappedDoc = { ...doc };
 
@@ -755,6 +858,25 @@ describe('document-controller', () => {
       it('should return the document', () => {
         expect(res.statusCode).toBe(201);
         expect(res._getData()).toBe(mappedDoc);
+      });
+    });
+
+    describe('when the user is a collaborator of the room to contain the draft document', () => {
+      beforeEach(() => {
+        room.owner = uniqueId.create();
+        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
+        room.members = [{ userId: user._id }];
+
+        doc.roomId = room._id;
+        doc.roomContext = { draft: true };
+
+        req = { user, body: doc };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
@@ -782,144 +904,6 @@ describe('document-controller', () => {
       });
 
       it('should return the document', () => {
-        expect(res.statusCode).toBe(201);
-        expect(res._getData()).toBe(mappedDoc);
-      });
-    });
-  });
-
-  describe('handlePostDocument', () => {
-    describe('when the roomId is unknown', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-
-        roomService.getRoomById.withArgs(room._id).resolves(null);
-      });
-
-      it('should throw BadRequest', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(BadRequest);
-      });
-    });
-
-    describe('when the user neither owns nor is not a collaborator of the room to contain the doc', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        room.members = [{ userId: uniqueId.create() }];
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the user is a member of the (exclusive) room to contain the doc', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        room.members = [{ userId: user._id }];
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the user owns the room to contain the doc', () => {
-      let newDoc;
-      let mappedDoc;
-
-      beforeEach(() => new Promise((resolve, reject) => {
-        room.owner = user._id;
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        room.members = [{ userId: uniqueId.create() }];
-        doc.roomId = room._id;
-        newDoc = { ...doc };
-        mappedDoc = { ...doc };
-
-        req = { user, body: doc };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-        documentService.createDocument.resolves(newDoc);
-        clientDataMappingService.mapDocOrRevision.resolves(mappedDoc);
-
-        sut.handlePostDocument(req, res).catch(reject);
-      }));
-
-      it('should create the doc', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
-      });
-
-      it('should return the doc', () => {
-        expect(res.statusCode).toBe(201);
-        expect(res._getData()).toBe(mappedDoc);
-      });
-    });
-
-    describe('when the user is a collaborator of the room to contain the doc', () => {
-      let newDoc;
-      let mappedDoc;
-
-      beforeEach(() => new Promise((resolve, reject) => {
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        room.members = [{ userId: user._id }];
-        doc.roomId = room._id;
-        newDoc = { ...doc };
-        mappedDoc = { ...doc };
-
-        req = { user, body: doc };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-        documentService.createDocument.resolves(newDoc);
-        clientDataMappingService.mapDocOrRevision.resolves(mappedDoc);
-
-        sut.handlePostDocument(req, res).catch(reject);
-      }));
-
-      it('should create the doc', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
-      });
-
-      it('should return the doc', () => {
-        expect(res.statusCode).toBe(201);
-        expect(res._getData()).toBe(mappedDoc);
-      });
-    });
-
-    describe('when the doc does not belong to a room', () => {
-      let newDoc;
-      let mappedDoc;
-
-      beforeEach(() => new Promise((resolve, reject) => {
-        newDoc = { ...doc };
-        mappedDoc = { ...doc };
-
-        req = { user, body: doc };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', resolve);
-
-        documentService.createDocument.resolves(newDoc);
-        clientDataMappingService.mapDocOrRevision.resolves(mappedDoc);
-
-        sut.handlePostDocument(req, res).catch(reject);
-      }));
-
-      it('should create the doc', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
-      });
-
-      it('should return the doc', () => {
         expect(res.statusCode).toBe(201);
         expect(res._getData()).toBe(mappedDoc);
       });
