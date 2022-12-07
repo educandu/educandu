@@ -99,3 +99,9 @@ export function useDedupedCallback(callback) {
   });
   return obj.current.wrapper;
 }
+
+export function useStableCallback(callback) {
+  const callbackRef = useRef();
+  callbackRef.current = callback;
+  return useCallback((...args) => callbackRef.current?.(...args), [callbackRef]);
+}

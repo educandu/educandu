@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import reactPlayerNs from 'react-player';
 import Markdown from '../../components/markdown.js';
+import { useStableCallback } from '../../ui/hooks.js';
 import { RESOURCE_TYPE } from '../../domain/constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
@@ -16,7 +17,6 @@ function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const timeoutToPlayMedia = useRef();
-  const playerHandlersRef = useRef({});
   const clientConfig = useService(ClientConfig);
 
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -50,17 +50,13 @@ function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
     setIsPlaying(false);
   };
 
-  playerHandlersRef.current.handleBufferEnd = () => {
+  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
+  const handleBufferEnd = useStableCallback(() => {
     if (!playMedia) {
       clearTimeout(timeoutToPlayMedia.current);
       ensureStopStateIsRegistered();
     }
-  };
-
-  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
-  const handleBufferEnd = () => {
-    playerHandlersRef.current.handleBufferEnd();
-  };
+  });
 
   const renderReactPlayer = () => (
     <ReactPlayer
