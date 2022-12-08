@@ -12,12 +12,15 @@ function SectionsDisplay({
   pendingSectionKeys,
   canEdit,
   canHardDelete,
+  editedSectionKeys,
   onPendingSectionApply,
   onPendingSectionDiscard,
   onSectionMove,
   onSectionInsert,
   onSectionDuplicate,
   onSectionDelete,
+  onSectionEditEnter,
+  onSectionEditLeave,
   onSectionContentChange,
   onSectionCopyToClipboard,
   onSectionPasteFromClipboard,
@@ -73,6 +76,7 @@ function SectionsDisplay({
       canHardDelete={canHardDelete}
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
+      isEditing={editedSectionKeys.includes(section.key)}
       isOtherSectionDragged={isDragging && !isDragged}
       isPending={pendingSectionKeys.includes(section.key)}
       onPendingSectionApply={() => onPendingSectionApply(index)}
@@ -80,6 +84,8 @@ function SectionsDisplay({
       onSectionCopyToClipboard={() => onSectionCopyToClipboard(index)}
       onSectionDelete={() => onSectionDelete(index)}
       onSectionDuplicate={() => onSectionDuplicate(index)}
+      onSectionEditEnter={() => onSectionEditEnter(index)}
+      onSectionEditLeave={() => onSectionEditLeave(index)}
       onSectionMoveUp={() => handleSectionMove(index, index - 1)}
       onSectionMoveDown={() => handleSectionMove(index, index + 1)}
       onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
@@ -155,12 +161,15 @@ function SectionsDisplay({
 SectionsDisplay.propTypes = {
   canEdit: PropTypes.bool,
   canHardDelete: PropTypes.bool,
+  editedSectionKeys: PropTypes.arrayOf(PropTypes.string),
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
   onSectionCopyToClipboard: PropTypes.func,
   onSectionDelete: PropTypes.func,
   onSectionDuplicate: PropTypes.func,
+  onSectionEditEnter: PropTypes.func,
+  onSectionEditLeave: PropTypes.func,
   onSectionHardDelete: PropTypes.func,
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
@@ -172,12 +181,15 @@ SectionsDisplay.propTypes = {
 SectionsDisplay.defaultProps = {
   canEdit: false,
   canHardDelete: false,
+  editedSectionKeys: [],
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},
   onSectionCopyToClipboard: () => {},
   onSectionDelete: () => {},
   onSectionDuplicate: () => {},
+  onSectionEditEnter: () => {},
+  onSectionEditLeave: () => {},
   onSectionHardDelete: () => {},
   onSectionInsert: () => {},
   onSectionMove: () => {},
