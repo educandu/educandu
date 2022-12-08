@@ -91,12 +91,15 @@ export function useOnComponentUnmount(callback) {
 export function useDedupedCallback(callback) {
   const obj = useRef({});
   obj.current.callback = callback;
-  obj.current.wrapper = obj.current.wrapper || ((...args) => {
-    if (!('lastValue' in obj.current) || !deepEqual(obj.current.lastValue, args)) {
-      obj.current.lastValue = args;
-      obj.current.callback(...args);
-    }
-  });
+
+  if (!obj.current.wrapper) {
+    obj.current.wrapper = (...args) => {
+      if (!('lastValue' in obj.current) || !deepEqual(obj.current.lastValue, args)) {
+        obj.current.lastValue = args;
+        obj.current.callback(...args);
+      }
+    };
+  }
   return obj.current.wrapper;
 }
 
