@@ -1,9 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Root from '../components/root.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
 import ClientConfig from './client-config.js';
+import ReactDOMClient from 'react-dom/client';
 import PageResolver from '../domain/page-resolver.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
@@ -53,8 +53,8 @@ export async function hydrateApp({ bundleConfig }) {
   };
 
   logger.info('Hydrating application');
-  ReactDOM.hydrate(
-    React.createElement(Root, props),
-    document.getElementById('root')
+  ReactDOMClient.hydrateRoot(
+    document.getElementById('root'),
+    React.createElement(Root, props)
   );
 }

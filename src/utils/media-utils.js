@@ -1,7 +1,7 @@
 import React from 'react';
 import memoizee from 'memoizee';
-import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
+import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
@@ -57,14 +57,17 @@ export function analyzeMediaUrl(url) {
 }
 
 export const determineMediaDuration = memoizee(async url => {
-  const div = window.document.createElement('div');
-  div.style.display = 'none';
-  window.document.body.appendChild(div);
+  const element = window.document.createElement('div');
+  element.style.display = 'none';
+  window.document.body.appendChild(element);
+
+  const root = ReactDOMClient.createRoot(element);
+
   let cleanedUp = false;
   const ensureCleanup = () => {
     if (!cleanedUp) {
-      ReactDOM.unmountComponentAtNode(div);
-      div.remove();
+      root.unmount();
+      element.remove();
       cleanedUp = true;
     }
   };
@@ -86,7 +89,7 @@ export const determineMediaDuration = memoizee(async url => {
     }
 
     try {
-      const element = React.createElement(ReactPlayer, {
+      const player = React.createElement(ReactPlayer, {
         url: validUrl,
         light: false,
         playing: false,
@@ -100,7 +103,7 @@ export const determineMediaDuration = memoizee(async url => {
           ensureCleanup();
         }
       });
-      ReactDOM.render(element, div);
+      root.render(player);
     } catch (error) {
       reject(error);
     }

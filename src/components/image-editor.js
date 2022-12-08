@@ -45,12 +45,14 @@ function ImageEditor({ file, editorRef, onCrop }) {
   onCropRef.current = onCrop;
 
   const cleanUp = useCallback(() => {
-    if (cropperInstanceRef.current) {
+    if (cropperImageRef.current) {
       const oldUrl = cropperImageRef.current.src;
       cropperImageRef.current.src = '';
+      URL.revokeObjectURL(oldUrl);
+    }
+    if (cropperInstanceRef.current) {
       cropperInstanceRef.current.destroy();
       cropperInstanceRef.current = null;
-      URL.revokeObjectURL(oldUrl);
     }
   }, [cropperInstanceRef, cropperImageRef]);
 
