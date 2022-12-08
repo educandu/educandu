@@ -67,7 +67,7 @@ function SectionsDisplay({
 
   const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false }) => {
     return (<SectionDisplay
-      key={section.key}
+      key={`${section.key}-${index}`}
       section={section}
       canEdit={!!dragHandleProps && canEdit}
       canHardDelete={canHardDelete}

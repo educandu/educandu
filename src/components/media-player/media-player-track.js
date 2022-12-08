@@ -150,16 +150,6 @@ function MediaPlayerTrack({
     const currentSourceTimestamp = progress.played * sourceDuration;
     const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
-    // This unbexpected case only occurs when the react-player rerenders, having
-    // loaded, played and paused a youtube resource before that.
-    // In this case the react-player automatically plays, disregarding the value passed to the "playing" prop.
-    // This solution stops the auto-play on re-render, however the react-player's internal state is damaged
-    // from this point on, the state change of the "playing" prop not being handled correctly
-    if (trackPlayState.current === MEDIA_PLAY_STATE.pausing && progress.played === 0) {
-      playerRef.current.getInternalPlayer()?.pauseVideo();
-      return;
-    }
-
     if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
       setTrackPlayState({
         current: MEDIA_PLAY_STATE.stopped,
