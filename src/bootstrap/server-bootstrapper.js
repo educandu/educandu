@@ -47,15 +47,9 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Loading resources');
   const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
-    if ((modulePath.toLowerCase()).endsWith('.json')) {
-      const resourceFileUrl = new URL(modulePath, import.meta.url);
-      const resourceJSON = JSON.parse(readFileSync(resourceFileUrl));
-      return resourceJSON;
-    }
-
-    const moduleUrl = url.pathToFileURL(modulePath);
-    const module = await import(moduleUrl);
-    return module.default;
+    const resourceFileUrl = new URL(modulePath, import.meta.url);
+    const resourceJSON = JSON.parse(readFileSync(resourceFileUrl));
+    return resourceJSON;
   }));
 
   const resourceManager = new ResourceManager(resources, ...additionalResources);
