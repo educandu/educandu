@@ -1,6 +1,6 @@
 import BaseDataProvider from './base-data-provider.js';
-import languageNamesEn from './language-names/en.json';
-import languageNamesDe from './language-names/de.json';
+import languageNamesEn from './language-names/en.json' assert { type: "json" };
+import languageNamesDe from './language-names/de.json' assert { type: "json" };
 
 class LanguageNameProvider extends BaseDataProvider {
   constructor() {

@@ -1,3 +1,11 @@
 dist/**
 test/**
 src/plugins/*/static/**
+# Following files will be removed from this list in https://educandu.atlassian.net/browse/EDU-936
+src/index.js
+src/test-helper.js
+src/data/language-name-provider.js
+src/bootstrap/server-bootstrapper.js
+src/components/history-control-panel.js
+src/components/localization/language-select.js
+src/components/localization/language-flag-and-name.js

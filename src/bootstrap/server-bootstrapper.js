@@ -5,10 +5,10 @@ import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
-import resources from '../resources/resources.json';
 import PageResolver from '../domain/page-resolver.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
+import resources from '../resources/resources.json' assert { type: "json" };
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
@@ -47,7 +47,9 @@ export async function createContainer(configValues = {}) {
   logger.info('Loading resources');
   const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
     const moduleUrl = url.pathToFileURL(modulePath);
-    const module = await import(moduleUrl);
+    const module = modulePath.endsWith('.json')
+      ? await import(moduleUrl, { assert: { type: 'json' }})
+      : await import(moduleUrl);
     return module.default;
   }));
 
