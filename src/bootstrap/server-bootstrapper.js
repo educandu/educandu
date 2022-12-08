@@ -1,4 +1,5 @@
 import url from 'url';
+import { readFileSync } from 'fs';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
@@ -46,10 +47,14 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Loading resources');
   const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
+    if ((modulePath.toLowerCase()).endsWith('.json')) {
+      const resourceFileUrl = new URL(modulePath, import.meta.url);
+      const resourceJSON = JSON.parse(readFileSync(resourceFileUrl));
+      return resourceJSON;
+    }
+
     const moduleUrl = url.pathToFileURL(modulePath);
-    const module = modulePath.endsWith('.json')
-      ? await import(moduleUrl, { assert: { type: 'json' }})
-      : await import(moduleUrl);
+    const module = await import(moduleUrl);
     return module.default;
   }));
 
