@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
+import { useStableCallback } from '../../ui/hooks.js';
 import AudioIcon from '../icons/general/audio-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../../utils/media-utils.js';
@@ -28,7 +29,6 @@ function MediaPlayerTrack({
   onPlayStateChange
 }) {
   const playerRef = useRef();
-  const playerHandlersRef = useRef({});
   const [sourceDuration, setSourceDuration] = useState(0);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
@@ -97,16 +97,12 @@ function MediaPlayerTrack({
     changePlayState(MEDIA_PLAY_STATE.buffering);
   };
 
-  playerHandlersRef.current.handleBufferEnd = () => {
+  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
+  const handleBufferEnd = useStableCallback(() => {
     if (trackPlayState.current === MEDIA_PLAY_STATE.buffering) {
       changePlayState(trackPlayState.beforeBuffering);
     }
-  };
-
-  // This workaround fixes a react-player bug in which the bufferEnd callback is not updated
-  const handleBufferEnd = () => {
-    playerHandlersRef.current.handleBufferEnd();
-  };
+  });
 
   const handlePlay = () => {
     changePlayState(MEDIA_PLAY_STATE.playing);

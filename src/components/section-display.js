@@ -7,6 +7,7 @@ import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
 import React, { Fragment, useState } from 'react';
+import { useStableCallback } from '../ui/hooks.js';
 import HelpIcon from './icons/general/help-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
 import { useService } from './container-context.js';
@@ -19,6 +20,7 @@ import { sectionShape } from '../ui/default-prop-types.js';
 import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
+import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
@@ -296,40 +298,44 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
-  canEdit: PropTypes.bool,
-  canHardDelete: PropTypes.bool,
-  dragHandleProps: PropTypes.object,
-  isDragged: PropTypes.bool,
-  isOtherSectionDragged: PropTypes.bool,
-  isPending: PropTypes.bool,
-  onPendingSectionApply: PropTypes.func,
-  onPendingSectionDiscard: PropTypes.func,
-  onSectionContentChange: PropTypes.func,
-  onSectionCopyToClipboard: PropTypes.func,
-  onSectionDelete: PropTypes.func,
-  onSectionDuplicate: PropTypes.func,
-  onSectionHardDelete: PropTypes.func,
-  onSectionMoveDown: PropTypes.func,
-  onSectionMoveUp: PropTypes.func,
+  canEdit: PropTypes.bool.isRequired,
+  canHardDelete: PropTypes.bool.isRequired,
+  dragHandleProps: PropTypes.object.isRequired,
+  isDragged: PropTypes.bool.isRequired,
+  isOtherSectionDragged: PropTypes.bool.isRequired,
+  isPending: PropTypes.bool.isRequired,
+  onPendingSectionApply: PropTypes.func.isRequired,
+  onPendingSectionDiscard: PropTypes.func.isRequired,
+  onSectionContentChange: PropTypes.func.isRequired,
+  onSectionCopyToClipboard: PropTypes.func.isRequired,
+  onSectionDelete: PropTypes.func.isRequired,
+  onSectionDuplicate: PropTypes.func.isRequired,
+  onSectionHardDelete: PropTypes.func.isRequired,
+  onSectionMoveDown: PropTypes.func.isRequired,
+  onSectionMoveUp: PropTypes.func.isRequired,
   section: sectionShape.isRequired
 };
 
-SectionDisplay.defaultProps = {
-  canEdit: false,
-  canHardDelete: false,
-  dragHandleProps: {},
-  isDragged: false,
-  isOtherSectionDragged: false,
-  isPending: false,
-  onPendingSectionApply: () => {},
-  onPendingSectionDiscard: () => {},
-  onSectionContentChange: () => {},
-  onSectionCopyToClipboard: () => {},
-  onSectionDelete: () => {},
-  onSectionDuplicate: () => {},
-  onSectionHardDelete: () => {},
-  onSectionMoveDown: () => {},
-  onSectionMoveUp: () => {}
-};
-
-export default SectionDisplay;
+export default memoAndTransformProps(SectionDisplay, ({
+  onPendingSectionApply,
+  onPendingSectionDiscard,
+  onSectionDuplicate,
+  onSectionDelete,
+  onSectionMoveUp,
+  onSectionMoveDown,
+  onSectionContentChange,
+  onSectionCopyToClipboard,
+  onSectionHardDelete,
+  ...rest
+}) => ({
+  onPendingSectionApply: useStableCallback(onPendingSectionApply),
+  onPendingSectionDiscard: useStableCallback(onPendingSectionDiscard),
+  onSectionDuplicate: useStableCallback(onSectionDuplicate),
+  onSectionDelete: useStableCallback(onSectionDelete),
+  onSectionMoveUp: useStableCallback(onSectionMoveUp),
+  onSectionMoveDown: useStableCallback(onSectionMoveDown),
+  onSectionContentChange: useStableCallback(onSectionContentChange),
+  onSectionCopyToClipboard: useStableCallback(onSectionCopyToClipboard),
+  onSectionHardDelete: useStableCallback(onSectionHardDelete),
+  ...rest
+}));

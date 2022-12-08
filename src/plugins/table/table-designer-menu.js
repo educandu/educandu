@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useStableCallback } from '../../ui/hooks.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { CELL_TYPE, DESIGNER_CELL_ACTION, DESIGNER_CELL_TYPE } from './table-utils.js';
 import {
@@ -69,12 +70,10 @@ export const menuItemInfos = {
 function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange }) {
   const isInitialMount = useRef(true);
   const { t } = useTranslation('table');
-  const onIsActiveChangeRef = useRef(null);
   const [isActive, setIsActive] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
+  const onIsActiveChangeStable = useStableCallback(onIsActiveChange);
   const [isCellActionInProgress, setIsCellActionInProgress] = useState(false);
-
-  onIsActiveChangeRef.current = onIsActiveChange;
 
   useEffect(() => {
     setIsActive(isMouseOver || isCellActionInProgress);
@@ -88,9 +87,9 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       return noop;
     }
 
-    onIsActiveChangeRef.current(isActive, cell);
-    return isActive ? () => onIsActiveChangeRef.current(false, cell) : noop;
-  }, [isActive, onIsActiveChangeRef, cell]);
+    onIsActiveChangeStable(isActive, cell);
+    return isActive ? () => onIsActiveChangeStable(false, cell) : noop;
+  }, [isActive, onIsActiveChangeStable, cell]);
 
   const createMenuActionGroupItem = ({ groupName, children, disabled = false }) => {
     const menuGroupInfo = menuGroupInfos[groupName];
