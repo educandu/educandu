@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 import React from 'react';
-import ReactDOMServer from 'react-dom/server.js';
+import ReactDOMServer from 'react-dom/server';
 import { resetServerContext } from 'react-beautiful-dnd';
 import PageTemplate from '../components/templates/page-template.js';
 
