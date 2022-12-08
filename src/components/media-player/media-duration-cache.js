@@ -5,6 +5,8 @@ import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
 
 const logger = new Logger(import.meta.url);
 
+const FAILED_ENTRIES_LIFETIME = 5000;
+
 class MediaDurationCache {
   static get inject() { return []; }
 
@@ -74,7 +76,8 @@ class MediaDurationCache {
       this._handleDurationDetermined(sourceUrl, duration, null);
     } catch (error) {
       logger.error(error);
-      this._handleDurationDetermined(null, null, error);
+      this._handleDurationDetermined(sourceUrl, null, error);
+      this._registerForDeletion(sourceUrl);
     }
   }
 
@@ -93,6 +96,15 @@ class MediaDurationCache {
         logger.error(error);
       }
     }
+  }
+
+  _registerForDeletion(sourceUrl) {
+    window.setTimeout(() => {
+      if (!this._isDisposed) {
+        this._entries.delete(sourceUrl);
+        this._notifySubscribers();
+      }
+    }, FAILED_ENTRIES_LIFETIME);
   }
 
   _throwIfDisposed() {
