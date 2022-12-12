@@ -24,20 +24,20 @@ export default class Educandu_2022_07_14_01_remove_document_key {
       }
     ]);
 
-    await this.db.collection('settings').update({ _id: 'templateDocument' }, {
+    await this.db.collection('settings').updateOne({ _id: 'templateDocument' }, {
       $rename: {
         'value.documentKey': 'value.documentId'
       }
     });
 
-    await this.db.collection('settings').update({ _id: 'termsPage' }, {
+    await this.db.collection('settings').updateOne({ _id: 'termsPage' }, {
       $rename: {
         'value.en.documentKey': 'value.en.documentId',
         'value.de.documentKey': 'value.de.documentId'
       }
     });
 
-    await this.db.collection('settings').update({ _id: 'helpPage' }, {
+    await this.db.collection('settings').updateOne({ _id: 'helpPage' }, {
       $rename: {
         'value.en.documentKey': 'value.en.documentId',
         'value.de.documentKey': 'value.de.documentId'
@@ -45,7 +45,7 @@ export default class Educandu_2022_07_14_01_remove_document_key {
     });
 
     await this.db.collection('settings')
-      .update(
+      .updateMany(
         { $and: [{ _id: 'footerLinks' }, { 'value.en': { $exists: true } }] },
         [
           {
@@ -61,11 +61,10 @@ export default class Educandu_2022_07_14_01_remove_document_key {
               }
             }
           }
-        ],
-        { multi: true }
+        ]
       );
     await this.db.collection('settings')
-      .update(
+      .updateMany(
         { $and: [{ _id: 'footerLinks' }, { 'value.de': { $exists: true } }] },
         [
           {
@@ -81,15 +80,14 @@ export default class Educandu_2022_07_14_01_remove_document_key {
               }
             }
           }
-        ],
-        { multi: true }
+        ]
       );
 
-    await this.db.collection('tasks').update(
+    await this.db.collection('tasks').updateMany(
       { taskType: { $in: ['document-import', 'document-regeneration'] } },
       { $rename: { 'taskParams.key': 'taskParams.documentId' } }
     );
-    await this.db.collection('tasks').update(
+    await this.db.collection('tasks').updateMany(
       { taskType: { $in: ['cdn-upload-directory-creation', 'cdn-resources-consolidation'] } },
       { $rename: { 'taskParams.documentKey': 'taskParams.documentId' } }
     );
