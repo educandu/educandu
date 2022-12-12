@@ -23,6 +23,7 @@ function PreloadingMediaPlayerTrack({
   onDuration,
   onProgress,
   onEndReached,
+  onInvalidStateReached,
   onPlayStateChange
 }) {
   const httpClient = useService(HttpClient);
@@ -95,6 +96,7 @@ function PreloadingMediaPlayerTrack({
       onDuration={onDuration}
       onProgress={onProgress}
       onEndReached={onEndReached}
+      onInvalidStateReached={onInvalidStateReached}
       onPlayStateChange={onPlayStateChange}
       />
   );
@@ -105,6 +107,7 @@ PreloadingMediaPlayerTrack.propTypes = {
   loadImmediately: PropTypes.bool,
   onDuration: PropTypes.func,
   onEndReached: PropTypes.func,
+  onInvalidStateReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
@@ -125,6 +128,7 @@ PreloadingMediaPlayerTrack.defaultProps = {
   loadImmediately: false,
   onDuration: () => {},
   onEndReached: () => {},
+  onInvalidStateReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
   playbackRange: [0, 1],
