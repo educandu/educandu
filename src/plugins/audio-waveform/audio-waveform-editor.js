@@ -26,7 +26,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
   const formatPercentage = usePercentageFormat();
-  const [isWaveformGeneratorDialogVisible, setIsWaveformGeneratorDialogVisible] = useState(false);
+  const [isWaveformGeneratorDialogOpen, setIsWaveformGeneratorDialogOpen] = useState(false);
 
   const { sourceUrl, width, displayMode, interactivityConfig } = content;
   const { penColor, baselineColor, backgroundColor, opacityWhenResolved } = interactivityConfig;
@@ -44,16 +44,16 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   };
 
   const handleGenerateWaveform = () => {
-    setIsWaveformGeneratorDialogVisible(true);
+    setIsWaveformGeneratorDialogOpen(true);
   };
 
   const handleWaveformGeneratorDialogSelect = selectedUrl => {
-    setIsWaveformGeneratorDialogVisible(false);
+    setIsWaveformGeneratorDialogOpen(false);
     changeContent({ sourceUrl: getPortableUrl({ url: selectedUrl, cdnRootUrl: clientConfig.cdnRootUrl }) });
   };
 
   const handleWaveformGeneratorDialogCancel = () => {
-    setIsWaveformGeneratorDialogVisible(false);
+    setIsWaveformGeneratorDialogOpen(false);
   };
 
   const handleWidthChange = value => {
@@ -139,7 +139,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
         )}
       </Form>
       <AudioWaveformGeneratorDialog
-        visible={isWaveformGeneratorDialogVisible}
+        isOpen={isWaveformGeneratorDialogOpen}
         onSelect={handleWaveformGeneratorDialogSelect}
         onCancel={handleWaveformGeneratorDialogCancel}
         />

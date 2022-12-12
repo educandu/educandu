@@ -151,7 +151,7 @@ function SectionsDisplay({
       </DragDropContext>
 
       <PluginSelectorDialog
-        visible={currentNewSectionIndex > -1}
+        open={currentNewSectionIndex > -1}
         onSelect={handlePluginSelectorDialogSelect}
         onCancel={handlePluginSelectorDialogCancel}
         onPasteFromClipboard={handlePasteFromClipboard}

@@ -9,7 +9,7 @@ import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 
-function VolumePresetsModal({ volumePresets, isVisible, onOk, onClose }) {
+function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
   const { t } = useTranslation('volumePresetsModal');
 
   const [isDirty, setIsDirty] = useState(false);
@@ -17,7 +17,7 @@ function VolumePresetsModal({ volumePresets, isVisible, onOk, onClose }) {
 
   useEffect(() => {
     setManagedVolumePresets(volumePresets);
-  }, [isVisible, volumePresets]);
+  }, [isOpen, volumePresets]);
 
   const handleOk = () => {
     onOk(isDirty, isDirty ? managedVolumePresets : null);
@@ -92,7 +92,7 @@ function VolumePresetsModal({ volumePresets, isVisible, onOk, onClose }) {
   return (
     <Modal
       title={t('modalTitle')}
-      visible={isVisible}
+      open={isOpen}
       onOk={handleOk}
       onCancel={handleCancel}
       >
@@ -103,7 +103,7 @@ function VolumePresetsModal({ volumePresets, isVisible, onOk, onClose }) {
 }
 
 VolumePresetsModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired,
   volumePresets: PropTypes.arrayOf(PropTypes.shape({

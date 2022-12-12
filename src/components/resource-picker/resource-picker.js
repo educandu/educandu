@@ -6,19 +6,19 @@ import ResourcePickerDialog from './resource-picker-dialog.js';
 
 function ResourcePicker({ url, onUrlChange }) {
   const { t } = useTranslation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSelectButtonClick = () => {
-    setIsModalVisible(true);
+    setIsModalOpen(true);
   };
 
   const handleSelect = newUrl => {
     onUrlChange(newUrl);
-    setIsModalVisible(false);
+    setIsModalOpen(false);
   };
 
   const handleClose = () => {
-    setIsModalVisible(false);
+    setIsModalOpen(false);
   };
 
   return (
@@ -31,7 +31,7 @@ function ResourcePicker({ url, onUrlChange }) {
       </Button>
       <ResourcePickerDialog
         url={url}
-        isVisible={isModalVisible}
+        isOpen={isModalOpen}
         onSelect={handleSelect}
         onClose={handleClose}
         />

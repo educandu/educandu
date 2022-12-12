@@ -98,7 +98,7 @@ function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChan
         >
         <LinkOutlined />
         <ResourcePickerDialog
-          isVisible={isResourcePickerOpen}
+          isOpen={isResourcePickerOpen}
           onSelect={handleResourcePickerUrlSelect}
           onClose={handleResourcePickerClose}
           />

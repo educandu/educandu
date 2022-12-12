@@ -7,7 +7,7 @@ import { baseStoragePlanShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
-function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk, onCancel }) {
+function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, onCancel }) {
   const [form] = Form.useForm();
   const { t } = useTranslation('storagePlanModal');
   const [loading, setLoading] = useState(false);
@@ -37,10 +37,10 @@ function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk,
   ];
 
   useEffect(() => {
-    if (isVisible) {
+    if (isOpen) {
       form.resetFields();
     }
-  }, [isVisible, form]);
+  }, [isOpen, form]);
 
   const handleOk = () => {
     form.submit();
@@ -65,7 +65,7 @@ function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk,
   return (
     <Modal
       title={storagePlan?._id ? t('editStoragePlan') : t('newStoragePlan')}
-      visible={isVisible}
+      open={isOpen}
       onOk={handleOk}
       onCancel={onCancel}
       maskClosable={false}
@@ -87,7 +87,7 @@ function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk,
 }
 
 StoragePlanModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired,
   storagePlan: baseStoragePlanShape,

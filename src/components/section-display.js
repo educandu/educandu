@@ -54,7 +54,7 @@ function SectionDisplay({
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
   const [isInvalid, setIsInvalid] = useState(false);
-  const [isHelpModalVisible, setIsHelpModalVisible] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
 
@@ -145,7 +145,7 @@ function SectionDisplay({
       type: 'openHelp',
       tooltip: renderActionTooltip('openHelp'),
       icon: <HelpIcon key="openHelp" />,
-      handleAction: () => setIsHelpModalVisible(true),
+      handleAction: () => setIsHelpModalOpen(true),
       isVisible: !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
       isEnabled: true
     }
@@ -293,8 +293,8 @@ function SectionDisplay({
 
       <Modal
         footer={null}
-        visible={isHelpModalVisible}
-        onCancel={() => setIsHelpModalVisible(false)}
+        open={isHelpModalOpen}
+        onCancel={() => setIsHelpModalOpen(false)}
         destroyOnClose
         >
         <Markdown>{settings.pluginsHelpTexts?.[section.type]?.[uiLanguage]}</Markdown>

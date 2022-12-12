@@ -6,7 +6,7 @@ import { SOURCE_TYPE } from '../../domain/constants.js';
 
 const allowedSourceTypes = [SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons];
 
-function ResourcePickerDialog({ isVisible, url, onSelect, onClose }) {
+function ResourcePickerDialog({ isOpen, url, onSelect, onClose }) {
   const handleCancel = event => {
     if (!event.key) {
       onClose();
@@ -19,10 +19,10 @@ function ResourcePickerDialog({ isVisible, url, onSelect, onClose }) {
     <Modal
       centered
       width="80%"
+      open={isOpen}
       footer={null}
       destroyOnClose
       closable={false}
-      visible={isVisible}
       onCancel={handleCancel}
       modalRender={modalRender}
       >
@@ -37,7 +37,7 @@ function ResourcePickerDialog({ isVisible, url, onSelect, onClose }) {
 }
 
 ResourcePickerDialog.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
   onSelect: PropTypes.func,
   url: PropTypes.string

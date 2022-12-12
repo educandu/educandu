@@ -11,7 +11,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const [currentRange, setCurrentRange] = useState(range);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMediaInfo, setCurrentMediaInfo] = useState(null);
   const [isRetrievingMediaInfo, setIsRetrievingMediaInfo] = useState(false);
 
@@ -21,7 +21,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   }, [currentProgress, currentMediaInfo]);
 
   const handleSelectButtonClick = async () => {
-    setIsModalVisible(true);
+    setIsModalOpen(true);
     try {
       setIsRetrievingMediaInfo(true);
       const info = analyzeMediaUrl(sourceUrl);
@@ -37,11 +37,11 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const handleApply = () => {
     setCurrentProgress(0);
     onRangeChange(currentRange);
-    setIsModalVisible(false);
+    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setIsModalOpen(false);
     setCurrentProgress(0);
     setCurrentRange(range);
     setCurrentMediaInfo(null);
@@ -106,7 +106,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
       <Button type="primary" onClick={handleSelectButtonClick}>{t('common:select')}</Button>
       <Modal
         width="80%"
-        visible={isModalVisible}
+        open={isModalOpen}
         title={t('modalTitle')}
         onOk={handleApply}
         okText={t('common:apply')}

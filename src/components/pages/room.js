@@ -35,7 +35,7 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisible = false }) {
+function getDocumentMetadataModalState({ t, room, documentToClone = null, isOpen = false }) {
   const initialDocumentMetadata = documentToClone
     ? {
       ...documentToClone,
@@ -50,7 +50,7 @@ function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisi
   return {
     mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
     allowMultiple: !documentToClone,
-    isVisible,
+    isOpen,
     documentToClone,
     initialDocumentMetadata,
     initialDocumentRoomMetadata: room
@@ -75,7 +75,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
-  const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
+  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
   const isUserRoomOwner = isRoomOwner({ room, userId: user?._id });
@@ -86,7 +86,7 @@ export default function Room({ PageTemplate, initialState }) {
   }, [room._id, room.slug]);
 
   const handleCreateInvitationButtonClick = event => {
-    setIsRoomInvitationModalVisible(true);
+    setIsRoomInvitationModalOpen(true);
     event.stopPropagation();
   };
 
@@ -117,7 +117,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleInvitationModalClose = newInvitations => {
-    setIsRoomInvitationModalVisible(false);
+    setIsRoomInvitationModalOpen(false);
     if (newInvitations) {
       setInvitations(currentInvitations => {
         const invitationsByEmail = new Map(currentInvitations.map(x => [x.email, x]));
@@ -128,7 +128,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleNewDocumentClick = (documentToClone = null) => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isVisible: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
@@ -144,12 +144,12 @@ export default function Room({ PageTemplate, initialState }) {
       });
     } else {
       setDocuments([...documents, ...createdDocuments]);
-      setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+      setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
     }
   };
 
   const handleDocumentMetadataModalCancel = () => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
   const handleUpdateRoomClick = () => {
@@ -404,7 +404,7 @@ export default function Room({ PageTemplate, initialState }) {
               {renderRoomMembers()}
               {renderRoomInvitations()}
               <RoomInvitationCreationModal
-                isVisible={isRoomInvitationModalVisible}
+                isOpen={isRoomInvitationModalOpen}
                 onOk={handleInvitationModalClose}
                 onCancel={handleInvitationModalClose}
                 roomId={room._id}

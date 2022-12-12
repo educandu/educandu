@@ -26,7 +26,7 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
   const [storagePlans, setStoragePlans] = useState(cloneDeep(initialStoragePlans));
   const [editedStoragePlan, setEditedStoragePlan] = useState(null);
   const [storagePlanNamesInUse, setStoragePlanNamesInUse] = useState([]);
-  const [isStoragePlanModalVisible, setIsStoragePlanModalVisible] = useState(false);
+  const [isStoragePlanModalOpen, setIsStoragePlanModalOpen] = useState(false);
   const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
   const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
 
@@ -34,13 +34,13 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
     const { _id, name, maxBytes } = storagePlan;
     setEditedStoragePlan({ _id, name, maxBytes });
     setStoragePlanNamesInUse(storagePlans.filter(plan => plan._id !== storagePlan._id).map(plan => plan.name));
-    setIsStoragePlanModalVisible(true);
+    setIsStoragePlanModalOpen(true);
   };
 
   const handleNewStoragePlanClick = () => {
     setEditedStoragePlan(null);
     setStoragePlanNamesInUse(storagePlans.map(plan => plan.name));
-    setIsStoragePlanModalVisible(true);
+    setIsStoragePlanModalOpen(true);
   };
 
   const handleDeleteClick = storagePlan => {
@@ -77,7 +77,7 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
       onStoragePlansSaved(currentStoragePlans);
       setEditedStoragePlan(null);
       setStoragePlanNamesInUse([]);
-      setIsStoragePlanModalVisible(false);
+      setIsStoragePlanModalOpen(false);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -86,7 +86,7 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
   const handleModalCancel = () => {
     setEditedStoragePlan(null);
     setStoragePlanNamesInUse([]);
-    setIsStoragePlanModalVisible(false);
+    setIsStoragePlanModalOpen(false);
   };
 
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
@@ -170,7 +170,7 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
         onClick={handleNewStoragePlanClick}
         />
       <StoragePlanModal
-        isVisible={isStoragePlanModalVisible}
+        isOpen={isStoragePlanModalOpen}
         storagePlan={editedStoragePlan}
         storagePlanNamesInUse={storagePlanNamesInUse}
         onOk={handleModalOk}

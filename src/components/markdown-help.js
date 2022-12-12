@@ -9,8 +9,8 @@ import { isLetter, splitAroundWords, ZERO_WIDTH_SPACE } from '../utils/string-ut
 
 function MarkdownHelp({ inline, size, disabled }) {
   const { t } = useTranslation('markdownHelp');
-  const [isBlockHelpModalVisible, setIsBlockHelpModalVisible] = useState(false);
-  const toggleModal = useCallback(() => setIsBlockHelpModalVisible(val => !val), [setIsBlockHelpModalVisible]);
+  const [isBlockHelpModalOpen, setIsBlockHelpModalOpen] = useState(false);
+  const toggleModal = useCallback(() => setIsBlockHelpModalOpen(val => !val), [setIsBlockHelpModalOpen]);
 
   if (inline) {
     const inlineHelp = (
@@ -131,7 +131,7 @@ function MarkdownHelp({ inline, size, disabled }) {
       <Modal
         width="80%"
         footer={null}
-        visible={isBlockHelpModalVisible}
+        open={isBlockHelpModalOpen}
         onCancel={toggleModal}
         destroyOnClose
         >
