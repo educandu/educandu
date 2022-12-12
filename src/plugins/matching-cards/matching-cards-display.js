@@ -1,5 +1,8 @@
 import classNames from 'classnames';
 import { SIZE } from './constants.js';
+import { Button, Tooltip } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { ReloadOutlined } from '@ant-design/icons';
 import FlipCard from '../../components/flip-card.js';
 import MatchingCardsTile from './matching-cards-tile.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -8,6 +11,7 @@ import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
 
 function MatchingCardsDisplay({ content }) {
   const { size, tilePairs, width } = content;
+  const { t } = useTranslation('matchingCards');
 
   const isMounted = useRef(false);
   const [tiles, setTiles] = useState([]);
@@ -27,11 +31,11 @@ function MatchingCardsDisplay({ content }) {
     setTiles(getRandomizedTilesFromPairs(tilePairs));
   }, [tilePairs]);
 
-  const mainClasses = classNames(
-    'MatchingCardsDisplay',
+  const gridClasses = classNames(
+    'MatchingCardsDisplay-grid',
     `u-width-${width}`,
-    { 'MatchingCardsDisplay--3x3': size === SIZE.threeByThree },
-    { 'MatchingCardsDisplay--4x4': size === SIZE.fourByFour }
+    { 'MatchingCardsDisplay-grid--3x3': size === SIZE.threeByThree },
+    { 'MatchingCardsDisplay-grid--4x4': size === SIZE.fourByFour }
   );
 
   const handleTileClick = tile => {
@@ -58,9 +62,21 @@ function MatchingCardsDisplay({ content }) {
 
     if (hasJustMatched) {
       setTimeout(() => {
-        setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+        if (isMounted.current) {
+          setMatchedTilePairKeys(prevState => [...prevState, tile.pairKey]);
+        }
       }, 500);
     }
+  };
+
+  const handleResetClick = () => {
+    setMatchedTilePairKeys([]);
+    setCurrentlyFlippedTiles([]);
+    setTimeout(() => {
+      if (isMounted.current) {
+        setTiles(getRandomizedTilesFromPairs(tilePairs));
+      }
+    }, 500);
   };
 
   const renderTile = (tile, index) => {
@@ -96,8 +112,18 @@ function MatchingCardsDisplay({ content }) {
   };
 
   return (
-    <div className={mainClasses}>
-      {tiles.map(renderTile)}
+    <div className="MatchingCardsDisplay">
+      <div className={gridClasses}>
+        {tiles.map(renderTile)}
+      </div>
+      <Tooltip title={t('common:reset')}>
+        <Button
+          shape="circle"
+          icon={<ReloadOutlined />}
+          onClick={handleResetClick}
+          className="MatchingCardsDisplay-resetButton"
+          />
+      </Tooltip>
     </div>
   );
 }

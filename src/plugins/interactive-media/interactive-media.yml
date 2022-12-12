@@ -19,9 +19,6 @@ continue:
 replay:
   en: Replay
   de: Wiederholen
-reset:
-  en: Reset
-  de: Zurücksetzen
 results:
   en: Results
   de: Ergebnisse
