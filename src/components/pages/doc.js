@@ -97,6 +97,7 @@ function Doc({ initialState, PageTemplate }) {
   const [doc, setDoc] = useState(initialState.doc);
   const [comments, setComments] = useState([]);
   const [historyRevisions, setHistoryRevisions] = useState([]);
+  const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
@@ -222,12 +223,12 @@ function Doc({ initialState, PageTemplate }) {
   const handleEditClose = () => {
     return new Promise(resolve => {
       const exitEditMode = () => {
-        setPendingTemplateSectionKeys([]);
         setCurrentSections(doc.sections);
-
         setIsDirty(false);
         setView(VIEW.display);
+        setEditedSectionKeys([]);
         setInvalidSectionKeys([]);
+        setPendingTemplateSectionKeys([]);
         resolve(true);
       };
 
@@ -332,11 +333,22 @@ function Doc({ initialState, PageTemplate }) {
       () => {
         const section = currentSections[index];
         const reducedSections = removeItemAt(currentSections, index);
+        setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setCurrentSections(reducedSections);
         setIsDirty(true);
       }
     );
+  };
+
+  const handleSectionEditEnter = index => {
+    const section = currentSections[index];
+    setEditedSectionKeys(keys => ensureIsIncluded(keys, section.key));
+  };
+
+  const handleSectionEditLeave = index => {
+    const section = currentSections[index];
+    setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
   };
 
   const handlePendingSectionApply = index => {
@@ -517,6 +529,7 @@ function Doc({ initialState, PageTemplate }) {
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
+            editedSectionKeys={editedSectionKeys}
             canEdit={view === VIEW.edit}
             canHardDelete={userCanHardDelete && view === VIEW.history}
             onPendingSectionApply={handlePendingSectionApply}
@@ -529,6 +542,8 @@ function Doc({ initialState, PageTemplate }) {
             onSectionDuplicate={handleSectionDuplicate}
             onSectionDelete={handleSectionDelete}
             onSectionHardDelete={handleSectionHardDelete}
+            onSectionEditEnter={handleSectionEditEnter}
+            onSectionEditLeave={handleSectionEditLeave}
             />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
 

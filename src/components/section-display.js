@@ -31,12 +31,15 @@ function SectionDisplay({
   canHardDelete,
   dragHandleProps,
   isDragged,
+  isEditing,
   isOtherSectionDragged,
   isPending,
   onPendingSectionApply,
   onPendingSectionDiscard,
   onSectionDuplicate,
   onSectionDelete,
+  onSectionEditEnter,
+  onSectionEditLeave,
   onSectionMoveUp,
   onSectionMoveDown,
   onSectionContentChange,
@@ -50,7 +53,6 @@ function SectionDisplay({
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
-  const [isEditing, setIsEditing] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isHelpModalVisible, setIsHelpModalVisible] = useState(false);
 
@@ -87,7 +89,7 @@ function SectionDisplay({
       type: 'edit',
       tooltip: renderActionTooltip('edit', ['ctrl', 'click']),
       icon: <EditIcon key="edit" />,
-      handleAction: () => setIsEditing(true),
+      handleAction: () => onSectionEditEnter(),
       isVisible: !isEditing,
       isEnabled: !isEditing && !!section.content
     },
@@ -95,7 +97,7 @@ function SectionDisplay({
       type: 'preview',
       tooltip: renderActionTooltip('preview', ['ctrl', 'click']),
       icon: <PreviewIcon key="preview" />,
-      handleAction: () => setIsEditing(false),
+      handleAction: () => onSectionEditLeave(),
       isVisible: isEditing,
       isEnabled: isEditing
     },
@@ -222,7 +224,11 @@ function SectionDisplay({
           onSectionDuplicate();
         }
       } else if (section.content) {
-        setIsEditing(!isEditing);
+        if (isEditing) {
+          onSectionEditLeave();
+        } else {
+          onSectionEditEnter();
+        }
       }
     }
   };
@@ -302,6 +308,7 @@ SectionDisplay.propTypes = {
   canHardDelete: PropTypes.bool.isRequired,
   dragHandleProps: PropTypes.object.isRequired,
   isDragged: PropTypes.bool.isRequired,
+  isEditing: PropTypes.bool.isRequired,
   isOtherSectionDragged: PropTypes.bool.isRequired,
   isPending: PropTypes.bool.isRequired,
   onPendingSectionApply: PropTypes.func.isRequired,
@@ -310,6 +317,8 @@ SectionDisplay.propTypes = {
   onSectionCopyToClipboard: PropTypes.func.isRequired,
   onSectionDelete: PropTypes.func.isRequired,
   onSectionDuplicate: PropTypes.func.isRequired,
+  onSectionEditEnter: PropTypes.func.isRequired,
+  onSectionEditLeave: PropTypes.func.isRequired,
   onSectionHardDelete: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired,
@@ -321,6 +330,8 @@ export default memoAndTransformProps(SectionDisplay, ({
   onPendingSectionDiscard,
   onSectionDuplicate,
   onSectionDelete,
+  onSectionEditEnter,
+  onSectionEditLeave,
   onSectionMoveUp,
   onSectionMoveDown,
   onSectionContentChange,
@@ -332,6 +343,8 @@ export default memoAndTransformProps(SectionDisplay, ({
   onPendingSectionDiscard: useStableCallback(onPendingSectionDiscard),
   onSectionDuplicate: useStableCallback(onSectionDuplicate),
   onSectionDelete: useStableCallback(onSectionDelete),
+  onSectionEditEnter: useStableCallback(onSectionEditEnter),
+  onSectionEditLeave: useStableCallback(onSectionEditLeave),
   onSectionMoveUp: useStableCallback(onSectionMoveUp),
   onSectionMoveDown: useStableCallback(onSectionMoveDown),
   onSectionContentChange: useStableCallback(onSectionContentChange),

@@ -89,6 +89,7 @@ function MediaPlayerTrackGroup({
   onDuration,
   onProgress,
   onEndReached,
+  onInvalidStateReached,
   onPlayStateChange,
   sources
 }) {
@@ -292,6 +293,7 @@ function MediaPlayerTrackGroup({
         loadImmediately={isMultitrack || loadImmediately}
         onDuration={handleMainTrackDuration}
         onEndReached={handleMainTrackEndReached}
+        onInvalidStateReached={onInvalidStateReached}
         onProgress={handleMainTrackProgress}
         onPlayStateChange={handleMainTrackPlayStateChange}
         />
@@ -329,6 +331,7 @@ MediaPlayerTrackGroup.propTypes = {
   loadImmediately: PropTypes.bool,
   onDuration: PropTypes.func,
   onEndReached: PropTypes.func,
+  onInvalidStateReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
   playbackRate: PropTypes.number,
@@ -360,6 +363,7 @@ MediaPlayerTrackGroup.defaultProps = {
   loadImmediately: false,
   onDuration: () => {},
   onEndReached: () => {},
+  onInvalidStateReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
   playbackRate: 1,

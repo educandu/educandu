@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useService } from '../container-context.js';
+import { remountWhen } from '../../ui/react-helper.js';
 import { useDedupedCallback } from '../../ui/hooks.js';
 import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -87,6 +88,7 @@ function MultitrackMediaPlayer({
   onSelectedVolumePresetChange,
   onPartEndReached,
   onEndReached,
+  onInvalidStateReached,
   onProgress,
   onPlayStateChange,
   onPlayingPartIndexChange,
@@ -316,6 +318,7 @@ function MultitrackMediaPlayer({
           playbackRate={playbackRate}
           onDuration={handleDuration}
           onEndReached={handleEndReached}
+          onInvalidStateReached={onInvalidStateReached}
           onProgress={handleProgress}
           onPlayStateChange={handlePlayStateChange}
           posterImageUrl={posterImageUrl}
@@ -369,6 +372,7 @@ MultitrackMediaPlayer.propTypes = {
     current: PropTypes.any
   }),
   onEndReached: PropTypes.func,
+  onInvalidStateReached: PropTypes.func,
   onPartEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onPlayingPartIndexChange: PropTypes.func,
@@ -416,6 +420,7 @@ MultitrackMediaPlayer.defaultProps = {
     current: null
   },
   onEndReached: () => {},
+  onInvalidStateReached: () => {},
   onPartEndReached: () => {},
   onPlayStateChange: () => {},
   onPlayingPartIndexChange: () => {},
@@ -434,4 +439,4 @@ MultitrackMediaPlayer.defaultProps = {
   volumePresetOptions: []
 };
 
-export default MultitrackMediaPlayer;
+export default remountWhen(MultitrackMediaPlayer, 'onInvalidStateReached');

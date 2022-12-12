@@ -26,6 +26,7 @@ function MediaPlayerTrack({
   onDuration,
   onProgress,
   onEndReached,
+  onInvalidStateReached,
   onPlayStateChange
 }) {
   const playerRef = useRef();
@@ -150,6 +151,16 @@ function MediaPlayerTrack({
     const currentSourceTimestamp = progress.played * sourceDuration;
     const trackStopTimecode = lastPlaybackRange[1] * sourceDuration;
 
+    // This unbexpected case only occurs when the react-player has loaded, played and paused a youtube resource
+    // and then the DOM element is moved (by swapping section positions).
+    // In this case the react-player automatically plays, disregarding the value passed to the "playing" prop.
+    // Therefore we have to inform the parent player about the internal state damage and reload the whole player.
+    if (trackPlayState.current === MEDIA_PLAY_STATE.pausing && progress.played === 0) {
+      playerRef.current.getInternalPlayer()?.pauseVideo();
+      onInvalidStateReached();
+      return;
+    }
+
     if (currentSourceTimestamp > trackStopTimecode && trackStopTimecode !== lastProgressTimecode) {
       setTrackPlayState({
         current: MEDIA_PLAY_STATE.stopped,
@@ -253,6 +264,7 @@ MediaPlayerTrack.propTypes = {
   loadImmediately: PropTypes.bool,
   onDuration: PropTypes.func,
   onEndReached: PropTypes.func,
+  onInvalidStateReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
@@ -273,6 +285,7 @@ MediaPlayerTrack.defaultProps = {
   loadImmediately: false,
   onDuration: () => {},
   onEndReached: () => {},
+  onInvalidStateReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
   playbackRange: [0, 1],
