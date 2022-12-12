@@ -1,9 +1,9 @@
 import React from 'react';
 import Login from './login.js';
 import PropTypes from 'prop-types';
+import { Button, Dropdown } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
-import { Button, Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
@@ -92,8 +92,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
 
   const menuItems = pageMenuItems.map(({ key, label, icon }) => ({ key, label, icon }));
 
-  const menu = <Menu items={menuItems} onClick={handleMenuItemClick} />;
-
   return (
     <header className="DefaultPageHeader">
       <div className="DefaultPageHeader-header">
@@ -106,7 +104,12 @@ function DefaultPageHeader({ onUiLanguageClick }) {
           <div className="DefaultPageHeader-loginButton">
             <Login />
           </div>
-          <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} arrow={{ pointAtCenter: true }}>
+          <Dropdown
+            trigger={['click']}
+            placement="bottomRight"
+            arrow={{ pointAtCenter: true }}
+            menu={{ items: menuItems, onClick: handleMenuItemClick }}
+            >
             <Button className="DefaultPageHeader-headerButton" icon={<MenuIcon />} type="link" />
           </Dropdown>
         </div>

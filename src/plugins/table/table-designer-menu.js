@@ -1,5 +1,5 @@
+import { Dropdown } from 'antd';
 import PropTypes from 'prop-types';
-import { Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useStableCallback } from '../../ui/hooks.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -121,7 +121,7 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
     };
   };
 
-  const handleDropdownVisibleChange = newValue => {
+  const handleDropdownOpenChange = newValue => {
     setIsCellActionInProgress(newValue);
   };
 
@@ -267,10 +267,13 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       break;
   }
 
-  const menu = <Menu items={items} onClick={handleMenuItemClick} />;
-
   return (
-    <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleDropdownVisibleChange} arrow={{ pointAtCenter: true }}>
+    <Dropdown
+      trigger={['click']}
+      arrow={{ pointAtCenter: true }}
+      onOpenChange={handleDropdownOpenChange}
+      menu={{ items, onClick: handleMenuItemClick }}
+      >
       <a className="TableDesignerMenu" onMouseOver={() => setIsMouseOver(true)} onMouseLeave={() => setIsMouseOver(false)}>
         <span className={`TableDesignerMenu-dot TableDesignerMenu-dot--${dotType}`} />
       </a>

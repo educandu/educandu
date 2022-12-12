@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, Button, Dropdown, Collapse } from 'antd';
+import { Button, Dropdown, Collapse } from 'antd';
 import DeleteIcon from '../components/icons/general/delete-icon.js';
 import MoveUpIcon from '../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../components/icons/general/move-down-icon.js';
@@ -81,9 +81,13 @@ function ItemPanel({
     if (!items.length) {
       return null;
     }
-    const menu = <Menu items={items} onClick={handleMenuClick} />;
     return (
-      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} onClick={handleDropdownClick}>
+      <Dropdown
+        trigger={['click']}
+        placement="bottomRight"
+        onClick={handleDropdownClick}
+        menu={{ items, onClick: handleMenuClick }}
+        >
         <Button ref={settingsButtonRef} type="ghost" icon={<SettingsIcon />} size="small" />
       </Dropdown>
     );

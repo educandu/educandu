@@ -27,7 +27,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
-import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Menu, Dropdown } from 'antd';
+import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
@@ -254,9 +254,12 @@ export default function Room({ PageTemplate, initialState }) {
       });
     }
 
-    const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, index, menuItem)} />;
     return (
-      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+      <Dropdown
+        trigger={['click']}
+        placement="bottomRight"
+        menu={{ items, onClick: menuItem => handleDocumentMenuClick(doc, index, menuItem) }}
+        >
         <Button type="ghost" icon={<SettingsIcon />} size="small" />
       </Dropdown>
     );

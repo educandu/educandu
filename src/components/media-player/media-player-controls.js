@@ -44,7 +44,7 @@ function MediaPlayerControls({
     }
   };
 
-  const renderSettingsMenu = () => {
+  const getSettingsMenuItems = () => {
     const items = [];
 
     if (onDownloadClick) {
@@ -72,7 +72,7 @@ function MediaPlayerControls({
       }))
     });
 
-    return <Menu items={items} onClick={handleSettingsMenuItemClick} />;
+    return items;
   };
 
   const renderTimeDisplay = () => {
@@ -98,7 +98,11 @@ function MediaPlayerControls({
           {playbackRate !== NORMAL_PLAYBACK_RATE && (
             <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>
           )}
-          <Dropdown overlay={renderSettingsMenu()} placement="bottomRight" trigger={['click']}>
+          <Dropdown
+            trigger={['click']}
+            placement="bottomRight"
+            menu={{ items: getSettingsMenuItems(), onClick: handleSettingsMenuItemClick }}
+            >
             <Button type="link" icon={<SettingsIcon />} />
           </Dropdown>
         </div>
