@@ -35,13 +35,25 @@ function MatchingCardsDisplay({ content }) {
   );
 
   const handleTileClick = tile => {
-    let hasJustMatched;
-    if (currentlyFlippedTiles.length === 1) {
-      setCurrentlyFlippedTiles([currentlyFlippedTiles[0], tile]);
-      hasJustMatched = currentlyFlippedTiles[0].pairKey === tile.pairKey;
-    } else {
-      setCurrentlyFlippedTiles([tile]);
-      hasJustMatched = false;
+    let hasJustMatched = false;
+
+    switch (currentlyFlippedTiles.length) {
+      case 0:
+        setCurrentlyFlippedTiles([tile]);
+        break;
+      case 1:
+        setCurrentlyFlippedTiles([currentlyFlippedTiles[0], tile]);
+        hasJustMatched = currentlyFlippedTiles[0].pairKey === tile.pairKey;
+        break;
+      case 2:
+        if (tile.key === currentlyFlippedTiles[0].key || tile.key === currentlyFlippedTiles[1].key) {
+          setCurrentlyFlippedTiles([]);
+        } else {
+          setCurrentlyFlippedTiles([tile]);
+        }
+        break;
+      default:
+        break;
     }
 
     if (hasJustMatched) {
@@ -54,6 +66,7 @@ function MatchingCardsDisplay({ content }) {
   const renderTile = (tile, index) => {
     const elementsToRender = [];
     const isFlipped = currentlyFlippedTiles.includes(tile);
+    const isSingleFlipped = isFlipped && currentlyFlippedTiles.length === 1;
     const wasMatched = matchedTilePairKeys.includes(tile.pairKey);
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
 
@@ -65,7 +78,7 @@ function MatchingCardsDisplay({ content }) {
       <FlipCard
         key={tile.key}
         flipped={isFlipped || wasMatched}
-        locked={isFlipped}
+        locked={isSingleFlipped}
         disabled={wasMatched}
         frontContent={(
           <MatchingCardsTile
