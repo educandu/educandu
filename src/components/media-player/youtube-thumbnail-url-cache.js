@@ -18,8 +18,8 @@ class YoutubeThumbnailUrlCache {
     this._throwIfDisposed();
     let entry = this._entries.get(sourceUrl);
     if (!entry) {
-      const { isYoutube, youtubeVideoId } = analyzeMediaUrl(sourceUrl);
-      if (isYoutube && youtubeVideoId) {
+      const { youtubeVideoId } = analyzeMediaUrl(sourceUrl);
+      if (youtubeVideoId) {
         const lowResUrl = `https://i.ytimg.com/vi/${encodeURIComponent(youtubeVideoId)}/hqdefault.jpg`;
         const highResUrl = `https://i.ytimg.com/vi/${encodeURIComponent(youtubeVideoId)}/maxresdefault.jpg`;
         entry = this._createUnverifiedYoutubeEntry(sourceUrl, youtubeVideoId, lowResUrl, highResUrl);

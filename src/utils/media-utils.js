@@ -27,7 +27,6 @@ export function analyzeMediaUrl(url) {
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
-      isYoutube: true,
       youtubeVideoId: videoId,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: Number.isInteger(endSecond) ? endSecond * 1000 : null,
@@ -41,7 +40,6 @@ export function analyzeMediaUrl(url) {
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
-      isYoutube: true,
       youtubeVideoId: videoId,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: null,
@@ -51,7 +49,6 @@ export function analyzeMediaUrl(url) {
 
   return {
     sanitizedUrl: parsedUrl?.href || url,
-    isYoutube: false,
     youtubeVideoId: null,
     startTimecode: null,
     stopTimecode: null,

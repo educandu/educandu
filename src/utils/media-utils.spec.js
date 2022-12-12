@@ -6,7 +6,6 @@ describe('media-utils', () => {
   describe('analyzeMediaUrl', () => {
     const getDefaultResult = url => ({
       sanitizedUrl: url,
-      isYoutube: false,
       youtubeVideoId: null,
       startTimecode: null,
       stopTimecode: null,
@@ -20,7 +19,6 @@ describe('media-utils', () => {
         url: 'https://a',
         expectedResult: {
           sanitizedUrl: 'https://a/',
-          isYoutube: false,
           youtubeVideoId: null,
           startTimecode: null,
           stopTimecode: null,
@@ -31,7 +29,6 @@ describe('media-utils', () => {
         url: 'https://a.com/abc.mp3',
         expectedResult: {
           sanitizedUrl: 'https://a.com/abc.mp3',
-          isYoutube: false,
           youtubeVideoId: null,
           startTimecode: null,
           stopTimecode: null,
@@ -42,7 +39,6 @@ describe('media-utils', () => {
         url: 'https://www.youtube.com/watch?v=4cn8439c2',
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
-          isYoutube: true,
           youtubeVideoId: '4cn8439c2',
           startTimecode: null,
           stopTimecode: null,
@@ -53,7 +49,6 @@ describe('media-utils', () => {
         url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5',
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
-          isYoutube: true,
           youtubeVideoId: '4cn8439c2',
           startTimecode: 5000,
           stopTimecode: null,
@@ -64,7 +59,6 @@ describe('media-utils', () => {
         url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5&end=20',
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
-          isYoutube: true,
           youtubeVideoId: '4cn8439c2',
           startTimecode: 5000,
           stopTimecode: 20000,
@@ -75,7 +69,6 @@ describe('media-utils', () => {
         url: 'https://youtu.be/j440-D5JhjI',
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
-          isYoutube: true,
           youtubeVideoId: 'j440-D5JhjI',
           startTimecode: null,
           stopTimecode: null,
@@ -86,7 +79,6 @@ describe('media-utils', () => {
         url: 'https://youtu.be/j440-D5JhjI?t=804',
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
-          isYoutube: true,
           youtubeVideoId: 'j440-D5JhjI',
           startTimecode: 804000,
           stopTimecode: null,
