@@ -30,7 +30,7 @@
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.0.3",
     "accept-language-parser": "^1.5.0",
-    "antd": "4.21.0",
+    "antd": "5.0.6",
     "any-base": "^1.1.0",
     "async": "^3.2.1",
     "aws-sdk": "^2.1006.0",
