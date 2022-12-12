@@ -36,21 +36,24 @@ const { TabPane } = Tabs;
 const logger = new Logger(import.meta.url);
 
 function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisible = false }) {
+  const initialDocumentMetadata = documentToClone
+    ? {
+      ...documentToClone,
+      title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
+      slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
+      tags: [...documentToClone.tags]
+    }
+    : {
+      roomId: room._id
+    };
+
   return {
     mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
     allowMultiple: !documentToClone,
     isVisible,
     documentToClone,
-    initialDocumentMetadata: documentToClone
-      ? {
-        ...documentToClone,
-        title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
-        slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
-        tags: [...documentToClone.tags]
-      }
-      : {
-        roomId: room._id
-      }
+    initialDocumentMetadata,
+    initialDocumentRoomMetadata: room
   };
 }
 
