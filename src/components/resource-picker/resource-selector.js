@@ -10,8 +10,6 @@ import StorageLocationScreens from './storage-location-screens.js';
 import WikimediaCommonsScreens from './wikimedia-commons-screens.js';
 import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
-const { TabPane } = Tabs;
-
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('resourceSelector');
@@ -93,13 +91,12 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
         activeKey={selectedSourceType || visibleSourceTypes[0] || null}
         onChange={handleSourceTypeTabChange}
         destroyInactiveTabPane
-        >
-        {visibleSourceTypes.map(sourceType => (
-          <TabPane key={sourceType} tab={t(`sourceType_${sourceType}`)}>
-            {renderSourceType(sourceType)}
-          </TabPane>
-        ))}
-      </Tabs>
+        items={visibleSourceTypes.map(sourceType => ({
+          key: sourceType,
+          label: t(`sourceType_${sourceType}`),
+          children: renderSourceType(sourceType)
+        }))}
+        />
     </div>
   );
 }

@@ -35,7 +35,6 @@ import {
   DEFAULT_WAVEFORM_SMOOTHING
 } from '../../plugins/audio-waveform/constants.js';
 
-const { TabPane } = Tabs;
 const { Search, TextArea } = Input;
 
 const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
@@ -357,316 +356,405 @@ function Tests({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="TestsPage">
-        <Tabs defaultActiveKey={initialTab} onChange={handleTabChange} destroyInactiveTabPane>
-          <TabPane tab="WikimediaCommonsApiClient" key="WikimediaCommonsApiClient">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
-              File types:
-              <Checkbox.Group options={Object.values(FILE_TYPE)} value={wcacFileTypes} onChange={setWcacFileTypes} />
-              Search text:
-              <Input value={wcacQuery} onChange={event => setWcacQuery(event.target.value)} />
-              <Button type="primary" onClick={handleWcacSearchClick}>Search</Button>
-            </div>
-            <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
-              {wcacResult}
-            </pre>
-          </TabPane>
-          <TabPane tab="UrlInput" key="UrlInput">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
-              <Button onClick={handleUrlInputCopyWikimediaCommonsClick}>Copy Wikimedia Commons URL</Button>
-              <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
-              <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
-              <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
-              <Button onClick={handleUrlInputSetWikimediaCommonsClick}>Set Wikimedia Commons URL</Button>
-              <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
-              <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
-              <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
-            </div>
-            <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
-          </TabPane>
-          <TabPane tab="AudioWaveformCanvas" key="AudioWaveformCanvas">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              Pen width:
-              <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={awcPenWidth} onChange={value => setAwcPenWidth(value)} />
-              Smoothing:
-              <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
-              Pen color:
-              <ColorPicker color={awcPenColor} onChange={value => setAwcPenColor(value)} />
-              Baseline color:
-              <ColorPicker color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
-              Background color:
-              <ColorPicker color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
-              <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
-            </div>
-            <div style={{ border: '1px solid silver' }}>
-              <DimensionsProvider>
-                {({ containerWidth }) => (
-                  <AudioWaveformCanvas
-                    apiRef={awcApiRef}
-                    width={containerWidth}
-                    height={Math.round(containerWidth / 2.5)}
-                    penWidth={awcPenWidth}
-                    smoothing={awcSmoothing}
-                    penColor={awcPenColor}
-                    baselineColor={awcBaselineColor}
-                    backgroundColor={awcBackgroundColor}
-                    />
-                )}
-              </DimensionsProvider>
-            </div>
-          </TabPane>
-          <TabPane tab="MusicXmlDocument" key="MusicXmlDocument">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              <div>Load Url:</div>
-              {mxdSources.map(({ title, url }) => <Button key={url} onClick={() => setMxdUrl(url)}>{title}</Button>)}
-              <div>Zoom:</div>
-              <Slider style={{ width: '200px' }} min={0.5} max={1.5} step={0.05} value={mxdZoom} onChange={setMxdZoom} />
-            </div>
-            <MusicXmlDocument url={mxdUrl} zoom={mxdZoom} />
-          </TabPane>
-          <TabPane tab="DebouncedInput" key="DebouncedInput">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              Element type:
-              <Radio.Group value={diElementType} onChange={event => setDiElementType(event.target.value)}>
-                {Object.keys(diElementTypes).map(key => <Radio.Button key={key} value={key}>{key}</Radio.Button>)}
-              </Radio.Group>
-              Time limit:
-              <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={500} value={diTimeLimit} onChange={setDiTimeLimit} />
-              <Button onClick={() => diApiRef.current.flush()}>Flush</Button>
-            </div>
-            <div>Event Log</div>
-            <div ref={diEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
-              <pre>{diEventLog}</pre>
-            </div>
-            <DebouncedInput
-              apiRef={diApiRef}
-              timeLimit={diTimeLimit}
-              elementType={diElementTypes[diElementType].elementType}
-              value={diValue}
-              onChange={value => handleDiEvent('onChange', value)}
-              {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
-              />
-          </TabPane>
-          <TabPane tab="ImageEditor" key="ImageEditor">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
-              <Button onClick={() => setIeFileUrl(IMAGE_URL_JPG)}>Set to JPG</Button>
-              <Button onClick={handleIeDownloadClick}>Download</Button>
-              <div>DIRTY: {ieIsDirty.toString()}</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              URL: {ieFileUrl}
-            </div>
-            {!!ieFile && (
-              <div style={{ height: '50vh' }}>
-                <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
-              </div>
-            )}
-          </TabPane>
-          <TabPane tab="Timeline" key="Timeline">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              Duration in milliseconds:
-              <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={1} value={timelineDuration} onChange={setTimelineDuration} />
-              <Button onClick={() => setTimelineDuration(0)}>Set to unknown</Button>
-              <Button onClick={() => setTimelineDuration(5 * 60 * 1000)}>Set to 5 minutes</Button>
-              <Button onClick={() => setTimelineDuration(10 * 60 * 1000)}>Set to 10 minutes</Button>
-            </div>
-            <Timeline
-              durationInMilliseconds={timelineDuration}
-              parts={timelineParts}
-              selectedPartIndex={-1}
-              onPartAdd={handleTimelinePartAdd}
-              onPartDelete={handleTimelinePartDelete}
-              onStartPositionChange={handleTimelineStartPositionChange}
-              />
-          </TabPane>
-          <TabPane tab="MediaRangeSelector" key="MediaRangeSelector">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              Source:
-              <Input value={mrsSource} readOnly />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              <Button onClick={() => setMrsSource('')}>Reset</Button>
-              <Button onClick={() => setMrsSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
-              <Button onClick={() => setMrsSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-              Range: {JSON.stringify(mrsRange)}
-            </div>
-            <MediaRangeSelector
-              sourceUrl={mrsSource}
-              range={mrsRange}
-              onRangeChange={setMrsRange}
-              />
-          </TabPane>
-          <TabPane tab="MediaPlayer" key="MediaPlayer">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-              <div>
-                <MediaPlayer
-                  source={mpSourceUrl}
-                  playbackRange={mpRange}
-                  screenMode={mpScreenMode}
-                  mediaPlayerRef={mpPlayerRef}
-                  onPartEndReached={(...args) => handleMpEvent('onPartEndReached', ...args)}
-                  onEndReached={(...args) => handleMpEvent('onEndReached', ...args)}
-                  onPlayStateChange={(...args) => handleMpEvent('onPlayStateChange', ...args)}
-                  onPlayingPartIndexChange={(...args) => handleMpEvent('onPlayingPartIndexChange', ...args)}
-                  onReady={(...args) => handleMpEvent('onReady', ...args)}
-                  onSeek={(...args) => handleMpEvent('onSeek', ...args)}
-                  />
-              </div>
-              <div>
-                <h6>Source</h6>
+        <Tabs
+          defaultActiveKey={initialTab}
+          onChange={handleTabChange}
+          destroyInactiveTabPane
+          items={[
+            {
+              key: 'WikimediaCommonsApiClient',
+              label: 'WikimediaCommonsApiClient',
+              children: (
                 <div>
-                  {mpSources.map((source, index) => (
-                    <Button key={index.toString()} onClick={() => setMpSourceUrl(source.url)}>Set to {source.title}</Button>
-                  ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
+                    File types:
+                    <Checkbox.Group options={Object.values(FILE_TYPE)} value={wcacFileTypes} onChange={setWcacFileTypes} />
+                    Search text:
+                    <Input value={wcacQuery} onChange={event => setWcacQuery(event.target.value)} />
+                    <Button type="primary" onClick={handleWcacSearchClick}>Search</Button>
+                  </div>
+                  <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
+                    {wcacResult}
+                  </pre>
                 </div>
-                <div>{mpSourceUrl}</div>
-                <h6 style={{ marginTop: '15px' }}>Media Range</h6>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto) 1fr', gap: '25px', alignItems: 'center' }}>
-                  <Button onClick={handleRandomPlaybackRangeClick}>Set to random value</Button>
+              )
+            },
+            {
+              key: 'UrlInput',
+              label: 'UrlInput',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
+                    <Button onClick={handleUrlInputCopyWikimediaCommonsClick}>Copy Wikimedia Commons URL</Button>
+                    <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
+                    <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
+                    <Button onClick={handleUrlInputSetWikimediaCommonsClick}>Set Wikimedia Commons URL</Button>
+                    <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
+                    <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
+                    <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
+                  </div>
+                  <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
+                </div>
+              )
+            },
+            {
+              key: 'AudioWaveformCanvas',
+              label: 'AudioWaveformCanvas',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    Pen width:
+                    <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={awcPenWidth} onChange={value => setAwcPenWidth(value)} />
+                    Smoothing:
+                    <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
+                    Pen color:
+                    <ColorPicker color={awcPenColor} onChange={value => setAwcPenColor(value)} />
+                    Baseline color:
+                    <ColorPicker color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
+                    Background color:
+                    <ColorPicker color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
+                    <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
+                  </div>
+                  <div style={{ border: '1px solid silver' }}>
+                    <DimensionsProvider>
+                      {({ containerWidth }) => (
+                        <AudioWaveformCanvas
+                          apiRef={awcApiRef}
+                          width={containerWidth}
+                          height={Math.round(containerWidth / 2.5)}
+                          penWidth={awcPenWidth}
+                          smoothing={awcSmoothing}
+                          penColor={awcPenColor}
+                          baselineColor={awcBaselineColor}
+                          backgroundColor={awcBackgroundColor}
+                          />
+                      )}
+                    </DimensionsProvider>
+                  </div>
+                </div>
+              )
+            },
+            {
+              key: 'MusicXmlDocument',
+              label: 'MusicXmlDocument',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <div>Load Url:</div>
+                    {mxdSources.map(({ title, url }) => <Button key={url} onClick={() => setMxdUrl(url)}>{title}</Button>)}
+                    <div>Zoom:</div>
+                    <Slider style={{ width: '200px' }} min={0.5} max={1.5} step={0.05} value={mxdZoom} onChange={setMxdZoom} />
+                  </div>
+                  <MusicXmlDocument url={mxdUrl} zoom={mxdZoom} />
+                </div>
+              )
+            },
+            {
+              key: 'DebouncedInput',
+              label: 'DebouncedInput',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    Element type:
+                    <Radio.Group value={diElementType} onChange={event => setDiElementType(event.target.value)}>
+                      {Object.keys(diElementTypes).map(key => <Radio.Button key={key} value={key}>{key}</Radio.Button>)}
+                    </Radio.Group>
+                    Time limit:
+                    <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={500} value={diTimeLimit} onChange={setDiTimeLimit} />
+                    <Button onClick={() => diApiRef.current.flush()}>Flush</Button>
+                  </div>
+                  <div>Event Log</div>
+                  <div ref={diEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
+                    <pre>{diEventLog}</pre>
+                  </div>
+                  <DebouncedInput
+                    apiRef={diApiRef}
+                    timeLimit={diTimeLimit}
+                    elementType={diElementTypes[diElementType].elementType}
+                    value={diValue}
+                    onChange={value => handleDiEvent('onChange', value)}
+                    {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
+                    />
+                </div>
+              )
+            },
+            {
+              key: 'ImageEditor',
+              label: 'ImageEditor',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
+                    <Button onClick={() => setIeFileUrl(IMAGE_URL_JPG)}>Set to JPG</Button>
+                    <Button onClick={handleIeDownloadClick}>Download</Button>
+                    <div>DIRTY: {ieIsDirty.toString()}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    URL: {ieFileUrl}
+                  </div>
+                  {!!ieFile && (
+                  <div style={{ height: '50vh' }}>
+                    <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
+                  </div>
+                  )}
+                </div>
+              )
+            },
+            {
+              key: 'Timeline',
+              label: 'Timeline',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    Duration in milliseconds:
+                    <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={1} value={timelineDuration} onChange={setTimelineDuration} />
+                    <Button onClick={() => setTimelineDuration(0)}>Set to unknown</Button>
+                    <Button onClick={() => setTimelineDuration(5 * 60 * 1000)}>Set to 5 minutes</Button>
+                    <Button onClick={() => setTimelineDuration(10 * 60 * 1000)}>Set to 10 minutes</Button>
+                  </div>
+                  <Timeline
+                    durationInMilliseconds={timelineDuration}
+                    parts={timelineParts}
+                    selectedPartIndex={-1}
+                    onPartAdd={handleTimelinePartAdd}
+                    onPartDelete={handleTimelinePartDelete}
+                    onStartPositionChange={handleTimelineStartPositionChange}
+                    />
+                </div>
+              )
+            },
+            {
+              key: 'MediaRangeSelector',
+              label: 'MediaRangeSelector',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    Source:
+                    <Input value={mrsSource} readOnly />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <Button onClick={() => setMrsSource('')}>Reset</Button>
+                    <Button onClick={() => setMrsSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
+                    <Button onClick={() => setMrsSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    Range: {JSON.stringify(mrsRange)}
+                  </div>
                   <MediaRangeSelector
-                    range={mpRange}
-                    sourceUrl={mpSourceUrl}
-                    onRangeChange={setMpRange}
+                    sourceUrl={mrsSource}
+                    range={mrsRange}
+                    onRangeChange={setMrsRange}
                     />
-                  <div>{mpRange[0].toFixed(2)} &ndash; {mpRange[1].toFixed(2)}</div>
                 </div>
-                <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
-                <Radio.Group value={mpScreenMode} onChange={event => setMpScreenMode(event.target.value)}>
-                  {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
-                </Radio.Group>
-                <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
+              )
+            },
+            {
+              key: 'MediaPlayer',
+              label: 'MediaPlayer',
+              children: (
                 <div>
-                  <Button onClick={() => mpPlayerRef.current.play()}>play</Button>
-                  <Button onClick={() => mpPlayerRef.current.pause()}>pause</Button>
-                  <Button onClick={() => mpPlayerRef.current.stop()}>stop</Button>
-                  <Button onClick={() => mpPlayerRef.current.reset()}>reset</Button>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                    <div>
+                      <MediaPlayer
+                        source={mpSourceUrl}
+                        playbackRange={mpRange}
+                        screenMode={mpScreenMode}
+                        mediaPlayerRef={mpPlayerRef}
+                        onPartEndReached={(...args) => handleMpEvent('onPartEndReached', ...args)}
+                        onEndReached={(...args) => handleMpEvent('onEndReached', ...args)}
+                        onPlayStateChange={(...args) => handleMpEvent('onPlayStateChange', ...args)}
+                        onPlayingPartIndexChange={(...args) => handleMpEvent('onPlayingPartIndexChange', ...args)}
+                        onReady={(...args) => handleMpEvent('onReady', ...args)}
+                        onSeek={(...args) => handleMpEvent('onSeek', ...args)}
+                        />
+                    </div>
+                    <div>
+                      <h6>Source</h6>
+                      <div>
+                        {mpSources.map((source, index) => (
+                          <Button key={index.toString()} onClick={() => setMpSourceUrl(source.url)}>Set to {source.title}</Button>
+                        ))}
+                      </div>
+                      <div>{mpSourceUrl}</div>
+                      <h6 style={{ marginTop: '15px' }}>Media Range</h6>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto) 1fr', gap: '25px', alignItems: 'center' }}>
+                        <Button onClick={handleRandomPlaybackRangeClick}>Set to random value</Button>
+                        <MediaRangeSelector
+                          range={mpRange}
+                          sourceUrl={mpSourceUrl}
+                          onRangeChange={setMpRange}
+                          />
+                        <div>{mpRange[0].toFixed(2)} &ndash; {mpRange[1].toFixed(2)}</div>
+                      </div>
+                      <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
+                      <Radio.Group value={mpScreenMode} onChange={event => setMpScreenMode(event.target.value)}>
+                        {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
+                      </Radio.Group>
+                      <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
+                      <div>
+                        <Button onClick={() => mpPlayerRef.current.play()}>play</Button>
+                        <Button onClick={() => mpPlayerRef.current.pause()}>pause</Button>
+                        <Button onClick={() => mpPlayerRef.current.stop()}>stop</Button>
+                        <Button onClick={() => mpPlayerRef.current.reset()}>reset</Button>
+                      </div>
+                      <h6 style={{ marginTop: '15px' }}>Event Log</h6>
+                      <div ref={mpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
+                        <pre>{mpEventLog}</pre>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <h6 style={{ marginTop: '15px' }}>Event Log</h6>
-                <div ref={mpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
-                  <pre>{mpEventLog}</pre>
-                </div>
-              </div>
-            </div>
-          </TabPane>
-          <TabPane tab="MultitrackMediaPlayer" key="MultitrackMediaPlayer">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-              <div>
-                <MultitrackMediaPlayer
-                  sources={mmpSourceOption.sources}
-                  screenMode={mmpScreenMode}
-                  mediaPlayerRef={mmpPlayerRef}
-                  onPartEndReached={(...args) => handleMmpEvent('onPartEndReached', ...args)}
-                  onEndReached={(...args) => handleMmpEvent('onEndReached', ...args)}
-                  onPlayStateChange={(...args) => handleMmpEvent('onPlayStateChange', ...args)}
-                  onPlayingPartIndexChange={(...args) => handleMmpEvent('onPlayingPartIndexChange', ...args)}
-                  onReady={(...args) => handleMmpEvent('onReady', ...args)}
-                  onSeek={(...args) => handleMmpEvent('onSeek', ...args)}
-                  showTrackMixer
-                  />
-              </div>
-              <div>
-                <h6>Source</h6>
+              )
+            },
+            {
+              key: 'MultitrackMediaPlayer',
+              label: 'MultitrackMediaPlayer',
+              children: (
                 <div>
-                  {mmpSourceOptions.map((source, index) => (
-                    <Button key={index.toString()} onClick={() => setMmpSourceOption(source)}>Set to {source.title}</Button>
-                  ))}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                    <div>
+                      <MultitrackMediaPlayer
+                        sources={mmpSourceOption.sources}
+                        screenMode={mmpScreenMode}
+                        mediaPlayerRef={mmpPlayerRef}
+                        onPartEndReached={(...args) => handleMmpEvent('onPartEndReached', ...args)}
+                        onEndReached={(...args) => handleMmpEvent('onEndReached', ...args)}
+                        onPlayStateChange={(...args) => handleMmpEvent('onPlayStateChange', ...args)}
+                        onPlayingPartIndexChange={(...args) => handleMmpEvent('onPlayingPartIndexChange', ...args)}
+                        onReady={(...args) => handleMmpEvent('onReady', ...args)}
+                        onSeek={(...args) => handleMmpEvent('onSeek', ...args)}
+                        showTrackMixer
+                        />
+                    </div>
+                    <div>
+                      <h6>Source</h6>
+                      <div>
+                        {mmpSourceOptions.map((source, index) => (
+                          <Button key={index.toString()} onClick={() => setMmpSourceOption(source)}>Set to {source.title}</Button>
+                        ))}
+                      </div>
+                      <div>{mmpSourceOption.title} - {mmpSourceOption.sources.secondaryTracks.length + 1} tracks</div>
+                      <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
+                      <Radio.Group value={mmpScreenMode} onChange={event => setMmpScreenMode(event.target.value)}>
+                        {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
+                      </Radio.Group>
+                      <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
+                      <div>
+                        <Button onClick={() => mmpPlayerRef.current.play()}>play</Button>
+                        <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
+                        <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
+                        <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
+                      </div>
+                      <h6 style={{ marginTop: '15px' }}>Event Log</h6>
+                      <div ref={mmpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
+                        <pre>{mmpEventLog}</pre>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>{mmpSourceOption.title} - {mmpSourceOption.sources.secondaryTracks.length + 1} tracks</div>
-                <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
-                <Radio.Group value={mmpScreenMode} onChange={event => setMmpScreenMode(event.target.value)}>
-                  {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
-                </Radio.Group>
-                <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
+              )
+            },
+            {
+              key: 'ResourceSelector',
+              label: 'ResourceSelector',
+              children: (
                 <div>
-                  <Button onClick={() => mmpPlayerRef.current.play()}>play</Button>
-                  <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
-                  <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
-                  <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
+                  <ResourceSelector
+                    allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
+                    onSelect={ev => console.log('select', ev)}
+                    onCancel={ev => console.log('cancel', ev)}
+                    />
                 </div>
-                <h6 style={{ marginTop: '15px' }}>Event Log</h6>
-                <div ref={mmpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
-                  <pre>{mmpEventLog}</pre>
+              )
+            },
+            {
+              key: 'ResourcePicker',
+              label: 'ResourcePicker',
+              children: (
+                <div>
+                  <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr auto' }}>
+                    <Input
+                      value={rsResourceUrl}
+                      onChange={event => setRsResourceUrl(event.target.value)}
+                      />
+                    <ResourcePicker
+                      url={rsResourceUrl}
+                      onUrlChange={setRsResourceUrl}
+                      />
+                  </div>
                 </div>
-              </div>
-            </div>
-          </TabPane>
-          <TabPane tab="ResourceSelector" key="ResourceSelector">
-            <ResourceSelector
-              allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
-              onSelect={ev => console.log('select', ev)}
-              onCancel={ev => console.log('cancel', ev)}
-              />
-          </TabPane>
-          <TabPane tab="ResourcePicker" key="ResourcePicker">
-            <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr auto' }}>
-              <Input
-                value={rsResourceUrl}
-                onChange={event => setRsResourceUrl(event.target.value)}
-                />
-              <ResourcePicker
-                url={rsResourceUrl}
-                onUrlChange={setRsResourceUrl}
-                />
-            </div>
-          </TabPane>
-          <TabPane tab="NeverScrollingTextArea" key="NeverScrollingTextArea">
-            <h4>Grid aligned</h4>
-            <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
-              <NeverScrollingTextArea value={nstaValue1} onChange={event => setNstaValue1(event.target.value)} minRows={3} />
-              <NeverScrollingTextArea value={nstaValue2} onChange={event => setNstaValue2(event.target.value)} minRows={4} />
-              <NeverScrollingTextArea value={nstaValue3} onChange={event => setNstaValue3(event.target.value)} minRows={5} />
-            </div>
-            <br />
-            <h4>Alignment</h4>
-            <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px', minHeight: '100px' }}>
-              <NeverScrollingTextArea value={nstaValue4} onChange={event => setNstaValue4(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.top} horizontalAlignment={HORIZONTAL_ALIGNMENT.left} />
-              <NeverScrollingTextArea value={nstaValue5} onChange={event => setNstaValue5(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.middle} horizontalAlignment={HORIZONTAL_ALIGNMENT.center} />
-              <NeverScrollingTextArea value={nstaValue6} onChange={event => setNstaValue6(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.bottom} horizontalAlignment={HORIZONTAL_ALIGNMENT.right} />
-            </div>
-            <br />
-            <h4>Within Form</h4>
-            <Form initialValues={{ ta1: 'Hello World', ta2: 'Hello World', ta3: 'Hello World', ta4: 'Hello World', ta5: 'Hello World', ta6: 'Hello World' }}>
-              <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
-                <Form.Item name="ta1" validateStatus="success" hasFeedback>
-                  <NeverScrollingTextArea minRows={3} />
-                </Form.Item>
-                <Form.Item name="ta2" validateStatus="warning" hasFeedback>
-                  <NeverScrollingTextArea minRows={4} />
-                </Form.Item>
-                <Form.Item name="ta3" validateStatus="error" hasFeedback>
-                  <NeverScrollingTextArea minRows={5} />
-                </Form.Item>
-                <Form.Item name="ta4" validateStatus="validating" hasFeedback>
-                  <NeverScrollingTextArea minRows={3} />
-                </Form.Item>
-                <Form.Item name="ta5">
-                  <NeverScrollingTextArea minRows={4} disabled />
-                </Form.Item>
-                <Form.Item name="ta6" validateStatus="error" hasFeedback>
-                  <NeverScrollingTextArea minRows={5} disabled />
-                </Form.Item>
-              </div>
-            </Form>
-          </TabPane>
-          <TabPane tab="MultitrackMediaPlugin" key="MultitrackMediaPlugin">
-            <h4>Source</h4>
-            <div>
-              {mmpPresets.map((preset, index) => (
-                <Button key={index.toString()} onClick={() => setMmpContent(preset.content)}>Set to {preset.title}</Button>
-              ))}
-            </div>
-            <h4 style={{ marginTop: '15px' }}>Display</h4>
-            <MultitrackMediaDisplay content={mmpContent} />
-            <h4 style={{ marginTop: '15px' }}>Editor</h4>
-            <MultitrackMediaEditor content={mmpContent} onContentChanged={content => setMmpContent(content)} />
-          </TabPane>
-        </Tabs>
+              )
+            },
+            {
+              key: 'NeverScrollingTextArea',
+              label: 'NeverScrollingTextArea',
+              children: (
+                <div>
+                  <h4>Grid aligned</h4>
+                  <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
+                    <NeverScrollingTextArea value={nstaValue1} onChange={event => setNstaValue1(event.target.value)} minRows={3} />
+                    <NeverScrollingTextArea value={nstaValue2} onChange={event => setNstaValue2(event.target.value)} minRows={4} />
+                    <NeverScrollingTextArea value={nstaValue3} onChange={event => setNstaValue3(event.target.value)} minRows={5} />
+                  </div>
+                  <br />
+                  <h4>Alignment</h4>
+                  <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px', minHeight: '100px' }}>
+                    <NeverScrollingTextArea value={nstaValue4} onChange={event => setNstaValue4(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.top} horizontalAlignment={HORIZONTAL_ALIGNMENT.left} />
+                    <NeverScrollingTextArea value={nstaValue5} onChange={event => setNstaValue5(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.middle} horizontalAlignment={HORIZONTAL_ALIGNMENT.center} />
+                    <NeverScrollingTextArea value={nstaValue6} onChange={event => setNstaValue6(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.bottom} horizontalAlignment={HORIZONTAL_ALIGNMENT.right} />
+                  </div>
+                  <br />
+                  <h4>Within Form</h4>
+                  <Form initialValues={{ ta1: 'Hello World', ta2: 'Hello World', ta3: 'Hello World', ta4: 'Hello World', ta5: 'Hello World', ta6: 'Hello World' }}>
+                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
+                      <Form.Item name="ta1" validateStatus="success" hasFeedback>
+                        <NeverScrollingTextArea minRows={3} />
+                      </Form.Item>
+                      <Form.Item name="ta2" validateStatus="warning" hasFeedback>
+                        <NeverScrollingTextArea minRows={4} />
+                      </Form.Item>
+                      <Form.Item name="ta3" validateStatus="error" hasFeedback>
+                        <NeverScrollingTextArea minRows={5} />
+                      </Form.Item>
+                      <Form.Item name="ta4" validateStatus="validating" hasFeedback>
+                        <NeverScrollingTextArea minRows={3} />
+                      </Form.Item>
+                      <Form.Item name="ta5">
+                        <NeverScrollingTextArea minRows={4} disabled />
+                      </Form.Item>
+                      <Form.Item name="ta6" validateStatus="error" hasFeedback>
+                        <NeverScrollingTextArea minRows={5} disabled />
+                      </Form.Item>
+                    </div>
+                  </Form>
+                </div>
+              )
+            },
+            {
+              key: 'MultitrackMediaPlugin',
+              label: 'MultitrackMediaPlugin',
+              children: (
+                <div>
+                  <h4>Source</h4>
+                  <div>
+                    {mmpPresets.map((preset, index) => (
+                      <Button key={index.toString()} onClick={() => setMmpContent(preset.content)}>Set to {preset.title}</Button>
+                    ))}
+                  </div>
+                  <h4 style={{ marginTop: '15px' }}>Display</h4>
+                  <MultitrackMediaDisplay content={mmpContent} />
+                  <h4 style={{ marginTop: '15px' }}>Editor</h4>
+                  <MultitrackMediaEditor content={mmpContent} onContentChanged={content => setMmpContent(content)} />
+                </div>
+              )
+            }
+          ]}
+          />
       </div>
     </PageTemplate>
   );

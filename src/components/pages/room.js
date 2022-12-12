@@ -31,8 +31,6 @@ import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
-const { TabPane } = Tabs;
-
 const logger = new Logger(import.meta.url);
 
 function getDocumentMetadataModalState({ t, room, documentToClone = null, isOpen = false }) {
@@ -398,59 +396,81 @@ export default function Room({ PageTemplate, initialState }) {
         {!isUserRoomOwner && renderRoomDocumentsCard()}
 
         {!!isUserRoomOwner && (
-          <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
-            <TabPane className="Tabs-tabPane" tab={t('documentsTabTitle')} key="1">
-              {renderRoomDocumentsCard()}
-            </TabPane>
-
-            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-              {renderRoomMembers()}
-              {renderRoomInvitations()}
-              <RoomInvitationCreationModal
-                isOpen={isRoomInvitationModalOpen}
-                onOk={handleInvitationModalClose}
-                onCancel={handleInvitationModalClose}
-                roomId={room._id}
-                />
-            </TabPane>
-
-            <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
-              <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
-                <RoomMetadataForm
-                  formRef={formRef}
-                  room={room}
-                  onSubmit={handleRoomMetadataFormSubmitted}
-                  onFieldsChange={handleRoomMetadataFormFieldsChanged}
-                  editMode
-                  />
-                <Button
-                  className="RoomPage-cardEditButton"
-                  type="primary"
-                  onClick={handleUpdateRoomClick}
-                  disabled={isRoomUpdateButtonDisabled}
-                  >
-                  {t('common:update')}
-                </Button>
-              </Card>
-              <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
-                <div className="RoomPage-cardDangerAction">
-                  <div>
-                    <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
-                    <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
+          <Tabs
+            className="Tabs"
+            defaultActiveKey="1"
+            type="line"
+            size="middle"
+            items={[
+              {
+                key: '1',
+                label: t('documentsTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane">
+                    {renderRoomDocumentsCard()}
                   </div>
-                  <div className="RoomPage-cardDangerActionButtonContainer">
-                    <Button
-                      type="primary"
-                      icon={<DeleteIcon />}
-                      onClick={handleDeleteRoomClick}
-                      >
-                      {t('deleteRoomButton')}
-                    </Button>
+                )
+              },
+              {
+                key: '2',
+                label: t('membersTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane">
+                    {renderRoomMembers()}
+                    {renderRoomInvitations()}
+                    <RoomInvitationCreationModal
+                      isOpen={isRoomInvitationModalOpen}
+                      onOk={handleInvitationModalClose}
+                      onCancel={handleInvitationModalClose}
+                      roomId={room._id}
+                      />
                   </div>
-                </div>
-              </Card>
-            </TabPane>
-          </Tabs>
+                )
+              },
+              {
+                key: '3',
+                label: t('settingsTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane" >
+                    <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
+                      <RoomMetadataForm
+                        formRef={formRef}
+                        room={room}
+                        onSubmit={handleRoomMetadataFormSubmitted}
+                        onFieldsChange={handleRoomMetadataFormFieldsChanged}
+                        editMode
+                        />
+                      <Button
+                        className="RoomPage-cardEditButton"
+                        type="primary"
+                        onClick={handleUpdateRoomClick}
+                        disabled={isRoomUpdateButtonDisabled}
+                        >
+                        {t('common:update')}
+                      </Button>
+                    </Card>
+                    <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
+                      <div className="RoomPage-cardDangerAction">
+                        <div>
+                          <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
+                          <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
+                        </div>
+                        <div className="RoomPage-cardDangerActionButtonContainer">
+                          <Button
+                            type="primary"
+                            icon={<DeleteIcon />}
+                            onClick={handleDeleteRoomClick}
+                            >
+                            {t('deleteRoomButton')}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                )
+              }
+            ]}
+            />
         )}
 
         <DocumentMetadataModal
