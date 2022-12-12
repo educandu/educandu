@@ -17,7 +17,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
-import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
+import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
   composeTagOptions,
@@ -56,7 +56,8 @@ function DocumentMetadataModal({
   onSave,
   onClose,
   documentToClone,
-  initialDocumentMetadata
+  initialDocumentMetadata,
+  initialDocumentRoomMetadata
 }) {
   const user = useUser();
   const formRef = useRef(null);
@@ -312,6 +313,7 @@ function DocumentMetadataModal({
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
+  const isRoomOwner = cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom && initialDocumentRoomMetadata?.owner._id === user._id;
 
   return (
     <Modal
@@ -424,7 +426,7 @@ function DocumentMetadataModal({
             </CollapsePanel>
           </Collapse>
         )}
-        {!!isDocInRoomContext && (
+        {!!isDocInRoomContext && !!isRoomOwner && (
           <FormItem>
             <Checkbox checked={roomContext.draft} onChange={handleDraftChange}>
               <Info tooltip={t('draftInfo')} iconAfterContent> <span className="u-label">{t('draft')}</span></Info>
@@ -443,6 +445,7 @@ DocumentMetadataModal.propTypes = {
     PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
   ]).isRequired,
+  initialDocumentRoomMetadata: roomShape,
   isVisible: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
@@ -451,7 +454,8 @@ DocumentMetadataModal.propTypes = {
 
 DocumentMetadataModal.defaultProps = {
   allowMultiple: false,
-  documentToClone: null
+  documentToClone: null,
+  initialDocumentRoomMetadata: null
 };
 
 export default DocumentMetadataModal;
