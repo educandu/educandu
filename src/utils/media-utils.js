@@ -2,6 +2,7 @@ import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
+import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 import validation, { URL_VALIDATION_STATUS } from '../ui/validation.js';
@@ -26,7 +27,7 @@ export function analyzeMediaUrl(url) {
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
-      isYoutube: true,
+      youtubeVideoId: videoId,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: Number.isInteger(endSecond) ? endSecond * 1000 : null,
       resourceType: RESOURCE_TYPE.video
@@ -39,7 +40,7 @@ export function analyzeMediaUrl(url) {
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
-      isYoutube: true,
+      youtubeVideoId: videoId,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: null,
       resourceType: RESOURCE_TYPE.video
@@ -48,7 +49,7 @@ export function analyzeMediaUrl(url) {
 
   return {
     sanitizedUrl: parsedUrl?.href || url,
-    isYoutube: false,
+    youtubeVideoId: null,
     startTimecode: null,
     stopTimecode: null,
     resourceType: getResourceType(url)
@@ -111,6 +112,16 @@ export const determineMediaDuration = memoizee(async url => {
     }, MEDIA_TIMEOUT_IN_MS);
   });
   return Promise.race([playerPromise, timeoutPromise]);
+}, { promise: true });
+
+export const verifyMediaThumbnailUrl = memoizee(url => {
+  const imagePromise = preloadImage(url);
+
+  const timeoutPromise = new Promise((_resolve, reject) => {
+    setTimeout(() => reject(new Error(`Timeout verifying thumbnail URL ${url}`)), MEDIA_TIMEOUT_IN_MS);
+  });
+
+  return Promise.race([imagePromise, timeoutPromise]);
 }, { promise: true });
 
 export function formatMillisecondsAsDuration(milliseconds, { millisecondsLength } = {}) {

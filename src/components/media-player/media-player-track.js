@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import { useStableCallback } from '../../ui/hooks.js';
 import AudioIcon from '../icons/general/audio-icon.js';
+import { useYoutubeThumbnailUrl } from './media-hooks.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../../utils/media-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
@@ -31,6 +32,7 @@ function MediaPlayerTrack({
 }) {
   const playerRef = useRef();
   const [sourceDuration, setSourceDuration] = useState(0);
+  const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
@@ -217,6 +219,19 @@ function MediaPlayerTrack({
   const isBufferingWhilePlaying = trackPlayState.current === MEDIA_PLAY_STATE.buffering && trackPlayState.beforeBuffering === MEDIA_PLAY_STATE.playing;
   const shouldPlay = trackPlayState.current === MEDIA_PLAY_STATE.playing || isBufferingWhilePlaying;
 
+  let lightModeValue;
+  if (trackPlayState.current !== MEDIA_PLAY_STATE.initializing || loadImmediately) {
+    lightModeValue = false;
+  } else if (posterImageUrl) {
+    lightModeValue = posterImageUrl;
+  } else if (youtubeThumbnailUrl) {
+    lightModeValue = youtubeThumbnailUrl.isHighResThumbnailUrlVerfied
+      ? youtubeThumbnailUrl.highResThumbnailUrl
+      : youtubeThumbnailUrl.lowResThumbnailUrl;
+  } else {
+    lightModeValue = true;
+  }
+
   return (
     <div className={classes}>
       <div className="MediaPlayerTrack-aspectRatioContainer" style={{ paddingTop }}>
@@ -231,7 +246,7 @@ function MediaPlayerTrack({
           muted={volume === 0}
           playbackRate={playbackRate}
           progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
-          light={loadImmediately ? false : trackPlayState.current === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
+          light={lightModeValue}
           playing={shouldPlay}
           onReady={handleReady}
           onBuffer={handleBuffer}

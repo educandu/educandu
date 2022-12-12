@@ -1,22 +1,24 @@
-export const preloadImage = async url => {
+export const preloadImage = url => {
   if (!url) {
-    return;
+    return Promise.resolve(false);
   }
 
   const element = window.document.createElement('img');
   element.style.display = 'none';
   element.src = url;
 
-  await new Promise(resolve => {
-    element.onloadeddata = () => {
+  const promise = new Promise(resolve => {
+    element.onload = () => {
       element.remove();
-      resolve();
+      resolve(true);
     };
     element.onerror = () => {
       element.remove();
-      resolve();
+      resolve(false);
     };
   });
 
   window.document.body.appendChild(element);
+
+  return promise;
 };
