@@ -5,7 +5,7 @@ export default class Educandu_2022_04_11_02_add_updatedBy_to_lessons {
   }
 
   async up() {
-    await this.db.collection('lessons').update({}, [{ $set: { updatedBy: '$createdBy' } }], { multi: true });
+    await this.db.collection('lessons').updateMany({}, [{ $set: { updatedBy: '$createdBy' } }]);
   }
 
   async down() {

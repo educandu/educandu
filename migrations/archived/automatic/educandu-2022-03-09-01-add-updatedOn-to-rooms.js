@@ -5,7 +5,7 @@ export default class Educandu_2022_03_09_01_add_updatedOn_to_rooms {
   }
 
   async up() {
-    await this.db.collection('rooms').update({}, [{ $set: { updatedOn: '$createdOn' } }], { multi: true });
+    await this.db.collection('rooms').updateMany({}, [{ $set: { updatedOn: '$createdOn' } }]);
   }
 
   async down() {
