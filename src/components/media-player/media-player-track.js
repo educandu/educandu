@@ -31,11 +31,19 @@ function MediaPlayerTrack({
   onPlayStateChange
 }) {
   const playerRef = useRef();
+  const isMounted = useRef(false);
   const [sourceDuration, setSourceDuration] = useState(0);
   const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const [trackPlayState, setTrackPlayState] = useState({
     current: MEDIA_PLAY_STATE.initializing,
@@ -235,39 +243,41 @@ function MediaPlayerTrack({
   return (
     <div className={classes}>
       <div className="MediaPlayerTrack-aspectRatioContainer" style={{ paddingTop }}>
-        <ReactPlayer
-          ref={playerRef}
-          className={playerScreenClasses}
-          url={sourceUrl}
-          width="100%"
-          height="100%"
-          controls={false}
-          volume={volume}
-          muted={volume === 0}
-          playbackRate={playbackRate}
-          progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
-          light={lightModeValue}
-          playing={shouldPlay}
-          onReady={handleReady}
-          onBuffer={handleBuffer}
-          onBufferEnd={handleBufferEnd}
-          onStart={handlePlay}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onEnded={handleEnded}
-          onDuration={handleDuration}
-          onProgress={handleProgress}
-          onClickPreview={handleClickPreview}
-          />
+        {isMounted.current
+          ? <ReactPlayer
+              ref={playerRef}
+              className={playerScreenClasses}
+              url={sourceUrl}
+              width="100%"
+              height="100%"
+              controls={false}
+              volume={volume}
+              muted={volume === 0}
+              playbackRate={playbackRate}
+              progressInterval={MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS}
+              light={lightModeValue}
+              playing={shouldPlay}
+              onReady={handleReady}
+              onBuffer={handleBuffer}
+              onBufferEnd={handleBufferEnd}
+              onStart={handlePlay}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onEnded={handleEnded}
+              onDuration={handleDuration}
+              onProgress={handleProgress}
+              onClickPreview={handleClickPreview}
+              />
+          : null}
         {screenMode === MEDIA_SCREEN_MODE.audio && trackPlayState.current !== MEDIA_PLAY_STATE.initializing && (
-          <div className="MediaPlayerTrack--audioModeOverlay">
-            <AudioIcon />
-          </div>
+        <div className="MediaPlayerTrack--audioModeOverlay">
+          <AudioIcon />
+        </div>
         )}
-        {(screenMode === MEDIA_SCREEN_MODE.overlay || screenOverlay) && (
-          <div className="MediaPlayerTrack--screenOverlay">
-            {screenOverlay}
-          </div>
+        {(screenMode === MEDIA_SCREEN_MODE.overlay || !!screenOverlay) && (
+        <div className="MediaPlayerTrack--screenOverlay">
+          {screenOverlay}
+        </div>
         )}
       </div>
     </div>

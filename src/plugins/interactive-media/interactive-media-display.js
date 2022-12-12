@@ -98,8 +98,8 @@ function InteractiveMediaDisplay({ content }) {
         <div className="InteractiveMediaDisplay-overlayChapterAnswer">
           <Markdown tag="div" inline>{answer}</Markdown>
           <div className="InteractiveMediaDisplay-answerMark">
-            {isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
-            {isIncorrectAnswerSelected && <div className="InteractiveMediaDisplay-incorrectAnswerMark"><CloseOutlined /></div>}
+            {!!isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
+            {!!isIncorrectAnswerSelected && <div className="InteractiveMediaDisplay-incorrectAnswerMark"><CloseOutlined /></div>}
           </div>
         </div>
       </Radio>
@@ -159,7 +159,7 @@ function InteractiveMediaDisplay({ content }) {
           onSeek={handleSeek}
           canDownload={canDownload}
           />
-        {sourceUrl && (
+        {!!sourceUrl && (
           <div className="InteractiveMediaDisplay-progressBar">
             <div className="InteractiveMediaDisplay-progressBarCards">
               <div>

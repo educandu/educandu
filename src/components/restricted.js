@@ -19,7 +19,7 @@ Restricted.propTypes = {
   to: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string)
-  ])
+  ]).isRequired
 };
 
 Restricted.defaultProps = {

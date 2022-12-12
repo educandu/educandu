@@ -16,7 +16,7 @@ function VideoDisplay({ content }) {
   return (
     <div className="VideoDisplay">
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
-        {url && (
+        {!!url && (
           <MediaPlayer
             source={url}
             posterImageUrl={posterImageUrl}

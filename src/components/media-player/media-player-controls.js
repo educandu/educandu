@@ -84,7 +84,7 @@ function MediaPlayerControls({
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <div className="MediaPlayerControls-controlsGroup">
-        {isPlaying && <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />}
+        {!!isPlaying && <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />}
         {!isPlaying && <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />}
         <div className="MediaPlayerControls-volumeControls">
           <MediaVolumeSlider value={volume} onChange={onVolumeChange} />

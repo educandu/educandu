@@ -109,8 +109,8 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
           <SiteLogo readonly />
         </div>
         {!isValidRequest && completionFailureNotice}
-        {isValidRequest && !user && completionForm}
-        {isValidRequest && user && completionSuccessConfirmation}
+        {!!isValidRequest && !user && completionForm}
+        {!!isValidRequest && !!user && completionSuccessConfirmation}
       </div>
     </PageTemplate>
   );

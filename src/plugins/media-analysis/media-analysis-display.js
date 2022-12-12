@@ -121,7 +121,7 @@ function MediaAnalysisDisplay({ content }) {
         <div className="MediaAnalysisDisplay-chapterTitles">
           {chapters.map(renderChapterTitle)}
         </div>
-        {chapterTextsAreSet && (
+        {!!chapterTextsAreSet && (
           <Fragment>
             <div className={classNames('MediaAnalysisDisplay-chapterTexts', { 'is-expanded': areTextsExpanded })}>
               {chapters.map(renderChapterText)}
@@ -138,7 +138,7 @@ function MediaAnalysisDisplay({ content }) {
   return (
     <div className="MediaAnalysisDisplay">
       <div className={`MediaAnalysisDisplay-content u-width-${width || 100}`}>
-        {canRenderMediaPlayer && (
+        {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
               parts={chapters}

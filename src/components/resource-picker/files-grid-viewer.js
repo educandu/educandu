@@ -94,7 +94,7 @@ function FilesGridViewer({
               onClick={event => handlePreviewClick(event, file)}
               overlay
               />
-            {canDelete && (
+            {!!canDelete && (
               <ActionButton
                 title={t('common:delete')}
                 icon={<DeleteIcon />}
@@ -111,7 +111,7 @@ function FilesGridViewer({
 
   return (
     <div className="FilesGridViewer">
-      {canNavigateToParent && (
+      {!!canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
           <div className="FilesGridViewer-fileContainer">
             <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={handleParentLinkClick} onDoubleClick={handleParentLinkDoubleClick} >

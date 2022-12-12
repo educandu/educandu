@@ -22,7 +22,7 @@ function DocumentInfoCell({ doc }) {
           >
           <div>
             <div className="DocumentInfoCell-mainText">{doc.title}</div>
-            {doc.description && <div className="DocumentInfoCell-description">{doc.description}</div>}
+            {!!doc.description && <div className="DocumentInfoCell-description">{doc.description}</div>}
             <div className="DocumentInfoCell-subtext">{dates.join(' | ')}</div>
           </div>
         </a>

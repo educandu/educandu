@@ -499,7 +499,7 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
-          {room && (
+          {!!room && (
             <Breadcrumb className="Breadcrumbs">
               <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
               <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
@@ -531,7 +531,7 @@ function Doc({ initialState, PageTemplate }) {
             pendingSectionKeys={pendingTemplateSectionKeys}
             editedSectionKeys={editedSectionKeys}
             canEdit={view === VIEW.edit}
-            canHardDelete={userCanHardDelete && view === VIEW.history}
+            canHardDelete={!!userCanHardDelete && view === VIEW.history}
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
@@ -561,7 +561,7 @@ function Doc({ initialState, PageTemplate }) {
         </div>
       </PageTemplate>
       <div className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}>
-        {showHistoryPanel && (
+        {!!showHistoryPanel && (
           <Restricted to={permissions.EDIT_DOC}>
             <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
               <HistoryControlPanel
@@ -578,7 +578,7 @@ function Doc({ initialState, PageTemplate }) {
             </div>
           </Restricted>
         )}
-        {showCommentsPanel && (
+        {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
             <ControlPanel
               startOpen={initialView === VIEW.comments}
@@ -591,7 +591,7 @@ function Doc({ initialState, PageTemplate }) {
               />
           </div>
         )}
-        {showEditPanel && (
+        {!!showEditPanel && (
           <Restricted to={permissions.EDIT_DOC}>
             <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
               <EditControlPanel

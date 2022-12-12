@@ -66,7 +66,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
           <RadioButton value={ROOM_DOCUMENTS_MODE.collaborative}>{t('common:documentsMode_collaborative')}</RadioButton>
         </RadioGroup>
       </FormItem>
-      {editMode && (
+      {!!editMode && (
         <FormItem label={t('common:description')} name="description" initialValue={room.description}>
           <MarkdownInput preview />
         </FormItem>

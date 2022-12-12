@@ -43,7 +43,7 @@ export default function Collapsible({ title, icon, color, width, children, isCol
 
     return (
       <div className={contentClasses}>
-        {standalone && renderIcon({ standalone: true })}
+        {!!standalone && renderIcon({ standalone: true })}
         {children}
       </div>
     );
@@ -72,14 +72,14 @@ export default function Collapsible({ title, icon, color, width, children, isCol
         </Fragment>
       )}
 
-      {isCollapsible && (
+      {!!isCollapsible && (
         <Fragment>
           <a className={headerClasses} onClick={handleHeaderClick}>
             {renderIcon({ standalone: false })}
             {title}
             <RightOutlined className={classNames('Collapsible-headerArrow', { 'is-rotated-downwards': isExpanded })} />
           </a>
-          {isExpanded && renderContent({ standalone: false }) }
+          {!!isExpanded && renderContent({ standalone: false }) }
         </Fragment>
       )}
     </div>

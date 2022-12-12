@@ -346,7 +346,7 @@ function MultitrackMediaPlayer({
         onVolumeChange={setVolume}
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />
-      {!!loadedSources && showTrackMixer && (
+      {!!loadedSources && !!showTrackMixer && (
         <div className="MultitrackMediaPlayer-trackMixer">
           <MediaPlayerTrackMixer
             mainTrack={loadedSources.mainTrack}

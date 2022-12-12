@@ -93,7 +93,7 @@ function WikimediaCommonsFilesViewer({
 
     return (
       <div ref={sentryRef} className={classes} key="sentry">
-        <Spin size="large" spinning={isLoading && files.length} />
+        <Spin size="large" spinning={!!isLoading && files.length} />
       </div>
     );
   };

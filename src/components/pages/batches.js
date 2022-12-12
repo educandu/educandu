@@ -370,7 +370,8 @@ function Batches({ initialState, PageTemplate }) {
           }}
           />
       </div>
-    </PageTemplate>);
+    </PageTemplate>
+  );
 }
 
 Batches.propTypes = {

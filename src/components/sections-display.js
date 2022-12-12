@@ -69,28 +69,30 @@ function SectionsDisplay({
   };
 
   const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false }) => {
-    return (<SectionDisplay
-      key={section.key}
-      section={section}
-      canEdit={!!dragHandleProps && canEdit}
-      canHardDelete={canHardDelete}
-      dragHandleProps={dragHandleProps}
-      isDragged={isDragged}
-      isEditing={editedSectionKeys.includes(section.key)}
-      isOtherSectionDragged={isDragging && !isDragged}
-      isPending={pendingSectionKeys.includes(section.key)}
-      onPendingSectionApply={() => onPendingSectionApply(index)}
-      onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
-      onSectionCopyToClipboard={() => onSectionCopyToClipboard(index)}
-      onSectionDelete={() => onSectionDelete(index)}
-      onSectionDuplicate={() => onSectionDuplicate(index)}
-      onSectionEditEnter={() => onSectionEditEnter(index)}
-      onSectionEditLeave={() => onSectionEditLeave(index)}
-      onSectionMoveUp={() => handleSectionMove(index, index - 1)}
-      onSectionMoveDown={() => handleSectionMove(index, index + 1)}
-      onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
-      onSectionHardDelete={() => onSectionHardDelete(index)}
-      />);
+    return (
+      <SectionDisplay
+        key={section.key}
+        section={section}
+        canEdit={!!dragHandleProps && canEdit}
+        canHardDelete={canHardDelete}
+        dragHandleProps={dragHandleProps}
+        isDragged={isDragged}
+        isEditing={editedSectionKeys.includes(section.key)}
+        isOtherSectionDragged={!!isDragging && !isDragged}
+        isPending={pendingSectionKeys.includes(section.key)}
+        onPendingSectionApply={() => onPendingSectionApply(index)}
+        onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
+        onSectionCopyToClipboard={() => onSectionCopyToClipboard(index)}
+        onSectionDelete={() => onSectionDelete(index)}
+        onSectionDuplicate={() => onSectionDuplicate(index)}
+        onSectionEditEnter={() => onSectionEditEnter(index)}
+        onSectionEditLeave={() => onSectionEditLeave(index)}
+        onSectionMoveUp={() => handleSectionMove(index, index - 1)}
+        onSectionMoveDown={() => handleSectionMove(index, index + 1)}
+        onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
+        onSectionHardDelete={() => onSectionHardDelete(index)}
+        />
+    );
   };
 
   const renderSectionDivider = insertIndex => {

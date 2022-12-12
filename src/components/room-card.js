@@ -46,7 +46,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
     <div className="RoomCard">
       <div className="RoomCard-header">
         <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
-        {showOwner && !isDeletedRoom && renderOwner()}
+        {!!showOwner && !isDeletedRoom && renderOwner()}
       </div>
       <Divider className="RoomCard-divider" />
       {!!room?.documentsMode && (

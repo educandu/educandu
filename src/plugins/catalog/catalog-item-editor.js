@@ -101,7 +101,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
           </div>
         </FormItem>
       )}
-      {enableImageEditing && (
+      {!!enableImageEditing && (
         <FormItem {...FORM_ITEM_LAYOUT} {...getImageValidationProps(image.sourceUrl)} label={t('common:imageSource')}>
           <UrlInput value={image.sourceUrl} onChange={handleInternalImageUrlChange} allowedSourceTypes={allowedImageSourceTypes} />
         </FormItem>

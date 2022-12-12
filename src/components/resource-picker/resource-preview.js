@@ -170,7 +170,7 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
             </div>
           </Fragment>
         )}
-        {createdOn && (
+        {!!createdOn && (
           <Fragment>
             <div className="FilePreview-detailLabel">
               {t('common:createdOn')}
@@ -180,7 +180,7 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
             </div>
           </Fragment>
         )}
-        {updatedOn && (
+        {!!updatedOn && (
           <Fragment>
             <div className="FilePreview-detailLabel">
               {t('common:updatedOn')}
@@ -190,7 +190,7 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
             </div>
           </Fragment>
         )}
-        {imageDimensions && (
+        {!!imageDimensions && (
           <Fragment>
             <div className="FilePreview-detailLabel">
               {t('common:naturalSize')}
@@ -200,7 +200,7 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
             </div>
           </Fragment>
         )}
-        {pdf && (
+        {!!pdf && (
           <Fragment>
             <div className="FilePreview-detailLabel">
               {t('common:pageCount')}

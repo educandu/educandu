@@ -213,7 +213,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           onStartPositionChange={handleChapterStartPositionChange}
           />
 
-        {chapters.length && (
+        {!!chapters.length && (
           <Fragment>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="InteractiveMediaEditor-readonlyValue">

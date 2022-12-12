@@ -34,7 +34,7 @@ function HomePageTemplate({ children }) {
           </div>
           <div>
             {children}
-            {settings.homepageInfo && (
+            {!!settings.homepageInfo && (
               <div className="HomePageTemplate-info"><Markdown>{settings.homepageInfo}</Markdown></div>
             )}
           </div>

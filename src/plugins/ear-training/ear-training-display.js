@@ -70,10 +70,10 @@ function EarTrainingDisplay({ content }) {
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
-        {currentTest.sound.useMidi && (
+        {!!currentTest.sound.useMidi && (
           <AbcNotation abcCode={currentTest.answerAbcCode} displayMidi hideNotes />
         )}
-        {!currentTest.sound.useMidi && url && (
+        {!currentTest.sound.useMidi && !!url && (
           <MediaPlayer
             source={url}
             canDownload={canDownload}

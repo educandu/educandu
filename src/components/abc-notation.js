@@ -60,7 +60,7 @@ function AbcNotation({ abcCode, displayMidi, hideNotes }) {
   return (
     <div className="AbcNotation">
       {!hideNotes && <div className="AbcNotation-notes" ref={abcContainerRef} />}
-      {displayMidi && renderResult && (
+      {!!displayMidi && !!renderResult && (
         <div className={classNames('AbcNotation-audio', { 'AbcNotation-audio--audioOnly': hideNotes })}>
           <MediaPlayer
             source={audioUrlGenerator?.generate || null}

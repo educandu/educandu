@@ -271,8 +271,8 @@ export default function Room({ PageTemplate, initialState }) {
           <a href={url}>{doc.title}</a>
         </div>
         <div className="RoomPage-documentRowMenu">
-          {doc.roomContext.draft && (<div className="RoomPage-documentRowDraftLabel">{t('common:draft')}</div>)}
-          {isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index, documentsSubset)}
+          {!!doc.roomContext.draft && (<div className="RoomPage-documentRowDraftLabel">{t('common:draft')}</div>)}
+          {!!isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index, documentsSubset)}
         </div>
       </div>
     );
@@ -320,7 +320,7 @@ export default function Room({ PageTemplate, initialState }) {
         renderItem={invitation => (
           <List.Item className="RoomPage-membersRow">
             <Space>
-              {isUserRoomOwner && (
+              {!!isUserRoomOwner && (
                 <Tooltip title={t('revokeInvitation')}>
                   <DeleteButton className="RoomPage-deleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
                 </Tooltip>
@@ -345,7 +345,7 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <Card
         className="RoomPage-card"
-        actions={isUserRoomOwnerOrInvitedCollaborator && [
+        actions={!!isUserRoomOwnerOrInvitedCollaborator && [
           <Button
             className="RoomPage-cardButton"
             key="createDocument"
@@ -357,7 +357,7 @@ export default function Room({ PageTemplate, initialState }) {
             />
         ]}
         >
-        {room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
+        {!!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
         {!documents.length && t('documentsPlaceholder')}
         {nonDraftDocuments.map((doc, index) => renderDocument(doc, index, nonDraftDocuments))}
         {draftDocuments.map((doc, index) => renderDocument(doc, index, draftDocuments))}
@@ -394,7 +394,7 @@ export default function Room({ PageTemplate, initialState }) {
 
         {!isUserRoomOwner && renderRoomDocumentsCard()}
 
-        {isUserRoomOwner && (
+        {!!isUserRoomOwner && (
           <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
             <TabPane className="Tabs-tabPane" tab={t('documentsTabTitle')} key="1">
               {renderRoomDocumentsCard()}
@@ -456,7 +456,8 @@ export default function Room({ PageTemplate, initialState }) {
           onClose={handleDocumentMetadataModalCancel}
           />
       </div>
-    </PageTemplate>);
+    </PageTemplate>
+  );
 }
 
 Room.propTypes = {

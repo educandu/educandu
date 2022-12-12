@@ -104,7 +104,7 @@ function ImageDisplay({ content }) {
         position={revealEffect.startPosition}
         portrait={revealEffect.orientation === ORIENTATION.vertical}
         className={`ImageDisplay-mainImage u-width-${width}`}
-        itemOne={isMainImageLoaded && <img src={effectImageUrl} style={styleFitContainer()} />}
+        itemOne={!!isMainImageLoaded && <img src={effectImageUrl} style={styleFitContainer()} />}
         itemTwo={<img src={imageUrl} ref={mainImageRef} style={styleFitContainer()} />}
         />
     );
@@ -148,9 +148,9 @@ function ImageDisplay({ content }) {
       {effectType === EFFECT_TYPE.hover && renderHoverEffect()}
       {effectType === EFFECT_TYPE.reveal && renderRevealEffect()}
       {effectType === EFFECT_TYPE.clip && renderClipEffect()}
-      {showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
-      {showHoverEffectImageCopyright && <CopyrightNotice value={hoverEffect.copyrightNotice} />}
-      {showRevealEffectImageCopyright && <CopyrightNotice value={revealEffect.copyrightNotice} />}
+      {!!showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
+      {!!showHoverEffectImageCopyright && <CopyrightNotice value={hoverEffect.copyrightNotice} />}
+      {!!showRevealEffectImageCopyright && <CopyrightNotice value={revealEffect.copyrightNotice} />}
     </div>
   );
 }

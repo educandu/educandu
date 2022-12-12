@@ -20,7 +20,7 @@ function ErrorPage({ error, settings, uiLanguage, i18n }) {
             <h1 className="ErrorPage-status">{error.status}</h1>
             <h1 className="ErrorPage-message">{error.displayMessage || error.message}</h1>
             <div className="ErrorPage-back" dangerouslySetInnerHTML={{ __html: backHtml }} />
-            {error.expose && error.stack && <pre className="ErrorPage-stack">{error.stack}</pre>}
+            {!!error.expose && !!error.stack && <pre className="ErrorPage-stack">{error.stack}</pre>}
           </div>
         </div>
       </main>

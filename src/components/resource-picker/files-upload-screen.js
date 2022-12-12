@@ -167,7 +167,7 @@ function FilesUploadScreen({
     return (
       <div className="FilesUploadScreen-message">
         {getUploadMessage()}
-        {shouldRenderMessageDetails && (
+        {!!shouldRenderMessageDetails && (
           <div className="FilesUploadScreen-messageDetails">
             <Info>{t('stageDetails_uploadNotStarted')}</Info>
           </div>
@@ -187,7 +187,7 @@ function FilesUploadScreen({
     return (
       <div className="FilesUploadScreen-fileStatus">
         <div className="FilesUploadScreen-fileStatusRow">
-          {item.status === ITEM_STATUS.pristine && item.isEditable && (
+          {item.status === ITEM_STATUS.pristine && !!item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
               <EditIcon className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--pristine" />
@@ -197,7 +197,7 @@ function FilesUploadScreen({
           {item.status === ITEM_STATUS.pristine && !item.isEditable && (
           <FileIcon className="FilesUploadScreen-fileStatusIcon" />
           )}
-          {item.status === ITEM_STATUS.preprocessed && item.isEditable && (
+          {item.status === ITEM_STATUS.preprocessed && !!item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)}>
               <EditIcon className="FilesUploadScreen-fileStatusIcon FilesUploadScreen-fileStatusIcon--processed" />
@@ -221,7 +221,7 @@ function FilesUploadScreen({
           <span className="FilesUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
           )}
         </div>
-        {item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
+        {!!item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
         <div className="FilesUploadScreen-fileStatusPreview">
           <ResourcePreview
