@@ -132,7 +132,7 @@ function InteractiveMediaDisplay({ content }) {
             <Button type="primary" icon={<RightOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
           )}
           {interactingChapterIndex === chapters.length - 1 && (
-            <Button type="primary" icon={<ReloadOutlined />} onClick={handleResetChaptersClick}>{t('reset')}</Button>
+            <Button type="primary" icon={<ReloadOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
           )}
         </div>
       </div>

@@ -1992,7 +1992,6 @@
       "markCorrectAnswer": "Mark as correct answer",
       "continue": "Continue",
       "replay": "Replay",
-      "reset": "Reset",
       "results": "Results",
       "currentProgress": "Your current progress"
     }
@@ -2008,7 +2007,6 @@
       "markCorrectAnswer": "Als richtige Antwort markieren",
       "continue": "Fortfahren",
       "replay": "Wiederholen",
-      "reset": "Zurücksetzen",
       "results": "Ergebnisse",
       "currentProgress": "Dein aktueller Fortschritt"
     }
