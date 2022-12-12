@@ -213,7 +213,7 @@ function MediaPlayerTrack({
     lightModeValue = false;
   } else if (posterImageUrl) {
     lightModeValue = posterImageUrl;
-  } else if (youtubeThumbnailUrl.lowResThumbnailUrl) {
+  } else if (youtubeThumbnailUrl) {
     lightModeValue = youtubeThumbnailUrl.isHighResThumbnailUrlVerfied
       ? youtubeThumbnailUrl.highResThumbnailUrl
       : youtubeThumbnailUrl.lowResThumbnailUrl;

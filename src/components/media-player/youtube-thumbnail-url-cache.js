@@ -26,7 +26,7 @@ class YoutubeThumbnailUrlCache {
         this._entries.set(sourceUrl, entry);
         this._tryVerifyHighResThumbnailUrl(entry);
       } else {
-        entry = this._createEphemeralNonYoutubeEntry(sourceUrl);
+        entry = null;
       }
     }
 
@@ -49,16 +49,6 @@ class YoutubeThumbnailUrlCache {
       videoId,
       lowResThumbnailUrl,
       highResThumbnailUrl,
-      isHighResThumbnailUrlVerfied: false
-    };
-  }
-
-  _createEphemeralNonYoutubeEntry(sourceUrl) {
-    return {
-      sourceUrl,
-      videoId: null,
-      lowResThumbnailUrl: null,
-      highResThumbnailUrl: null,
       isHighResThumbnailUrlVerfied: false
     };
   }
