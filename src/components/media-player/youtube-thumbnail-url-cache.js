@@ -1,7 +1,7 @@
 import Logger from '../../common/logger.js';
 import { isBrowser } from '../../ui/browser-helper.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
-import { analyzeMediaUrl, verifyYoutubeThumbnailUrl } from '../../utils/media-utils.js';
+import { analyzeMediaUrl, verifyMediaThumbnailUrl } from '../../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -69,9 +69,9 @@ class YoutubeThumbnailUrlCache {
     }
 
     try {
-      const sucess = await verifyYoutubeThumbnailUrl(entry.highResThumbnailUrl);
-      if (sucess) {
-        this._handleVerificationSuccess(entry, sucess);
+      const success = await verifyMediaThumbnailUrl(entry.highResThumbnailUrl);
+      if (success) {
+        this._handleVerificationSuccess(entry, success);
       }
     } catch (error) {
       logger.error(error);

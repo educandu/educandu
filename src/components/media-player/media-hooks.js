@@ -34,7 +34,7 @@ export function useYoutubeThumbnailUrl(url) {
     const callback = () => setSemaphore(oldValue => oldValue + 1);
     cache.subscribe(callback);
     return () => cache.unsubscribe(callback);
-  }, [cache, setSemaphore]);
+  }, [cache]);
 
   const currentValue = cache.getEntry(url);
 
