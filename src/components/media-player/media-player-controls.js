@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Menu, Button, Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
 import { useNumberFormat } from '../locale-context.js';
