@@ -106,6 +106,7 @@ function SectionsDisplay({
           icon={<PlusOutlined style={{ fontSize: '12px', display: 'flex' }} />}
           style={{ transition: 'none', height: '18px', minWidth: 'unset', width: '18px', verticalAlign: 'baseline' }}
           />
+
       </Divider>
     );
   };
@@ -151,7 +152,7 @@ function SectionsDisplay({
       </DragDropContext>
 
       <PluginSelectorDialog
-        open={currentNewSectionIndex > -1}
+        isOpen={currentNewSectionIndex > -1}
         onSelect={handlePluginSelectorDialogSelect}
         onCancel={handlePluginSelectorDialogCancel}
         onPasteFromClipboard={handlePasteFromClipboard}
