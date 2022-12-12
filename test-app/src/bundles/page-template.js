@@ -54,7 +54,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
         </div>
       </main>
       <PageFooter />
-      <UiLanguageDialog open={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
+      <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
       <ConsentDrawer />
     </div>
   );
