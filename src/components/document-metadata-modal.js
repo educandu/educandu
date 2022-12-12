@@ -370,7 +370,9 @@ function DocumentMetadataModal({
         {canCreateSequence && (
           <FormItem>
             <Checkbox checked={generateSequence} onChange={handleGenerateSequenceChange}>
-              <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
+              <Info tooltip={t('sequenceInfo')} iconAfterContent>
+                <span className="u-label">{t('generateSequence')}</span>
+              </Info>
             </Checkbox>
           </FormItem>
         )}
