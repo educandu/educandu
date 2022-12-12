@@ -11,10 +11,10 @@ function ItemsExpander({ className, expandLinkClassName, items, renderItem, init
   return (
     <div className={className}>
       {items.filter((_tag, index) => isExpanded || !showExpander || index < initialItemCount).map(renderItem)}
-      {showExpander && isExpanded && (
+      {!!showExpander && !!isExpanded && (
         <a className={expandLinkClassName} onClick={() => setIsExpanded(false)}>{t('collapse')}</a>
       )}
-      {showExpander && !isExpanded && (
+      {!!showExpander && !isExpanded && (
         <a className={expandLinkClassName} onClick={() => setIsExpanded(true)}>{t('expand', { count: items.length - initialItemCount })}</a>
       )}
     </div>

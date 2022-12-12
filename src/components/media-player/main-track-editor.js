@@ -114,7 +114,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
         <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
       </FormItem>
-      {useAspectRatio && (
+      {!!useAspectRatio && (
         <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup
             size="small"
@@ -129,7 +129,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
           </RadioGroup>
         </FormItem>
       )}
-      {useShowVideo && (
+      {!!useShowVideo && (
         <FormItem label={t('common:videoDisplay')} {...FORM_ITEM_LAYOUT}>
           <Switch
             size="small"

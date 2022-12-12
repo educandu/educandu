@@ -19,7 +19,7 @@ function UsedStorage({ usedBytes, maxBytes, showLabel }) {
   return (
     <div className="UsedStorage">
       <div className="UsedStorage-progress">
-        {showLabel && <span className="UsedStorage-progressLabel">{t('label')}:</span>}
+        {!!showLabel && <span className="UsedStorage-progressLabel">{t('label')}:</span>}
         <Progress strokeLinecap="square" percent={Math.min(100, percent)} status={status} showInfo={false} />
         <span className="UserStorage-progressPercentage">{displayedPercent}</span>
       </div>

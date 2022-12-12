@@ -247,7 +247,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
           >
           {markerText}
         </div>
-        {newMarkerState.isInBounds && <PinIcon />}
+        {!!newMarkerState.isInBounds && <PinIcon />}
         {!newMarkerState.isInBounds && <CloseIcon />}
       </div>
     );

@@ -24,7 +24,7 @@ export function FlipCardFace({ content, color, faceType, locked, disabled }) {
       <div className="FlipCard-faceContent">
         {content}
       </div>
-      {disabled && <div className="FlipCard-disabledOverlay" />}
+      {!!disabled && <div className="FlipCard-disabledOverlay" />}
     </div>
   );
 }

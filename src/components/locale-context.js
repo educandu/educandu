@@ -11,7 +11,7 @@ import { NO_BREAK_SPACE } from '../utils/string-utils.js';
 import { setLongLastingCookie } from '../common/cookie.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { UI_LANGUAGE_COOKIE_NAME } from '../domain/constants.js';
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useContext } from 'react';
 import { SUPPORTED_UI_LANGUAGES, UI_LANGUAGE_EN, UI_LANGUAGE_DE, getLocale } from '../resources/ui-language.js';
 
 const antLocales = {
@@ -47,7 +47,7 @@ const createUiLanguageAndLocale = memoizee(uiLanguage => {
 
 export function LocaleProvider({ value, children }) {
   const resourceManager = useService(ResourceManager);
-  const [i18n] = useState(createI18n(resourceManager, value));
+  const i18n = useMemo(() => createI18n(resourceManager, value), [resourceManager, value]);
   const [antdLocale, setAntdLocale] = useState(determineAntdLocale(i18n.language));
 
   useEffect(() => {

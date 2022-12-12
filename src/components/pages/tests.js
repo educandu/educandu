@@ -460,7 +460,7 @@ function Tests({ PageTemplate }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               URL: {ieFileUrl}
             </div>
-            {ieFile && (
+            {!!ieFile && (
               <div style={{ height: '50vh' }}>
                 <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
               </div>

@@ -16,7 +16,7 @@ function AudioDisplay({ content }) {
   return (
     <div className="AudioDisplay">
       <div className="AudioDisplay-content">
-        {url && (
+        {!!url && (
           <MediaPlayer
             source={url}
             canDownload={canDownload}

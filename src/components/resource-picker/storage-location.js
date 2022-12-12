@@ -172,7 +172,7 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            {showCurrentDirectoryName && (
+            {!!showCurrentDirectoryName && (
               <div className="StorageLocation-currentDirectory">
                 {`${t('common:directory')}: ${composeHumanReadableDisplayName({ cdnObject: currentDirectory, t })}`}
               </div>
@@ -203,7 +203,7 @@ function StorageLocation({
         {!isInSearchMode && (
           <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
         )}
-        {isInSearchMode && (
+        {!!isInSearchMode && (
           <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
         )}
         <div className="u-resource-picker-screen-footer-buttons">

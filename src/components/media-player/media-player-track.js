@@ -274,11 +274,11 @@ function MediaPlayerTrack({
           <AudioIcon />
         </div>
         )}
-        {screenMode === MEDIA_SCREEN_MODE.overlay || screenOverlay
-          ? <div className="MediaPlayerTrack--screenOverlay">
-            {screenOverlay}
-            </div>
-          : null}
+        {(screenMode === MEDIA_SCREEN_MODE.overlay || !!screenOverlay) && (
+        <div className="MediaPlayerTrack--screenOverlay">
+          {screenOverlay}
+        </div>
+        )}
       </div>
     </div>
   );

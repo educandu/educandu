@@ -47,7 +47,7 @@ function NewsTab({ activities }) {
         </div>
         <div className="NewsTab-activityData">
           <span className="NewsTab-activityDataDescription">{description}:</span>
-          {isDeprecated && <span>[{deprecatedTitle}]</span>}
+          {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
           {!isDeprecated && <a className="NewsTab-activityDataLink" href={href}>{title}</a>}
         </div>
       </div>

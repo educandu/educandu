@@ -118,7 +118,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         destroyOnClose
         centered
         >
-        {isRetrievingMediaInfo && (
+        {!!isRetrievingMediaInfo && (
           <div className="MediaRangeSelector-noMediaArea">
             <Spin tip={t('loadingMessage')} />
           </div>
@@ -128,7 +128,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
             {t('errorMessage')}
           </div>
         )}
-        {!isRetrievingMediaInfo && currentMediaInfo && (
+        {!isRetrievingMediaInfo && !!currentMediaInfo && (
           <MediaPlayer
             source={currentMediaInfo.sanitizedUrl}
             onProgress={handleProgress}

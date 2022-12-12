@@ -60,7 +60,7 @@ function TagSelector({ tags, selectedCount, onSelect, size }) {
   return (
     <div className={mainClasses} ref={relativeElemRef}>
       <a className={linkClasses} onClick={handleClick}>{linkText}</a>
-      {isActive && (
+      {!!isActive && (
         <div ref={absoluteElemRef} className="TagSelector-selectWrapper" style={{ left: selectLeftOffset }}>
           <Select
             className="TagSelector-select"

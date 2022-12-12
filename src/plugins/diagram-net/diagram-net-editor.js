@@ -121,7 +121,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
   return (
     <div className="DiagramNetEditor">
       <Form layout="horizontal">
-        {image && (
+        {!!image && (
           <Form.Item label={t('name')} {...FORM_ITEM_LAYOUT}>
             <img className="DiagramNetEditor-preview" src={image} />
           </Form.Item>
@@ -146,8 +146,9 @@ function DiagramNetEditor({ content, onContentChanged }) {
         destroyOnClose
         centered
         >
-        {iframeUrl && (
+        {!!iframeUrl && (
           <Fragment>
+            {/* eslint-disable-next-line react/iframe-missing-sandbox */}
             <iframe ref={iframeRef} src={iframeUrl} frameBorder={0} style={iframeStyle} />
             {isEditorReady || <div style={iframeOverlayStyle}><Spin size="large" /></div>}
           </Fragment>

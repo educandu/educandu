@@ -66,7 +66,7 @@ function TableDisplay({ content }) {
   return (
     <div className="TableDisplay">
       <table className={`TableDisplay-table u-width-${width || 100}`}>
-        {columnWidths && columnWidths.map((value, index) => (
+        {!!columnWidths && columnWidths.map((value, index) => (
           <colgroup key={index.toString()} width={`${value}%`} />
         ))}
         <tbody>

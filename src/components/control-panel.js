@@ -73,7 +73,7 @@ function ControlPanel({
 
   return (
     <div className={classNames('ControlPanel', { 'is-open': isOpen })}>
-      {isOpen && isContentVisible && renderContent()}
+      {!!isOpen && !!isContentVisible && renderContent()}
       {!isOpen && renderOpenButton()}
     </div>
   );

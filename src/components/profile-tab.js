@@ -79,7 +79,7 @@ function ProfileTab() {
         <div className="ProfileTab-avatar">
           <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
           <a onClick={handleShowAvatarDescriptionClick}>{t('changePicture')}</a>
-          {showAvatarDescription && (
+          {!!showAvatarDescription && (
           <Alert
             message={t('howToChangePicture')}
             description={renderAvatarDescription()}

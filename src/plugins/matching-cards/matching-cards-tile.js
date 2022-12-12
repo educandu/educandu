@@ -94,7 +94,7 @@ function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
         {!!accessibleUrl && renderMedia()}
       </div>
       <div className="MatchingCardsTile-noInnerClickMask" />
-      {showMatched && <div className="MatchingCardsTile-match"><CheckIcon /></div>}
+      {!!showMatched && <div className="MatchingCardsTile-match"><CheckIcon /></div>}
     </div>
   );
 }

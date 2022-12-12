@@ -22,7 +22,7 @@ function Table({ className, pagination, ...tableProps }) {
   return (
     <AntdTable
       className={['Table', className].filter(x => x).join(' ')}
-      pagination={pagination && { position: ['bottomCenter'], showSizeChanger: false, itemRender }}
+      pagination={!!pagination && { position: ['bottomCenter'], showSizeChanger: false, itemRender }}
       size="large"
       {...tableProps}
       />

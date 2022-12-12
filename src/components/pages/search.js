@@ -152,7 +152,7 @@ function Search({ PageTemplate }) {
     <PageTemplate>
       <div className="SearchPage">
         <div className="SearchPage-headline">
-          {showSearchingHeadline && <h1>{t('headlineSearching')}</h1>}
+          {!!showSearchingHeadline && <h1>{t('headlineSearching')}</h1>}
           {!showSearchingHeadline && <h1>{t('headlineDocumentsFound', { count: displayedRows.length })}</h1>}
         </div>
         <div className="SearchPage-controls">

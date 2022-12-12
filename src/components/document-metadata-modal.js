@@ -326,12 +326,12 @@ function DocumentMetadataModal({
       okText={getDialogOkButtonText(mode, t)}
       >
       <Form ref={formRef} layout="vertical" onFinish={handleFinish} >
-        {canSelectCloningStrategy && (
+        {!!canSelectCloningStrategy && (
           <FormItem label={t('cloningStrategy')} >
             <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
           </FormItem>
         )}
-        {canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
+        {!!canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
           <FormItem label={t('common:room')} {...validationState.cloningTargetRoomId}>
             <Select
               value={cloningTargetRoomId}
@@ -367,43 +367,43 @@ function DocumentMetadataModal({
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>
-        {canCreateSequence && (
+        {!!canCreateSequence && (
           <FormItem>
             <Checkbox checked={generateSequence} onChange={handleGenerateSequenceChange}>
               <Info tooltip={t('sequenceInfo')} iconAfterContent>{t('generateSequence')}</Info>
             </Checkbox>
           </FormItem>
         )}
-        {canCreateSequence && generateSequence && (
+        {!!canCreateSequence && !!generateSequence && (
           <FormItem label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
             <InputNumber value={sequenceCount} onChange={handleSequenceCountChange} className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
           </FormItem>
         )}
-        {canUseTemplateDocument && (
+        {!!canUseTemplateDocument && (
           <FormItem>
             <Checkbox checked={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
               <span className="u-label">{t('useTemplateDocument')}</span>
             </Checkbox>
           </FormItem>
         )}
-        {isDocInPublicContext && (
+        {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
-              {publicContextPermissions.canArchive && (
+              {!!publicContextPermissions.canArchive && (
               <FormItem>
                 <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
                   <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
                 </Checkbox>
               </FormItem>
               )}
-              {publicContextPermissions.canVerify && (
+              {!!publicContextPermissions.canVerify && (
               <FormItem>
                 <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
                   <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
                 </Checkbox>
               </FormItem>
               )}
-              {publicContextPermissions.canReview && (
+              {!!publicContextPermissions.canReview && (
                 <FormItem
                   label={
                     <Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>
@@ -412,7 +412,7 @@ function DocumentMetadataModal({
                   <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
                 </FormItem>
               )}
-              {publicContextPermissions.canRestrictOpenContribution && (
+              {!!publicContextPermissions.canRestrictOpenContribution && (
                 <FormItem
                   label={
                     <Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>

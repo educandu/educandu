@@ -55,7 +55,7 @@ function CreditsFooter({ doc, revision }) {
   return (
     <div className="CreditsFooter">
       <p>
-        {settings.license?.name && settings.license?.url && (
+        {!!settings.license?.name && !!settings.license?.url && (
           <Fragment>
             <b>{t('license')}:</b> <a href={settings.license.url}>{settings.license.name}</a>
             <br />
@@ -63,8 +63,8 @@ function CreditsFooter({ doc, revision }) {
         )}
         <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
         <br />
-        {doc && renderDocumentContributors()}
-        {revision && renderRevisionAuthor()}
+        {!!doc && renderDocumentContributors()}
+        {!!revision && renderRevisionAuthor()}
       </p>
     </div>
   );

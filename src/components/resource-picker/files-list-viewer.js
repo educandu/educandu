@@ -100,7 +100,7 @@ function FilesListViewer({
             <PreviewIcon />
           </a>
         </Tooltip>
-        {canDelete && (
+        {!!canDelete && (
           <Tooltip title={t('common:delete')}>
             <a
               className="FilesListViewer-action FilesListViewer-action--delete"

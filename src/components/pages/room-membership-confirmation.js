@@ -78,7 +78,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
         </div>
         <div className="RoomMembershipConfirmationPage-message">
           {!invalidInvitationReason && !hasConfirmed && renderConfirmationMessage()}
-          {!invalidInvitationReason && hasConfirmed && renderSuccessMessage()}
+          {!invalidInvitationReason && !!hasConfirmed && renderSuccessMessage()}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.token && renderInvalidMessage(t('invalidToken'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.user && renderInvalidMessage(t('invalidUser'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.room && renderInvalidMessage(t('invalidRoom'))}

@@ -1,5 +1,9 @@
 {
-  "extends": ["eslint:all", "plugin:import/recommended", "plugin:react/all"],
+  "extends": [
+    "eslint:all",
+    "plugin:import/recommended",
+    "plugin:react/all"
+  ],
   "env": {
     "es2022": true,
     "browser": true,
@@ -83,6 +87,7 @@
     "react/destructuring-assignment": ["off"],
     "react/forbid-component-props": ["off"],
     "react/forbid-prop-types": ["off"],
+    "react/no-array-index-key": ["off"],
     "react/jsx-closing-bracket-location": [1, "props-aligned"],
     "react/jsx-filename-extension": ["off"],
     "react/jsx-fragments": ["error", "element"],

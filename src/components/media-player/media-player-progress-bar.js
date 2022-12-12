@@ -162,7 +162,7 @@ function MediaPlayerProgressBar({
   return (
     <div className={classes} ref={progressBarRef}>
       <div className="MediaPlayerProgressBar-baseBar" />
-      {tooltipState && (
+      {!!tooltipState && (
         <div
           className="MediaPlayerProgressBar-progressTooltip"
           style={{ width: `${TOOLTIP_WIDTH_IN_PX}px`, left: `${tooltipState.left}px` }}
@@ -172,7 +172,7 @@ function MediaPlayerProgressBar({
         </div>
       )}
       <div className="MediaPlayerProgressBar-progress" style={{ width: `${currentProgressInPx}px` }} />
-      {isMediaLoaded && parts.map(renderPartStart)}
+      {!!isMediaLoaded && parts.map(renderPartStart)}
       <div
         className="MediaPlayerProgressBar-interractionOverlay"
         onMouseDown={handleBarMouseDown}

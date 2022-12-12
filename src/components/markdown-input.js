@@ -127,7 +127,7 @@ function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChan
         >
         {!!locations.length && !disabled
           && (<Tooltip title={t('resourcePickerTooltip')}>{renderResourcePicker()}</Tooltip>)}
-        {!!locations.length && disabled && renderResourcePicker()}
+        {!!locations.length && !!disabled && renderResourcePicker()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
       {renderCount()}

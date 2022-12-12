@@ -5,7 +5,7 @@ function DiagramNetDisplay({ content }) {
   const { image, width } = content;
   return (
     <div className="DiagramNetDisplay">
-      {image && <img className={`DiagramNetDisplay-image u-width-${width}`} src={image} />}
+      {!!image && <img className={`DiagramNetDisplay-image u-width-${width}`} src={image} />}
     </div>
   );
 }

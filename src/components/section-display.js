@@ -237,7 +237,7 @@ function SectionDisplay({
     <section className={sectionClasses} onClick={handleSectionClick}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
-      {canEdit && (
+      {!!canEdit && (
         <Fragment>
           <div className="SectionDisplay-actions SectionDisplay-actions--left">
             <div className="SectionDisplay-sectionInfo" {...dragHandleProps}>
@@ -250,7 +250,7 @@ function SectionDisplay({
           <div className="SectionDisplay-actions SectionDisplay-actions--right">
             {editActions.map(renderEditAction)}
           </div>
-          { isPending && (
+          {!!isPending && (
             <Fragment>
               <div className="SectionDisplay-overlay" />
               <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
@@ -278,7 +278,7 @@ function SectionDisplay({
         </Fragment>
       )}
 
-      {isHardDeleteEnabled && (
+      {!!isHardDeleteEnabled && (
         <Fragment>
           <div className="SectionDisplay-actions SectionDisplay-actions--left">
             <div className="SectionDisplay-sectionInfo SectionDisplay-sectionInfo--hardDelete">
