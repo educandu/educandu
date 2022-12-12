@@ -27,6 +27,7 @@ export function useMediaDurations(urls) {
 }
 
 export function useYoutubeThumbnailUrl(url) {
+  // eslint-disable-next-line react/hook-use-state
   const [, setSemaphore] = useState(0);
   const cache = useService(YoutubeThumbnailUrlCache);
   const [lastReturnedValue, setLastReturnedValue] = useState(null);
