@@ -611,6 +611,7 @@ function Doc({ initialState, PageTemplate }) {
       <DocumentMetadataModal
         allowMultiple={false}
         initialDocumentMetadata={doc}
+        initialDocumentRoomMetadata={room}
         isVisible={isDocumentMetadataModalVisible}
         mode={DOCUMENT_METADATA_MODAL_MODE.update}
         onSave={handleDocumentMetadataModalSave}
