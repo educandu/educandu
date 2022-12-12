@@ -175,7 +175,7 @@ describe('batch-service', () => {
       ];
 
       await sut.createDocumentRegenerationBatch(user);
-      await db.tasks.update({ taskParams: { documentId: documents[0]._id } }, { $set: { processed: true } });
+      await db.tasks.updateOne({ taskParams: { documentId: documents[0]._id } }, { $set: { processed: true } });
       result = await sut.getBatchesWithProgress(BATCH_TYPE.documentRegeneration);
     });
 
