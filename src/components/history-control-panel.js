@@ -70,10 +70,10 @@ function HistoryControlPanel({
           step={null}
           marks={marks}
           onChange={onSelectedRevisionChange}
-          tipFormatter={formatRevisionTooltip}
+          tooltip={{ formatter: formatRevisionTooltip }}
           trackStyle={{ color: 'white' }}
           handleStyle={{ color: 'white' }}
-          />
+        />
       </div>
     );
   };
@@ -86,7 +86,7 @@ function HistoryControlPanel({
         icon={<PaperClipOutlined />}
         onClick={onPermalinkRequest}
         ghost
-        >
+      >
         {t('permalink')}
       </Button>
       {!!canRestoreRevisions && (
@@ -98,7 +98,7 @@ function HistoryControlPanel({
             onClick={onRestoreRevision}
             disabled={isSelectedRevisionLatestRevision}
             ghost
-            >
+          >
             {t('restore')}
           </Button>
         </Restricted>
@@ -115,7 +115,7 @@ function HistoryControlPanel({
       onClose={handleClose}
       leftSideContent={renderSlider()}
       contentBeforeClose={renderButtons()}
-      />
+    />
   );
 }
 
@@ -135,9 +135,9 @@ HistoryControlPanel.defaultProps = {
   canRestoreRevisions: false,
   onClose: () => Promise.resolve(true),
   onOpen: () => Promise.resolve(),
-  onPermalinkRequest: () => {},
-  onRestoreRevision: () => {},
-  onSelectedRevisionChange: () => {},
+  onPermalinkRequest: () => { },
+  onRestoreRevision: () => { },
+  onSelectedRevisionChange: () => { },
   revisions: [],
   selectedRevisionIndex: 0,
   startOpen: false
