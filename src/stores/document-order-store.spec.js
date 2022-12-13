@@ -1,4 +1,5 @@
 import DocumentOrderStore from './document-order-store.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('document-order-store', () => {

@@ -1,4 +1,5 @@
 import { ROLE } from './constants.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import permissions, { hasUserPermission, getAllUserPermissions } from './permissions.js';
 
 describe('permissions', () => {

@@ -1,4 +1,5 @@
 import { groupCommentsByTopic } from './comment-utils.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('comment-utils', () => {
   let result;

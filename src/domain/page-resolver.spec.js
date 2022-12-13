@@ -1,5 +1,6 @@
 import { PAGE_NAME } from './page-name.js';
 import PageResolver from './page-resolver.js';
+import { describe, expect, it } from 'vitest';
 import DefaultSiteLogo from '../components/default-site-logo.js';
 import DefaultPageTemplate from '../components/default-page-template.js';
 

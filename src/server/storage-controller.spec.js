@@ -1,10 +1,11 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import StorageController from './storage-controller.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { BadRequest, Unauthorized } = httpErrors;
 

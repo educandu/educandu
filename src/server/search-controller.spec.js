@@ -1,10 +1,11 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
-import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import SearchController from './search-controller.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('search-controller', () => {
   const sandbox = sinon.createSandbox();

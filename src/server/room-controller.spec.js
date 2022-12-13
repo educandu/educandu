@@ -1,12 +1,13 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;

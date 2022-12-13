@@ -1,4 +1,5 @@
 import { validate } from '../validation.js';
+import { describe, expect, it } from 'vitest';
 import { slugSchema, emailSchema } from './shared-schemas.js';
 
 describe('slugSchema', () => {

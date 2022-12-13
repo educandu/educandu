@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import DocumentService from './document-service.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
 
 describe('CdnResourcesConsolidationTaskProcessor', () => {

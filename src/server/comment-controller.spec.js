@@ -1,10 +1,11 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import CommentController from './comment-controller.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, BadRequest } = httpErrors;
 

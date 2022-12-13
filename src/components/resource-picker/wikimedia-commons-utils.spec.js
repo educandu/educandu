@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { processWikimediaResponse } from './wikimedia-commons-utils.js';
 
 describe('wikimedia-commons-utils', () => {

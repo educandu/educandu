@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import MigrationScript from './educandu-2022-09-01-01-transform-image-tiles-plugin-to-catalog-plugin.js';
 
 const IMAGE_TILES_SECTION = {

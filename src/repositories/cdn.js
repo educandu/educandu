@@ -1,5 +1,5 @@
-import fs from 'fs';
 import mime from 'mime';
+import fs from 'node:fs';
 import axios from 'axios';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';

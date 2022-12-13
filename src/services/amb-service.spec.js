@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import AmbService from './amb-service.js';
 import Database from '../stores/database.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   createTestDocument,
   createTestRoom,

@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import uniqueId from '../src/utils/unique-id.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import MigrationScript from './educandu-2022-09-27-01-migrate-anavis-to-media-analysis.js';
 
 const ANAVIS_SECTION = {

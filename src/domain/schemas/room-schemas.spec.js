@@ -1,4 +1,5 @@
 import { validate } from '../validation.js';
+import { describe, expect, it } from 'vitest';
 import { ROOM_DOCUMENTS_MODE } from '../constants.js';
 import { postRoomBodySchema, patchRoomMetadataBodySchema, postRoomInvitationsBodySchema } from './room-schemas.js';
 

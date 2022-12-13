@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { SOURCE_TYPE } from '../domain/constants.js';
 import { getSourceType, getPortableUrl, getAccessibleUrl, isInternalSourceType, couldAccessUrlFromRoom } from './source-utils.js';
 

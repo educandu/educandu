@@ -1,5 +1,5 @@
-import { EOL } from 'os';
 import awsSdk from 'aws-sdk';
+import { EOL } from 'node:os';
 import PriorityQueue from '../common/priority-queue.js';
 import { splitIntoChunks } from '../utils/array-utils.js';
 

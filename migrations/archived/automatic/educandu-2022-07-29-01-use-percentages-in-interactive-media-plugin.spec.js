@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import MigrationScript from './educandu-2022-07-29-01-use-percentages-in-interactive-media-plugin.js';
 
 describe('educandu-2022-07-29-01-use-percentages-in-interactive-media-plugin', () => {

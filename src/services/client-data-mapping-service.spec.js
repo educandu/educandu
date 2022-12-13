@@ -7,6 +7,7 @@ import permissions from '../domain/permissions.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {

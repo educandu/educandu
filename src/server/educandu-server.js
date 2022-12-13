@@ -1,4 +1,4 @@
-import util from 'util';
+import util from 'node:util';
 import express from 'express';
 import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';

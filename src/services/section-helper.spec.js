@@ -1,5 +1,6 @@
 import cloneDeep from '../utils/clone-deep.js';
 import { createSectionRevision } from './section-helper.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const createSection = () => ({
   key: 'shared-section-key',

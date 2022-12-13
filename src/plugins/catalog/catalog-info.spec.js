@@ -1,4 +1,5 @@
 import CatalogInfo from './catalog-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('catalog-info', () => {
   let sut;

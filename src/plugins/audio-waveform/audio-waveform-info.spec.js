@@ -1,4 +1,5 @@
 import AudioWaveformInfo from './audio-waveform-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('audio-waveform-info', () => {
   let sut;

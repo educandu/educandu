@@ -4,6 +4,7 @@ import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
   setupTestEnvironment,

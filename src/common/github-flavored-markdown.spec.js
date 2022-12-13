@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from './github-flavored-markdown.js';
 
 describe('GithubFlavoredMarkdown', () => {

@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import CommentService from './comment-service.js';
 import CommentStore from '../stores/comment-store.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('comment-service', () => {

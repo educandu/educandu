@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { processSection } from './educandu-2021-12-13-01-make-cdn-urls-generic.js';
 
 const testMarkdown = `

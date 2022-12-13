@@ -4,6 +4,7 @@ import Database from '../stores/database.js';
 import BatchService from './batch-service.js';
 import TaskStore from '../stores/task-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest } = httpErrors;

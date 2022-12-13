@@ -1,4 +1,5 @@
 import uniqueId from './unique-id.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { canEditDocContent, canEditDocMetadata } from './doc-utils.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 

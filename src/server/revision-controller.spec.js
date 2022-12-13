@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import RevisionController from './revision-controller.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden } = httpErrors;
 

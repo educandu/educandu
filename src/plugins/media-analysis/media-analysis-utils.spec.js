@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { exportChaptersToCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 describe('media-analysis-utils', () => {
