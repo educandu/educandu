@@ -42,7 +42,7 @@ function PageTemplate({ uiLanguage, title, content, styles, scripts, additionalH
       <head>
         <title>{ title }</title>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0" />
         {additionalHeadElements}
         {styleElements}
       </head>

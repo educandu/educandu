@@ -1,11 +1,19 @@
+// Import the @control-panel-height variable
+@import '../control-panel.less';
+
+// `has:` works in all modern browsers except Firefox
+*:has(> .DocPage-controlPanels) > *:first-child {
+  min-height: %(~"calc(100vh - %s)", @control-panel-height);
+}
+
 .DocPage {}
 
 .DocPage-controlPanels {
   position: sticky;
   bottom: 0;
-  top: %(~"calc(100% - %s)", @control-panel-height);
   left: 0;
   right: 0;
+  height: @control-panel-height;
   margin-right: 50px;
   display: flex;
   justify-content: flex-end;
