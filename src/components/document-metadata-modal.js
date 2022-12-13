@@ -313,7 +313,7 @@ function DocumentMetadataModal({
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
-  const isRoomOwner = cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom && initialDocumentRoomMetadata?.owner._id === user._id;
+  const isRoomOwner = !!user && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom && initialDocumentRoomMetadata?.owner._id === user._id;
 
   return (
     <Modal
