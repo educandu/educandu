@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import MigrationScript from './educandu-2022-09-29-01-migrate-tracks-volumes-to-volume-presets.js';
 
 const MULTITRACK_MEDIA_SECTION = {

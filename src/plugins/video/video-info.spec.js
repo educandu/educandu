@@ -1,4 +1,5 @@
 import VideoInfo from './video-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('video-info', () => {

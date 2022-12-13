@@ -1,5 +1,5 @@
-import url from 'url';
-import path from 'path';
+import url from 'node:url';
+import path from 'node:path';
 import parseBool from 'parseboolean';
 import educandu from '../../src/index.js';
 import bundleConfig from './bundles/bundle-config.js';

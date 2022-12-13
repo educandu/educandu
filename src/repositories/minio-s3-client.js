@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { Client } from 'minio';
 import readAllStream from 'read-all-stream';
 import streamToArray from 'stream-to-array';

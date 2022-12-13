@@ -1,5 +1,6 @@
 import UserStore from './user-store.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('user-store', () => {

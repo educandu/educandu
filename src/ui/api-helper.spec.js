@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import { ERROR_CODES } from '../domain/constants.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { tryApiCallWithLoginFallback } from './api-helper.js';
 
 describe('api-helper', () => {

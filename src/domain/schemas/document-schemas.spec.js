@@ -1,4 +1,5 @@
 import { validate } from '../validation.js';
+import { describe, expect, it } from 'vitest';
 import uniqueId from '../../utils/unique-id.js';
 import { documentSectionDBSchema } from './document-schemas.js';
 

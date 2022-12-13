@@ -1,6 +1,6 @@
-import url from 'url';
-import path from 'path';
-import { promises as fs } from 'fs';
+import url from 'node:url';
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';

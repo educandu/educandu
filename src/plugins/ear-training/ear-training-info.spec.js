@@ -1,4 +1,5 @@
 import EarTrainingInfo from './ear-training-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('ear-training-info', () => {

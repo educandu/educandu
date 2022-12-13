@@ -3,6 +3,7 @@ import uniqueId from '../utils/unique-id.js';
 import DocumentService from './document-service.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 describe('DocumentRegenerationTaskProcessor', () => {
   let container;

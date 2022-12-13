@@ -1,4 +1,5 @@
 import cloneDeep from './clone-deep.js';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('clone-deep', () => {
 

@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import MaintenanceService from './maintenance-service.js';
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 describe('maintenance-service', () => {
   const sandbox = sinon.createSandbox();

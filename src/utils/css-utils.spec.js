@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { cssQuote, cssUrl } from './css-utils.js';
 
 describe('css-utils', () => {

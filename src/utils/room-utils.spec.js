@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from './room-utils.js';
 

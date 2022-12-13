@@ -1,5 +1,6 @@
 import RoomStore from './room-store.js';
 import uniqueId from '../utils/unique-id.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
 describe('room-store', () => {

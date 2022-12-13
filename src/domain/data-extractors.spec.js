@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { extractUserIdsFromDocsOrRevisions } from './data-extractors.js';
 
 describe('data-extractors', () => {

@@ -1,4 +1,5 @@
 import MarkdownInfo from './markdown-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('markdown-info', () => {

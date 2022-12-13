@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import uniqueId from './unique-id.js';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getStorageLocationTypeForPath,

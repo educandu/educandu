@@ -1,12 +1,13 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
-import events from 'events';
+import events from 'node:events';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
-import UserController from './user-controller.js';
-import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import UserController from './user-controller.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
 
 const { NotFound } = httpErrors;
 

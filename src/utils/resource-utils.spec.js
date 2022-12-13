@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 

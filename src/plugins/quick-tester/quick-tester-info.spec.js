@@ -1,5 +1,6 @@
 import { TESTS_ORDER } from './constants.js';
 import QuickTesterInfo from './quick-tester-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('quick-tester-info', () => {

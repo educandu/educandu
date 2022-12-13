@@ -1,6 +1,7 @@
 import { ROLE } from '../constants.js';
-import { maxDisplayNameLength, minDisplayNameLength } from '../validation-constants.js';
 import { validate } from '../validation.js';
+import { describe, expect, it } from 'vitest';
+import { maxDisplayNameLength, minDisplayNameLength } from '../validation-constants.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,

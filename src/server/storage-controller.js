@@ -1,4 +1,4 @@
-import os from 'os';
+import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
 import httpErrors from 'http-errors';

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import ResourceManager from './resource-manager.js';
 
 const bundle1 = [

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { aggregateSectionUrls } from './educandu-2021-12-16-02-migrate-cdn-resources-due-to-annotations.js';
 
 const imageContent1 = {

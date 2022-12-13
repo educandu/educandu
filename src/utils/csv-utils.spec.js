@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { csvToObjects, objectsToCsv } from './csv-utils.js';
 
 describe('csv-utils', () => {

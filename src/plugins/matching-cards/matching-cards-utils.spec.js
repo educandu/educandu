@@ -1,4 +1,5 @@
 import { SIZE } from './constants.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ensureIsUnique, getSymmetricalDifference } from '../../utils/array-utils.js';
 import { getRandomizedTilesFromPairs, resizeTilePairs } from './matching-cards-utils.js';
 

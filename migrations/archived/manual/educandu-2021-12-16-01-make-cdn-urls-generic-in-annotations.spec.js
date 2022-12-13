@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { processSection } from './educandu-2021-12-16-01-make-cdn-urls-generic-in-annotations.js';
 
 const text = `

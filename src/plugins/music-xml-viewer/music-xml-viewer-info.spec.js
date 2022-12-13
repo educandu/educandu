@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import MusicXmlViewerInfo from './music-xml-viewer-info.js';
 
 describe('music-xml-viewer-info', () => {

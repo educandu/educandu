@@ -1,4 +1,5 @@
 import { CHAPTER_TYPE } from './constants.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import MediaSlideShowInfo from './media-slideshow-info.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 

@@ -1,4 +1,5 @@
 import PdfViewerInfo from './pdf-viewer-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('pdf-viewer-info', () => {
   let sut;

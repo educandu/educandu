@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
 import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import {

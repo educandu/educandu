@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import TableOfContentsInfo from './table-of-contents-info.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 

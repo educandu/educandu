@@ -1,4 +1,5 @@
 import MatchingCardsInfo from './matching-cards-info.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('matching-cards-info', () => {

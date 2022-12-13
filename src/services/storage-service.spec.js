@@ -11,6 +11,7 @@ import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CDN_OBJECT_TYPE, ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 

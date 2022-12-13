@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import { describe, expect, it } from 'vitest';
 import {
   validateUrl,
   URL_VALIDATION_STATUS,

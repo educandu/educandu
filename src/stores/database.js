@@ -1,10 +1,10 @@
-import url from 'url';
 import md5 from 'md5';
-import by from 'thenby';
-import path from 'path';
 import glob from 'glob';
+import by from 'thenby';
+import url from 'node:url';
+import path from 'node:path';
 import memoizee from 'memoizee';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { escapeHtml, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
 
 describe('string-utils', () => {
