@@ -1,31 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { useLocale } from '../locale-context.js';
 import { useService } from '../container-context.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import LanguageDataProvider from '../../localization/language-data-provider.js';
 
-export default function LanguageFlagAndName({ language, flagOnly, stacked }) {
+export default function LanguageFlagAndName({ language, stacked }) {
   const { uiLanguage } = useLocale();
-  const languageNameProvider = useService(LanguageNameProvider);
-  const languageData = languageNameProvider.getData(uiLanguage);
+  const languageDataProvider = useService(LanguageDataProvider);
+  const { name, flag } = languageDataProvider.getLanguageData(language, uiLanguage);
+
+  const classes = classNames({
+    'LanguageFlagAndName': true,
+    'LanguageFlagAndName--stacked': stacked
+  });
+
   return (
-    <CountryFlagAndName
-      code={languageData[language]?.flag}
-      name={languageData[language]?.name || language}
-      flagOnly={flagOnly}
-      stacked={stacked}
-      />
+    <span className={classes}>
+      <span className={`LanguageFlagAndName-flag flag-icon flag-icon-${flag.toLowerCase()}`} title={name} />
+      <span className="LanguageFlagAndName-name">&nbsp;&nbsp;{name}</span>
+    </span>
   );
 }
 
 LanguageFlagAndName.propTypes = {
-  flagOnly: PropTypes.bool,
   language: PropTypes.string.isRequired,
   stacked: PropTypes.bool
 };
 
 LanguageFlagAndName.defaultProps = {
-  flagOnly: false,
   stacked: false
 };

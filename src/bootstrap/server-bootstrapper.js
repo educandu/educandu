@@ -1,5 +1,6 @@
 import url from 'url';
-import { readFileSync } from 'fs';
+import path from 'path';
+import { promises as fs } from 'fs';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
@@ -9,10 +10,12 @@ import ClientConfig from './client-config.js';
 import PageResolver from '../domain/page-resolver.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
-import resources from '../resources/resources.json' assert { type: "json" };
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
+
+const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
+const resources = await fs.readFile(path.resolve(thisDir, '../resources/resources.json'), 'utf8').then(JSON.parse);
 
 export async function createContainer(configValues = {}) {
   logger.info('Creating container');
@@ -48,7 +51,7 @@ export async function createContainer(configValues = {}) {
   logger.info('Loading resources');
   const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
     const resourceFileUrl = new URL(modulePath, import.meta.url);
-    const resourceJSON = JSON.parse(readFileSync(resourceFileUrl));
+    const resourceJSON = await fs.readFile(resourceFileUrl, 'utf8').then(JSON.parse);
     return resourceJSON;
   }));
 

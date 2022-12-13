@@ -7,7 +7,6 @@ import {
   createGithubRelease,
   createLabelInJiraIssues,
   createReleaseNotesFromCurrentTag,
-  downloadJson,
   ensureIsValidSemverTag,
   esbuild,
   eslint,
@@ -22,8 +21,6 @@ import {
   runInteractiveMigrations,
   TunnelProxyContainer
 } from '@educandu/dev-tools';
-
-const supportedLanguages = ['en', 'de'];
 
 let bundler = null;
 let currentApp = null;
@@ -132,13 +129,6 @@ export async function buildTranslations() {
 }
 
 export const buildTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);
-
-export async function countriesUpdate() {
-  await Promise.all(supportedLanguages.map(lang => downloadJson(
-    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${encodeURIComponent(lang)}/country.json`,
-    `./src/data/country-names/${lang}.json`
-  )));
-}
 
 export async function maildevUp() {
   await maildevContainer.ensureIsRunning();

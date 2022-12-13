@@ -2,7 +2,8 @@
   "extends": [
     "eslint:all",
     "plugin:import/recommended",
-    "plugin:react/all"
+    "plugin:react/all",
+    "plugin:react-hooks/recommended"
   ],
   "env": {
     "es2022": true,
@@ -14,7 +15,6 @@
     "ecmaVersion": 2022,
     "sourceType": "module",
     "ecmaFeatures": {
-      "impliedStrict": true,
       "jsx": true
     }
   },
@@ -25,6 +25,7 @@
   },
   "plugins": [
     "import",
+    "react",
     "react-hooks"
   ],
   "rules": {

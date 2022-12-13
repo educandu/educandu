@@ -4,36 +4,23 @@ import PropTypes from 'prop-types';
 import { useLocale } from '../locale-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
+import LanguageDataProvider from '../../localization/language-data-provider.js';
 
 const Option = Select.Option;
 
-function createLanguageList(languageNameProvider, language, languages) {
-  const data = languageNameProvider.getData(language);
-  return Object.entries(data)
-    .filter(([key]) => !languages || languages.includes(key))
-    .map(([key, value]) => ({
-      code: key,
-      name: value.name
-    }))
-    .sort(by(x => x.name, { ignoreCase: true }));
-}
-
 function LanguageSelect({ size, value, languages, onChange }) {
   const { uiLanguage } = useLocale();
-  const languageNameProvider = useService(LanguageNameProvider);
-  const languageData = languageNameProvider.getData(uiLanguage);
-  const [languageList, setLanguageList] = useState(createLanguageList(languageNameProvider, uiLanguage, languages));
-  useEffect(() => {
-    setLanguageList(createLanguageList(languageNameProvider, uiLanguage, languages));
-  }, [languageNameProvider, uiLanguage, languages]);
+  const [languageList, setLanguageList] = useState([]);
+  const languageDataProvider = useService(LanguageDataProvider);
 
-  const renderLanguage = language => {
-    const code = language.toUpperCase();
-    const name = languageData[language]?.name;
-    const languageText = name ? `${code} - ${name}` : code;
-    return <span>{languageText}</span>;
-  };
+  useEffect(() => {
+    const allData = languageDataProvider.getAllLanguageData(uiLanguage);
+    const relevantLanguages = Object.values(allData)
+      .filter(({ code }) => !languages || languages.includes(code))
+      .sort(by(x => x.name, { ignoreCase: true }));
+
+    setLanguageList(relevantLanguages);
+  }, [languageDataProvider, uiLanguage, languages]);
 
   return (
     <Select
@@ -47,7 +34,7 @@ function LanguageSelect({ size, value, languages, onChange }) {
       >
       {languageList.map(ln => (
         <Option key={ln.code} value={ln.code} title={ln.name}>
-          {renderLanguage(ln.code)}
+          <span>{ln.name} ({ln.code})</span>
         </Option>
       ))}
     </Select>
