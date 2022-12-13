@@ -42,6 +42,8 @@ class PageRenderer extends PageRendererBase {
       SiteLogoComponent
     } = this.pageResolver.getCachedPageComponentInfo(pageName);
 
+    const themeToken = {};
+
     const props = {
       request: cloneDeep(request),
       user: cloneDeep(user),
@@ -49,6 +51,7 @@ class PageRenderer extends PageRendererBase {
       storagePlan: cloneDeep(storagePlan),
       container,
       initialState: cloneDeep(initialState),
+      themeToken: cloneDeep(themeToken),
       uiLanguage,
       pageName,
       settings: cloneDeep(settings),
@@ -68,7 +71,8 @@ class PageRenderer extends PageRendererBase {
       `window.__settings__=${htmlescape(settings)};`,
       `window.__resources__=${htmlescape(resources)};`,
       `window.__initalState__=${htmlescape(initialState)};`,
-      `window.__clientconfig__=${htmlescape(clientConfig)};`
+      `window.__clientconfig__=${htmlescape(clientConfig)};`,
+      `window.__themeToken__=${htmlescape(themeToken)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];
