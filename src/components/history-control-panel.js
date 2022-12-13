@@ -8,9 +8,9 @@ import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
-import LanguageNameProvider from '../data/language-name-provider.js';
 import { PaperClipOutlined, ReloadOutlined } from '@ant-design/icons';
 import ViewHistoryIcon from './icons/multi-color/view-history-icon.js';
+import LanguageDataProvider from '../localization/language-data-provider.js';
 
 function HistoryControlPanel({
   revisions,
@@ -26,7 +26,7 @@ function HistoryControlPanel({
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('historyControlPanel');
-  const languageNameProvider = useService(LanguageNameProvider);
+  const languageDataProvider = useService(LanguageDataProvider);
 
   const isSelectedRevisionLatestRevision = selectedRevisionIndex === revisions.length - 1;
 
@@ -38,7 +38,7 @@ function HistoryControlPanel({
 
   const formatRevisionTooltip = index => {
     const revision = revisions[index];
-    const languageName = languageNameProvider.getData(uiLanguage)[revision.language].name;
+    const { name: languageName } = languageDataProvider.getLanguageData(revision.language, uiLanguage);
 
     return (
       <div>
@@ -47,7 +47,7 @@ function HistoryControlPanel({
         <div>{t('common:language')}: <b>{languageName}</b></div>
         <div>{t('common:user')}: <b>{revision.createdBy.displayName}</b></div>
         <div>{t('common:id')}: <b>{revision._id}</b></div>
-        {revision.restoredFrom && (
+        {!!revision.restoredFrom && (
           <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>
         )}
       </div>
@@ -89,7 +89,7 @@ function HistoryControlPanel({
         >
         {t('permalink')}
       </Button>
-      {canRestoreRevisions && (
+      {!!canRestoreRevisions && (
         <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
           <Button
             className="HistoryControlPanel-button"

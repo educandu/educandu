@@ -1,7 +1,6 @@
-node_modules/
-coverage/
-reports/
-dist/
-.test/
-*.log
+/node_modules/**
+/coverage/**
+/reports/**
+/dist/**
+/test-app/dist/**
 .DS_Store
