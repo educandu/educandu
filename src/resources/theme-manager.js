@@ -13,7 +13,6 @@ class ThemeManager {
         fontSize: getNumberFromString(this._lessVariables['@edu-font-size-base']),
         borderRadius: getNumberFromString(this._lessVariables['@edu-border-radius-base']),
         colorPrimary: this._lessVariables['@edu-primary-color-light'],
-        colorTextBase: this._lessVariables['@edu-text-color'],
         colorError: this._lessVariables['@edu-error-color'],
         colorSuccess: this._lessVariables['@edu-success-color'],
         colorInfo: this._lessVariables['@edu-info-color'],
@@ -41,7 +40,7 @@ class ThemeManager {
         colorLinkHover: this._lessVariables['@edu-link-hover-color'],
         colorLinkActive: this._lessVariables['@edu-link-active-color'],
         linkDecoration: this._lessVariables['@edu-link-decoration'],
-        fontWeightStrong: 400, // Table header
+        fontWeightStrong: getNumberFromString(this._lessVariables['@edu-heading-font-weight']),
         controlOutlineWidth: getNumberFromString(this._lessVariables['@edu-outline-width'])
       }
     };
