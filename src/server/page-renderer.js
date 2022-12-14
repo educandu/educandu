@@ -7,19 +7,21 @@ import PageResolver from '../domain/page-resolver.js';
 import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import ThemeManager from '../resources/theme-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, PageResolver]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, PageResolver]; }
 
-  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, pageResolver) {
+  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, pageResolver) {
     super();
     this.container = container;
     this.serverConfig = serverConfig;
     this.clientConfig = clientConfig;
     this.clientDataMappingService = clientDataMappingService;
     this.resourceManager = resourceManager;
+    this.themeManager = themeManager;
     this.pageResolver = pageResolver;
   }
 
@@ -34,6 +36,7 @@ class PageRenderer extends PageRendererBase {
     const storagePlan = req.storagePlan;
     const storage = req.storage;
     const resources = this.resourceManager.getAllResourceBundles();
+    const themeToken = this.themeManager.getThemeToken();
 
     const {
       PageComponent,
@@ -41,8 +44,6 @@ class PageRenderer extends PageRendererBase {
       HomePageTemplateComponent,
       SiteLogoComponent
     } = this.pageResolver.getCachedPageComponentInfo(pageName);
-
-    const themeToken = {};
 
     const props = {
       request: cloneDeep(request),

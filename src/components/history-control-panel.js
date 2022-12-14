@@ -73,7 +73,7 @@ function HistoryControlPanel({
           tooltip={{ formatter: formatRevisionTooltip }}
           trackStyle={{ color: 'white' }}
           handleStyle={{ color: 'white' }}
-        />
+          />
       </div>
     );
   };
@@ -86,7 +86,7 @@ function HistoryControlPanel({
         icon={<PaperClipOutlined />}
         onClick={onPermalinkRequest}
         ghost
-      >
+        >
         {t('permalink')}
       </Button>
       {!!canRestoreRevisions && (
@@ -98,7 +98,7 @@ function HistoryControlPanel({
             onClick={onRestoreRevision}
             disabled={isSelectedRevisionLatestRevision}
             ghost
-          >
+            >
             {t('restore')}
           </Button>
         </Restricted>
@@ -115,7 +115,7 @@ function HistoryControlPanel({
       onClose={handleClose}
       leftSideContent={renderSlider()}
       contentBeforeClose={renderButtons()}
-    />
+      />
   );
 }
 

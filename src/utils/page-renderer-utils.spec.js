@@ -1,4 +1,5 @@
 import sut from './page-renderer-utils.js';
+import { describe, it, expect } from 'vitest';
 
 describe('page-renderer-utils', () => {
   describe('parseThemeText', () => {
