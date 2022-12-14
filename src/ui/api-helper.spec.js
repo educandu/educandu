@@ -1,9 +1,15 @@
-import sinon from 'sinon';
+import { assert, createSandbox } from 'sinon';
 import { ERROR_CODES } from '../domain/constants.js';
-import { beforeEach, describe, expect, it } from 'vitest';
 import { tryApiCallWithLoginFallback } from './api-helper.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('api-helper', () => {
+  const sandbox = createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   describe('tryApiCallWithLoginFallback', () => {
     let result;
     let executeCall;
@@ -11,8 +17,8 @@ describe('api-helper', () => {
 
     beforeEach(() => {
       result = null;
-      executeCall = sinon.stub();
-      onLoginRequired = sinon.stub();
+      executeCall = sandbox.stub();
+      onLoginRequired = sandbox.stub();
     });
 
     describe('when the API call succeeds on the first try', () => {
@@ -24,10 +30,10 @@ describe('api-helper', () => {
         expect(result).toEqual({ result: 'abc' });
       });
       it('does not execute the API call a second time', () => {
-        sinon.assert.calledOnce(executeCall);
+        assert.calledOnce(executeCall);
       });
       it('does not invoke the re-login callback', () => {
-        sinon.assert.notCalled(onLoginRequired);
+        assert.notCalled(onLoginRequired);
       });
     });
 
@@ -69,7 +75,7 @@ describe('api-helper', () => {
         });
         it('does not execute the API call a second time', async () => {
           await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
-          sinon.assert.calledOnce(executeCall);
+          assert.calledOnce(executeCall);
         });
       });
     });
@@ -83,11 +89,11 @@ describe('api-helper', () => {
       });
       it('does not execute the API call a second time', async () => {
         await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
-        sinon.assert.calledOnce(executeCall);
+        assert.calledOnce(executeCall);
       });
       it('does not invoke the re-login callback', async () => {
         await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
-        sinon.assert.notCalled(onLoginRequired);
+        assert.notCalled(onLoginRequired);
       });
     });
   });

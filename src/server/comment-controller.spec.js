@@ -1,8 +1,8 @@
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import CommentController from './comment-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 const { NotFound, BadRequest } = httpErrors;
 
 describe('comment-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let clientDataMappingService;
   let documentService;
@@ -81,11 +81,11 @@ describe('comment-controller', () => {
     }));
 
     it('should call commentService.getAllDocumentComments', () => {
-      sinon.assert.calledWith(commentService.getAllDocumentComments, documentId);
+      assert.calledWith(commentService.getAllDocumentComments, documentId);
     });
 
     it('should call clientDataMappingService.mapComments', () => {
-      sinon.assert.calledWith(clientDataMappingService.mapComments, comments);
+      assert.calledWith(clientDataMappingService.mapComments, comments);
     });
 
     it('should return the mapped comments', () => {
@@ -136,15 +136,15 @@ describe('comment-controller', () => {
       }));
 
       it('should call documentService.getDocumentById', () => {
-        sinon.assert.calledWith(documentService.getDocumentById, documentId);
+        assert.calledWith(documentService.getDocumentById, documentId);
       });
 
       it('should call commentService.createComment', () => {
-        sinon.assert.calledWith(commentService.createComment, { data, user });
+        assert.calledWith(commentService.createComment, { data, user });
       });
 
       it('should call clientDataMappingService.mapComment', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapComment, comment);
+        assert.calledWith(clientDataMappingService.mapComment, comment);
       });
 
       it('should return the mapped comment', () => {
@@ -198,7 +198,7 @@ describe('comment-controller', () => {
       }));
 
       it('should call commentService.deleteComment', () => {
-        sinon.assert.calledWith(commentService.deleteComment, { commentId, user });
+        assert.calledWith(commentService.deleteComment, { commentId, user });
       });
     });
   });

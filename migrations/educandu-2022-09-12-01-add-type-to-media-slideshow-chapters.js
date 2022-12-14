@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_09_12_01_add_type_to_media_slideshow_chapters {
   constructor(db) {
     this.db = db;

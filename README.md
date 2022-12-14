@@ -1,14 +1,16 @@
 # educandu
 
-[![codecov](https://codecov.io/gh/educandu/educandu/branch/main/graph/badge.svg?token=SM7ANNBT3A)](https://codecov.io/gh/educandu/educandu)
+[![codecov](https://codecov.io/gh/educandu/educandu/branch/main/graph/badge.svg)](https://codecov.io/gh/educandu/educandu)
 
 The educandu framework
 
-## Perequisites
+## Prerequisites
 
- * Node 16 or higher
- * Docker
- * gulp installed globally (for conveninence): npm i -g gulp
+* node.js ^18.0.0
+* Docker
+* optional: globally installed gulp: `npm i -g gulp-cli`
+
+The output of this repository is an npm package (`@educandu/educandu`).
 
  ## Configuration options
 

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 export default class Educandu_2022_07_25_01_change_user_model {
   constructor(db) {
     this.db = db;

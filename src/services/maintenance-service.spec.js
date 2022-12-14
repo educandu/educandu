@@ -1,9 +1,9 @@
-import sinon from 'sinon';
+import { assert, createSandbox } from 'sinon';
 import MaintenanceService from './maintenance-service.js';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 describe('maintenance-service', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
   let cdn;
@@ -51,23 +51,23 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock', () => {
-        sinon.assert.calledOnce(lockStore.takeMaintenanceLock);
+        assert.calledOnce(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock', () => {
-        sinon.assert.calledOnce(lockStore.releaseLock);
+        assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have run the migrations', () => {
-        sinon.assert.calledOnce(database.runMigrationScripts);
+        assert.calledOnce(database.runMigrationScripts);
       });
 
       it('should have run the checks', () => {
-        sinon.assert.calledOnce(database.checkDb);
+        assert.calledOnce(database.checkDb);
       });
 
       it('should have created the initial CDN directories', () => {
-        sinon.assert.calledTwice(cdn.uploadEmptyObject);
+        assert.calledTwice(cdn.uploadEmptyObject);
       });
     });
 
@@ -87,19 +87,19 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock twice', () => {
-        sinon.assert.calledTwice(lockStore.takeMaintenanceLock);
+        assert.calledTwice(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock once', () => {
-        sinon.assert.calledOnce(lockStore.releaseLock);
+        assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have run the migrations once', () => {
-        sinon.assert.calledOnce(database.runMigrationScripts);
+        assert.calledOnce(database.runMigrationScripts);
       });
 
       it('should have run the checks once', () => {
-        sinon.assert.calledOnce(database.checkDb);
+        assert.calledOnce(database.checkDb);
       });
     });
 
@@ -126,23 +126,23 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock', () => {
-        sinon.assert.calledOnce(lockStore.takeMaintenanceLock);
+        assert.calledOnce(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock', () => {
-        sinon.assert.calledOnce(lockStore.releaseLock);
+        assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have tried run the migrations', () => {
-        sinon.assert.calledOnce(database.runMigrationScripts);
+        assert.calledOnce(database.runMigrationScripts);
       });
 
       it('should not have run the checks', () => {
-        sinon.assert.notCalled(database.checkDb);
+        assert.notCalled(database.checkDb);
       });
 
       it('should not have created the initial CDN directories', () => {
-        sinon.assert.notCalled(cdn.uploadEmptyObject);
+        assert.notCalled(cdn.uploadEmptyObject);
       });
     });
 

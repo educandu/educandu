@@ -1,12 +1,12 @@
-import sinon from 'sinon';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import AdminController from './admin-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('admin-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let settingService;
   let storageService;
@@ -56,7 +56,7 @@ describe('admin-controller', () => {
     }));
 
     it('should call createDocumentRegenerationBatch with the user', () => {
-      sinon.assert.calledWith(batchService.createDocumentRegenerationBatch, user);
+      assert.calledWith(batchService.createDocumentRegenerationBatch, user);
     });
 
     it('should return the batch', () => {

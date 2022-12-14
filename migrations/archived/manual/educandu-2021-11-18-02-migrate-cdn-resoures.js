@@ -1,5 +1,3 @@
-// eslint-disable-next-line camelcase
-
 const pluginsWithCdnResources = new Set([
   'image',
   'video',
@@ -68,18 +66,13 @@ const aggregateSectionUrls = sections => sections.reduce((acc, section) => {
 async function updateAll(collection, query, updateFn) {
   const cursor = collection.find(query);
 
-  /* eslint-disable-next-line no-await-in-loop */
   while (await cursor.hasNext()) {
-    /* eslint-disable-next-line no-await-in-loop */
     const doc = await cursor.next();
-    /* eslint-disable-next-line no-await-in-loop */
     await updateFn(doc);
-    /* eslint-disable-next-line no-await-in-loop */
     await collection.replaceOne({ _id: doc._id }, doc);
   }
 }
 
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_11_18_02_migrate_cdn_resources_manually_run {
   constructor(db) {
     this.db = db;

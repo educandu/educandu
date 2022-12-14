@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_09_09_01_add_documents_list_to_rooms {
   constructor(db) {
     this.db = db;

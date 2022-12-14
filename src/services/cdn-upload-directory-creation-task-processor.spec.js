@@ -1,6 +1,6 @@
-import sinon from 'sinon';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import DocumentService from './document-service.js';
 import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../domain/constants.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
@@ -11,7 +11,7 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
   let container;
   let documentService;
   let roomService;
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
 
@@ -43,7 +43,7 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
 
       it('should call createUploadDirectoryMarkerForDocument on documentService', async () => {
         await sut.process({ taskParams: { type, documentId } }, {});
-        sinon.assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentId);
+        assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentId);
       });
     });
 
@@ -53,7 +53,7 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
 
       it('should call createUploadDirectoryMarkerForRoom on roomService', async () => {
         await sut.process({ taskParams: { type, roomId } }, {});
-        sinon.assert.calledWith(roomService.createUploadDirectoryMarkerForRoom, roomId);
+        assert.calledWith(roomService.createUploadDirectoryMarkerForRoom, roomId);
       });
     });
 
@@ -68,9 +68,9 @@ describe('CdnUploadDirectoryCreationTaskProcessor', () => {
       it('should not call createUploadDirectoryMarkerForDocument', async () => {
         try {
           await sut.process({ taskParams: { type, documentId } }, { cancellationRequested: true });
-          sinon.assert.fail('This code should not have been reached');
+          assert.fail('This code should not have been reached');
         } catch {
-          sinon.assert.notCalled(documentService.createUploadDirectoryMarkerForDocument);
+          assert.notCalled(documentService.createUploadDirectoryMarkerForDocument);
         }
       });
     });

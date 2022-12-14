@@ -2,9 +2,9 @@ import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../ui/error-helper.js';
 import EmailFormItem from './email-form-item.js';
 import { useDialogs } from './dialog-context.js';
+import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -51,7 +51,7 @@ function AccountTab() {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 
@@ -64,7 +64,7 @@ function AccountTab() {
       await userApiClient.requestPasswordReset({ email: user.email });
       message.success(t('passwordResetEmailSent', { email: user.email }));
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 
@@ -75,7 +75,7 @@ function AccountTab() {
         window.location = routes.getLogoutUrl();
       });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

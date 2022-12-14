@@ -147,7 +147,6 @@ export default class RoomController {
     const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
 
     for (const room of rooms) {
-      // eslint-disable-next-line no-await-in-loop
       await this._deleteRoom({ room, roomOwner });
     }
 

@@ -1,5 +1,3 @@
-/* eslint no-process-env: off */
-
 if (!process.env.EDUCANDU_SKIP_MONGO_MIGRATIONS) {
   process.env.EDUCANDU_SKIP_MONGO_MIGRATIONS = true.toString();
 }

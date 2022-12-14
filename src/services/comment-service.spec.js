@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import CommentService from './comment-service.js';
 import CommentStore from '../stores/comment-store.js';
@@ -13,7 +13,7 @@ describe('comment-service', () => {
   let commentStore;
 
   const now = new Date();
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();

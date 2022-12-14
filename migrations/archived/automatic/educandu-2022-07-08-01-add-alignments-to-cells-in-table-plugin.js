@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_07_08_01_add_alignments_to_cells_in_table_plugin {
   constructor(db) {
     this.db = db;

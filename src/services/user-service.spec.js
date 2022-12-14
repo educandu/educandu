@@ -1,5 +1,5 @@
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
+import { createSandbox } from 'sinon';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
@@ -25,7 +25,7 @@ describe('user-service', () => {
   let executingUser;
 
   const now = new Date();
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();

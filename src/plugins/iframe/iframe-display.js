@@ -5,7 +5,6 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 function IframeDisplay({ content }) {
   return (
     <div className="Iframe">
-      {/* eslint-disable-next-line react/iframe-missing-sandbox */}
       <iframe
         src={content.url}
         style={{ height: `${content.height}px` }}

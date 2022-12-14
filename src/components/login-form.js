@@ -3,9 +3,9 @@ import { Form, Input } from 'antd';
 import Logger from '../common/logger.js';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../ui/error-helper.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
+import { handleApiError } from '../ui/error-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
@@ -53,7 +53,7 @@ export default function LoginForm({
         onLoginFailed();
       }
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       onLoginFailed();
     }
   };

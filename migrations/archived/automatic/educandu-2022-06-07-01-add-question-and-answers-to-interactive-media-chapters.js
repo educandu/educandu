@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_06_07_01_add_question_and_answers_to_interactive_media_chapters {
   constructor(db) {
     this.db = db;

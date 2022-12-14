@@ -18,10 +18,10 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, TAIL_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -51,7 +51,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     const newContent = { ...content, ...newContentValues };
 
     const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
+    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalidSourceUrl);
   };

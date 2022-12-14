@@ -1,6 +1,5 @@
 import uniqueId from '../../../src/utils/unique-id.js';
 
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_05_05_01_add_sourceDuration_and_chapters_to_interactive_media_plugin {
   constructor(db) {
     this.db = db;

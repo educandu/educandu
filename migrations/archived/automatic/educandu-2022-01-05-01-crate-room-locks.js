@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_01_05_01_create_room_locks {
   constructor(db) {
     this.db = db;

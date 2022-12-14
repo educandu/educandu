@@ -98,8 +98,6 @@ function FilesUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file, locationToUpload);
-
-        // eslint-disable-next-line no-await-in-loop
         const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], targetDirectory.path);
         result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
         updatedItem = {

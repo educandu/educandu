@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_09_20_01_rework_effects_in_image_plugin {
   constructor(db) {
     this.db = db;

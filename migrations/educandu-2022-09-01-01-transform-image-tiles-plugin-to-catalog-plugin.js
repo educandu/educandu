@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 export default class Educandu_2022_09_01_01_transform_image_tiles_plugin_to_catalog_plugin {
   constructor(db) {
     this.db = db;

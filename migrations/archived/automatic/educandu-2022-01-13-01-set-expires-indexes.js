@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_01_13_01_set_expires_indexes {
   constructor(db) {
     this.db = db;

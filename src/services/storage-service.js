@@ -54,7 +54,6 @@ export default class StorageService {
     ];
   }
 
-  // eslint-disable-next-line max-params
   constructor(
     serverConfig,
     cdn,
@@ -351,7 +350,6 @@ export default class StorageService {
 
     let totalSize = 0;
     for (const storagePath of storagePaths) {
-      // eslint-disable-next-line no-await-in-loop
       const size = await this._getDirectorySize(storagePath);
       totalSize += size;
     }

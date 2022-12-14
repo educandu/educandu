@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_11_29_01_migrate_email_provider_index {
   constructor(db) {
     this.db = db;

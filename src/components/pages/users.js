@@ -8,10 +8,10 @@ import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import { Table, Tabs, Select, Input } from 'antd';
-import errorHelper from '../../ui/error-helper.js';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { replaceItem } from '../../utils/array-utils.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -101,7 +101,7 @@ function Users({ initialState, PageTemplate }) {
     try {
       await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, roles: oldRoles }));
     } finally {
       setIsSaving(false);
@@ -117,7 +117,7 @@ function Users({ initialState, PageTemplate }) {
     try {
       await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOut });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, lockedOut: oldLockedOut }));
     } finally {
       setIsSaving(false);
@@ -139,7 +139,7 @@ function Users({ initialState, PageTemplate }) {
     try {
       finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId || null });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       finalStorage = oldStorage;
     } finally {
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
@@ -168,7 +168,7 @@ function Users({ initialState, PageTemplate }) {
     try {
       finalStorage = await userApiClient.addUserStorageReminder({ userId: user._id });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       finalStorage = oldStorage;
     } finally {
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
@@ -191,7 +191,7 @@ function Users({ initialState, PageTemplate }) {
     try {
       finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       finalStorage = oldStorage;
     } finally {
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
@@ -217,7 +217,7 @@ function Users({ initialState, PageTemplate }) {
         await roomApiClient.deleteAllRoomsForUser({ ownerId: user._id });
         finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
       } catch (error) {
-        errorHelper.handleApiError({ error, logger, t });
+        handleApiError({ error, logger, t });
         finalStorage = oldStorage;
       } finally {
         setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));

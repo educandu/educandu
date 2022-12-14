@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_02_08_01_add_quick_tester_tests_order {
   constructor(db) {
     this.db = db;

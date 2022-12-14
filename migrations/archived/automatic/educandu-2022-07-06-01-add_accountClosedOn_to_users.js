@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_07_06_01_add_accountClosedOn_to_users {
   constructor(db) {
     this.db = db;

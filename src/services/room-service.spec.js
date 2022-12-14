@@ -1,8 +1,8 @@
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
+import { assert, createSandbox } from 'sinon';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -22,7 +22,7 @@ describe('room-service', () => {
   let lockStore;
 
   const now = new Date();
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -219,11 +219,11 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        sinon.assert.calledWith(lockStore.takeRoomLock, invitation.roomId);
+        assert.calledWith(lockStore.takeRoomLock, invitation.roomId);
       });
 
       it('should release the lock on the room', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
 
       it('should add the user as a room member if user and token are valid', async () => {
@@ -385,11 +385,11 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+        assert.calledWith(lockStore.takeRoomLock, roomId);
       });
 
       it('should release the lock on the room', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -403,11 +403,11 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+        assert.calledWith(lockStore.takeRoomLock, roomId);
       });
 
       it('should release the lock on the room', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -421,11 +421,11 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        sinon.assert.calledWith(lockStore.takeRoomLock, roomId);
+        assert.calledWith(lockStore.takeRoomLock, roomId);
       });
 
       it('should release the lock on the room', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
   });

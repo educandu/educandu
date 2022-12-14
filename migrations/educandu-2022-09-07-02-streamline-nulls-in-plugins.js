@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop, complexity */
-
 import { EFFECT_TYPE } from '../src/plugins/image/constants.js';
 import { MEDIA_ASPECT_RATIO } from '../src/domain/constants.js';
 import { TEST_MODE } from '../src/plugins/ear-training/constants.js';

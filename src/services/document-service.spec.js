@@ -1,7 +1,6 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
@@ -19,7 +18,7 @@ const createDefaultSection = () => ({
 });
 
 describe('document-service', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
   const now = new Date();
 
   let lockStore;
@@ -135,11 +134,11 @@ describe('document-service', () => {
     });
 
     it('takes a lock on the document', () => {
-      sinon.assert.calledWith(lockStore.takeDocumentLock, createdRevision.documentId);
+      assert.calledWith(lockStore.takeDocumentLock, createdRevision.documentId);
     });
 
     it('takes a lock on the room', () => {
-      sinon.assert.calledWith(lockStore.takeRoomLock, room._id);
+      assert.calledWith(lockStore.takeRoomLock, room._id);
     });
 
     it('saves the revision', () => {
@@ -210,11 +209,11 @@ describe('document-service', () => {
     });
 
     it('releases the lock on the document', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, documentLock);
+      assert.calledWith(lockStore.releaseLock, documentLock);
     });
 
     it('releases the lock on the room', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, roomLock);
+      assert.calledWith(lockStore.releaseLock, roomLock);
     });
   });
 
@@ -420,11 +419,11 @@ describe('document-service', () => {
     });
 
     it('takes a lock on the document', () => {
-      sinon.assert.calledWith(lockStore.takeDocumentLock, documentToDelete._id);
+      assert.calledWith(lockStore.takeDocumentLock, documentToDelete._id);
     });
 
     it('takes a lock on the room', () => {
-      sinon.assert.calledWith(lockStore.takeRoomLock, room._id);
+      assert.calledWith(lockStore.takeRoomLock, room._id);
     });
 
     it('updates the room which container the document', async () => {
@@ -443,11 +442,11 @@ describe('document-service', () => {
     });
 
     it('releases the lock on the document', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, documentLock);
+      assert.calledWith(lockStore.releaseLock, documentLock);
     });
 
     it('releases the lock on the room', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, roomLock);
+      assert.calledWith(lockStore.releaseLock, roomLock);
     });
   });
 
@@ -1210,11 +1209,11 @@ describe('document-service', () => {
     });
 
     it('should take a lock on the document', () => {
-      sinon.assert.calledWith(lockStore.takeDocumentLock, regeneratedDocument._id);
+      assert.calledWith(lockStore.takeDocumentLock, regeneratedDocument._id);
     });
 
     it('should release the lock on the document', () => {
-      sinon.assert.calledWith(lockStore.releaseLock, lock);
+      assert.calledWith(lockStore.releaseLock, lock);
     });
 
     it('should save a new document', () => {

@@ -79,8 +79,6 @@ class AwsSdkS3Client {
     const commonPrefixes = new Set();
 
     do {
-
-      /* eslint-disable-next-line no-await-in-loop, no-loop-func */
       const response = await this.req(() => this.awsSdkS3Client.listObjects({ ...params, Marker: marker }), PRIORITY_DOWNLOAD);
 
       const keys = params.Delimiter

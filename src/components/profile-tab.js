@@ -3,10 +3,10 @@ import gravatar from 'gravatar';
 import routes from '../utils/routes.js';
 import React, { useState } from 'react';
 import Logger from '../common/logger.js';
-import errorHelper from '../ui/error-helper.js';
 import { useLocale } from './locale-context.js';
 import MarkdownInput from './markdown-input.js';
 import { Trans, useTranslation } from 'react-i18next';
+import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import { Form, Input, Avatar, Button, message } from 'antd';
 import DisplayNameFormItem from './displayName-form-item.js';
@@ -41,7 +41,7 @@ function ProfileTab() {
       setUser({ ...updatedUser });
       message.success(t('updateSuccessMessage'));
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

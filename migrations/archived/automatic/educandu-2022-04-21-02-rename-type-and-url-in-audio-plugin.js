@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_04_21_02_rename_type_and_url_in_audio_plugin {
   constructor(db) {
     this.db = db;

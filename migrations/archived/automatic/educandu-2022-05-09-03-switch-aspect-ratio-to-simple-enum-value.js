@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_05_09_03_switch_aspect_ratio_to_simple_enum_value {
   constructor(db) {
     this.db = db;

@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
@@ -7,11 +6,11 @@ import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
+import { handleApiError } from '../ui/error-helper.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
-import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -288,7 +287,6 @@ function DocumentMetadataModal({
               documentToSave.title = `${mappedDocument.title} (${sequenceIndex + 1})`;
               documentToSave.slug = mappedDocument.slug ? `${mappedDocument.slug}/${sequenceIndex + 1}` : '';
             }
-            // eslint-disable-next-line no-await-in-loop
             savedDocuments.push(await documentApiClient.createDocument(documentToSave));
           }
           break;
@@ -304,7 +302,7 @@ function DocumentMetadataModal({
 
       onSave(savedDocuments, actualTemplateDocumentId);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     } finally {
       setIsSaving(false);
     }

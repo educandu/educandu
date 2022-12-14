@@ -149,7 +149,6 @@ function DiagramNetEditor({ content, onContentChanged }) {
         >
         {!!iframeUrl && (
           <Fragment>
-            {/* eslint-disable-next-line react/iframe-missing-sandbox */}
             <iframe ref={iframeRef} src={iframeUrl} frameBorder={0} style={iframeStyle} />
             {isEditorReady || <div style={iframeOverlayStyle}><Spin size="large" /></div>}
           </Fragment>

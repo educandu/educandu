@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_05_10_02_remove_showVideo_from_video_plugin {
   constructor(db) {
     this.db = db;

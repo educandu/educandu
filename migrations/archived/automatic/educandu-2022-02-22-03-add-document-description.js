@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_02_22_03_add_document_description {
   constructor(db) {
     this.db = db;

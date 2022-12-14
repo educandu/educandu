@@ -16,7 +16,6 @@ class OrderStoreBase {
     const orders = [];
 
     for (let i = 0; i < count; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
       orders.push(await this.getNextOrder());
     }
 

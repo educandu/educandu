@@ -1,5 +1,5 @@
-import i18next from 'i18next';
 import icu from 'i18next-icu';
+import { createInstance } from 'i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { initReactI18next } from 'react-i18next';
 import { SUPPORTED_UI_LANGUAGES } from './ui-language.js';
@@ -30,7 +30,7 @@ class ResourceManager {
   }
 
   createI18n(initialLanguage) {
-    const instance = i18next.createInstance();
+    const instance = createInstance();
     instance.use(initReactI18next);
     instance.use(icu);
     instance.init({

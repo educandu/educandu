@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 export default class Educandu_2022_07_22_01_rename_username_to_displayName {
   constructor(db) {
     this.db = db;

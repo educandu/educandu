@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_07_19_01_rename_question_to_text_in_interactive_media_plugin {
   constructor(db) {
     this.db = db;

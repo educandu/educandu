@@ -117,8 +117,6 @@ export class Container {
       const disposalGroup = disposalGroups.get(priority);
 
       logger.debug(`Disposing ${disposalGroup.length} items in priority group ${priority}`);
-
-      /* eslint-disable-next-line no-await-in-loop */
       await Promise.all(disposalGroup.map(dispose => dispose()));
     }
   }

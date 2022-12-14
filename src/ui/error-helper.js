@@ -47,7 +47,3 @@ export function handleError({ message, error, logger, t, duration = 10 }) {
     console.error(err);
   }
 }
-
-export default {
-  handleApiError
-};

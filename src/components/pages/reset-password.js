@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import EmailFormItem from '../email-form-item.js';
-import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import { handleApiError } from '../../ui/error-helper.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 
 const logger = new Logger(import.meta.url);
@@ -24,7 +24,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
       await userApiClient.requestPasswordReset({ email });
       setIsRequestSent(true);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

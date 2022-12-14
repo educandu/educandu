@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_04_15_01_add_consentText_to_settings {
   constructor(db) {
     this.db = db;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_11_14_01_rename_memory_to_matching_cards_plugin {
   constructor(db) {
     this.db = db;

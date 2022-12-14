@@ -9,9 +9,9 @@ import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -28,8 +28,8 @@ function VideoEditor({ content, onContentChanged }) {
     const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
     const isNewPosterImageSourceTypeInternal = isInternalSourceType({ url: newContent.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
     const isInvalid
-      = (!isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error)
-      || (isNewPosterImageSourceTypeInternal && validation.getUrlValidationStatus(newContent.posterImage.sourceUrl) === URL_VALIDATION_STATUS.error);
+      = (!isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error)
+      || (isNewPosterImageSourceTypeInternal && getUrlValidationStatus(newContent.posterImage.sourceUrl) === URL_VALIDATION_STATUS.error);
 
     onContentChanged(newContent, isInvalid);
   };
@@ -63,11 +63,11 @@ function VideoEditor({ content, onContentChanged }) {
 
   const validationPropsSourceUrl = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+    : validateUrl(sourceUrl, t, { allowEmpty: true });
 
   const validationPropsPosterImageSourceUrl = isInternalSourceType({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(posterImage.sourceUrl, t, { allowEmpty: true });
+    : validateUrl(posterImage.sourceUrl, t, { allowEmpty: true });
 
   return (
     <div>

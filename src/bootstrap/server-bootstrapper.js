@@ -84,8 +84,3 @@ export async function createContainer(configValues = {}) {
 export function disposeContainer(container) {
   return container.dispose();
 }
-
-export default {
-  createContainer,
-  disposeContainer
-};

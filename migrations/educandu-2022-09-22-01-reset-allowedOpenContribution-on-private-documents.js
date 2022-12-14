@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 export default class Educandu_2022_09_22_01_reset_allowedOpenContribution_on_private_documents {
   constructor(db) {
     this.db = db;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_10_24_02_delete_import_tasks_and_batches {
   constructor(db) {
     this.db = db;

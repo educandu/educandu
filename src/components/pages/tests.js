@@ -1,4 +1,4 @@
-/* eslint-disable no-console, max-len, max-lines */
+/* eslint-disable no-console */
 
 import by from 'thenby';
 import PropTypes from 'prop-types';

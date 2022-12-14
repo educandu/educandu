@@ -16,9 +16,9 @@ import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import { swapItemsAt, removeItemAt, ensureIsExcluded } from '../../utils/array-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -34,7 +34,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const { tests } = content;
 
   const isInvalidUrl = url => !isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+    && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -175,7 +175,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
   const getValidationPropsSourceUrl = sourceUrl => isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+    : validateUrl(sourceUrl, t, { allowEmpty: true });
 
   return (
     <div>

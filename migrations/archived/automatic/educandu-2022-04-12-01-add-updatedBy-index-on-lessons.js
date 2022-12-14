@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_04_12_01_add_updatedBy_index_to_lessons {
   constructor(db) {
     this.db = db;

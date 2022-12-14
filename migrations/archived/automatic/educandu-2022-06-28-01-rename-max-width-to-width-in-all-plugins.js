@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 const pluginTypes = ['abc-notation', 'diagram-net', 'ear-training', 'image', 'image-tiles'];
 
 export default class Educandu_2022_06_28_01_rename_max_width_to_width_in_all_plugins {

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
-
 export default class Educandu_2022_04_25_01_rename_cell_properties_in_table_plugin {
   constructor(db) {
     this.db = db;

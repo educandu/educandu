@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import Database from '../stores/database.js';
 import DashboardService from './dashboard-service.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';

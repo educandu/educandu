@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_04_04_01_only_allow_internal_sources_and_canvas_rendering_in_pdf_viewer {
   constructor(db) {
     this.db = db;

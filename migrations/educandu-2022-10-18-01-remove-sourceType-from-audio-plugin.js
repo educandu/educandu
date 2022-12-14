@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_18_01_remove_sourceType_from_audio_plugin {
   constructor(db) {
     this.db = db;

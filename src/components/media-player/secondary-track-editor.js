@@ -10,8 +10,8 @@ import { handleError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getMediaInformation } from '../../utils/media-utils.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -31,7 +31,7 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
     const newContent = { ...content, ...newContentValues };
 
     const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
+    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalidSourceUrl);
   };
@@ -65,7 +65,7 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
 
   const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+    : validateUrl(sourceUrl, t, { allowEmpty: true });
 
   return (
     <Fragment>

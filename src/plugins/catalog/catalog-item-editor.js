@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
+import { validateUrl } from '../../ui/validation.js';
 import { LINK_SOURCE_TYPE } from './constants.js';
 import React, { Fragment, useState } from 'react';
 import { Button, Form, Input, Radio } from 'antd';
@@ -58,7 +58,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
 
   const getImageValidationProps = url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(url, t, { allowEmpty: true });
+    : validateUrl(url, t, { allowEmpty: true });
 
   const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
 
@@ -77,7 +77,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
         <FormItem
           label={t('common:externalUrl')}
           {...FORM_ITEM_LAYOUT}
-          {...validation.validateUrl(link.sourceUrl, t, { allowHttp: true, allowMailto: true })}
+          {...validateUrl(link.sourceUrl, t, { allowHttp: true, allowMailto: true })}
           hasFeedback
           >
           <Input value={link.sourceUrl} onChange={handleExternalLinkUrlValueChange} />

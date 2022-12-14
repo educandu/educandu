@@ -6,11 +6,11 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../../ui/error-helper.js';
 import SortingSelector from '../sorting-selector.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
 import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -153,7 +153,7 @@ function Docs({ initialState, PageTemplate }) {
 
       setDocuments(newDocuments);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

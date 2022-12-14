@@ -71,23 +71,23 @@ Graceful.on('exit', async () => {
 });
 
 export async function clean() {
-  await deleteAsync(['.test', 'dist', 'coverage', 'test-app/dist']);
+  await deleteAsync(['dist', 'coverage', 'test-app/dist']);
 }
 
 export async function lint() {
-  await eslint.lint(['*.js', 'src/**/*.js', 'migrations/**/*.js', 'test-app/src/**/*.js'], { failOnError: !currentApp });
+  await eslint.lint('**/*.js', { failOnError: !currentApp });
 }
 
 export async function fix() {
-  await eslint.fix(['*.js', 'src/**/*.js', 'migrations/**/*.js', 'test-app/src/**/*.js']);
+  await eslint.fix('**/*.js');
 }
 
-export function test() {
-  return vitest.coverage();
+export async function test() {
+  await vitest.coverage();
 }
 
-export function testWatch() {
-  return vitest.watch();
+export async function testWatch() {
+  await vitest.watch();
 }
 
 export async function buildJs() {
@@ -112,7 +112,6 @@ export async function buildTestAppJs() {
   if (bundler?.rebuild) {
     await bundler.rebuild();
   } else {
-    // eslint-disable-next-line require-atomic-updates
     bundler = await esbuild.bundle({
       entryPoints: ['./test-app/src/bundles/main.js'],
       outdir: './test-app/dist',

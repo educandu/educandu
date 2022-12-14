@@ -1,5 +1,5 @@
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
+import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
 import BatchService from './batch-service.js';
 import TaskStore from '../stores/task-store.js';
@@ -10,7 +10,7 @@ import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setup
 const { BadRequest } = httpErrors;
 
 describe('batch-service', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
   const now = new Date();
 
   let db;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_20_02_change_CDN_path_into_portable_URLs {
   constructor(db) {
     this.db = db;

@@ -5,8 +5,8 @@ import UserService from './services/user-service.js';
 import ServerConfig from './bootstrap/server-config.js';
 import TaskScheduler from './services/task-scheduler.js';
 import EducanduServer from './server/educandu-server.js';
-import bootstrapper from './bootstrap/server-bootstrapper.js';
 import MaintenanceService from './services/maintenance-service.js';
+import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -28,7 +28,7 @@ export default async function educandu(options) {
     if (container) {
       try {
         logger.info('Start disposing of container');
-        await bootstrapper.disposeContainer(container);
+        await disposeContainer(container);
         logger.info('Container was sucessfully disposed');
       } catch (err) {
         logger.fatal(err);
@@ -38,12 +38,11 @@ export default async function educandu(options) {
 
     logger.info(`Graceful exit process has finished ${hasError ? 'with' : 'without'} errors`);
 
-    // eslint-disable-next-line no-process-exit
     process.exit(hasError ? 1 : 0);
   });
 
   try {
-    container = await bootstrapper.createContainer(options);
+    container = await createContainer(options);
     const maintenanceService = container.get(MaintenanceService);
     const educanduServer = container.get(EducanduServer);
     const serverConfig = container.get(ServerConfig);

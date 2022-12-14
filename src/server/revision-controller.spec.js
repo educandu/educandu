@@ -1,14 +1,13 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import RevisionController from './revision-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden } = httpErrors;
 
 describe('document-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let clientDataMappingService;
   let documentService;
@@ -81,7 +80,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
       });
     });
 
@@ -118,7 +117,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
       });
     });
 
@@ -138,7 +137,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
       });
     });
   });

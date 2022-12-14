@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_04_21_01_rename_type_and_url_in_anavis_plugin {
   constructor(db) {
     this.db = db;

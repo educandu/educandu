@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_04_20_01_add_intent_and_state_to_annotation_plugin {
   constructor(db) {
     this.db = db;

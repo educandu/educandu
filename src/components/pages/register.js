@@ -6,11 +6,11 @@ import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
 import { useLocale } from '../locale-context.js';
 import EmailFormItem from '../email-form-item.js';
-import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import PasswordFormItem from '../password-form-item.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
@@ -45,7 +45,7 @@ function Register({ PageTemplate, SiteLogo }) {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

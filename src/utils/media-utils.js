@@ -5,8 +5,8 @@ import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import validation, { URL_VALIDATION_STATUS } from '../ui/validation.js';
 import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -184,7 +184,7 @@ export async function getMediaInformation({ url, playbackRange, cdnRootUrl }) {
 
   try {
     const isInvalidSourceUrl = !isInternalSourceType({ url, cdnRootUrl })
-      && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+      && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
 
     if (isInvalidSourceUrl) {
       return defaultResult;

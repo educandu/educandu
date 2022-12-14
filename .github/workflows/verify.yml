@@ -5,7 +5,7 @@ on:
       - '**'
 jobs:
   verify:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       NODE_ENV: development
     services:
@@ -34,9 +34,11 @@ jobs:
           - 8000:8000
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Install node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "18.12.1"
           cache: "yarn"
@@ -49,4 +51,6 @@ jobs:
       - name: Build
         run: ./node_modules/.bin/gulp build
       - name: Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3.1.1
+        with:
+          files: ./coverage/coverage-final.json

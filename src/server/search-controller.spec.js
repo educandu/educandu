@@ -1,14 +1,13 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import SearchController from './search-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('search-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let clientDataMappingService;
   let documentService;
@@ -56,11 +55,11 @@ describe('search-controller', () => {
     }));
 
     it('should call documentService.getSearchableDocumentsMetadataByTags', () => {
-      sinon.assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
+      assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
     });
 
     it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-      sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+      assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
     });
 
     it('should return status 200', () => {

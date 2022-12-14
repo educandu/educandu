@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2021_12_28_01_remove_duplicate_tags {
   constructor(db) {
     this.db = db;

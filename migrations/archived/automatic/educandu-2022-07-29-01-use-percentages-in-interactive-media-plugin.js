@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 import by from 'thenby';
 
 export default class Educandu_2022_07_29_01_use_percentages_in_interactive_media_plugin {
