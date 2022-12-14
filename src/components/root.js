@@ -21,7 +21,7 @@ function Root({
   storagePlan,
   container,
   initialState,
-  themeToken,
+  theme,
   settings,
   uiLanguage,
   pageName,
@@ -35,7 +35,7 @@ function Root({
 
   return (
     <ContainerProvider value={container}>
-      <ConfigProvider theme={{ token: themeToken }}>
+      <ConfigProvider theme={theme}>
         <PageNameProvider value={pageName}>
           <LocaleProvider value={uiLanguage}>
             <SettingsProvider value={settings}>
@@ -73,7 +73,7 @@ Root.propTypes = {
   container: PropTypes.instanceOf(Container).isRequired,
   /* eslint-disable-next-line react/forbid-prop-types */
   initialState: PropTypes.any,
-  themeToken: PropTypes.any.isRequired,
+  theme: PropTypes.any.isRequired,
   uiLanguage: PropTypes.string.isRequired
 };
 

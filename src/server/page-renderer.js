@@ -36,7 +36,7 @@ class PageRenderer extends PageRendererBase {
     const storagePlan = req.storagePlan;
     const storage = req.storage;
     const resources = this.resourceManager.getAllResourceBundles();
-    const themeToken = this.themeManager.getThemeToken();
+    const theme = this.themeManager.getTheme();
 
     const {
       PageComponent,
@@ -52,7 +52,7 @@ class PageRenderer extends PageRendererBase {
       storagePlan: cloneDeep(storagePlan),
       container,
       initialState: cloneDeep(initialState),
-      themeToken: cloneDeep(themeToken),
+      theme: cloneDeep(theme),
       uiLanguage,
       pageName,
       settings: cloneDeep(settings),
@@ -73,7 +73,7 @@ class PageRenderer extends PageRendererBase {
       `window.__resources__=${htmlescape(resources)};`,
       `window.__initalState__=${htmlescape(initialState)};`,
       `window.__clientconfig__=${htmlescape(clientConfig)};`,
-      `window.__themeToken__=${htmlescape(themeToken)};`
+      `window.__theme__=${htmlescape(theme)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];

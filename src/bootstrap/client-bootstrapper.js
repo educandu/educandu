@@ -46,7 +46,7 @@ export async function hydrateApp({ bundleConfig }) {
     pageName: window.__pageName__,
     container,
     initialState: window.__initalState__,
-    themeToken: window.__themeToken__,
+    theme: window.__theme__,
     PageComponent,
     PageTemplateComponent,
     HomePageTemplateComponent,
