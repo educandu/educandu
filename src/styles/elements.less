@@ -26,3 +26,19 @@ h5 {
 h6 {
   font-size: @edu-heading-6-size;
 }
+
+a {
+  color: @edu-link-color;
+  text-decoration: @edu-link-decoration;
+
+  &:hover {
+    color: @edu-link-hover-color;
+    text-decoration: none;
+  }
+
+  &:active,
+  &:visited {
+    color: @edu-link-active-color;
+    color: @edu-link-color;
+  }
+}

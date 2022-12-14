@@ -32,12 +32,12 @@ class ThemeManager {
       fontSizeSM: getNumberFromString(this._lessVariables['@edu-font-size-sm']),
 
       // Alias tokens
-      colorTextHeading: this._lessVariables['@edu-heading-color'],
-      colorTextLabel: this._lessVariables['@edu-label-color'],
+      colorTextHeading: this._lessVariables['@edu-label-color'],
+      colorTextDescription: this._lessVariables['@edu-text-color'],
+      colorTextDisabled: this._lessVariables['@edu-disabled-color'],
       colorLink: this._lessVariables['@edu-link-color'],
       colorLinkHover: this._lessVariables['@edu-link-hover-color'],
       colorLinkActive: this._lessVariables['@edu-link-active-color'],
-      colorTextDisabled: this._lessVariables['@edu-disabled-color'],
       linkDecoration: this._lessVariables['@edu-link-decoration'],
       fontWeightStrong: 400, // Table header
       controlOutlineWidth: getNumberFromString(this._lessVariables['@edu-outline-width'])
