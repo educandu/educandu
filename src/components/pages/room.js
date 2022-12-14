@@ -457,6 +457,7 @@ export default function Room({ PageTemplate, initialState }) {
                         </div>
                         <div className="RoomPage-cardDangerActionButtonContainer">
                           <Button
+                            danger
                             type="primary"
                             icon={<DeleteIcon />}
                             onClick={handleDeleteRoomClick}

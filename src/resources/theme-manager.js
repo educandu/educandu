@@ -7,31 +7,40 @@ class ThemeManager {
 
   getThemeToken() {
     const themeToken = {
-      fontSize: getNumberFromString(this._lessVariables['@edu-font-size-base']),
+      // Seed tokens
       fontFamily: this._lessVariables['@edu-font-family'],
+      fontSize: getNumberFromString(this._lessVariables['@edu-font-size-base']),
       borderRadius: getNumberFromString(this._lessVariables['@edu-border-radius-base']),
-      // Active/hover input border and text color, primary button bg
       colorPrimary: this._lessVariables['@edu-primary-color-light'],
-      // Input text, table pager, table headers, labels, card headers, dropdown/menu items, buttons
-      colorText: this._lessVariables['@edu-text-color'],
-      // Input placeholder, Switch bg, table row hover bg
       colorTextBase: this._lessVariables['@edu-text-color'],
-      // Labels, table headers, collapse arrows
-      colorTextHeading: this._lessVariables['@edu-text-color'],
-      colorLink: this._lessVariables['@edu-link-color'],
-      // Validation
       colorError: this._lessVariables['@edu-error-color'],
-      // All icons
-      colorSuccess: this._lessVariables['@edu-text-color-secondary'],
+      colorSuccess: this._lessVariables['@edu-success-color'],
+      colorInfo: this._lessVariables['@edu-info-color'],
+      controlHeight: getNumberFromString(this._lessVariables['@edu-control-height-base']),
+
+      // Map tokens
+      colorText: this._lessVariables['@edu-text-color'],
+      colorBorder: this._lessVariables['@edu-border-color-base'],
+      colorBorderSecondary: this._lessVariables['@edu-border-color-light'],
+      colorBgSpotlight: this._lessVariables['@edu-tooltip-background-color'],
+      fontSizeHeading1: getNumberFromString(this._lessVariables['@edu-heading-1-size']),
+      fontSizeHeading2: getNumberFromString(this._lessVariables['@edu-heading-2-size']),
+      fontSizeHeading3: getNumberFromString(this._lessVariables['@edu-heading-3-size']),
+      fontSizeHeading4: getNumberFromString(this._lessVariables['@edu-heading-4-size']),
+      fontSizeHeading5: getNumberFromString(this._lessVariables['@edu-heading-5-size']),
+      fontSizeLG: getNumberFromString(this._lessVariables['@edu-font-size-lg']),
+      fontSizeSM: getNumberFromString(this._lessVariables['@edu-font-size-sm']),
+
+      // Alias tokens
+      colorTextHeading: this._lessVariables['@edu-heading-color'],
+      colorTextLabel: this._lessVariables['@edu-label-color'],
+      colorLink: this._lessVariables['@edu-link-color'],
       colorLinkHover: this._lessVariables['@edu-link-hover-color'],
       colorLinkActive: this._lessVariables['@edu-link-active-color'],
+      colorTextDisabled: this._lessVariables['@edu-disabled-color'],
       linkDecoration: this._lessVariables['@edu-link-decoration'],
-      // Inputs, buttons in normal state
-      colorBorder: this._lessVariables['@edu-border-color-base'],
-      // Tabs, Table first and last, card separators
-      colorBorderSecondary: this._lessVariables['@edu-border-color-base'],
-      // Table header
-      fontWeightStrong: 400
+      fontWeightStrong: 400, // Table header
+      controlOutlineWidth: getNumberFromString(this._lessVariables['@edu-outline-width'])
     };
 
     return themeToken;

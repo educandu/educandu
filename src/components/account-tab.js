@@ -97,7 +97,7 @@ function AccountTab() {
       <div className="AccountTab-headline">{t('closeAccount')}</div>
       <section className="AccountTab-section AccountTab-section--wide">
         <div>{t('closeAccountDetails')}</div>
-        <Button className="AccountTab-closeAccountButton" onClick={handleCloseAccountClick}>{t('closeAccount')}</Button>
+        <Button className="AccountTab-closeAccountButton" danger type="primary" onClick={handleCloseAccountClick}>{t('closeAccount')}</Button>
       </section>
     </div>
   );
