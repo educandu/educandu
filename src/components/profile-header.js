@@ -17,7 +17,7 @@ export default function ProfileHeader({ avatarUrl, displayName, organization, em
         )}
         {!!email && (
           <div className="ProfileHeader-email">
-            <MailOutlined /><a href={`mailto:${encodeURI(email)}`}>{email}</a>
+            <MailOutlined /><a className="ProfileHeader-emailLink" href={`mailto:${encodeURI(email)}`}>{email}</a>
           </div>
         )}
       </div>

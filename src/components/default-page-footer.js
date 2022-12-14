@@ -11,8 +11,8 @@ function DefaultPageFooter() {
     <footer className="DefaultPageFooter">
       <div>
         {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
-          <span key={index.toString()} className="DefaultPageFooter-link">
-            <a href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+          <span key={index.toString()} className="DefaultPageFooter-linkWrappter" >
+            <a className="DefaultPageFooter-link" href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
           </span>
         ))}
       </div>

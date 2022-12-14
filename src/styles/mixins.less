@@ -342,3 +342,15 @@
   right: 0;
   bottom: 0;
 }
+
+.m-link(@color: @edu-link-color) {
+  color: @color;
+  text-decoration: underline;
+
+  &:hover,
+  &:active,
+  &:visited {
+    color: @color;
+    text-decoration: none;
+  }
+}

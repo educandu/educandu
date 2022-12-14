@@ -1,8 +1,8 @@
 export function getNumberFromString(string) {
-  const digits = string.replace(/\D/g, '');
+  const matches = string.match(/[+-]?\d+(\.\d+)?/g);
 
-  if (digits) {
-    return Number(digits);
+  if (matches) {
+    return parseFloat(matches[0]);
   }
 
   return null;

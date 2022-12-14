@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import Markdown from '../../components/markdown.js';
-import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { calculateEvenColumnWidthsInPercent, CELL_TYPE, COLUMN_DISTRIBUTION, createTableCellsInRows } from './table-utils.js';
 
 function TableDisplay({ content }) {

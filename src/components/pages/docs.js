@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
 import SortingSelector from '../sorting-selector.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
+import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -18,9 +19,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
-import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { CheckOutlined, LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
@@ -190,6 +191,8 @@ function Docs({ initialState, PageTemplate }) {
       <Switch
         size="small"
         checked={row.archived}
+        checkedChildren={<CheckOutlined />}
+        unCheckedChildren={<CloseIcon />}
         onChange={() => handleArchivedSwitchChange(archived, row)}
         />
     );

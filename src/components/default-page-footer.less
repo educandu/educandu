@@ -8,10 +8,12 @@
   z-index: @edu-z-index-base-layer;
 }
 
-.DefaultPageFooter-link {
-  font-size: @edu-font-size-base;
-
+.DefaultPageFooter-linkWrapper {
   &:not(:last-child)::after {
     content: "\00A0\00A0|\00A0\00A0";
   }
+}
+
+.DefaultPageFooter-link {
+  .m-link;
 }

@@ -30,6 +30,10 @@
   padding: 0 @edu-content-padding;
 }
 
+.RoomPage-subtitleLink {
+  .m-link(inherit);
+}
+
 .RoomPage-leaveRoomLink {
   .m-control-group;
   padding-left: @edu-control-spacing-wide;
@@ -82,10 +86,10 @@
 }
 
 .RoomPage-card {
-  margin-top: 40px;
+  margin-top: 40px !important;
 
   &:first-of-type {
-    margin-top: 0;
+    margin-top: 0 !important;
   }
 
   &.RoomPage-card--danger {
