@@ -36,6 +36,7 @@ class ThemeManager {
         colorTextHeading: this._lessVariables['@edu-label-color'],
         colorTextDescription: this._lessVariables['@edu-text-color'],
         colorTextDisabled: this._lessVariables['@edu-disabled-color'],
+        colorBgContainerDisabled: this._lessVariables['@edu-disabled-background-color'],
         colorLink: this._lessVariables['@edu-link-color'],
         colorLinkHover: this._lessVariables['@edu-link-hover-color'],
         colorLinkActive: this._lessVariables['@edu-link-active-color'],
