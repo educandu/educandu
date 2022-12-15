@@ -60,9 +60,10 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Loading theme files');
   const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
-  const themeManager = new ThemeManager({ ...globalVariables, ...themeOverrideVariables });
 
   logger.info('Registering theme manager');
+  const themeManager = new ThemeManager();
+  themeManager.setThemeFromLessVariables({ ...globalVariables, ...themeOverrideVariables });
   container.registerInstance(ThemeManager, themeManager);
 
   logger.info('Registering page resolver');
