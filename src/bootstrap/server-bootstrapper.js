@@ -1,5 +1,6 @@
 import url from 'node:url';
 import path from 'node:path';
+import { promises as fs } from 'node:fs';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
@@ -7,7 +8,6 @@ import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import PageResolver from '../domain/page-resolver.js';
-import { promises as fs, readFileSync } from 'node:fs';
 import ThemeManager from '../resources/theme-manager.js';
 import lessVariablesToJson from 'less-variables-to-json';
 import PluginRegistry from '../plugins/plugin-registry.js';
@@ -18,6 +18,7 @@ const logger = new Logger(import.meta.url);
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
 const resources = await fs.readFile(path.resolve(thisDir, '../resources/resources.json'), 'utf8').then(JSON.parse);
+const globalVariables = await fs.readFile(path.resolve(thisDir, '../styles/global-variables.less'), 'utf8').then(lessVariablesToJson);
 
 export async function createContainer(configValues = {}) {
   logger.info('Creating container');
@@ -51,27 +52,15 @@ export async function createContainer(configValues = {}) {
   container.registerInstance(Cdn, cdn);
 
   logger.info('Loading resources');
-  const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
-    const resourceFileUrl = new URL(modulePath, import.meta.url);
-    const resourceJSON = await fs.readFile(resourceFileUrl, 'utf8').then(JSON.parse);
-    return resourceJSON;
-  }));
-
+  const additionalResources = await Promise.all(serverConfig.resources.map(modulePath => fs.readFile(modulePath, 'utf8').then(JSON.parse)));
   const resourceManager = new ResourceManager(resources, ...additionalResources);
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);
 
   logger.info('Loading theme files');
-  const globalVariablesFileUrl = new URL(path.resolve('./src/styles/global-variables.less'), import.meta.url);
-  let variables = await lessVariablesToJson(readFileSync(globalVariablesFileUrl, 'utf8'));
-
-  if (serverConfig.themeFile) {
-    const themeFileUrl = new URL(serverConfig.themeFile, import.meta.url);
-    const overriddenVariables = await lessVariablesToJson(readFileSync(themeFileUrl, 'utf8'));
-    variables = { ...variables, ...overriddenVariables };
-  }
-  const themeManager = new ThemeManager(variables);
+  const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
+  const themeManager = new ThemeManager({ ...globalVariables, ...themeOverrideVariables });
 
   logger.info('Registering theme manager');
   container.registerInstance(ThemeManager, themeManager);
