@@ -33,6 +33,7 @@ The educandu framework
  | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
+ | themeFile | URL to overrides of educandu LESS variables  | `string`  | no |
  | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |

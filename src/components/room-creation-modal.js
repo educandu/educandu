@@ -13,7 +13,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
 const logger = new Logger(import.meta.url);
 
-function RoomCreationModal({ isVisible, onClose }) {
+function RoomCreationModal({ isOpen, onClose }) {
   const formRef = useRef(null);
   const { t } = useTranslation('roomCreationModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
@@ -27,10 +27,10 @@ function RoomCreationModal({ isVisible, onClose }) {
   };
 
   useEffect(() => {
-    if (isVisible && formRef.current) {
+    if (isOpen && formRef.current) {
       formRef.current.resetFields();
     }
-  }, [isVisible]);
+  }, [isOpen]);
 
   const handleOk = () => {
     if (formRef.current) {
@@ -60,16 +60,18 @@ function RoomCreationModal({ isVisible, onClose }) {
       onOk={handleOk}
       onCancel={handleCancel}
       maskClosable={false}
-      visible={isVisible}
+      open={isOpen}
       okButtonProps={{ loading }}
       >
-      <RoomMetadataForm formRef={formRef} room={defaultRoom} onSubmit={handleFormSubmitted} />
+      <div className="u-modal-body">
+        <RoomMetadataForm formRef={formRef} room={defaultRoom} onSubmit={handleFormSubmitted} />
+      </div>
     </Modal>
   );
 }
 
 RoomCreationModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };
 

@@ -15,7 +15,7 @@
   font-weight: bold;
   margin: 0 2.5em 0 0;
   color: @edu-text-color;
-  font-size: @edu-title-size;
+  font-size: @edu-heading-1-size;
 }
 
 .RoomPage-titleExtra {
@@ -28,6 +28,10 @@
   justify-content: space-between;
   color: @edu-text-color-secondary;
   padding: 0 @edu-content-padding;
+}
+
+.RoomPage-subtitleLink {
+  .m-link(inherit);
 }
 
 .RoomPage-leaveRoomLink {
@@ -82,10 +86,10 @@
 }
 
 .RoomPage-card {
-  margin-top: 40px;
+  margin-top: 40px !important;
 
   &:first-of-type {
-    margin-top: 0;
+    margin-top: 0 !important;
   }
 
   &.RoomPage-card--danger {
@@ -94,9 +98,8 @@
 }
 
 .RoomPage-cardButton {
-  display: block;
-  margin-left: 20px;
-  margin-right: auto;
+  display: block !important;
+  margin: 0 auto 0 20px !important;
 }
 
 .RoomPage-cardDangerAction {

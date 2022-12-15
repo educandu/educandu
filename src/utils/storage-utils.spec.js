@@ -64,7 +64,7 @@ describe('storage-utils', () => {
       { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'hello world 123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-wo-ld-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-world-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'Hello World 123 !"§.mp3', prefix: 'media/my-directory/', expectedOutput: 'media/my-directory/hello-world-123-ch5zqo897tzo8f3.mp3' },

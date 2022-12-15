@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ConfigProvider } from 'antd';
 import { Container } from '../common/di.js';
 import { UserProvider } from './user-context.js';
 import { DialogProvider } from './dialog-context.js';
@@ -20,6 +21,7 @@ function Root({
   storagePlan,
   container,
   initialState,
+  theme,
   settings,
   uiLanguage,
   pageName,
@@ -33,28 +35,30 @@ function Root({
 
   return (
     <ContainerProvider value={container}>
-      <PageNameProvider value={pageName}>
-        <LocaleProvider value={uiLanguage}>
-          <SettingsProvider value={settings}>
-            <RequestProvider value={request}>
-              <UserProvider value={user}>
-                <StoragePlanProvider value={storagePlan}>
-                  <StorageProvider value={storage}>
-                    <DialogProvider>
-                      <PageComponent
-                        initialState={initialState}
-                        PageTemplate={PageTemplateComponent}
-                        HomePageTemplate={HomePageTemplateComponent}
-                        SiteLogo={SiteLogoComponent}
-                        />
-                    </DialogProvider>
-                  </StorageProvider>
-                </StoragePlanProvider>
-              </UserProvider>
-            </RequestProvider>
-          </SettingsProvider>
-        </LocaleProvider>
-      </PageNameProvider>
+      <ConfigProvider theme={theme}>
+        <PageNameProvider value={pageName}>
+          <LocaleProvider value={uiLanguage}>
+            <SettingsProvider value={settings}>
+              <RequestProvider value={request}>
+                <UserProvider value={user}>
+                  <StoragePlanProvider value={storagePlan}>
+                    <StorageProvider value={storage}>
+                      <DialogProvider>
+                        <PageComponent
+                          initialState={initialState}
+                          PageTemplate={PageTemplateComponent}
+                          HomePageTemplate={HomePageTemplateComponent}
+                          SiteLogo={SiteLogoComponent}
+                          />
+                      </DialogProvider>
+                    </StorageProvider>
+                  </StoragePlanProvider>
+                </UserProvider>
+              </RequestProvider>
+            </SettingsProvider>
+          </LocaleProvider>
+        </PageNameProvider>
+      </ConfigProvider>
     </ContainerProvider>
   );
 }
@@ -69,6 +73,7 @@ Root.propTypes = {
   container: PropTypes.instanceOf(Container).isRequired,
   /* eslint-disable-next-line react/forbid-prop-types */
   initialState: PropTypes.any,
+  theme: PropTypes.any.isRequired,
   uiLanguage: PropTypes.string.isRequired
 };
 

@@ -23,7 +23,6 @@ import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js'
 
 const logger = new Logger(import.meta.url);
 
-const { TabPane } = Tabs;
 const { Search } = Input;
 const { Option } = Select;
 
@@ -31,7 +30,6 @@ const availableRoles = Object.values(ROLE);
 
 const TABS = {
   internalUsers: 'internal-users',
-  externalUsers: 'external-users',
   storageUsers: 'storage-users',
   closedAccountUsers: 'closed-accounts'
 };
@@ -40,7 +38,6 @@ function createUserSubsets(users, storagePlans) {
   const storagePlansById = new Map(storagePlans.map(plan => [plan._id, plan]));
 
   const internalUsers = [];
-  const externalUsers = [];
   const storageUsers = [];
 
   const activeAccountUsers = users.filter(user => !user.accountClosedOn);
@@ -49,22 +46,17 @@ function createUserSubsets(users, storagePlans) {
   for (const user of activeAccountUsers) {
     const enrichedUserObject = {
       ...user,
-      storagePlan: storagePlansById.get(user.storage.planId) || null,
-      importSource: (/^external\/(.+)$/).exec(user.provider)?.[1] || null
+      storagePlan: storagePlansById.get(user.storage.planId) || null
     };
 
-    if (enrichedUserObject.importSource) {
-      externalUsers.push(enrichedUserObject);
-    } else {
-      internalUsers.push(enrichedUserObject);
-    }
+    internalUsers.push(enrichedUserObject);
 
     if (user.storage.planId || user.storage.usedBytes || user.storage.reminders.length) {
       storageUsers.push(enrichedUserObject);
     }
   }
 
-  return { internalUsers, externalUsers, storageUsers, closedAccountUsers };
+  return { internalUsers, storageUsers, closedAccountUsers };
 }
 
 function Users({ initialState, PageTemplate }) {
@@ -80,7 +72,6 @@ function Users({ initialState, PageTemplate }) {
   const [filterText, setFilterText] = useState('');
   const [usersById, setUsersById] = useState(new Map());
   const [internalUsers, setInternalUsers] = useState([]);
-  const [externalUsers, setExternalUsers] = useState([]);
   const [storageUsers, setStorageUsers] = useState([]);
   const [closedAccountUsers, setClosedAccountUsers] = useState([]);
 
@@ -97,7 +88,6 @@ function Users({ initialState, PageTemplate }) {
 
     const subsets = createUserSubsets(filteredUsers, initialState.storagePlans);
     setInternalUsers(subsets.internalUsers);
-    setExternalUsers(subsets.externalUsers);
     setStorageUsers(subsets.storageUsers);
     setClosedAccountUsers(subsets.closedAccountUsers);
   }, [users, filterText, initialState.storagePlans]);
@@ -372,21 +362,6 @@ function Users({ initialState, PageTemplate }) {
     }
   ];
 
-  const externalUserTableColumns = [
-    {
-      title: () => t('common:displayName'),
-      dataIndex: 'displayName',
-      key: 'displayName',
-      sorter: by(x => x.displayName, { ignoreCase: true }),
-      render: renderDisplayName
-    }, {
-      title: () => t('importSource'),
-      dataIndex: 'importSource',
-      key: 'importSource',
-      sorter: by(x => x.importSource, { ignoreCase: true })
-    }
-  ];
-
   const storageUserTableColumns = [
     {
       title: () => t('common:displayName'),
@@ -469,47 +444,61 @@ function Users({ initialState, PageTemplate }) {
           onChange={handleFilterTextChange}
           placeholder={t('filterPlaceholder')}
           />
-        <Tabs className="Tabs Tabs--smallPadding" defaultActiveKey={TABS.internalUsers} type="line" size="middle" disabled={isSaving}>
-          <TabPane className="Tabs-tabPane" tab={t('internalUsers')} key={TABS.internalUsers}>
-            <Table
-              dataSource={internalUsers}
-              columns={internalUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              loading={isSaving}
-              bordered
-              />
-          </TabPane>
-          {!!externalUsers.length && (
-          <TabPane className="Tabs-tabPane" tab={t('externalUsers')} key={TABS.externalUsers}>
-            <Table
-              dataSource={externalUsers}
-              columns={externalUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              bordered
-              />
-          </TabPane>
-          )}
-          <TabPane className="Tabs-tabPane" tab={t('storageUsers')} key={TABS.storageUsers}>
-            <Table
-              dataSource={storageUsers}
-              columns={storageUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              bordered
-              />
-          </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('closedAccountUsers')} key={TABS.closedAccountUsers}>
-            <Table
-              dataSource={closedAccountUsers}
-              columns={closedAccountUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              bordered
-              />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          className="Tabs Tabs--smallPadding"
+          defaultActiveKey={TABS.internalUsers}
+          type="line"
+          size="middle"
+          disabled={isSaving}
+          items={[
+            {
+              label: t('internalUsers'),
+              key: TABS.internalUsers,
+              children: (
+                <div className="Tabs-tabPane">
+                  <Table
+                    dataSource={internalUsers}
+                    columns={internalUserTableColumns}
+                    rowKey="_id"
+                    size="middle"
+                    loading={isSaving}
+                    bordered
+                    />
+                </div>
+              )
+            },
+            {
+              label: t('storageUsers'),
+              key: TABS.storageUsers,
+              children: (
+                <div className="Tabs-tabPane">
+                  <Table
+                    dataSource={storageUsers}
+                    columns={storageUserTableColumns}
+                    rowKey="_id"
+                    size="middle"
+                    bordered
+                    />
+                </div>
+              )
+            },
+            {
+              label: t('closedAccountUsers'),
+              key: TABS.closedAccountUsers,
+              children: (
+                <div className="Tabs-tabPane">
+                  <Table
+                    dataSource={closedAccountUsers}
+                    columns={closedAccountUserTableColumns}
+                    rowKey="_id"
+                    size="middle"
+                    bordered
+                    />
+                </div>
+              )
+            }
+          ]}
+          />
       </div>
     </PageTemplate>
   );

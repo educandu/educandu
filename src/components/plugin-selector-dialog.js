@@ -8,7 +8,7 @@ import { QuestionOutlined } from '@ant-design/icons';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import PasteFromClipboardIcon from './icons/general/paste-from-clipboard-icon.js';
 
-function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboard }) {
+function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard }) {
   const { t } = useTranslation('pluginSelectorDialog');
   const pluginRegistry = useService(PluginRegistry);
 
@@ -66,33 +66,35 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
     <Modal
       centered
       width="560px"
-      visible={visible}
+      open={isOpen}
       title={t('title')}
       footer={renderFooter()}
       onCancel={onCancel}
       className="PluginSelectorDialog"
       >
-      <GridSelector
-        items={pluginItems}
-        selectedItemKey={selectedPluginType}
-        onSelectionChange={handleSelectionChange}
-        />
+      <div className="u-modal-body">
+        <GridSelector
+          items={pluginItems}
+          selectedItemKey={selectedPluginType}
+          onSelectionChange={handleSelectionChange}
+          />
+      </div>
     </Modal>
   );
 }
 
 PluginSelectorDialog.propTypes = {
+  isOpen: PropTypes.bool,
   onCancel: PropTypes.func,
   onPasteFromClipboard: PropTypes.func,
-  onSelect: PropTypes.func,
-  visible: PropTypes.bool
+  onSelect: PropTypes.func
 };
 
 PluginSelectorDialog.defaultProps = {
+  isOpen: false,
   onCancel: () => {},
   onPasteFromClipboard: () => {},
-  onSelect: () => {},
-  visible: false
+  onSelect: () => {}
 };
 
 export default PluginSelectorDialog;

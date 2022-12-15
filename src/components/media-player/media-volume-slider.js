@@ -42,7 +42,7 @@ function MediaVolumeSlider({ value, onChange, orientation }) {
         step={0.01}
         value={value}
         onChange={handleSliderChange}
-        tipFormatter={percentageFormatter}
+        tooltip={{ formatter: percentageFormatter }}
         vertical={orientation === MEDIA_VOLUME_SLIDER_ORIENTATION.vertical}
         />
     </div>

@@ -140,11 +140,12 @@ function DiagramNetEditor({ content, onContentChanged }) {
         title={null}
         footer={null}
         closable={false}
-        visible={!!iframeUrl}
+        open={!!iframeUrl}
         width={modalBodyStyle.width}
         bodyStyle={modalBodyStyle}
         destroyOnClose
         centered
+        className="DiagramNetEditor-modal"
         >
         {!!iframeUrl && (
           <Fragment>

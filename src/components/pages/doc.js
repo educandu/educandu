@@ -101,7 +101,7 @@ function Doc({ initialState, PageTemplate }) {
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
-  const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
+  const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
@@ -167,17 +167,17 @@ function Doc({ initialState, PageTemplate }) {
   }, [view]);
 
   const handleEditMetadataOpen = () => {
-    setIsDocumentMetadataModalVisible(true);
+    setIsDocumentMetadataModalOpen(true);
   };
 
   const handleDocumentMetadataModalSave = updatedDocuments => {
     setDoc(updatedDocuments[0]);
-    setIsDocumentMetadataModalVisible(false);
+    setIsDocumentMetadataModalOpen(false);
     message.success(t('documentMetadataUpdated'));
   };
 
   const handleDocumentMetadataModalClose = () => {
-    setIsDocumentMetadataModalVisible(false);
+    setIsDocumentMetadataModalOpen(false);
   };
 
   const handleEditOpen = () => {
@@ -612,7 +612,7 @@ function Doc({ initialState, PageTemplate }) {
         allowMultiple={false}
         initialDocumentMetadata={doc}
         initialDocumentRoomMetadata={room}
-        isVisible={isDocumentMetadataModalVisible}
+        isOpen={isDocumentMetadataModalOpen}
         mode={DOCUMENT_METADATA_MODAL_MODE.update}
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}

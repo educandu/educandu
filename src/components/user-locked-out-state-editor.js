@@ -12,6 +12,7 @@ function UserLockedOutStateEditor({ user, onLockedOutStateChange }) {
 
   return (
     <Switch
+      size="small"
       checkedChildren={<CheckOutlined />}
       unCheckedChildren={<CloseIcon />}
       checked={user.lockedOut}

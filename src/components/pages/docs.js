@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
 import SortingSelector from '../sorting-selector.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
+import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -18,9 +19,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
-import { LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { CheckOutlined, LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
@@ -29,11 +30,11 @@ import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allo
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ t, documentToClone = null, isVisible = false }) {
+function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = false }) {
   return {
     mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
     allowMultiple: false,
-    isVisible,
+    isOpen,
     documentToClone,
     initialDocumentMetadata: documentToClone
       ? {
@@ -115,16 +116,16 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleNewDocumentClick = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, isVisible: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, isOpen: true }));
   };
 
   const handleCloneClick = row => {
     const documentToClone = documents.find(d => d._id === row.documentId);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, documentToClone, isVisible: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, documentToClone, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
 
     const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
     window.location = routes.getDocUrl({
@@ -136,7 +137,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleDocumentMetadataModalClose = () => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
   const handleArchivedSwitchChange = async (archived, row) => {
@@ -190,6 +191,8 @@ function Docs({ initialState, PageTemplate }) {
       <Switch
         size="small"
         checked={row.archived}
+        checkedChildren={<CheckOutlined />}
+        unCheckedChildren={<CloseIcon />}
         onChange={() => handleArchivedSwitchChange(archived, row)}
         />
     );

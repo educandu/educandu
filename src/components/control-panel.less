@@ -45,13 +45,18 @@
 }
 
 .ControlPanel-openButton {
-  border-radius: 0;
-
   .m-no-spinner-background;
-  height: @control-panel-height;
-  width: @control-panel-height;
+  border-radius: 0;
+  height: @control-panel-height !important;
+  width: @control-panel-height !important;
 
   & .anticon {
-    font-size: 0.6 * @control-panel-height;
+    font-size: 0.5 * @control-panel-height;
+  }
+
+  &:hover,
+  &:active,
+  &:visited {
+    border-radius: 0;
   }
 }

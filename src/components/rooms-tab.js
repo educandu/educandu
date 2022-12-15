@@ -20,14 +20,14 @@ function RoomsTab({ rooms, invitations }) {
   const memberOfRooms = rooms.filter(room => room.owner._id !== user._id)
     .sort(by(room => room.members.find(member => member.userId === user._id).joinedOn));
 
-  const [isRoomCreationModalVisible, setIsRoomCreationModalVisible] = useState(false);
+  const [isRoomCreationModalOpen, setIsRoomCreationModalOpen] = useState(false);
 
   const handleCreateRoomClick = () => {
-    setIsRoomCreationModalVisible(true);
+    setIsRoomCreationModalOpen(true);
   };
 
   const handleRoomCreationModalClose = () => {
-    setIsRoomCreationModalVisible(false);
+    setIsRoomCreationModalOpen(false);
   };
 
   return (
@@ -49,7 +49,7 @@ function RoomsTab({ rooms, invitations }) {
         {!memberOfRooms.length && !invitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
       </section>
 
-      <RoomCreationModal isVisible={isRoomCreationModalVisible} onClose={handleRoomCreationModalClose} />
+      <RoomCreationModal isOpen={isRoomCreationModalOpen} onClose={handleRoomCreationModalClose} />
     </div>
   );
 }

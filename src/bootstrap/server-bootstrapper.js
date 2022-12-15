@@ -8,6 +8,8 @@ import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import PageResolver from '../domain/page-resolver.js';
+import ThemeManager from '../resources/theme-manager.js';
+import lessVariablesToJson from 'less-variables-to-json';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
@@ -16,6 +18,7 @@ const logger = new Logger(import.meta.url);
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
 const resources = await fs.readFile(path.resolve(thisDir, '../resources/resources.json'), 'utf8').then(JSON.parse);
+const globalVariables = await fs.readFile(path.resolve(thisDir, '../styles/global-variables.less'), 'utf8').then(lessVariablesToJson);
 
 export async function createContainer(configValues = {}) {
   logger.info('Creating container');
@@ -49,16 +52,19 @@ export async function createContainer(configValues = {}) {
   container.registerInstance(Cdn, cdn);
 
   logger.info('Loading resources');
-  const additionalResources = await Promise.all(serverConfig.resources.map(async modulePath => {
-    const resourceFileUrl = new URL(modulePath, import.meta.url);
-    const resourceJSON = await fs.readFile(resourceFileUrl, 'utf8').then(JSON.parse);
-    return resourceJSON;
-  }));
-
+  const additionalResources = await Promise.all(serverConfig.resources.map(modulePath => fs.readFile(modulePath, 'utf8').then(JSON.parse)));
   const resourceManager = new ResourceManager(resources, ...additionalResources);
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);
+
+  logger.info('Loading theme files');
+  const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
+
+  logger.info('Registering theme manager');
+  const themeManager = new ThemeManager();
+  themeManager.setThemeFromLessVariables({ ...globalVariables, ...themeOverrideVariables });
+  container.registerInstance(ThemeManager, themeManager);
 
   logger.info('Registering page resolver');
   const pageResolver = new PageResolver(serverConfig.bundleConfig);

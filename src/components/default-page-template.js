@@ -8,14 +8,14 @@ import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
 
 function DefaultPageTemplate({ children, fullScreen, alerts }) {
-  const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
+  const [isUiLanguageDialogOpen, setIsUiLanguageDialogOpen] = useState(false);
 
   const handleUiLanguageDialogClose = () => {
-    setIsUiLanguageDialogVisible(false);
+    setIsUiLanguageDialogOpen(false);
   };
 
   const handleUiLanguageClick = () => {
-    setIsUiLanguageDialogVisible(true);
+    setIsUiLanguageDialogOpen(true);
   };
 
   const contentAreaClasses = classNames({
@@ -60,7 +60,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
         </div>
       </main>
       <DefaultPageFooter />
-      <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
+      <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
       <ConsentDrawer />
     </div>
   );

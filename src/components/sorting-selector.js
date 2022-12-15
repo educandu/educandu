@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Dropdown, Menu, Tooltip } from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
 function SortingSelector({ sorting, options, size, onChange }) {
@@ -31,15 +31,11 @@ function SortingSelector({ sorting, options, size, onChange }) {
     label: option.label
   }));
 
-  const menu = (
-    <Menu items={items} onClick={handleChange} />
-  );
-
   const selectedOption = options.find(option => option.value === sorting.value);
 
   return (
     <div className={sortingSelectorClasses}>
-      <Dropdown overlay={menu} trigger="click">
+      <Dropdown trigger={['click']} menu={{ items, onClick: handleChange }}>
         <Tooltip placement="top" title={t('changeSortingValue')}>
           <a>{selectedOption.appliedLabel || selectedOption.label}</a>
         </Tooltip>

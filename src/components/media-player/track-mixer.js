@@ -24,7 +24,7 @@ function TrackMixer({
 }) {
   const { t } = useTranslation('trackMixer');
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
-  const [isVolumePresetsModalVisible, setIsVolumePresetsModalVisible] = useState(false);
+  const [isVolumePresetsModalOpen, setIsVolumePresetsModalOpen] = useState(false);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
   const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
@@ -40,7 +40,7 @@ function TrackMixer({
   };
 
   const handleVolumePresetsSettingsClick = () => {
-    setIsVolumePresetsModalVisible(true);
+    setIsVolumePresetsModalOpen(true);
   };
 
   const handleVolumePresetsModalOk = (hasMadeChanges, updatedVolumePresets) => {
@@ -48,11 +48,11 @@ function TrackMixer({
       onSelectedVolumePresetChange(0);
       onVolumePresetsChange(updatedVolumePresets);
     }
-    setIsVolumePresetsModalVisible(false);
+    setIsVolumePresetsModalOpen(false);
   };
 
   const handleVolumePresetsModalClose = () => {
-    setIsVolumePresetsModalVisible(false);
+    setIsVolumePresetsModalOpen(false);
   };
 
   const tracks = [
@@ -129,7 +129,7 @@ function TrackMixer({
         volumePresets={volumePresets}
         onOk={handleVolumePresetsModalOk}
         onClose={handleVolumePresetsModalClose}
-        isVisible={isVolumePresetsModalVisible}
+        isOpen={isVolumePresetsModalOpen}
         />
     </div>
   );

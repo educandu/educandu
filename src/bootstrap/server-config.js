@@ -33,6 +33,7 @@ const configSchema = joi.object({
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),
+  themeFile: joi.string().default(''),
   initialUser: joi.object({
     email: joi.string().required(),
     password: joi.string().required(),

@@ -18,7 +18,7 @@ const parseElementDefinitions = memoizee(html => {
     });
 });
 
-function PageTemplate({ uiLanguage, title, content, styles, scripts, additionalHeadHtml }) {
+function PageTemplate({ uiLanguage, title, content, styles, themeStylesData, scripts, additionalHeadHtml }) {
   const additionalHeadElementDefinitions = parseElementDefinitions(additionalHeadHtml);
 
   const additionalHeadElements = additionalHeadElementDefinitions.map((elem, index) => {
@@ -29,6 +29,10 @@ function PageTemplate({ uiLanguage, title, content, styles, scripts, additionalH
     return style.href
       ? (<link key={index.toString()} rel="stylesheet" href={style.href} />)
       : (<style key={index.toString()} dangerouslySetInnerHTML={{ __html: style.content }} />);
+  });
+
+  const themeStyleElements = themeStylesData.map((styleData, index) => {
+    return <style key={`theme-${index}`} {...styleData.attributes} dangerouslySetInnerHTML={{ __html: styleData.content }} />;
   });
 
   const scriptElements = scripts.map((script, index) => {
@@ -45,6 +49,7 @@ function PageTemplate({ uiLanguage, title, content, styles, scripts, additionalH
         <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0" />
         {additionalHeadElements}
         {styleElements}
+        {themeStyleElements}
       </head>
       <body>
         <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
@@ -59,6 +64,10 @@ PageTemplate.propTypes = {
   content: PropTypes.string.isRequired,
   scripts: PropTypes.array,
   styles: PropTypes.array,
+  themeStylesData: PropTypes.arrayOf(PropTypes.shape({
+    attributes: PropTypes.object.isRequired,
+    content: PropTypes.string.isRequired
+  })).isRequired,
   title: PropTypes.string.isRequired,
   uiLanguage: PropTypes.string.isRequired
 };

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Menu, Button, Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useState } from 'react';
 import { useNumberFormat } from '../locale-context.js';
@@ -44,7 +44,7 @@ function MediaPlayerControls({
     }
   };
 
-  const renderSettingsMenu = () => {
+  const getSettingsMenuItems = () => {
     const items = [];
 
     if (onDownloadClick) {
@@ -72,7 +72,7 @@ function MediaPlayerControls({
       }))
     });
 
-    return <Menu items={items} onClick={handleSettingsMenuItemClick} />;
+    return items;
   };
 
   const renderTimeDisplay = () => {
@@ -98,7 +98,11 @@ function MediaPlayerControls({
           {playbackRate !== NORMAL_PLAYBACK_RATE && (
             <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>
           )}
-          <Dropdown overlay={renderSettingsMenu()} placement="bottomRight" trigger={['click']}>
+          <Dropdown
+            trigger={['click']}
+            placement="bottomRight"
+            menu={{ items: getSettingsMenuItems(), onClick: handleSettingsMenuItemClick }}
+            >
             <Button type="link" icon={<SettingsIcon />} />
           </Dropdown>
         </div>

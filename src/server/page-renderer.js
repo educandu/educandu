@@ -7,19 +7,21 @@ import PageResolver from '../domain/page-resolver.js';
 import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import ThemeManager from '../resources/theme-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, PageResolver]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, PageResolver]; }
 
-  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, pageResolver) {
+  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, pageResolver) {
     super();
     this.container = container;
     this.serverConfig = serverConfig;
     this.clientConfig = clientConfig;
     this.clientDataMappingService = clientDataMappingService;
     this.resourceManager = resourceManager;
+    this.themeManager = themeManager;
     this.pageResolver = pageResolver;
   }
 
@@ -34,6 +36,7 @@ class PageRenderer extends PageRendererBase {
     const storagePlan = req.storagePlan;
     const storage = req.storage;
     const resources = this.resourceManager.getAllResourceBundles();
+    const theme = this.themeManager.getTheme();
 
     const {
       PageComponent,
@@ -49,6 +52,7 @@ class PageRenderer extends PageRendererBase {
       storagePlan: cloneDeep(storagePlan),
       container,
       initialState: cloneDeep(initialState),
+      theme: cloneDeep(theme),
       uiLanguage,
       pageName,
       settings: cloneDeep(settings),
@@ -68,7 +72,8 @@ class PageRenderer extends PageRendererBase {
       `window.__settings__=${htmlescape(settings)};`,
       `window.__resources__=${htmlescape(resources)};`,
       `window.__initalState__=${htmlescape(initialState)};`,
-      `window.__clientconfig__=${htmlescape(clientConfig)};`
+      `window.__clientconfig__=${htmlescape(clientConfig)};`,
+      `window.__theme__=${htmlescape(theme)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];

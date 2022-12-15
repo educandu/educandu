@@ -14,8 +14,6 @@ import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 import { batchShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
-const { TabPane } = Tabs;
-
 function Admin({ initialState, PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('admin');
@@ -44,6 +42,48 @@ function Admin({ initialState, PageTemplate }) {
     }
   };
 
+  const items = [
+    {
+      key: 'settings',
+      label: t('settingsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <SettingsTab
+            initialSettings={settings}
+            onSettingsSaved={setSettings}
+            onDirtyStateChange={setIsCurrentTabDirty}
+            />
+        </div>
+      )
+    },
+    {
+      key: 'storage-plans',
+      label: t('storagePlansTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <StoragePlansTab
+            initialStoragePlans={storagePlans}
+            onStoragePlansSaved={setStoragePlans}
+            />
+        </div>
+      )
+    },
+    {
+      key: 'technical-maintenance',
+      label: t('technicalMaintenanceTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <TechnicalMaintenanceTab
+            lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
+            lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
+            lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
+            lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
+            />
+        </div>
+      )
+    }
+  ];
+
   return (
     <PageTemplate>
       <div className="AdminPage">
@@ -56,29 +96,8 @@ function Admin({ initialState, PageTemplate }) {
             activeKey={currentTab}
             onChange={handleTabChange}
             destroyInactiveTabPane
-            >
-            <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="settings">
-              <SettingsTab
-                initialSettings={settings}
-                onSettingsSaved={setSettings}
-                onDirtyStateChange={setIsCurrentTabDirty}
-                />
-            </TabPane>
-            <TabPane className="Tabs-tabPane" tab={t('storagePlansTabTitle')} key="storage-plans">
-              <StoragePlansTab
-                initialStoragePlans={storagePlans}
-                onStoragePlansSaved={setStoragePlans}
-                />
-            </TabPane>
-            <TabPane className="Tabs-tabPane" tab={t('technicalMaintenanceTabTitle')} key="technical-maintenance">
-              <TechnicalMaintenanceTab
-                lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
-                lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
-                lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
-                lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
-                />
-            </TabPane>
-          </Tabs>
+            items={items}
+            />
         </Restricted>
       </div>
     </PageTemplate>

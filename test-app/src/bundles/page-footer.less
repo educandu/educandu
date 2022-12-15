@@ -8,10 +8,12 @@
   z-index: @edu-z-index-base-layer;
 }
 
-.PageFooter-link {
-  display: inline-block;
-
+.PageFooter-linkWrapper {
   &:not(:last-child)::after {
     content: "\00A0\00A0|\00A0\00A0";
   }
+}
+
+.PageFooter-link {
+  .m-link;
 }

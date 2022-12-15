@@ -17,16 +17,16 @@ const logger = new Logger(import.meta.url);
 const normalizeEmails = value => value.toLowerCase();
 const extractEmails = value => value.match(/[^\s;,]+/g) || [];
 
-function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
+function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
   const [form] = Form.useForm();
   const { t } = useTranslation('roomInvitationCreationModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   useEffect(() => {
-    if (!isVisible) {
+    if (!isOpen) {
       form.resetFields();
     }
-  }, [form, isVisible]);
+  }, [form, isOpen]);
 
   const initialFormValues = { emails: '' };
   const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +81,7 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
       title={t('sendRoomInvitations')}
       onCancel={handleModalCancel}
       onOk={handleModalOk}
-      visible={isVisible}
+      open={isOpen}
       okButtonProps={{ loading: isLoading }}
       forceRender
       >
@@ -90,6 +90,7 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
         layout="vertical"
         initialValues={initialFormValues}
         onFinish={handleFormFinish}
+        className="u-modal-body"
         >
         <FormItem
           name="emails"
@@ -105,7 +106,7 @@ function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
 }
 
 RoomInvitationCreationModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired,
   roomId: PropTypes.string.isRequired

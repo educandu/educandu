@@ -148,20 +148,22 @@ function SettingsTab({
 
       <Collapse className="SettingsTab-collapse">
         <Collapse.Panel header={t('pluginsHelpTextsHeader')} key="plugisHelpTexts">
-          <Tabs type="line" size="small">
-            {pluginRegistry.getAllInfos().map(pluginInfo => (
-              <Tabs.TabPane
-                key={pluginInfo.type}
-                className="SettingsTab-collapsTabPane"
-                tab={t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`)}
-                >
-                <MarkdownSettingInSupportedLanguages
-                  settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
-                  onChange={(value, { isValid }) => handlePluginHelpTextChange(pluginInfo.type, value, { isValid })}
-                  />
-              </Tabs.TabPane>
-            ))}
-          </Tabs>
+          <Tabs
+            type="line"
+            size="small"
+            items={pluginRegistry.getAllInfos().map(pluginInfo => ({
+              key: pluginInfo.type,
+              label: t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`),
+              children: (
+                <div className="SettingsTab-collapseTabPane">
+                  <MarkdownSettingInSupportedLanguages
+                    settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
+                    onChange={(value, { isValid }) => handlePluginHelpTextChange(pluginInfo.type, value, { isValid })}
+                    />
+                </div>
+              )
+            }))}
+            />
         </Collapse.Panel>
       </Collapse>
 

@@ -50,7 +50,7 @@ const getDefaultPublicContext = () => (
 const getDefaultRoomContext = () => ({ draft: false });
 
 function DocumentMetadataModal({
-  isVisible,
+  isOpen,
   mode,
   allowMultiple,
   onSave,
@@ -153,7 +153,7 @@ function DocumentMetadataModal({
   useEffect(() => {
     resetStates();
     loadRooms();
-  }, [isVisible, resetStates, loadRooms]);
+  }, [isOpen, resetStates, loadRooms]);
 
   useEffect(() => {
     setPublicContext(getDefaultPublicContext());
@@ -318,14 +318,14 @@ function DocumentMetadataModal({
   return (
     <Modal
       title={getDialogTitle(mode, t)}
-      visible={isVisible}
+      open={isOpen}
       onOk={handleOk}
       onCancel={handleCancel}
       maskClosable={false}
       okButtonProps={{ loading: isSaving }}
       okText={getDialogOkButtonText(mode, t)}
       >
-      <Form ref={formRef} layout="vertical" onFinish={handleFinish} >
+      <Form ref={formRef} layout="vertical" onFinish={handleFinish} className="u-modal-body">
         {!!canSelectCloningStrategy && (
           <FormItem label={t('cloningStrategy')} >
             <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
@@ -448,7 +448,7 @@ DocumentMetadataModal.propTypes = {
     documentMetadataEditShape
   ]).isRequired,
   initialDocumentRoomMetadata: roomShape,
-  isVisible: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired

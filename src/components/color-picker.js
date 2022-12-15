@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown } from 'antd';
+import { Popover } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SwatchesPickerNs from 'react-color/lib/Swatches.js';
@@ -29,9 +29,9 @@ function ColorPicker({ color, colors, onChange, placement, width, inline }) {
 
   return (
     <div className={pickerClasses}>
-      <Dropdown overlay={picker} placement={placement}>
+      <Popover content={picker} placement={placement}>
         <div className={currentColorClasses} style={{ backgroundColor: color }} />
-      </Dropdown>
+      </Popover>
     </div>
   );
 }

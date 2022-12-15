@@ -70,7 +70,7 @@ function HistoryControlPanel({
           step={null}
           marks={marks}
           onChange={onSelectedRevisionChange}
-          tipFormatter={formatRevisionTooltip}
+          tooltip={{ formatter: formatRevisionTooltip }}
           trackStyle={{ color: 'white' }}
           handleStyle={{ color: 'white' }}
           />
@@ -135,9 +135,9 @@ HistoryControlPanel.defaultProps = {
   canRestoreRevisions: false,
   onClose: () => Promise.resolve(true),
   onOpen: () => Promise.resolve(),
-  onPermalinkRequest: () => {},
-  onRestoreRevision: () => {},
-  onSelectedRevisionChange: () => {},
+  onPermalinkRequest: () => { },
+  onRestoreRevision: () => { },
+  onSelectedRevisionChange: () => { },
   revisions: [],
   selectedRevisionIndex: 0,
   startOpen: false

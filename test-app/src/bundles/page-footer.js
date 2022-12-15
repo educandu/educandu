@@ -11,8 +11,8 @@ function PageFooter() {
     <footer className="PageFooter">
       <div>
         {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
-          <span key={index.toString()} className="PageFooter-link">
-            <a href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+          <span key={index.toString()} className="PageFooter-linkWrapper">
+            <a className="PageFooter-link" href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
           </span>
         ))}
       </div>

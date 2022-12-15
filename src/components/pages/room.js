@@ -27,15 +27,13 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
-import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Menu, Dropdown } from 'antd';
+import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
-const { TabPane } = Tabs;
-
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisible = false }) {
+function getDocumentMetadataModalState({ t, room, documentToClone = null, isOpen = false }) {
   const initialDocumentMetadata = documentToClone
     ? {
       ...documentToClone,
@@ -50,7 +48,7 @@ function getDocumentMetadataModalState({ t, room, documentToClone = null, isVisi
   return {
     mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
     allowMultiple: !documentToClone,
-    isVisible,
+    isOpen,
     documentToClone,
     initialDocumentMetadata,
     initialDocumentRoomMetadata: room
@@ -75,7 +73,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
-  const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
+  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
   const isUserRoomOwner = isRoomOwner({ room, userId: user?._id });
@@ -86,7 +84,7 @@ export default function Room({ PageTemplate, initialState }) {
   }, [room._id, room.slug]);
 
   const handleCreateInvitationButtonClick = event => {
-    setIsRoomInvitationModalVisible(true);
+    setIsRoomInvitationModalOpen(true);
     event.stopPropagation();
   };
 
@@ -117,7 +115,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleInvitationModalClose = newInvitations => {
-    setIsRoomInvitationModalVisible(false);
+    setIsRoomInvitationModalOpen(false);
     if (newInvitations) {
       setInvitations(currentInvitations => {
         const invitationsByEmail = new Map(currentInvitations.map(x => [x.email, x]));
@@ -128,7 +126,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleNewDocumentClick = (documentToClone = null) => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isVisible: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
@@ -144,12 +142,12 @@ export default function Room({ PageTemplate, initialState }) {
       });
     } else {
       setDocuments([...documents, ...createdDocuments]);
-      setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+      setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
     }
   };
 
   const handleDocumentMetadataModalCancel = () => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isVisible: false }));
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
   const handleUpdateRoomClick = () => {
@@ -254,9 +252,12 @@ export default function Room({ PageTemplate, initialState }) {
       });
     }
 
-    const menu = <Menu items={items} onClick={menuItem => handleDocumentMenuClick(doc, index, menuItem)} />;
     return (
-      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+      <Dropdown
+        trigger={['click']}
+        placement="bottomRight"
+        menu={{ items, onClick: menuItem => handleDocumentMenuClick(doc, index, menuItem) }}
+        >
         <Button type="ghost" icon={<SettingsIcon />} size="small" />
       </Dropdown>
     );
@@ -368,7 +369,7 @@ export default function Room({ PageTemplate, initialState }) {
   const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
   const renderOwnerLink = () => (
     <Fragment>
-      {t('common:owner')}: <a href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
+      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
     </Fragment>
   );
 
@@ -395,59 +396,82 @@ export default function Room({ PageTemplate, initialState }) {
         {!isUserRoomOwner && renderRoomDocumentsCard()}
 
         {!!isUserRoomOwner && (
-          <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
-            <TabPane className="Tabs-tabPane" tab={t('documentsTabTitle')} key="1">
-              {renderRoomDocumentsCard()}
-            </TabPane>
-
-            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-              {renderRoomMembers()}
-              {renderRoomInvitations()}
-              <RoomInvitationCreationModal
-                isVisible={isRoomInvitationModalVisible}
-                onOk={handleInvitationModalClose}
-                onCancel={handleInvitationModalClose}
-                roomId={room._id}
-                />
-            </TabPane>
-
-            <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
-              <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
-                <RoomMetadataForm
-                  formRef={formRef}
-                  room={room}
-                  onSubmit={handleRoomMetadataFormSubmitted}
-                  onFieldsChange={handleRoomMetadataFormFieldsChanged}
-                  editMode
-                  />
-                <Button
-                  className="RoomPage-cardEditButton"
-                  type="primary"
-                  onClick={handleUpdateRoomClick}
-                  disabled={isRoomUpdateButtonDisabled}
-                  >
-                  {t('common:update')}
-                </Button>
-              </Card>
-              <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
-                <div className="RoomPage-cardDangerAction">
-                  <div>
-                    <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
-                    <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
+          <Tabs
+            className="Tabs"
+            defaultActiveKey="1"
+            type="line"
+            size="middle"
+            items={[
+              {
+                key: '1',
+                label: t('documentsTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane">
+                    {renderRoomDocumentsCard()}
                   </div>
-                  <div className="RoomPage-cardDangerActionButtonContainer">
-                    <Button
-                      type="primary"
-                      icon={<DeleteIcon />}
-                      onClick={handleDeleteRoomClick}
-                      >
-                      {t('deleteRoomButton')}
-                    </Button>
+                )
+              },
+              {
+                key: '2',
+                label: t('membersTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane">
+                    {renderRoomMembers()}
+                    {renderRoomInvitations()}
+                    <RoomInvitationCreationModal
+                      isOpen={isRoomInvitationModalOpen}
+                      onOk={handleInvitationModalClose}
+                      onCancel={handleInvitationModalClose}
+                      roomId={room._id}
+                      />
                   </div>
-                </div>
-              </Card>
-            </TabPane>
-          </Tabs>
+                )
+              },
+              {
+                key: '3',
+                label: t('settingsTabTitle'),
+                children: (
+                  <div className="Tabs-tabPane" >
+                    <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
+                      <RoomMetadataForm
+                        formRef={formRef}
+                        room={room}
+                        onSubmit={handleRoomMetadataFormSubmitted}
+                        onFieldsChange={handleRoomMetadataFormFieldsChanged}
+                        editMode
+                        />
+                      <Button
+                        className="RoomPage-cardEditButton"
+                        type="primary"
+                        onClick={handleUpdateRoomClick}
+                        disabled={isRoomUpdateButtonDisabled}
+                        >
+                        {t('common:update')}
+                      </Button>
+                    </Card>
+                    <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
+                      <div className="RoomPage-cardDangerAction">
+                        <div>
+                          <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
+                          <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
+                        </div>
+                        <div className="RoomPage-cardDangerActionButtonContainer">
+                          <Button
+                            danger
+                            type="primary"
+                            icon={<DeleteIcon />}
+                            onClick={handleDeleteRoomClick}
+                            >
+                            {t('deleteRoomButton')}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                )
+              }
+            ]}
+            />
         )}
 
         <DocumentMetadataModal

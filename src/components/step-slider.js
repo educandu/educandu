@@ -35,7 +35,7 @@ function StepSlider({ min, max, step, marksStep, labelsStep, formatter, ...slide
       max={max}
       step={step}
       marks={marks}
-      tipFormatter={actualFormatter}
+      tooltip={{ formatter: actualFormatter }}
       />
   );
 }

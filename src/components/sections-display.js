@@ -103,9 +103,10 @@ function SectionsDisplay({
           size="small"
           type="primary"
           onClick={() => handleNewSectionClick(insertIndex)}
-          icon={<PlusOutlined style={{ fontSize: '12px', display: 'flex' }} />}
-          style={{ transition: 'none', height: '18px', minWidth: 'unset', width: '18px', verticalAlign: 'baseline' }}
+          icon={<PlusOutlined style={{ fontSize: '12px' }} />}
+          style={{ transition: 'none', height: '18px', minWidth: 'unset', width: '18px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           />
+
       </Divider>
     );
   };
@@ -151,7 +152,7 @@ function SectionsDisplay({
       </DragDropContext>
 
       <PluginSelectorDialog
-        visible={currentNewSectionIndex > -1}
+        isOpen={currentNewSectionIndex > -1}
         onSelect={handlePluginSelectorDialogSelect}
         onCancel={handlePluginSelectorDialogCancel}
         onPasteFromClipboard={handlePasteFromClipboard}

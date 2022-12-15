@@ -22,27 +22,6 @@
 }
 
 .Table {
-  .ant-table-container {
-    border-radius: 0;
-
-    table {
-      border-radius: 0;
-
-      thead tr th {
-        background-color: @edu-background-color-base;
-
-        &:first-child,
-        &:last-child {
-          border-radius: 0;
-        }
-      }
-
-      tbody tr td {
-        border-color: @edu-border-color-dark;
-      }
-    }
-  }
-
   .ant-table-thead th::before {
     display: none;
   }
@@ -57,7 +36,7 @@
 
     color: @edu-text-color;
     background-color: transparent;
-    border: 1px solid @edu-border-color-dark;
+    border: 1px solid @edu-border-color-base;
     border-radius: @edu-border-radius-base;
 
     &:hover:not(.ant-pagination-disabled) {
@@ -83,6 +62,22 @@
     &.ant-pagination-item-active {
       .m-pagination-item-active();
     }
+  }
+}
+
+.Table-row {
+  .ant-table-cell {
+    border-top: 1px solid @edu-border-color-base !important;
+    border-bottom: 1px solid transparent !important;
+  }
+
+  .ant-table-cell-row-hover {
+    border-top-color: @edu-border-color-base !important;
+    border-radius: 0 !important;
+  }
+
+  &:first-of-type .ant-table-cell {
+    border-top: none !important;
   }
 }
 

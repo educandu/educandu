@@ -24,7 +24,7 @@ const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useD
 
 const logger = new Logger(import.meta.url);
 
-function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
+function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const storage = useStorage();
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
@@ -34,7 +34,7 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isGeneratingPeaks, setIsGeneratingPeaks] = useState(false);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [isCdnResourcePickerVisible, setIsCdnResourcePickerVisible] = useState(false);
+  const [isCdnResourcePickerOpen, setIsCdnResourcePickerOpen] = useState(false);
   const [waveformPenColor, setWaveformPenColor] = useState(DEFAULT_WAVEFORM_PEN_COLOR);
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
   const [waveformBackgroundColor, setWaveformBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
@@ -117,11 +117,11 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
   };
 
   const handleOpenCdnFilePickerClick = () => {
-    setIsCdnResourcePickerVisible(true);
+    setIsCdnResourcePickerOpen(true);
   };
 
   const handleCdnResourcePickerSelect = sourceUrl => {
-    setIsCdnResourcePickerVisible(false);
+    setIsCdnResourcePickerOpen(false);
     generatePeaks(async () => {
       const url = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
@@ -135,7 +135,7 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
   };
 
   const handleCdnResourcePickerClose = () => {
-    setIsCdnResourcePickerVisible(false);
+    setIsCdnResourcePickerOpen(false);
   };
 
   const segmentsDropzoneClasses = classNames({
@@ -149,50 +149,52 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
       <Modal
         centered
         width="80%"
+        open={isOpen}
         onOk={handleOk}
-        visible={visible}
         onCancel={onCancel}
         title={t('dialogTitle')}
         okText={t('common:apply')}
         className="AudioWaveformGeneratorDialog"
         okButtonProps={{ disabled: !imageUrl || isGeneratingPeaks, loading: isUploadingFile }}
         >
-        <Spin spinning={isGeneratingPeaks}>
-          <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
-            <input {...dropzone.getInputProps()} hidden />
-            <div
-              className="AudioWaveformGeneratorDialog-previewArea"
-              style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
-              >
-              {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+        <div className="u-modal-body">
+          <Spin spinning={isGeneratingPeaks}>
+            <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
+              <input {...dropzone.getInputProps()} hidden />
+              <div
+                className="AudioWaveformGeneratorDialog-previewArea"
+                style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
+                >
+                {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+              </div>
+            </div>
+          </Spin>
+          <div className="AudioWaveformGeneratorDialog-controls">
+            <div>
+              <span>{t('penColor')}: </span>
+              <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
+            </div>
+            <div>
+              <span>{t('baselineColor')}: </span>
+              <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
+            </div>
+            <div>
+              <span>{t('backgroundColor')}: </span>
+              <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
             </div>
           </div>
-        </Spin>
-        <div className="AudioWaveformGeneratorDialog-controls">
-          <div>
-            <span>{t('penColor')}: </span>
-            <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
+          <div className="AudioWaveformGeneratorDialog-controls">
+            <Button onClick={handleOpenLocalFilePickerClick}>
+              {t('dialogLocalFilePickerButtonText')}
+            </Button>
+            <Button onClick={handleOpenCdnFilePickerClick}>
+              {t('dialogCdnFilePickerButtonText')}
+            </Button>
           </div>
-          <div>
-            <span>{t('baselineColor')}: </span>
-            <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
-          </div>
-          <div>
-            <span>{t('backgroundColor')}: </span>
-            <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
-          </div>
-        </div>
-        <div className="AudioWaveformGeneratorDialog-controls">
-          <Button onClick={handleOpenLocalFilePickerClick}>
-            {t('dialogLocalFilePickerButtonText')}
-          </Button>
-          <Button onClick={handleOpenCdnFilePickerClick}>
-            {t('dialogCdnFilePickerButtonText')}
-          </Button>
         </div>
       </Modal>
       <ResourcePickerDialog
-        isVisible={isCdnResourcePickerVisible}
+        isOpen={isCdnResourcePickerOpen}
         onSelect={handleCdnResourcePickerSelect}
         onClose={handleCdnResourcePickerClose}
         />
@@ -201,15 +203,15 @@ function AudioWaveformGeneratorDialog({ visible, onSelect, onCancel }) {
 }
 
 AudioWaveformGeneratorDialog.propTypes = {
+  isOpen: PropTypes.bool,
   onCancel: PropTypes.func,
-  onSelect: PropTypes.func,
-  visible: PropTypes.bool
+  onSelect: PropTypes.func
 };
 
 AudioWaveformGeneratorDialog.defaultProps = {
+  isOpen: false,
   onCancel: () => {},
-  onSelect: () => {},
-  visible: false
+  onSelect: () => {}
 };
 
 export default AudioWaveformGeneratorDialog;
