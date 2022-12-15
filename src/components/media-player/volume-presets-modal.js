@@ -96,8 +96,10 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
       onOk={handleOk}
       onCancel={handleCancel}
       >
-      {managedVolumePresets.map(renderVolumePreset)}
-      <Button onClick={handleAddClick} type="primary" shape="circle" icon={<PlusOutlined />} />
+      <div className="u-modal-body">
+        {managedVolumePresets.map(renderVolumePreset)}
+        <Button onClick={handleAddClick} type="primary" shape="circle" icon={<PlusOutlined />} />
+      </div>
     </Modal>
   );
 }

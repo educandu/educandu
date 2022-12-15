@@ -27,18 +27,20 @@ function UiLanguageDialog({ isOpen, onClose }) {
 
   return (
     <Modal open={isOpen} onOk={handleOk} onCancel={handleCancel} title={t('title')}>
-      <div className="UiLanguageDialog-explanation">{t('explanation')}</div>
-      <div className="UiLanguageDialog-languages">
-        {supportedUiLanguages.map(language => (
-          <div
-            key={language}
-            onClick={() => handleLanguageChange(language, false)}
-            onDoubleClick={() => handleLanguageChange(language, true)}
-            className={classNames('UiLanguageDialog-language', { 'is-selected': selectedLanguage === language })}
-            >
-            <LanguageFlagAndName language={language} stacked />
-          </div>
-        ))}
+      <div className="u-modal-body">
+        <div className="UiLanguageDialog-explanation">{t('explanation')}</div>
+        <div className="UiLanguageDialog-languages">
+          {supportedUiLanguages.map(language => (
+            <div
+              key={language}
+              onClick={() => handleLanguageChange(language, false)}
+              onDoubleClick={() => handleLanguageChange(language, true)}
+              className={classNames('UiLanguageDialog-language', { 'is-selected': selectedLanguage === language })}
+              >
+              <LanguageFlagAndName language={language} stacked />
+            </div>
+          ))}
+        </div>
       </div>
     </Modal>
   );

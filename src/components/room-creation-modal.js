@@ -63,7 +63,9 @@ function RoomCreationModal({ isOpen, onClose }) {
       open={isOpen}
       okButtonProps={{ loading }}
       >
-      <RoomMetadataForm formRef={formRef} room={defaultRoom} onSubmit={handleFormSubmitted} />
+      <div className="u-modal-body">
+        <RoomMetadataForm formRef={formRef} room={defaultRoom} onSubmit={handleFormSubmitted} />
+      </div>
     </Modal>
   );
 }

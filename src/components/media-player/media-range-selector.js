@@ -118,48 +118,50 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         destroyOnClose
         centered
         >
-        {!!isRetrievingMediaInfo && (
-          <div className="MediaRangeSelector-noMediaArea">
-            <Spin tip={t('loadingMessage')} />
-          </div>
-        )}
-        {!isRetrievingMediaInfo && !currentMediaInfo && (
-          <div className="MediaRangeSelector-noMediaArea">
-            {t('errorMessage')}
-          </div>
-        )}
-        {!isRetrievingMediaInfo && !!currentMediaInfo && (
-          <MediaPlayer
-            source={currentMediaInfo.sanitizedUrl}
-            onProgress={handleProgress}
-            parts={getCurrentRangeParts()}
-            screenMode={getScreenMode()}
-            extraCustomContent={(
-              <div className="MediaRangeSelector-rangeSelectorArea">
-                <div className="MediaRangeSelector-rangeDisplay">
-                  {renderRangeText()}
-                </div>
-                <div className="MediaRangeSelector-rangeSelector">
-                  {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
-                  <div className="MediaRangeSelector-rangeSelectorButtons">
-                    <Button
-                      onClick={handleSetAsStartClick}
-                      disabled={currentRange[1] <= currentPosition}
-                      >
-                      {t('setAsStart')}
-                    </Button>
-                    <Button
-                      onClick={handleSetAsEndClick}
-                      disabled={currentPosition <= currentRange[0]}
-                      >
-                      {t('setAsEnd')}
-                    </Button>
+        <div className="u-modal-body">
+          {!!isRetrievingMediaInfo && (
+            <div className="MediaRangeSelector-noMediaArea">
+              <Spin tip={t('loadingMessage')} />
+            </div>
+          )}
+          {!isRetrievingMediaInfo && !currentMediaInfo && (
+            <div className="MediaRangeSelector-noMediaArea">
+              {t('errorMessage')}
+            </div>
+          )}
+          {!isRetrievingMediaInfo && !!currentMediaInfo && (
+            <MediaPlayer
+              source={currentMediaInfo.sanitizedUrl}
+              onProgress={handleProgress}
+              parts={getCurrentRangeParts()}
+              screenMode={getScreenMode()}
+              extraCustomContent={(
+                <div className="MediaRangeSelector-rangeSelectorArea">
+                  <div className="MediaRangeSelector-rangeDisplay">
+                    {renderRangeText()}
+                  </div>
+                  <div className="MediaRangeSelector-rangeSelector">
+                    {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                    <div className="MediaRangeSelector-rangeSelectorButtons">
+                      <Button
+                        onClick={handleSetAsStartClick}
+                        disabled={currentRange[1] <= currentPosition}
+                        >
+                        {t('setAsStart')}
+                      </Button>
+                      <Button
+                        onClick={handleSetAsEndClick}
+                        disabled={currentPosition <= currentRange[0]}
+                        >
+                        {t('setAsEnd')}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            />
-        )}
+              )}
+              />
+          )}
+        </div>
       </Modal>
     </div>
   );

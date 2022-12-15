@@ -90,6 +90,7 @@ function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
         layout="vertical"
         initialValues={initialFormValues}
         onFinish={handleFormFinish}
+        className="u-modal-body"
         >
         <FormItem
           name="emails"

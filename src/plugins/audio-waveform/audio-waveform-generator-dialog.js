@@ -157,38 +157,40 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
         className="AudioWaveformGeneratorDialog"
         okButtonProps={{ disabled: !imageUrl || isGeneratingPeaks, loading: isUploadingFile }}
         >
-        <Spin spinning={isGeneratingPeaks}>
-          <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
-            <input {...dropzone.getInputProps()} hidden />
-            <div
-              className="AudioWaveformGeneratorDialog-previewArea"
-              style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
-              >
-              {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+        <div className="u-modal-body">
+          <Spin spinning={isGeneratingPeaks}>
+            <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
+              <input {...dropzone.getInputProps()} hidden />
+              <div
+                className="AudioWaveformGeneratorDialog-previewArea"
+                style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
+                >
+                {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+              </div>
+            </div>
+          </Spin>
+          <div className="AudioWaveformGeneratorDialog-controls">
+            <div>
+              <span>{t('penColor')}: </span>
+              <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
+            </div>
+            <div>
+              <span>{t('baselineColor')}: </span>
+              <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
+            </div>
+            <div>
+              <span>{t('backgroundColor')}: </span>
+              <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
             </div>
           </div>
-        </Spin>
-        <div className="AudioWaveformGeneratorDialog-controls">
-          <div>
-            <span>{t('penColor')}: </span>
-            <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
+          <div className="AudioWaveformGeneratorDialog-controls">
+            <Button onClick={handleOpenLocalFilePickerClick}>
+              {t('dialogLocalFilePickerButtonText')}
+            </Button>
+            <Button onClick={handleOpenCdnFilePickerClick}>
+              {t('dialogCdnFilePickerButtonText')}
+            </Button>
           </div>
-          <div>
-            <span>{t('baselineColor')}: </span>
-            <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
-          </div>
-          <div>
-            <span>{t('backgroundColor')}: </span>
-            <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
-          </div>
-        </div>
-        <div className="AudioWaveformGeneratorDialog-controls">
-          <Button onClick={handleOpenLocalFilePickerClick}>
-            {t('dialogLocalFilePickerButtonText')}
-          </Button>
-          <Button onClick={handleOpenCdnFilePickerClick}>
-            {t('dialogCdnFilePickerButtonText')}
-          </Button>
         </div>
       </Modal>
       <ResourcePickerDialog

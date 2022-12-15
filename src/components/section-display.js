@@ -297,7 +297,7 @@ function SectionDisplay({
         onCancel={() => setIsHelpModalOpen(false)}
         destroyOnClose
         >
-        <Markdown>{settings.pluginsHelpTexts?.[section.type]?.[uiLanguage]}</Markdown>
+        <Markdown className="u-modal-body">{settings.pluginsHelpTexts?.[section.type]?.[uiLanguage]}</Markdown>
       </Modal>
     </section>
   );

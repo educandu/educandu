@@ -71,7 +71,7 @@ function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, on
       maskClosable={false}
       okButtonProps={{ loading }}
       >
-      <Form form={form} onFinish={handleOnFinish} name="storage-plan-form" layout="vertical" initialValues={initialValues}>
+      <Form form={form} onFinish={handleOnFinish} name="storage-plan-form" layout="vertical" initialValues={initialValues} className="u-modal-body">
         <FormItem name="_id" hidden>
           <Input />
         </FormItem>

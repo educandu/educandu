@@ -145,6 +145,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
         bodyStyle={modalBodyStyle}
         destroyOnClose
         centered
+        className="DiagramNetEditor-modal"
         >
         {!!iframeUrl && (
           <Fragment>

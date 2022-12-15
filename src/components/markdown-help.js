@@ -82,7 +82,7 @@ function MarkdownHelp({ inline, size, disabled }) {
   const renderBlockHelp = () => {
     const parts = t('blockHelpMarkdown').replaceAll('<space>', ' ').split('\n\n');
     return (
-      <div className="MarkdownHelp-blockHelpContent">
+      <div className="MarkdownHelp-blockHelpContent u-modal-body">
         <table className="MarkdownHelp-blockHelpTable">
           <thead>
             <tr>

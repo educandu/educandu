@@ -72,11 +72,13 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
       onCancel={onCancel}
       className="PluginSelectorDialog"
       >
-      <GridSelector
-        items={pluginItems}
-        selectedItemKey={selectedPluginType}
-        onSelectionChange={handleSelectionChange}
-        />
+      <div className="u-modal-body">
+        <GridSelector
+          items={pluginItems}
+          selectedItemKey={selectedPluginType}
+          onSelectionChange={handleSelectionChange}
+          />
+      </div>
     </Modal>
   );
 }

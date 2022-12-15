@@ -325,7 +325,7 @@ function DocumentMetadataModal({
       okButtonProps={{ loading: isSaving }}
       okText={getDialogOkButtonText(mode, t)}
       >
-      <Form ref={formRef} layout="vertical" onFinish={handleFinish} >
+      <Form ref={formRef} layout="vertical" onFinish={handleFinish} className="u-modal-body">
         {!!canSelectCloningStrategy && (
           <FormItem label={t('cloningStrategy')} >
             <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
