@@ -1,5 +1,5 @@
-import del from 'del';
 import gulp from 'gulp';
+import { deleteAsync } from 'del';
 import Graceful from 'node-graceful';
 import {
   buildTranslationsJson,
@@ -71,7 +71,7 @@ Graceful.on('exit', async () => {
 });
 
 export async function clean() {
-  await del(['.test', 'dist', 'coverage', 'test-app/dist']);
+  await deleteAsync(['.test', 'dist', 'coverage', 'test-app/dist']);
 }
 
 export async function lint() {

@@ -1,11 +1,11 @@
 import React from 'react';
-import parse5 from 'parse5';
+import { parse } from 'parse5';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 
 const parseElementDefinitions = memoizee(html => {
-  const headElem = parse5.parse(html).childNodes[0].childNodes[0];
+  const headElem = parse(html).childNodes[0].childNodes[0];
   return headElem.childNodes
     .filter(({ nodeName }) => !nodeName.startsWith('#'))
     .map(({ tagName, attrs }) => {
