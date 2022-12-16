@@ -5,19 +5,27 @@ import { useLocale } from '../locale-context.js';
 import { useService } from '../container-context.js';
 import LanguageDataProvider from '../../localization/language-data-provider.js';
 
+const FLAG_ICONS_LIBRARY_MAIN_CLASS = 'fi';
+
 export default function LanguageFlagAndName({ language, stacked }) {
   const { uiLanguage } = useLocale();
   const languageDataProvider = useService(LanguageDataProvider);
   const { name, flag } = languageDataProvider.getLanguageData(language, uiLanguage);
 
-  const classes = classNames({
+  const mainClasses = classNames({
     'LanguageFlagAndName': true,
     'LanguageFlagAndName--stacked': stacked
   });
 
+  const flagClasses = classNames(
+    'LanguageFlagAndName-flag',
+    FLAG_ICONS_LIBRARY_MAIN_CLASS,
+    `${FLAG_ICONS_LIBRARY_MAIN_CLASS}-${flag.toLowerCase()}`
+  );
+
   return (
-    <span className={classes}>
-      <span className={`LanguageFlagAndName-flag flag-icon flag-icon-${flag.toLowerCase()}`} title={name} />
+    <span className={mainClasses}>
+      <span className={flagClasses} title={name} />
       <span className="LanguageFlagAndName-name">&nbsp;&nbsp;{name}</span>
     </span>
   );

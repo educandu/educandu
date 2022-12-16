@@ -5,7 +5,7 @@ import { resolvePathWithinPackage } from '../utils/module-utils.js';
 const staticConfig = [
   {
     root: '/images/flags',
-    destination: resolvePathWithinPackage('flag-icon-css', './flags')
+    destination: resolvePathWithinPackage('flag-icons', './flags')
   }
 ];
 
