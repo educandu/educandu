@@ -8,6 +8,7 @@ import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 import {
   ROLE,
@@ -26,15 +27,16 @@ const PASSWORD_SALT_ROUNDS = 1024;
 const logger = new Logger(import.meta.url);
 
 class UserService {
-  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore, TransactionRunner]; }
 
-  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lockStore) {
+  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lockStore, transactionRunner) {
     this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
     this.roomStore = roomStore;
     this.documentStore = documentStore;
     this.lockStore = lockStore;
+    this.transactionRunner = transactionRunner;
   }
 
   getAllUsers() {
@@ -360,8 +362,13 @@ class UserService {
       expires: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
     };
 
-    logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);
-    await this.passwordResetRequestStore.saveRequest(request);
+    await this.transactionRunner.run(async session => {
+      logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);
+
+      await this.passwordResetRequestStore.deleteRequestsByUserId(user._id, { session });
+      await this.passwordResetRequestStore.saveRequest(request, { session });
+    });
+
     return request;
   }
 
