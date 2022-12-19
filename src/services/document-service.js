@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 import joi from 'joi';
 import by from 'thenby';
 import httpErrors from 'http-errors';
@@ -50,7 +48,6 @@ class DocumentService {
     ];
   }
 
-  // eslint-disable-next-line max-params
   constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, roomStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
     this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
@@ -561,7 +558,6 @@ class DocumentService {
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 
-  // eslint-disable-next-line complexity
   _buildDocumentRevision(data) {
     const mappedSections = data.sections?.map(section => this._buildSection(section)) || [];
     validateSections(mappedSections, this.pluginRegistry);

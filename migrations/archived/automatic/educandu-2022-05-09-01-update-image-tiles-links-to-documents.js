@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, max-depth, no-console */
 export default class Educandu_2022_05_09_01_update_image_tiles_links_to_documents {
   constructor(db) {
     this.db = db;

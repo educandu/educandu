@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop, max-depth */
 export default class Educandu_2022_06_27_01_change_ear_training_plugin_data_model {
   constructor(db) {
     this.db = db;

@@ -5,7 +5,6 @@ import educandu from '../../src/index.js';
 import bundleConfig from './bundles/bundle-config.js';
 import TestsController from '../../src/server/tests-controller.js';
 
-// eslint-disable-next-line no-process-env
 const processEnv = process.env;
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));

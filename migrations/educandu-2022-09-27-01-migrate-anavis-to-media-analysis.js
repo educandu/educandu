@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 import uniqueId from '../src/utils/unique-id.js';
 
 const getTotalPreviousPartsLength = (parts, currentPartIndex) => {

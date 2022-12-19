@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_08_11_01_remove_public_rooms {
   constructor(db) {
     this.db = db;

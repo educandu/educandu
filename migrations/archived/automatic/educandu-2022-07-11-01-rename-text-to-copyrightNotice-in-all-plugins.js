@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 const pluginTypes = ['abc-notation', 'anavis', 'audio', 'ear-training', 'image', 'interactive-media', 'video'];
 
 export default class Educandu_2022_07_11_01_rename_text_to_copyrightNotice_in_all_plugins {
@@ -39,7 +38,6 @@ export default class Educandu_2022_07_11_01_rename_text_to_copyrightNotice_in_al
             case 'image':
               section.content[newProperty] = section.content[oldProperty];
               delete section.content[oldProperty];
-              // eslint-disable-next-line max-depth
               if (section.content.effect) {
                 section.content.effect[newProperty] = section.content.effect[oldProperty];
                 delete section.content.effect[oldProperty];

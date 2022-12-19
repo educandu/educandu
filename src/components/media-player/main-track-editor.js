@@ -12,9 +12,9 @@ import MediaRangeSelector from './media-range-selector.js';
 import { usePercentageFormat } from '../locale-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
 import { getAccessibleUrl, getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -46,7 +46,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     const newContent = { ...content, ...newContentValues };
 
     const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && validation.getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
+    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalidSourceUrl);
   };
@@ -107,7 +107,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
 
   const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
-    : validation.validateUrl(sourceUrl, t, { allowEmpty: true });
+    : validateUrl(sourceUrl, t, { allowEmpty: true });
 
   return (
     <Fragment>

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
-
 export default class Educandu_2022_01_05_02_change_user_indices {
   constructor(db) {
     this.db = db;

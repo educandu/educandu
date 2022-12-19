@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_12_21_01_add_token_index_to_room_invitations {
   constructor(db) {
     this.db = db;

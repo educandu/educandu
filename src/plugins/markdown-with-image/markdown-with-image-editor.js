@@ -13,8 +13,8 @@ import { isInternalSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { useNumberWithUnitFormat } from '../../components/locale-context.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateMarkdown } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -31,7 +31,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
     const newContent = { ...content, ...newContentValues };
 
     const isInvalid = !isInternalSourceType({ url: newContent.image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-      && validation.getUrlValidationStatus(newContent.image.sourceUrl) === URL_VALIDATION_STATUS.error;
+      && getUrlValidationStatus(newContent.image.sourceUrl) === URL_VALIDATION_STATUS.error;
 
     onContentChanged(newContent, isInvalid);
   };
@@ -67,7 +67,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form>
-        <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
         </FormItem>
         <FormItem

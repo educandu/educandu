@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, max-depth, no-console */
 export default class Educandu_2022_05_09_02_remove_documentSlug_from_settings {
   constructor(db) {
     this.db = db;

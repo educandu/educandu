@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 export default class Educandu_2022_02_25_01_add_password_reset_expiry_index {
   constructor(db) {
     this.db = db;

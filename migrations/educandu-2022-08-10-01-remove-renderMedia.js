@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_08_10_01_remove_renderMedia {
   constructor(db) {
     this.db = db;

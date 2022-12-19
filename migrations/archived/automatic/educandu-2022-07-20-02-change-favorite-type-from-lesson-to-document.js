@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_07_20_02_change_favorite_type_from_lesson_to_document {
   constructor(db) {
     this.db = db;

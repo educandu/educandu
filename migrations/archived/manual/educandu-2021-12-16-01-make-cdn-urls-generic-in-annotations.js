@@ -1,5 +1,3 @@
-/* eslint-disable no-await-in-loop, no-console */
-
 async function updateAll(collection, query, updateFn) {
   const cursor = collection.find(query);
 
@@ -25,7 +23,6 @@ export function processSection(section) {
   return updateCount;
 }
 
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_12_16_01_make_cdn_urls_generic_in_annotations {
   constructor(db) {
     this.db = db;

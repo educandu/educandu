@@ -1,5 +1,5 @@
-import sinon from 'sinon';
-import { describe, expect, it } from 'vitest';
+import { assert, createSandbox } from 'sinon';
+import { afterEach, describe, expect, it } from 'vitest';
 import { Container, getDisposalInfo, DISPOSAL_PRIORITY } from './di.js';
 
 class A {}
@@ -31,12 +31,10 @@ class D {
 }
 
 class E {
-  // eslint-disable-next-line no-use-before-define
   static get inject() { return [F]; }
 }
 
 class F {
-  // eslint-disable-next-line no-use-before-define
   static get inject() { return [G]; }
 }
 
@@ -45,6 +43,11 @@ class G {
 }
 
 describe('di', () => {
+  const sandbox = createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
 
   describe('Container', () => {
 
@@ -111,7 +114,7 @@ describe('di', () => {
       it('should call the dispose functions in the right priority order', async () => {
         const disposalInfoA = {
           priority: DISPOSAL_PRIORITY.domain,
-          dispose: sinon.spy()
+          dispose: sandbox.spy()
         };
 
         const a = {
@@ -120,7 +123,7 @@ describe('di', () => {
 
         const disposalInfoB = {
           priority: DISPOSAL_PRIORITY.storage,
-          dispose: sinon.spy()
+          dispose: sandbox.spy()
         };
 
         const b = {
@@ -132,7 +135,7 @@ describe('di', () => {
         container.registerInstance(A, a);
 
         await container.dispose();
-        sinon.assert.callOrder(disposalInfoA.dispose, disposalInfoB.dispose);
+        assert.callOrder(disposalInfoA.dispose, disposalInfoB.dispose);
       });
     });
 

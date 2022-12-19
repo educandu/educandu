@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_plugin {
   constructor(db) {
     this.db = db;
@@ -13,7 +12,6 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
       for (const section of doc.sections) {
         if (section.type === 'image-tiles' && section.content) {
           for (const tile of section.content.tiles) {
-            // eslint-disable-next-line max-depth
             if (tile.image) {
               tile.image.sourceType = tile.image.type;
               tile.image.sourceUrl = tile.image.url;
@@ -21,7 +19,6 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
               delete tile.image.url;
               docWasUpdated = true;
             }
-            // eslint-disable-next-line max-depth
             if (tile.link) {
               tile.link.sourceType = tile.link.type === 'external' ? 'external' : 'document';
               tile.link.sourceUrl = tile.link.type === 'external' ? tile.link.url : '';
@@ -52,7 +49,6 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
       for (const section of doc.sections) {
         if (section.type === 'image-tiles' && section.content) {
           for (const tile of section.content.tiles) {
-            // eslint-disable-next-line max-depth
             if (tile.image) {
               tile.image.type = tile.image.sourceType;
               tile.image.url = tile.image.sourceUrl;
@@ -60,7 +56,6 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
               delete tile.image.sourceUrl;
               docWasUpdated = true;
             }
-            // eslint-disable-next-line max-depth
             if (tile.link) {
               tile.link.type = tile.link.sourceType === 'external' ? 'external' : 'internal';
               tile.link.url = tile.link.sourceType === 'external' ? tile.link.sourceUrl : tile.link.documentId;

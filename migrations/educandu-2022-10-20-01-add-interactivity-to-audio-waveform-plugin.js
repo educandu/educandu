@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_20_01_add_interactivity_to_audio_waveform_plugin {
   constructor(db) {
     this.db = db;

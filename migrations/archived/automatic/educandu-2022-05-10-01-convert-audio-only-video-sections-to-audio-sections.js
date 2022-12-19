@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, max-depth, no-console */
 export default class Educandu_2022_05_10_01_convert_audio_only_video_sections_to_audio_sections {
   constructor(db) {
     this.db = db;

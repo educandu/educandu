@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { assert, createSandbox } from 'sinon';
 import TaskStore from '../stores/task-store.js';
 import TaskProcessor from './task-processor.js';
 import BatchProcessor from './batch-processor.js';
@@ -9,7 +9,7 @@ import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } fr
 describe('batch-processor', () => {
 
   const now = new Date();
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
   let ctx;
@@ -54,15 +54,15 @@ describe('batch-processor', () => {
       });
 
       it('should call batchStore.getUncompletedBatch', () => {
-        sinon.assert.called(batchStore.getUncompletedBatch);
+        assert.called(batchStore.getUncompletedBatch);
       });
 
       it('should not call taskStore.getRandomUnprocessedTaskWithBatchId', () => {
-        sinon.assert.notCalled(taskStore.getRandomUnprocessedTaskWithBatchId);
+        assert.notCalled(taskStore.getRandomUnprocessedTaskWithBatchId);
       });
 
       it('should not call taskProcessor.process', () => {
-        sinon.assert.notCalled(taskProcessor.process);
+        assert.notCalled(taskProcessor.process);
       });
 
       it('should return false', () => {
@@ -85,15 +85,15 @@ describe('batch-processor', () => {
       });
 
       it('should call taskStore.getRandomUnprocessedTaskWithBatchId', () => {
-        sinon.assert.calledWith(taskStore.getRandomUnprocessedTaskWithBatchId, 'batchId');
+        assert.calledWith(taskStore.getRandomUnprocessedTaskWithBatchId, 'batchId');
       });
 
       it('should complete the batch', () => {
-        sinon.assert.calledWith(batchStore.saveBatch, expectedBatch);
+        assert.calledWith(batchStore.saveBatch, expectedBatch);
       });
 
       it('should not call taskProcessor.process', () => {
-        sinon.assert.notCalled(taskProcessor.process);
+        assert.notCalled(taskProcessor.process);
       });
 
       it('should return false', () => {
@@ -116,15 +116,15 @@ describe('batch-processor', () => {
       });
 
       it('should call taskStore.getRandomUnprocessedTaskWithBatchId', () => {
-        sinon.assert.calledWith(taskStore.getRandomUnprocessedTaskWithBatchId, 'batchId');
+        assert.calledWith(taskStore.getRandomUnprocessedTaskWithBatchId, 'batchId');
       });
 
       it('should not complete the batch', () => {
-        sinon.assert.notCalled(batchStore.saveBatch);
+        assert.notCalled(batchStore.saveBatch);
       });
 
       it('should call taskProcessor.process', () => {
-        sinon.assert.calledWith(taskProcessor.process, nextCandidateTask._id, uncompletedBatch.batchParams, ctx);
+        assert.calledWith(taskProcessor.process, nextCandidateTask._id, uncompletedBatch.batchParams, ctx);
       });
 
       it('should return true', () => {
@@ -147,15 +147,15 @@ describe('batch-processor', () => {
       });
 
       it('should not call taskStore.getRandomUnprocessedTaskWithBatchId', () => {
-        sinon.assert.notCalled(taskStore.getRandomUnprocessedTaskWithBatchId);
+        assert.notCalled(taskStore.getRandomUnprocessedTaskWithBatchId);
       });
 
       it('should not complete the batch', () => {
-        sinon.assert.notCalled(batchStore.saveBatch);
+        assert.notCalled(batchStore.saveBatch);
       });
 
       it('should not call taskProcessor.process', () => {
-        sinon.assert.notCalled(taskProcessor.process);
+        assert.notCalled(taskProcessor.process);
       });
 
       it('should return true', () => {

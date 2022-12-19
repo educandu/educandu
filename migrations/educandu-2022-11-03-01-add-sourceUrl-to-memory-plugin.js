@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_11_03_01_add_sourceUrl_memory_plugin {
   constructor(db) {
     this.db = db;

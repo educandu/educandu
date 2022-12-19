@@ -1,7 +1,6 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
@@ -11,7 +10,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let markdownInfo;
   let userStore;
@@ -357,11 +356,11 @@ describe('client-data-mapping-service', () => {
     });
 
     it('should call getUserById with "owner"', () => {
-      sinon.assert.calledWith(userStore.getUserById, 'owner');
+      assert.calledWith(userStore.getUserById, 'owner');
     });
 
     it('should call getUsersById with "[member1, memeber2]"', () => {
-      sinon.assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
+      assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
     });
 
     it('should return the mapped result', () => {
@@ -513,7 +512,7 @@ describe('client-data-mapping-service', () => {
         expect(result[0].revision).toBeNull();
       });
       it('calls redactContent for that section\'s content on the respective plugin info', () => {
-        sinon.assert.calledOnceWithExactly(markdownInfo.redactContent, testSection.content, targetRoomId);
+        assert.calledOnceWithExactly(markdownInfo.redactContent, testSection.content, targetRoomId);
       });
       it('assigns the redacted content to that section', () => {
         expect(result[0].content).toStrictEqual(redactedContent);

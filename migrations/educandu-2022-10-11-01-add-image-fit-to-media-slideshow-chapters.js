@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_11_01_add_image_fit_to_media_slideshow_chapters {
   constructor(db) {
     this.db = db;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_05_04_01_add_column_distribution_to_table_plugin {
   constructor(db) {
     this.db = db;

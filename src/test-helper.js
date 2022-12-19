@@ -237,9 +237,7 @@ export async function createTestRevisions(container, user, revisions) {
     };
 
     lastCreatedDocument = lastCreatedDocument
-      // eslint-disable-next-line no-await-in-loop
       ? await documentService.updateDocument({ documentId: lastCreatedDocument._id, data, user })
-      // eslint-disable-next-line no-await-in-loop
       : await documentService.createDocument({ data, user });
   }
 

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 export default class Educandu_2022_10_24_01_remove_origin_and_originUrl_from_documents {
   constructor(db) {
     this.db = db;

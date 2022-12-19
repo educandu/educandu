@@ -1,9 +1,8 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -13,7 +12,7 @@ import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../domain/constants.js';
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('room-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let clientDataMappingService;
   let storageService;
@@ -213,11 +212,11 @@ describe('room-controller', () => {
       });
 
       it('should call roomService.updateRoomMetadata', () => {
-        sinon.assert.calledWith(roomService.updateRoomMetadata, room._id, { ...requestBody });
+        assert.calledWith(roomService.updateRoomMetadata, room._id, { ...requestBody });
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+        assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
       });
 
       it('should respond with the updated room', () => {
@@ -306,11 +305,11 @@ describe('room-controller', () => {
       });
 
       it('should call roomService.updateRoomDocumentsOrder', () => {
-        sinon.assert.calledWith(roomService.updateRoomDocumentsOrder, room._id, requestBody.documentIds);
+        assert.calledWith(roomService.updateRoomDocumentsOrder, room._id, requestBody.documentIds);
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+        assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
       });
 
       it('should respond with the updated room', () => {
@@ -415,7 +414,7 @@ describe('room-controller', () => {
       });
 
       it('should have called roomService.createOrUpdateInvitations', () => {
-        sinon.assert.calledWith(roomService.createOrUpdateInvitations, {
+        assert.calledWith(roomService.createOrUpdateInvitations, {
           roomId: '843zvnzn2vw',
           emails: ['invited-1@user.com', 'invited-2@user.com'],
           user
@@ -423,7 +422,7 @@ describe('room-controller', () => {
       });
 
       it('should have called mailService.sendRoomInvitationEmails', () => {
-        sinon.assert.calledWith(mailService.sendRoomInvitationEmails, {
+        assert.calledWith(mailService.sendRoomInvitationEmails, {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
           invitations: [invitation1, invitation2],
@@ -542,31 +541,31 @@ describe('room-controller', () => {
       });
 
       it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, room._id);
+        assert.calledWith(roomService.getRoomById, room._id);
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+        assert.calledWith(clientDataMappingService.mapRoom, room);
       });
 
       it('should call getRoomInvitations', () => {
-        sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
+        assert.calledWith(roomService.getRoomInvitations, room._id);
       });
 
       it('should call mapRoomInvitations with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
+        assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
       });
 
       it('should call getDocumentsExtendedMetadataByIds', () => {
-        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
+        assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the documents returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(
+        assert.calledWith(
           pageRenderer.sendPage,
           request,
           {},
@@ -606,27 +605,27 @@ describe('room-controller', () => {
       });
 
       it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, room._id);
+        assert.calledWith(roomService.getRoomById, room._id);
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+        assert.calledWith(clientDataMappingService.mapRoom, room);
       });
 
       it('should not call getRoomInvitations', () => {
-        sinon.assert.notCalled(roomService.getRoomInvitations);
+        assert.notCalled(roomService.getRoomInvitations);
       });
 
       it('should call getDocumentsExtendedMetadataByIds', () => {
-        sinon.assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
+        assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the non-draft documents returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [documents[0]]);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [documents[0]]);
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(
+        assert.calledWith(
           pageRenderer.sendPage,
           request,
           {},
@@ -724,7 +723,7 @@ describe('room-controller', () => {
       }));
 
       it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
       });
 
       it('should return status 403', () => {
@@ -751,7 +750,7 @@ describe('room-controller', () => {
       }));
 
       it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
       });
 
       it('should return status 200', () => {
@@ -783,23 +782,23 @@ describe('room-controller', () => {
       }));
 
       it('should call storageService.deleteRoomAndResources for each room', () => {
-        sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
-        sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
+        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
+        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
-        sinon.assert.calledWith(
+        assert.calledWith(
           mailService.sendRoomDeletionNotificationEmails,
           { roomName: roomA.name, ownerName: user.displayName, roomMembers: roomA.members }
         );
-        sinon.assert.calledWith(
+        assert.calledWith(
           mailService.sendRoomDeletionNotificationEmails,
           { roomName: roomB.name, ownerName: user.displayName, roomMembers: roomB.members }
         );
       });
 
       it('should call storageService.updateUserUsedBytes', () => {
-        sinon.assert.calledWith(storageService.updateUserUsedBytes, user._id);
+        assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
 
       it('should return status 200', () => {
@@ -823,15 +822,15 @@ describe('room-controller', () => {
       }));
 
       it('should not call storageService.deleteRoomAndResources', () => {
-        sinon.assert.notCalled(storageService.deleteRoomAndResources);
+        assert.notCalled(storageService.deleteRoomAndResources);
       });
 
       it('should not call mailService.sendRoomDeletionNotificationEmails', () => {
-        sinon.assert.notCalled(mailService.sendRoomDeletionNotificationEmails);
+        assert.notCalled(mailService.sendRoomDeletionNotificationEmails);
       });
 
       it('should call storageService.updateUserUsedBytes once to ensure the calculation is up to date', () => {
-        sinon.assert.calledWith(storageService.updateUserUsedBytes, user._id);
+        assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
 
       it('should return status 200', () => {
@@ -904,11 +903,11 @@ describe('room-controller', () => {
       }));
 
       it('should call storageService.deleteRoomAndResources', () => {
-        sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
+        assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails with the right emails', () => {
-        sinon.assert.calledWith(
+        assert.calledWith(
           mailService.sendRoomDeletionNotificationEmails,
           { roomMembers: room.members, roomName: room.name, ownerName: user.displayName }
         );
@@ -1022,7 +1021,7 @@ describe('room-controller', () => {
       });
 
       it('should have called mailService.sendRoomMemberRemovalNotificationEmail', () => {
-        sinon.assert.calledWith(mailService.sendRoomMemberRemovalNotificationEmail, {
+        assert.calledWith(mailService.sendRoomMemberRemovalNotificationEmail, {
           roomName: 'my room',
           ownerName: 'dagobert-the-third',
           memberUser
@@ -1065,7 +1064,7 @@ describe('room-controller', () => {
       });
 
       it('should have not called mailService.sendRoomMemberRemovalNotificationEmail', () => {
-        sinon.assert.notCalled(mailService.sendRoomMemberRemovalNotificationEmail);
+        assert.notCalled(mailService.sendRoomMemberRemovalNotificationEmail);
       });
     });
   });
@@ -1151,7 +1150,7 @@ describe('room-controller', () => {
       });
 
       it('should have called mailService.sendRoomInvitationDeletionNotificationEmail', () => {
-        sinon.assert.calledWith(mailService.sendRoomInvitationDeletionNotificationEmail, {
+        assert.calledWith(mailService.sendRoomInvitationDeletionNotificationEmail, {
           roomName: 'my room',
           ownerName: 'dagobert-the-third',
           email: 'max.mustermann@gtest.com'

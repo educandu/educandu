@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { assert, createSandbox } from 'sinon';
 import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
 import TaskProcessor from './task-processor.js';
@@ -12,7 +12,7 @@ import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } fr
 describe('task-processor', () => {
 
   const now = new Date();
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
   let ctx;
@@ -65,23 +65,23 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should not call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.notCalled(taskStore.getUnprocessedTaskById);
+        assert.notCalled(taskStore.getUnprocessedTaskById);
       });
 
       it('should not call documentValidationTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentValidationTaskProcessor.process);
+        assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
-        sinon.assert.notCalled(taskStore.saveTask);
+        assert.notCalled(taskStore.saveTask);
       });
 
       it('should not call lockStore.releaseLock', () => {
-        sinon.assert.notCalled(lockStore.releaseLock);
+        assert.notCalled(lockStore.releaseLock);
       });
     });
 
@@ -95,23 +95,23 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should not call documentValidationTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentValidationTaskProcessor.process);
+        assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
-        sinon.assert.notCalled(taskStore.saveTask);
+        assert.notCalled(taskStore.saveTask);
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -133,23 +133,23 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should not call documentValidationTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentValidationTaskProcessor.process);
+        assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
-        sinon.assert.notCalled(taskStore.saveTask);
+        assert.notCalled(taskStore.saveTask);
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
 
       it('should throw an error', () => {
@@ -175,19 +175,19 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should call documentValidationTaskProcessor.process', () => {
-        sinon.assert.calledOnceWithExactly(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
+        assert.calledOnceWithExactly(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
-        sinon.assert.calledWith(taskStore.saveTask, {
+        assert.calledWith(taskStore.saveTask, {
           _id: taskId,
           taskType: TASK_TYPE.documentValidation,
           processed: true,
@@ -202,7 +202,7 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -223,19 +223,19 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should call documentValidationTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
+        assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
-        sinon.assert.calledWith(taskStore.saveTask, {
+        assert.calledWith(taskStore.saveTask, {
           _id: taskId,
           taskType: TASK_TYPE.documentValidation,
           processed: false,
@@ -250,7 +250,7 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -284,19 +284,19 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should call documentValidationTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
+        assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
-        sinon.assert.calledWith(taskStore.saveTask, {
+        assert.calledWith(taskStore.saveTask, {
           _id: taskId,
           taskType: TASK_TYPE.documentValidation,
           processed: true,
@@ -316,7 +316,7 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -338,19 +338,19 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should call documentValidationTaskProcessor.process', () => {
-        sinon.assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
+        assert.calledWith(documentValidationTaskProcessor.process, nextTask, batchParams, ctx);
       });
 
       it('should call taskStore.saveTask', () => {
-        sinon.assert.calledWith(taskStore.saveTask, {
+        assert.calledWith(taskStore.saveTask, {
           _id: taskId,
           taskType: TASK_TYPE.documentValidation,
           processed: true,
@@ -365,7 +365,7 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -382,23 +382,23 @@ describe('task-processor', () => {
       });
 
       it('should call lockStore.takeTaskLock', () => {
-        sinon.assert.calledOnce(lockStore.takeTaskLock);
+        assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.getUnprocessedTaskById', () => {
-        sinon.assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
+        assert.calledWith(taskStore.getUnprocessedTaskById, taskId);
       });
 
       it('should not call documentValidationTaskProcessor.process', () => {
-        sinon.assert.notCalled(documentValidationTaskProcessor.process);
+        assert.notCalled(documentValidationTaskProcessor.process);
       });
 
       it('should not call taskStore.saveTask', () => {
-        sinon.assert.notCalled(taskStore.saveTask);
+        assert.notCalled(taskStore.saveTask);
       });
 
       it('should call lockStore.releaseLock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
     });
   });

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
-
 const pluginsWithCdnResources = new Set([
   'image',
   'video',

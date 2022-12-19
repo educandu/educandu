@@ -196,7 +196,6 @@ class ClientDataMappingService {
     const mappedUserFavorites = [];
 
     for (const favorite of favorites) {
-      // eslint-disable-next-line no-await-in-loop
       mappedUserFavorites.push(await this._mapFavorite({ favorite, user }));
     }
 

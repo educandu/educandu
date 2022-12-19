@@ -1,9 +1,8 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import events from 'node:events';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import UserController from './user-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -13,7 +12,7 @@ const { NotFound } = httpErrors;
 
 describe('user-controller', () => {
 
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let passwordResetRequestService;
   let clientDataMappingService;
@@ -136,7 +135,7 @@ describe('user-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
+        assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
           user: mappedViewedUser,
           documents: mappedDocuments
         });
@@ -171,7 +170,7 @@ describe('user-controller', () => {
       });
 
       it('should call sendRegistrationVerificationEmail', () => {
-        sinon.assert.calledWith(mailService.sendRegistrationVerificationEmail, {
+        assert.calledWith(mailService.sendRegistrationVerificationEmail, {
           email: 'test@test.com',
           displayName: 'Test 1234',
           verificationLink: 'https://localhost/complete-registration/verificationCode'
@@ -206,11 +205,11 @@ describe('user-controller', () => {
       });
 
       it('should not call mailService.sendRegistrationVerificationEmail', () => {
-        sinon.assert.notCalled(mailService.sendRegistrationVerificationEmail);
+        assert.notCalled(mailService.sendRegistrationVerificationEmail);
       });
 
       it('should not call clientDataMappingService.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
+        assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -246,7 +245,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserAccount', () => {
-        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com' });
+        assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com' });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -282,7 +281,7 @@ describe('user-controller', () => {
       });
 
       it('should not call clientDataMappingService.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
+        assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -322,7 +321,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserProfile', () => {
-        sinon.assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, introduction });
+        assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, introduction });
       });
 
       it('should set the status code on the response to 201', () => {
@@ -383,11 +382,11 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.createPasswordResetRequest', () => {
-        sinon.assert.calledWith(userService.createPasswordResetRequest, user);
+        assert.calledWith(userService.createPasswordResetRequest, user);
       });
 
       it('should call mailService.sendPasswordResetEmail', () => {
-        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
+        assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
           displayName: user.displayName,
           completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
       });
@@ -421,11 +420,11 @@ describe('user-controller', () => {
       }));
 
       it('should not call userService.createPasswordResetRequest', () => {
-        sinon.assert.notCalled(userService.createPasswordResetRequest);
+        assert.notCalled(userService.createPasswordResetRequest);
       });
 
       it('should not call mailService.sendPasswordResetEmail', () => {
-        sinon.assert.notCalled(mailService.sendPasswordResetEmail);
+        assert.notCalled(mailService.sendPasswordResetEmail);
       });
 
       it('should set the status code on the response to 201', () => {
@@ -461,7 +460,7 @@ describe('user-controller', () => {
     }));
 
     it('should call userService.addUserStorageReminder', () => {
-      sinon.assert.calledWith(userService.addUserStorageReminder, 'abcde', { _id: '12345' });
+      assert.calledWith(userService.addUserStorageReminder, 'abcde', { _id: '12345' });
     });
 
     it('should set the status code on the response to 201', () => {
@@ -496,7 +495,7 @@ describe('user-controller', () => {
     }));
 
     it('should call userService.deleteAllUserStorageReminders', () => {
-      sinon.assert.calledWith(userService.deleteAllUserStorageReminders, 'abcde');
+      assert.calledWith(userService.deleteAllUserStorageReminders, 'abcde');
     });
 
     it('should set the status code on the response to 200', () => {
@@ -545,7 +544,7 @@ describe('user-controller', () => {
     }));
 
     it('should call userService.addFavorite', () => {
-      sinon.assert.calledWith(userService.addFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
+      assert.calledWith(userService.addFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
     });
 
     it('should set the status code on the response to 201', () => {
@@ -594,7 +593,7 @@ describe('user-controller', () => {
     }));
 
     it('should call userService.deleteFavorite', () => {
-      sinon.assert.calledWith(userService.deleteFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
+      assert.calledWith(userService.deleteFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
     });
 
     it('should set the status code on the response to 200', () => {

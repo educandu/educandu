@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 import uniqueId from '../../../src/utils/unique-id.js';
 
 export default class Educandu_2022_07_13_01_remove_key_from_cells_in_table_plugin {

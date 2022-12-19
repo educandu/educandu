@@ -1,4 +1,3 @@
-/* eslint-disable no-console, camelcase */
 export default class Educandu_2022_02_07_01_delete_orphaned_lessons {
   constructor(db) {
     this.db = db;

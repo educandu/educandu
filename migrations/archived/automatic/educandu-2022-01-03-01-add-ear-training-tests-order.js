@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 const PLUGIN_TYPE = 'ear-training';
 
 export default class Educandu_2022_01_03_01_add_ear_training_tests_order {

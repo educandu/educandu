@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_01_21_01_add_render_media_to_markdown_and_annotation {
   constructor(db) {
     this.db = db;
@@ -41,16 +40,11 @@ export default class Educandu_2022_01_21_01_add_render_media_to_markdown_and_ann
     const collection = this.db.collection(collectionName);
     const cursor = collection.find(filter);
 
-    // eslint-disable-next-line no-await-in-loop
     while (await cursor.hasNext()) {
-      // eslint-disable-next-line no-await-in-loop
       const doc = await cursor.next();
-      // eslint-disable-next-line no-await-in-loop
       const updatedDoc = await updateFn(doc);
       if (updatedDoc) {
-        // eslint-disable-next-line no-console
         console.log(`Updating: ${collectionName}, id = ${doc._id}`);
-        // eslint-disable-next-line no-await-in-loop
         await collection.replaceOne({ _id: doc._id }, updatedDoc);
       }
     }

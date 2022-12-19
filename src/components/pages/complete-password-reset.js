@@ -4,10 +4,10 @@ import Countdown from '../countdown.js';
 import React, { useState } from 'react';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
-import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import PasswordFormItem from '../password-form-item.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
 
@@ -26,7 +26,7 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
       const response = await userApiClient.completePasswordReset({ passwordResetRequestId, password });
       setUser(response.user);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
   };
 

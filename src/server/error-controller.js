@@ -19,8 +19,8 @@ class ErrorController {
   registerErrorHandler(router) {
     router.use((req, res, next) => next(createError(404)));
 
-    /* eslint-disable-next-line no-unused-vars */
-    router.use((err, req, res, next) => {
+    // eslint-disable-next-line no-unused-vars
+    router.use((err, req, res, _next) => {
       const isApiCall = this.acceptsJson(req);
       const consolidatedErr = this.consolidateError(err, req);
 

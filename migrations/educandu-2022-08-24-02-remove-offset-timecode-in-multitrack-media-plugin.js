@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 export default class Educandu_2022_08_24_02_remove_offset_timecode_in_multitrack_media_plugin {
   constructor(db) {
     this.db = db;

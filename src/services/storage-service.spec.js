@@ -1,11 +1,10 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import Cdn from '../repositories/cdn.js';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
+import { assert, createSandbox, match } from 'sinon';
 import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
@@ -16,7 +15,7 @@ import { CDN_OBJECT_TYPE, ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } fro
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('storage-service', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let documentRevisionStore;
   let roomInvitationStore;
@@ -112,7 +111,7 @@ describe('storage-service', () => {
       });
 
       it('should call the CDN', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: 'media/34q87zc95t9c287eh/', recursive: false });
+        assert.calledWith(cdn.listObjects, { prefix: 'media/34q87zc95t9c287eh/', recursive: false });
       });
 
       it('should construct all paths and URLs correctly', () => {
@@ -202,7 +201,7 @@ describe('storage-service', () => {
       });
 
       it('should call the CDN', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
+        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
       });
 
       it('should construct all paths and URLs correctly', () => {
@@ -285,7 +284,7 @@ describe('storage-service', () => {
       });
 
       it('should call the CDN', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: '', recursive: false });
+        assert.calledWith(cdn.listObjects, { prefix: '', recursive: false });
       });
 
       it('should construct all paths and URLs correctly', () => {
@@ -359,11 +358,11 @@ describe('storage-service', () => {
       });
 
       it('should call the CDN once for the current level objects', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
+        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
       });
 
       it('should call the CDN once for the inner levels objects', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: true });
       });
 
       it('should construct parentDirectory correctly', () => {
@@ -459,7 +458,7 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should throw an error', () => {
@@ -467,7 +466,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
 
@@ -499,17 +498,17 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should call cdn.uploadObject for each file', () => {
-        sinon.assert.calledTwice(cdn.uploadObject);
-        sinon.assert.calledWith(cdn.uploadObject, `media/${docId}/file1-${id}.jpeg`, files[0].path);
-        sinon.assert.calledWith(cdn.uploadObject, `media/${docId}/file2-${id}.jpeg`, files[1].path);
+        assert.calledTwice(cdn.uploadObject);
+        assert.calledWith(cdn.uploadObject, `media/${docId}/file1-${id}.jpeg`, files[0].path);
+        assert.calledWith(cdn.uploadObject, `media/${docId}/file2-${id}.jpeg`, files[1].path);
       });
 
       it('should release the lock', () => {
-        sinon.assert.calledWith(lockStore.releaseLock, lock);
+        assert.calledWith(lockStore.releaseLock, lock);
       });
 
       it('should return zero used bytes', () => {
@@ -566,7 +565,7 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should throw an error', () => {
@@ -574,7 +573,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
 
@@ -597,7 +596,7 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should throw an error', () => {
@@ -605,7 +604,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
 
@@ -653,18 +652,18 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should call cdn.uploadObject for each file', () => {
-        sinon.assert.calledTwice(cdn.uploadObject);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path);
+        assert.calledTwice(cdn.uploadObject);
+        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path);
+        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path);
       });
 
       it('should call cdn.listObjects for each room', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${otherRoomId}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `rooms/${otherRoomId}/media/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -674,7 +673,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
 
       it('should return the recalculated used bytes', () => {
@@ -737,7 +736,7 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should throw an error', () => {
@@ -745,7 +744,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
 
@@ -763,19 +762,19 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should call cdn.deleteObjects', () => {
-        sinon.assert.calledWith(cdn.deleteObjects, [path]);
+        assert.calledWith(cdn.deleteObjects, [path]);
       });
 
       it('should not call roomStore.getRoomIdsByOwnerId', () => {
-        sinon.assert.notCalled(roomStore.getRoomIdsByOwnerId);
+        assert.notCalled(roomStore.getRoomIdsByOwnerId);
       });
 
       it('should not call cdn.listObjects', () => {
-        sinon.assert.notCalled(cdn.listObjects);
+        assert.notCalled(cdn.listObjects);
       });
 
       it('should not update the user\'s usedBytes', async () => {
@@ -784,7 +783,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
 
@@ -816,16 +815,16 @@ describe('storage-service', () => {
       });
 
       it('should take the lock on the user record', () => {
-        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should call cdn.deleteObjects', () => {
-        sinon.assert.calledWith(cdn.deleteObjects, [path]);
+        assert.calledWith(cdn.deleteObjects, [path]);
       });
 
       it('should call cdn.listObjects for each room', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -834,7 +833,7 @@ describe('storage-service', () => {
       });
 
       it('should release the lock', () => {
-        sinon.assert.called(lockStore.releaseLock);
+        assert.called(lockStore.releaseLock);
       });
     });
   });
@@ -878,47 +877,47 @@ describe('storage-service', () => {
     });
 
     it('should take the lock on the user record', () => {
-      sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      assert.calledWith(lockStore.takeUserLock, myUser._id);
     });
 
     it('should call documentStore.getDocumentsMetadataByRoomId', () => {
-      sinon.assert.calledWith(documentStore.getDocumentsMetadataByRoomId, roomId, { session: sinon.match.object });
+      assert.calledWith(documentStore.getDocumentsMetadataByRoomId, roomId, { session: match.object });
     });
 
     it('should call commentStore.deleteCommentsByDocumentIds', () => {
-      sinon.assert.calledWith(commentStore.deleteCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: sinon.match.object });
+      assert.calledWith(commentStore.deleteCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: match.object });
     });
 
     it('should call documentStore.deleteDocumentsByRoomId', () => {
-      sinon.assert.calledWith(documentStore.deleteDocumentsByRoomId, roomId, { session: sinon.match.object });
+      assert.calledWith(documentStore.deleteDocumentsByRoomId, roomId, { session: match.object });
     });
 
     it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {
-      sinon.assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, roomId, { session: sinon.match.object });
+      assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, roomId, { session: match.object });
     });
 
     it('should call roomInvitationStore.deleteRoomInvitationsByRoomId', () => {
-      sinon.assert.calledWith(roomInvitationStore.deleteRoomInvitationsByRoomId, roomId, { session: sinon.match.object });
+      assert.calledWith(roomInvitationStore.deleteRoomInvitationsByRoomId, roomId, { session: match.object });
     });
 
     it('should call roomStore.deleteRoomById', () => {
-      sinon.assert.calledWith(roomStore.deleteRoomById, roomId, { session: sinon.match.object });
+      assert.calledWith(roomStore.deleteRoomById, roomId, { session: match.object });
     });
 
     it('should call cdn.listObjects for the room being deleted', () => {
-      sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+      assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
     });
 
     it('should call cdn.deleteObjects', () => {
-      sinon.assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
+      assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
     });
 
     it('should call roomStore.getRoomIdsByOwnerId', () => {
-      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerId, { ownerId: myUser._id });
+      assert.calledWith(roomStore.getRoomIdsByOwnerId, { ownerId: myUser._id });
     });
 
     it('should call cdn.listObjects for the remaining private room', () => {
-      sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
+      assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
     });
 
     it('should update the user\'s usedBytes', async () => {
@@ -927,7 +926,7 @@ describe('storage-service', () => {
     });
 
     it('should release the lock', () => {
-      sinon.assert.called(lockStore.releaseLock);
+      assert.called(lockStore.releaseLock);
     });
   });
 

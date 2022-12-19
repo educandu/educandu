@@ -304,8 +304,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
     dialog.update(createDialogProps());
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleOkClick = _close => {
+  const handleOkClick = () => {
     formRef.current.submit();
     return true;
   };
@@ -365,8 +364,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
     dialog.update(createDialogProps());
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleOkClick = _close => {
+  const handleOkClick = () => {
     formRef.current.submit();
     return true;
   };

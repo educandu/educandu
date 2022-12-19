@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_12_16_01_delete_namspaces {
   constructor(db) {
     this.db = db;

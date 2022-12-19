@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_04_08_01_add_initial_page_number_to_pdf_viewer_plugin {
   constructor(db) {
     this.db = db;

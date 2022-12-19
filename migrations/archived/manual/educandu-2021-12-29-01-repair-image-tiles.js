@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
-
 import { promises as fs } from 'node:fs';
 
 const IMAGE_TILE_SECTION_TYPE = 'image-tiles';

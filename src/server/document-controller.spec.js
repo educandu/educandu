@@ -1,9 +1,8 @@
-/* eslint-disable max-lines */
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
@@ -13,7 +12,7 @@ import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_DOCUMENTS_MODE } from '../doma
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('document-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let clientDataMappingService;
   let documentService;
@@ -98,15 +97,15 @@ describe('document-controller', () => {
       });
 
       it('should call documentService.getAllPublicDocumentsMetadata', () => {
-        sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: true });
+        assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: true });
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
       });
     });
 
@@ -121,15 +120,15 @@ describe('document-controller', () => {
       });
 
       it('should call documentService.getAllPublicDocumentsMetadata', () => {
-        sinon.assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: false });
+        assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: false });
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
       });
     });
   });
@@ -251,15 +250,15 @@ describe('document-controller', () => {
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
       });
 
       it('should call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
+        assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
       });
     });
 
@@ -348,7 +347,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
       });
     });
 
@@ -385,7 +384,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
       });
     });
 
@@ -521,7 +520,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
       });
     });
 
@@ -559,7 +558,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
       });
     });
 
@@ -597,7 +596,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
       });
     });
 
@@ -634,15 +633,15 @@ describe('document-controller', () => {
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
       });
 
       it('should call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
+        assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
       });
     });
 
@@ -701,15 +700,15 @@ describe('document-controller', () => {
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, null], user);
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, null], user);
       });
 
       it('should not call clientDataMappingService.createProposedSections', () => {
-        sinon.assert.notCalled(clientDataMappingService.createProposedSections);
+        assert.notCalled(clientDataMappingService.createProposedSections);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [] });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [] });
       });
     });
   });
@@ -783,7 +782,7 @@ describe('document-controller', () => {
       }));
 
       it('should create the document', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
+        assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
       it('should return the document', () => {
@@ -818,7 +817,7 @@ describe('document-controller', () => {
       }));
 
       it('should create the document', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
+        assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
       it('should return the document', () => {
@@ -853,7 +852,7 @@ describe('document-controller', () => {
       }));
 
       it('should create the document', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
+        assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
       it('should return the document', () => {
@@ -901,7 +900,7 @@ describe('document-controller', () => {
       }));
 
       it('should create the document', () => {
-        sinon.assert.calledWith(documentService.createDocument, { data: doc, user });
+        assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
       it('should return the document', () => {
@@ -974,7 +973,7 @@ describe('document-controller', () => {
       }));
 
       it('should call documentService.hardDeleteDocument', () => {
-        sinon.assert.calledWith(documentService.hardDeleteDocument, doc._id);
+        assert.calledWith(documentService.hardDeleteDocument, doc._id);
       });
     });
 

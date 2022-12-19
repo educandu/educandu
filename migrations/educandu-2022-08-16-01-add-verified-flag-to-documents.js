@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_08_16_01_add_verified_flag_to_documents {
   constructor(db) {
     this.db = db;

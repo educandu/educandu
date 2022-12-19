@@ -24,12 +24,10 @@ export default class MaintenanceService {
 
     while (!lock) {
       try {
-        // eslint-disable-next-line no-await-in-loop
         lock = await this.lockStore.takeMaintenanceLock(MaintenanceService.MAINTENANCE_LOCK_KEY);
       } catch (error) {
         if (error.code === MONGO_DUPLUCATE_KEY_ERROR_CODE) {
           logger.info(`Maintenance lock is already taken, waiting for ${MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC} sec.`);
-          // eslint-disable-next-line no-await-in-loop
           await delay(MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC * 1000);
         } else {
           throw error;

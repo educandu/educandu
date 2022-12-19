@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 import slugify from '@sindresorhus/slugify';
 
 export default class Educandu_2022_09_22_02_fix_invalid_slugs {

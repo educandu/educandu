@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_02_11_01_remove_empty_cdn_resources {
   constructor(db) {
     this.db = db;

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_02_16_01_add_storage_to_users {
   constructor(db) {
     this.db = db;

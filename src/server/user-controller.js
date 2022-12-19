@@ -1,4 +1,3 @@
-/* eslint-disable max-params */
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
@@ -310,7 +309,6 @@ class UserController {
 
     const userRooms = await this.roomService.getRoomsOwnedByUser(userId);
     for (const room of userRooms) {
-      // eslint-disable-next-line no-await-in-loop
       await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: userId });
     }
     await this.roomService.removeMembershipFromAllRoomsForUser(userId);
@@ -392,7 +390,6 @@ class UserController {
         if (req.user?.storage.planId) {
           storagePlan = await this.storageService.getStoragePlanById(req.user.storage.planId);
         }
-        // eslint-disable-next-line require-atomic-updates
         req.storagePlan = storagePlan || null;
         return next();
       } catch (err) {

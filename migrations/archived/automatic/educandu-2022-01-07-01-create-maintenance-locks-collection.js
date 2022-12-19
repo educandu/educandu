@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_01_07_01_create_maintenance_locks_collection {
   constructor(db) {
     this.db = db;

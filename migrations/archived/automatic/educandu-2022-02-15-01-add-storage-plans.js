@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 export default class Educandu_2022_02_15_01_add_storage_plans {
   constructor(db) {
     this.db = db;

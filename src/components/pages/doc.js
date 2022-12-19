@@ -1,4 +1,3 @@
-/* eslint-disable complexity, max-lines */
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';

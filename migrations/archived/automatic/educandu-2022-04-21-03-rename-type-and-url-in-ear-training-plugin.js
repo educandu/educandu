@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
 export default class Educandu_2022_04_21_03_rename_type_and_url_in_ear_training_plugin {
   constructor(db) {
     this.db = db;
@@ -13,7 +12,6 @@ export default class Educandu_2022_04_21_03_rename_type_and_url_in_ear_training_
       for (const section of doc.sections) {
         if (section.type === 'ear-training' && section.content) {
           for (const test of section.content.tests) {
-            // eslint-disable-next-line max-depth
             if (test.sound) {
               test.sound.sourceType = test.sound.type;
               test.sound.sourceUrl = test.sound.url;
@@ -44,7 +42,6 @@ export default class Educandu_2022_04_21_03_rename_type_and_url_in_ear_training_
       for (const section of doc.sections) {
         if (section.type === 'ear-training' && section.content) {
           for (const test of section.content.tests) {
-            // eslint-disable-next-line max-depth
             if (test.sound) {
               test.sound.type = test.sound.sourceType;
               test.sound.url = test.sound.sourceUrl;

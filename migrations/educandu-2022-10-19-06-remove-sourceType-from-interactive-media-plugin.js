@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_19_06_remove_sourceType_from_interactive_media_plugin {
   constructor(db) {
     this.db = db;

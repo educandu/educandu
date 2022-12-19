@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_06_30_01_add_review_to_documents {
   constructor(db) {
     this.db = db;

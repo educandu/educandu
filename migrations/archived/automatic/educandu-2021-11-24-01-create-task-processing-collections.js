@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_11_24_01_create_task_processing_collections {
   constructor(db) {
     this.db = db;

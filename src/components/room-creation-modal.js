@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../ui/error-helper.js';
 import RoomMetadataForm from './room-metadata-form.js';
+import { handleApiError } from '../ui/error-helper.js';
 import React, { useState, useRef, useEffect } from 'react';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
@@ -47,7 +47,7 @@ function RoomCreationModal({ isOpen, onClose }) {
 
       window.location = routes.getRoomUrl(newRoom._id, newRoom.slug);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
       setLoading(false);
     }
   };

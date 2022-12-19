@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_03_11_01_add_document_key_index {
   constructor(db) {
     this.db = db;

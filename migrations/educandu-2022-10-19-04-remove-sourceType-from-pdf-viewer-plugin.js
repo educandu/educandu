@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_10_19_04_remove_sourceType_from_pdf_viewer_plugin {
   constructor(db) {
     this.db = db;

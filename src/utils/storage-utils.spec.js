@@ -1,6 +1,6 @@
-import sinon from 'sinon';
 import uniqueId from './unique-id.js';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { createSandbox } from 'sinon';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getStorageLocationTypeForPath,
@@ -13,10 +13,14 @@ import {
 describe('storage-utils', () => {
   let result;
 
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
-  beforeAll(() => {
+  beforeEach(() => {
     sandbox.stub(uniqueId, 'create').returns('ch5zqo897tzo8f3');
+  });
+
+  afterEach(() => {
+    sandbox.restore();
   });
 
   describe('getStorageLocationTypeForPath', () => {
@@ -84,7 +88,7 @@ describe('storage-utils', () => {
 
     describe('when the cdn object is a file', () => {
       beforeEach(() => {
-        t = sinon.fake();
+        t = sandbox.fake();
         result = composeHumanReadableDisplayName({
           t,
           cdnObject: {
@@ -102,7 +106,7 @@ describe('storage-utils', () => {
 
     describe('when the cdn object is the public root path', () => {
       beforeEach(() => {
-        t = sinon.fake();
+        t = sandbox.fake();
         result = composeHumanReadableDisplayName({
           t,
           cdnObject: {
@@ -120,7 +124,7 @@ describe('storage-utils', () => {
 
     describe('when the cdn object does not contain document metadata', () => {
       beforeEach(() => {
-        t = sinon.stub();
+        t = sandbox.stub();
         t.withArgs('common:unknownDocument').returns('Unknown document');
         result = composeHumanReadableDisplayName({
           t,
@@ -139,7 +143,7 @@ describe('storage-utils', () => {
 
     describe('when the cdn object corresponds to a document accessible to the current user', () => {
       beforeEach(() => {
-        t = sinon.stub();
+        t = sandbox.stub();
         t.withArgs('common:unknownDocument').returns('Unknown document');
         result = composeHumanReadableDisplayName({
           t,
@@ -158,7 +162,7 @@ describe('storage-utils', () => {
 
     describe('when the cdn object corresponds to a document that is not accessible to the current user', () => {
       beforeEach(() => {
-        t = sinon.stub();
+        t = sandbox.stub();
         t.withArgs('common:privateDocument').returns('Private document');
         result = composeHumanReadableDisplayName({
           t,

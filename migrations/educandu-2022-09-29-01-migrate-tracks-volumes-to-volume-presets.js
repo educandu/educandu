@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 export default class Educandu_2022_09_29_01_migrate_tracks_volumes_to_volume_presets {
   constructor(db) {
     this.db = db;

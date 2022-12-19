@@ -1,4 +1,3 @@
-// eslint-disable-next-line camelcase
 export default class Educandu_2022_03_10_01_add_activities_related_indexes {
   constructor(db) {
     this.db = db;

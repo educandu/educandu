@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 export default class Educandu_2022_09_13_01_rename_plan_to_planId_in_user_storage {
   constructor(db) {
     this.db = db;

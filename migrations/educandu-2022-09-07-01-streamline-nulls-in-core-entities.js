@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_09_07_01_streamline_nulls_in_core_entities {
   constructor(db) {
     this.db = db;

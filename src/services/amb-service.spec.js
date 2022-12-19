@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import AmbService from './amb-service.js';
 import Database from '../stores/database.js';
 import ServerConfig from '../bootstrap/server-config.js';
@@ -16,7 +16,7 @@ import {
 describe('amb-service', () => {
   const now = new Date();
   const origin = 'https://educandu.dev';
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let db;
   let sut;

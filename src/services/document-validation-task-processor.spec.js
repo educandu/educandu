@@ -1,5 +1,5 @@
-import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import DocumentService from './document-service.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
@@ -8,7 +8,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 describe('DocumentValidationTaskProcessor', () => {
   let container;
   let documentService;
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
 
@@ -36,7 +36,7 @@ describe('DocumentValidationTaskProcessor', () => {
 
       await sut.process({ taskParams: { documentId } }, {});
 
-      sinon.assert.calledWith(documentService.validateDocument, documentId);
+      assert.calledWith(documentService.validateDocument, documentId);
     });
 
     it('should throw an error if a cancellation was requested', async () => {
@@ -50,9 +50,9 @@ describe('DocumentValidationTaskProcessor', () => {
 
       try {
         await sut.process({ taskParams: { documentId } }, { cancellationRequested: true });
-        sinon.assert.fail('This code should not have been reached');
+        assert.fail('This code should not have been reached');
       } catch {
-        sinon.assert.notCalled(documentService.validateDocument);
+        assert.notCalled(documentService.validateDocument);
       }
     });
   });

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase, no-console, no-await-in-loop */
-
 export default class Educandu_2022_07_14_01_remove_document_key {
   constructor(db) {
     this.db = db;

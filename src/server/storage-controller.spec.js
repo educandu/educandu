@@ -1,8 +1,8 @@
-import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import StorageController from './storage-controller.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 const { BadRequest, Unauthorized } = httpErrors;
 
 describe('storage-controller', () => {
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let storageService;
   let roomService;
@@ -104,7 +104,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.getObjects', () => {
-        sinon.assert.calledWith(storageService.getObjects, {
+        assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
           user
@@ -143,7 +143,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.getObjects', () => {
-        sinon.assert.calledWith(storageService.getObjects, {
+        assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
           user
@@ -179,7 +179,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.getObjects', () => {
-        sinon.assert.calledWith(storageService.getObjects, {
+        assert.calledWith(storageService.getObjects, {
           parentPath: currentDirectory,
           searchTerm: null,
           user
@@ -261,7 +261,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.uploadFiles', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, {
+        assert.calledWith(storageService.uploadFiles, {
           parentPath: `rooms/${room._id}/media`,
           files: req.files,
           storageClaimingUserId: user._id
@@ -294,7 +294,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.uploadFiles (on behalf of the room owner)', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, {
+        assert.calledWith(storageService.uploadFiles, {
           parentPath: `rooms/${room._id}/media`,
           files: req.files,
           storageClaimingUserId: room.owner
@@ -366,7 +366,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, {
+        assert.calledWith(storageService.deleteObject, {
           path: `rooms/${room._id}/media/object-to-delete`,
           storageClaimingUserId: user._id
         });
@@ -399,7 +399,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, {
+        assert.calledWith(storageService.deleteObject, {
           path: `rooms/${room._id}/media/object-to-delete`,
           storageClaimingUserId: room.owner
         });
@@ -429,7 +429,7 @@ describe('storage-controller', () => {
       }));
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, {
+        assert.calledWith(storageService.deleteObject, {
           path: 'media/object-to-delete',
           storageClaimingUserId: user._id
         });

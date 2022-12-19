@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { assert, createSandbox } from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import DocumentService from './document-service.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
@@ -8,7 +8,7 @@ import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidatio
 describe('CdnResourcesConsolidationTaskProcessor', () => {
   let container;
   let documentService;
-  const sandbox = sinon.createSandbox();
+  const sandbox = createSandbox();
 
   let sut;
 
@@ -35,7 +35,7 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
     it('should call consolidateCdnResources on documentService', async () => {
       const documentId = uniqueId.create();
       await sut.process({ taskParams: { documentId } }, {});
-      sinon.assert.calledWith(documentService.consolidateCdnResources, documentId);
+      assert.calledWith(documentService.consolidateCdnResources, documentId);
     });
 
     describe('when cancellation is requested', () => {
@@ -48,9 +48,9 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
       it('should not call consolidateCdnResources', async () => {
         try {
           await sut.process({ taskParams: { documentId } }, { cancellationRequested: true });
-          sinon.assert.fail('This code should not have been reached');
+          assert.fail('This code should not have been reached');
         } catch {
-          sinon.assert.notCalled(documentService.consolidateCdnResources);
+          assert.notCalled(documentService.consolidateCdnResources);
         }
       });
     });

@@ -12,8 +12,8 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import validation, { URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { isInternalSourceType, getAccessibleUrl } from '../../utils/source-utils.js';
+import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import {
   createDefaultClipEffect,
   createDefaultHoverEffect,
@@ -73,7 +73,7 @@ function ImageEditor({ content, onContentChanged }) {
   }, [updateClipEffectState, clipEffect.region]);
 
   const isInvalidUrl = url => !isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    && validation.getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
+    && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };

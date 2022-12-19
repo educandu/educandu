@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_11_26_01_add_publicContext_to_documents {
   constructor(db) {
     this.db = db;

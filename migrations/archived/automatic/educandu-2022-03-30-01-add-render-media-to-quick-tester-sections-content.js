@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_03_30_01_add_render_media_to_quick_tester_sections_content {
   constructor(db) {
     this.db = db;

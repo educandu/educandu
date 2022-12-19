@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../ui/error-helper.js';
 import React, { useEffect, useState } from 'react';
+import { handleApiError } from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -62,7 +62,7 @@ function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
       const invitations = await roomApiClient.addRoomInvitations({ emails, roomId });
       onOk(invitations);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     } finally {
       setIsLoading(false);
     }

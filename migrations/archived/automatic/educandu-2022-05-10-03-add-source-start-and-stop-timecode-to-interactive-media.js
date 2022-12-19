@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_05_10_03_add_source_start_and_stop_timecode_to_interactive_media {
   constructor(db) {
     this.db = db;

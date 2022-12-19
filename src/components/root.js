@@ -71,14 +71,12 @@ Root.propTypes = {
   PageComponent: PropTypes.func.isRequired,
   PageTemplateComponent: PropTypes.func.isRequired,
   container: PropTypes.instanceOf(Container).isRequired,
-  /* eslint-disable-next-line react/forbid-prop-types */
   initialState: PropTypes.any,
   theme: PropTypes.any.isRequired,
   uiLanguage: PropTypes.string.isRequired
 };
 
 Root.defaultProps = {
-  /* eslint-disable-next-line no-undefined */
   initialState: undefined
 };
 

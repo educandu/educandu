@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-console */
 export default class Educandu_2022_05_03_02_add_width_to_table_plugin {
   constructor(db) {
     this.db = db;

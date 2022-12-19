@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
+import { validateUrl } from '../../ui/validation.js';
 import { settingsLicenseShape } from '../../ui/default-prop-types.js';
 
 function LicenseSettings({ license, onChange }) {
@@ -11,12 +11,12 @@ function LicenseSettings({ license, onChange }) {
   const name = license?.name || '';
   const url = license?.url || '';
 
-  const validateUrl = newUrl => {
-    return validation.validateUrl(newUrl, t, { allowEmpty: true, allowHttp: true });
+  const isUrlValid = newUrl => {
+    return validateUrl(newUrl, t, { allowEmpty: true, allowHttp: true });
   };
 
   const handleChange = newLicense => {
-    onChange(newLicense, { isValid: validateUrl(newLicense.url).validateStatus !== 'error' });
+    onChange(newLicense, { isValid: isUrlValid(newLicense.url).validateStatus !== 'error' });
   };
 
   const handleNameChange = event => {

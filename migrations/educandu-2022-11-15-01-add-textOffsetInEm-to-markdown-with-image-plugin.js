@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, no-await-in-loop, no-console */
 export default class Educandu_2022_11_15_01_add_textOffsetInEm_to_markdown_with_image_plugin {
   constructor(db) {
     this.db = db;
