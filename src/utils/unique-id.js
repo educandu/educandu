@@ -1,11 +1,10 @@
-import { v4 } from 'uuid';
-import anyBase from 'any-base';
+import { customAlphabet } from 'nanoid';
 
-const flickrBase58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
-const hexToFlickrBase58 = anyBase(anyBase.HEX, flickrBase58);
+const alphabet = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+const nanoid = customAlphabet(alphabet, 22);
 
 function create() {
-  return hexToFlickrBase58(v4().replace(/-/g, ''));
+  return nanoid();
 }
 
 export default {
