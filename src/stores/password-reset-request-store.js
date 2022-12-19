@@ -15,6 +15,10 @@ class PasswordResetRequestStore {
     return this.collection.deleteOne({ _id: id }, { session });
   }
 
+  deleteRequestsByUserId(userId, { session } = {}) {
+    return this.collection.deleteMany({ userId }, { session });
+  }
+
   saveRequest(request, { session } = {}) {
     return this.collection.replaceOne({ _id: request._id }, request, { session, upsert: true });
   }
