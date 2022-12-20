@@ -323,7 +323,8 @@ class UserController {
       cookie: {
         httpOnly: true,
         sameSite: COOKIE_SAME_SITE_POLICY,
-        domain: this.serverConfig.sessionCookieDomain
+        domain: this.serverConfig.sessionCookieDomain,
+        secure: this.serverConfig.sessionCookieSecure
       },
       secret: this.serverConfig.sessionSecret,
       resave: false,

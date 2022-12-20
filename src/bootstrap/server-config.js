@@ -23,6 +23,7 @@ const configSchema = joi.object({
   sessionSecret: joi.string().default(uniqueId.create()),
   sessionCookieDomain: joi.string(),
   sessionCookieName: joi.string().required(),
+  sessionCookieSecure: joi.boolean().default(false),
   sessionDurationInMinutes: joi.number().min(1).default(60),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
