@@ -166,7 +166,18 @@ function MediaPlayerTrack({
     // In this case the react-player automatically plays, disregarding the value passed to the "playing" prop.
     // Therefore we have to inform the parent player about the internal state damage and reload the whole player.
     if (trackPlayState.current === MEDIA_PLAY_STATE.pausing && progress.played === 0) {
-      playerRef.current.getInternalPlayer()?.pauseVideo();
+      playerRef.current.getInternalPlayer()?.pauseVideo?.();
+      onInvalidStateReached();
+      return;
+    }
+
+    // This case mostly occurs when the react-player has loaded and started playing a youtube resource
+    // and then the DOM element is moved (by swapping section positions).
+    // In this case the react-player automatically resets to the beginning and restarts playing.
+    // From this point on the value passed to the "playing" prop is disregarded and the media can no longer
+    // be paused through the media controls.
+    // Therefore we have to inform the parent player about the internal state damage and reload the whole player.
+    if (trackPlayState.current === MEDIA_PLAY_STATE.playing && progress.played === 0 && lastProgressTimecode > 0) {
       onInvalidStateReached();
       return;
     }
