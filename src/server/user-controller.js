@@ -1,4 +1,3 @@
-import util from 'node:util';
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
@@ -118,7 +117,11 @@ class UserController {
 
   async handleGetLogoutPage(req, res) {
     if (req.isAuthenticated()) {
-      await util.promisify(req.logout)();
+      const logout = () => new Promise((resolve, reject) =>
+        req.logout(err => err ? reject(err) : resolve())
+      );
+
+      await logout();
       res.clearCookie(this.serverConfig.sessionCookieName);
     }
 
