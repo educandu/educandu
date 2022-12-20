@@ -28,7 +28,13 @@ class ErrorPageRenderer extends PageRendererBase {
       contentProps: props
     });
 
-    return res.status(error.status).type('html').send(html);
+    const headers = this.getHeaders({ xFrameOptions: this.serverConfig.xFrameOptions });
+
+    return res
+      .status(error.status)
+      .type('html')
+      .set(headers)
+      .send(html);
   }
 }
 
