@@ -29,6 +29,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | sessionSecret | The unique ID of the user session | `string` | no, defaults to a generated unique id |
  | sessionCookieDomain | The domain attribute to be set on the session cookie | `string` | no, defaults to the request's host header domain |
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
+ | sessionCookieSecure | The value of the cookie's "secure" flag. Note: When set to `true`, the cookie only gets set over an HTTPS connection | `boolean`, defaults to `false` | no |
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
