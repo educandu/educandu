@@ -284,6 +284,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
 
   let dialog = null;
   let isLoggingIn = false;
+  let isLoginFrozen = false;
   let createDialogProps = null;
 
   const handleLoginStarted = () => {
@@ -301,6 +302,11 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
 
   const handleLoginFailed = () => {
     isLoggingIn = false;
+    dialog.update(createDialogProps());
+  };
+
+  const handleLoginFailedTooOften = () => {
+    isLoginFrozen = true;
     dialog.update(createDialogProps());
   };
 
@@ -319,6 +325,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
           onLoginFailed={handleLoginFailed}
           onLoginStarted={handleLoginStarted}
           onLoginSucceeded={handleLoginSucceeded}
+          onLoginFailedTooOften={handleLoginFailedTooOften}
           />
       </div>
     );
@@ -332,7 +339,8 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
     onOk: handleOkClick,
     onCancel,
     okButtonProps: {
-      loading: isLoggingIn
+      loading: isLoggingIn,
+      disabled: isLoginFrozen
     }
   });
 
@@ -344,6 +352,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
 
   let dialog = null;
   let isLoggingIn = false;
+  let isLoginFrozen = false;
   let createDialogProps = null;
 
   const handleLoginStarted = () => {
@@ -364,6 +373,11 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
     dialog.update(createDialogProps());
   };
 
+  const handleLoginFailedTooOften = () => {
+    isLoginFrozen = true;
+    dialog.update(createDialogProps());
+  };
+
   const handleOkClick = () => {
     formRef.current.submit();
     return true;
@@ -379,6 +393,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
         onLoginFailed={handleLoginFailed}
         onLoginStarted={handleLoginStarted}
         onLoginSucceeded={handleLoginSucceeded}
+        onLoginFailedTooOften={handleLoginFailedTooOften}
         />
     </div>
   );
@@ -391,7 +406,8 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
     onOk: handleOkClick,
     okText: t('common:confirm'),
     okButtonProps: {
-      loading: isLoggingIn
+      loading: isLoggingIn,
+      disabled: isLoginFrozen
     }
   });
 

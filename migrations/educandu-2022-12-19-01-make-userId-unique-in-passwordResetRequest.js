@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop, camelcase, no-console */
 export default class Educandu_2022_12_19_01_make_userId_unique_in_passwordResetRequest {
   constructor(db) {
     this.db = db;

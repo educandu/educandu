@@ -15,6 +15,7 @@ describe('user-controller', () => {
   const sandbox = createSandbox();
 
   let passwordResetRequestService;
+  let requestLimitRecordService;
   let clientDataMappingService;
   let documentService;
   let storageService;
@@ -46,6 +47,11 @@ describe('user-controller', () => {
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
     };
+    requestLimitRecordService = {
+      isFailedLoginRequestLimitReached: sandbox.stub(),
+      incrementFailedLoginRequestCount: sandbox.stub(),
+      resetFailedLoginRequestCount: sandbox.stub()
+    };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
@@ -69,6 +75,7 @@ describe('user-controller', () => {
       storageService,
       documentService,
       passwordResetRequestService,
+      requestLimitRecordService,
       mailService,
       clientDataMappingService,
       roomService,

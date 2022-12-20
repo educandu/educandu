@@ -18,6 +18,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | --- | --- | --- | --- |
  | appName | The name of the application using educandu | `string` | yes |
  | port | Port on which the project is run | `number`, mininum 1 | no, defaults to 80 |
+ | trustProxy | Whether to trust proxies at all or how many maximum consecutive proxy hubs to trust | `boolean` or `number` (mininum 0) | no, defaults to `false` |
  | mongoConnectionString | The URI for the project's MongoDB | `string` | yes |
  | skipMaintenance | Whether or not to run MongoDB migrations and checks on startup | `boolean` | no, defaults to `false` |
  | cdnEndpoint | The URL of the AWS-hosted CDN | `string` | yes |

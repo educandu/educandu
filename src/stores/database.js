@@ -22,6 +22,7 @@ import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
+import requestLimitRecordsSpec from './collection-specs/request-limit-records.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
@@ -43,6 +44,7 @@ const collectionSpecs = [
   documentOrdersSpec,
   roomInvitationsSpec,
   documentRevisionsSpec,
+  requestLimitRecordsSpec,
   passwordResetRequestsSpec
 ];
 

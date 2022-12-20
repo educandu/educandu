@@ -1,4 +1,37 @@
 import cloneDeep from './clone-deep.js';
+import fastSafeStringify from 'fast-safe-stringify';
+
+const requestPropsToSerialize = [
+  'aborted',
+  'httpVersion',
+  'complete',
+  'headers',
+  'trailers',
+  'statusCode',
+  'statusMessage',
+  'method',
+  'url',
+  'query',
+  'originalUrl',
+  'protocol',
+  'secure',
+  'ip',
+  'ips',
+  'subdomains',
+  'path',
+  'hostname',
+  'fresh',
+  'stale',
+  'xhr',
+  'body',
+  'cookies',
+  'params',
+  'query',
+  'route',
+  'signedCookies',
+  'originalUrl',
+  'baseUrl'
+];
 
 function getHostInfo(req) {
   const proto = req.protocol;
@@ -20,7 +53,28 @@ function expressReqToRequest(req) {
   };
 }
 
+function requestToPlainObject(req) {
+  const result = {};
+
+  for (const propName of requestPropsToSerialize) {
+    const value = req[propName];
+    if (typeof value !== 'undefined') {
+      result[propName] = typeof value === 'object' && value !== null
+        ? JSON.parse(fastSafeStringify(value))
+        : value;
+    }
+  }
+
+  if (result.cookies) {
+    delete result.cookies.request;
+    delete result.cookies.response;
+  }
+
+  return result;
+}
+
 export default {
   getHostInfo,
-  expressReqToRequest
+  expressReqToRequest,
+  requestToPlainObject
 };

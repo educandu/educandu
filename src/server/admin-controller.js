@@ -2,6 +2,7 @@ import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { BATCH_TYPE } from '../domain/constants.js';
+import requestUtils from '../utils/request-utils.js';
 import BatchService from '../services/batch-service.js';
 import SettingService from '../services/setting-service.js';
 import StorageService from '../services/storage-service.js';
@@ -86,6 +87,10 @@ class AdminController {
     return res.status(201).send(batch);
   }
 
+  handleGetRequestInfoRequest(req, res) {
+    return res.send(requestUtils.requestToPlainObject(req));
+  }
+
   registerPages(router) {
     router.get(
       '/admin',
@@ -117,6 +122,12 @@ class AdminController {
       '/api/v1/admin/cdn-upload-directory-creation',
       needsPermission(permissions.ADMIN),
       (req, res) => this.handlePostCdnUploadDirectoryCreationRequest(req, res)
+    );
+
+    router.get(
+      '/api/v1/admin/request-info',
+      needsPermission(permissions.ADMIN),
+      (req, res) => this.handleGetRequestInfoRequest(req, res)
     );
   }
 }
