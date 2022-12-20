@@ -112,16 +112,10 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
   }
 
-  async handleGetLogoutPage(req, res, next) {
+  async handleGetLogoutPage(req, res) {
     if (req.isAuthenticated()) {
-      const logout = util.promisify(req.logout);
-
-      try {
-        await logout();
-        res.clearCookie(this.serverConfig.sessionCookieName);
-      } catch (err) {
-        return next(err);
-      }
+      await util.promisify(req.logout)();
+      res.clearCookie(this.serverConfig.sessionCookieName);
     }
 
     return res.redirect(routes.getDefaultLogoutRedirectUrl());
@@ -417,7 +411,7 @@ class UserController {
 
     router.get('/login', (req, res) => this.handleGetLoginPage(req, res));
 
-    router.get('/logout', (req, res, next) => this.handleGetLogoutPage(req, res, next));
+    router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
