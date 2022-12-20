@@ -283,8 +283,8 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   const formRef = createRef();
 
   let dialog = null;
-  let isFrozen = false;
   let isLoggingIn = false;
+  let isLoginFrozen = false;
   let createDialogProps = null;
 
   const handleLoginStarted = () => {
@@ -306,7 +306,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   };
 
   const handleLoginFailedTooOften = () => {
-    isFrozen = true;
+    isLoginFrozen = true;
     dialog.update(createDialogProps());
   };
 
@@ -340,7 +340,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
     onCancel,
     okButtonProps: {
       loading: isLoggingIn,
-      disabled: isFrozen
+      disabled: isLoginFrozen
     }
   });
 
@@ -351,8 +351,8 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
   const formRef = createRef();
 
   let dialog = null;
-  let isFrozen = false;
   let isLoggingIn = false;
+  let isLoginFrozen = false;
   let createDialogProps = null;
 
   const handleLoginStarted = () => {
@@ -374,7 +374,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
   };
 
   const handleLoginFailedTooOften = () => {
-    isFrozen = true;
+    isLoginFrozen = true;
     dialog.update(createDialogProps());
   };
 
@@ -407,7 +407,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
     okText: t('common:confirm'),
     okButtonProps: {
       loading: isLoggingIn,
-      disabled: isFrozen
+      disabled: isLoginFrozen
     }
   });
 
