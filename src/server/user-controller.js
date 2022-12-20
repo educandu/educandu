@@ -1,3 +1,4 @@
+import util from 'node:util';
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
@@ -111,10 +112,16 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
   }
 
-  handleGetLogoutPage(req, res) {
+  async handleGetLogoutPage(req, res, next) {
     if (req.isAuthenticated()) {
-      req.logout();
-      res.clearCookie(this.serverConfig.sessionCookieName);
+      const logout = util.promisify(req.logout);
+
+      try {
+        await logout();
+        res.clearCookie(this.serverConfig.sessionCookieName);
+      } catch (err) {
+        return next(err);
+      }
     }
 
     return res.redirect(routes.getDefaultLogoutRedirectUrl());
@@ -410,7 +417,7 @@ class UserController {
 
     router.get('/login', (req, res) => this.handleGetLoginPage(req, res));
 
-    router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
+    router.get('/logout', (req, res, next) => this.handleGetLogoutPage(req, res, next));
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
