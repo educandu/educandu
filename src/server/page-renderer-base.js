@@ -22,6 +22,20 @@ class PageRendererBase {
 
     return `<!DOCTYPE html>${EOL}${page}${EOL}`;
   }
+
+  getHeaders({ xFrameOptions } = {}) {
+    const headers = {
+      'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
+    };
+
+    if (xFrameOptions) {
+      headers['X-Frame-Options'] = xFrameOptions;
+    }
+
+    return headers;
+  }
 }
 
 export default PageRendererBase;

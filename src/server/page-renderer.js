@@ -90,13 +90,11 @@ class PageRenderer extends PageRendererBase {
       additionalHeadHtml: this.serverConfig.additionalHeadHtml
     });
 
+    const headers = this.getHeaders({ xFrameOptions: this.serverConfig.xFrameOptions });
+
     return res
       .type('html')
-      .set({
-        'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
-      })
+      .set(headers)
       .send(html);
   }
 }

@@ -28,6 +28,7 @@ let currentCdnProxy = null;
 
 const testAppEnv = {
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
+  TEST_APP_SKIP_MAINTENANCE: false.toString(),
   TEST_APP_CDN_ENDPOINT: 'http://localhost:9000',
   TEST_APP_CDN_REGION: 'eu-central-1',
   TEST_APP_CDN_ACCESS_KEY: 'UVDXF41PYEAX0PXD8826',
@@ -37,11 +38,13 @@ const testAppEnv = {
   TEST_APP_SESSION_SECRET: 'd4340515fa834498b3ab1aba1e4d9013',
   TEST_APP_SESSION_COOKIE_DOMAIN: 'localhost',
   TEST_APP_SESSION_COOKIE_NAME: 'SESSION_ID_TEST_APP_LOCAL',
+  TEST_APP_CONSENT_COOKIE_NAME_PREFIX: 'CONSENT_TEST_APP',
+  TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME: 'UPLOAD_LIABILITY_TEST_APP',
+  TEST_APP_X_FRAME_OPTIONS: 'SAMEORIGIN',
   TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
-  TEST_APP_SKIP_MAINTENANCE: false.toString(),
   TEST_APP_AMB_API_KEY: '4985nvcz56v1'
 };
 
