@@ -1,12 +1,13 @@
 import Logger from '../common/logger.js';
 import { createShortHash } from '../utils/string-utils.js';
 import RequestLimitRecordStore from '../stores/request-limit-record-store.js';
+import {
+  FAILED_LOGIN_ATTEMPTS_KEY,
+  FAILED_LOGIN_ATTEMPTS_LIMIT,
+  FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS
+} from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
-
-const FAILED_LOGIN_ATTEMPTS_THRESHOLD = 5;
-const FAILED_LOGIN_ATTEMPTS_KEY = 'failed-login-attempts';
-const FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS = 15 * 60 * 1000;
 
 export default class RequestLimitRecordService {
   static get inject() {
@@ -17,17 +18,13 @@ export default class RequestLimitRecordService {
     this.requestLimitRecordStore = requestLimitRecordStore;
   }
 
-  getRoomById(roomId) {
-    return this.roomStore.getRoomById(roomId);
-  }
-
   async isFailedLoginRequestLimitReached(req) {
     const record = await this.requestLimitRecordStore.getRequestLimitRecord({
       requestKey: FAILED_LOGIN_ATTEMPTS_KEY,
       ipAddress: req.ip
     });
 
-    return !!record && record.count >= FAILED_LOGIN_ATTEMPTS_THRESHOLD;
+    return !!record && record.count >= FAILED_LOGIN_ATTEMPTS_LIMIT;
   }
 
   async incrementFailedLoginRequestCount(req) {

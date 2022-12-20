@@ -196,6 +196,10 @@ export const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
 export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
+export const FAILED_LOGIN_ATTEMPTS_LIMIT = 5;
+export const FAILED_LOGIN_ATTEMPTS_KEY = 'failed-login-attempts';
+export const FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS = 15 * 60 * 1000;
+
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
