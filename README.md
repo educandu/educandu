@@ -26,27 +26,28 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | cdnSecretKey | The secret key of the AWS-hosted CDN | `string` | yes |
  | cdnBucketName | The name of the AWS S3 bucket storing the CDN data | `string` | yes |
  | cdnRootUrl | The root url of the CDN | `string` | yes |
+ | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
+ | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
+ | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
+ | themeFile | URL to overrides of educandu LESS variables, through which the AntDesign theme is set | `string`  | no |
+ | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
+ | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
  | sessionSecret | The unique ID of the user session | `string` | no, defaults to a generated unique id |
  | sessionCookieDomain | The domain attribute to be set on the session cookie | `string` | no, defaults to the request's host header domain |
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
  | sessionCookieSecure | The value of the cookie's "secure" flag. Note: When set to `true`, the cookie only gets set over an HTTPS connection | `boolean`, defaults to `false` | no |
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
- | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
- | emailSenderAddress | The email address from which emails are sent | `string` | yes |
- | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
- | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
- | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
- | themeFile | URL to overrides of educandu LESS variables  | `string`  | no |
- | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
- | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
- | disabledFeatures | A list of names of disabled features | `string[]` | no |
- | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
- | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
- | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
- | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
+ | xFrameOptions | Value for the `X-Frame-Options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
+ | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
+ | emailSenderAddress | The email address from which emails are sent | `string` | yes |
+ | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
+ | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
+ | disabledFeatures | A list of names of disabled features | `string[]` | no |
+ | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
+ | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }] }, about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}]` | no, however if provided, `apiKey` is mandatory |
 
 ## How to use
@@ -61,30 +62,66 @@ Use it in code as follows:
 import educandu from '@educandu/educandu';
 
 educandu({
+  appName: 'My educandu app',
   port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
-  skipMaintenance: process.env.TEST_APP_SKIP_MAINTENANCE === true.toString(),
+  skipMaintenance: false,
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
   cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
   cdnBucketName: 'dev-educandu-cdn',
   cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
-  sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-  sessionDurationInMinutes: 60,
-  emailSenderAddress: 'educandu-test-app@test.com',
-  smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+  bundleConfig: {
+    getPageTemplateComponent: null,
+    getHomePageTemplateComponent: null,
+    getSiteLogoComponent: null
+  }).required(),
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
+  themeFile: path.resolve('./test-app/theme.less'),
+  additionalControllers: [MyCustomPageController],
+  additionalHeadHtml: '<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png?v=cakfaagbe\">\n<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon-32x32.png?v=cakfaagbe\">',
+  sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
+  sessionCookieDomain: 'localhost',
+  sessionCookieName: 'APP_SESSION_ID',
+  sessionCookieSecure: false,
+  sessionDurationInMinutes: 60,
+  consentCookieNamePrefix: 'APP_CONSENT_COOKIE_NAME',
+  uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME',
+  xFrameOptions: 'SAMEORIGIN',
+  smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+  emailSenderAddress: 'educandu-test-app@test.com',
   initialUser: {
     email: 'test@test.com',
     password: 'test',
     displayName: 'Testibus'
   },
+  basicAuthUsers: {
+    gatekeeper: 'gatekeeperPassword'
+  },
+  plugins: ['markdown', 'image', 'table', 'audio', 'video'],
   exposeErrorDetails: true,
-  additionalControllers: [],
-  consentCookieNamePrefix 'APP_CONSENT_COOKIE_NAME'
-  uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME'
+  taskProcessing: {
+    isEnabled: true,
+    idlePollIntervalInMs: 10000,
+    maxAttempts: 3
+  },
+  ambConfig {
+    apiKey: 'C36CAD3A805A11EDA1EB0242AC120002',
+    image: './test-app/images/app-logo.png',
+    publisher: [
+      {
+        type: 'Organization',
+        name: 'My educandu app'
+      }
+    ],
+    about: [
+      {
+        id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
+      }
+    ]
+  }
 });
 ~~~
 

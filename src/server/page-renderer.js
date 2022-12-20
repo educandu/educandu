@@ -90,13 +90,19 @@ class PageRenderer extends PageRendererBase {
       additionalHeadHtml: this.serverConfig.additionalHeadHtml
     });
 
+    const headers = {
+      'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
+    };
+
+    if (this.serverConfig.xFrameOptions) {
+      headers['X-Frame-Options'] = this.serverConfig.xFrameOptions;
+    }
+
     return res
       .type('html')
-      .set({
-        'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
-      })
+      .set(headers)
       .send(html);
   }
 }
