@@ -34,11 +34,11 @@ jobs:
           - 8000:8000
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.2.0
         with:
           fetch-depth: 0
       - name: Install node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.5.1
         with:
           node-version: "18.12.1"
           cache: "yarn"
