@@ -27,7 +27,7 @@ export default class EducanduServer {
 
     this.app.on('error', err => logger.error(err));
 
-    this.app.enable('trust proxy');
+    this.app.enable('trust proxy', this.serverConfig.trustProxy);
 
     this.app.use(useragent.express());
 

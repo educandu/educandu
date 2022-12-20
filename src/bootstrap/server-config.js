@@ -12,6 +12,7 @@ const defaultTaskProcessing = {
 const configSchema = joi.object({
   appName: joi.string().required(),
   port: joi.number().min(1).default(80),
+  trustProxy: joi.alternatives(joi.boolean(), joi.number().integer().min(0)).default(false),
   mongoConnectionString: joi.string().required(),
   skipMaintenance: joi.boolean().default(false),
   cdnEndpoint: joi.string().required(),

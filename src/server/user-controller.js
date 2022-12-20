@@ -25,6 +25,7 @@ import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import { COOKIE_SAME_SITE_POLICY, SAVE_USER_RESULT } from '../domain/constants.js';
+import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
   postUserBodySchema,
@@ -40,7 +41,7 @@ import {
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden } = httpErrors;
+const { NotFound, Forbidden, TooManyRequests } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -54,6 +55,7 @@ class UserController {
       StorageService,
       DocumentService,
       PasswordResetRequestService,
+      RequestLimitRecordService,
       MailService,
       ClientDataMappingService,
       RoomService,
@@ -68,6 +70,7 @@ class UserController {
     storageService,
     documentService,
     passwordResetRequestService,
+    requestLimitRecordService,
     mailService,
     clientDataMappingService,
     roomService,
@@ -82,6 +85,7 @@ class UserController {
     this.storageService = storageService;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
+    this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
   }
 
@@ -198,14 +202,21 @@ class UserController {
     res.status(201).send({ user: updatedUser });
   }
 
-  handlePostUserLogin(req, res, next) {
-    passport.authenticate('local', (err, user) => {
+  async handlePostUserLogin(req, res, next) {
+    if (await this.requestLimitRecordService.isFailedLoginRequestLimitReached(req)) {
+      throw new TooManyRequests();
+    }
+
+    passport.authenticate('local', async (err, user) => {
       if (err) {
         return next(err);
       }
 
       if (!user) {
+        await this.requestLimitRecordService.incrementFailedLoginRequestCount(req);
         return res.status(201).send({ user: null });
+      } else {
+        await this.requestLimitRecordService.resetFailedLoginRequestCount(req);
       }
 
       return req.login(user, loginError => {

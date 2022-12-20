@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { escapeHtml, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
+import { createShortHash, escapeHtml, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
 
 describe('string-utils', () => {
 
@@ -46,6 +46,14 @@ describe('string-utils', () => {
     it('returns an array of tokens keeping all words intact', () => {
       const result = splitAroundWords('Wörter und Zeichen/Sonderzeichen und Café!');
       expect(result).toStrictEqual(['Wörter', ' ', 'und', ' ', 'Zeichen', '/', 'Sonderzeichen', ' ', 'und', ' ', 'Café', '!']);
+    });
+  });
+
+  describe('createShortHash', () => {
+    it('returns the same hash code for the same input', () => {
+      const result1 = createShortHash('Hello World!');
+      const result2 = createShortHash('Hello World!');
+      expect(result1).toBe(result2);
     });
   });
 

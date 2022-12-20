@@ -537,7 +537,8 @@
     "resources": {
       "enterEmail": "Please enter your email address",
       "enterPassword": "Please enter your password",
-      "loginFailed": "Login failed. Please check your input."
+      "loginFailed": "Login failed. Please check your input.",
+      "loginFailedTooOften": "Too many failed login attempts. Please try again later."
     }
   },
   {
@@ -546,7 +547,8 @@
     "resources": {
       "enterEmail": "Bitte gib deine E-Mail-Adresse an",
       "enterPassword": "Bitte gib dein Kennwort an",
-      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe."
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.",
+      "loginFailedTooOften": "Zu viele fehlgeschlagene Anmeldungsversuche. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal."
     }
   },
   {

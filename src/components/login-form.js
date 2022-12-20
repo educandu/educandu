@@ -9,6 +9,8 @@ import { handleApiError } from '../ui/error-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
+const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
+
 const logger = new Logger(import.meta.url);
 
 export default function LoginForm({
@@ -17,13 +19,16 @@ export default function LoginForm({
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  formRef
+  onLoginFailedTooOften,
+  formRef,
+  disabled
 }) {
   const [form] = Form.useForm();
   const setUser = useSetUser();
   const { t } = useTranslation('loginForm');
   const userApiClient = useService(UserApiClient);
-  const [loginError, setLoginError] = useState(null);
+  const [hasLoginFailed, setHasLoginFailed] = useState(false);
+  const [hasLoginFailedTooOften, setHasLoginFailedTooOften] = useState(false);
 
   if (formRef) {
     formRef.current = form;
@@ -33,14 +38,6 @@ export default function LoginForm({
     ensureFormValuesAfterHydration(form, ['email', 'password']);
   }, [form]);
 
-  const showLoginError = () => {
-    setLoginError(t('loginFailed'));
-  };
-
-  const clearLoginError = () => {
-    setLoginError(null);
-  };
-
   const login = async ({ email, password }) => {
     try {
       onLoginStarted();
@@ -49,17 +46,24 @@ export default function LoginForm({
         setUser(user);
         onLoginSucceeded();
       } else {
-        showLoginError();
+        setHasLoginFailed(true);
         onLoginFailed();
       }
     } catch (error) {
-      handleApiError({ error, logger, t });
-      onLoginFailed();
+      if (error.status === HTTP_STATUS_TOO_MANY_REQUESTS) {
+        setHasLoginFailedTooOften(true);
+        onLoginFailed();
+        onLoginFailedTooOften();
+      } else {
+        handleApiError({ error, logger, t });
+        onLoginFailed();
+      }
     }
   };
 
   const handleFinish = values => {
-    clearLoginError();
+    setHasLoginFailed(false);
+    setHasLoginFailedTooOften(false);
     const { email, password } = values;
     login({ email: email.trim(), password });
   };
@@ -87,6 +91,15 @@ export default function LoginForm({
     }
   ];
 
+  let loginError;
+  if (hasLoginFailedTooOften) {
+    loginError = t('loginFailedTooOften');
+  } else if (hasLoginFailed) {
+    loginError = t('loginFailed');
+  } else {
+    loginError = null;
+  }
+
   return (
     <Form
       form={form}
@@ -104,14 +117,14 @@ export default function LoginForm({
         initialValue={fixedEmail || ''}
         hidden={!!fixedEmail}
         >
-        <Input onPressEnter={handlePressEnter} />
+        <Input onPressEnter={handlePressEnter} disabled={disabled} />
       </Form.Item>
       <Form.Item
         label={t('common:password')}
         name="password"
         rules={passwordValidationRules}
         >
-        <Input type="password" onPressEnter={handlePressEnter} />
+        <Input type="password" onPressEnter={handlePressEnter} disabled={disabled} />
       </Form.Item>
       {!!loginError && <div className="LoginForm-errorMessage">{loginError}</div>}
     </Form>
@@ -124,16 +137,20 @@ LoginForm.propTypes = {
     current: PropTypes.object
   }),
   name: PropTypes.string,
+  disabled: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
-  onLoginSucceeded: PropTypes.func
+  onLoginSucceeded: PropTypes.func,
+  onLoginFailedTooOften: PropTypes.func
 };
 
 LoginForm.defaultProps = {
   fixedEmail: null,
   formRef: null,
   name: 'login-form',
+  disabled: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
-  onLoginSucceeded: () => {}
+  onLoginSucceeded: () => {},
+  onLoginFailedTooOften: () => {},
 };

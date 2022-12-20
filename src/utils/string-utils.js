@@ -55,3 +55,9 @@ export function splitAroundWords(word) {
   }
   return tokens;
 }
+
+export function createShortHash(value) {
+  return String(value).split('').reduce((prevHash, currVal) => {
+    return (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0;
+  }, 0).toString(16);
+}
