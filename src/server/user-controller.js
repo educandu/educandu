@@ -1,3 +1,4 @@
+import util from 'node:util';
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
@@ -111,9 +112,9 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
   }
 
-  handleGetLogoutPage(req, res) {
+  async handleGetLogoutPage(req, res) {
     if (req.isAuthenticated()) {
-      req.logout();
+      await util.promisify(req.logout)();
       res.clearCookie(this.serverConfig.sessionCookieName);
     }
 
