@@ -15,6 +15,7 @@ import MailService from '../services/mail-service.js';
 import RoomService from '../services/room-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import rateLimit from '../domain/rate-limit-middleware.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
@@ -24,9 +25,16 @@ import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { COOKIE_SAME_SITE_POLICY, SAVE_USER_RESULT } from '../domain/constants.js';
 import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
+import {
+  COOKIE_SAME_SITE_POLICY,
+  FAILED_LOGIN_ATTEMPTS_LIMIT,
+  FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS,
+  PASSWORD_RESET_REQUEST_LIMIT,
+  PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
+  SAVE_USER_RESULT
+} from '../domain/constants.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -87,6 +95,12 @@ class UserController {
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
+
+    this.passwordResetRateLimitOptions = {
+      maxRequests: PASSWORD_RESET_REQUEST_LIMIT,
+      expiresInMs: PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
+      store: this.requestLimitRecordService
+    };
   }
 
   handleGetRegisterPage(req, res) {
@@ -207,7 +221,8 @@ class UserController {
   }
 
   async handlePostUserLogin(req, res, next) {
-    if (await this.requestLimitRecordService.isFailedLoginRequestLimitReached(req)) {
+    const failedAttemptsCount = await this.requestLimitRecordService.getCount({ req });
+    if (failedAttemptsCount >= FAILED_LOGIN_ATTEMPTS_LIMIT) {
       throw new TooManyRequests();
     }
 
@@ -217,10 +232,10 @@ class UserController {
       }
 
       if (!user) {
-        await this.requestLimitRecordService.incrementFailedLoginRequestCount(req);
+        await this.requestLimitRecordService.incrementCount({ req, expiresInMs: FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS });
         return res.status(201).send({ user: null });
       } else {
-        await this.requestLimitRecordService.resetFailedLoginRequestCount(req);
+        await this.requestLimitRecordService.resetCount({ req });
       }
 
       return req.login(user, loginError => {
@@ -441,31 +456,40 @@ class UserController {
 
     router.post(
       '/api/v1/users',
-      [jsonParser, validateBody(postUserBodySchema)],
+      jsonParser,
+      validateBody(postUserBodySchema),
       (req, res) => this.handlePostUser(req, res)
     );
 
     router.post(
       '/api/v1/users/request-password-reset',
-      [jsonParser, validateBody(postUserPasswordResetRequestBodySchema)],
+      rateLimit(this.passwordResetRateLimitOptions),
+      jsonParser,
+      validateBody(postUserPasswordResetRequestBodySchema),
       (req, res) => this.handlePostUserPasswordResetRequest(req, res)
     );
 
     router.post(
       '/api/v1/users/complete-password-reset',
-      [jsonParser, validateBody(postUserPasswordResetCompletionBodySchema)],
+      rateLimit(this.passwordResetRateLimitOptions),
+      jsonParser,
+      validateBody(postUserPasswordResetCompletionBodySchema),
       (req, res) => this.handlePostUserPasswordResetCompletion(req, res)
     );
 
     router.post(
       '/api/v1/users/account',
-      [needsAuthentication(), jsonParser, validateBody(postUserAccountBodySchema)],
+      needsAuthentication(),
+      jsonParser,
+      validateBody(postUserAccountBodySchema),
       (req, res) => this.handlePostUserAccount(req, res)
     );
 
     router.post(
       '/api/v1/users/profile',
-      [needsAuthentication(), jsonParser, validateBody(postUserProfileBodySchema)],
+      needsAuthentication(),
+      jsonParser,
+      validateBody(postUserProfileBodySchema),
       (req, res) => this.handlePostUserProfile(req, res)
     );
 
@@ -478,31 +502,42 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/roles',
-      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserRolesBodySchema)],
+      needsPermission(permissions.EDIT_USERS),
+      jsonParser,
+      validateParams(userIdParamsSchema),
+      validateBody(postUserRolesBodySchema),
       (req, res) => this.handlePostUserRoles(req, res)
     );
 
     router.post(
       '/api/v1/users/:userId/lockedOut',
-      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserLockedOutBodySchema)],
+      needsPermission(permissions.EDIT_USERS),
+      jsonParser,
+      validateParams(userIdParamsSchema),
+      validateBody(postUserLockedOutBodySchema),
       (req, res) => this.handlePostUserLockedOut(req, res)
     );
 
     router.post(
       '/api/v1/users/:userId/storagePlan',
-      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserStoragePlanBodySchema)],
+      needsPermission(permissions.EDIT_USERS),
+      jsonParser,
+      validateParams(userIdParamsSchema),
+      validateBody(postUserStoragePlanBodySchema),
       (req, res) => this.handlePostUserStoragePlan(req, res)
     );
 
     router.post(
       '/api/v1/users/:userId/storageReminders',
-      [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
+      needsPermission(permissions.EDIT_USERS),
+      validateParams(userIdParamsSchema),
       (req, res) => this.handlePostUserStorageReminder(req, res)
     );
 
     router.delete(
       '/api/v1/users/:userId/storageReminders',
-      [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
+      needsPermission(permissions.EDIT_USERS),
+      validateParams(userIdParamsSchema),
       (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
     );
 

@@ -197,8 +197,10 @@ export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
 export const FAILED_LOGIN_ATTEMPTS_LIMIT = 5;
-export const FAILED_LOGIN_ATTEMPTS_KEY = 'failed-login-attempts';
 export const FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS = 15 * 60 * 1000;
+
+export const PASSWORD_RESET_REQUEST_LIMIT = 10;
+export const PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS = 60 * 60 * 1000;
 
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
@@ -223,3 +225,11 @@ export const DEFAULT_COLOR_SWATCHES = [
   ['#fffbe6', '#fff1b8', '#ffe58f', '#ffd666', '#ffc53d', '#faad14', '#d48806', '#ad6800', '#874d00', '#613400'],
   ['#ffffff', '#fafafa', '#f5f5f5', '#e8e8e8', '#d9d9d9', '#bfbfbf', '#8c8c8c', '#595959', '#262626', '#000000']
 ];
+
+export const HTTP_STATUS = {
+  badRequest: 400,
+  unauthorized: 401,
+  notFound: 404,
+  tooManyRequests: 429,
+  internalServerError: 500
+};

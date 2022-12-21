@@ -1,9 +1,4 @@
 import RequestLimitRecordStore from '../stores/request-limit-record-store.js';
-import {
-  FAILED_LOGIN_ATTEMPTS_KEY,
-  FAILED_LOGIN_ATTEMPTS_LIMIT,
-  FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS
-} from '../domain/constants.js';
 
 export default class RequestLimitRecordService {
   static get inject() {
@@ -14,27 +9,27 @@ export default class RequestLimitRecordService {
     this.requestLimitRecordStore = requestLimitRecordStore;
   }
 
-  async isFailedLoginRequestLimitReached(req) {
+  async getCount({ req }) {
     const record = await this.requestLimitRecordStore.getRequestLimitRecord({
-      requestKey: FAILED_LOGIN_ATTEMPTS_KEY,
+      requestKey: req.path,
       ipAddress: req.ip
     });
-
-    return !!record && record.count >= FAILED_LOGIN_ATTEMPTS_LIMIT;
+    return record?.count || 0;
   }
 
-  async incrementFailedLoginRequestCount(req) {
-    return await this.requestLimitRecordStore.incrementCount({
-      requestKey: FAILED_LOGIN_ATTEMPTS_KEY,
+  async incrementCount({ req, expiresInMs }) {
+    const record = await this.requestLimitRecordStore.incrementCount({
+      requestKey: req.path,
       ipAddress: req.ip,
-      expiresInMs: FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS,
+      expiresInMs,
       resetExpiresOnUpdate: false
     });
+    return record.count;
   }
 
-  async resetFailedLoginRequestCount(req) {
+  async resetCount({ req }) {
     await this.requestLimitRecordStore.deleteRequestLimitRecord({
-      requestKey: FAILED_LOGIN_ATTEMPTS_KEY,
+      requestKey: req.path,
       ipAddress: req.ip
     });
   }
