@@ -21,6 +21,7 @@ import DocumentService from '../services/document-service.js';
 import { ambMetadataUser } from '../domain/built-in-users.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -333,41 +334,6 @@ class UserController {
   }
 
   registerMiddleware(router) {
-    router.use(session({
-      name: this.serverConfig.sessionCookieName,
-      cookie: {
-        httpOnly: true,
-        sameSite: COOKIE_SAME_SITE_POLICY,
-        domain: this.serverConfig.sessionCookieDomain,
-        secure: this.serverConfig.sessionCookieSecure
-      },
-      secret: this.serverConfig.sessionSecret,
-      resave: false,
-      saveUninitialized: false, // Don't create session until something stored
-      store: MongoStore.create({
-        client: this.database._mongoClient,
-        collectionName: sessionsStoreSpec.name,
-        ttl: this.serverConfig.sessionDurationInMinutes * 60,
-        autoRemove: 'disabled', // We use our own index
-        stringify: false // Do not serialize session data
-      })
-    }));
-
-    if (!this.serverConfig.sessionCookieDomain) {
-      router.use((req, res, next) => {
-        if (req.session?.cookie) {
-          const { domain } = requestUtils.getHostInfo(req);
-          req.session.cookie.domain = domain;
-        }
-
-        next();
-      });
-    }
-
-    router.use(passport.initialize());
-    router.use(passport.session());
-    router.use(passport.authenticate('apikey', { session: false }));
-
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
       const { ambConfig } = this.serverConfig;
 
@@ -399,6 +365,48 @@ class UserController {
         return cb(err);
       }
     });
+
+    router.use(session({
+      name: this.serverConfig.sessionCookieName,
+      cookie: {
+        httpOnly: true,
+        sameSite: COOKIE_SAME_SITE_POLICY,
+        domain: this.serverConfig.sessionCookieDomain,
+        secure: this.serverConfig.sessionCookieSecure
+      },
+      secret: this.serverConfig.sessionSecret,
+      resave: false,
+      saveUninitialized: false, // Don't create session until something stored
+      store: MongoStore.create({
+        client: this.database._mongoClient,
+        collectionName: sessionsStoreSpec.name,
+        ttl: this.serverConfig.sessionDurationInMinutes * 60,
+        autoRemove: 'disabled', // We use our own index
+        stringify: false // Do not serialize session data
+      }),
+      genid: generateSessionId
+    }));
+
+    router.use((req, res, next) => {
+      return isSessionValid(req)
+        ? next()
+        : req.session.regenerate(next);
+    });
+
+    if (!this.serverConfig.sessionCookieDomain) {
+      router.use((req, res, next) => {
+        if (req.session?.cookie) {
+          const { domain } = requestUtils.getHostInfo(req);
+          req.session.cookie.domain = domain;
+        }
+
+        next();
+      });
+    }
+
+    router.use(passport.initialize());
+    router.use(passport.session());
+    router.use(passport.authenticate('apikey', { session: false }));
 
     router.use(async (req, res, next) => {
       try {
