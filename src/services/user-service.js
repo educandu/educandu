@@ -282,33 +282,21 @@ class UserService {
     return user;
   }
 
-  async authenticateUser({ email, password }) {
+  async findConfirmedActiveUserByEmailAndPassword({ email, password }) {
     if (!email || !password) {
-      return false;
+      return null;
     }
 
-    const lowerCasedEmail = email.toLowerCase() || '';
+    const lowerCasedEmail = email.toLowerCase();
 
-    const possibleMatches = await this.userStore.findActiveUsersByEmail(lowerCasedEmail);
+    const user = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
 
-    let user;
-    switch (possibleMatches.length) {
-      case 0:
-        user = null;
-        break;
-      case 1:
-        user = possibleMatches[0];
-        break;
-      default:
-        user = possibleMatches.find(match => match.email === lowerCasedEmail);
-    }
-
-    if (!user || user.expiresOn || user.accountLockedOn) {
-      return false;
+    if (!user || user.expires) {
+      return null;
     }
 
     const doesPasswordMatch = await bcrypt.compare(password, user.passwordHash);
-    return doesPasswordMatch ? user : false;
+    return doesPasswordMatch ? user : null;
   }
 
   async createPasswordResetRequest(user) {

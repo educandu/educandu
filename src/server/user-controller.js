@@ -30,6 +30,7 @@ import RequestLimitRecordService from '../services/request-limit-record-service.
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
   COOKIE_SAME_SITE_POLICY,
+  ERROR_CODES,
   FAILED_LOGIN_ATTEMPTS_LIMIT,
   FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS,
   PASSWORD_RESET_REQUEST_LIMIT,
@@ -235,10 +236,9 @@ class UserController {
       if (!user) {
         await this.requestLimitRecordService.incrementCount({ req, expiresInMs: FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS });
         return res.status(201).send({ user: null });
-      } else {
-        await this.requestLimitRecordService.resetCount({ req });
       }
 
+      await this.requestLimitRecordService.resetCount({ req });
       const updatedUser = await this.userService.recordUserLogIn(user._id);
 
       return req.login(updatedUser, loginError => {
@@ -373,8 +373,16 @@ class UserController {
       usernameField: 'email',
       passwordField: 'password'
     }, (email, password, cb) => {
-      this.userService.authenticateUser({ email, password })
-        .then(user => cb(null, user || false))
+      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
+        .then(user => {
+          if (user?.accountLockedOn) {
+            const err = new Error('User account is locked');
+            err.code = ERROR_CODES.userAccountLocked;
+            throw err;
+          }
+
+          return cb(null, user || false);
+        })
         .catch(err => cb(err));
     }));
 

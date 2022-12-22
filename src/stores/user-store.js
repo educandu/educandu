@@ -13,22 +13,6 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findActiveUsersByEmail(email, { session } = {}) {
-    const queryFilters = [];
-
-    if (email) {
-      queryFilters.push({ email });
-    }
-
-    if (!queryFilters.length) {
-      return [];
-    }
-
-    return this.collection
-      .find({ $and: [{ accountClosedOn: null }, { $or: queryFilters }] }, { session })
-      .toArray();
-  }
-
   findUserByVerificationCode(verificationCode, { session } = {}) {
     return this.collection.findOne({ verificationCode }, { session });
   }

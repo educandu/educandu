@@ -11,7 +11,8 @@ import {
   pruneTestEnvironment,
   setupTestUser,
   createTestRoom,
-  createTestDocument
+  createTestDocument,
+  updateTestUser
 } from '../test-helper.js';
 
 const { NotFound } = httpErrors;
@@ -51,30 +52,30 @@ describe('user-service', () => {
     sandbox.restore();
   });
 
-  describe('authenticateUser', () => {
+  describe('findConfirmedActiveUserByEmailAndPassword', () => {
     let result;
 
     describe('when email doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ email: 'unknown', password });
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: 'unknown', password });
       });
       it('should return null', () => {
-        expect(result).toBe(false);
+        expect(result).toBe(null);
       });
     });
 
     describe('when password doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ email: user.email, password: 'wrong!' });
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password: 'wrong!' });
       });
       it('should return null', () => {
-        expect(result).toBe(false);
+        expect(result).toBe(null);
       });
     });
 
     describe('when email matches', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ email: user.email, password });
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password });
       });
       it('should return the user', () => {
         expect(result).toEqual(user);
@@ -83,9 +84,31 @@ describe('user-service', () => {
 
     describe('when email matches in a different casing', () => {
       beforeEach(async () => {
-        result = await sut.authenticateUser({ email: user.email.toUpperCase(), password });
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email.toUpperCase(), password });
       });
-      it('should return the user', () => {
+      it('should still return the user', () => {
+        expect(result).toEqual(user);
+      });
+    });
+
+    describe('when email and password match but the account is closed', () => {
+      beforeEach(async () => {
+        user.accountClosedOn = new Date('2022-12-01T12:00:00.000Z');
+        await updateTestUser(container, user);
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password });
+      });
+      it('should return null', () => {
+        expect(result).toBe(null);
+      });
+    });
+
+    describe('when email and password match but the user account is locked', () => {
+      beforeEach(async () => {
+        user.accountLockedOn = new Date();
+        await updateTestUser(container, user);
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password });
+      });
+      it('should still return the user', () => {
         expect(result).toEqual(user);
       });
     });

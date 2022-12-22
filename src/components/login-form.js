@@ -5,9 +5,10 @@ import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
-import { HTTP_STATUS } from '../domain/constants.js';
 import { handleApiError } from '../ui/error-helper.js';
+import BlockedLoginError from './blocked-login-error.js';
 import UserApiClient from '../api-clients/user-api-client.js';
+import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
@@ -18,15 +19,15 @@ export default function LoginForm({
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  onLoginFailedTooOften,
-  formRef,
-  disabled
+  onLoginBlocked,
+  formRef
 }) {
-  const [form] = Form.useForm();
   const setUser = useSetUser();
+  const [form] = Form.useForm();
   const { t } = useTranslation('loginForm');
   const userApiClient = useService(UserApiClient);
   const [hasLoginFailed, setHasLoginFailed] = useState(false);
+  const [isUserAccountLocked, setIsUserAccountLocked] = useState(false);
   const [hasLoginFailedTooOften, setHasLoginFailedTooOften] = useState(false);
 
   if (formRef) {
@@ -52,7 +53,12 @@ export default function LoginForm({
       if (error.status === HTTP_STATUS.tooManyRequests) {
         setHasLoginFailedTooOften(true);
         onLoginFailed();
-        onLoginFailedTooOften();
+        onLoginBlocked();
+      } else if (error.code === ERROR_CODES.userAccountLocked) {
+        setIsUserAccountLocked(true);
+        setHasLoginFailed(true);
+        onLoginFailed();
+        onLoginBlocked();
       } else {
         handleApiError({ error, logger, t });
         onLoginFailed();
@@ -90,43 +96,43 @@ export default function LoginForm({
     }
   ];
 
-  let loginError;
-  if (hasLoginFailedTooOften) {
-    loginError = t('loginFailedTooOften');
-  } else if (hasLoginFailed) {
-    loginError = t('loginFailed');
-  } else {
-    loginError = null;
-  }
+  const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
 
   return (
-    <Form
-      form={form}
-      name={name}
-      layout="vertical"
-      className="LoginForm"
-      onFinish={handleFinish}
-      scrollToFirstError
-      validateTrigger="onSubmit"
-      >
-      <Form.Item
-        label={t('common:emailAddress')}
-        name="email"
-        rules={fixedEmail ? [] : emailValidationRules}
-        initialValue={fixedEmail || ''}
-        hidden={!!fixedEmail}
+    <div className="LoginForm">
+      <Form
+        form={form}
+        name={name}
+        layout="vertical"
+        onFinish={handleFinish}
+        scrollToFirstError
+        validateTrigger="onSubmit"
+        hidden={hasBlockingError}
         >
-        <Input onPressEnter={handlePressEnter} disabled={disabled} />
-      </Form.Item>
-      <Form.Item
-        label={t('common:password')}
-        name="password"
-        rules={passwordValidationRules}
-        >
-        <Input type="password" onPressEnter={handlePressEnter} disabled={disabled} />
-      </Form.Item>
-      {!!loginError && <div className="LoginForm-errorMessage">{loginError}</div>}
-    </Form>
+        <Form.Item
+          label={t('common:emailAddress')}
+          name="email"
+          rules={fixedEmail ? [] : emailValidationRules}
+          initialValue={fixedEmail || ''}
+          hidden={!!fixedEmail}
+          >
+          <Input onPressEnter={handlePressEnter} />
+        </Form.Item>
+        <Form.Item
+          label={t('common:password')}
+          name="password"
+          rules={passwordValidationRules}
+          >
+          <Input type="password" onPressEnter={handlePressEnter} />
+        </Form.Item>
+      </Form>
+      {!hasBlockingError && !!hasLoginFailed && (
+        <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
+      )}
+      {!!hasBlockingError && (
+        <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
+      )}
+    </div>
   );
 }
 
@@ -136,20 +142,18 @@ LoginForm.propTypes = {
     current: PropTypes.object
   }),
   name: PropTypes.string,
-  disabled: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
-  onLoginFailedTooOften: PropTypes.func
+  onLoginBlocked: PropTypes.func
 };
 
 LoginForm.defaultProps = {
   fixedEmail: null,
   formRef: null,
   name: 'login-form',
-  disabled: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},
-  onLoginFailedTooOften: () => {},
+  onLoginBlocked: () => {},
 };

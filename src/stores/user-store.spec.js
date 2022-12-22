@@ -46,26 +46,6 @@ describe('user-store', () => {
     });
   });
 
-  describe('findActiveUsersByEmail', () => {
-    let matchingEmailUser;
-    let otherEmailUser;
-    let closedAccountUser;
-
-    beforeEach(async () => {
-      matchingEmailUser = await setupTestUser(container, { email: 'email', displayName: 'Other user 2' });
-      otherEmailUser = await setupTestUser(container, { email: 'other_3', displayName: 'Other user 3' });
-      await sut.saveUser({ ...otherEmailUser, displayName: 'Other user' });
-      closedAccountUser = await setupTestUser(container, { email: 'other_4', displayName: 'Other user 4' });
-      await sut.saveUser({ ...closedAccountUser, email: 'email', accountClosedOn: new Date() });
-
-      result = await sut.findActiveUsersByEmail('email');
-    });
-
-    it('should return all matching active users', () => {
-      expect(result).toEqual([matchingEmailUser]);
-    });
-  });
-
   describe('findActiveUserByEmail', () => {
     describe('when email doesn\'t match', () => {
       beforeEach(async () => {

@@ -148,6 +148,11 @@ export async function setupTestUser(container, userValues) {
   return verifiedUser;
 }
 
+export async function updateTestUser(container, user) {
+  const userStore = container.get(UserStore);
+  await userStore.saveUser(user);
+}
+
 export async function createTestRoom(container, roomValues = {}) {
   const db = container.get(Database);
 
