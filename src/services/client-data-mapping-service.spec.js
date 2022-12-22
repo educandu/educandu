@@ -52,7 +52,7 @@ describe('client-data-mapping-service', () => {
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
         roles: ['user', 'admin'],
-        expires: null,
+        expiresOn: null,
         verificationCode: null,
         lockedOut: false,
         organization: 'Educandu',
@@ -155,7 +155,7 @@ describe('client-data-mapping-service', () => {
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
         roles: ['user', 'admin'],
-        expires: null,
+        expiresOn: null,
         verificationCode: null,
         lockedOut: false,
         organization: 'Educandu',
@@ -391,7 +391,7 @@ describe('client-data-mapping-service', () => {
     let invitations;
 
     beforeEach(async () => {
-      invitations = [{ roomId: 'roomId', sentOn: new Date(), expires: new Date() }];
+      invitations = [{ roomId: 'roomId', sentOn: new Date(), expiresOn: new Date() }];
       result = await sut.mapRoomInvitations(invitations);
     });
 
@@ -400,7 +400,7 @@ describe('client-data-mapping-service', () => {
         {
           roomId: 'roomId',
           sentOn: invitations[0].sentOn.toISOString(),
-          expires: invitations[0].expires.toISOString()
+          expiresOn: invitations[0].expiresOn.toISOString()
         }
       ]);
     });
@@ -413,7 +413,7 @@ describe('client-data-mapping-service', () => {
 
     beforeEach(async () => {
       room = await createTestRoom(container, { owner: user1._id });
-      invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expires: new Date() };
+      invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expiresOn: new Date() };
 
       result = await sut.mapRoomInvitationWithBasicRoomData(invitation);
     });
@@ -422,7 +422,7 @@ describe('client-data-mapping-service', () => {
       expect(result).toEqual({
         _id: invitation._id,
         sentOn: invitation.sentOn.toISOString(),
-        expires: invitation.expires.toISOString(),
+        expiresOn: invitation.expiresOn.toISOString(),
         room: {
           name: room.name,
           documentsMode: room.documentsMode,

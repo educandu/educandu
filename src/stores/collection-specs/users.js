@@ -8,8 +8,8 @@ export default {
       partialFilterExpression: { $and: [{ email: { $type: 'string' } }, { accountClosedOn: null }] }
     },
     {
-      name: '_idx_expires_',
-      key: { expires: 1 },
+      name: '_idx_expiresOn_',
+      key: { expiresOn: 1 },
       expireAfterSeconds: 0
     },
     {

@@ -336,9 +336,9 @@ function Users({ initialState, PageTemplate }) {
       sorter: by(x => x.email, { ignoreCase: true })
     }, {
       title: () => t('expires'),
-      dataIndex: 'expires',
-      key: 'expires',
-      sorter: by(x => x.expires),
+      dataIndex: 'expiresOn',
+      key: 'expiresOn',
+      sorter: by(x => x.expiresOn),
       responsive: ['lg']
     }, {
       title: () => t('lockedOut'),

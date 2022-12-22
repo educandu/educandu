@@ -189,7 +189,7 @@ export default class RoomService {
       }
 
       invitation.sentOn = now;
-      invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
+      invitation.expiresOn = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
 
       logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
       await this.roomInvitationStore.saveRoomInvitation(invitation);

@@ -66,7 +66,7 @@ class ClientDataMappingService {
   mapUsersForAdminArea(users) {
     return users.map(user => ({
       ...user,
-      expires: user.expires ? user.expires.toISOString() : user.expires,
+      expiresOn: user.expiresOn ? user.expiresOn.toISOString() : user.expiresOn,
       storage: {
         ...user.storage,
         reminders: user.storage.reminders.map(reminder => ({
@@ -143,7 +143,7 @@ class ClientDataMappingService {
     return {
       _id: invitation._id,
       sentOn: invitation.sentOn.toISOString(),
-      expires: invitation.expires.toISOString(),
+      expiresOn: invitation.expiresOn.toISOString(),
       room: {
         name: room.name,
         documentsMode: room.documentsMode,
@@ -338,12 +338,12 @@ class ClientDataMappingService {
 
   _mapRoomInvitation(rawInvitation) {
     const sentOn = rawInvitation.sentOn && rawInvitation.sentOn.toISOString();
-    const expires = rawInvitation.expires && rawInvitation.expires.toISOString();
+    const expiresOn = rawInvitation.expiresOn && rawInvitation.expiresOn.toISOString();
 
     return {
       ...rawInvitation,
       sentOn,
-      expires
+      expiresOn
     };
   }
 

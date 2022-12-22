@@ -6,7 +6,7 @@ const roomInvitationMetadataProjection = {
   _id: 1,
   email: 1,
   sentOn: 1,
-  expires: 1
+  expiresOn: 1
 };
 
 class RoomInvitationStore {

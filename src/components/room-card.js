@@ -85,9 +85,9 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
           <div>{formatDate(invitation.sentOn)}</div>
         </div>
       )}
-      {!!invitation?.expires && (
+      {!!invitation?.expiresOn && (
         <div className="RoomCard-infoRow RoomCard-infoRow--textBlock">
-          <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expires) })}</Markdown>
+          <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
         </div>
       )}
       <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>

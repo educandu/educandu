@@ -248,7 +248,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       displayName,
       roles,
-      expires: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
 
@@ -264,7 +264,7 @@ class UserService {
       user = await this.userStore.findUserByVerificationCode(verificationCode);
       if (user) {
         logger.info(`Found user with id ${user._id}`);
-        user.expires = null;
+        user.expiresOn = null;
         user.verificationCode = null;
         await this.userStore.saveUser(user);
       } else {
@@ -298,7 +298,7 @@ class UserService {
         user = possibleMatches.find(match => match.email === lowerCasedEmail);
     }
 
-    if (!user || user.expires || user.lockedOut) {
+    if (!user || user.expiresOn || user.lockedOut) {
       return false;
     }
 
@@ -310,7 +310,7 @@ class UserService {
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expires: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
+      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
     };
 
     await this.transactionRunner.run(async session => {
@@ -359,7 +359,7 @@ class UserService {
       organization: '',
       introduction: '',
       roles: [],
-      expires: null,
+      expiresOn: null,
       verificationCode: null,
       lockedOut: false,
       storage: {

@@ -22,7 +22,7 @@ class RequestLimitRecordStore {
   }
 
   async incrementCount({ ipAddress, requestKey, expiresInMs, resetExpiresOnUpdate = false }, { session } = {}) {
-    const expires = new Date(Date.now() + expiresInMs);
+    const expiresOn = new Date(Date.now() + expiresInMs);
 
     const filter = {
       _id: this._createId({ requestKey, ipAddress })
@@ -30,7 +30,7 @@ class RequestLimitRecordStore {
 
     const update = {
       $inc: { count: 1 },
-      [resetExpiresOnUpdate ? '$set' : '$setOnInsert']: { expires }
+      [resetExpiresOnUpdate ? '$set' : '$setOnInsert']: { expiresOn }
     };
 
     const options = {

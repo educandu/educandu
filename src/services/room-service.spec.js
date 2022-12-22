@@ -127,7 +127,7 @@ describe('room-service', () => {
       expect(updatedInvitations[0]._id).toBe(originalInvitations[0]._id);
       expect(updatedInvitations[0].token).toBe(originalInvitations[0].token);
       expect(updatedInvitations[0].sentOn).not.toBe(originalInvitations[0].sentOn);
-      expect(updatedInvitations[0].expires.getTime()).toBeGreaterThan(originalInvitations[0].expires.getTime());
+      expect(updatedInvitations[0].expiresOn.getTime()).toBeGreaterThan(originalInvitations[0].expiresOn.getTime());
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {

@@ -80,7 +80,7 @@ export const userDBSchema = joi.object({
   passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
   roles: joi.array().required().items(joi.string()),
-  expires: joi.date().allow(null).required(),
+  expiresOn: joi.date().allow(null).required(),
   verificationCode: joi.string().allow(null).required(),
   lockedOut: joi.bool().required(),
   storage: storageDBSchema.required(),

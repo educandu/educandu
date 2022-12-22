@@ -147,7 +147,7 @@ export const userShape = PropTypes.shape({
   organization: PropTypes.string,
   introduction: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expires: PropTypes.string,
+  expiresOn: PropTypes.string,
   lockedOut: PropTypes.bool,
   storage: userStorageShape,
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
@@ -401,7 +401,7 @@ export const roomShape = PropTypes.shape({
 export const invitationBasicProps = {
   _id: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
-  expires: PropTypes.string.isRequired
+  expiresOn: PropTypes.string.isRequired
 };
 
 export const invitationBasicShape = PropTypes.shape(invitationBasicProps);
