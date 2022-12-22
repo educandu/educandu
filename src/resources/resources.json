@@ -1151,6 +1151,7 @@
     "namespace": "users",
     "language": "en",
     "resources": {
+      "lastLogIn": "Last log in",
       "expires": "Expires",
       "accountLocked": "Locked",
       "roles": "Roles",
@@ -1178,6 +1179,7 @@
     "namespace": "users",
     "language": "de",
     "resources": {
+      "lastLogIn": "Zuletzt angemeldet",
       "expires": "Verfallsdatum",
       "accountLocked": "Ausgesperrt",
       "roles": "Rollen",

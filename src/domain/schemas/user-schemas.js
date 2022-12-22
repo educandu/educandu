@@ -86,6 +86,7 @@ export const userDBSchema = joi.object({
   favorites: joi.array().required().items(favoriteDBSchema),
   accountLockedOn: joi.date().allow(null).required(),
   accountClosedOn: joi.date().allow(null).required(),
+  lastLoggedInOn: joi.date().allow(null).required(),
   displayName: joi.string().required(),
   introduction: joi.string().allow('').required(),
   organization: joi.string().allow('').required()

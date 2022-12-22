@@ -257,6 +257,10 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user };
   }
 
+  async recordUserLogIn(userId) {
+    await this.userStore.updateUserLastLoggedIn(userId);
+  }
+
   async verifyUser(verificationCode) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
@@ -368,7 +372,8 @@ class UserService {
       },
       favorites: [],
       accountLockedOn: null,
-      accountClosedOn: null
+      accountClosedOn: null,
+      lastLoggedInOn: null
     };
   }
 }

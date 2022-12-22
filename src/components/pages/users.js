@@ -339,7 +339,15 @@ function Users({ initialState, PageTemplate }) {
       title: () => t('expires'),
       dataIndex: 'expiresOn',
       key: 'expiresOn',
-      sorter: by(x => x.expiresOn),
+      sorter: by(x => x.expiresOn || ''),
+      render: expiresOn => formatDate(expiresOn),
+      responsive: ['lg']
+    }, {
+      title: () => t('lastLogIn'),
+      dataIndex: 'lastLoggedInOn',
+      key: 'lastLoggedInOn',
+      sorter: by(x => x.lastLoggedInOn || ''),
+      render: lastLoggedInOn => formatDate(lastLoggedInOn),
       responsive: ['lg']
     }, {
       title: () => t('accountLocked'),

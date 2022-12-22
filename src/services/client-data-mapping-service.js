@@ -69,6 +69,7 @@ class ClientDataMappingService {
       expiresOn: user.expiresOn ? user.expiresOn.toISOString() : user.expiresOn,
       accountLockedOn: user.accountLockedOn ? user.accountLockedOn.toISOString() : user.accountLockedOn,
       accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : user.accountClosedOn,
+      lastLoggedInOn: user.lastLoggedInOn ? user.lastLoggedInOn.toISOString() : user.lastLoggedInOn,
       storage: {
         ...user.storage,
         reminders: user.storage.reminders.map(reminder => ({

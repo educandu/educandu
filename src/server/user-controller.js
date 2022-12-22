@@ -239,11 +239,12 @@ class UserController {
         await this.requestLimitRecordService.resetCount({ req });
       }
 
-      return req.login(user, loginError => {
+      return req.login(user, async loginError => {
         if (loginError) {
           return next(loginError);
         }
 
+        await this.userService.recordUserLogIn(user._id);
         return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
       });
     })(req, res, next);

@@ -60,6 +60,10 @@ class UserStore {
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
   }
 
+  updateUserLastLoggedIn(userId, { session } = {}) {
+    return this.collection.updateOne({ _id: userId }, { $set: { lastLoggedInOn: new Date() } }, { session, upsert: true });
+  }
+
   addToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {
     const favorite = { type: favoriteType, id: favoriteId, setOn: favoriteSetOn };
     validate(favorite, favoriteDBSchema);
