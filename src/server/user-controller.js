@@ -283,7 +283,7 @@ class UserController {
     return res.status(201).send({ roles: newRoles });
   }
 
-  async handlePostUserAccountLockedOnBodySchema(req, res) {
+  async handlePostUserAccountLockedOn(req, res) {
     const { userId } = req.params;
     const { accountLockedOn } = req.body;
     const accountLockedOnDate = accountLockedOn ? new Date(accountLockedOn) : null;
@@ -541,7 +541,7 @@ class UserController {
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserAccountLockedOnBodySchema),
-      (req, res) => this.handlePostUserAccountLockedOnBodySchema(req, res)
+      (req, res) => this.handlePostUserAccountLockedOn(req, res)
     );
 
     router.post(
