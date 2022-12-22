@@ -21,6 +21,7 @@ import storagePlansSpec from './collection-specs/storage-plans.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
+import externalAccountsSpec from './collection-specs/external-accounts.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import requestLimitRecordsSpec from './collection-specs/request-limit-records.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
@@ -43,6 +44,7 @@ const collectionSpecs = [
   storagePlansSpec,
   documentOrdersSpec,
   roomInvitationsSpec,
+  externalAccountsSpec,
   documentRevisionsSpec,
   requestLimitRecordsSpec,
   passwordResetRequestsSpec

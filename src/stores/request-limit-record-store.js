@@ -21,16 +21,14 @@ class RequestLimitRecordStore {
     return this.collection.deleteOne({ _id }, { session });
   }
 
-  async incrementCount({ ipAddress, requestKey, expiresInMs, resetExpiresOnUpdate = false }, { session } = {}) {
-    const expiresOn = new Date(Date.now() + expiresInMs);
-
+  async createOrUpdateRequestLimitRecord({ ipAddress, requestKey, setExpiresOnOnInsert }, { session } = {}) {
     const filter = {
       _id: this._createId({ requestKey, ipAddress })
     };
 
     const update = {
       $inc: { count: 1 },
-      [resetExpiresOnUpdate ? '$set' : '$setOnInsert']: { expiresOn }
+      $setOnInsert: { expiresOn: setExpiresOnOnInsert }
     };
 
     const options = {
@@ -39,8 +37,8 @@ class RequestLimitRecordStore {
       returnDocument: 'after'
     };
 
-    const result = await this.collection.findOneAndUpdate(filter, update, options);
-    return result.value;
+    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    return value;
   }
 }
 

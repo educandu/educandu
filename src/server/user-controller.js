@@ -101,7 +101,7 @@ class UserController {
     this.passwordResetRateLimitOptions = {
       maxRequests: PASSWORD_RESET_REQUEST_LIMIT,
       expiresInMs: PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
-      store: this.requestLimitRecordService
+      service: this.requestLimitRecordService
     };
   }
 
