@@ -10,7 +10,7 @@ function Login({ PageTemplate, SiteLogo }) {
   const formRef = useRef();
   const request = useRequest();
   const { t } = useTranslation('login');
-  const [isFrozen, setIsFrozen] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   const handleLoginButtonClick = () => {
     formRef.current.submit();
@@ -20,8 +20,8 @@ function Login({ PageTemplate, SiteLogo }) {
     window.location = request.query.redirect || routes.getDefaultLoginRedirectUrl();
   };
 
-  const handleLoginFailedIrrecoverably = () => {
-    setIsFrozen(true);
+  const handleLoginBlocked = () => {
+    setIsBlocked(true);
   };
 
   return (
@@ -35,9 +35,9 @@ function Login({ PageTemplate, SiteLogo }) {
             formRef={formRef}
             name="login-page-login-form"
             onLoginSucceeded={handleLoginSucceeded}
-            onLoginFailedIrrecoverably={handleLoginFailedIrrecoverably}
+            onLoginBlocked={handleLoginBlocked}
             />
-          {!isFrozen && (
+          {!isBlocked && (
             <Fragment>
               <div className="LoginPage-forgotPasswordLink">
                 <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>

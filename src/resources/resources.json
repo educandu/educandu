@@ -140,6 +140,26 @@
     }
   },
   {
+    "namespace": "blockedLoginError",
+    "language": "en",
+    "resources": {
+      "loginFailedTooOften": "Too many failed login attempts within a short time period. Please try again later.",
+      "userLockedOut": "You currently cannot login because your user account is locked.",
+      "contactAdminWithoutEmail": "Please contact an administrator.",
+      "contactAdminWithEmail": "Please contact an <0>administrator</0>."
+    }
+  },
+  {
+    "namespace": "blockedLoginError",
+    "language": "de",
+    "resources": {
+      "loginFailedTooOften": "Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal.",
+      "userLockedOut": "Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist.",
+      "contactAdminWithoutEmail": "Bitte kontaktiere einen Administrator.",
+      "contactAdminWithEmail": "Bitte kontaktiere einen <0>Administrator</0>."
+    }
+  },
+  {
     "namespace": "commentsPanel",
     "language": "en",
     "resources": {
@@ -513,26 +533,6 @@
       "rotateLeft": "Gegen den Uhrzeigersinn drehen",
       "scaleX": "Horizontal spiegeln",
       "scaleY": "Vertikal spiegeln"
-    }
-  },
-  {
-    "namespace": "irrecoverableLoginError",
-    "language": "en",
-    "resources": {
-      "loginFailedTooOften": "Too many failed login attempts within a short time period. Please try again later.",
-      "userLockedOut": "You currently cannot login because your user account is locked.",
-      "contactAdminWithoutEmail": "Please contact an administrator.",
-      "contactAdminWithEmail": "Please contact an <0>administrator</0>."
-    }
-  },
-  {
-    "namespace": "irrecoverableLoginError",
-    "language": "de",
-    "resources": {
-      "loginFailedTooOften": "Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal.",
-      "userLockedOut": "Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist.",
-      "contactAdminWithoutEmail": "Bitte kontaktiere einen Administrator.",
-      "contactAdminWithEmail": "Bitte kontaktiere einen <0>Administrator</0>."
     }
   },
   {

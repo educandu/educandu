@@ -4,8 +4,8 @@ import { useService } from './container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../bootstrap/client-config.js';
 
-export default function IrrecoverableLoginError({ type }) {
-  const { t } = useTranslation('irrecoverableLoginError');
+export default function BlockedLoginError({ type }) {
+  const { t } = useTranslation('blockedLoginError');
   const clientConfig = useService(ClientConfig);
 
   let mainMessage;
@@ -41,17 +41,17 @@ export default function IrrecoverableLoginError({ type }) {
   }
 
   return (
-    <div className="IrrecoverableLoginError">
+    <div className="BlockedLoginError">
       {!!mainMessage && (
-        <div className="IrrecoverableLoginError-mainMessage">{mainMessage}</div>
+        <div className="BlockedLoginError-mainMessage">{mainMessage}</div>
       )}
       {!!contactAdminMessage && (
-        <div className="IrrecoverableLoginError-contactAdminMessage">{contactAdminMessage}</div>
+        <div className="BlockedLoginError-contactAdminMessage">{contactAdminMessage}</div>
       )}
     </div>
   );
 }
 
-IrrecoverableLoginError.propTypes = {
+BlockedLoginError.propTypes = {
   type: PropTypes.oneOf(['loginFailedTooOften', 'userLockedOut'])
 };

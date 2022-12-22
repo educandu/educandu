@@ -8,7 +8,7 @@ import { useService } from './container-context.js';
 import { handleApiError } from '../ui/error-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
-import IrrecoverableLoginError from './irrecoverable-login-error.js';
+import BlockedLoginError from './blocked-login-error.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
@@ -19,7 +19,7 @@ export default function LoginForm({
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  onLoginFailedIrrecoverably,
+  onLoginBlocked,
   formRef
 }) {
   const setUser = useSetUser();
@@ -53,12 +53,12 @@ export default function LoginForm({
       if (error.status === HTTP_STATUS.tooManyRequests) {
         setHasLoginFailedTooOften(true);
         onLoginFailed();
-        onLoginFailedIrrecoverably();
+        onLoginBlocked();
       } else if (error.code === ERROR_CODES.userLockedOut) {
         setIsUserLockedOut(true);
         setHasLoginFailed(true);
         onLoginFailed();
-        onLoginFailedIrrecoverably();
+        onLoginBlocked();
       } else {
         handleApiError({ error, logger, t });
         onLoginFailed();
@@ -96,7 +96,7 @@ export default function LoginForm({
     }
   ];
 
-  const hasIrrecoverableError = hasLoginFailedTooOften || isUserLockedOut;
+  const hasBlockingError = hasLoginFailedTooOften || isUserLockedOut;
 
   return (
     <div className="LoginForm">
@@ -107,7 +107,7 @@ export default function LoginForm({
         onFinish={handleFinish}
         scrollToFirstError
         validateTrigger="onSubmit"
-        hidden={hasIrrecoverableError}
+        hidden={hasBlockingError}
         >
         <Form.Item
           label={t('common:emailAddress')}
@@ -126,11 +126,11 @@ export default function LoginForm({
           <Input type="password" onPressEnter={handlePressEnter} />
         </Form.Item>
       </Form>
-      {!hasIrrecoverableError && !!hasLoginFailed && (
+      {!hasBlockingError && !!hasLoginFailed && (
         <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
       )}
-      {!!hasIrrecoverableError && (
-        <IrrecoverableLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userLockedOut'} />
+      {!!hasBlockingError && (
+        <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userLockedOut'} />
       )}
     </div>
   );
@@ -145,7 +145,7 @@ LoginForm.propTypes = {
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
-  onLoginFailedIrrecoverably: PropTypes.func
+  onLoginBlocked: PropTypes.func
 };
 
 LoginForm.defaultProps = {
@@ -155,5 +155,5 @@ LoginForm.defaultProps = {
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},
-  onLoginFailedIrrecoverably: () => {},
+  onLoginBlocked: () => {},
 };
