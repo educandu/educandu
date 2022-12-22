@@ -134,13 +134,16 @@ export async function setupTestUser(container, userValues) {
   if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, email, password, displayName }));
   }
+
   const verifiedUser = await userService.verifyUser(user.verificationCode);
+
   verifiedUser.roles = userValues?.roles || [ROLE.user];
   verifiedUser.organization = userValues?.organization || '';
   verifiedUser.introduction = userValues?.introduction || '';
-  verifiedUser.lockedOut = userValues?.lockedOut || false;
+  verifiedUser.accountLockedOn = userValues?.accountLockedOn || null;
   verifiedUser.accountClosedOn = userValues?.accountClosedOn || null;
   verifiedUser.storage = userValues?.storage || { planId: null, usedBytes: 0, reminders: [] };
+
   await userStore.saveUser(verifiedUser);
   return verifiedUser;
 }

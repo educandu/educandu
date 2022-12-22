@@ -47,7 +47,6 @@ class ClientDataMappingService {
 
     return {
       _id: user._id,
-      provider: user.provider,
       displayName: user.displayName,
       email: user.email,
       roles: user.roles,
@@ -64,10 +63,13 @@ class ClientDataMappingService {
     };
   }
 
-  mapUsersForAdminArea(users) {
-    return users.map(user => ({
+  mapUserForAdminArea(user) {
+    return {
       ...user,
-      expires: user.expires ? user.expires.toISOString() : user.expires,
+      expiresOn: user.expiresOn ? user.expiresOn.toISOString() : user.expiresOn,
+      accountLockedOn: user.accountLockedOn ? user.accountLockedOn.toISOString() : user.accountLockedOn,
+      accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : user.accountClosedOn,
+      lastLoggedInOn: user.lastLoggedInOn ? user.lastLoggedInOn.toISOString() : user.lastLoggedInOn,
       storage: {
         ...user.storage,
         reminders: user.storage.reminders.map(reminder => ({
@@ -79,7 +81,11 @@ class ClientDataMappingService {
         ...favorite,
         setOn: favorite.setOn.toISOString()
       }))
-    }));
+    };
+  }
+
+  mapUsersForAdminArea(users) {
+    return users.map(this.mapUserForAdminArea);
   }
 
   createProposedSections(docOrRevision, targetRoomId) {
@@ -144,7 +150,7 @@ class ClientDataMappingService {
     return {
       _id: invitation._id,
       sentOn: invitation.sentOn.toISOString(),
-      expires: invitation.expires.toISOString(),
+      expiresOn: invitation.expiresOn.toISOString(),
       room: {
         name: room.name,
         documentsMode: room.documentsMode,
@@ -339,12 +345,12 @@ class ClientDataMappingService {
 
   _mapRoomInvitation(rawInvitation) {
     const sentOn = rawInvitation.sentOn && rawInvitation.sentOn.toISOString();
-    const expires = rawInvitation.expires && rawInvitation.expires.toISOString();
+    const expiresOn = rawInvitation.expiresOn && rawInvitation.expiresOn.toISOString();
 
     return {
       ...rawInvitation,
       sentOn,
-      expires
+      expiresOn
     };
   }
 

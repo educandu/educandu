@@ -13,12 +13,12 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
-    return this.collection.findOne({ provider, verificationCode }, { session });
+  findUserByVerificationCode(verificationCode, { session } = {}) {
+    return this.collection.findOne({ verificationCode }, { session });
   }
 
-  findActiveUserByProviderAndEmail({ provider, email }, { session } = {}) {
-    return this.collection.findOne({ $and: [{ provider }, { email }, { accountClosedOn: null }] }, { session });
+  findActiveUserByEmail(email, { session } = {}) {
+    return this.collection.findOne({ $and: [{ email }, { accountClosedOn: null }] }, { session });
   }
 
   getUserById(id, { session } = {}) {
@@ -42,6 +42,10 @@ class UserStore {
   saveUser(user, { session } = {}) {
     validate(user, userDBSchema);
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
+  }
+
+  updateUserLastLoggedIn({ userId, lastLoggedInOn }, { session } = {}) {
+    return this.collection.updateOne({ _id: userId }, { $set: { lastLoggedInOn } }, { session, upsert: true });
   }
 
   addToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {

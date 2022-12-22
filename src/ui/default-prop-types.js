@@ -142,14 +142,14 @@ export const userFavoriteShape = PropTypes.shape({
 
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
-  provider: PropTypes.string.isRequired,
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
   introduction: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expires: PropTypes.string,
-  lockedOut: PropTypes.bool,
+  expiresOn: PropTypes.string,
+  accountLockedOn: PropTypes.string,
+  lastLoggedInOn: PropTypes.string,
   storage: userStorageShape,
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
 });
@@ -402,7 +402,7 @@ export const roomShape = PropTypes.shape({
 export const invitationBasicProps = {
   _id: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
-  expires: PropTypes.string.isRequired
+  expiresOn: PropTypes.string.isRequired
 };
 
 export const invitationBasicShape = PropTypes.shape(invitationBasicProps);

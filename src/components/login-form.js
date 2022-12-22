@@ -27,7 +27,7 @@ export default function LoginForm({
   const { t } = useTranslation('loginForm');
   const userApiClient = useService(UserApiClient);
   const [hasLoginFailed, setHasLoginFailed] = useState(false);
-  const [isUserLockedOut, setIsUserLockedOut] = useState(false);
+  const [isUserAccountLocked, setIsUserAccountLocked] = useState(false);
   const [hasLoginFailedTooOften, setHasLoginFailedTooOften] = useState(false);
 
   if (formRef) {
@@ -54,8 +54,8 @@ export default function LoginForm({
         setHasLoginFailedTooOften(true);
         onLoginFailed();
         onLoginBlocked();
-      } else if (error.code === ERROR_CODES.userLockedOut) {
-        setIsUserLockedOut(true);
+      } else if (error.code === ERROR_CODES.userAccountLocked) {
+        setIsUserAccountLocked(true);
         setHasLoginFailed(true);
         onLoginFailed();
         onLoginBlocked();
@@ -96,7 +96,7 @@ export default function LoginForm({
     }
   ];
 
-  const hasBlockingError = hasLoginFailedTooOften || isUserLockedOut;
+  const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
 
   return (
     <div className="LoginForm">
@@ -130,7 +130,7 @@ export default function LoginForm({
         <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
       )}
       {!!hasBlockingError && (
-        <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userLockedOut'} />
+        <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
       )}
     </div>
   );

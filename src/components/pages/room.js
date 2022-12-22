@@ -331,7 +331,7 @@ export default function Room({ PageTemplate, initialState }) {
             </Space>
             <Space>
               <span>{t('expires')}:</span>
-              <span className="RoomPage-membersRowDate">{formatDate(invitation.expires)}</span>
+              <span className="RoomPage-membersRowDate">{formatDate(invitation.expiresOn)}</span>
             </Space>
           </List.Item>
         )}

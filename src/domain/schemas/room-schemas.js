@@ -104,5 +104,5 @@ export const roomInvitationDBSchema = joi.object({
   email: joi.string().required(),
   sentOn: joi.date().required(),
   token: idOrKeySchema.required(),
-  expires: joi.date().required()
+  expiresOn: joi.date().required()
 });

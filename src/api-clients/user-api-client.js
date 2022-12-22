@@ -86,11 +86,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserLockedOutState({ userId, lockedOut }) {
+  saveUserAccountLockedOnState({ userId, accountLockedOn }) {
     return this.httpClient
       .post(
-        `/api/v1/users/${encodeURIComponent(userId)}/lockedOut`,
-        { lockedOut },
+        `/api/v1/users/${encodeURIComponent(userId)}/accountLockedOn`,
+        { accountLockedOn },
         { responseType: 'json' }
       )
       .then(res => res.data);

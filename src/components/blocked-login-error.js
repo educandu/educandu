@@ -15,8 +15,8 @@ export default function BlockedLoginError({ type }) {
       mainMessage = t('loginFailedTooOften');
       tryShowContactAdminMessage = false;
       break;
-    case 'userLockedOut':
-      mainMessage = t('userLockedOut');
+    case 'userAccountLocked':
+      mainMessage = t('userAccountLocked');
       tryShowContactAdminMessage = true;
       break;
     default:
@@ -53,5 +53,5 @@ export default function BlockedLoginError({ type }) {
 }
 
 BlockedLoginError.propTypes = {
-  type: PropTypes.oneOf(['loginFailedTooOften', 'userLockedOut'])
+  type: PropTypes.oneOf(['loginFailedTooOften', 'userAccountLocked'])
 };

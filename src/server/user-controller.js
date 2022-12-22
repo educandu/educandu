@@ -44,14 +44,14 @@ import {
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
-  postUserLockedOutBodySchema,
+  postUserAccountLockedOnBodySchema,
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
   favoriteBodySchema,
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden, TooManyRequests } = httpErrors;
+const { NotFound, Forbidden, TooManyRequests, BadRequest } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -182,8 +182,9 @@ class UserController {
   }
 
   async handleGetUsers(req, res) {
-    const result = await this.userService.getAllUsers();
-    res.send({ users: result });
+    const users = await this.userService.getAllUsers();
+    const mappedUsers = this.clientDataMappingService.mapUsersForAdminArea(users);
+    res.send({ users: mappedUsers });
   }
 
   async handlePostUser(req, res) {
@@ -202,10 +203,9 @@ class UserController {
 
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
-    const provider = req.user.provider;
     const { email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, email });
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
@@ -239,13 +239,14 @@ class UserController {
       }
 
       await this.requestLimitRecordService.resetCount({ req });
+      const updatedUser = await this.userService.recordUserLogIn(user._id);
 
-      return req.login(user, loginError => {
+      return req.login(updatedUser, loginError => {
         if (loginError) {
           return next(loginError);
         }
 
-        return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
+        return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
       });
     })(req, res, next);
   }
@@ -282,11 +283,19 @@ class UserController {
     return res.status(201).send({ roles: newRoles });
   }
 
-  async handlePostUserLockedOut(req, res) {
+  async handlePostUserAccountLockedOn(req, res) {
     const { userId } = req.params;
-    const { lockedOut } = req.body;
-    const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
-    return res.status(201).send({ lockedOut: newLockedOutState });
+    const { accountLockedOn } = req.body;
+    const accountLockedOnDate = accountLockedOn ? new Date(accountLockedOn) : null;
+
+    if (isNaN(accountLockedOnDate)) {
+      throw new BadRequest(`'${accountLockedOn}' is not a valid date string.`);
+    }
+
+    const updatedUser = await this.userService.updateUserAccountLockedOn(userId, accountLockedOnDate);
+    const mappedUser = this.clientDataMappingService.mapUserForAdminArea(updatedUser);
+
+    return res.status(201).send(mappedUser);
   }
 
   async handlePostUserStoragePlan(req, res) {
@@ -366,9 +375,9 @@ class UserController {
     }, (email, password, cb) => {
       this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
         .then(user => {
-          if (user?.lockedOut) {
-            const err = new Error('User is locked out');
-            err.code = ERROR_CODES.userLockedOut;
+          if (user?.accountLockedOn) {
+            const err = new Error('User account is locked');
+            err.code = ERROR_CODES.userAccountLocked;
             throw err;
           }
 
@@ -527,12 +536,12 @@ class UserController {
     );
 
     router.post(
-      '/api/v1/users/:userId/lockedOut',
+      '/api/v1/users/:userId/accountLockedOn',
       needsPermission(permissions.EDIT_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
-      validateBody(postUserLockedOutBodySchema),
-      (req, res) => this.handlePostUserLockedOut(req, res)
+      validateBody(postUserAccountLockedOnBodySchema),
+      (req, res) => this.handlePostUserAccountLockedOn(req, res)
     );
 
     router.post(

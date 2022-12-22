@@ -1,8 +1,11 @@
+lastLogIn:
+  en: Last log in
+  de: Zuletzt angemeldet
 expires:
   en: Expires
   de: Verfallsdatum
-lockedOut:
-  en: Locked Out
+accountLocked:
+  en: Locked
   de: Ausgesperrt
 roles:
   en: Roles

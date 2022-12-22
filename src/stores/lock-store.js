@@ -52,9 +52,9 @@ class LockStore {
   }
 
   async _takeLock({ type, key, expirationTimeInMinutes }) {
-    const expires = expirationTimeInMinutes ? moment().add(expirationTimeInMinutes, 'minutes').toDate() : null;
+    const expiresOn = expirationTimeInMinutes ? moment().add(expirationTimeInMinutes, 'minutes').toDate() : null;
 
-    const lock = { _id: uniqueId.create(), type, key, expires };
+    const lock = { _id: uniqueId.create(), type, key, expiresOn };
 
     await this.collection.insertOne(lock);
     return lock;

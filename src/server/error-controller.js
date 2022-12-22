@@ -70,7 +70,7 @@ class ErrorController {
   }
 
   tryRespondToApiError(req, res, err) {
-    if (err.code === ERROR_CODES.userLockedOut) {
+    if (err.code === ERROR_CODES.userAccountLocked) {
       res.status(HTTP_STATUS.unauthorized).json(err);
       return true;
     }

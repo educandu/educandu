@@ -36,8 +36,8 @@ export const postUserRolesBodySchema = joi.object({
   roles: joi.array().items(joi.string().valid(...Object.values(ROLE))).min(1).required()
 });
 
-export const postUserLockedOutBodySchema = joi.object({
-  lockedOut: joi.boolean().required()
+export const postUserAccountLockedOnBodySchema = joi.object({
+  accountLockedOn: joi.string().allow(null).required()
 });
 
 export const postUserStoragePlanBodySchema = joi.object({
@@ -77,16 +77,16 @@ export const favoriteDBSchema = joi.object({
 
 export const userDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  provider: joi.string().required(),
   passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
   roles: joi.array().required().items(joi.string()),
-  expires: joi.date().allow(null).required(),
+  expiresOn: joi.date().allow(null).required(),
   verificationCode: joi.string().allow(null).required(),
-  lockedOut: joi.bool().required(),
   storage: storageDBSchema.required(),
   favorites: joi.array().required().items(favoriteDBSchema),
+  accountLockedOn: joi.date().allow(null).required(),
   accountClosedOn: joi.date().allow(null).required(),
+  lastLoggedInOn: joi.date().allow(null).required(),
   displayName: joi.string().required(),
   introduction: joi.string().allow('').required(),
   organization: joi.string().allow('').required()

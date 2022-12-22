@@ -41,7 +41,7 @@ export const SAVE_USER_RESULT = {
 };
 
 export const ERROR_CODES = {
-  userLockedOut: 'user-locked-out',
+  userAccountLocked: 'user-account-locked',
   sessionExpired: 'session-expired',
   operationCancelled: 'operation-cancelled'
 };

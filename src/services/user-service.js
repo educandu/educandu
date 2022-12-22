@@ -21,7 +21,6 @@ import {
 const { BadRequest, NotFound } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
-const DEFAULT_PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
 
 const logger = new Logger(import.meta.url);
@@ -51,11 +50,11 @@ class UserService {
     return email ? this.userStore.getActiveUserByEmailAddress(email.toLowerCase()) : null;
   }
 
-  async updateUserAccount({ userId, provider, email }) {
+  async updateUserAccount({ userId, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
 
     if (existingActiveUserWithEmail && existingActiveUserWithEmail._id !== userId) {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
@@ -87,12 +86,12 @@ class UserService {
     return user.roles;
   }
 
-  async updateUserLockedOutState(userId, lockedOut) {
-    logger.info(`Updating locked out state for user with id ${userId}: ${lockedOut}`);
+  async updateUserAccountLockedOn(userId, accountLockedOn) {
+    logger.info(`${accountLockedOn ? 'Locking' : 'Unlocking'} account for user with id ${userId}.`);
     const user = await this.userStore.getUserById(userId);
-    user.lockedOut = lockedOut;
+    user.accountLockedOn = accountLockedOn;
     await this.userStore.saveUser(user);
-    return user.lockedOut;
+    return user;
   }
 
   async closeUserAccount(userId) {
@@ -102,7 +101,6 @@ class UserService {
       _id: userId,
       email: user.email,
       displayName: user.displayName,
-      provider: user.provider,
       accountClosedOn: new Date()
     };
     await this.userStore.saveUser(clearedUserData);
@@ -236,22 +234,21 @@ class UserService {
     return updatedUser;
   }
 
-  async createUser({ email, password, displayName, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
+  async createUser({ email, password, displayName, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
     if (existingActiveUserWithEmail) {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
     const user = {
       ...this._buildEmptyUser(),
-      provider,
       email: lowerCasedEmail,
       passwordHash: await this._hashPassword(password),
       displayName,
       roles,
-      expires: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
 
@@ -260,53 +257,19 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user };
   }
 
-  async ensureExternalUser({ _id, displayName, hostName }) {
-    const user = {
-      ...this._buildEmptyUser(),
-      _id,
-      provider: `external/${hostName}`,
-      email: null,
-      passwordHash: null,
-      displayName
-    };
-    await this.userStore.saveUser(user);
+  async recordUserLogIn(userId) {
+    await this.userStore.updateUserLastLoggedIn({ userId, lastLoggedInOn: new Date() });
+    return this.userStore.getUserById(userId);
   }
 
-  async ensureInternalUser({ _id, displayName, email }) {
-    const users = await this.userStore.getUsersByEmailAddress(email);
-    const activeUser = users.find(user => !user.accountClosedOn);
-    const userWithClosedAccount = users.find(user => user.accountClosedOn);
-
-    if (activeUser) {
-      return activeUser._id;
-    }
-
-    if (userWithClosedAccount) {
-      return userWithClosedAccount._id;
-    }
-
-    const user = {
-      ...this._buildEmptyUser(),
-      _id,
-      provider: DEFAULT_PROVIDER_NAME,
-      email,
-      passwordHash: null,
-      displayName,
-      accountClosedOn: new Date()
-    };
-    await this.userStore.saveUser(user);
-
-    return _id;
-  }
-
-  async verifyUser(verificationCode, provider = DEFAULT_PROVIDER_NAME) {
+  async verifyUser(verificationCode) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
-      user = await this.userStore.findUserByVerificationCode({ provider, verificationCode });
+      user = await this.userStore.findUserByVerificationCode(verificationCode);
       if (user) {
         logger.info(`Found user with id ${user._id}`);
-        user.expires = null;
+        user.expiresOn = null;
         user.verificationCode = null;
         await this.userStore.saveUser(user);
       } else {
@@ -319,17 +282,14 @@ class UserService {
     return user;
   }
 
-  async findConfirmedActiveUserByEmailAndPassword({ email, password, provider = DEFAULT_PROVIDER_NAME }) {
+  async findConfirmedActiveUserByEmailAndPassword({ email, password }) {
     if (!email || !password) {
       return null;
     }
 
     const lowerCasedEmail = email.toLowerCase();
 
-    const user = await this.userStore.findActiveUserByProviderAndEmail({
-      email: lowerCasedEmail,
-      provider
-    });
+    const user = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
 
     if (!user || user.expires) {
       return null;
@@ -340,14 +300,10 @@ class UserService {
   }
 
   async createPasswordResetRequest(user) {
-    if (user.provider !== DEFAULT_PROVIDER_NAME) {
-      throw new Error('Cannot reset passwords on third party users');
-    }
-
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expires: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
+      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
     };
 
     await this.transactionRunner.run(async session => {
@@ -390,23 +346,23 @@ class UserService {
   _buildEmptyUser() {
     return {
       _id: uniqueId.create(),
-      provider: null,
       email: null,
       passwordHash: null,
       displayName: null,
       organization: '',
       introduction: '',
       roles: [],
-      expires: null,
+      expiresOn: null,
       verificationCode: null,
-      lockedOut: false,
       storage: {
         planId: null,
         usedBytes: 0,
         reminders: []
       },
       favorites: [],
-      accountClosedOn: null
+      accountLockedOn: null,
+      accountClosedOn: null,
+      lastLoggedInOn: null
     };
   }
 }
