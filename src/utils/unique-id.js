@@ -1,10 +1,14 @@
 import { customAlphabet } from 'nanoid';
 
+const DEFAULT_ID_LENGTH = 22;
 const alphabet = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
-const nanoid = customAlphabet(alphabet, 22);
 
-function create() {
-  return nanoid();
+const defaultGenerator = customAlphabet(alphabet, DEFAULT_ID_LENGTH);
+
+function create(length = DEFAULT_ID_LENGTH) {
+  return length === DEFAULT_ID_LENGTH
+    ? defaultGenerator()
+    : customAlphabet(alphabet, length)();
 }
 
 export default {
