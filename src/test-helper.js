@@ -129,24 +129,25 @@ export async function setupTestUser(container, userValues) {
   const email = userValues?.email || 'test@test@com';
   const password = userValues?.password || 'test';
   const displayName = userValues?.displayName || 'Testibus';
-  const roles = userValues?.roles || [ROLE.user];
-  const organization = userValues?.organization || '';
-  const introduction = userValues?.introduction || '';
-  const lockedOut = userValues?.lockedOut || false;
 
   const { result, user } = await userService.createUser({ email, password, displayName });
   if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, email, password, displayName }));
   }
   const verifiedUser = await userService.verifyUser(user.verificationCode);
-  verifiedUser.roles = roles;
-  verifiedUser.organization = organization;
-  verifiedUser.introduction = introduction;
-  verifiedUser.lockedOut = lockedOut;
+  verifiedUser.roles = userValues?.roles || [ROLE.user];
+  verifiedUser.organization = userValues?.organization || '';
+  verifiedUser.introduction = userValues?.introduction || '';
+  verifiedUser.lockedOut = userValues?.lockedOut || false;
   verifiedUser.accountClosedOn = userValues?.accountClosedOn || null;
   verifiedUser.storage = userValues?.storage || { planId: null, usedBytes: 0, reminders: [] };
   await userStore.saveUser(verifiedUser);
   return verifiedUser;
+}
+
+export async function updateTestUser(container, user) {
+  const userStore = container.get(UserStore);
+  await userStore.saveUser(user);
 }
 
 export async function createTestRoom(container, roomValues = {}) {

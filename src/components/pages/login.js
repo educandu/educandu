@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
 import { useRequest } from '../request-context.js';
+import React, { Fragment, useRef, useState } from 'react';
 
 function Login({ PageTemplate, SiteLogo }) {
   const formRef = useRef();
   const request = useRequest();
   const { t } = useTranslation('login');
-  const [isFrozen, setIsFrozen] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   const handleLoginButtonClick = () => {
     formRef.current.submit();
@@ -20,8 +20,8 @@ function Login({ PageTemplate, SiteLogo }) {
     window.location = request.query.redirect || routes.getDefaultLoginRedirectUrl();
   };
 
-  const handleLoginFailedTooOften = () => {
-    setIsFrozen(true);
+  const handleLoginBlocked = () => {
+    setIsBlocked(true);
   };
 
   return (
@@ -33,19 +33,22 @@ function Login({ PageTemplate, SiteLogo }) {
         <div className="LoginPage-form">
           <LoginForm
             formRef={formRef}
-            disabled={isFrozen}
             name="login-page-login-form"
             onLoginSucceeded={handleLoginSucceeded}
-            onLoginFailedTooOften={handleLoginFailedTooOften}
+            onLoginBlocked={handleLoginBlocked}
             />
-          <div className="LoginPage-forgotPasswordLink">
-            <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
-          </div>
-          <div className="LoginPage-loginButton">
-            <Button type="primary" size="large" onClick={handleLoginButtonClick} disabled={isFrozen} block>
-              {t('common:login')}
-            </Button>
-          </div>
+          {!isBlocked && (
+            <Fragment>
+              <div className="LoginPage-forgotPasswordLink">
+                <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+              </div>
+              <div className="LoginPage-loginButton">
+                <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
+                  {t('common:login')}
+                </Button>
+              </div>
+            </Fragment>
+          )}
         </div>
       </div>
     </PageTemplate>

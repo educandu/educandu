@@ -59,6 +59,7 @@ const config = {
   xFrameOptions: processEnv.TEST_APP_X_FRAME_OPTIONS,
   smtpOptions: processEnv.TEST_APP_SMTP_OPTIONS,
   emailSenderAddress: processEnv.TEST_APP_EMAIL_SENDER_ADDRESS,
+  adminEmailAddress: processEnv.TEST_APP_ADMIN_EMAIL_ADDRESS,
   initialUser: processEnv.TEST_APP_INITIAL_USER ? JSON.parse(processEnv.TEST_APP_INITIAL_USER) : null,
   basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}'),
   plugins,

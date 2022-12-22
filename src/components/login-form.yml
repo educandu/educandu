@@ -7,6 +7,3 @@ enterPassword:
 loginFailed:
   en: Login failed. Please check your input.
   de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.
-loginFailedTooOften:
-  en: Too many failed login attempts. Please try again later.
-  de: Zu viele fehlgeschlagene Anmeldungsversuche. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.

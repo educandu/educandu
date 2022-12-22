@@ -24,7 +24,7 @@ class ErrorController {
       const isApiCall = this.acceptsJson(req);
       const consolidatedErr = this.consolidateError(err, req);
 
-      if (isApiCall && this.tryRespondToExpiredSession(req, res, consolidatedErr)) {
+      if (isApiCall && this.tryRespondToApiError(req, res, consolidatedErr)) {
         return;
       }
 
@@ -69,7 +69,12 @@ class ErrorController {
     return req.accepts(['html', 'json']) === 'json';
   }
 
-  tryRespondToExpiredSession(req, res, err) {
+  tryRespondToApiError(req, res, err) {
+    if (err.code === ERROR_CODES.userLockedOut) {
+      res.status(HTTP_STATUS.unauthorized).json(err);
+      return true;
+    }
+
     if (err.status === HTTP_STATUS.unauthorized && !req.isAuthenticated() && req.cookies[this.serverConfig.sessionCookieName]) {
       err.code = ERROR_CODES.sessionExpired;
       res.status(HTTP_STATUS.unauthorized).json(err);
