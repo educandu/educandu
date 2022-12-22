@@ -43,14 +43,14 @@ import {
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
-  postUserLockedOutBodySchema,
+  postUserAccountLockedOnBodySchema,
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
   favoriteBodySchema,
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden, TooManyRequests } = httpErrors;
+const { NotFound, Forbidden, TooManyRequests, BadRequest } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -181,8 +181,9 @@ class UserController {
   }
 
   async handleGetUsers(req, res) {
-    const result = await this.userService.getAllUsers();
-    res.send({ users: result });
+    const users = await this.userService.getAllUsers();
+    const mappedUsers = this.clientDataMappingService.mapUsersForAdminArea(users);
+    res.send({ users: mappedUsers });
   }
 
   async handlePostUser(req, res) {
@@ -280,11 +281,19 @@ class UserController {
     return res.status(201).send({ roles: newRoles });
   }
 
-  async handlePostUserLockedOut(req, res) {
+  async handlePostUserAccountLockedOnBodySchema(req, res) {
     const { userId } = req.params;
-    const { lockedOut } = req.body;
-    const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
-    return res.status(201).send({ lockedOut: newLockedOutState });
+    const { accountLockedOn } = req.body;
+    const accountLockedOnDate = accountLockedOn ? new Date(accountLockedOn) : null;
+
+    if (isNaN(accountLockedOnDate)) {
+      throw new BadRequest(`'${accountLockedOn}' is not a valid date string.`);
+    }
+
+    const updatedUser = await this.userService.updateUserAccountLockedOn(userId, accountLockedOnDate);
+    const mappedUser = this.clientDataMappingService.mapUserForAdminArea(updatedUser);
+
+    return res.status(201).send(mappedUser);
   }
 
   async handlePostUserStoragePlan(req, res) {
@@ -517,12 +526,12 @@ class UserController {
     );
 
     router.post(
-      '/api/v1/users/:userId/lockedOut',
+      '/api/v1/users/:userId/accountLockedOn',
       needsPermission(permissions.EDIT_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
-      validateBody(postUserLockedOutBodySchema),
-      (req, res) => this.handlePostUserLockedOut(req, res)
+      validateBody(postUserAccountLockedOnBodySchema),
+      (req, res) => this.handlePostUserAccountLockedOnBodySchema(req, res)
     );
 
     router.post(

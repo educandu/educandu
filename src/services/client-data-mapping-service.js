@@ -63,10 +63,12 @@ class ClientDataMappingService {
     };
   }
 
-  mapUsersForAdminArea(users) {
-    return users.map(user => ({
+  mapUserForAdminArea(user) {
+    return {
       ...user,
       expiresOn: user.expiresOn ? user.expiresOn.toISOString() : user.expiresOn,
+      accountLockedOn: user.accountLockedOn ? user.accountLockedOn.toISOString() : user.accountLockedOn,
+      accountClosedOn: user.accountClosedOn ? user.accountClosedOn.toISOString() : user.accountClosedOn,
       storage: {
         ...user.storage,
         reminders: user.storage.reminders.map(reminder => ({
@@ -78,7 +80,11 @@ class ClientDataMappingService {
         ...favorite,
         setOn: favorite.setOn.toISOString()
       }))
-    }));
+    };
+  }
+
+  mapUsersForAdminArea(users) {
+    return users.map(this.mapUserForAdminArea);
   }
 
   createProposedSections(docOrRevision, targetRoomId) {

@@ -1152,7 +1152,7 @@
     "language": "en",
     "resources": {
       "expires": "Expires",
-      "lockedOut": "Locked Out",
+      "accountLocked": "Locked",
       "roles": "Roles",
       "firstName": "First name(s)",
       "lastName": "Last name",
@@ -1179,7 +1179,7 @@
     "language": "de",
     "resources": {
       "expires": "Verfallsdatum",
-      "lockedOut": "Ausgesperrt",
+      "accountLocked": "Ausgesperrt",
       "roles": "Rollen",
       "firstName": "Vorname(n)",
       "lastName": "Nachname",

@@ -17,9 +17,9 @@ import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 import { confirmAllPrivateRoomsDelete } from '../confirmation-dialogs.js';
 import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
+import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -108,17 +108,18 @@ function Users({ initialState, PageTemplate }) {
     }
   };
 
-  const handleLockedOutStateChange = async (user, newLockedOut) => {
-    const oldLockedOut = user.lockedOut;
+  const handleAccountLockedOnChange = async (user, newAccountLockedOn) => {
+    const oldAccountLockedOn = user.accountLockedOn;
 
     setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, lockedOut: newLockedOut }));
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, accountLockedOn: newAccountLockedOn }));
 
     try {
-      await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOut });
+      const updatedUser = await userApiClient.saveUserAccountLockedOnState({ userId: user._id, accountLockedOn: newAccountLockedOn });
+      setUsers(oldUsers => replaceItem(oldUsers, { ...updatedUser }));
     } catch (error) {
       handleApiError({ error, logger, t });
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, lockedOut: oldLockedOut }));
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, accountLockedOn: oldAccountLockedOn }));
     } finally {
       setIsSaving(false);
     }
@@ -251,8 +252,8 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const renderLockedOutState = (_, user) => {
-    return <UserLockedOutStateEditor user={user} onLockedOutStateChange={handleLockedOutStateChange} />;
+  const renderAccountLockedOn = (_, user) => {
+    return <UserAccountLockedStateEditor user={user} onAccountLockedOnChange={handleAccountLockedOnChange} />;
   };
 
   const renderStorage = (_, user) => {
@@ -341,11 +342,11 @@ function Users({ initialState, PageTemplate }) {
       sorter: by(x => x.expiresOn),
       responsive: ['lg']
     }, {
-      title: () => t('lockedOut'),
-      dataIndex: 'lockedOut',
-      key: 'lockedOut',
-      sorter: by(x => x.lockedOut),
-      render: renderLockedOutState,
+      title: () => t('accountLocked'),
+      dataIndex: 'accountLockedOn',
+      key: 'accountLockedOn',
+      sorter: by(x => x.accountLockedOn || ''),
+      render: renderAccountLockedOn,
       responsive: ['md']
     }, {
       title: () => t('roles'),

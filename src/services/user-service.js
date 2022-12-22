@@ -86,12 +86,12 @@ class UserService {
     return user.roles;
   }
 
-  async updateUserLockedOutState(userId, lockedOut) {
-    logger.info(`Updating locked out state for user with id ${userId}: ${lockedOut}`);
+  async updateUserAccountLockedOn(userId, accountLockedOn) {
+    logger.info(`${accountLockedOn ? 'Locking' : 'Unlocking'} account for user with id ${userId}.`);
     const user = await this.userStore.getUserById(userId);
-    user.lockedOut = lockedOut;
+    user.accountLockedOn = accountLockedOn;
     await this.userStore.saveUser(user);
-    return user.lockedOut;
+    return user;
   }
 
   async closeUserAccount(userId) {
@@ -298,7 +298,7 @@ class UserService {
         user = possibleMatches.find(match => match.email === lowerCasedEmail);
     }
 
-    if (!user || user.expiresOn || user.lockedOut) {
+    if (!user || user.expiresOn || user.accountLockedOn) {
       return false;
     }
 
@@ -361,13 +361,13 @@ class UserService {
       roles: [],
       expiresOn: null,
       verificationCode: null,
-      lockedOut: false,
       storage: {
         planId: null,
         usedBytes: 0,
         reminders: []
       },
       favorites: [],
+      accountLockedOn: null,
       accountClosedOn: null
     };
   }

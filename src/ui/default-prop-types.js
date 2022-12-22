@@ -148,7 +148,7 @@ export const userShape = PropTypes.shape({
   introduction: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expiresOn: PropTypes.string,
-  lockedOut: PropTypes.bool,
+  accountLockedOn: PropTypes.string,
   storage: userStorageShape,
   favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
 });

@@ -54,11 +54,11 @@ describe('client-data-mapping-service', () => {
         roles: ['user', 'admin'],
         expiresOn: null,
         verificationCode: null,
-        lockedOut: false,
         organization: 'Educandu',
         introduction: 'Educandu test user',
         storage: {},
         favorites: [],
+        accountLockedOn: null,
         accountClosedOn: null
       };
       sandbox.stub(urlUtils, 'getGravatarUrl').withArgs(viewedUser.email).returns('www://avatar.domain/12345');
@@ -157,7 +157,7 @@ describe('client-data-mapping-service', () => {
         roles: ['user', 'admin'],
         expiresOn: null,
         verificationCode: null,
-        lockedOut: false,
+        accountLockedOn: null,
         organization: 'Educandu',
         introduction: 'Educandu test user',
         storage: {
