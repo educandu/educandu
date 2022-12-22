@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useRef, useState } from 'react';
 import { useRequest } from '../request-context.js';
+import React, { Fragment, useRef, useState } from 'react';
 
 function Login({ PageTemplate, SiteLogo }) {
   const formRef = useRef();

@@ -5,9 +5,9 @@ import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
-import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import { handleApiError } from '../ui/error-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
+import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import IrrecoverableLoginError from './irrecoverable-login-error.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
