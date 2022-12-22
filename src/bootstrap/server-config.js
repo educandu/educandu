@@ -41,6 +41,7 @@ const configSchema = joi.object({
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
+  adminEmailAddress: joi.string().default(null),
   initialUser: joi.object({
     email: joi.string().required(),
     password: joi.string().required(),
@@ -86,6 +87,7 @@ class ServerConfig {
       appName: this.appName,
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
+      adminEmailAddress: this.adminEmailAddress,
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
       plugins: this.plugins

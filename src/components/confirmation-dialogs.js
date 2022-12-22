@@ -305,7 +305,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
     dialog.update(createDialogProps());
   };
 
-  const handleLoginFailedTooOften = () => {
+  const handleLoginFailedIrrecoverably = () => {
     isLoginFrozen = true;
     dialog.update(createDialogProps());
   };
@@ -325,7 +325,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
           onLoginFailed={handleLoginFailed}
           onLoginStarted={handleLoginStarted}
           onLoginSucceeded={handleLoginSucceeded}
-          onLoginFailedTooOften={handleLoginFailedTooOften}
+          onLoginFailedIrrecoverably={handleLoginFailedIrrecoverably}
           />
       </div>
     );
@@ -373,7 +373,7 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
     dialog.update(createDialogProps());
   };
 
-  const handleLoginFailedTooOften = () => {
+  const handleLoginFailedIrrecoverably = () => {
     isLoginFrozen = true;
     dialog.update(createDialogProps());
   };
@@ -389,11 +389,11 @@ export function confirmWithPassword(modal, t, email, onOk, onCancel = () => {}) 
       <LoginForm
         formRef={formRef}
         fixedEmail={email}
-        name="session-expired-login-form"
+        name="confirmation-login-form"
         onLoginFailed={handleLoginFailed}
         onLoginStarted={handleLoginStarted}
         onLoginSucceeded={handleLoginSucceeded}
-        onLoginFailedTooOften={handleLoginFailedTooOften}
+        onLoginFailedIrrecoverably={handleLoginFailedIrrecoverably}
         />
     </div>
   );

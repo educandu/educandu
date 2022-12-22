@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { useRequest } from '../request-context.js';
 
 function Login({ PageTemplate, SiteLogo }) {
@@ -20,7 +20,7 @@ function Login({ PageTemplate, SiteLogo }) {
     window.location = request.query.redirect || routes.getDefaultLoginRedirectUrl();
   };
 
-  const handleLoginFailedTooOften = () => {
+  const handleLoginFailedIrrecoverably = () => {
     setIsFrozen(true);
   };
 
@@ -33,19 +33,22 @@ function Login({ PageTemplate, SiteLogo }) {
         <div className="LoginPage-form">
           <LoginForm
             formRef={formRef}
-            disabled={isFrozen}
             name="login-page-login-form"
             onLoginSucceeded={handleLoginSucceeded}
-            onLoginFailedTooOften={handleLoginFailedTooOften}
+            onLoginFailedIrrecoverably={handleLoginFailedIrrecoverably}
             />
-          <div className="LoginPage-forgotPasswordLink">
-            <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
-          </div>
-          <div className="LoginPage-loginButton">
-            <Button type="primary" size="large" onClick={handleLoginButtonClick} disabled={isFrozen} block>
-              {t('common:login')}
-            </Button>
-          </div>
+          {!isFrozen && (
+            <Fragment>
+              <div className="LoginPage-forgotPasswordLink">
+                <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+              </div>
+              <div className="LoginPage-loginButton">
+                <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
+                  {t('common:login')}
+                </Button>
+              </div>
+            </Fragment>
+          )}
         </div>
       </div>
     </PageTemplate>

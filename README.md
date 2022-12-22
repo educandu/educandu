@@ -43,6 +43,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | xFrameOptions | Value for the `X-Frame-Options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
+ | adminEmailAddress | The email address to show to users as the admin email address | `string` | no |
  | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |

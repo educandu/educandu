@@ -41,6 +41,7 @@ const testAppEnv = {
   TEST_APP_CONSENT_COOKIE_NAME_PREFIX: 'CONSENT_TEST_APP',
   TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME: 'UPLOAD_LIABILITY_TEST_APP',
   TEST_APP_X_FRAME_OPTIONS: 'SAMEORIGIN',
+  TEST_APP_ADMIN_EMAIL_ADDRESS: 'educandu-test-admin@test.com',
   TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
