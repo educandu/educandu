@@ -47,7 +47,6 @@ class ClientDataMappingService {
 
     return {
       _id: user._id,
-      provider: user.provider,
       displayName: user.displayName,
       email: user.email,
       roles: user.roles,

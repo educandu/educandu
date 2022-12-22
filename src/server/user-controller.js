@@ -201,10 +201,9 @@ class UserController {
 
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
-    const provider = req.user.provider;
     const { email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, provider, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, email });
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }

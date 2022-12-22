@@ -142,7 +142,6 @@ export const userFavoriteShape = PropTypes.shape({
 
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
-  provider: PropTypes.string.isRequired,
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,

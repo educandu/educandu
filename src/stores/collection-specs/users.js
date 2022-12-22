@@ -17,12 +17,6 @@ export default {
       key: { verificationCode: 1 },
       unique: true,
       partialFilterExpression: { verificationCode: { $type: 'string' } }
-    },
-    {
-      name: '_idx_verificationCode_provider_',
-      key: { verificationCode: 1, provider: 1 },
-      unique: true,
-      partialFilterExpression: { verificationCode: { $type: 'string' } }
     }
   ]
 };

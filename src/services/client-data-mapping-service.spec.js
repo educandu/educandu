@@ -48,7 +48,6 @@ describe('client-data-mapping-service', () => {
     beforeEach(() => {
       viewedUser = {
         _id: 'k991UQneLdmDGrAgqR7s6q',
-        provider: 'educandu',
         displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
@@ -152,7 +151,6 @@ describe('client-data-mapping-service', () => {
     beforeEach(() => {
       dbUser = {
         _id: 'k991UQneLdmDGrAgqR7s6q',
-        provider: 'educandu',
         displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
@@ -186,7 +184,6 @@ describe('client-data-mapping-service', () => {
     it('should map the user from the database', () => {
       expect(result).toStrictEqual({
         _id: 'k991UQneLdmDGrAgqR7s6q',
-        provider: 'educandu',
         displayName: 'Test user',
         email: 'test@test.com',
         roles: ['user', 'admin'],

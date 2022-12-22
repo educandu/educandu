@@ -77,7 +77,6 @@ export const favoriteDBSchema = joi.object({
 
 export const userDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  provider: joi.string().required(),
   passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
   roles: joi.array().required().items(joi.string()),

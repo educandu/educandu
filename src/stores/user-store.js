@@ -13,7 +13,7 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findActiveUsersByEmail({ provider, email }, { session } = {}) {
+  findActiveUsersByEmail(email, { session } = {}) {
     const queryFilters = [];
 
     if (email) {
@@ -25,16 +25,16 @@ class UserStore {
     }
 
     return this.collection
-      .find({ $and: [{ provider }, { accountClosedOn: null }, { $or: queryFilters }] }, { session })
+      .find({ $and: [{ accountClosedOn: null }, { $or: queryFilters }] }, { session })
       .toArray();
   }
 
-  findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
-    return this.collection.findOne({ provider, verificationCode }, { session });
+  findUserByVerificationCode(verificationCode, { session } = {}) {
+    return this.collection.findOne({ verificationCode }, { session });
   }
 
-  findActiveUserByProviderAndEmail({ provider, email }, { session } = {}) {
-    return this.collection.findOne({ $and: [{ provider }, { email }, { accountClosedOn: null }] }, { session });
+  findActiveUserByEmail(email, { session } = {}) {
+    return this.collection.findOne({ $and: [{ email }, { accountClosedOn: null }] }, { session });
   }
 
   getUserById(id, { session } = {}) {

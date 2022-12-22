@@ -238,7 +238,7 @@ describe('user-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          user: { _id: 1234, provider: 'educandu' },
+          user: { _id: 1234 },
           body: { email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
@@ -252,7 +252,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserAccount', () => {
-        assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', email: 'test@test.com' });
+        assert.calledWith(userService.updateUserAccount, { userId: 1234, email: 'test@test.com' });
       });
 
       it('should set the status code on the response to 201', () => {

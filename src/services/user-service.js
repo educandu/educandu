@@ -21,7 +21,6 @@ import {
 const { BadRequest, NotFound } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
-const DEFAULT_PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
 
 const logger = new Logger(import.meta.url);
@@ -51,11 +50,11 @@ class UserService {
     return email ? this.userStore.getActiveUserByEmailAddress(email.toLowerCase()) : null;
   }
 
-  async updateUserAccount({ userId, provider, email }) {
+  async updateUserAccount({ userId, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
 
     if (existingActiveUserWithEmail && existingActiveUserWithEmail._id !== userId) {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
@@ -102,7 +101,6 @@ class UserService {
       _id: userId,
       email: user.email,
       displayName: user.displayName,
-      provider: user.provider,
       accountClosedOn: new Date()
     };
     await this.userStore.saveUser(clearedUserData);
@@ -236,17 +234,16 @@ class UserService {
     return updatedUser;
   }
 
-  async createUser({ email, password, displayName, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
+  async createUser({ email, password, displayName, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
     if (existingActiveUserWithEmail) {
       return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
     const user = {
       ...this._buildEmptyUser(),
-      provider,
       email: lowerCasedEmail,
       passwordHash: await this._hashPassword(password),
       displayName,
@@ -260,50 +257,11 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user };
   }
 
-  async ensureExternalUser({ _id, displayName, hostName }) {
-    const user = {
-      ...this._buildEmptyUser(),
-      _id,
-      provider: `external/${hostName}`,
-      email: null,
-      passwordHash: null,
-      displayName
-    };
-    await this.userStore.saveUser(user);
-  }
-
-  async ensureInternalUser({ _id, displayName, email }) {
-    const users = await this.userStore.getUsersByEmailAddress(email);
-    const activeUser = users.find(user => !user.accountClosedOn);
-    const userWithClosedAccount = users.find(user => user.accountClosedOn);
-
-    if (activeUser) {
-      return activeUser._id;
-    }
-
-    if (userWithClosedAccount) {
-      return userWithClosedAccount._id;
-    }
-
-    const user = {
-      ...this._buildEmptyUser(),
-      _id,
-      provider: DEFAULT_PROVIDER_NAME,
-      email,
-      passwordHash: null,
-      displayName,
-      accountClosedOn: new Date()
-    };
-    await this.userStore.saveUser(user);
-
-    return _id;
-  }
-
-  async verifyUser(verificationCode, provider = DEFAULT_PROVIDER_NAME) {
+  async verifyUser(verificationCode) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
-      user = await this.userStore.findUserByVerificationCode({ provider, verificationCode });
+      user = await this.userStore.findUserByVerificationCode(verificationCode);
       if (user) {
         logger.info(`Found user with id ${user._id}`);
         user.expires = null;
@@ -319,17 +277,14 @@ class UserService {
     return user;
   }
 
-  async authenticateUser({ email, password, provider = DEFAULT_PROVIDER_NAME }) {
+  async authenticateUser({ email, password }) {
     if (!email || !password) {
       return false;
     }
 
     const lowerCasedEmail = email.toLowerCase() || '';
 
-    const possibleMatches = await this.userStore.findActiveUsersByEmail({
-      email: lowerCasedEmail,
-      provider
-    });
+    const possibleMatches = await this.userStore.findActiveUsersByEmail(lowerCasedEmail);
 
     let user;
     switch (possibleMatches.length) {
@@ -352,10 +307,6 @@ class UserService {
   }
 
   async createPasswordResetRequest(user) {
-    if (user.provider !== DEFAULT_PROVIDER_NAME) {
-      throw new Error('Cannot reset passwords on third party users');
-    }
-
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
@@ -402,7 +353,6 @@ class UserService {
   _buildEmptyUser() {
     return {
       _id: uniqueId.create(),
-      provider: null,
       email: null,
       passwordHash: null,
       displayName: null,
