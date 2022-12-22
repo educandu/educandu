@@ -5,11 +5,10 @@ import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
+import { HTTP_STATUS } from '../domain/constants.js';
 import { handleApiError } from '../ui/error-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
-
-const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
 
 const logger = new Logger(import.meta.url);
 
@@ -50,7 +49,7 @@ export default function LoginForm({
         onLoginFailed();
       }
     } catch (error) {
-      if (error.status === HTTP_STATUS_TOO_MANY_REQUESTS) {
+      if (error.status === HTTP_STATUS.tooManyRequests) {
         setHasLoginFailedTooOften(true);
         onLoginFailed();
         onLoginFailedTooOften();

@@ -48,9 +48,9 @@ describe('user-controller', () => {
       getRequestById: sandbox.stub()
     };
     requestLimitRecordService = {
-      isFailedLoginRequestLimitReached: sandbox.stub(),
-      incrementFailedLoginRequestCount: sandbox.stub(),
-      resetFailedLoginRequestCount: sandbox.stub()
+      getCount: sandbox.stub(),
+      incrementCount: sandbox.stub(),
+      resetCount: sandbox.stub()
     };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),

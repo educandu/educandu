@@ -2,9 +2,9 @@ import createError from 'http-errors';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import requestUtils from '../utils/request-utils.js';
-import { ERROR_CODES } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ErrorPageRenderer from './error-page-renderer.js';
+import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -17,7 +17,7 @@ class ErrorController {
   }
 
   registerErrorHandler(router) {
-    router.use((req, res, next) => next(createError(404)));
+    router.use((_req, _res, next) => next(createError(HTTP_STATUS.notFound)));
 
     // eslint-disable-next-line no-unused-vars
     router.use((err, req, res, _next) => {
@@ -36,7 +36,7 @@ class ErrorController {
 
       if (isApiCall) {
         this.sendErrorJson(res, consolidatedErr);
-      } else if (!this.tryRedirectToLogin(req, res, consolidatedErr)) {
+      } else {
         this.sendErrorHtml(req, res, consolidatedErr);
       }
     });
@@ -52,10 +52,10 @@ class ErrorController {
       const message = `${err.error.name}: ${err.error.message}`;
       const props = { ...err, details: err.error.details };
       delete props.error;
-      return createError(400, message, props);
+      return createError(HTTP_STATUS.badRequest, message, props);
     }
 
-    return createError(500, err);
+    return createError(HTTP_STATUS.internalServerError, err);
   }
 
   consolidateError(err, req) {
@@ -70,9 +70,9 @@ class ErrorController {
   }
 
   tryRespondToExpiredSession(req, res, err) {
-    if (!req.isAuthenticated() && req.cookies[this.serverConfig.sessionCookieName]) {
+    if (err.status === HTTP_STATUS.unauthorized && !req.isAuthenticated() && req.cookies[this.serverConfig.sessionCookieName]) {
       err.code = ERROR_CODES.sessionExpired;
-      res.status(401).json(err);
+      res.status(HTTP_STATUS.unauthorized).json(err);
       return true;
     }
 
@@ -80,7 +80,7 @@ class ErrorController {
   }
 
   tryRedirectToLogin(req, res, err) {
-    if (err.status === 401 && !req.isAuthenticated()) {
+    if (err.status === HTTP_STATUS.unauthorized && !req.isAuthenticated()) {
       const url = routes.getLoginUrl(req.originalUrl);
       res.redirect(url);
       return true;
