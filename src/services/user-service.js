@@ -257,9 +257,8 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user };
   }
 
-  async recordUserLogIn(userId) {
-    await this.userStore.updateUserLastLoggedIn({ userId, lastLoggedInOn: new Date() });
-    return this.userStore.getUserById(userId);
+  recordUserLogIn(userId) {
+    return this.userStore.updateUserLastLoggedInOn({ userId, lastLoggedInOn: new Date() });
   }
 
   async verifyUser(verificationCode) {

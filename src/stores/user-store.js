@@ -44,8 +44,15 @@ class UserStore {
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
   }
 
-  updateUserLastLoggedIn({ userId, lastLoggedInOn }, { session } = {}) {
-    return this.collection.updateOne({ _id: userId }, { $set: { lastLoggedInOn } }, { session, upsert: true });
+  async updateUserLastLoggedInOn({ userId, lastLoggedInOn }, { session } = {}) {
+    const filter = { _id: userId };
+    const update = { $set: { lastLoggedInOn } };
+    const options = { session, returnDocument: 'after' };
+
+    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+
+    validate(value, userDBSchema);
+    return value;
   }
 
   addToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {

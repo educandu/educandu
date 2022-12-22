@@ -18,11 +18,11 @@ export default class RequestLimitRecordService {
   }
 
   async incrementCount({ req, expiresInMs }) {
-    const record = await this.requestLimitRecordStore.incrementCount({
+    const setExpiresOnOnInsert = new Date(Date.now() + expiresInMs);
+    const record = await this.requestLimitRecordStore.createOrUpdateRequestLimitRecord({
       requestKey: req.path,
       ipAddress: req.ip,
-      expiresInMs,
-      resetExpiresOnUpdate: false
+      setExpiresOnOnInsert
     });
     return record.count;
   }
