@@ -258,7 +258,8 @@ class UserService {
   }
 
   async recordUserLogIn(userId) {
-    await this.userStore.updateUserLastLoggedIn(userId);
+    await this.userStore.updateUserLastLoggedIn({ userId, lastLoggedInOn: new Date() });
+    return this.userStore.getUserById(userId);
   }
 
   async verifyUser(verificationCode) {
