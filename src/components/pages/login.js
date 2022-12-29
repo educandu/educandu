@@ -76,7 +76,7 @@ function Login({ PageTemplate, SiteLogo }) {
               </div>
             </Fragment>
           )}
-          {clientConfig.externalAccountProviders.length && (
+          {!!clientConfig.externalAccountProviders.length && (
             <div className="LoginPage-loginButton LoginPage-loginButton--secondary">
               <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
                 {t('loginWithShibboleth')}
