@@ -4,16 +4,34 @@ import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
+import { useService } from '../container-context.js';
 import React, { Fragment, useRef, useState } from 'react';
+import ClientConfig from '../../bootstrap/client-config.js';
+import ExternalAccountProviderDialog from '../external-account-provider-dialog.js';
 
 function Login({ PageTemplate, SiteLogo }) {
   const formRef = useRef();
   const request = useRequest();
   const { t } = useTranslation('login');
+  const clientConfig = useService(ClientConfig);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [isExternalAccountProviderDialogOpen, setIsExternalAccountProviderDialogOpen] = useState(false);
+
+  const loginUsingExternalProvider = providerKey => {
+    const provider = clientConfig.externalAccountProviders.find(p => p.key === providerKey);
+    window.location = provider.loginUrl;
+  };
 
   const handleLoginButtonClick = () => {
     formRef.current.submit();
+  };
+
+  const handleLoginWithShibbolethButtonClick = () => {
+    if (clientConfig.externalAccountProviders.length === 1) {
+      loginUsingExternalProvider(clientConfig.externalAccountProviders[0].key);
+    } else {
+      setIsExternalAccountProviderDialogOpen(true);
+    }
   };
 
   const handleLoginSucceeded = () => {
@@ -22,6 +40,15 @@ function Login({ PageTemplate, SiteLogo }) {
 
   const handleLoginBlocked = () => {
     setIsBlocked(true);
+  };
+
+  const handleExternalAccountProviderDialogOk = providerKey => {
+    setIsExternalAccountProviderDialogOpen(false);
+    loginUsingExternalProvider(providerKey);
+  };
+
+  const handleExternalAccountProviderDialogCancel = () => {
+    setIsExternalAccountProviderDialogOpen(false);
   };
 
   return (
@@ -49,8 +76,20 @@ function Login({ PageTemplate, SiteLogo }) {
               </div>
             </Fragment>
           )}
+          {clientConfig.externalAccountProviders.length && (
+            <div className="LoginPage-loginButton LoginPage-loginButton--secondary">
+              <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
+                {t('loginWithShibboleth')}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
+      <ExternalAccountProviderDialog
+        isOpen={isExternalAccountProviderDialogOpen}
+        onOk={handleExternalAccountProviderDialogOk}
+        onCancel={handleExternalAccountProviderDialogCancel}
+        />
     </PageTemplate>
   );
 }

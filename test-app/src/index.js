@@ -83,7 +83,30 @@ const config = {
         id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
       }
     ]
-  }
+  },
+  externalAccountProviders: [
+    {
+      key: 'samltest',
+      displayName: 'SAMLTEST.ID',
+      loginUrl: 'https://samltest.id',
+      logoUrl: 'https://samltest.id/wp-content/uploads/2018/08/Logo-2-73x73.png',
+      expiryTimeoutInDays: 6 * 30
+    },
+    {
+      key: 'panda',
+      displayName: 'The Panda University',
+      loginUrl: 'https://en.wikipedia.org/wiki/Giant_panda',
+      logoUrl: '/images/panda-logo.svg',
+      expiryTimeoutInDays: 4 * 30
+    },
+    {
+      key: 'handshake',
+      displayName: 'The Massachusetts International Institute of Handshakes - this is a reeeeeeeally long name',
+      loginUrl: 'https://en.wikipedia.org/wiki/Handshake',
+      logoUrl: '/images/handshake-logo.svg',
+      expiryTimeoutInDays: 2 * 30
+    }
+  ]
 };
 
 educandu(config);
