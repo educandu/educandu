@@ -11,16 +11,6 @@ class RequestLimitRecordStore {
     return `${requestKey}|${ipAddress}`;
   }
 
-  getRequestLimitRecord({ requestKey, ipAddress }, { session } = {}) {
-    const _id = this._createId({ requestKey, ipAddress });
-    return this.collection.findOne({ _id }, { session });
-  }
-
-  deleteRequestLimitRecord({ requestKey, ipAddress }, { session } = {}) {
-    const _id = this._createId({ requestKey, ipAddress });
-    return this.collection.deleteOne({ _id }, { session });
-  }
-
   async createOrUpdateRequestLimitRecord({ ipAddress, requestKey, setExpiresOnOnInsert }, { session } = {}) {
     const filter = {
       _id: this._createId({ requestKey, ipAddress })
