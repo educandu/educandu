@@ -66,7 +66,14 @@ const configSchema = joi.object({
     about: joi.array().items(joi.object({
       id: joi.string().required()
     }))
-  }).default({})
+  }).default({}),
+  externalAccountProviders: joi.array().items(joi.object({
+    key: joi.string().required(),
+    displayName: joi.string().required(),
+    loginUrl: joi.string().required(),
+    logoUrl: joi.string().allow(null).default(null),
+    expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30)
+  })).default([])
 });
 
 class ServerConfig {
@@ -90,7 +97,13 @@ class ServerConfig {
       adminEmailAddress: this.adminEmailAddress,
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
-      plugins: this.plugins
+      plugins: this.plugins,
+      externalAccountProviders: this.externalAccountProviders.map(p => ({
+        key: p.key,
+        displayName: p.displayName,
+        loginUrl: p.loginUrl,
+        logoUrl: p.logoUrl
+      }))
     };
   }
 }

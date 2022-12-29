@@ -1,0 +1,42 @@
+.ExternalAccountProviderDialog {}
+
+.ExternalAccountProviderDialog-explanation {
+  margin: 0 0 25px 0;
+}
+
+.ExternalAccountProviderDialog-providers {
+  display: grid;
+  user-select: none;
+  grid-auto-flow: row;
+  gap: 10px;
+}
+
+.ExternalAccountProviderDialog-provider {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: @edu-border-radius-base;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  justify-items: start;
+
+  &:hover {
+    .m-box-shadow;
+  }
+
+  &.is-selected {
+    background-color: @edu-selection-background-color;
+  }
+}
+
+.ExternalAccountProviderDialog-providerLogo {
+  grid-column: 1;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.ExternalAccountProviderDialog-providerName {
+  grid-column: 2;
+}

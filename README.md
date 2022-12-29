@@ -50,7 +50,8 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
- | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }] }, about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}]` | no, however if provided, `apiKey` is mandatory |
+ | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }], about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}] }` | no, however if provided, `apiKey` is mandatory |
+ | externalAccountProviders | Configuration for SAML authentication | `{ key: <string>, displayName: <string>, loginUrl: <string>, logoUrl: <string>, expiryTimeoutInDays: <number> }` | no, however if provided, `key`, `displayName` and `loginUrl` are mandatory, while `expiryTimeoutInDays` defaults to 180 days |
 
 ## How to use
 

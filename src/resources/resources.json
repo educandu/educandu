@@ -458,6 +458,22 @@
     }
   },
   {
+    "namespace": "externalAccountProviderDialog",
+    "language": "en",
+    "resources": {
+      "title": "Choose institution",
+      "explanation": "Please select the institution you're associated with in order to login."
+    }
+  },
+  {
+    "namespace": "externalAccountProviderDialog",
+    "language": "de",
+    "resources": {
+      "title": "Institution auswählen",
+      "explanation": "Bitte wähle die Institution aus, der du angehörst, um dich einzuloggen."
+    }
+  },
+  {
     "namespace": "favoriteStar",
     "language": "en",
     "resources": {
@@ -995,14 +1011,16 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "forgotPassword": "Forgot your password?"
+      "forgotPassword": "Forgot your password?",
+      "loginWithShibboleth": "Login with Shibboleth"
     }
   },
   {
     "namespace": "login",
     "language": "de",
     "resources": {
-      "forgotPassword": "Kennwort vergessen?"
+      "forgotPassword": "Kennwort vergessen?",
+      "loginWithShibboleth": "Mit Shibboleth anmelden"
     }
   },
   {
