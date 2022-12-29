@@ -28,7 +28,7 @@ class ErrorController {
         return;
       }
 
-      if (!isApiCall && this.tryRedirectToLogin(req, res, consolidatedErr)) {
+      if (!isApiCall && this.tryRespondToPageError(req, res, consolidatedErr)) {
         return;
       }
 
@@ -37,7 +37,7 @@ class ErrorController {
       if (isApiCall) {
         this.sendErrorJson(res, consolidatedErr);
       } else {
-        this.sendErrorHtml(req, res, consolidatedErr);
+        this.sendErrorPage(req, res, consolidatedErr);
       }
     });
   }
@@ -84,7 +84,7 @@ class ErrorController {
     return false;
   }
 
-  tryRedirectToLogin(req, res, err) {
+  tryRespondToPageError(req, res, err) {
     if (err.status === HTTP_STATUS.unauthorized && !req.isAuthenticated()) {
       const url = routes.getLoginUrl(req.originalUrl);
       res.redirect(url);
@@ -98,7 +98,7 @@ class ErrorController {
     res.status(err.status).type('json').send(this.errorToPlainObj(err));
   }
 
-  sendErrorHtml(req, res, err) {
+  sendErrorPage(req, res, err) {
     this.errorPageRenderer.sendPage(req, res, err);
   }
 
