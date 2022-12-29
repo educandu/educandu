@@ -29,12 +29,10 @@ import { validateBody, validateParams } from '../domain/validation-middleware.js
 import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
+  ANTI_BRUTE_FORCE_MAX_REQUESTS,
+  ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
   COOKIE_SAME_SITE_POLICY,
   ERROR_CODES,
-  FAILED_LOGIN_ATTEMPTS_LIMIT,
-  FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS,
-  PASSWORD_RESET_REQUEST_LIMIT,
-  PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
   SAVE_USER_RESULT
 } from '../domain/constants.js';
 import {
@@ -51,7 +49,7 @@ import {
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden, TooManyRequests, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -98,9 +96,9 @@ class UserController {
     this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
 
-    this.passwordResetRateLimitOptions = {
-      maxRequests: PASSWORD_RESET_REQUEST_LIMIT,
-      expiresInMs: PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
+    this.antiBruteForceRequestLimitOptions = {
+      maxRequests: ANTI_BRUTE_FORCE_MAX_REQUESTS,
+      expiresInMs: ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
       service: this.requestLimitRecordService
     };
   }
@@ -222,31 +220,20 @@ class UserController {
     res.status(201).send({ user: updatedUser });
   }
 
-  async handlePostUserLogin(req, res, next) {
-    const failedAttemptsCount = await this.requestLimitRecordService.getCount({ req });
-    if (failedAttemptsCount >= FAILED_LOGIN_ATTEMPTS_LIMIT) {
-      throw new TooManyRequests();
-    }
-
-    passport.authenticate('local', async (err, user) => {
+  handlePostUserLogin(req, res, next) {
+    passport.authenticate('local', (err, user) => {
       if (err) {
         return next(err);
       }
 
       if (!user) {
-        await this.requestLimitRecordService.incrementCount({ req, expiresInMs: FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS });
         return res.status(201).send({ user: null });
       }
 
-      await this.requestLimitRecordService.resetCount({ req });
-      const updatedUser = await this.userService.recordUserLogIn(user._id);
-
-      return req.login(updatedUser, loginError => {
-        if (loginError) {
-          return next(loginError);
-        }
-
-        return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
+      return req.login(user, loginError => {
+        return loginError
+          ? next(loginError)
+          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
       });
     })(req, res, next);
   }
@@ -489,7 +476,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/request-password-reset',
-      rateLimit(this.passwordResetRateLimitOptions),
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(postUserPasswordResetRequestBodySchema),
       (req, res) => this.handlePostUserPasswordResetRequest(req, res)
@@ -497,7 +484,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/complete-password-reset',
-      rateLimit(this.passwordResetRateLimitOptions),
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(postUserPasswordResetCompletionBodySchema),
       (req, res) => this.handlePostUserPasswordResetCompletion(req, res)
@@ -521,6 +508,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/login',
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(loginBodySchema),
       (req, res, next) => this.handlePostUserLogin(req, res, next)
