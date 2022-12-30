@@ -1,0 +1,36 @@
+@import (less) 'plyr/dist/plyr.css';
+
+.MediaPlayback {
+  --plyr-video-background: @edu-white;
+  cursor: pointer;
+  position: relative;
+
+  &.MediaPlayback--audioOnly iframe {
+    width: 0;
+    height: 0;
+  }
+}
+
+.MediaPlayback-videoOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MediaPlayback-videoOverlayIcon {
+  .m-box-shadow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 25px;
+  color: @edu-white;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+}
