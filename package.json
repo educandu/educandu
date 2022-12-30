@@ -78,6 +78,7 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "passport-strategy": "^1.0.0",
+    "plyr": "^3.7.3",
     "pretty-bytes": "^6.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
