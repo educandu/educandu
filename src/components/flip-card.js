@@ -8,7 +8,7 @@ const FACE_TYPE = {
   standalone: 'standalone'
 };
 
-export function FlipCardFace({ content, color, faceType, locked, disabled }) {
+export function FlipCardFace({ content, color, faceType, locked, disabled, hidden }) {
   const faceStyle = color ? { backgroundColor: color } : null;
 
   const classes = classNames(
@@ -25,6 +25,8 @@ export function FlipCardFace({ content, color, faceType, locked, disabled }) {
         {content}
       </div>
       {!!disabled && <div className="FlipCard-disabledOverlay" />}
+      {/* Ensures card face is not revealed in browser print or screenshot tools */}
+      {!!hidden && <div className="FlipCard-hiddenOverlay" />}
     </div>
   );
 }
@@ -39,8 +41,8 @@ function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, o
   return (
     <div className="FlipCard" onClick={handleClick}>
       <div className={classNames('FlipCard-content', { 'is-flipped': flipped })}>
-        <FlipCardFace content={backContent} color={backColor} locked={locked} disabled={disabled} faceType={FACE_TYPE.back} />
-        <FlipCardFace content={frontContent} color={frontColor} locked={locked} disabled={disabled} faceType={FACE_TYPE.front} />
+        <FlipCardFace content={backContent} color={backColor} locked={locked} disabled={disabled} hidden={flipped} faceType={FACE_TYPE.back} />
+        <FlipCardFace content={frontContent} color={frontColor} locked={locked} disabled={disabled} hidden={!flipped} faceType={FACE_TYPE.front} />
       </div>
     </div>
   );
@@ -50,6 +52,7 @@ FlipCardFace.propTypes = {
   color: PropTypes.string,
   content: PropTypes.any,
   disabled: PropTypes.bool,
+  hidden: PropTypes.bool,
   faceType: PropTypes.oneOf(Object.values(FACE_TYPE)),
   locked: PropTypes.bool
 };
