@@ -100,8 +100,8 @@ function MatchingCardsDisplay({ content }) {
           <MatchingCardsTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
-            playMedia={isFlipped}
             showMatched={wasMatched}
+            playMedia={isFlipped && !wasMatched}
             />
         )}
         onClick={() => handleTileClick(tile)}
