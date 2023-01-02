@@ -41,7 +41,7 @@ const configSchema = joi.object({
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
-  adminEmailAddress: joi.string().default(null),
+  adminEmailAddress: joi.string().allow(null).default(null),
   initialUser: joi.object({
     email: joi.string().required(),
     password: joi.string().required(),
