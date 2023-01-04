@@ -408,7 +408,7 @@ class UserController {
     }));
 
     router.use((req, res, next) => {
-      return isSessionValid(req)
+      return isSessionValid(req, this.serverConfig)
         ? next()
         : req.session.regenerate(next);
     });
