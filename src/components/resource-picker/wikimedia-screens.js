@@ -1,21 +1,21 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
+import WikimediaSearch from './wikimedia-search.js';
 import { ensureIsUnique } from '../../utils/array-utils.js';
 import ResourcePreviewScreen from './resource-preview-screen.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import WikimediaCommonsSearch from './wikimedia-commons-search.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';
+import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import WikimediaCommonsApiClient from '../../api-clients/wikimedia-commons-api-client.js';
-import { mapSearchFileTypesToWikimediaCommonsFileTypes, processWikimediaResponse, SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
+import { mapSearchFileTypesToWikimediaFileTypes, processWikimediaResponse, SEARCH_FILE_TYPE } from './wikimedia-utils.js';
 
 const SCREEN = {
   search: 'search',
   filePreview: 'file-preview'
 };
 
-function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
-  const wikimediaCommonsApiClient = useSessionAwareApiClient(WikimediaCommonsApiClient);
+function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
+  const wikimediaApiClient = useSessionAwareApiClient(WikimediaApiClient);
 
   const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
@@ -37,8 +37,8 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const fileTypes = mapSearchFileTypesToWikimediaCommonsFileTypes(searchFileTypes);
-      const response = await wikimediaCommonsApiClient.queryMediaFiles({
+      const fileTypes = mapSearchFileTypesToWikimediaFileTypes(searchFileTypes);
+      const response = await wikimediaApiClient.queryMediaFiles({
         searchText: searchTerm,
         offset: searchOffset,
         fileTypes
@@ -58,7 +58,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     } finally {
       setIsLoading(false);
     }
-  }, [wikimediaCommonsApiClient, isMounted]);
+  }, [wikimediaApiClient, isMounted]);
 
   const handleLoadMore = () => {
     fetchWikimediaFiles(searchParams, nextSearchOffset);
@@ -85,7 +85,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
     pushScreen(SCREEN.filePreview);
   };
 
-  const handleOpenWikimediaCommonsPageClick = file => {
+  const handleOpenWikimediaPageClick = file => {
     window.open(file.pageUrl, '_blank');
   };
 
@@ -140,7 +140,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
 
   return (
     <Fragment>
-      <WikimediaCommonsSearch
+      <WikimediaSearch
         files={files}
         isLoading={isLoading}
         initialUrl={initialUrl}
@@ -156,7 +156,7 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
         onSearchParamsChange={handleSearchParamsChange}
         onSelectInitialUrlClick={handleSelectInitialUrlClick}
         onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
-        onOpenWikimediaCommonsPageClick={handleOpenWikimediaCommonsPageClick}
+        onOpenWikimediaPageClick={handleOpenWikimediaPageClick}
         />
 
       {screen === SCREEN.filePreview && (
@@ -171,16 +171,16 @@ function WikimediaCommonsScreens({ initialUrl, onSelect, onCancel }) {
   );
 }
 
-WikimediaCommonsScreens.propTypes = {
+WikimediaScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func
 };
 
-WikimediaCommonsScreens.defaultProps = {
+WikimediaScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default WikimediaCommonsScreens;
+export default WikimediaScreens;

@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import WikimediaScreens from './wikimedia-screens.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
 import StorageLocationScreens from './storage-location-screens.js';
-import WikimediaCommonsScreens from './wikimedia-commons-screens.js';
 import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
@@ -71,9 +71,9 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
             onCancel={onCancel}
             />
         );
-      case SOURCE_TYPE.wikimediaCommons:
+      case SOURCE_TYPE.wikimedia:
         return (
-          <WikimediaCommonsScreens
+          <WikimediaScreens
             initialUrl={initialUrl}
             onSelect={onSelect}
             onCancel={onCancel}
@@ -102,7 +102,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 }
 
 ResourceSelector.propTypes = {
-  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.documentMedia, SOURCE_TYPE.roomMedia, SOURCE_TYPE.wikimediaCommons])),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia])),
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func

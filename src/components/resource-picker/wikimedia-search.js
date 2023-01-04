@@ -4,11 +4,11 @@ import LiteralUrl from '../literal-url.js';
 import DebouncedInput from '../debounced-input.js';
 import { SearchOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
+import { SEARCH_FILE_TYPE } from './wikimedia-utils.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Modal, Checkbox, Empty } from 'antd';
-import { SEARCH_FILE_TYPE } from './wikimedia-commons-utils.js';
+import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
-import WikimediaCommonsFilesViewer from './wikimedia-commons-files-viewer.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 
 const CheckboxGroup = Checkbox.Group;
@@ -25,7 +25,7 @@ const createSearchFileTypeOptions = t => {
   return Object.values(SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
 };
 
-function WikimediaCommonsSearch({
+function WikimediaSearch({
   files,
   isHidden,
   isLoading,
@@ -40,10 +40,10 @@ function WikimediaCommonsSearch({
   onPreviewFileClick,
   onSearchParamsChange,
   onSelectInitialUrlClick,
+  onOpenWikimediaPageClick,
   onSelectHighlightedFileClick,
-  onOpenWikimediaCommonsPageClick
 }) {
-  const { t } = useTranslation('wikimediaCommonsSearch');
+  const { t } = useTranslation('wikimediaSearch');
 
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchParams.searchTerm);
@@ -139,9 +139,9 @@ function WikimediaCommonsSearch({
   };
 
   return (
-    <div className={classNames('WikimediaCommonsSearch', { 'is-hidden': isHidden })}>
-      <div className="WikimediaCommonsSearch-buttonsLine">
-        <div className="WikimediaCommonsSearch-buttonsLineItem">
+    <div className={classNames('WikimediaSearch', { 'is-hidden': isHidden })}>
+      <div className="WikimediaSearch-buttonsLine">
+        <div className="WikimediaSearch-buttonsLineItem">
           <DebouncedInput
             placeholder={t('common:search')}
             value={typedInSearchTerm}
@@ -149,7 +149,7 @@ function WikimediaCommonsSearch({
             onChange={handleSearchTermChange}
             />
         </div>
-        <div className="WikimediaCommonsSearch-buttonsLineItem">
+        <div className="WikimediaSearch-buttonsLineItem">
           <CheckboxGroup
             options={searchFileTypeOptions}
             value={selectedSearchFileTypes}
@@ -157,7 +157,7 @@ function WikimediaCommonsSearch({
             disabled={isLoading}
             />
         </div>
-        <div className="WikimediaCommonsSearch-buttonsLineItem">
+        <div className="WikimediaSearch-buttonsLineItem">
           <Button
             type="primary"
             icon={<SearchOutlined />}
@@ -170,9 +170,9 @@ function WikimediaCommonsSearch({
       </div>
       {currentScreen === SCREEN.search && (
         <Fragment>
-          <div className="WikimediaCommonsSearch-filesViewer">
-            <div className="WikimediaCommonsSearch-filesViewerContent">
-              <WikimediaCommonsFilesViewer
+          <div className="WikimediaSearch-filesViewer">
+            <div className="WikimediaSearch-filesViewerContent">
+              <WikimediaFilesViewer
                 files={files}
                 isLoading={isLoading}
                 onLoadMore={onLoadMore}
@@ -181,27 +181,27 @@ function WikimediaCommonsSearch({
                 onFileDoubleClick={onFileDoubleClick}
                 selectedFileUrl={highlightedFile?.url}
                 onPreviewFileClick={onPreviewFileClick}
-                onOpenWikimediaCommonsPageClick={onOpenWikimediaCommonsPageClick}
+                onOpenWikimediaPageClick={onOpenWikimediaPageClick}
                 />
             </div>
           </div>
-          <div className="WikimediaCommonsSearch-searchInfo">
+          <div className="WikimediaSearch-searchInfo">
             {renderSearchInfo()}
           </div>
         </Fragment>
       )}
       {currentScreen === SCREEN.searchInvitation && (
-        <div className="WikimediaCommonsSearch-noSearch">
+        <div className="WikimediaSearch-noSearch">
           <Empty
             image={(
-              <SearchOutlined className="WikimediaCommonsSearch-searchInvitationIcon" />
+              <SearchOutlined className="WikimediaSearch-searchInvitationIcon" />
             )}
             description={(
               <Fragment>
-                <div className="WikimediaCommonsSearch-searchInvitationHeader">
+                <div className="WikimediaSearch-searchInvitationHeader">
                   {t('searchInvitationHeader')}
                 </div>
-                <div className="WikimediaCommonsSearch-searchInvitationDescription">
+                <div className="WikimediaSearch-searchInvitationDescription">
                   {t('searchInvitationDescription')}
                 </div>
               </Fragment>
@@ -210,8 +210,8 @@ function WikimediaCommonsSearch({
         </div>
       )}
       {currentScreen === SCREEN.initialUrlPreview && (
-        <div className="WikimediaCommonsSearch-noSearch">
-          <div className="WikimediaCommonsSearch-initialFilePreviewHeader">
+        <div className="WikimediaSearch-noSearch">
+          <div className="WikimediaSearch-initialFilePreviewHeader">
             <b>{t('initialFilePreviewHeader')}:</b>
             <br />
             <LiteralUrl>{initialUrl}</LiteralUrl>
@@ -220,7 +220,7 @@ function WikimediaCommonsSearch({
             url={initialUrl}
             layout={RESOURCE_PREVIEW_LAYOUT.thumbnailOnly}
             />
-          <div className="WikimediaCommonsSearch-initialFilePreviewFooter">
+          <div className="WikimediaSearch-initialFilePreviewFooter">
             {t('initialFilePreviewFooter')}
           </div>
         </div>
@@ -237,7 +237,7 @@ function WikimediaCommonsSearch({
   );
 }
 
-WikimediaCommonsSearch.propTypes = {
+WikimediaSearch.propTypes = {
   canLoadMore: PropTypes.bool.isRequired,
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   highlightedFile: wikimediaFileShape,
@@ -248,7 +248,7 @@ WikimediaCommonsSearch.propTypes = {
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onLoadMore: PropTypes.func.isRequired,
-  onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
+  onOpenWikimediaPageClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,
   onSelectHighlightedFileClick: PropTypes.func.isRequired,
@@ -259,9 +259,9 @@ WikimediaCommonsSearch.propTypes = {
   }).isRequired
 };
 
-WikimediaCommonsSearch.defaultProps = {
+WikimediaSearch.defaultProps = {
   highlightedFile: null,
   initialUrl: null
 };
 
-export default WikimediaCommonsSearch;
+export default WikimediaSearch;

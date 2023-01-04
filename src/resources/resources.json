@@ -1417,7 +1417,7 @@
     "resources": {
       "sourceType_document-media": "Document media",
       "sourceType_room-media": "Room media",
-      "sourceType_wikimedia-commons": "Wikimedia Commons"
+      "sourceType_wikimedia": "Wikimedia"
     }
   },
   {
@@ -1426,7 +1426,7 @@
     "resources": {
       "sourceType_document-media": "Dokument-Medien",
       "sourceType_room-media": "Raum-Medien",
-      "sourceType_wikimedia-commons": "Wikimedia Commons"
+      "sourceType_wikimedia": "Wikimedia"
     }
   },
   {
@@ -1452,21 +1452,21 @@
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesViewer",
+    "namespace": "wikimediaFilesViewer",
     "language": "en",
     "resources": {
-      "openWikimediaCommonsPage": "Open Wikimedia Commons page"
+      "openWikimediaPage": "Open Wikimedia page"
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesViewer",
+    "namespace": "wikimediaFilesViewer",
     "language": "de",
     "resources": {
-      "openWikimediaCommonsPage": "Seite auf Wikimedia Commons öffnen"
+      "openWikimediaPage": "Seite auf Wikimedia öffnen"
     }
   },
   {
-    "namespace": "wikimediaCommonsSearch",
+    "namespace": "wikimediaSearch",
     "language": "en",
     "resources": {
       "searchTerm": "Search term",
@@ -1474,14 +1474,14 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
-      "searchInvitationHeader": "Search in the Wikimedia Commons Database",
+      "searchInvitationHeader": "Search in the Wikimedia Database",
       "searchInvitationDescription": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
       "initialFilePreviewHeader": "Currently selected file",
       "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above"
     }
   },
   {
-    "namespace": "wikimediaCommonsSearch",
+    "namespace": "wikimediaSearch",
     "language": "de",
     "resources": {
       "searchTerm": "Suchbegriff",
@@ -1489,7 +1489,7 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
-      "searchInvitationHeader": "Suche in der Wikimedia-Commons-Datenbank",
+      "searchInvitationHeader": "Suche in der Wikimedia-Datenbank",
       "searchInvitationDescription": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest",
       "initialFilePreviewHeader": "Momentan ausgewählte Datei",
       "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
@@ -1712,7 +1712,7 @@
     "language": "en",
     "resources": {
       "tooltip_youtube": "Youtube",
-      "tooltip_wikimedia-commons": "Wikimedia Commons",
+      "tooltip_wikimedia": "Wikimedia",
       "tooltip_document-media": "document media storage",
       "tooltip_room-media": "room media storage",
       "tooltip_external": "external",
@@ -1724,7 +1724,7 @@
     "language": "de",
     "resources": {
       "tooltip_youtube": "Youtube",
-      "tooltip_wikimedia-commons": "Wikimedia Commons",
+      "tooltip_wikimedia": "Wikimedia",
       "tooltip_document-media": "Dokument-Medien Speicher",
       "tooltip_room-media": "Raum-Medien Speicher",
       "tooltip_external": "extern",

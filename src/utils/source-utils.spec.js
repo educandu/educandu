@@ -15,7 +15,7 @@ describe('source-utils', () => {
       { url: 'http://cdn-root/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
       { url: 'http://cdn-root/media/resource.jpeg', expectedResult: SOURCE_TYPE.documentMedia },
       { url: 'http://cdn-root/rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.roomMedia },
-      { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/resource.jpg', expectedResult: SOURCE_TYPE.wikimediaCommons },
+      { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/resource.jpg', expectedResult: SOURCE_TYPE.wikimedia },
       { url: 'https://www.youtube.com/resource', expectedResult: SOURCE_TYPE.youtube },
       { url: 'https://youtu.be/resource', expectedResult: SOURCE_TYPE.youtube },
       { url: 'https://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.external },

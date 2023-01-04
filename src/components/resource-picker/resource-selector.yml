@@ -4,6 +4,6 @@ sourceType_document-media:
 sourceType_room-media:
   en: Room media
   de: Raum-Medien
-sourceType_wikimedia-commons:
-  en: Wikimedia Commons
-  de: Wikimedia Commons
+sourceType_wikimedia:
+  en: Wikimedia
+  de: Wikimedia

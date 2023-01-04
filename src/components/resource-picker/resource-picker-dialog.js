@@ -7,7 +7,7 @@ import { SOURCE_TYPE } from '../../domain/constants.js';
 const allowedSourceTypes = [
   SOURCE_TYPE.roomMedia,
   SOURCE_TYPE.documentMedia,
-  SOURCE_TYPE.wikimediaCommons
+  SOURCE_TYPE.wikimedia
 ];
 
 function ResourcePickerDialog({ isOpen, url, onSelect, onClose }) {

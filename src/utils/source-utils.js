@@ -67,7 +67,7 @@ export function getSourceType({ url, cdnRootUrl }) {
   }
 
   if (url.startsWith('https://upload.wikimedia.org/')) {
-    return SOURCE_TYPE.wikimediaCommons;
+    return SOURCE_TYPE.wikimedia;
   }
 
   if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.valid) {

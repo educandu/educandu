@@ -1,4 +1,4 @@
-import { FILE_TYPE } from '../../api-clients/wikimedia-commons-api-client.js';
+import { FILE_TYPE } from '../../api-clients/wikimedia-api-client.js';
 
 export const SEARCH_FILE_TYPE = {
   image: 'image',
@@ -7,7 +7,7 @@ export const SEARCH_FILE_TYPE = {
   pdf: 'pdf'
 };
 
-export function mapSearchFileTypesToWikimediaCommonsFileTypes(searchFileTypes) {
+export function mapSearchFileTypesToWikimediaFileTypes(searchFileTypes) {
   return [
     ...searchFileTypes.reduce((set, searchFileType) => {
       switch (searchFileType) {

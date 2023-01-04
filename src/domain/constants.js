@@ -112,7 +112,7 @@ export const SOURCE_TYPE = {
   external: 'external',
   documentMedia: 'document-media',
   roomMedia: 'room-media',
-  wikimediaCommons: 'wikimedia-commons',
+  wikimedia: 'wikimedia',
   unsupported: 'unsupported'
 };
 
