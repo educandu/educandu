@@ -40,7 +40,8 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
- | xFrameOptions | Value for the `X-Frame-Options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
+ | xFrameOptions | Value for the `x-frame-options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
+ | xRoomsAuthSecret | Value for the `x-rooms-auth-secret` header expected from `rooms-auth-lambda` authorization requests upon accessing rooms CDN resources | `string` | no, when not provided the effect of the request is an automatic session cookie invalidation/regeneration |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
  | adminEmailAddress | The email address to show to users as the admin email address | `string` | no |

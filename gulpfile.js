@@ -41,6 +41,7 @@ const testAppEnv = {
   TEST_APP_CONSENT_COOKIE_NAME_PREFIX: 'CONSENT_TEST_APP',
   TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME: 'UPLOAD_LIABILITY_TEST_APP',
   TEST_APP_X_FRAME_OPTIONS: 'SAMEORIGIN',
+  TEST_APP_X_ROOMS_AUTH_SECRET: '5do47sdh37',
   TEST_APP_ADMIN_EMAIL_ADDRESS: 'educandu-test-admin@test.com',
   TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
@@ -210,7 +211,8 @@ export async function startServer() {
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
-      SESSION_COOKIE_NAME: testAppEnv.TEST_APP_SESSION_COOKIE_NAME
+      SESSION_COOKIE_NAME: testAppEnv.TEST_APP_SESSION_COOKIE_NAME,
+      X_ROOMS_AUTH_SECRET: testAppEnv.TEST_APP_X_ROOMS_AUTH_SECRET
     }
   });
 

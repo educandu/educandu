@@ -105,7 +105,7 @@
     "@educandu/dev-tools": "^6.0.2",
     "@educandu/eslint-config": "^2.0.0",
     "@educandu/node-jsx-loader": "^3.0.1",
-    "@educandu/rooms-auth-lambda": "^2.0.3",
+    "@educandu/rooms-auth-lambda": "^3.0.0",
     "@vitest/coverage-c8": "^0.25.8",
     "del": "^7.0.0",
     "eslint": "^8.30.0",
