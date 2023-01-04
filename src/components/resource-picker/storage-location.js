@@ -118,11 +118,11 @@ function StorageLocation({
   };
 
   const renderStorageInfo = () => {
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
       return <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />;
     }
 
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.public) {
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia) {
       return <Alert message={t('publicStorageWarning')} type="warning" showIcon />;
     }
 

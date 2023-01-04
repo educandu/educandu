@@ -56,7 +56,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but the room ID is unknown', () => {
+    describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
         req = { user, query: { parentPath: 'rooms/some-room-id/media' } };
         res = {};
@@ -67,7 +67,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but user is not the room owner or a collaborator', () => {
+    describe('when storage path type is room-media but user is not the room owner or a collaborator', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
@@ -81,7 +81,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user is the room owner', () => {
+    describe('when storage path type is room-media and the user is the room owner', () => {
       let parentDirectory;
       let currentDirectory;
       let objects;
@@ -120,7 +120,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user is a room collaborator', () => {
+    describe('when storage path type is room-media and the user is a room collaborator', () => {
       let parentDirectory;
       let currentDirectory;
       let objects;
@@ -159,7 +159,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is public', () => {
+    describe('when storage path type is document-media', () => {
       let parentDirectory;
       let currentDirectory;
       let objects;
@@ -219,7 +219,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but the room ID is unknown', () => {
+    describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
         req = { user, files: [{}], body: { parentPath: 'rooms/some-room-id/media' } };
         res = {};
@@ -230,7 +230,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but user is not the room owner or a collaborator', () => {
+    describe('when storage path type is room-media but user is not the room owner or a collaborator', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
@@ -244,7 +244,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user is the room owner', () => {
+    describe('when storage path type is room-media and the user is the room owner', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
       beforeEach(() => new Promise((resolve, reject) => {
@@ -277,7 +277,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user is a room collaborator', () => {
+    describe('when storage path type is room-media and the user is a room collaborator', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
       beforeEach(() => new Promise((resolve, reject) => {
@@ -323,7 +323,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but the room ID is unknown', () => {
+    describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
         req = { user, query: { path: 'rooms/some-room-id/media/object-to-delete' } };
         res = {};
@@ -334,7 +334,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private but user is not the room owner or a collaborator', () => {
+    describe('when storage path type is room-media but user is not the room owner or a collaborator', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
@@ -348,7 +348,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user is the room owner', () => {
+    describe('when storage path type is room-media and the user is the room owner', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
       beforeEach(() => new Promise((resolve, reject) => {
@@ -381,7 +381,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is private and the user a room collaborator', () => {
+    describe('when storage path type is room-media and the user a room collaborator', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
       beforeEach(() => new Promise((resolve, reject) => {
@@ -414,7 +414,7 @@ describe('storage-controller', () => {
       });
     });
 
-    describe('when storage path type is public', () => {
+    describe('when storage path type is document-media', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;

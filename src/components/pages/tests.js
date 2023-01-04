@@ -342,13 +342,13 @@ function Tests({ PageTemplate }) {
   const handleUrlInputCopyYoutubeClick = () => handleCopyToClipboard('https://www.youtube.com/watch?v=221F55VPp2M');
   const handleUrlInputCopyWikimediaCommonsClick = () => handleCopyToClipboard('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputCopyExternalClick = () => handleCopyToClipboard('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputCopyPrivateCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputCopyPublicCdnClick = () => handleCopyToClipboard('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputCopyRoomMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputCopyDocumentMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputSetYoutubeClick = () => setUrlInputValue('https://www.youtube.com/watch?v=221F55VPp2M');
   const handleUrlInputSetWikimediaCommonsClick = () => setUrlInputValue('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputSetPrivateCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputSetPublicCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputSetRoomMediaCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputSetDocumentMediaCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputChange = url => {
     setUrlInputValue(url);
   };
@@ -388,15 +388,15 @@ function Tests({ PageTemplate }) {
                     <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
                     <Button onClick={handleUrlInputCopyWikimediaCommonsClick}>Copy Wikimedia Commons URL</Button>
                     <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
-                    <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
-                    <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyRoomMediaCdnClick}>Copy room-media CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyDocumentMediaCdnClick}>Copy document-media CDN URL</Button>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                     <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
                     <Button onClick={handleUrlInputSetWikimediaCommonsClick}>Set Wikimedia Commons URL</Button>
                     <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
-                    <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
-                    <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
+                    <Button onClick={handleUrlInputSetRoomMediaCdnClick}>Set room-media CDN URL</Button>
+                    <Button onClick={handleUrlInputSetDocumentMediaCdnClick}>Set document-media CDN URL</Button>
                   </div>
                   <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
                 </div>
@@ -665,7 +665,7 @@ function Tests({ PageTemplate }) {
               children: (
                 <div>
                   <ResourceSelector
-                    allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
+                    allowedSourceTypes={[SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimediaCommons]}
                     onSelect={ev => console.log('select', ev)}
                     onCancel={ev => console.log('cancel', ev)}
                     />

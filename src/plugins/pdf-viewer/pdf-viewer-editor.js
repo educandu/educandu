@@ -39,7 +39,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
-  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.internalPublic];
+  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia];
 
   return (
     <div className="PdfViewerEditor">

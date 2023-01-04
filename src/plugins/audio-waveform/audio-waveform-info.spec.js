@@ -52,7 +52,7 @@ describe('audio-waveform-info', () => {
       });
       expect(result).toEqual(['cdn://media/12345/some-image.png']);
     });
-    it('returns a list with the url for an internal private resource', () => {
+    it('returns a list with the url for an internal room-media resource', () => {
       const result = sut.getCdnResources({
         sourceUrl: 'cdn://rooms/12345/media/some-image.png',
         width: 100

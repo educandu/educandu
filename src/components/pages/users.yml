@@ -49,9 +49,9 @@ addReminder:
 removeAllReminders:
   en: Remove reminders
   de: Erinnerungen entfernen
-deleteAllPrivateRooms:
-  en: Delete private rooms
-  de: Private Räume löschen
+deleteAllOwnedRooms:
+  en: Delete rooms
+  de: Räume löschen
 storageSpace:
   en: Storage space
   de: Speicherplatz

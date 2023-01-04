@@ -11,7 +11,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { tryGetRoomIdFromStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,
@@ -89,9 +89,9 @@ class StorageController {
     }
 
     let storageClaimingUserId;
-    if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(path);
-      const room = await this.roomService.getRoomById(roomId);
+    if (storageLocationType === STORAGE_LOCATION_TYPE.roomMedia) {
+      const roomId = tryGetRoomIdFromStoragePath(path);
+      const room = roomId ? await this.roomService.getRoomById(roomId) : null;
 
       if (!room) {
         throw new BadRequest(`Unknown room id '${roomId}'`);

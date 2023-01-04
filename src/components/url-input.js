@@ -31,9 +31,9 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
         return <YoutubeOutlined />;
       case SOURCE_TYPE.wikimediaCommons:
         return <WikimediaCommonsIcon />;
-      case SOURCE_TYPE.internalPublic:
+      case SOURCE_TYPE.documentMedia:
         return <PublicIcon />;
-      case SOURCE_TYPE.internalPrivate:
+      case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:
         return <GlobalOutlined />;

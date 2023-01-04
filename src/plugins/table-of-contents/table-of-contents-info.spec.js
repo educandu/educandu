@@ -10,7 +10,7 @@ describe('table-of-contents-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts private resources from different rooms', () => {
+    it('redacts room-media resources from different rooms', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png)'
       }, 'rebhjf4MLq7yjeoCnYfn7E');
@@ -19,7 +19,7 @@ describe('table-of-contents-info', () => {
       });
     });
 
-    it('leaves private resources from the same room intact', () => {
+    it('leaves room-media resources from the same room intact', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://rooms/63cHjt3BAhGnNxzJGrTsN1/media/some-image.png)'
       }, '63cHjt3BAhGnNxzJGrTsN1');
@@ -28,7 +28,7 @@ describe('table-of-contents-info', () => {
       });
     });
 
-    it('leaves public resources intact', () => {
+    it('leaves non room-media resources intact', () => {
       const result = sut.redactContent({
         text: '![Some image](cdn://media/JgTaqob5vqosBiHsZZoh1/some-image.png)'
       }, 'rebhjf4MLq7yjeoCnYfn7E');
@@ -39,7 +39,7 @@ describe('table-of-contents-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns public and private CDN resources from the text', () => {
+    it('returns document-media and room-media CDN resources from the text', () => {
       const result = sut.getCdnResources({
         text: [
           '![Some image](cdn://media/JgTaqob5vqosBiHsZZoh1/some-image.png)',

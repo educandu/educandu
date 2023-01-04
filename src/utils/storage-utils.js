@@ -6,11 +6,11 @@ import {
   CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
+  ROOM_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
+  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
   IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES,
-  INTERNAL_PUBLIC_STORAGE_PATH_PATTERN,
-  INTERNAL_PRIVATE_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
@@ -74,11 +74,11 @@ export function processFilesBeforeUpload({ files, optimizeImages }) {
 }
 
 export function getStorageLocationTypeForPath(path) {
-  if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(path)) {
-    return STORAGE_LOCATION_TYPE.public;
+  if (DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
+    return STORAGE_LOCATION_TYPE.documentMedia;
   }
-  if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(path)) {
-    return STORAGE_LOCATION_TYPE.private;
+  if (ROOM_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
+    return STORAGE_LOCATION_TYPE.roomMedia;
   }
   return STORAGE_LOCATION_TYPE.unknown;
 }
@@ -88,11 +88,11 @@ export function canUploadToPath(path) {
     return false;
   }
 
-  const publicPathMatch = path.match(INTERNAL_PUBLIC_STORAGE_PATH_PATTERN);
-  const privatePathMatch = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
+  const documentMediaStoragePathMatch = path.match(DOCUMENT_MEDIA_STORAGE_PATH_PATTERN);
+  const roomMediaStoragePathMatch = path.match(ROOM_MEDIA_STORAGE_PATH_PATTERN);
 
-  const documentId = publicPathMatch?.[1];
-  const roomId = privatePathMatch?.[1];
+  const documentId = documentMediaStoragePathMatch?.[1];
+  const roomId = roomMediaStoragePathMatch?.[1];
 
   return !!(documentId || roomId);
 }
@@ -118,7 +118,7 @@ export function getPublicRootPath() {
   return 'media';
 }
 
-export function getPrivateRoomsRootPath() {
+export function getRoomsRootPath() {
   return 'rooms';
 }
 
@@ -126,12 +126,12 @@ export function getPublicHomePath(documentId) {
   return `media/${documentId}`;
 }
 
-export function getPathForPrivateRoom(roomId) {
+export function getPathForRoom(roomId) {
   return `rooms/${roomId}/media`;
 }
 
-export function getRoomIdFromPrivateStoragePath(path) {
-  const match = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
+export function tryGetRoomIdFromStoragePath(path) {
+  const match = path.match(ROOM_MEDIA_STORAGE_PATH_PATTERN);
   return match ? match[1] : null;
 }
 

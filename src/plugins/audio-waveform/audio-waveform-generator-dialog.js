@@ -39,7 +39,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
   const [waveformBackgroundColor, setWaveformBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
 
-  const homePath = storage.locations?.find(location => location.type === STORAGE_LOCATION_TYPE.public)?.homePath || null;
+  const homePath = storage.locations?.find(location => location.type === STORAGE_LOCATION_TYPE.documentMedia)?.homePath || null;
 
   useEffect(() => {
     if (!generatedPeaks) {

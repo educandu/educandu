@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import ResourceSelector from './resource-selector.js';
 import { SOURCE_TYPE } from '../../domain/constants.js';
 
-const allowedSourceTypes = [SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons];
+const allowedSourceTypes = [
+  SOURCE_TYPE.roomMedia,
+  SOURCE_TYPE.documentMedia,
+  SOURCE_TYPE.wikimediaCommons
+];
 
 function ResourcePickerDialog({ isOpen, url, onSelect, onClose }) {
   const handleCancel = event => {

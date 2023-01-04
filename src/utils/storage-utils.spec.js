@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getStorageLocationTypeForPath,
-  getPathForPrivateRoom,
-  getRoomIdFromPrivateStoragePath,
+  getPathForRoom,
+  tryGetRoomIdFromStoragePath,
   componseUniqueFileName,
   composeHumanReadableDisplayName
 } from './storage-utils.js';
@@ -27,11 +27,11 @@ describe('storage-utils', () => {
     const testCases = [
       { path: 'root/media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: 'mediatech/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: 'media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.public },
+      { path: 'media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.documentMedia },
       { path: '/root/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: '/media/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: '/root/rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: 'rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.private }
+      { path: 'rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.roomMedia }
     ];
 
     testCases.forEach(({ path, expectedResult }) => {
@@ -47,19 +47,19 @@ describe('storage-utils', () => {
     });
   });
 
-  describe('getPathForPrivateRoom', () => {
+  describe('getPathForRoom', () => {
     it('should return the path', () => {
-      expect(getPathForPrivateRoom('myRoom')).toBe('rooms/myRoom/media');
+      expect(getPathForRoom('myRoom')).toBe('rooms/myRoom/media');
     });
   });
 
-  describe('getRoomIdFromPrivateStoragePath', () => {
+  describe('tryGetRoomIdFromStoragePath', () => {
     it('should return the room id when the path is valid', () => {
-      expect(getRoomIdFromPrivateStoragePath('rooms/myRoom/media/')).toBe('myRoom');
+      expect(tryGetRoomIdFromStoragePath('rooms/myRoom/media/')).toBe('myRoom');
     });
 
     it('should return null when the path is invalid', () => {
-      expect(getRoomIdFromPrivateStoragePath('root/rooms/myRoom/media/')).toBe(null);
+      expect(tryGetRoomIdFromStoragePath('root/rooms/myRoom/media/')).toBe(null);
     });
   });
 
@@ -104,7 +104,7 @@ describe('storage-utils', () => {
       });
     });
 
-    describe('when the cdn object is the public root path', () => {
+    describe('when the cdn object is the document-media root path', () => {
       beforeEach(() => {
         t = sandbox.fake();
         result = composeHumanReadableDisplayName({
