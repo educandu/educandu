@@ -29,6 +29,7 @@ import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
+import { useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
@@ -79,12 +80,28 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
+  const controlPanelsRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const [controPanelTopInPx, setControlPanelTopInPx] = useState(0);
 
   const { room } = initialState;
+
+  const ensureControlPanelPosition = useCallback(() => {
+    setControlPanelTopInPx(window.innerHeight - controlPanelsRef.current.getBoundingClientRect().height);
+  }, [controlPanelsRef]);
+
+  useOnComponentMounted(() => {
+    ensureControlPanelPosition();
+    // Ensure panel stays on the bottom when address bar is hidden on mobile
+    window.addEventListener('resize', ensureControlPanelPosition);
+  });
+
+  useOnComponentUnmount(() => {
+    window.removeEventListener('resize', ensureControlPanelPosition);
+  });
 
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
@@ -559,7 +576,11 @@ function Doc({ initialState, PageTemplate }) {
           )}
         </div>
       </PageTemplate>
-      <div className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}>
+      <div
+        ref={controlPanelsRef}
+        style={{ top: `${controPanelTopInPx}px` }}
+        className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
+        >
         {!!showHistoryPanel && (
           <Restricted to={permissions.EDIT_DOC}>
             <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
