@@ -23,6 +23,7 @@ import DocumentService from '../services/document-service.js';
 import { ambMetadataUser } from '../domain/built-in-users.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import ExternalAccountService from '../services/external-account-service.js';
 import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -67,6 +68,7 @@ class UserController {
       DocumentService,
       PasswordResetRequestService,
       RequestLimitRecordService,
+      ExternalAccountService,
       MailService,
       ClientDataMappingService,
       RoomService,
@@ -82,6 +84,7 @@ class UserController {
     documentService,
     passwordResetRequestService,
     requestLimitRecordService,
+    externalAccountService,
     mailService,
     clientDataMappingService,
     roomService,
@@ -95,6 +98,7 @@ class UserController {
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
     this.documentService = documentService;
+    this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
@@ -131,22 +135,15 @@ class UserController {
       getSamlOptions: (req, done) => {
         const provider = this.getProviderForRequest(req);
         const { origin } = requestUtils.getHostInfo(req);
-
-        const error = provider ? null : new NotFound('Invalid identity provider key');
-
-        const samlConfig = provider
-          ? {
-            issuer: origin,
-            entryPoint: provider.entryPoint,
-            cert: provider.cert,
-            callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
-            decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
-            wantAssertionsSigned: false,
-            forceAuthn: true
-          }
-          : null;
-
-        done(error, samlConfig);
+        done(null, {
+          issuer: origin,
+          entryPoint: provider.entryPoint,
+          cert: provider.cert,
+          callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
+          decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
+          wantAssertionsSigned: false,
+          forceAuthn: true
+        });
       }
     }, (profile, done) => done(null, { ...profile }));
   }
@@ -155,7 +152,7 @@ class UserController {
     const idpKey = req.params[paramName] || '';
     const provider = this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
     if (!provider) {
-      return next(new NotFound(`Invalid identity provider key: "${idpKey}"`));
+      return next(new NotFound('Invalid identity provider key'));
     }
 
     req[idpKeySymbol] = idpKey;
@@ -497,7 +494,7 @@ class UserController {
       express.urlencoded({ extended: false }),
       (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
       (req, res, next) => {
-        passport.authenticate('saml', (err, profile) => {
+        passport.authenticate('saml', async (err, profile) => {
           if (err) {
             return next(err);
           }
@@ -506,8 +503,13 @@ class UserController {
             return next(new Error('No profile was sent by identity provider'));
           }
 
+          const providerKey = this.getProviderForRequest(req).key;
+          const externalUserId = profile.nameID;
+
+          await this.externalAccountService.createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
+
           req.session.samlInfo = {
-            providerKey: this.getProviderForRequest(req).key,
+            providerKey: providerKey,
             loggedInOn: new Date(),
             profile
           };

@@ -17,6 +17,7 @@ describe('user-controller', () => {
   let passwordResetRequestService;
   let requestLimitRecordService;
   let clientDataMappingService;
+  let externalAccountService;
   let documentService;
   let storageService;
   let pageRenderer;
@@ -52,6 +53,7 @@ describe('user-controller', () => {
       incrementCount: sandbox.stub(),
       resetCount: sandbox.stub()
     };
+    externalAccountService = {};
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
@@ -76,6 +78,7 @@ describe('user-controller', () => {
       documentService,
       passwordResetRequestService,
       requestLimitRecordService,
+      externalAccountService,
       mailService,
       clientDataMappingService,
       roomService,
