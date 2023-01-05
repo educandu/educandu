@@ -6,6 +6,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import FlipCard from '../../components/flip-card.js';
 import MatchingCardsTile from './matching-cards-tile.js';
 import React, { useEffect, useRef, useState } from 'react';
+import CheckIcon from '../../components/icons/general/check-icon.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
 
@@ -96,14 +97,16 @@ function MatchingCardsDisplay({ content }) {
         flipped={isFlipped || wasMatched}
         locked={isSingleFlipped}
         disabled={wasMatched}
-        frontContent={(
+        disabledContent={
+          <div className="MatchingCardsDisplay-matchedTileOverlay"><CheckIcon /></div>
+        }
+        frontContent={
           <MatchingCardsTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
-            showMatched={wasMatched}
             playMedia={isFlipped && !wasMatched}
             />
-        )}
+        }
         onClick={() => handleTileClick(tile)}
         />
     ));

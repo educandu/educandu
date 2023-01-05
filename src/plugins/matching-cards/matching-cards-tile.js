@@ -8,12 +8,11 @@ import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
-import CheckIcon from '../../components/icons/general/check-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
-function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
+function MatchingCardsTile({ text, sourceUrl, playMedia }) {
   const playerRef = useRef();
   const isMounted = useRef(false);
   const timeoutToPlayMedia = useRef();
@@ -94,21 +93,18 @@ function MatchingCardsTile({ text, sourceUrl, playMedia, showMatched }) {
         {!!accessibleUrl && renderMedia()}
       </div>
       <div className="MatchingCardsTile-noInnerClickMask" />
-      {!!showMatched && <div className="MatchingCardsTile-match"><CheckIcon /></div>}
     </div>
   );
 }
 
 MatchingCardsTile.propTypes = {
   playMedia: PropTypes.bool,
-  showMatched: PropTypes.bool,
   sourceUrl: PropTypes.string,
   text: PropTypes.string
 };
 
 MatchingCardsTile.defaultProps = {
   playMedia: false,
-  showMatched: false,
   sourceUrl: '',
   text: ''
 };
