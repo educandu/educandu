@@ -4,7 +4,6 @@ import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
 import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
-import { getRoomsRootPath, getPublicRootPath } from '../utils/storage-utils.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
@@ -45,8 +44,8 @@ export default class MaintenanceService {
       logger.info('Finished database checks successfully');
 
       logger.info('Creating basic CDN directories');
-      await this.cdn.uploadEmptyObject(`${getPublicRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
-      await this.cdn.uploadEmptyObject(`${getRoomsRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
+      await this.cdn.uploadEmptyObject(`media/${STORAGE_DIRECTORY_MARKER_NAME}`);
+      await this.cdn.uploadEmptyObject(`rooms/${STORAGE_DIRECTORY_MARKER_NAME}`);
       logger.info('Finished creating basic CDN directories successfully');
     } finally {
       await this.lockStore.releaseLock(lock);

@@ -8,10 +8,10 @@ class StorageApiClient {
     this.httpClient = httpClient;
   }
 
-  getCdnObjects({ parentPath, searchTerm = null }) {
+  getCdnObjects({ parentPath }) {
     return this.httpClient
       .get(
-        `/api/v1/storage/objects?${urlUtils.composeQueryString({ parentPath, searchTerm })}`,
+        `/api/v1/storage/objects?${urlUtils.composeQueryString({ parentPath })}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -21,8 +21,7 @@ class TestsController {
     const locations = [
       {
         type: STORAGE_LOCATION_TYPE.documentMedia,
-        rootPath: 'media',
-        homePath: 'media',
+        path: 'media',
         usedBytes: 0,
         maxBytes: 0,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
@@ -41,8 +40,7 @@ class TestsController {
 
       locations.push({
         type: STORAGE_LOCATION_TYPE.roomMedia,
-        rootPath: `rooms/${room._id}/media`,
-        homePath: `rooms/${room._id}/media`,
+        path: `rooms/${room._id}/media`,
         usedBytes: roomOwner.storage.usedBytes,
         maxBytes: roomOwnerStoragePlan?.maxBytes,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator

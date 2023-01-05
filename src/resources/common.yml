@@ -258,12 +258,6 @@ opt:
 unknown:
   en: Unknown
   de: Unbekannt
-unknownDocument:
-  en: Unknown document
-  de: Unbekanntes Dokument
-privateDocument:
-  en: Private document
-  de: Privates Dokument
 storage:
   en: Storage
   de: Speicher
@@ -366,9 +360,6 @@ resource_none:
 resource_unknown:
   en: Unknown
   de: Unbekannt
-directory:
-  en: Directory
-  de: Verzeichnis
 pageCount:
   en: Page count
   de: Seitenanzahl

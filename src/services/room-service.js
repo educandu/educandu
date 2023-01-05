@@ -9,7 +9,7 @@ import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { getPathForRoom } from '../utils/storage-utils.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import {
@@ -96,14 +96,14 @@ export default class RoomService {
   }
 
   async createUploadDirectoryMarkerForRoom(roomId) {
-    const homePath = getPathForRoom(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    const storagePath = getRoomMediaRoomPath(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.uploadEmptyObject(directoryMarkerPath);
   }
 
   async deleteUploadDirectoryMarkerForRoom(roomId) {
-    const homePath = getPathForRoom(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    const storagePath = getRoomMediaRoomPath(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 

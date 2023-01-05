@@ -8,6 +8,7 @@
 .StorageLocation-filesViewer {
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
   overflow: hidden;
 
   & .ant-table-placeholder .ant-table-cell {
@@ -18,10 +19,6 @@
 .StorageLocation-filesViewerContent {
   height: 100%;
   overflow: auto;
-
-  &.StorageLocation-filesViewerContent--topPadding {
-    padding-top: @edu-content-padding;
-  }
 }
 
 .StorageLocation-buttonsLine {
@@ -46,18 +43,6 @@
 .StorageLocation-locationInfo {
   min-height: 40px;
   margin-bottom: 20px;
-}
-
-.StorageLocation-currentDirectory {
-  .m-overflow-ellipsis;
-  position: absolute;
-  right: 1px;
-  left: 1px;
-  font-size: 11px;
-  padding-left: 5px;
-  font-style: italic;
-  background-color: @edu-background-color-light;
-  z-index: @edu-z-index-sticky-content-layer;
 }
 
 .StorageLocation-alertPrivateStorage {
