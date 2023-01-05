@@ -296,7 +296,7 @@ StorageLocationScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
-  storageLocationType: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired
+  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
 };
 
 StorageLocationScreens.defaultProps = {
