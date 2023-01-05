@@ -169,7 +169,7 @@ function MediaPlayback({
 
   return (
     <div className={classNames('MediaPlayback', { 'MediaPlayback--audioOnly': audioOnly } )}>
-      <video crossOrigin="true" ref={plyrRef} />
+      <video ref={plyrRef} />
       {showOverlay && (
         <div className="MediaPlayback-videoOverlay" onClick={handleOverlayClick} >
           <div className="MediaPlayback-videoOverlayIcon">
