@@ -31,6 +31,15 @@
   margin: 15px auto 0 auto;
 }
 
+.MatchingCardsDisplay-matchedTileOverlay {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: @edu-success-color;
+}
+
 .MatchingCardsEditor {}
 
 .MatchingCardsEditor-tileButtonGroup {
@@ -95,16 +104,6 @@
   @media @edu-media-phone {
     font-size: @edu-font-size-sm;
   }
-}
-
-.MatchingCardsTile-match {
-  .m-mask;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: @edu-success-color;
-  z-index: @edu-z-index-overlay-layer;
 }
 
 .MatchingCardsTile-noInnerClickMask {
