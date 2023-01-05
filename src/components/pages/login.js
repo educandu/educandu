@@ -18,8 +18,8 @@ function Login({ PageTemplate, SiteLogo }) {
   const [isExternalAccountProviderDialogOpen, setIsExternalAccountProviderDialogOpen] = useState(false);
 
   const loginUsingExternalProvider = providerKey => {
-    const provider = clientConfig.externalAccountProviders.find(p => p.key === providerKey);
-    window.location = provider.loginUrl;
+    const provider = clientConfig.samlAuth.identityProviders.find(p => p.key === providerKey);
+    window.location = `/saml-auth/login/${provider.key}`;
   };
 
   const handleLoginButtonClick = () => {
@@ -27,8 +27,8 @@ function Login({ PageTemplate, SiteLogo }) {
   };
 
   const handleLoginWithShibbolethButtonClick = () => {
-    if (clientConfig.externalAccountProviders.length === 1) {
-      loginUsingExternalProvider(clientConfig.externalAccountProviders[0].key);
+    if (clientConfig.samlAuth.identityProviders.length === 1) {
+      loginUsingExternalProvider(clientConfig.samlAuth.identityProviders[0].key);
     } else {
       setIsExternalAccountProviderDialogOpen(true);
     }
@@ -76,7 +76,7 @@ function Login({ PageTemplate, SiteLogo }) {
               </div>
             </Fragment>
           )}
-          {!!clientConfig.externalAccountProviders.length && (
+          {!!clientConfig.samlAuth?.identityProviders.length && (
             <div className="LoginPage-loginButton LoginPage-loginButton--secondary">
               <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
                 {t('loginWithShibboleth')}

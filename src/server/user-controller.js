@@ -9,6 +9,7 @@ import urlUtils from '../utils/url-utils.js';
 import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import passportSaml from '@node-saml/passport-saml';
 import requestUtils from '../utils/request-utils.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
@@ -49,10 +50,10 @@ import {
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
-
 const jsonParser = express.json();
-const LocalStrategy = passportLocal.Strategy;
+const { MultiSamlStrategy } = passportSaml;
+const { Strategy: LocalStrategy } = passportLocal;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 class UserController {
   static get inject() {
@@ -101,6 +102,57 @@ class UserController {
       expiresInMs: ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
       service: this.requestLimitRecordService
     };
+
+    const samlAuth = this.serverConfig.samlAuth;
+    if (!samlAuth) {
+      return;
+    }
+
+    const idpKeySymbol = Symbol('idpKey');
+
+    this.getAndValidateProviderForIdpKey = idpKey => {
+      const provider = samlAuth.identityProviders.find(p => p.key === idpKey);
+      if (!provider) {
+        throw new NotFound(`Invalid identity provider key: "${idpKey}"`);
+      }
+
+      return provider;
+    };
+
+    this.setIdpKeyForRequest = (req, idpKey) => {
+      this.getAndValidateProviderForIdpKey(idpKey);
+      return req[idpKeySymbol] = idpKey;
+    };
+
+    this.getIdpKeyForRequest = req => {
+      return req[idpKeySymbol] || null;
+    };
+
+    this.samlStrategy = new MultiSamlStrategy({
+      getSamlOptions: (req, done) => {
+        const idpKey = this.getIdpKeyForRequest(req);
+        const provider = this.getAndValidateProviderForIdpKey(idpKey);
+        const { origin } = requestUtils.getHostInfo(req);
+
+        const error = provider
+          ? null
+          : new Error(`No identity provider with key '${idpKey}' is available`);
+
+        const samlConfig = provider
+          ? {
+            issuer: origin,
+            entryPoint: provider.entryPoint,
+            cert: provider.cert,
+            callbackUrl: `${origin}/saml-auth/login-callback/${provider.key}`
+          }
+          : null;
+
+        done(error, samlConfig);
+      },
+      decryptionPvk: samlAuth.decryption.pvk,
+      wantAssertionsSigned: false,
+      forceAuthn: true
+    }, (profile, done) => done(null, { ...profile }));
   }
 
   handleGetRegisterPage(req, res) {
@@ -345,7 +397,58 @@ class UserController {
     return res.status(204).end();
   }
 
+  setupSamlAuthEndpoints(router) {
+    router.get(
+      '/saml-auth/metadata/:idpKey',
+      (req, res, next) => {
+        this.setIdpKeyForRequest(req, req.params.idpKey);
+        this.samlStrategy.generateServiceProviderMetadata(req, this.serverConfig.samlAuth.decryption.cert, null, (err, metadata) => {
+          return err ? next(err) : res.set('content-type', 'text/xml').send(metadata);
+        });
+      }
+    );
+
+    router.get(
+      '/saml-auth/login/:idpKey',
+      (req, res, next) => {
+        this.setIdpKeyForRequest(req, req.params.idpKey);
+        passport.authenticate('saml', err => {
+          return err ? next(err) : res.end();
+        })(req, res, next);
+      }
+    );
+
+    router.post(
+      '/saml-auth/login-callback/:idpKey',
+      express.urlencoded({ extended: false }),
+      (req, res, next) => {
+        this.setIdpKeyForRequest(req, req.params.idpKey);
+        passport.authenticate('saml', (err, profile) => {
+          if (err) {
+            return next(err);
+          }
+
+          if (!profile) {
+            return res.redirect('/this-is-redirected-from-callback-without-profile');
+          }
+
+          req.session.samlInfo = {
+            providerKey: this.getIdpKeyForRequest(req),
+            loggedInOn: new Date(),
+            profile
+          };
+
+          return res.redirect('/this-is-redirected-from-callback-with-success');
+        })(req, res, next);
+      }
+    );
+  }
+
   registerMiddleware(router) {
+    if (this.samlStrategy) {
+      passport.use('saml', this.samlStrategy);
+    }
+
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
       const { ambConfig } = this.serverConfig;
 
@@ -427,6 +530,9 @@ class UserController {
     router.use(passport.initialize());
     router.use(passport.session());
     router.use(passport.authenticate('apikey', { session: false }));
+    if (this.samlStrategy) {
+      this.setupSamlAuthEndpoints(router);
+    }
 
     router.use(async (req, res, next) => {
       try {
