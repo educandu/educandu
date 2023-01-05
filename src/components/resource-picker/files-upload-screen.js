@@ -71,7 +71,7 @@ function FilesUploadScreen({
       }));
     }
 
-    if (locationToUpload.type === STORAGE_LOCATION_TYPE.private) {
+    if (locationToUpload.type === STORAGE_LOCATION_TYPE.roomMedia) {
       const availableBytes = Math.max(0, (locationToUpload.maxBytes || 0) - (locationToUpload.usedBytes || 0));
       if (file.size > availableBytes) {
         throw new Error(t('insufficientPrivateStorge'));
@@ -239,7 +239,7 @@ function FilesUploadScreen({
       <h3>{t('headline')}</h3>
       <div className="u-resource-picker-screen-content">
         <div className="FilesUploadScreen">
-          {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
+          {storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
             <div className="FilesUploadScreen-usedStorage" >
               <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
             </div>

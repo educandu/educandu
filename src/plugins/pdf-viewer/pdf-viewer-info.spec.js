@@ -36,7 +36,7 @@ describe('pdf-viewer-info', () => {
       expect(result).toEqual(['cdn://media/12345/some-doc.pdf']);
     });
 
-    it('returns a list with the url for an internal private resource', () => {
+    it('returns a list with the url for an internal room-media resource', () => {
       const result = sut.getCdnResources({ sourceUrl: 'cdn://rooms/12345/media/some-doc.pdf' });
       expect(result).toEqual(['cdn://rooms/12345/media/some-doc.pdf']);
     });

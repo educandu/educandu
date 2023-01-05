@@ -4,9 +4,12 @@ filesView_list:
 filesView_grid:
   en: Grid
   de: Grid
-publicStorageWarning:
-  en: This directory is publicly accessible
-  de: Dieses Verzeichnis ist öffentlich zugänglich
+privateStorageMessage:
+  en: Private directory!
+  de: Privates Verzeichnis!
+publicStorageMessage:
+  en: Public directory!
+  de: Öffentliches Verzeichnis!
 backToDirectoryView:
   en: Back to directory view
   de: Zurück zur Verzeichnisansicht

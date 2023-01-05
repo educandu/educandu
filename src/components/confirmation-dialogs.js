@@ -42,10 +42,10 @@ export function confirmDocumentDelete(t, documentTitle, onOk, onCancel = () => {
   });
 }
 
-export function confirmAllPrivateRoomsDelete(t, ownerName, onOk, onCancel = () => {}) {
+export function confirmAllOwnedRoomsDelete(t, ownerName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:deleteAllPrivateRoomsConfirmation', { ownerName }),
+    content: t('confirmationDialogs:deleteAllOwnedRoomsConfirmation', { ownerName }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),

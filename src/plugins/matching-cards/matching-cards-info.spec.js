@@ -46,11 +46,11 @@ describe('matching-cards-info', () => {
         result = sut.redactContent(content, roomId1);
       });
 
-      it('leaves private resources from the same room intact', () => {
+      it('leaves room-media resources from the same room intact', () => {
         expect(result.tilePairs[0][0].text).toEqual(`![link](cdn://rooms/${roomId1}/media/image-1a.png)`);
         expect(result.tilePairs[0][0].sourceUrl).toEqual(`cdn://rooms/${roomId1}/media/image-1b.png`);
       });
-      it('leaves public resources intact', () => {
+      it('leaves non room-media resources intact', () => {
         expect(result.tilePairs[0][1].text).toEqual('![link](cdn://media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)');
         expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png');
       });
@@ -69,11 +69,11 @@ describe('matching-cards-info', () => {
         result = sut.redactContent(content, roomId2);
       });
 
-      it('redacts private resources from the other room', () => {
+      it('redacts room-media resources from the other room', () => {
         expect(result.tilePairs[0][0].text).toEqual('![link]()');
         expect(result.tilePairs[0][0].sourceUrl).toEqual('');
       });
-      it('leaves public resources intact', () => {
+      it('leaves non room-media resources intact', () => {
         expect(result.tilePairs[0][1].text).toEqual('![link](cdn://media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)');
         expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png');
       });
@@ -116,7 +116,7 @@ describe('matching-cards-info', () => {
       };
       result = sut.getCdnResources(content);
     });
-    it('returns public and private CDN resources from the text, without duplicates', () => {
+    it('returns document-media and room-media CDN resources from the text, without duplicates', () => {
       expect(result).toStrictEqual([
         `cdn://rooms/${roomId1}/media/image-1a.png`,
         'cdn://media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png',

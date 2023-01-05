@@ -88,42 +88,29 @@ describe('room-service', () => {
   });
 
   describe('createOrUpdateInvitations', () => {
-    let myPublicRoom = null;
-    let myPrivateRoom = null;
+    let room = null;
 
     beforeEach(async () => {
-      [myPublicRoom, myPrivateRoom] = await Promise.all([
-        await sut.createRoom({
-          name: 'my public room',
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
-          user: myUser
-        }),
-        await sut.createRoom({
-          name: 'my private room',
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
-          user: myUser
-        })
-      ]);
+      room = await sut.createRoom({
+        name: 'my room',
+        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        user: myUser
+      });
     });
 
-    it('should create a new invitation for a private room if it does not exist', async () => {
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
-      expect(invitations[0].token).toBeDefined();
-    });
-
-    it('should create a new invitation for a public room if it does not exist', async () => {
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: myPublicRoom._id, emails: ['invited-user@test.com'], user: myUser });
+    it('should create a new invitation for a room if it does not exist', async () => {
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
       expect(invitations[0].token).toBeDefined();
     });
 
     it('should throw a bad request if the owner invites themselves', async () => {
-      await expect(() => sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: [myUser.email], user: myUser })).rejects.toThrow(BadRequest);
+      await expect(() => sut.createOrUpdateInvitations({ roomId: room._id, emails: [myUser.email], user: myUser })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {
-      const { invitations: originalInvitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
+      const { invitations: originalInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
       sandbox.clock.tick(1000);
-      const { invitations: updatedInvitations } = await sut.createOrUpdateInvitations({ roomId: myPrivateRoom._id, emails: ['invited-user@test.com'], user: myUser });
+      const { invitations: updatedInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
       expect(updatedInvitations[0]._id).toBe(originalInvitations[0]._id);
       expect(updatedInvitations[0].token).toBe(originalInvitations[0].token);
       expect(updatedInvitations[0].sentOn).not.toBe(originalInvitations[0].sentOn);

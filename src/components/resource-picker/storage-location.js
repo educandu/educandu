@@ -118,12 +118,20 @@ function StorageLocation({
   };
 
   const renderStorageInfo = () => {
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
-      return <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />;
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
+      const alertContent = (
+        <div className="StorageLocation-alertPrivateStorage">
+          <span>{t('privateStorageMessage')}</span>
+          <div className="StorageLocation-alertPrivateStorageUsage">
+            <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+          </div>
+        </div>
+      );
+      return <Alert message={alertContent} type="warning" />;
     }
 
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.public) {
-      return <Alert message={t('publicStorageWarning')} type="warning" showIcon />;
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia) {
+      return <Alert message={t('publicStorageMessage')} type="warning" />;
     }
 
     return null;

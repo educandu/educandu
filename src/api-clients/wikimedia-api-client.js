@@ -11,7 +11,7 @@ export const FILE_TYPE = {
   pdf: 'pdf'
 };
 
-class WikimediaCommonsApiClient {
+class WikimediaApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
@@ -41,4 +41,4 @@ class WikimediaCommonsApiClient {
   }
 }
 
-export default WikimediaCommonsApiClient;
+export default WikimediaApiClient;

@@ -3,7 +3,7 @@ import iconNs from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function WikimediaCommonsIconComponent() {
+export function WikimediaIconComponent() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -36,10 +36,10 @@ export function WikimediaCommonsIconComponent() {
   );
 }
 
-function WikimediaCommonsIcon(props) {
+function WikimediaIcon(props) {
   return (
-    <Icon component={WikimediaCommonsIconComponent} {...props} />
+    <Icon component={WikimediaIconComponent} {...props} />
   );
 }
 
-export default WikimediaCommonsIcon;
+export default WikimediaIcon;

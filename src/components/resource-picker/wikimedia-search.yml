@@ -14,8 +14,8 @@ searchFileType_pdf:
   en: PDF
   de: PDF
 searchInvitationHeader:
-  en: Search in the Wikimedia Commons Database
-  de: Suche in der Wikimedia-Commons-Datenbank
+  en: Search in the Wikimedia database
+  de: Suche in der Wikimedia-Datenbank
 searchInvitationDescription:
   en: Enter a search term in the field above and select whether you want to search for images, videos, etc.
   de: Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest

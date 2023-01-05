@@ -110,16 +110,16 @@ export const SOURCE_TYPE = {
   none: 'none',
   youtube: 'youtube',
   external: 'external',
-  internalPublic: 'internal-public',
-  internalPrivate: 'internal-private',
-  wikimediaCommons: 'wikimedia-commons',
+  documentMedia: 'document-media',
+  roomMedia: 'room-media',
+  wikimedia: 'wikimedia',
   unsupported: 'unsupported'
 };
 
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
-  public: 'public',
-  private: 'private'
+  roomMedia: 'room-media',
+  documentMedia: 'document-media'
 };
 
 export const CDN_OBJECT_TYPE = {
@@ -204,8 +204,8 @@ export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
 
-export const INTERNAL_PUBLIC_STORAGE_PATH_PATTERN = /^media(\/.*)?$/;
-export const INTERNAL_PRIVATE_STORAGE_PATH_PATTERN = /^rooms\/([^/]+)\/media(\/.*)?$/;
+export const DOCUMENT_MEDIA_STORAGE_PATH_PATTERN = /^media(\/.*)?$/;
+export const ROOM_MEDIA_STORAGE_PATH_PATTERN = /^rooms\/([^/]+)\/media(\/.*)?$/;
 
 export const DEFAULT_COLOR_SWATCHES = [
   ['#fffafa', '#ffd700', '#9ef083', '#7fff00', '#228b22', '#4582b4', '#ff0000', '#ca1515', '#800000', '#575757'],

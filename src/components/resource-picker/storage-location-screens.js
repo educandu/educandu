@@ -149,7 +149,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
 
   useEffect(() => {
     const checkPreconditions = () => {
-      return storageLocation.type === STORAGE_LOCATION_TYPE.public
+      return storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia
         ? new Promise(resolve => {
           if (!getCookie(uploadLiabilityCookieName)) {
             confirmPublicUploadLiability(t, () => {
@@ -296,7 +296,7 @@ StorageLocationScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
-  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]).isRequired
+  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
 };
 
 StorageLocationScreens.defaultProps = {
