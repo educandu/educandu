@@ -53,7 +53,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }], about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}] }` | no, however if provided, `apiKey` is mandatory |
  | samlAuth | Configuration for SAML authentication | `{ decryption: { pvk: <string>, cert: <string> }, identityProviders: [{ key: <string>, displayName: <string>, entryPoint: <string>,  cert: <string>, logoUrl: <string>, expiryTimeoutInDays: <number> }] }` | no, however if provided, `decryption.pvk`, `decryption.cert`, `identityProviders.key`, `identityProviders.displayName`, `identityProviders.entryPoint` and `identityProviders.cert` are mandatory, while `identityProviders.logoUrl` defaults to null and `identityProviders.expiryTimeoutInDays` defaults to 180 days |
- 
+
 ## How to use
 
 ~~~
