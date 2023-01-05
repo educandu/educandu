@@ -221,7 +221,7 @@ class UserController {
   }
 
   handlePostUserLogin(req, res, next) {
-    passport.authenticate('local', (err, user) => {
+    passport.authenticate('local', async (err, user) => {
       if (err) {
         return next(err);
       }
@@ -230,10 +230,11 @@ class UserController {
         return res.status(201).send({ user: null });
       }
 
-      return req.login(user, loginError => {
+      const updatedUser = await this.userService.recordUserLogIn(user._id);
+      return req.login(updatedUser, loginError => {
         return loginError
           ? next(loginError)
-          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
+          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
       });
     })(req, res, next);
   }
