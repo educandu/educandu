@@ -89,7 +89,7 @@ describe('interactive-media-info', () => {
       expect(result).toEqual(['cdn://media/12345/some-video.mp4']);
     });
 
-    it('returns a list with the url for an internal private resource', () => {
+    it('returns a list with the url for an internal room-media resource', () => {
       content = {
         sourceUrl: 'cdn://rooms/12345/media/some-video.mp4',
         copyrightNotice: ''

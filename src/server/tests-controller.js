@@ -20,7 +20,7 @@ class TestsController {
 
     const locations = [
       {
-        type: STORAGE_LOCATION_TYPE.public,
+        type: STORAGE_LOCATION_TYPE.documentMedia,
         rootPath: 'media',
         homePath: 'media',
         usedBytes: 0,
@@ -40,7 +40,7 @@ class TestsController {
       const roomOwnerStoragePlan = roomOwner.storage.plan ? await this.storageService.getStoragePlanById(roomOwner.storage.plan) : null;
 
       locations.push({
-        type: STORAGE_LOCATION_TYPE.private,
+        type: STORAGE_LOCATION_TYPE.roomMedia,
         rootPath: `rooms/${room._id}/media`,
         homePath: `rooms/${room._id}/media`,
         usedBytes: roomOwner.storage.usedBytes,

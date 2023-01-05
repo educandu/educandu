@@ -1,15 +1,15 @@
 tooltip_youtube:
   en: Youtube
   de: Youtube
-tooltip_wikimedia-commons:
-  en: Wikimedia Commons
-  de: Wikimedia Commons
-tooltip_internal-public:
-  en: internal public storage
-  de: interner öffentlicher Speicher
-tooltip_internal-private:
-  en: internal private storage
-  de: interner privater Speicher
+tooltip_wikimedia:
+  en: Wikimedia
+  de: Wikimedia
+tooltip_document-media:
+  en: document media storage
+  de: Dokument-Medien Speicher
+tooltip_room-media:
+  en: room media storage
+  de: Raum-Medien Speicher
 tooltip_external:
   en: external
   de: extern

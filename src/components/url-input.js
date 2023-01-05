@@ -9,10 +9,10 @@ import { SOURCE_TYPE } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
+import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
 import { getSourceType, getPortableUrl } from '../utils/source-utils.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
-import WikimediaCommonsIcon from './icons/wikimedia-commons/wikimedia-commons-icon.js';
 
 function UrlInput({ value, allowedSourceTypes, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -29,11 +29,11 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
         return null;
       case SOURCE_TYPE.youtube:
         return <YoutubeOutlined />;
-      case SOURCE_TYPE.wikimediaCommons:
-        return <WikimediaCommonsIcon />;
-      case SOURCE_TYPE.internalPublic:
+      case SOURCE_TYPE.wikimedia:
+        return <WikimediaIcon />;
+      case SOURCE_TYPE.documentMedia:
         return <PublicIcon />;
-      case SOURCE_TYPE.internalPrivate:
+      case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:
         return <GlobalOutlined />;

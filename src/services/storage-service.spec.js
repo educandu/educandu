@@ -470,7 +470,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is public', () => {
+    describe('when the storage type is document-media', () => {
       const id = 'xyz';
       const docId = uniqueId.create();
 
@@ -544,7 +544,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private but the user has no storage plan allocated', () => {
+    describe('when the storage type is room-media but the user has no storage plan allocated', () => {
       beforeEach(async () => {
         parentPath = `rooms/${roomId}/media`;
         files = [
@@ -569,7 +569,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe('Cannot upload to private storage without a storage plan');
+        expect(result).toBe('Cannot upload to room-media storage without a storage plan');
       });
 
       it('should release the lock', () => {
@@ -577,7 +577,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private but the user has not enough storage space left', () => {
+    describe('when the storage type is room-media but the user has not enough storage space left', () => {
       beforeEach(async () => {
         parentPath = `rooms/${roomId}/media`;
         files = [
@@ -608,7 +608,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private and the user has enough storage space left', () => {
+    describe('when the storage type is room-media and the user has enough storage space left', () => {
       const id = 'xyz';
       const otherRoomId = uniqueId.create();
 
@@ -748,7 +748,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is public', () => {
+    describe('when the storage type is document-media', () => {
       beforeEach(async () => {
         path = 'media/file.jpeg';
 
@@ -787,7 +787,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private', () => {
+    describe('when the storage type is room-media', () => {
       let allOwnedPrivateRoomIds;
 
       beforeEach(async () => {
@@ -916,7 +916,7 @@ describe('storage-service', () => {
       assert.calledWith(roomStore.getRoomIdsByOwnerId, { ownerId: myUser._id });
     });
 
-    it('should call cdn.listObjects for the remaining private room', () => {
+    it('should call cdn.listObjects for the remaining room', () => {
       assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
     });
 
@@ -950,10 +950,10 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location with deletion disabled', () => {
+        it('should return the document media storage location with deletion disabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: false
@@ -969,10 +969,10 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location with deletion enabled', () => {
+        it('should return the document media storage location with deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: true
@@ -993,10 +993,10 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location', () => {
+        it('should return the document media storage location', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: false
@@ -1015,16 +1015,16 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: false
             },
             {
-              type: STORAGE_LOCATION_TYPE.private,
+              type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: myUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
               rootPath: 'rooms/room/media',
@@ -1057,10 +1057,10 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location', () => {
+        it('should return the document media storage location', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: false
@@ -1094,16 +1094,16 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
+              type: STORAGE_LOCATION_TYPE.documentMedia,
               rootPath: 'media',
               homePath: 'media/documentId',
               isDeletionEnabled: false
             },
             {
-              type: STORAGE_LOCATION_TYPE.private,
+              type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: ownerUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
               rootPath: 'rooms/room/media',

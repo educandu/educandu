@@ -14,8 +14,8 @@ passwordResetEmailSent:
   en: The password reset link has been sent to {email}
   de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet
 closeAccountDetails:
-  en: All your public contributions (documents, public rooms, files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, private rooms and files uploaded to the private storage) will be removed. You will no longer be able to log into the website.
-  de: Alle deine öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.
+  en: All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.
+  de: Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.
 closeAccount:
   en: Close account
   de: Konto schließen

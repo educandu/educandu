@@ -17,7 +17,7 @@ import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { confirmAllPrivateRoomsDelete } from '../confirmation-dialogs.js';
+import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
 import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js';
 
@@ -200,8 +200,8 @@ function Users({ initialState, PageTemplate }) {
     }
   };
 
-  const handleDeleteAllPrivateRoomsClick = user => {
-    confirmAllPrivateRoomsDelete(t, user.displayName, async () => {
+  const handleDeleteAllOwnedRoomsClick = user => {
+    confirmAllOwnedRoomsDelete(t, user.displayName, async () => {
       const oldStorage = user.storage;
 
       const newStorage = {
@@ -311,8 +311,8 @@ function Users({ initialState, PageTemplate }) {
           {t('removeAllReminders')}
         </a>
         )}
-        <a className="UsersPage-actionButton" onClick={() => handleDeleteAllPrivateRoomsClick(user)}>
-          {t('deleteAllPrivateRooms')}
+        <a className="UsersPage-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(user)}>
+          {t('deleteAllOwnedRooms')}
         </a>
       </div>
     );

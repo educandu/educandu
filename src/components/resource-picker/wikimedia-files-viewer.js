@@ -5,11 +5,11 @@ import { Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import WikimediaIcon from '../icons/wikimedia/wikimedia-icon.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
-import WikimediaCommonsIcon from '../icons/wikimedia-commons/wikimedia-commons-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
-function WikimediaCommonsFilesViewer({
+function WikimediaFilesViewer({
   files,
   isLoading,
   canLoadMore,
@@ -18,9 +18,9 @@ function WikimediaCommonsFilesViewer({
   onFileClick,
   onFileDoubleClick,
   onPreviewFileClick,
-  onOpenWikimediaCommonsPageClick
+  onOpenWikimediaPageClick
 }) {
-  const { t } = useTranslation('wikimediaCommonsFilesViewer');
+  const { t } = useTranslation('wikimediaFilesViewer');
 
   const [sentryRef, { rootRef }] = useInfiniteScroll({
     loading: isLoading,
@@ -30,9 +30,9 @@ function WikimediaCommonsFilesViewer({
     rootMargin: '0px 0px 100px 0px'
   });
 
-  const handleOpenWikimediaCommonsPageClick = (event, file) => {
+  const handleOpenWikimediaPageClick = (event, file) => {
     event.stopPropagation();
-    onOpenWikimediaCommonsPageClick(file);
+    onOpenWikimediaPageClick(file);
   };
 
   const handlePreviewClick = (event, file) => {
@@ -42,33 +42,33 @@ function WikimediaCommonsFilesViewer({
 
   const renderFile = file => {
     const classes = classNames({
-      'WikimediaCommonsFilesViewer-itemContainer': true,
-      'WikimediaCommonsFilesViewer-itemContainer--file': true,
+      'WikimediaFilesViewer-itemContainer': true,
+      'WikimediaFilesViewer-itemContainer--file': true,
       'is-selected': file.url === selectedFileUrl
     });
 
     const actionsClasses = classNames({
-      'WikimediaCommonsFilesViewer-actions': true,
+      'WikimediaFilesViewer-actions': true,
       'are-visible': file.url === selectedFileUrl
     });
 
     return (
       <div className={classes} key={file.url}>
         <Tooltip title={file.displayName} placement="bottom">
-          <a className="WikimediaCommonsFilesViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
-            <div className="WikimediaCommonsFilesViewer-fileDisplay">
-              <img className="WikimediaCommonsFilesViewer-fileDisplayImage" src={file.thumbnailUrl} />
+          <a className="WikimediaFilesViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
+            <div className="WikimediaFilesViewer-fileDisplay">
+              <img className="WikimediaFilesViewer-fileDisplayImage" src={file.thumbnailUrl} />
             </div>
-            <span className="WikimediaCommonsFilesViewer-fileName">{file.displayName}</span>
+            <span className="WikimediaFilesViewer-fileName">{file.displayName}</span>
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
           <ActionButtonGroup>
             <ActionButton
-              title={t('openWikimediaCommonsPage')}
-              icon={<WikimediaCommonsIcon />}
+              title={t('openWikimediaPage')}
+              icon={<WikimediaIcon />}
               intent={ACTION_BUTTON_INTENT.default}
-              onClick={event => handleOpenWikimediaCommonsPageClick(event, file)}
+              onClick={event => handleOpenWikimediaPageClick(event, file)}
               overlay
               />
             <ActionButton
@@ -86,8 +86,8 @@ function WikimediaCommonsFilesViewer({
 
   const renderSentry = () => {
     const classes = classNames({
-      'WikimediaCommonsFilesViewer-itemContainer': true,
-      'WikimediaCommonsFilesViewer-itemContainer--sentry': true,
+      'WikimediaFilesViewer-itemContainer': true,
+      'WikimediaFilesViewer-itemContainer--sentry': true,
       'is-disabled': !canLoadMore
     });
 
@@ -99,12 +99,12 @@ function WikimediaCommonsFilesViewer({
   };
 
   return (
-    <div ref={rootRef} className="WikimediaCommonsFilesViewer">
-      <div className="WikimediaCommonsFilesViewer-files">
+    <div ref={rootRef} className="WikimediaFilesViewer">
+      <div className="WikimediaFilesViewer-files">
         {files.map(file => renderFile(file))}
         {renderSentry()}
       </div>
-      <div className={classNames('WikimediaCommonsFilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
+      <div className={classNames('WikimediaFilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
         <Spin size="large" />
       </div>
     </div>
@@ -112,21 +112,21 @@ function WikimediaCommonsFilesViewer({
   );
 }
 
-WikimediaCommonsFilesViewer.propTypes = {
+WikimediaFilesViewer.propTypes = {
   canLoadMore: PropTypes.bool.isRequired,
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   isLoading: PropTypes.bool,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onLoadMore: PropTypes.func.isRequired,
-  onOpenWikimediaCommonsPageClick: PropTypes.func.isRequired,
+  onOpenWikimediaPageClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   selectedFileUrl: PropTypes.string
 };
 
-WikimediaCommonsFilesViewer.defaultProps = {
+WikimediaFilesViewer.defaultProps = {
   isLoading: false,
   selectedFileUrl: null
 };
 
-export default WikimediaCommonsFilesViewer;
+export default WikimediaFilesViewer;

@@ -17,7 +17,7 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { CDN_OBJECT_TYPE, CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { componseUniqueFileName, getPathForRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
@@ -156,13 +156,13 @@ export default class StorageService {
         throw new Error(`Invalid storage path '${parentPath}'`);
       }
 
-      if (storageLocationType === STORAGE_LOCATION_TYPE.public) {
+      if (storageLocationType === STORAGE_LOCATION_TYPE.documentMedia) {
         uploadedFiles = await this._uploadFiles(files, parentPath);
         return { uploadedFiles, usedBytes };
       }
 
       if (!user.storage.planId) {
-        throw new Error('Cannot upload to private storage without a storage plan');
+        throw new Error('Cannot upload to room-media storage without a storage plan');
       }
 
       const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.planId);
@@ -238,7 +238,7 @@ export default class StorageService {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
       await this._deleteObjects([path]);
 
-      if (getStorageLocationTypeForPath(path) === STORAGE_LOCATION_TYPE.private) {
+      if (getStorageLocationTypeForPath(path) === STORAGE_LOCATION_TYPE.roomMedia) {
         usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
       }
 
@@ -268,7 +268,7 @@ export default class StorageService {
       });
 
       const { objects: roomPrivateStorageObjects } = await this._getObjects({
-        parentPath: getPathForPrivateRoom(roomId),
+        parentPath: getPathForRoom(roomId),
         recursive: true,
         includeEmptyObjects: true,
         ignoreNonExistingPath: true
@@ -294,7 +294,7 @@ export default class StorageService {
 
     if (documentId) {
       locations.push({
-        type: STORAGE_LOCATION_TYPE.public,
+        type: STORAGE_LOCATION_TYPE.documentMedia,
         rootPath: getPublicRootPath(),
         homePath: getPublicHomePath(documentId),
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
@@ -308,7 +308,7 @@ export default class StorageService {
       if (doc.roomId) {
         const room = await this.roomStore.getRoomById(doc.roomId);
         const isRoomOwner = user._id === room.owner;
-        const rootAndHomePath = getPathForPrivateRoom(room._id);
+        const rootAndHomePath = getPathForRoom(room._id);
 
         const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
 
@@ -316,7 +316,7 @@ export default class StorageService {
           const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
 
           locations.push({
-            type: STORAGE_LOCATION_TYPE.private,
+            type: STORAGE_LOCATION_TYPE.roomMedia,
             usedBytes: roomOwner.storage.usedBytes,
             maxBytes: roomOwnerStoragePlan.maxBytes,
             rootPath: rootAndHomePath,
@@ -346,7 +346,7 @@ export default class StorageService {
 
   async _calculateUserUsedBytes(userId) {
     const roomIds = await this.roomStore.getRoomIdsByOwnerId({ ownerId: userId });
-    const storagePaths = roomIds.map(getPathForPrivateRoom);
+    const storagePaths = roomIds.map(getPathForRoom);
 
     let totalSize = 0;
     for (const storagePath of storagePaths) {

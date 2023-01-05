@@ -8,7 +8,7 @@
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
       "passwordResetEmailSent": "The password reset link has been sent to {email}",
-      "closeAccountDetails": "All your public contributions (documents, public rooms, files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, private rooms and files uploaded to the private storage) will be removed. You will no longer be able to log into the website.",
+      "closeAccountDetails": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
       "closeAccount": "Close account"
     }
   },
@@ -21,7 +21,7 @@
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Dein Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "closeAccountDetails": "Alle deine öffentlichen Beiträge (Dokumente, öffentliche Räume und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, private Räume und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.",
+      "closeAccountDetails": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
     }
   },
@@ -188,7 +188,7 @@
       "discardUnsavedChanges": "All unsaved changes will be lost.",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
-      "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
+      "deleteAllOwnedRoomsConfirmation": "Do you really want to delete all rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteRoomMemberConfirmation": "Do you really want to remove member \"{memberDisplayName}\" from the room?",
       "deleteRoomInvitationConfirmation": "Do you really want to revoke the room invitation sent to \"{invitationEmail}\"?",
@@ -221,7 +221,7 @@
       "discardUnsavedChanges": "Alle nicht gespeicherten Änderungen werden verworfen.",
       "deleteSectionConfirmation": "Möchtest du den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchtest du das Dokument \"{title}\" wirklich löschen?",
-      "deleteAllPrivateRoomsConfirmation": "Möchtest du wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
+      "deleteAllOwnedRoomsConfirmation": "Möchtest du wirklich alle Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchtest du den Raum \"{roomName}\" wirklich löschen?",
       "deleteRoomMemberConfirmation": "Möchtest du das Mitglied \"{memberDisplayName}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchtest du die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
@@ -777,7 +777,7 @@
       "roomCreatedActivity": "New room created",
       "roomUpdatedActivity": "Room updated",
       "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Private room joined",
+      "roomJoinedActivity": "Room joined",
       "userMarkedFavoriteActivity": "User marked as favorite"
     }
   },
@@ -793,7 +793,7 @@
       "roomCreatedActivity": "Neuen Raum erstellt",
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Privatem Raum beigetreten",
+      "roomJoinedActivity": "Raum beigetreten",
       "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
     }
   },
@@ -1204,7 +1204,7 @@
       "selectPlan": "Select plan",
       "addReminder": "Add reminder",
       "removeAllReminders": "Remove reminders",
-      "deleteAllPrivateRooms": "Delete private rooms",
+      "deleteAllOwnedRooms": "Delete rooms",
       "storageSpace": "Storage space",
       "reminders": "Reminders",
       "accountClosedOn": "Account closing date",
@@ -1232,7 +1232,7 @@
       "selectPlan": "Plan auswählen",
       "addReminder": "Erinnerung hinzufügen",
       "removeAllReminders": "Erinnerungen entfernen",
-      "deleteAllPrivateRooms": "Private Räume löschen",
+      "deleteAllOwnedRooms": "Räume löschen",
       "storageSpace": "Speicherplatz",
       "reminders": "Erinnerungen",
       "accountClosedOn": "Kontoschlussdatum",
@@ -1415,18 +1415,18 @@
     "namespace": "resourceSelector",
     "language": "en",
     "resources": {
-      "sourceType_internal-public": "Public storage",
-      "sourceType_internal-private": "Private storage",
-      "sourceType_wikimedia-commons": "Wikimedia Commons"
+      "sourceType_document-media": "Document media",
+      "sourceType_room-media": "Room media",
+      "sourceType_wikimedia": "Wikimedia"
     }
   },
   {
     "namespace": "resourceSelector",
     "language": "de",
     "resources": {
-      "sourceType_internal-public": "Öffentlicher Speicher",
-      "sourceType_internal-private": "Privater Speicher",
-      "sourceType_wikimedia-commons": "Wikimedia Commons"
+      "sourceType_document-media": "Dokument-Medien",
+      "sourceType_room-media": "Raum-Medien",
+      "sourceType_wikimedia": "Wikimedia"
     }
   },
   {
@@ -1435,7 +1435,8 @@
     "resources": {
       "filesView_list": "List",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "This directory is publicly accessible",
+      "privateStorageMessage": "Private directory!",
+      "publicStorageMessage": "Public directory!",
       "backToDirectoryView": "Back to directory view",
       "uploadFiles": "Upload files"
     }
@@ -1446,27 +1447,28 @@
     "resources": {
       "filesView_list": "Liste",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "privateStorageMessage": "Privates Verzeichnis!",
+      "publicStorageMessage": "Öffentliches Verzeichnis!",
       "backToDirectoryView": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen"
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesViewer",
+    "namespace": "wikimediaFilesViewer",
     "language": "en",
     "resources": {
-      "openWikimediaCommonsPage": "Open Wikimedia Commons page"
+      "openWikimediaPage": "Open Wikimedia page"
     }
   },
   {
-    "namespace": "wikimediaCommonsFilesViewer",
+    "namespace": "wikimediaFilesViewer",
     "language": "de",
     "resources": {
-      "openWikimediaCommonsPage": "Seite auf Wikimedia Commons öffnen"
+      "openWikimediaPage": "Seite auf Wikimedia öffnen"
     }
   },
   {
-    "namespace": "wikimediaCommonsSearch",
+    "namespace": "wikimediaSearch",
     "language": "en",
     "resources": {
       "searchTerm": "Search term",
@@ -1474,14 +1476,14 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
-      "searchInvitationHeader": "Search in the Wikimedia Commons Database",
+      "searchInvitationHeader": "Search in the Wikimedia database",
       "searchInvitationDescription": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
       "initialFilePreviewHeader": "Currently selected file",
       "initialFilePreviewFooter": "In order to select a different file, start a new search using the search field above"
     }
   },
   {
-    "namespace": "wikimediaCommonsSearch",
+    "namespace": "wikimediaSearch",
     "language": "de",
     "resources": {
       "searchTerm": "Suchbegriff",
@@ -1489,7 +1491,7 @@
       "searchFileType_video": "Video",
       "searchFileType_audio": "Audio",
       "searchFileType_pdf": "PDF",
-      "searchInvitationHeader": "Suche in der Wikimedia-Commons-Datenbank",
+      "searchInvitationHeader": "Suche in der Wikimedia-Datenbank",
       "searchInvitationDescription": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest",
       "initialFilePreviewHeader": "Momentan ausgewählte Datei",
       "initialFilePreviewFooter": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
@@ -1712,9 +1714,9 @@
     "language": "en",
     "resources": {
       "tooltip_youtube": "Youtube",
-      "tooltip_wikimedia-commons": "Wikimedia Commons",
-      "tooltip_internal-public": "internal public storage",
-      "tooltip_internal-private": "internal private storage",
+      "tooltip_wikimedia": "Wikimedia",
+      "tooltip_document-media": "document media storage",
+      "tooltip_room-media": "room media storage",
       "tooltip_external": "external",
       "tooltip_unsupported": "unsupported"
     }
@@ -1724,9 +1726,9 @@
     "language": "de",
     "resources": {
       "tooltip_youtube": "Youtube",
-      "tooltip_wikimedia-commons": "Wikimedia Commons",
-      "tooltip_internal-public": "interner öffentlicher Speicher",
-      "tooltip_internal-private": "interner privater Speicher",
+      "tooltip_wikimedia": "Wikimedia",
+      "tooltip_document-media": "Dokument-Medien Speicher",
+      "tooltip_room-media": "Raum-Medien Speicher",
       "tooltip_external": "extern",
       "tooltip_unsupported": "nicht unterstützt"
     }

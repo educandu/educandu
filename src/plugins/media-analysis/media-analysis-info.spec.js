@@ -159,7 +159,7 @@ describe('media-analysis-info', () => {
       ]);
     });
 
-    it('returns a list with the url for an internal private resource', () => {
+    it('returns a list with the url for an internal room-media resource', () => {
       content = {
         mainTrack: {
           sourceUrl: 'cdn://rooms/12345/media/some-video-1.mp4',

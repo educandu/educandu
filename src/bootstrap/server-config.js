@@ -39,6 +39,7 @@ const configSchema = joi.object({
   consentCookieNamePrefix: joi.string().required(),
   uploadLiabilityCookieName: joi.string().required(),
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
+  xRoomsAuthSecret: joi.string().allow(null).default(null),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
   adminEmailAddress: joi.string().allow(null).default(null),
