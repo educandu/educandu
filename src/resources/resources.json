@@ -1435,7 +1435,8 @@
     "resources": {
       "filesView_list": "List",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "This directory is publicly accessible",
+      "privateStorageMessage": "Private directory!",
+      "publicStorageMessage": "Public directory!",
       "backToDirectoryView": "Back to directory view",
       "uploadFiles": "Upload files"
     }
@@ -1446,7 +1447,8 @@
     "resources": {
       "filesView_list": "Liste",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "privateStorageMessage": "Privates Verzeichnis!",
+      "publicStorageMessage": "Öffentliches Verzeichnis!",
       "backToDirectoryView": "Zurück zur Verzeichnisansicht",
       "uploadFiles": "Dateien hochladen"
     }
