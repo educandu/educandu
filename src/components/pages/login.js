@@ -19,7 +19,7 @@ function Login({ PageTemplate, SiteLogo }) {
 
   const loginUsingExternalProvider = providerKey => {
     const provider = clientConfig.samlAuth.identityProviders.find(p => p.key === providerKey);
-    window.location = `/saml-auth/login/${provider.key}`;
+    window.location = routes.getSamlAuthLoginPath(provider.key);
   };
 
   const handleLoginButtonClick = () => {

@@ -17,7 +17,9 @@ const docsPrefix = '/docs/';
 const usersPrefix = '/users/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
+const samlAuthLoginPrefix = '/saml-auth/login/';
 const completeRegistrationPrefix = '/complete-registration/';
+const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const completePasswordResetPrefix = '/complete-password-reset/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
@@ -114,6 +116,14 @@ function getDocIdIfDocUrl(url) {
   return documentId || null;
 }
 
+function getSamlAuthLoginPath(providerKey) {
+  return urlUtils.concatParts(samlAuthLoginPrefix, encodeURIComponent(providerKey));
+}
+
+function getSamlAuthLoginCallbackPath(providerKey) {
+  return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
+}
+
 export default {
   getUserUrl,
   getDocsUrl,
@@ -135,5 +145,7 @@ export default {
   getResetPasswordUrl,
   getSearchUrl,
   getBatchUrl,
-  getDocIdIfDocUrl
+  getDocIdIfDocUrl,
+  getSamlAuthLoginPath,
+  getSamlAuthLoginCallbackPath
 };

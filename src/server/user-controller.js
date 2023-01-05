@@ -55,6 +55,8 @@ const { MultiSamlStrategy } = passportSaml;
 const { Strategy: LocalStrategy } = passportLocal;
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
+const idpKeySymbol = Symbol('idpKey');
+
 class UserController {
   static get inject() {
     return [
@@ -103,56 +105,66 @@ class UserController {
       service: this.requestLimitRecordService
     };
 
-    const samlAuth = this.serverConfig.samlAuth;
-    if (!samlAuth) {
-      return;
-    }
+    this.apiKeyStrategy = new ApiKeyStrategy((apikey, cb) => {
+      const { ambConfig } = this.serverConfig;
+      return cb(null, ambConfig?.apiKey && apikey === ambConfig.apiKey ? ambMetadataUser : false);
+    });
 
-    const idpKeySymbol = Symbol('idpKey');
+    this.localStrategy = new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password'
+    }, (email, password, cb) => {
+      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
+        .then(user => {
+          if (user?.accountLockedOn) {
+            const err = new Error('User account is locked');
+            err.code = ERROR_CODES.userAccountLocked;
+            throw err;
+          }
 
-    this.getAndValidateProviderForIdpKey = idpKey => {
-      const provider = samlAuth.identityProviders.find(p => p.key === idpKey);
-      if (!provider) {
-        throw new NotFound(`Invalid identity provider key: "${idpKey}"`);
-      }
-
-      return provider;
-    };
-
-    this.setIdpKeyForRequest = (req, idpKey) => {
-      this.getAndValidateProviderForIdpKey(idpKey);
-      return req[idpKeySymbol] = idpKey;
-    };
-
-    this.getIdpKeyForRequest = req => {
-      return req[idpKeySymbol] || null;
-    };
+          return cb(null, user || false);
+        })
+        .catch(err => cb(err));
+    });
 
     this.samlStrategy = new MultiSamlStrategy({
       getSamlOptions: (req, done) => {
-        const idpKey = this.getIdpKeyForRequest(req);
-        const provider = this.getAndValidateProviderForIdpKey(idpKey);
+        const provider = this.getProviderForRequest(req);
         const { origin } = requestUtils.getHostInfo(req);
 
-        const error = provider
-          ? null
-          : new Error(`No identity provider with key '${idpKey}' is available`);
+        const error = provider ? null : new NotFound('Invalid identity provider key');
 
         const samlConfig = provider
           ? {
             issuer: origin,
             entryPoint: provider.entryPoint,
             cert: provider.cert,
-            callbackUrl: `${origin}/saml-auth/login-callback/${provider.key}`
+            callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
+            decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
+            wantAssertionsSigned: false,
+            forceAuthn: true
           }
           : null;
 
         done(error, samlConfig);
-      },
-      decryptionPvk: samlAuth.decryption.pvk,
-      wantAssertionsSigned: false,
-      forceAuthn: true
+      }
     }, (profile, done) => done(null, { ...profile }));
+  }
+
+  setIdpKeyFromRequestParam(paramName, req, _res, next) {
+    const idpKey = req.params[paramName] || '';
+    const provider = this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
+    if (!provider) {
+      return next(new NotFound(`Invalid identity provider key: "${idpKey}"`));
+    }
+
+    req[idpKeySymbol] = idpKey;
+    return next();
+  }
+
+  getProviderForRequest(req) {
+    const idpKey = req[idpKeySymbol];
+    return this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
   }
 
   handleGetRegisterPage(req, res) {
@@ -397,98 +409,7 @@ class UserController {
     return res.status(204).end();
   }
 
-  setupSamlAuthEndpoints(router) {
-    router.get(
-      '/saml-auth/metadata/:idpKey',
-      (req, res, next) => {
-        this.setIdpKeyForRequest(req, req.params.idpKey);
-        this.samlStrategy.generateServiceProviderMetadata(req, this.serverConfig.samlAuth.decryption.cert, null, (err, metadata) => {
-          return err ? next(err) : res.set('content-type', 'text/xml').send(metadata);
-        });
-      }
-    );
-
-    router.get(
-      '/saml-auth/login/:idpKey',
-      (req, res, next) => {
-        this.setIdpKeyForRequest(req, req.params.idpKey);
-        passport.authenticate('saml', err => {
-          return err ? next(err) : res.end();
-        })(req, res, next);
-      }
-    );
-
-    router.post(
-      '/saml-auth/login-callback/:idpKey',
-      express.urlencoded({ extended: false }),
-      (req, res, next) => {
-        this.setIdpKeyForRequest(req, req.params.idpKey);
-        passport.authenticate('saml', (err, profile) => {
-          if (err) {
-            return next(err);
-          }
-
-          if (!profile) {
-            return res.redirect('/this-is-redirected-from-callback-without-profile');
-          }
-
-          req.session.samlInfo = {
-            providerKey: this.getIdpKeyForRequest(req),
-            loggedInOn: new Date(),
-            profile
-          };
-
-          return res.redirect('/this-is-redirected-from-callback-with-success');
-        })(req, res, next);
-      }
-    );
-  }
-
-  registerMiddleware(router) {
-    if (this.samlStrategy) {
-      passport.use('saml', this.samlStrategy);
-    }
-
-    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { ambConfig } = this.serverConfig;
-
-      if (ambConfig?.apiKey && apikey === ambConfig.apiKey) {
-        return cb(null, ambMetadataUser);
-      }
-
-      return cb(null, false);
-    }));
-
-    passport.use('local', new LocalStrategy({
-      usernameField: 'email',
-      passwordField: 'password'
-    }, (email, password, cb) => {
-      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
-        .then(user => {
-          if (user?.accountLockedOn) {
-            const err = new Error('User account is locked');
-            err.code = ERROR_CODES.userAccountLocked;
-            throw err;
-          }
-
-          return cb(null, user || false);
-        })
-        .catch(err => cb(err));
-    }));
-
-    passport.serializeUser((user, cb) => {
-      cb(null, { _id: user._id });
-    });
-
-    passport.deserializeUser(async (input, cb) => {
-      try {
-        const user = await this.userService.getUserById(input._id);
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
-      }
-    });
-
+  setupSessionMiddleware(router) {
     router.use(session({
       name: this.serverConfig.sessionCookieName,
       cookie: {
@@ -526,14 +447,86 @@ class UserController {
         next();
       });
     }
+  }
+
+  setupPassportMiddleware(router) {
+    passport.use('apikey', this.apiKeyStrategy);
+    passport.use('local', this.localStrategy);
+    passport.use('saml', this.samlStrategy);
+
+    passport.serializeUser((user, cb) => {
+      cb(null, { _id: user._id });
+    });
+
+    passport.deserializeUser(async (input, cb) => {
+      try {
+        const user = await this.userService.getUserById(input._id);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    });
 
     router.use(passport.initialize());
     router.use(passport.session());
-    router.use(passport.authenticate('apikey', { session: false }));
-    if (this.samlStrategy) {
-      this.setupSamlAuthEndpoints(router);
-    }
+  }
 
+  setupSamlAuthMiddleware(router) {
+    router.get(
+      '/saml-auth/metadata/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        this.samlStrategy.generateServiceProviderMetadata(req, this.serverConfig.samlAuth.decryption.cert, null, (err, metadata) => {
+          return err ? next(err) : res.set('content-type', 'text/xml').send(metadata);
+        });
+      }
+    );
+
+    router.get(
+      '/saml-auth/login/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', err => {
+          return err ? next(err) : res.end();
+        })(req, res, next);
+      }
+    );
+
+    router.post(
+      '/saml-auth/login-callback/:idpKey',
+      express.urlencoded({ extended: false }),
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', (err, profile) => {
+          if (err) {
+            return next(err);
+          }
+
+          if (!profile) {
+            return next(new Error('No profile was sent by identity provider'));
+          }
+
+          req.session.samlInfo = {
+            providerKey: this.getProviderForRequest(req).key,
+            loggedInOn: new Date(),
+            profile
+          };
+
+          // In upcoming tickets the next middleware should handle the situation after logging in with SAML:
+          // return next();
+
+          // For now we just print the session to the screen in order to verify all values are set correctly:
+          return res.setHeader('content-type', 'text/plain').send(JSON.stringify(req.session, null, 2));
+        })(req, res, next);
+      }
+    );
+  }
+
+  setupApiKeyMiddleware(router) {
+    router.use(passport.authenticate('apikey', { session: false }));
+  }
+
+  setupStoragePlanMiddleware(router) {
     router.use(async (req, res, next) => {
       try {
         let storagePlan;
@@ -546,6 +539,14 @@ class UserController {
         return next(err);
       }
     });
+  }
+
+  registerMiddleware(router) {
+    this.setupSessionMiddleware(router);
+    this.setupPassportMiddleware(router);
+    this.setupSamlAuthMiddleware(router);
+    this.setupApiKeyMiddleware(router);
+    this.setupStoragePlanMiddleware(router);
   }
 
   registerPages(router) {
