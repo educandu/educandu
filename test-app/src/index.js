@@ -106,7 +106,7 @@ const config = {
   consentCookieNamePrefix: process.env.TEST_APP_CONSENT_COOKIE_NAME_PREFIX,
   uploadLiabilityCookieName: process.env.TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME,
   xFrameOptions: process.env.TEST_APP_X_FRAME_OPTIONS,
-  xRoomsAuthSecret: processEnv.TEST_APP_X_ROOMS_AUTH_SECRET,
+  xRoomsAuthSecret: process.env.TEST_APP_X_ROOMS_AUTH_SECRET,
   smtpOptions: process.env.TEST_APP_SMTP_OPTIONS,
   emailSenderAddress: process.env.TEST_APP_EMAIL_SENDER_ADDRESS,
   adminEmailAddress: process.env.TEST_APP_ADMIN_EMAIL_ADDRESS,
