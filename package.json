@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@node-saml/passport-saml": "^4.0.2",
     "@sindresorhus/slugify": "^2.1.1",
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.1.7",
@@ -112,7 +113,9 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "gulp": "^4.0.2",
+    "mkdirp": "^1.0.4",
     "node-mocks-http": "^1.12.1",
+    "selfsigned": "^2.1.1",
     "sinon": "^15.0.1",
     "vitest": "^0.25.8"
   }

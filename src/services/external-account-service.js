@@ -17,15 +17,9 @@ export default class ExternalAccountService {
     this.serverConfig = serverConfig;
   }
 
-  // Can be deleted after https://educandu.atlassian.net/browse/EDU-992
   getAllProviders() {
-    return [];
+    return this.serverConfig.samlAuth?.identityProviders || [];
   }
-
-  // Can be uncommented after https://educandu.atlassian.net/browse/EDU-992
-  // getAllProviders() {
-  //   return this.serverConfig.externalAccountProviders;
-  // }
 
   getProvider(providerKey) {
     const provider = this.getAllProviders().find(provider => provider.key === providerKey);

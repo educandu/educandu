@@ -10,6 +10,7 @@ function ExternalAccountProviderDialog({ isOpen, onCancel, onOk }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('externalAccountProviderDialog');
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const identityProviders = clientConfig.samlAuth?.identityProviders || [];
 
   const handleProviderChange = (provider, close) => {
     setSelectedProvider(provider);
@@ -41,7 +42,7 @@ function ExternalAccountProviderDialog({ isOpen, onCancel, onOk }) {
       <div className="u-modal-body">
         <div className="ExternalAccountProviderDialog-explanation">{t('explanation')}</div>
         <div className="ExternalAccountProviderDialog-providers">
-          {clientConfig.externalAccountProviders.map(provider => (
+          {identityProviders.map(provider => (
             <div
               key={provider.key}
               onClick={() => handleProviderChange(provider, false)}

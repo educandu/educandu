@@ -9,6 +9,7 @@ import urlUtils from '../utils/url-utils.js';
 import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import passportSaml from '@node-saml/passport-saml';
 import requestUtils from '../utils/request-utils.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
@@ -22,6 +23,7 @@ import DocumentService from '../services/document-service.js';
 import { ambMetadataUser } from '../domain/built-in-users.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import ExternalAccountService from '../services/external-account-service.js';
 import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -49,10 +51,12 @@ import {
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
+const jsonParser = express.json();
+const { MultiSamlStrategy } = passportSaml;
+const { Strategy: LocalStrategy } = passportLocal;
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
-const jsonParser = express.json();
-const LocalStrategy = passportLocal.Strategy;
+const idpKeySymbol = Symbol('idpKey');
 
 class UserController {
   static get inject() {
@@ -64,6 +68,7 @@ class UserController {
       DocumentService,
       PasswordResetRequestService,
       RequestLimitRecordService,
+      ExternalAccountService,
       MailService,
       ClientDataMappingService,
       RoomService,
@@ -79,6 +84,7 @@ class UserController {
     documentService,
     passwordResetRequestService,
     requestLimitRecordService,
+    externalAccountService,
     mailService,
     clientDataMappingService,
     roomService,
@@ -92,6 +98,7 @@ class UserController {
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
     this.documentService = documentService;
+    this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
@@ -101,6 +108,60 @@ class UserController {
       expiresInMs: ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
       service: this.requestLimitRecordService
     };
+
+    this.apiKeyStrategy = new ApiKeyStrategy((apikey, cb) => {
+      const { ambConfig } = this.serverConfig;
+      return cb(null, ambConfig?.apiKey && apikey === ambConfig.apiKey ? ambMetadataUser : false);
+    });
+
+    this.localStrategy = new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password'
+    }, (email, password, cb) => {
+      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
+        .then(user => {
+          if (user?.accountLockedOn) {
+            const err = new Error('User account is locked');
+            err.code = ERROR_CODES.userAccountLocked;
+            throw err;
+          }
+
+          return cb(null, user || false);
+        })
+        .catch(err => cb(err));
+    });
+
+    this.samlStrategy = new MultiSamlStrategy({
+      getSamlOptions: (req, done) => {
+        const provider = this.getProviderForRequest(req);
+        const { origin } = requestUtils.getHostInfo(req);
+        done(null, {
+          issuer: origin,
+          entryPoint: provider.entryPoint,
+          cert: provider.cert,
+          callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
+          decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
+          wantAssertionsSigned: false,
+          forceAuthn: true
+        });
+      }
+    }, (profile, done) => done(null, { ...profile }));
+  }
+
+  setIdpKeyFromRequestParam(paramName, req, _res, next) {
+    const idpKey = req.params[paramName] || '';
+    const provider = this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
+    if (!provider) {
+      return next(new NotFound('Invalid identity provider key'));
+    }
+
+    req[idpKeySymbol] = idpKey;
+    return next();
+  }
+
+  getProviderForRequest(req) {
+    const idpKey = req[idpKeySymbol];
+    return this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
   }
 
   handleGetRegisterPage(req, res) {
@@ -346,47 +407,7 @@ class UserController {
     return res.status(204).end();
   }
 
-  registerMiddleware(router) {
-    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { ambConfig } = this.serverConfig;
-
-      if (ambConfig?.apiKey && apikey === ambConfig.apiKey) {
-        return cb(null, ambMetadataUser);
-      }
-
-      return cb(null, false);
-    }));
-
-    passport.use('local', new LocalStrategy({
-      usernameField: 'email',
-      passwordField: 'password'
-    }, (email, password, cb) => {
-      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
-        .then(user => {
-          if (user?.accountLockedOn) {
-            const err = new Error('User account is locked');
-            err.code = ERROR_CODES.userAccountLocked;
-            throw err;
-          }
-
-          return cb(null, user || false);
-        })
-        .catch(err => cb(err));
-    }));
-
-    passport.serializeUser((user, cb) => {
-      cb(null, { _id: user._id });
-    });
-
-    passport.deserializeUser(async (input, cb) => {
-      try {
-        const user = await this.userService.getUserById(input._id);
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
-      }
-    });
-
+  setupSessionMiddleware(router) {
     router.use(session({
       name: this.serverConfig.sessionCookieName,
       cookie: {
@@ -424,11 +445,91 @@ class UserController {
         next();
       });
     }
+  }
+
+  setupPassportMiddleware(router) {
+    passport.use('apikey', this.apiKeyStrategy);
+    passport.use('local', this.localStrategy);
+    passport.use('saml', this.samlStrategy);
+
+    passport.serializeUser((user, cb) => {
+      cb(null, { _id: user._id });
+    });
+
+    passport.deserializeUser(async (input, cb) => {
+      try {
+        const user = await this.userService.getUserById(input._id);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    });
 
     router.use(passport.initialize());
     router.use(passport.session());
-    router.use(passport.authenticate('apikey', { session: false }));
+  }
 
+  setupSamlAuthMiddleware(router) {
+    router.get(
+      '/saml-auth/metadata/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        this.samlStrategy.generateServiceProviderMetadata(req, this.serverConfig.samlAuth.decryption.cert, null, (err, metadata) => {
+          return err ? next(err) : res.set('content-type', 'text/xml').send(metadata);
+        });
+      }
+    );
+
+    router.get(
+      '/saml-auth/login/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', err => {
+          return err ? next(err) : res.end();
+        })(req, res, next);
+      }
+    );
+
+    router.post(
+      '/saml-auth/login-callback/:idpKey',
+      express.urlencoded({ extended: false }),
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', async (err, profile) => {
+          if (err) {
+            return next(err);
+          }
+
+          if (!profile) {
+            return next(new Error('No profile was sent by identity provider'));
+          }
+
+          const providerKey = this.getProviderForRequest(req).key;
+          const externalUserId = profile.nameID;
+
+          await this.externalAccountService.createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
+
+          req.session.samlInfo = {
+            providerKey: providerKey,
+            loggedInOn: new Date(),
+            profile
+          };
+
+          // In upcoming tickets the next middleware should handle the situation after logging in with SAML:
+          // return next();
+
+          // For now we just print the session to the screen in order to verify all values are set correctly:
+          return res.setHeader('content-type', 'text/plain').send(JSON.stringify(req.session, null, 2));
+        })(req, res, next);
+      }
+    );
+  }
+
+  setupApiKeyMiddleware(router) {
+    router.use(passport.authenticate('apikey', { session: false }));
+  }
+
+  setupStoragePlanMiddleware(router) {
     router.use(async (req, res, next) => {
       try {
         let storagePlan;
@@ -441,6 +542,14 @@ class UserController {
         return next(err);
       }
     });
+  }
+
+  registerMiddleware(router) {
+    this.setupSessionMiddleware(router);
+    this.setupPassportMiddleware(router);
+    this.setupSamlAuthMiddleware(router);
+    this.setupApiKeyMiddleware(router);
+    this.setupStoragePlanMiddleware(router);
   }
 
   registerPages(router) {

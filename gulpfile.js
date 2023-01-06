@@ -1,6 +1,10 @@
 import gulp from 'gulp';
+import mkdirp from 'mkdirp';
 import { deleteAsync } from 'del';
+import selfsigned from 'selfsigned';
 import Graceful from 'node-graceful';
+import { promisify } from 'node:util';
+import { promises as fs } from 'node:fs';
 import {
   buildTranslationsJson,
   cliArgs,
@@ -47,7 +51,9 @@ const testAppEnv = {
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
-  TEST_APP_AMB_API_KEY: '4985nvcz56v1'
+  TEST_APP_AMB_API_KEY: '4985nvcz56v1',
+  TEST_APP_ENABLE_SAML_AUTH: false.toString(),
+  TEST_APP_SAML_AUTH_DECRYPTION: String(null)
 };
 
 const mongoContainer = new MongoContainer({
@@ -158,12 +164,35 @@ export async function minioDown() {
   await minioContainer.ensureIsRemoved();
 }
 
+export async function createSamlCertificate() {
+  const { domain, days, dir } = cliArgs;
+  const outputDirectory = dir || './certificates';
+  const attributes = [{ name: 'commonName', value: domain }];
+  const options = { days: days || (100 * 365) };
+  const pems = await promisify(selfsigned.generate)(attributes, options);
+
+  // eslint-disable-next-line no-console
+  console.log(pems);
+
+  const decryptionJson = JSON.stringify({ pvk: pems.private, cert: pems.cert });
+
+  await mkdirp(outputDirectory);
+
+  await Promise.all([
+    fs.writeFile(`${outputDirectory}/${domain}.crt`, pems.cert, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}.pub`, pems.public, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}.key`, pems.private, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}-saml-auth-decryption.json`, decryptionJson, 'utf8')
+  ]);
+}
+
 export async function startServer() {
   const { instances, tunnel } = cliArgs;
 
   const tunnelToken = tunnel ? getEnvAsString('TUNNEL_TOKEN') : null;
   const tunnelWebsiteDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_DOMAIN') : null;
   const tunnelWebsiteCdnDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_CDN_DOMAIN') : null;
+  const tunnelWebsiteSamlAuthDecryption = tunnel ? getEnvAsString('TUNNEL_WEBSITE_SAML_AUTH_DECRYPTION') : null;
 
   if (tunnel) {
     // eslint-disable-next-line no-console
@@ -200,8 +229,11 @@ export async function startServer() {
   const finalTestAppEnv = {
     NODE_ENV: 'development',
     ...testAppEnv,
+    TEST_APP_ENABLE_SAML_AUTH: (!!tunnel).toString(),
+    TEST_APP_SAML_AUTH_DECRYPTION: tunnel ? tunnelWebsiteSamlAuthDecryption : String(null),
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN
+    TEST_APP_SESSION_COOKIE_NAME: `${testAppEnv.TEST_APP_SESSION_COOKIE_NAME}_${tunnel ? 'TUNNEL' : 'LOCAL'}`,
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN,
   };
 
   currentCdnProxy = new NodeProcess({

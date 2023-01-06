@@ -68,13 +68,20 @@ const configSchema = joi.object({
       id: joi.string().required()
     }))
   }).default({}),
-  externalAccountProviders: joi.array().items(joi.object({
-    key: joi.string().required(),
-    displayName: joi.string().required(),
-    loginUrl: joi.string().required(),
-    logoUrl: joi.string().allow(null).default(null),
-    expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30)
-  })).default([])
+  samlAuth: joi.object({
+    decryption: joi.object({
+      pvk: joi.string().required(),
+      cert: joi.string().required(),
+    }).required(),
+    identityProviders: joi.array().items(joi.object({
+      key: joi.string().required(),
+      displayName: joi.string().required(),
+      entryPoint: joi.string().required(),
+      cert: joi.string().required(),
+      logoUrl: joi.string().allow(null).default(null),
+      expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30)
+    })).default(null)
+  }).allow(null).default(null)
 });
 
 class ServerConfig {
@@ -99,12 +106,13 @@ class ServerConfig {
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
       plugins: this.plugins,
-      externalAccountProviders: this.externalAccountProviders.map(p => ({
-        key: p.key,
-        displayName: p.displayName,
-        loginUrl: p.loginUrl,
-        logoUrl: p.logoUrl
-      }))
+      samlAuth: this.samlAuth ? {
+        identityProviders: this.samlAuth.identityProviders.map(p => ({
+          key: p.key,
+          displayName: p.displayName,
+          logoUrl: p.logoUrl
+        }))
+      } : null
     };
   }
 }
