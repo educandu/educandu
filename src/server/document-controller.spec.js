@@ -7,7 +7,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -88,7 +88,7 @@ describe('document-controller', () => {
 
     describe(`when user has '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
       beforeEach(() => {
-        user.permissions = [permissions.MANAGE_ARCHIVED_DOCS];
+        user.roles = [ROLE.user, ROLE.maintainer];
 
         req = { user };
         res = {};
@@ -111,7 +111,7 @@ describe('document-controller', () => {
 
     describe(`when user does not have '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
       beforeEach(() => {
-        user.permissions = [];
+        user.roles = [ROLE.user];
 
         res = {};
         req = { user };
@@ -926,8 +926,6 @@ describe('document-controller', () => {
     describe('when the document is public (does not belong to a room)', () => {
       beforeEach(() => {
         req = { user, body: { documentId: doc._id } };
-
-        user.permissions = [permissions.MANAGE_IMPORT];
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
       });

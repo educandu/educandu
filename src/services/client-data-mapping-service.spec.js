@@ -86,7 +86,7 @@ describe('client-data-mapping-service', () => {
       const accountClosedOn = new Date();
 
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewingUser = { roles: [ROLE.user] };
         viewedUser.accountClosedOn = accountClosedOn;
 
         urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
@@ -107,7 +107,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewingUser = { roles: [ROLE.user] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 
@@ -125,7 +125,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.SEE_USER_EMAIL] };
+        viewingUser = { roles: [ROLE.user, ROLE.maintainer] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 

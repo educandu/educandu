@@ -26,7 +26,6 @@ const CREATE_DOCUMENT_COMMENTS = 'create-document-comments';
 const MANAGE_DOCUMENT_COMMENTS = 'manage-document-comments';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const RESTRICT_OPEN_CONTRIBUTION = 'restrict-open-contribution';
-const REQUEST_AMB_METADATA_WITH_BUILT_IN_USER = 'request-amb-metadata-with-built-in-user';
 
 const userPermissions = [
   EDIT_DOC,
@@ -77,16 +76,12 @@ const permissionsPerRole = {
 };
 
 export function hasUserPermission(user, permission) {
-  return user?.permissions
-    ? user.permissions.includes(permission)
-    : (user?.roles || []).some(role => permissionsPerRole[role].includes(permission));
+  return (user?.roles || []).some(role => permissionsPerRole[role].includes(permission));
 }
 
 export function getAllUserPermissions(user) {
-  const directPermissions = user?.permissions || [];
-  const permissionsBasedOnRoles = (user?.roles || []).map(role => [...permissionsPerRole[role]]).flat();
-
-  return [...new Set([...directPermissions, ...permissionsBasedOnRoles])];
+  const permissionsFromAllRoles = (user?.roles || []).map(role => [...permissionsPerRole[role]]).flat();
+  return [...new Set([...permissionsFromAllRoles])];
 }
 
 export default {
@@ -109,7 +104,6 @@ export default {
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
   RESTORE_DOC_REVISIONS,
-  REQUEST_AMB_METADATA_WITH_BUILT_IN_USER,
   DELETE_ANY_STORAGE_FILE,
   OWN_ROOMS,
   DELETE_FOREIGN_ROOMS,

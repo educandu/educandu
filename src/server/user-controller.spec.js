@@ -21,12 +21,14 @@ describe('user-controller', () => {
   let documentService;
   let storageService;
   let pageRenderer;
+  let serverConfig;
   let userService;
   let mailService;
   let roomService;
   let sut;
 
   beforeEach(() => {
+    serverConfig = {};
     userService = {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
@@ -67,12 +69,9 @@ describe('user-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    const serverConfig = {};
-    const database = {};
 
     sut = new UserController(
       serverConfig,
-      database,
       userService,
       storageService,
       documentService,

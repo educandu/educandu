@@ -1,12 +1,9 @@
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
-import session from 'express-session';
-import MongoStore from 'connect-mongo';
 import routes from '../utils/routes.js';
 import passportLocal from 'passport-local';
 import urlUtils from '../utils/url-utils.js';
-import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
 import passportSaml from '@node-saml/passport-saml';
@@ -17,14 +14,10 @@ import RoomService from '../services/room-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
-import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
-import { ambMetadataUser } from '../domain/built-in-users.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import ExternalAccountService from '../services/external-account-service.js';
-import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -33,7 +26,6 @@ import PasswordResetRequestService from '../services/password-reset-request-serv
 import {
   ANTI_BRUTE_FORCE_MAX_REQUESTS,
   ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
-  COOKIE_SAME_SITE_POLICY,
   ERROR_CODES,
   SAVE_USER_RESULT
 } from '../domain/constants.js';
@@ -56,13 +48,12 @@ const { MultiSamlStrategy } = passportSaml;
 const { Strategy: LocalStrategy } = passportLocal;
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
-const idpKeySymbol = Symbol('idpKey');
+const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
 
 class UserController {
   static get inject() {
     return [
       ServerConfig,
-      Database,
       UserService,
       StorageService,
       DocumentService,
@@ -78,7 +69,6 @@ class UserController {
 
   constructor(
     serverConfig,
-    database,
     userService,
     storageService,
     documentService,
@@ -90,7 +80,6 @@ class UserController {
     roomService,
     pageRenderer
   ) {
-    this.database = database;
     this.userService = userService;
     this.mailService = mailService;
     this.roomService = roomService;
@@ -108,11 +97,6 @@ class UserController {
       expiresInMs: ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
       service: this.requestLimitRecordService
     };
-
-    this.apiKeyStrategy = new ApiKeyStrategy((apikey, cb) => {
-      const { ambConfig } = this.serverConfig;
-      return cb(null, ambConfig?.apiKey && apikey === ambConfig.apiKey ? ambMetadataUser : false);
-    });
 
     this.localStrategy = new LocalStrategy({
       usernameField: 'email',
@@ -146,6 +130,22 @@ class UserController {
         });
       }
     }, (profile, done) => done(null, { ...profile }));
+
+    passport.use('local', this.localStrategy);
+    passport.use('saml', this.samlStrategy);
+
+    passport.serializeUser((user, cb) => {
+      cb(null, { _id: user._id });
+    });
+
+    passport.deserializeUser(async (input, cb) => {
+      try {
+        const user = await this.userService.getUserById(input._id);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    });
   }
 
   setIdpKeyFromRequestParam(paramName, req, _res, next) {
@@ -155,12 +155,12 @@ class UserController {
       return next(new NotFound('Invalid identity provider key'));
     }
 
-    req[idpKeySymbol] = idpKey;
+    req[SYMBOL_IDP_KEY] = idpKey;
     return next();
   }
 
   getProviderForRequest(req) {
-    const idpKey = req[idpKeySymbol];
+    const idpKey = req[SYMBOL_IDP_KEY];
     return this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
   }
 
@@ -407,69 +407,11 @@ class UserController {
     return res.status(204).end();
   }
 
-  setupSessionMiddleware(router) {
-    router.use(session({
-      name: this.serverConfig.sessionCookieName,
-      cookie: {
-        httpOnly: true,
-        sameSite: COOKIE_SAME_SITE_POLICY,
-        domain: this.serverConfig.sessionCookieDomain,
-        secure: this.serverConfig.sessionCookieSecure
-      },
-      secret: this.serverConfig.sessionSecret,
-      resave: false,
-      saveUninitialized: false, // Don't create session until something stored
-      store: MongoStore.create({
-        client: this.database._mongoClient,
-        collectionName: sessionsStoreSpec.name,
-        ttl: this.serverConfig.sessionDurationInMinutes * 60,
-        autoRemove: 'disabled', // We use our own index
-        stringify: false // Do not serialize session data
-      }),
-      genid: generateSessionId
-    }));
-
-    router.use((req, res, next) => {
-      return isSessionValid(req, this.serverConfig)
-        ? next()
-        : req.session.regenerate(next);
-    });
-
-    if (!this.serverConfig.sessionCookieDomain) {
-      router.use((req, res, next) => {
-        if (req.session?.cookie) {
-          const { domain } = requestUtils.getHostInfo(req);
-          req.session.cookie.domain = domain;
-        }
-
-        next();
-      });
-    }
-  }
-
-  setupPassportMiddleware(router) {
-    passport.use('apikey', this.apiKeyStrategy);
-    passport.use('local', this.localStrategy);
-    passport.use('saml', this.samlStrategy);
-
-    passport.serializeUser((user, cb) => {
-      cb(null, { _id: user._id });
-    });
-
-    passport.deserializeUser(async (input, cb) => {
-      try {
-        const user = await this.userService.getUserById(input._id);
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
-      }
-    });
-
+  registerMiddleware(router) {
     router.use(passport.initialize());
-    router.use(passport.session());
-  }
 
-  setupSamlAuthMiddleware(router) {
+    router.use(passport.session());
+
     router.get(
       '/saml-auth/metadata/:idpKey',
       (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
@@ -507,13 +449,7 @@ class UserController {
           const providerKey = this.getProviderForRequest(req).key;
           const externalUserId = profile.nameID;
 
-          await this.externalAccountService.createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
-
-          req.session.samlInfo = {
-            providerKey: providerKey,
-            loggedInOn: new Date(),
-            profile
-          };
+          req.session.externalAccount = await this.externalAccountService.createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
 
           // In upcoming tickets the next middleware should handle the situation after logging in with SAML:
           // return next();
@@ -523,33 +459,6 @@ class UserController {
         })(req, res, next);
       }
     );
-  }
-
-  setupApiKeyMiddleware(router) {
-    router.use(passport.authenticate('apikey', { session: false }));
-  }
-
-  setupStoragePlanMiddleware(router) {
-    router.use(async (req, res, next) => {
-      try {
-        let storagePlan;
-        if (req.user?.storage.planId) {
-          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.planId);
-        }
-        req.storagePlan = storagePlan || null;
-        return next();
-      } catch (err) {
-        return next(err);
-      }
-    });
-  }
-
-  registerMiddleware(router) {
-    this.setupSessionMiddleware(router);
-    this.setupPassportMiddleware(router);
-    this.setupSamlAuthMiddleware(router);
-    this.setupApiKeyMiddleware(router);
-    this.setupStoragePlanMiddleware(router);
   }
 
   registerPages(router) {

@@ -141,13 +141,24 @@ class StorageController {
 
   registerMiddleware(router) {
     router.use(async (req, _res, next) => {
-      const { user } = req;
-      const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
-      const locations = await this.storageService.getStorageLocations({ user, documentId });
+      try {
+        const { user } = req;
+        const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
+        const locations = await this.storageService.getStorageLocations({ user, documentId });
 
-      req.storage = { locations };
+        req.storage = { locations };
 
-      return next();
+        let storagePlan;
+        if (user?.storage.planId) {
+          storagePlan = await this.storageService.getStoragePlanById(user.storage.planId);
+        }
+
+        req.storagePlan = storagePlan || null;
+
+        return next();
+      } catch (err) {
+        return next(err);
+      }
     });
   }
 

@@ -37,12 +37,11 @@ describe('permissions', () => {
 
     describe('when user has role \'user\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.user] };
+        const user = { roles: [ROLE.user] };
         result = getAllUserPermissions(user);
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          'custom',
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
@@ -59,13 +58,12 @@ describe('permissions', () => {
 
     describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.maintainer] };
+        const user = { roles: [ROLE.maintainer] };
         result = getAllUserPermissions(user);
       });
 
       it('should return all maintainer permissions', () => {
         expect(result).toEqual([
-          'custom',
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
@@ -91,13 +89,12 @@ describe('permissions', () => {
 
     describe('when user has role \'admin\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.admin] };
+        const user = { roles: [ROLE.admin] };
         result = getAllUserPermissions(user);
       });
 
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          'custom',
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
