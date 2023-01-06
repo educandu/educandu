@@ -1,13 +1,14 @@
 import Database from '../stores/database.js';
 import AmbService from '../services/amb-service.js';
 import requestUtils from '../utils/request-utils.js';
-import needsPermission from '../domain/needs-permission-middleware.js';
-import permissions from '../domain/permissions.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import needsApiKey from '../domain/needs-api-key-middleware.js';
 
 class AmbController {
-  static get inject() { return [AmbService, Database]; }
+  static get inject() { return [ServerConfig, AmbService, Database]; }
 
-  constructor(ambService, database) {
+  constructor(serverConfig, ambService, database) {
+    this.serverConfig = serverConfig;
     this.ambService = ambService;
     this.database = database;
   }
@@ -19,11 +20,14 @@ class AmbController {
   }
 
   registerApi(router) {
-    router.get(
-      '/api/v1/amb/metadata',
-      needsPermission(permissions.REQUEST_AMB_METADATA_WITH_BUILT_IN_USER),
-      (req, res) => this.handleGetAmbMetadata(req, res)
-    );
+    const expectedApiKey = this.serverConfig.ambConfig?.apiKey || null;
+    if (expectedApiKey) {
+      router.get(
+        '/api/v1/amb/metadata',
+        needsApiKey(expectedApiKey),
+        (req, res) => this.handleGetAmbMetadata(req, res)
+      );
+    }
   }
 }
 

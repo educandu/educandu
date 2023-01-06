@@ -1,4 +1,3 @@
-import routes from '../utils/routes.js';
 import { Container } from '../common/di.js';
 import AmbController from './amb-controller.js';
 import RoomController from './room-controller.js';
@@ -49,11 +48,6 @@ class ControllerFactory {
 
   registerAdditionalControllers(additionalControllers) {
     controllerTypes.push(...additionalControllers);
-  }
-
-  registerPermanentRedirects(router) {
-    router.get('/lessons/:id', (req, res) => res.redirect(301, routes.getDocUrl({ id: req.params.id })));
-    router.get('/revs/articles/:id', (req, res) => res.redirect(301, routes.getDocumentRevisionUrl(req.params.id)));
   }
 
   getAllControllers() {

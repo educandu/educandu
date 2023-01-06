@@ -12,6 +12,7 @@ import ThemeManager from '../resources/theme-manager.js';
 import lessVariablesToJson from 'less-variables-to-json';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
+import ControllerFactory from '../server/controller-factory.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
@@ -70,6 +71,10 @@ export async function createContainer(configValues = {}) {
   const pageResolver = new PageResolver(serverConfig.bundleConfig);
   await pageResolver.prefillCache();
   container.registerInstance(PageResolver, pageResolver);
+
+  logger.info('Registering additional controllers');
+  const controllerFactory = container.get(ControllerFactory);
+  controllerFactory.registerAdditionalControllers(serverConfig.additionalControllers);
 
   logger.info('Loading plugin editors');
   const pluginRegistry = container.get(PluginRegistry);

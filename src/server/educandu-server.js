@@ -1,25 +1,34 @@
 import util from 'node:util';
 import express from 'express';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';
 import useragent from 'express-useragent';
 import basicAuth from 'express-basic-auth';
+import Database from '../stores/database.js';
+import requestUtils from '../utils/request-utils.js';
 import ControllerFactory from './controller-factory.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { COOKIE_SAME_SITE_POLICY } from '../domain/constants.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
+import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
 
 import 'express-async-errors';
 
 const logger = new Logger(import.meta.url);
 
-const SYMBOL_MAINTENACE = Symbol('maintenance');
+const SYMBOL_MAINTENACE = Symbol('SYMBOL_MAINTENACE');
 
 export default class EducanduServer {
-  static get inject() { return [ServerConfig, ControllerFactory]; }
+  static get inject() { return [ServerConfig, ControllerFactory, Database]; }
 
-  constructor(serverConfig, controllerFactory) {
+  constructor(serverConfig, controllerFactory, database) {
     this.serverConfig = serverConfig;
     this.controllerFactory = controllerFactory;
+    this.database = database;
 
     this.server = null;
 
@@ -29,26 +38,53 @@ export default class EducanduServer {
 
     this.app.set('trust proxy', this.serverConfig.trustProxy);
 
-    this.app.use(useragent.express());
-
-    this.app.use(cookieParser());
-
     const router = express.Router();
     this.app.use('/', router);
 
     logger.info('Registering healthcheck');
-    router.use((req, res, next) => {
-      if (req.path === '/healthcheck') {
-        return res.send({
-          status: 'OK',
-          mode: req.app.locals[SYMBOL_MAINTENACE] ? 'maintenance' : 'ready'
-        });
-      }
+    this.registerHealthcheck(router);
 
-      return next();
-    });
+    logger.info('Registering permanent redirects');
+    this.registerPermanentRedirects(router);
+
+    logger.info('Registering user agent middleware');
+    router.use(useragent.express());
+
+    logger.info('Registering cookie parser middleware');
+    router.use(cookieParser());
 
     logger.info('Registering maintenance middleware');
+    this.registerMaintenanceMiddleware(router);
+
+    logger.info('Registering basic auth middleware');
+    this.registerBasicAuthMiddleware(router);
+
+    logger.info('Registering session middleware');
+    this.registerSessionMiddleware(router);
+
+    logger.info('Registering controllers');
+    const controllers = this.controllerFactory.getAllControllers();
+    controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
+    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
+    controllers.filter(c => c.registerApi).forEach(c => c.registerApi(router));
+    controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
+  }
+
+  registerHealthcheck(router) {
+    router.get('/healthcheck', (req, res) => {
+      return res.send({
+        status: 'OK',
+        mode: req.app.locals[SYMBOL_MAINTENACE] ? 'maintenance' : 'ready'
+      });
+    });
+  }
+
+  registerPermanentRedirects(router) {
+    router.get('/lessons/:id', (req, res) => res.redirect(301, routes.getDocUrl({ id: req.params.id })));
+    router.get('/revs/articles/:id', (req, res) => res.redirect(301, routes.getDocumentRevisionUrl(req.params.id)));
+  }
+
+  registerMaintenanceMiddleware(router) {
     router.use((req, res, next) => {
       if (!req.app.locals[SYMBOL_MAINTENACE]) {
         return next();
@@ -59,31 +95,55 @@ export default class EducanduServer {
         ? res.status(503).json({ message })
         : res.status(503).type('html').send(`<!DOCTYPE html><p>${message}</p>`);
     });
+  }
 
+  registerBasicAuthMiddleware(router) {
     if (Object.keys(this.serverConfig.basicAuthUsers).length) {
       router.use(/^\/(?!api\/)/, basicAuth({
         users: this.serverConfig.basicAuthUsers,
         challenge: true
       }));
     }
+  }
 
-    logger.info('Registering permanent redirects');
-    this.controllerFactory.registerPermanentRedirects(router);
+  registerSessionMiddleware(router) {
+    router.use(session({
+      name: this.serverConfig.sessionCookieName,
+      cookie: {
+        httpOnly: true,
+        sameSite: COOKIE_SAME_SITE_POLICY,
+        domain: this.serverConfig.sessionCookieDomain,
+        secure: this.serverConfig.sessionCookieSecure
+      },
+      secret: this.serverConfig.sessionSecret,
+      resave: false,
+      saveUninitialized: false, // Don't create session until something stored
+      store: MongoStore.create({
+        client: this.database._mongoClient,
+        collectionName: sessionsStoreSpec.name,
+        ttl: this.serverConfig.sessionDurationInMinutes * 60,
+        autoRemove: 'disabled', // We use our own index
+        stringify: false // Do not serialize session data
+      }),
+      genid: generateSessionId
+    }));
 
-    this.controllerFactory.registerAdditionalControllers(this.serverConfig.additionalControllers);
-    const controllers = this.controllerFactory.getAllControllers();
+    router.use((req, _res, next) => {
+      return isSessionValid(req, this.serverConfig)
+        ? next()
+        : req.session.regenerate(next);
+    });
 
-    logger.info('Registering middlewares');
-    controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
+    if (!this.serverConfig.sessionCookieDomain) {
+      router.use((req, _res, next) => {
+        if (req.session?.cookie) {
+          const { domain } = requestUtils.getHostInfo(req);
+          req.session.cookie.domain = domain;
+        }
 
-    logger.info('Registering pages');
-    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
-
-    logger.info('Registering APIs');
-    controllers.filter(c => c.registerApi).forEach(c => c.registerApi(router));
-
-    logger.info('Registering error handlers');
-    controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
+        next();
+      });
+    }
   }
 
   exitMaintenanceMode() {
