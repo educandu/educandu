@@ -232,8 +232,7 @@ export async function startServer() {
     TEST_APP_ENABLE_SAML_AUTH: (!!tunnel).toString(),
     TEST_APP_SAML_AUTH_DECRYPTION: tunnel ? tunnelWebsiteSamlAuthDecryption : String(null),
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN,
-    TEST_APP_SESSION_COOKIE_NAME: tunnel ? `${testAppEnv.TEST_APP_SESSION_COOKIE_NAME}_TUNNEL` : testAppEnv.TEST_APP_SESSION_COOKIE_NAME
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN
   };
 
   currentCdnProxy = new NodeProcess({
@@ -243,8 +242,8 @@ export async function startServer() {
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
-      SESSION_COOKIE_NAME: testAppEnv.TEST_APP_SESSION_COOKIE_NAME,
-      X_ROOMS_AUTH_SECRET: testAppEnv.TEST_APP_X_ROOMS_AUTH_SECRET
+      SESSION_COOKIE_NAME: finalTestAppEnv.TEST_APP_SESSION_COOKIE_NAME,
+      X_ROOMS_AUTH_SECRET: finalTestAppEnv.TEST_APP_X_ROOMS_AUTH_SECRET
     }
   });
 
