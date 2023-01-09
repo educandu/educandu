@@ -10,9 +10,9 @@ privateStorageMessage:
 publicStorageMessage:
   en: Public directory!
   de: Öffentliches Verzeichnis!
-backToDirectoryView:
-  en: Back to directory view
-  de: Zurück zur Verzeichnisansicht
+clearSearch:
+  en: Clear search
+  de: Suche löschen
 uploadFiles:
   en: Upload files
   de: Dateien hochladen

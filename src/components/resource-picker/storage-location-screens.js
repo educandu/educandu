@@ -14,7 +14,7 @@ import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import { useSetStorageLocation, useStorage } from '../storage-context.js';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const SCREEN = {
@@ -46,6 +46,10 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
+
+  const displayedFiles = useMemo(() => {
+    return files.filter(file => file.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [searchTerm, files]);
 
   const fetchStorageContent = useCallback(async () => {
     if (!storageLocation) {
@@ -163,24 +167,24 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
       return;
     }
 
-    const previouslyHighlightedFileStillExists = files.some(file => file.portableUrl === highlightedFile.portableUrl);
+    const previouslyHighlightedFileStillExists = displayedFiles.some(file => file.portableUrl === highlightedFile.portableUrl);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
-  }, [screen, searchTerm, highlightedFile, files]);
+  }, [screen, highlightedFile, displayedFiles]);
 
   useEffect(() => {
-    if (!files.length || !showInitialFileHighlighting) {
+    if (!displayedFiles.length || !showInitialFileHighlighting) {
       return;
     }
 
     const initialResourceName = getResourceFullName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = files.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = displayedFiles.find(file => file.displayName === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
-  }, [initialUrl, showInitialFileHighlighting, files]);
+  }, [initialUrl, showInitialFileHighlighting, displayedFiles]);
 
   useEffect(() => {
     fetchStorageContent();
@@ -194,7 +198,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
     <Fragment>
       {screen === SCREEN.default && (
         <StorageLocation
-          files={files}
+          files={displayedFiles}
           isLoading={isLoading}
           searchTerm={searchTerm}
           highlightedFile={highlightedFile}

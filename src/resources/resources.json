@@ -1437,7 +1437,7 @@
       "filesView_grid": "Grid",
       "privateStorageMessage": "Private directory!",
       "publicStorageMessage": "Public directory!",
-      "backToDirectoryView": "Back to directory view",
+      "clearSearch": "Clear search",
       "uploadFiles": "Upload files"
     }
   },
@@ -1449,7 +1449,7 @@
       "filesView_grid": "Grid",
       "privateStorageMessage": "Privates Verzeichnis!",
       "publicStorageMessage": "Öffentliches Verzeichnis!",
-      "backToDirectoryView": "Zurück zur Verzeichnisansicht",
+      "clearSearch": "Suche löschen",
       "uploadFiles": "Dateien hochladen"
     }
   },

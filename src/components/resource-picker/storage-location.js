@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import FilesViewer from './files-viewer.js';
 import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
+import { CloseOutlined } from '@ant-design/icons';
 import DebouncedInput from '../debounced-input.js';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -181,7 +181,7 @@ function StorageLocation({
           <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
         )}
         {!!isInSearchMode && (
-          <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
+          <Button onClick={handleBackToDirectoryScreenClick} icon={<CloseOutlined />} disabled={isLoading}>{t('clearSearch')}</Button>
         )}
         <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
