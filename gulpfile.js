@@ -232,8 +232,8 @@ export async function startServer() {
     TEST_APP_ENABLE_SAML_AUTH: (!!tunnel).toString(),
     TEST_APP_SAML_AUTH_DECRYPTION: tunnel ? tunnelWebsiteSamlAuthDecryption : String(null),
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_NAME: `${testAppEnv.TEST_APP_SESSION_COOKIE_NAME}_${tunnel ? 'TUNNEL' : 'LOCAL'}`,
     TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN,
+    TEST_APP_SESSION_COOKIE_NAME: tunnel ? `${testAppEnv.TEST_APP_SESSION_COOKIE_NAME}_TUNNEL` : testAppEnv.TEST_APP_SESSION_COOKIE_NAME
   };
 
   currentCdnProxy = new NodeProcess({
