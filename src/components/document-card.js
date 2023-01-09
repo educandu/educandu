@@ -1,11 +1,11 @@
 import React from 'react';
 import { Modal } from 'antd';
+import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { documentMetadataShape } from '../ui/default-prop-types.js';
-import classNames from 'classnames';
 
 function DocumentCard({ doc }) {
   const { formatDate } = useDateFormat();

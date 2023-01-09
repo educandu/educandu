@@ -45,17 +45,13 @@ class StorageController {
 
   async handleGetCdnObjects(req, res) {
     const { user } = req;
-    const { parentPath, searchTerm } = req.query;
+    const { parentPath } = req.query;
 
     await this._checkPathAccess(parentPath, user);
 
-    const { parentDirectory, currentDirectory, objects } = await this.storageService.getObjects({
-      parentPath,
-      searchTerm: searchTerm || null,
-      user
-    });
+    const objects = await this.storageService.getObjects({ parentPath });
 
-    return res.send({ parentDirectory, currentDirectory, objects });
+    return res.send({ objects });
   }
 
   async handleDeleteCdnObject(req, res) {

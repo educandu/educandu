@@ -12,9 +12,9 @@ import { replaceItemAt } from '../../utils/array-utils.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
-import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -35,7 +35,6 @@ const STAGE = {
 
 function FilesUploadScreen({
   uploadQueue,
-  directory,
   storageLocation,
   onBackClick,
   onCancelClick,
@@ -79,8 +78,8 @@ function FilesUploadScreen({
     }
   }, [t, uiLocale]);
 
-  const uploadFiles = useCallback(async (itemsToUpload, locationToUpload, targetDirectory) => {
-    let currentLocation = locationToUpload;
+  const uploadFiles = useCallback(async (itemsToUpload, uploadLocation) => {
+    let currentLocation = uploadLocation;
 
     const result = {
       uploadedFiles: {},
@@ -97,8 +96,8 @@ function FilesUploadScreen({
 
       let updatedItem;
       try {
-        ensureCanUpload(file, locationToUpload);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], targetDirectory.path);
+        ensureCanUpload(file, uploadLocation);
+        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], uploadLocation.path);
         result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
         updatedItem = {
           ...currentItem,
@@ -125,7 +124,7 @@ function FilesUploadScreen({
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    await uploadFiles(uploadItems, storageLocation, directory);
+    await uploadFiles(uploadItems, storageLocation);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -281,7 +280,6 @@ function FilesUploadScreen({
 }
 
 FilesUploadScreen.propTypes = {
-  directory: cdnObjectShape.isRequired,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
   onEditFileClick: PropTypes.func,

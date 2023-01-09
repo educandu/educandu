@@ -1,13 +1,12 @@
 import uniqueId from './unique-id.js';
 import { createSandbox } from 'sinon';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getStorageLocationTypeForPath,
-  getPathForRoom,
+  getRoomMediaRoomPath,
   tryGetRoomIdFromStoragePath,
-  componseUniqueFileName,
-  composeHumanReadableDisplayName
+  componseUniqueFileName
 } from './storage-utils.js';
 
 describe('storage-utils', () => {
@@ -47,9 +46,9 @@ describe('storage-utils', () => {
     });
   });
 
-  describe('getPathForRoom', () => {
+  describe('getRoomMediaRoomPath', () => {
     it('should return the path', () => {
-      expect(getPathForRoom('myRoom')).toBe('rooms/myRoom/media');
+      expect(getRoomMediaRoomPath('myRoom')).toBe('rooms/myRoom/media');
     });
   });
 
@@ -79,103 +78,6 @@ describe('storage-utils', () => {
       it(`should transform fileName '${fileName} with prefix ${prefix === null ? 'null' : `'${prefix}'`} to '${expectedOutput}'`, () => {
         const actualOutput = componseUniqueFileName(fileName, prefix);
         expect(actualOutput).toBe(expectedOutput);
-      });
-    });
-  });
-
-  describe('composeHumanReadableDisplayName', () => {
-    let t;
-
-    describe('when the cdn object is a file', () => {
-      beforeEach(() => {
-        t = sandbox.fake();
-        result = composeHumanReadableDisplayName({
-          t,
-          cdnObject: {
-            type: CDN_OBJECT_TYPE.file,
-            displayName: 'my-file.jpeg',
-            documentMetadata: null
-          }
-        });
-      });
-
-      it('should return the file display name', () => {
-        expect(result).toBe('my-file.jpeg');
-      });
-    });
-
-    describe('when the cdn object is the document-media root path', () => {
-      beforeEach(() => {
-        t = sandbox.fake();
-        result = composeHumanReadableDisplayName({
-          t,
-          cdnObject: {
-            type: CDN_OBJECT_TYPE.directory,
-            displayName: 'media',
-            documentMetadata: null
-          }
-        });
-      });
-
-      it('should return the file display name', () => {
-        expect(result).toBe('media');
-      });
-    });
-
-    describe('when the cdn object does not contain document metadata', () => {
-      beforeEach(() => {
-        t = sandbox.stub();
-        t.withArgs('common:unknownDocument').returns('Unknown document');
-        result = composeHumanReadableDisplayName({
-          t,
-          cdnObject: {
-            type: CDN_OBJECT_TYPE.directory,
-            displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: null
-          }
-        });
-      });
-
-      it('should return the composed display name', () => {
-        expect(result).toBe('Unknown document [ch5zqo897tzo8f3]');
-      });
-    });
-
-    describe('when the cdn object corresponds to a document accessible to the current user', () => {
-      beforeEach(() => {
-        t = sandbox.stub();
-        t.withArgs('common:unknownDocument').returns('Unknown document');
-        result = composeHumanReadableDisplayName({
-          t,
-          cdnObject: {
-            type: CDN_OBJECT_TYPE.directory,
-            displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: 'Document title', isAccessibleToUser: true }
-          }
-        });
-      });
-
-      it('should return the composed display name', () => {
-        expect(result).toBe('Document title [ch5zqo897tzo8f3]');
-      });
-    });
-
-    describe('when the cdn object corresponds to a document that is not accessible to the current user', () => {
-      beforeEach(() => {
-        t = sandbox.stub();
-        t.withArgs('common:privateDocument').returns('Private document');
-        result = composeHumanReadableDisplayName({
-          t,
-          cdnObject: {
-            type: CDN_OBJECT_TYPE.directory,
-            displayName: 'ch5zqo897tzo8f3',
-            documentMetadata: { title: 'Document title', isAccessibleToUser: false }
-          }
-        });
-      });
-
-      it('should return the composed display name', () => {
-        expect(result).toBe('Private document [ch5zqo897tzo8f3]');
       });
     });
   });

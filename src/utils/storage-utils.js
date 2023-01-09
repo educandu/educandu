@@ -3,14 +3,13 @@ import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
 import { getResourceExtension } from './resource-utils.js';
 import {
-  CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
   ROOM_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
-  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES,
+  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
 } from '../domain/constants.js';
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
@@ -83,50 +82,11 @@ export function getStorageLocationTypeForPath(path) {
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
-export function canUploadToPath(path) {
-  if (!path) {
-    return false;
-  }
-
-  const documentMediaStoragePathMatch = path.match(DOCUMENT_MEDIA_STORAGE_PATH_PATTERN);
-  const roomMediaStoragePathMatch = path.match(ROOM_MEDIA_STORAGE_PATH_PATTERN);
-
-  const documentId = documentMediaStoragePathMatch?.[1];
-  const roomId = roomMediaStoragePathMatch?.[1];
-
-  return !!(documentId || roomId);
-}
-
-export function getStorageLocationPathForUrl(url) {
-  try {
-    const urlObj = new URL(url);
-
-    if (urlObj.protocol !== 'cdn:') {
-      return null;
-    }
-    return urlUtils.removeLeadingSlashes(urlObj.pathname);
-  } catch {
-    return null;
-  }
-}
-
-export function getParentPathForStorageLocationPath(pathname) {
-  return (pathname || '').split('/').slice(0, -1).join('/');
-}
-
-export function getPublicRootPath() {
-  return 'media';
-}
-
-export function getRoomsRootPath() {
-  return 'rooms';
-}
-
-export function getPublicHomePath(documentId) {
+export function getDocumentMediaDocumentPath(documentId) {
   return `media/${documentId}`;
 }
 
-export function getPathForRoom(roomId) {
+export function getRoomMediaRoomPath(roomId) {
   return `rooms/${roomId}/media`;
 }
 
@@ -143,18 +103,4 @@ export function componseUniqueFileName(fileName, parentPath = null) {
   const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
   const newFileName = `${uniqueBaseName}.${extension}`;
   return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
-}
-
-export function composeHumanReadableDisplayName({ cdnObject, t }) {
-  if (cdnObject.type === CDN_OBJECT_TYPE.file || cdnObject.displayName === getPublicRootPath()) {
-    return cdnObject.displayName;
-  }
-
-  if (!cdnObject.documentMetadata) {
-    return `${t('common:unknownDocument')} [${cdnObject.displayName}]`;
-  }
-
-  return cdnObject.documentMetadata.isAccessibleToUser
-    ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
-    : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
 }

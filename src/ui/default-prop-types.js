@@ -3,7 +3,6 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import {
   DOCUMENT_ALLOWED_OPEN_CONTRIBUTION,
   BATCH_TYPE,
-  CDN_OBJECT_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
@@ -15,8 +14,7 @@ export const storageLocationShape = PropTypes.shape({
   type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
   usedBytes: PropTypes.number,
   maxBytes: PropTypes.number,
-  rootPath: PropTypes.string.isRequired,
-  homePath: PropTypes.string,
+  path: PropTypes.string.isRequired,
   isDeletionEnabled: PropTypes.bool.isRequired
 });
 
@@ -27,12 +25,7 @@ export const cdnObjectShape = PropTypes.shape({
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
   createdOn: PropTypes.string,
-  type: PropTypes.oneOf(Object.values(CDN_OBJECT_TYPE)).isRequired,
-  size: PropTypes.number,
-  documentMetadata: PropTypes.shape({
-    title: PropTypes.string,
-    isAccessibleToUser: PropTypes.bool.isRequired
-  })
+  size: PropTypes.number
 });
 
 export const wikimediaFileShape = PropTypes.shape({

@@ -1,12 +1,10 @@
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import FolderIcon from '../components/icons/files/folder-icon.js';
 import FilePdfIcon from '../components/icons/files/file-pdf-icon.js';
 import FileTextIcon from '../components/icons/files/file-text-icon.js';
 import FileImageIcon from '../components/icons/files/file-image-icon.js';
 import FileAudioIcon from '../components/icons/files/file-audio-icon.js';
 import FileVideoIcon from '../components/icons/files/file-video-icon.js';
 import FileUnknownIcon from '../components/icons/files/file-unknown-icon.js';
-import FolderFilledIcon from '../components/icons/files/folder-filled-icon.js';
 import FilePdfFilledIcon from '../components/icons/files/file-pdf-filled-icon.js';
 import FileTextFilledIcon from '../components/icons/files/file-text-filled-icon.js';
 import FileImageFilledIcon from '../components/icons/files/file-image-filled-icon.js';
@@ -45,11 +43,7 @@ export const getResourceType = url => {
   return extensionsGroup?.type || RESOURCE_TYPE.unknown;
 };
 
-export const getResourceIcon = ({ url, isDirectory, filled }) => {
-  if (isDirectory) {
-    return filled ? FolderFilledIcon : FolderIcon;
-  }
-
+export const getResourceIcon = ({ url, filled }) => {
   const resourceType = getResourceType(url);
 
   switch (resourceType) {

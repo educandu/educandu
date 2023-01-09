@@ -3,16 +3,14 @@ import classNames from 'classnames';
 import FilesViewer from './files-viewer.js';
 import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
+import { CloseOutlined } from '@ant-design/icons';
 import DebouncedInput from '../debounced-input.js';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
-import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Button, Modal, Select, Input } from 'antd';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
-import { canUploadToPath, composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
-import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -24,8 +22,6 @@ function StorageLocation({
   files,
   isLoading,
   searchTerm,
-  currentDirectory,
-  parentDirectory,
   highlightedFile,
   storageLocation,
   filesViewerDisplay,
@@ -37,9 +33,7 @@ function StorageLocation({
   onPreviewFileClick,
   onSearchTermChange,
   onFilesViewerDisplayChange,
-  onNavigateToParent,
-  onFilesDropped,
-  onDirectoryClick
+  onFilesDropped
 }) {
   const { t } = useTranslation('storageLocation');
 
@@ -51,24 +45,14 @@ function StorageLocation({
   }, [searchTerm]);
 
   const isInSearchMode = !!searchTerm;
-  const canAcceptFiles = !isInSearchMode && canUploadToPath(currentDirectory?.path) && !isLoading;
+  const canAcceptFiles = !isInSearchMode && !isLoading;
 
   const handleFileClick = file => {
-    if (file.type === CDN_OBJECT_TYPE.file) {
-      onFileClick(file);
-    }
-    if (file.type === CDN_OBJECT_TYPE.directory && isTouchDevice()) {
-      onDirectoryClick(file);
-    }
+    onFileClick(file);
   };
 
   const handleFileDoubleClick = file => {
-    if (file.type === CDN_OBJECT_TYPE.file) {
-      onFileDoubleClick(file);
-    }
-    if (file.type === CDN_OBJECT_TYPE.directory) {
-      onDirectoryClick(file);
-    }
+    onFileDoubleClick(file);
   };
 
   const handleSelectHighlightedFileClick = () => {
@@ -137,17 +121,10 @@ function StorageLocation({
     return null;
   };
 
-  const showCurrentDirectoryName = !isInSearchMode && !!currentDirectory;
-
   const getFilesViewerClasses = isDragActive => classNames({
     'StorageLocation-filesViewer': true,
     'u-can-drop': isDragActive && canAcceptFiles,
     'u-cannot-drop': isDragActive && !canAcceptFiles
-  });
-
-  const filesViewerContentClasses = classNames({
-    'StorageLocation-filesViewerContent': true,
-    'StorageLocation-filesViewerContent--topPadding': showCurrentDirectoryName
   });
 
   return (
@@ -180,24 +157,16 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            {!!showCurrentDirectoryName && (
-              <div className="StorageLocation-currentDirectory">
-                {`${t('common:directory')}: ${composeHumanReadableDisplayName({ cdnObject: currentDirectory, t })}`}
-              </div>
-            )}
-            <div className={filesViewerContentClasses}>
+            <div className='StorageLocation-filesViewerContent'>
               <FilesViewer
                 isLoading={isLoading}
                 files={files}
-                parentDirectory={parentDirectory}
                 display={filesViewerDisplay}
                 onFileClick={handleFileClick}
                 onFileDoubleClick={handleFileDoubleClick}
                 selectedFileUrl={highlightedFile?.portableUrl}
                 onDeleteFileClick={onDeleteFileClick}
                 onPreviewFileClick={onPreviewFileClick}
-                onNavigateToParent={onNavigateToParent}
-                canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
                 canDelete={storageLocation.isDeletionEnabled}
                 />
             </div>
@@ -212,7 +181,7 @@ function StorageLocation({
           <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
         )}
         {!!isInSearchMode && (
-          <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
+          <Button onClick={handleBackToDirectoryScreenClick} icon={<CloseOutlined />} disabled={isLoading}>{t('clearSearch')}</Button>
         )}
         <div className="u-resource-picker-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
@@ -224,31 +193,25 @@ function StorageLocation({
 }
 
 StorageLocation.propTypes = {
-  currentDirectory: cdnObjectShape,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
   isLoading: PropTypes.bool.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onDeleteFileClick: PropTypes.func.isRequired,
-  onDirectoryClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onFilesDropped: PropTypes.func.isRequired,
   onFilesViewerDisplayChange: PropTypes.func.isRequired,
-  onNavigateToParent: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchTermChange: PropTypes.func.isRequired,
   onSelectHighlightedFileClick: PropTypes.func.isRequired,
-  parentDirectory: cdnObjectShape,
   searchTerm: PropTypes.string,
   storageLocation: storageLocationShape.isRequired
 };
 
 StorageLocation.defaultProps = {
-  currentDirectory: null,
   highlightedFile: null,
-  parentDirectory: null,
   searchTerm: null
 };
 

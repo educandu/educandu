@@ -15,10 +15,10 @@ import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { ensureIsExcluded } from '../utils/array-utils.js';
-import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 import {
@@ -547,14 +547,14 @@ class DocumentService {
   }
 
   async createUploadDirectoryMarkerForDocument(documentId) {
-    const homePath = getPublicHomePath(documentId);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    const storagePath = getDocumentMediaDocumentPath(documentId);
+    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.uploadEmptyObject(directoryMarkerPath);
   }
 
   async deleteUploadDirectoryMarkerForDocument(documentId) {
-    const homePath = getPublicHomePath(documentId);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    const storagePath = getDocumentMediaDocumentPath(documentId);
+    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 

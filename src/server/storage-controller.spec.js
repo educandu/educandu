@@ -82,33 +82,27 @@ describe('storage-controller', () => {
     });
 
     describe('when storage path type is room-media and the user is the room owner', () => {
-      let parentDirectory;
-      let currentDirectory;
+      let parentPath;
       let objects;
 
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        parentDirectory = `rooms/${room._id}`;
-        currentDirectory = `rooms/${room._id}/media`;
+        parentPath = `rooms/${room._id}/media`;
         objects = [];
-        req = { user, query: { parentPath: currentDirectory } };
+        req = { user, query: { parentPath } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+        storageService.getObjects.resolves(objects);
 
         sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
-        assert.calledWith(storageService.getObjects, {
-          parentPath: currentDirectory,
-          searchTerm: null,
-          user
-        });
+        assert.calledWith(storageService.getObjects, { parentPath });
       });
 
       it('should return 200', () => {
@@ -116,38 +110,32 @@ describe('storage-controller', () => {
       });
 
       it('should return the objects', () => {
-        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+        expect(res._getData()).toEqual({ objects });
       });
     });
 
     describe('when storage path type is room-media and the user is a room collaborator', () => {
-      let parentDirectory;
-      let currentDirectory;
+      let parentPath;
       let objects;
 
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        parentDirectory = `rooms/${room._id}`;
-        currentDirectory = `rooms/${room._id}/media`;
+        parentPath = `rooms/${room._id}/media`;
         objects = [];
-        req = { user, query: { parentPath: currentDirectory } };
+        req = { user, query: { parentPath } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+        storageService.getObjects.resolves(objects);
 
         sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
-        assert.calledWith(storageService.getObjects, {
-          parentPath: currentDirectory,
-          searchTerm: null,
-          user
-        });
+        assert.calledWith(storageService.getObjects, { parentPath });
       });
 
       it('should return 200', () => {
@@ -155,35 +143,29 @@ describe('storage-controller', () => {
       });
 
       it('should return the objects', () => {
-        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+        expect(res._getData()).toEqual({ objects });
       });
     });
 
     describe('when storage path type is document-media', () => {
-      let parentDirectory;
-      let currentDirectory;
+      let parentPath;
       let objects;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        parentDirectory = '';
-        currentDirectory = 'media';
+        parentPath = 'media';
         objects = [];
-        req = { user, query: { parentPath: currentDirectory } };
+        req = { user, query: { parentPath } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+        storageService.getObjects.resolves(objects);
 
         sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
-        assert.calledWith(storageService.getObjects, {
-          parentPath: currentDirectory,
-          searchTerm: null,
-          user
-        });
+        assert.calledWith(storageService.getObjects, { parentPath });
       });
 
       it('should return 200', () => {
@@ -191,7 +173,7 @@ describe('storage-controller', () => {
       });
 
       it('should return the objects', () => {
-        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+        expect(res._getData()).toEqual({ objects });
       });
     });
   });

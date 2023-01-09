@@ -2,8 +2,7 @@ import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
 export const getCdnObjectsQuerySchema = joi.object({
-  parentPath: joi.string(),
-  searchTerm: joi.string().min(3)
+  parentPath: joi.string()
 });
 
 export const deleteCdnObjectQuerySchema = joi.object({

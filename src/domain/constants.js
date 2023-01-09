@@ -122,11 +122,6 @@ export const STORAGE_LOCATION_TYPE = {
   documentMedia: 'document-media'
 };
 
-export const CDN_OBJECT_TYPE = {
-  directory: 'directory',
-  file: 'file'
-};
-
 export const VERTICAL_ALIGNMENT = {
   top: 'top',
   middle: 'middle',
