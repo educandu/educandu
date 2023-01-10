@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +19,14 @@ export default function User({ PageTemplate, initialState }) {
 
   const { user } = initialState;
   const [documents, setDocuments] = useState([]);
+  const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [visibleDocumentsCount, setVisibleDocumentsCount] = useState(CARD_BATCH_SIZE);
 
   useEffect(() => {
     (async () => {
+      setFetchingDocuments(true);
       const userApiClientResponse = await userApiClient.getCreatedDocuments({ userId: user._id });
+      setFetchingDocuments(false);
       setDocuments(userApiClientResponse.documents);
     })();
   }, [user, userApiClient]);
@@ -69,7 +73,9 @@ export default function User({ PageTemplate, initialState }) {
           <div className="UserPage-accountClosed">{t('accountClosed')}</div>
         )}
 
-        {!!documents.length && (
+        {!!fetchingDocuments && <Spin className="u-spin" />}
+
+        {!fetchingDocuments && !documents.length && (
           <section>
             <div className="UserPage-sectionHeadline">{t('documentsHeadline')}</div>
             <div className="UserPage-sectionCards">

@@ -33,29 +33,35 @@ function Dashboard({ PageTemplate }) {
   const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.news;
+  const gravatarUrl = urlUtils.getGravatarUrl(user.email);
 
   const [rooms, setRooms] = useState([]);
   const [activities, setActivities] = useState([]);
   const [invitations, setInvitations] = useState([]);
-  const gravatarUrl = urlUtils.getGravatarUrl(user.email);
   const [selectedTab, setSelectedTab] = useState(initialTab);
-  const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const [fetchingRooms, setFetchingRooms] = useState(true);
+  const [fetchingActivities, setFetchingActivities] = useState(true);
 
   useEffect(() => {
     if (selectedTab === TAB_KEYS.news) {
       (async () => {
+        setFetchingActivities(true);
         const response = await userApiClient.getActivities();
+        setFetchingActivities(false);
         setActivities(response.activities);
       })();
     }
 
     if (selectedTab === TAB_KEYS.rooms) {
       (async () => {
+        setFetchingRooms(true);
         const roomApiClientResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
         const userApiClientResponse = await userApiClient.getRoomsInvitations();
+        setFetchingRooms(false);
 
         setRooms(roomApiClientResponse.rooms);
         setInvitations(userApiClientResponse.invitations);
@@ -74,7 +80,7 @@ function Dashboard({ PageTemplate }) {
       label: t('newsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <NewsTab activities={activities} />
+          <NewsTab activities={activities} loading={fetchingActivities} />
         </div>
       )
     },
@@ -92,7 +98,7 @@ function Dashboard({ PageTemplate }) {
       label: t('roomsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <RoomsTab rooms={rooms} invitations={invitations} />
+          <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
         </div>
       )
     },

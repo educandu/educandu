@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import routes from '../utils/routes.js';
 import React, { Fragment } from 'react';
@@ -13,7 +14,7 @@ import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite
 import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
-function NewsTab({ activities }) {
+function NewsTab({ activities, loading }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('newsTab');
 
@@ -183,21 +184,22 @@ function NewsTab({ activities }) {
     <div>
       <section>
         <div className="NewsTab-info">{t('info')}</div>
-        {!!activities.length && (
-          <Fragment>
-            <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
-            <div className="NewsTab-activities">
-              {renderActivities()}
-            </div>
-          </Fragment>
-        )}
+        <Fragment>
+          <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
+          <div className="NewsTab-activities">
+            {!!loading && <Spin className="u-spin" />}
+            {!loading && renderActivities()}
+            {!loading && !activities.length && <span>{t('noActivities')}</span>}
+          </div>
+        </Fragment>
       </section>
     </div>
   );
 }
 
 NewsTab.propTypes = {
-  activities: PropTypes.arrayOf(userActivitiesShape).isRequired
+  activities: PropTypes.arrayOf(userActivitiesShape).isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 export default NewsTab;

@@ -111,10 +111,11 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
   const [isDirty, setIsDirty] = useState(false);
-  const [doc, setDoc] = useState(initialState.doc);
   const [comments, setComments] = useState([]);
+  const [doc, setDoc] = useState(initialState.doc);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [fetchingComments, setFetchingComments] = useState(false);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
@@ -131,7 +132,9 @@ function Doc({ initialState, PageTemplate }) {
 
   const fetchComments = useCallback(async () => {
     try {
+      setFetchingComments(true);
       const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setFetchingComments(false);
       setComments(response.comments);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -569,6 +572,7 @@ function Doc({ initialState, PageTemplate }) {
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
               <CommentsPanel
                 comments={comments}
+                loading={fetchingComments}
                 onCommentPostClick={handleCommentPostClick}
                 onCommentDeleteClick={handleCommentDeleteClick}
                 onTopicChangeClick={handleCommentsTopicChangeClick}

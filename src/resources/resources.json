@@ -494,6 +494,7 @@
     "language": "en",
     "resources": {
       "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
+      "noFavorites": "You have not marked any favorites so far.",
       "favoriteUsers": "Users you have added to favorites",
       "favoriteRooms": "Rooms you have added to favorites",
       "favoriteDocuments": "Documents you have added to favorites"
@@ -504,6 +505,7 @@
     "language": "de",
     "resources": {
       "info": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.",
+      "noFavorites": "Du hast noch keine Favoriten markiert.",
       "favoriteUsers": "Benutzer, die du zu den Favoriten hinzugefügt hast",
       "favoriteRooms": "Räume, die du zu den Favoriten hinzugefügt hast",
       "favoriteDocuments": "Dokumente, die du zu den Favoriten hinzugefügt hast"
@@ -771,6 +773,7 @@
     "resources": {
       "info": "Here you can find news about the website and your latest activities.",
       "latestActivitiesHeader": "Your latest activities",
+      "noActivities": "No activities have been recorded so far.",
       "documentCreatedActivity": "New document created",
       "documentUpdatedActivity": "Document updated",
       "documentMarkedFavoriteActivity": "Document marked as favorite",
@@ -787,6 +790,7 @@
     "resources": {
       "info": "Hier findest du Neuigkeiten über die Website und deine letzten Aktivitäten.",
       "latestActivitiesHeader": "Deine letzten Aktivitäten",
+      "noActivities": "Bisher wurden keine Aktivitäten aufgezeichnet.",
       "documentCreatedActivity": "Neues Dokument erstellt",
       "documentUpdatedActivity": "Dokument bearbeitet",
       "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",

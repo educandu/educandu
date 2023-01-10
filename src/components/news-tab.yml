@@ -4,6 +4,9 @@ info:
 latestActivitiesHeader:
   en: Your latest activities
   de: Deine letzten Aktivitäten
+noActivities:
+  en: No activities have been recorded so far.
+  de: Bisher wurden keine Aktivitäten aufgezeichnet.
 documentCreatedActivity:
   en: New document created
   de: Neues Dokument erstellt
