@@ -1,5 +1,6 @@
 import routes from '../utils/routes.js';
 import React, { Fragment } from 'react';
+import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import LiteralUrlLink from './literal-url-link.js';
@@ -14,8 +15,9 @@ function CreditsFooter({ doc, revision }) {
 
   const request = useRequest();
   const settings = useSettings();
-  const { t } = useTranslation('creditsFooter');
+  const isMounted = useIsMounted();
   const { formatDate } = useDateFormat();
+  const { t } = useTranslation('creditsFooter');
 
   const title = doc?.title || revision?.title;
 
@@ -54,18 +56,20 @@ function CreditsFooter({ doc, revision }) {
 
   return (
     <div className="CreditsFooter">
-      <p>
-        {!!settings.license?.name && !!settings.license?.url && (
-          <Fragment>
-            <b>{t('license')}:</b> <a href={settings.license.url}>{settings.license.name}</a>
-            <br />
-          </Fragment>
-        )}
-        <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
-        <br />
-        {!!doc && renderDocumentContributors()}
-        {!!revision && renderRevisionAuthor()}
-      </p>
+      {!!isMounted.current && (
+        <p>
+          {!!settings.license?.name && !!settings.license?.url && (
+            <Fragment>
+              <b>{t('license')}:</b> <a href={settings.license.url}>{settings.license.name}</a>
+              <br />
+            </Fragment>
+          )}
+          <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
+          <br />
+          {!!doc && renderDocumentContributors()}
+          {!!revision && renderRevisionAuthor()}
+        </p>
+      )}
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import reactPlayerNs from 'react-player';
 import Markdown from '../../components/markdown.js';
-import { useStableCallback } from '../../ui/hooks.js';
 import { RESOURCE_TYPE } from '../../domain/constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
+import { useIsMounted, useStableCallback } from '../../ui/hooks.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 
@@ -14,7 +14,7 @@ const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 function MatchingCardsTile({ text, sourceUrl, playMedia }) {
   const playerRef = useRef();
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
   const timeoutToPlayMedia = useRef();
   const clientConfig = useService(ClientConfig);
 
@@ -22,13 +22,6 @@ function MatchingCardsTile({ text, sourceUrl, playMedia }) {
   const { resourceType } = sourceUrl ? analyzeMediaUrl(sourceUrl) : { resourceType: RESOURCE_TYPE.none };
 
   const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   useEffect(() => {
     setIsPlaying(false);
@@ -42,7 +35,7 @@ function MatchingCardsTile({ text, sourceUrl, playMedia }) {
         }
       }, 500);
     }
-  }, [playerRef, playMedia]);
+  }, [playerRef, playMedia, isMounted]);
 
   const ensureStopStateIsRegistered = () => {
     setIsPlaying(true);

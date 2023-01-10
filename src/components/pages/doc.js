@@ -29,11 +29,11 @@ import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
-import { useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
+import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
 import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
@@ -79,6 +79,7 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
+  const isMounted = useIsMounted();
   const { t } = useTranslation('doc');
   const controlPanelsRef = useRef(null);
   const commentsSectionRef = useRef(null);
@@ -110,10 +111,11 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
 
   const [isDirty, setIsDirty] = useState(false);
-  const [doc, setDoc] = useState(initialState.doc);
   const [comments, setComments] = useState([]);
+  const [doc, setDoc] = useState(initialState.doc);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [fetchingComments, setFetchingComments] = useState(false);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
@@ -130,7 +132,9 @@ function Doc({ initialState, PageTemplate }) {
 
   const fetchComments = useCallback(async () => {
     try {
+      setFetchingComments(true);
       const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setFetchingComments(false);
       setComments(response.comments);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -177,10 +181,10 @@ function Doc({ initialState, PageTemplate }) {
   }, [user, doc._id, doc.slug, view]);
 
   useEffect(() => {
-    if (view === VIEW.comments) {
+    if (view === VIEW.comments && !!commentsSectionRef.current) {
       commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [view]);
+  }, [view, commentsSectionRef]);
 
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalOpen(true);
@@ -563,11 +567,12 @@ function Doc({ initialState, PageTemplate }) {
             />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
 
-          {view === VIEW.comments && (
+          {view === VIEW.comments && !!isMounted.current && (
             <section ref={commentsSectionRef} className="DocPage-commentsSection">
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
               <CommentsPanel
                 comments={comments}
+                loading={fetchingComments}
                 onCommentPostClick={handleCommentPostClick}
                 onCommentDeleteClick={handleCommentDeleteClick}
                 onTopicChangeClick={handleCommentsTopicChangeClick}

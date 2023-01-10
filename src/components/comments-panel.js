@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
-import { Button, Collapse } from 'antd';
-import React, { useState } from 'react';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
+import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import React, { Fragment, useState } from 'react';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
@@ -24,7 +24,7 @@ const MODE = {
   write: 'write'
 };
 
-function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
+function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('commentsPanel');
@@ -264,14 +264,20 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
   const topics = Object.keys(commentGroups);
 
   return (
-    <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" defaultActiveKey="newTopic">
-      {topics.map(renderTopicPanel)}
-      {renderNewTopicPanel()}
-    </Collapse>
+    <Fragment>
+      {!!loading && <Spin className="u-spin" />}
+      {!loading && (
+        <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" defaultActiveKey="newTopic">
+          {topics.map(renderTopicPanel)}
+          {renderNewTopicPanel()}
+        </Collapse>
+      )}
+    </Fragment>
   );
 }
 
 CommentsPanel.propTypes = {
+  loading: PropTypes.bool.isRequired,
   comments: PropTypes.arrayOf(commentShape).isRequired,
   onCommentDeleteClick: PropTypes.func.isRequired,
   onCommentPostClick: PropTypes.func.isRequired,

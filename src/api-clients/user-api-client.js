@@ -154,6 +154,33 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  getActivities() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/activities',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getCreatedDocuments({ userId }) {
+    return this.httpClient
+      .get(
+        `/api/v1/users/${encodeURIComponent(userId)}/created-documents`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getRoomsInvitations() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/rooms-invitations',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   closeUserAccount({ userId }) {
     return this.httpClient
       .delete(

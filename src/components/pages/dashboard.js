@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import NewsTab from '../news-tab.js';
@@ -13,35 +12,80 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import ProfileHeader from '../profile-header.js';
 import { useRequest } from '../request-context.js';
+import React, { useEffect, useState } from 'react';
+import { ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useStoragePlan } from '../storage-plan-context.js';
-import { invitationBasicShape, roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
-function Dashboard({ initialState, PageTemplate }) {
+const TAB_KEYS = {
+  news: 'news',
+  favorites: 'favorites',
+  rooms: 'rooms',
+  profile: 'profile',
+  account: 'account',
+  storage: 'storage'
+};
+
+function Dashboard({ PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
-  const initialTab = request.query.tab || '';
+  const initialTab = request.query.tab || TAB_KEYS.news;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
-  const { rooms, invitations, activities } = initialState;
+
+  const [rooms, setRooms] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [invitations, setInvitations] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(initialTab);
+  const [fetchingRooms, setFetchingRooms] = useState(true);
+  const [fetchingActivities, setFetchingActivities] = useState(true);
+
+  useEffect(() => {
+    if (selectedTab === TAB_KEYS.news) {
+      (async () => {
+        setFetchingActivities(true);
+        const response = await userApiClient.getActivities();
+        setFetchingActivities(false);
+        setActivities(response.activities);
+      })();
+    }
+
+    if (selectedTab === TAB_KEYS.rooms) {
+      (async () => {
+        setFetchingRooms(true);
+        const roomApiClientResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
+        const userApiClientResponse = await userApiClient.getRoomsInvitations();
+        setFetchingRooms(false);
+
+        setRooms(roomApiClientResponse.rooms);
+        setInvitations(userApiClientResponse.invitations);
+      })();
+    }
+  }, [selectedTab, userApiClient, roomApiClient]);
 
   const handleTabChange = tab => {
+    setSelectedTab(tab);
     history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
 
   const items = [
     {
-      key: 'news',
+      key: TAB_KEYS.news,
       label: t('newsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <NewsTab activities={activities} />
+          <NewsTab activities={activities} loading={fetchingActivities} />
         </div>
       )
     },
     {
-      key: 'favorites',
+      key: TAB_KEYS.favorites,
       label: t('favoritesTabTitle'),
       children: (
         <div className="Tabs-tabPane">
@@ -50,16 +94,16 @@ function Dashboard({ initialState, PageTemplate }) {
       )
     },
     {
-      key: 'rooms',
+      key: TAB_KEYS.rooms,
       label: t('roomsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <RoomsTab rooms={rooms} invitations={invitations} />
+          <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
         </div>
       )
     },
     {
-      key: 'profile',
+      key: TAB_KEYS.profile,
       label: t('profileTabTitle'),
       children: (
         <div className="Tabs-tabPane">
@@ -68,7 +112,7 @@ function Dashboard({ initialState, PageTemplate }) {
       )
     },
     {
-      key: 'account',
+      key: TAB_KEYS.account,
       label: t('accountTabTitle'),
       children: (
         <div className="Tabs-tabPane">
@@ -80,7 +124,7 @@ function Dashboard({ initialState, PageTemplate }) {
 
   if (user.storage.plan || user.storage.usedBytes) {
     items.push({
-      key: 'storage',
+      key: TAB_KEYS.storage,
       label: t('common:storage'),
       children: (
         <div className="Tabs-tabPane">
@@ -123,12 +167,7 @@ function Dashboard({ initialState, PageTemplate }) {
 }
 
 Dashboard.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    rooms: PropTypes.arrayOf(roomShape).isRequired,
-    invitations: PropTypes.arrayOf(invitationBasicShape),
-    activities: PropTypes.arrayOf(userActivitiesShape).isRequired
-  }).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
 export default Dashboard;

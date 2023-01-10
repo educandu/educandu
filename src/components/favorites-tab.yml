@@ -1,6 +1,9 @@
 info:
   en: Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.
   de: Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.
+noFavorites:
+  en: You have not marked any favorites so far.
+  de: Du hast noch keine Favoriten markiert.
 favoriteUsers:
   en: Users you have added to favorites
   de: Benutzer, die du zu den Favoriten hinzugefügt hast

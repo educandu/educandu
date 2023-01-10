@@ -1,6 +1,7 @@
 import by from 'thenby';
-import { Avatar } from 'antd';
+import { Avatar, Spin } from 'antd';
 import RoomCard from './room-card.js';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import DocumentCard from './document-card.js';
 import FavoriteStar from './favorite-star.js';
@@ -10,7 +11,6 @@ import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import routes from '../utils/routes.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -21,9 +21,11 @@ function FavoritesTab() {
   const [favoriteUsers, setFavoriteUsers] = useState([]);
   const [favoriteRooms, setFavoriteRooms] = useState([]);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+  const [fetchingFavorites, setFetchingFavorites] = useState(true);
 
   const updateFavorites = useCallback(async () => {
     try {
+      setFetchingFavorites(true);
       const data = await userApiClient.getFavorites();
       const sortedFavorites = data.favorites.sort(by(f => f.setOn, 'desc'));
       setFavoriteUsers(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.user));
@@ -31,6 +33,8 @@ function FavoritesTab() {
       setFavoriteDocuments(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.document));
     } catch (error) {
       handleApiError({ error, logger, t });
+    } finally {
+      setFetchingFavorites(false);
     }
   }, [userApiClient, t]);
 
@@ -95,6 +99,10 @@ function FavoritesTab() {
   return (
     <div className="FavoritesTab">
       <div className="FavoritesTab-info">{t('info')}</div>
+      {!!fetchingFavorites && <Spin className="u-spin" /> }
+      {!fetchingFavorites && !favoriteUsers.length && !favoriteRooms.length && !favoriteDocuments.length && (
+        <span>{t('noFavorites')}</span>
+      )}
       {!!favoriteUsers.length && (
         <Fragment>
           <div className="FavoriteTab-headline">{t('favoriteUsers')}</div>

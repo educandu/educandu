@@ -145,7 +145,10 @@ function DocumentMetadataModal({
 
     setAvailableRooms([]);
     setIsLoadingRooms(true);
-    setAvailableRooms(await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrCollaborator }));
+
+    const { rooms } = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrCollaborator });
+    setAvailableRooms(rooms);
+
     setIsLoadingRooms(false);
   }, [mode, roomApiClient]);
 

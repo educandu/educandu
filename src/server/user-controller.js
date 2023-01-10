@@ -223,15 +223,9 @@ class UserController {
       throw new NotFound();
     }
 
-    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(viewedUser._id);
-
-    const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, {
-      user: mappedViewedUser,
-      documents: mappedCreatedDocuments
-    });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
   }
 
   async handleGetUsersPage(req, res) {
@@ -387,6 +381,31 @@ class UserController {
     const { type, id } = req.body;
     const updatedUser = await this.userService.deleteFavorite({ type, id, user });
     return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
+  async handleGetActivities(req, res) {
+    const { user } = req;
+    const activities = await this.userService.getActivities({ userId: user._id, limit: 10 });
+
+    const mappedActivities = await this.clientDataMappingService.mapUserActivities(activities);
+    return res.send({ activities: mappedActivities });
+  }
+
+  async handleGetCreatedDocuments(req, res) {
+    const { userId } = req.params;
+
+    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(userId);
+    const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
+
+    return res.send({ documents: mappedCreatedDocuments });
+  }
+
+  async handleGetRoomsInvitations(req, res) {
+    const { user } = req;
+    const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapRoomInvitationWithBasicRoomData(invitation)));
+
+    return res.send({ invitations: mappedInvitations });
   }
 
   async handleCloseUserAccount(req, res) {
@@ -594,6 +613,24 @@ class UserController {
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/activities',
+      needsAuthentication(),
+      (req, res) => this.handleGetActivities(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/:userId/created-documents',
+      needsAuthentication(),
+      (req, res) => this.handleGetCreatedDocuments(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/rooms-invitations',
+      needsAuthentication(),
+      (req, res) => this.handleGetRoomsInvitations(req, res)
     );
 
     router.delete(
