@@ -22,7 +22,6 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
   const request = useRequest();
   const loginFormRef = useRef();
   const { uiLanguage } = useLocale();
-  const registrationFormRef = useRef();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('linkExternalAccount');
   const [isLoginBlocked, setIsLoginBlocked] = useState(false);
@@ -51,12 +50,6 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
   const handleLoginBlocked = () => {
     setIsLoginBlocked(true);
   };
-
-  const handleRegistrationStarted = () => {};
-
-  const handleRegistrationFailed = () => {};
-
-  const handleRegistrationSucceeded = () => {};
 
   const handleBackButtonClick = () => {
     setCurrentView(VIEW.choices);
@@ -114,13 +107,7 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
         )}
         {currentView === VIEW.register && (
           <div className="LinkExternalAccountPage-registerView">
-            <RegistrationForm
-              formRef={registrationFormRef}
-              name="link-external-account-page-registration-form"
-              onRegistrationFailed={handleRegistrationFailed}
-              onRegistrationStarted={handleRegistrationStarted}
-              onRegistrationSucceeded={handleRegistrationSucceeded}
-              />
+            <RegistrationForm />
             <div className="LinkExternalAccountPage-backButton">
               <Button size="large" onClick={handleBackButtonClick} block>
                 {t('common:back')}

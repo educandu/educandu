@@ -1,16 +1,8 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { useRef } from 'react';
 import RegistrationForm from '../registration-form.js';
 
 function Register({ PageTemplate, SiteLogo }) {
-  const formRef = useRef();
-
-  const handleRegistrationStarted = () => {};
-
-  const handleRegistrationFailed = () => {};
-
-  const handleRegistrationSucceeded = () => {};
-
   return (
     <PageTemplate fullScreen>
       <div className="RegisterPage">
@@ -18,13 +10,7 @@ function Register({ PageTemplate, SiteLogo }) {
           <SiteLogo readonly />
         </div>
         <div className="RegisterPage-form">
-          <RegistrationForm
-            formRef={formRef}
-            name="register-page-registration-form"
-            onRegistrationFailed={handleRegistrationFailed}
-            onRegistrationStarted={handleRegistrationStarted}
-            onRegistrationSucceeded={handleRegistrationSucceeded}
-            />
+          <RegistrationForm />
         </div>
       </div>
     </PageTemplate>

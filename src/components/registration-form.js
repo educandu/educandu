@@ -21,7 +21,6 @@ const logger = new Logger(import.meta.url);
 const FormItem = Form.Item;
 
 function RegistrationForm({
-  name,
   formRef,
   onRegistrationFailed,
   onRegistrationStarted,
@@ -80,7 +79,6 @@ function RegistrationForm({
     <div className="RegistrationForm-form">
       <Form
         form={form}
-        name={name}
         layout="vertical"
         onFinish={handleFinish}
         validateTrigger="onSubmit"
@@ -131,7 +129,6 @@ RegistrationForm.propTypes = {
   formRef: PropTypes.shape({
     current: PropTypes.object
   }),
-  name: PropTypes.string,
   onRegistrationFailed: PropTypes.func,
   onRegistrationStarted: PropTypes.func,
   onRegistrationSucceeded: PropTypes.func
@@ -139,7 +136,6 @@ RegistrationForm.propTypes = {
 
 RegistrationForm.defaultProps = {
   formRef: null,
-  name: 'registration-form',
   onRegistrationFailed: () => {},
   onRegistrationStarted: () => {},
   onRegistrationSucceeded: () => {}
