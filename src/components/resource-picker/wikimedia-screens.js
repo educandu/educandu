@@ -1,12 +1,13 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
+import { useIsMounted } from '../../ui/hooks.js';
 import WikimediaSearch from './wikimedia-search.js';
 import { ensureIsUnique } from '../../utils/array-utils.js';
 import ResourcePreviewScreen from './resource-preview-screen.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getResourceFullName } from '../../utils/resource-utils.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { mapSearchFileTypesToWikimediaFileTypes, processWikimediaResponse, SEARCH_FILE_TYPE } from './wikimedia-utils.js';
 
 const SCREEN = {
@@ -17,7 +18,7 @@ const SCREEN = {
 function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
   const wikimediaApiClient = useSessionAwareApiClient(WikimediaApiClient);
 
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [nextSearchOffset, setNextSearchOffset] = useState(0);
@@ -130,13 +131,6 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
     setNextSearchOffset(0);
     fetchWikimediaFiles(searchParams, 0);
   }, [fetchWikimediaFiles, searchParams]);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   return (
     <Fragment>

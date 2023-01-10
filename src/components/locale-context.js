@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import 'moment/locale/de.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
@@ -6,6 +6,7 @@ import { ConfigProvider } from 'antd';
 import enUSNs from 'antd/lib/locale/en_US.js';
 import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
+import { isBrowser } from '../ui/browser-helper.js';
 import { useService } from './container-context.js';
 import { NO_BREAK_SPACE } from '../utils/string-utils.js';
 import { setLongLastingCookie } from '../common/cookie.js';
@@ -99,13 +100,16 @@ export function useDateFormat() {
     const localePattern = 'L, LT';
     const numberFormat = new Intl.NumberFormat(uiLocale);
 
-    const formatDate = date => date ? moment(date).locale(uiLocale).format(localePattern) : '';
-    const formatTimeTo = date => date ? moment().locale(uiLocale).to(date) : '';
+    let formatDate;
+    if (isBrowser()) {
+      formatDate = date => date ? moment(new Date(date)).locale(uiLocale).format(localePattern) : '';
+    } else {
+      formatDate = date => date ? moment(new Date(date)).locale(uiLocale).tz('America/Los_Angeles').format(localePattern) : '';
+    }
     const formatNumber = value => numberFormat(value);
 
     return {
       formatDate,
-      formatTimeTo,
       formatNumber,
       dateTimeFormat
     };

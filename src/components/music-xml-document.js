@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useIsMounted } from '../ui/hooks.js';
 import React, { useEffect, useRef } from 'react';
 import { useService } from './container-context.js';
 import HttpClient from '../api-clients/http-client.js';
@@ -14,17 +15,10 @@ const osmdOptions = {
 function MusicXmlDocument({ url, zoom }) {
   const osmd = useRef(null);
   const divRef = useRef(null);
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
   const lastLoadedUrl = useRef(null);
   const httpClient = useService(HttpClient);
   const hasRenderedAtLeastOnce = useRef(false);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -62,7 +56,7 @@ function MusicXmlDocument({ url, zoom }) {
         currentOsmd.clear();
       }
     })();
-  }, [url, zoom, osmd, httpClient]);
+  }, [url, zoom, osmd, httpClient, isMounted]);
 
   return (
     <div ref={divRef} />

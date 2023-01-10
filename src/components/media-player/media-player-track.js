@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import { useStableCallback } from '../../ui/hooks.js';
 import AudioIcon from '../icons/general/audio-icon.js';
 import { useYoutubeThumbnailUrl } from './media-hooks.js';
 import React, { useEffect, useRef, useState } from 'react';
+import { useIsMounted, useStableCallback } from '../../ui/hooks.js';
 import { getTrackDurationFromSourceDuration, getSourcePositionFromTrackPosition } from '../../utils/media-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
@@ -31,19 +31,12 @@ function MediaPlayerTrack({
   onPlayStateChange
 }) {
   const playerRef = useRef();
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
   const [sourceDuration, setSourceDuration] = useState(0);
   const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [lastProgressTimecode, setLastProgressTimecode] = useState(0);
   const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   const [trackPlayState, setTrackPlayState] = useState({
     current: MEDIA_PLAY_STATE.initializing,
