@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import React, { useRef, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
-import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import ExternalAccountProviderDialog from '../external-account-provider-dialog.js';
 
@@ -63,18 +63,14 @@ function Login({ PageTemplate, SiteLogo }) {
             name="login-page-login-form"
             onLoginSucceeded={handleLoginSucceeded}
             onLoginBlocked={handleLoginBlocked}
+            showPasswordReset
             />
           {!isBlocked && (
-            <Fragment>
-              <div className="LoginPage-forgotPasswordLink">
-                <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
-              </div>
-              <div className="LoginPage-loginButton">
-                <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
-                  {t('common:login')}
-                </Button>
-              </div>
-            </Fragment>
+            <div className="LoginPage-loginButton">
+              <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
+                {t('common:login')}
+              </Button>
+            </div>
           )}
           {!!clientConfig.samlAuth?.identityProviders.length && (
             <div className="LoginPage-loginButton LoginPage-loginButton--secondary">

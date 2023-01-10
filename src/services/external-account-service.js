@@ -37,7 +37,8 @@ export default class ExternalAccountService {
     const provider = this.getProvider(providerKey);
 
     const lastLoggedInOn = new Date();
-    const expiresOn = new Date(lastLoggedInOn + provider.expiryTimeoutInMs);
+    const expiryTimeoutInMs = provider.expiryTimeoutInDays * 24 * 60 * 60 * 1000;
+    const expiresOn = new Date(lastLoggedInOn.getTime() + expiryTimeoutInMs);
 
     logger.info(`Creating or updating external account for provider ${providerKey} and external user ${externalUserId}`);
     return this.externalAccountStore.createOrUpdateExternalAccountByProviderKeyAndExternalUserId({

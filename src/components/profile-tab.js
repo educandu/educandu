@@ -27,7 +27,7 @@ function ProfileTab() {
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
-  const gravatarRagistrationUrl = `https://${uiLanguage}.gravatar.com/`;
+  const gravatarRegistrationUrl = `https://${uiLanguage}.gravatar.com/`;
 
   const [showAvatarDescription, setShowAvatarDescription] = useState(false);
 
@@ -66,7 +66,7 @@ function ProfileTab() {
       <Trans
         t={t}
         i18nKey="avatarDescription"
-        components={[<a key="gravatar-link" href={gravatarRagistrationUrl} target="_blank" rel="noopener noreferrer" />]}
+        components={[<a key="gravatar-link" href={gravatarRegistrationUrl} target="_blank" rel="noopener noreferrer" />]}
         />
     </div>
   );

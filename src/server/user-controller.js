@@ -46,7 +46,7 @@ import {
 const jsonParser = express.json();
 const { MultiSamlStrategy } = passportSaml;
 const { Strategy: LocalStrategy } = passportLocal;
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, InternalServerError } = httpErrors;
 
 const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
 
@@ -177,8 +177,21 @@ class UserController {
       return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
+    let linkedExternalAccountId = null;
+
     const user = await this.userService.verifyUser(req.params.verificationCode);
-    const initialState = { user };
+
+    if (req.session.externalAccount) {
+      const externalAccountId = req.session.externalAccount._id;
+      const userId = user._id;
+      await this.externalAccountService.updateExternalAccountUserId({ externalAccountId, userId });
+      req.session.externalAccount = null;
+      linkedExternalAccountId = externalAccountId;
+
+      await new Promise((resolve, reject) => req.login(user, err => err ? reject(err) : resolve()));
+    }
+
+    const initialState = { user, linkedExternalAccountId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
   }
 
@@ -212,6 +225,10 @@ class UserController {
     const passwordResetRequestId = (resetRequest || {})._id;
     const initialState = { passwordResetRequestId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
+  }
+
+  handleGetLinkExternalAccountPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.linkExternalAccount, {});
   }
 
   async handleGetUserPage(req, res) {
@@ -291,11 +308,27 @@ class UserController {
         return res.status(201).send({ user: null });
       }
 
-      const updatedUser = await this.userService.recordUserLogIn(user._id);
+      let updatedUser;
+      let linkedExternalAccountId = null;
+
+      try {
+        updatedUser = await this.userService.recordUserLogIn(user._id);
+
+        if (req.body.linkExternalAccount) {
+          const externalAccountId = req.session.externalAccount._id;
+          const userId = updatedUser._id;
+          await this.externalAccountService.updateExternalAccountUserId({ externalAccountId, userId });
+          req.session.externalAccount = null;
+          linkedExternalAccountId = externalAccountId;
+        }
+      } catch (error) {
+        next(error);
+      }
+
       return req.login(updatedUser, loginError => {
         return loginError
           ? next(loginError)
-          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
+          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser), linkedExternalAccountId });
       });
     })(req, res, next);
   }
@@ -449,16 +482,36 @@ class UserController {
           const providerKey = this.getProviderForRequest(req).key;
           const externalUserId = profile.nameID;
 
-          req.session.externalAccount = await this.externalAccountService.createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
+          try {
+            req.session.externalAccount = await this.externalAccountService
+              .createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
+          } catch (error) {
+            return next(error);
+          }
 
-          // In upcoming tickets the next middleware should handle the situation after logging in with SAML:
-          // return next();
-
-          // For now we just print the session to the screen in order to verify all values are set correctly:
-          return res.setHeader('content-type', 'text/plain').send(JSON.stringify(req.session, null, 2));
+          return next();
         })(req, res, next);
       }
     );
+
+    router.use((req, res, next) => {
+      const { externalAccount } = req.session;
+
+      if (
+        !externalAccount ||
+        routes.isApiPath(req.originalUrl) ||
+        routes.isResetPasswordPath(req.originalUrl) ||
+        routes.isLinkExternalAccountPath(req.originalUrl) ||
+        routes.isCompleteRegistrationPath(req.originalUrl) ||
+        routes.isCompletePasswordResetPrefixPath(req.originalUrl)
+      ) {
+        return next();
+      }
+
+      return externalAccount.userId
+        ? next(new InternalServerError('NOT IMPLEMENTED: User is already linked to external account'))
+        : res.redirect(routes.getLinkExternalAccountPath());
+    });
   }
 
   registerPages(router) {
@@ -475,6 +528,8 @@ class UserController {
     router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
+
+    router.get('/link-external-account', (req, res) => this.handleGetLinkExternalAccountPage(req, res));
 
     router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }

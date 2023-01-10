@@ -24,6 +24,16 @@ export function kebabCaseToCamelCase(str) {
   return str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 }
 
+export function hyphenizeExpression(expression) {
+  return expression.split(' ').join('-');
+}
+
+export function makeCompoundWord(expression, language) {
+  return language === 'de'
+    ? hyphenizeExpression(expression)
+    : expression;
+}
+
 export function shorten(str, maxLength) {
   if (!str || str.length <= maxLength) {
     return str || '';

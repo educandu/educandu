@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -15,12 +16,14 @@ const logger = new Logger(import.meta.url);
 
 export default function LoginForm({
   name,
+  formRef,
   fixedEmail,
+  linkExternalAccount,
+  showPasswordReset,
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  onLoginBlocked,
-  formRef
+  onLoginBlocked
 }) {
   const setUser = useSetUser();
   const [form] = Form.useForm();
@@ -41,10 +44,10 @@ export default function LoginForm({
   const login = async ({ email, password }) => {
     try {
       onLoginStarted();
-      const { user } = await userApiClient.login({ email, password });
+      const { user, linkedExternalAccountId } = await userApiClient.login({ email, password, linkExternalAccount });
       if (user) {
         setUser(user);
-        onLoginSucceeded();
+        onLoginSucceeded(user, linkedExternalAccountId);
       } else {
         setHasLoginFailed(true);
         onLoginFailed();
@@ -129,6 +132,11 @@ export default function LoginForm({
       {!hasBlockingError && !!hasLoginFailed && (
         <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
       )}
+      {!hasBlockingError && !!showPasswordReset && (
+        <div className="LoginForm-forgotPasswordLink">
+          <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+        </div>
+      )}
       {!!hasBlockingError && (
         <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
       )}
@@ -142,6 +150,8 @@ LoginForm.propTypes = {
     current: PropTypes.object
   }),
   name: PropTypes.string,
+  showPasswordReset: PropTypes.bool,
+  linkExternalAccount: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
@@ -152,6 +162,8 @@ LoginForm.defaultProps = {
   fixedEmail: null,
   formRef: null,
   name: 'login-form',
+  showPasswordReset: false,
+  linkExternalAccount: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},

@@ -12,15 +12,17 @@ const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
 const resetPasswordPath = '/reset-password';
+const linkExternalAccountPath = '/link-external-account';
 
+const apiPrefix = '/api/';
 const docsPrefix = '/docs/';
 const usersPrefix = '/users/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
 const completeRegistrationPrefix = '/complete-registration/';
-const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const completePasswordResetPrefix = '/complete-password-reset/';
+const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
@@ -103,6 +105,10 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
+function getLinkExternalAccountPath() {
+  return linkExternalAccountPath;
+}
+
 function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
@@ -124,6 +130,26 @@ function getSamlAuthLoginCallbackPath(providerKey) {
   return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
 }
 
+function isApiPath(path) {
+  return path.startsWith(apiPrefix);
+}
+
+function isResetPasswordPath(path) {
+  return path === resetPasswordPath;
+}
+
+function isLinkExternalAccountPath(path) {
+  return path === linkExternalAccountPath;
+}
+
+function isCompleteRegistrationPath(path) {
+  return path.startsWith(completeRegistrationPrefix);
+}
+
+function isCompletePasswordResetPrefixPath(path) {
+  return path.startsWith(completePasswordResetPrefix);
+}
+
 export default {
   getUserUrl,
   getDocsUrl,
@@ -143,9 +169,15 @@ export default {
   getDashboardUrl,
   getRegisterUrl,
   getResetPasswordUrl,
+  getLinkExternalAccountPath,
   getSearchUrl,
   getBatchUrl,
   getDocIdIfDocUrl,
   getSamlAuthLoginPath,
-  getSamlAuthLoginCallbackPath
+  getSamlAuthLoginCallbackPath,
+  isApiPath,
+  isResetPasswordPath,
+  isLinkExternalAccountPath,
+  isCompleteRegistrationPath,
+  isCompletePasswordResetPrefixPath
 };
