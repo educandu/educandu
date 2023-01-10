@@ -298,39 +298,41 @@ class UserController {
     res.status(201).send({ user: updatedUser });
   }
 
-  handlePostUserLogin(req, res, next) {
-    passport.authenticate('local', async (err, user) => {
-      if (err) {
-        return next(err);
-      }
+  async handlePostUserLogin(req, res, next) {
+    try {
+      const user = await new Promise((resolve, reject) => passport.authenticate('local', async (err, usr) => {
+        return err ? reject(err) : resolve(usr);
+      })(req, res, next));
 
       if (!user) {
         return res.status(201).send({ user: null });
       }
 
-      let updatedUser;
-      let linkedExternalAccountId = null;
+      const updatedUser = await this.userService.recordUserLogIn(user._id);
 
-      try {
-        updatedUser = await this.userService.recordUserLogIn(user._id);
-
-        if (req.body.linkExternalAccount) {
-          const externalAccountId = req.session.externalAccount._id;
-          const userId = updatedUser._id;
-          await this.externalAccountService.updateExternalAccountUserId({ externalAccountId, userId });
-          req.session.externalAccount = null;
-          linkedExternalAccountId = externalAccountId;
-        }
-      } catch (error) {
-        next(error);
+      let linkedExternalAccountId;
+      if (req.body.linkExternalAccount) {
+        linkedExternalAccountId = req.session.externalAccount._id;
+        await this.externalAccountService.updateExternalAccountUserId({
+          externalAccountId: linkedExternalAccountId,
+          userId: updatedUser._id
+        });
+        req.session.externalAccount = null;
+      } else {
+        linkedExternalAccountId = null;
       }
 
-      return req.login(updatedUser, loginError => {
-        return loginError
-          ? next(loginError)
-          : res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser), linkedExternalAccountId });
+      await new Promise((resolve, reject) => req.login(updatedUser, err => {
+        return err ? reject(err) : resolve();
+      }));
+
+      return res.status(201).send({
+        user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
+        linkedExternalAccountId
       });
-    })(req, res, next);
+    } catch (error) {
+      return next(error);
+    }
   }
 
   async handlePostUserPasswordResetRequest(req, res) {
