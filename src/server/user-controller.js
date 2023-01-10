@@ -177,18 +177,22 @@ class UserController {
       return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
-    let linkedExternalAccountId = null;
-
     const user = await this.userService.verifyUser(req.params.verificationCode);
 
+    let linkedExternalAccountId;
     if (req.session.externalAccount) {
-      const externalAccountId = req.session.externalAccount._id;
-      const userId = user._id;
-      await this.externalAccountService.updateExternalAccountUserId({ externalAccountId, userId });
-      req.session.externalAccount = null;
-      linkedExternalAccountId = externalAccountId;
+      linkedExternalAccountId = req.session.externalAccount._id;
+      await this.externalAccountService.updateExternalAccountUserId({
+        externalAccountId: linkedExternalAccountId,
+        userId: user._id
+      });
 
-      await new Promise((resolve, reject) => req.login(user, err => err ? reject(err) : resolve()));
+      req.session.externalAccount = null;
+      await new Promise((resolve, reject) => req.login(user, err => {
+        return err ? reject(err) : resolve();
+      }));
+    } else {
+      linkedExternalAccountId = null;
     }
 
     const initialState = { user, linkedExternalAccountId };
