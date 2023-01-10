@@ -75,14 +75,18 @@ export default class RoomController {
       case ROOM_USER_ROLE.owner:
         rooms = await this.roomService.getRoomsOwnedByUser(user._id);
         break;
+      case ROOM_USER_ROLE.ownerOrMember:
+        rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
+        break;
       case ROOM_USER_ROLE.ownerOrCollaborator:
         rooms = await this.roomService.getRoomsByOwnerOrCollaboratorUser(user._id);
         break;
       default:
         throw new BadRequest();
     }
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
 
-    return res.send(rooms);
+    return res.send({ rooms: mappedRooms });
   }
 
   async handlePostRoom(req, res) {

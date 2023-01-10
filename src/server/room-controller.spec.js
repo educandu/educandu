@@ -32,6 +32,7 @@ describe('room-controller', () => {
       createOrUpdateInvitations: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomsOwnedByUser: sandbox.stub(),
+      getRoomsOwnedOrJoinedByUser: sandbox.stub(),
       getRoomsByOwnerOrCollaboratorUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
       getRoomInvitationById: sandbox.stub(),
@@ -83,10 +84,14 @@ describe('room-controller', () => {
   describe('handleGetRooms', () => {
 
     describe('when called with user role "owner"', () => {
-      const ownedRooms = Array.from({ length: 3 }, () => ({ _id: uniqueId.create() }));
+      let mappedRoom;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        roomService.getRoomsOwnedByUser.resolves(ownedRooms);
+        const room = { _id: uniqueId.create() };
+        mappedRoom = cloneDeep(room);
+
+        roomService.getRoomsOwnedByUser.resolves([room]);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
 
         req = { user, query: { userRole: ROOM_USER_ROLE.owner } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -100,15 +105,45 @@ describe('room-controller', () => {
       });
 
       it('should respond with the owned rooms', () => {
-        expect(res._getData()).toEqual(ownedRooms);
+        expect(res._getData()).toEqual({ rooms: [mappedRoom] });
+      });
+    });
+
+    describe('when called with user role "ownerOrMember"', () => {
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        const room = { _id: uniqueId.create() };
+        mappedRoom = cloneDeep(room);
+
+        roomService.getRoomsOwnedOrJoinedByUser.resolves([room]);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+
+        req = { user, query: { userRole: ROOM_USER_ROLE.ownerOrMember } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRooms(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the owned/joined rooms', () => {
+        expect(res._getData()).toEqual({ rooms: [mappedRoom] });
       });
     });
 
     describe('when called with user role "ownerOrCollaborator"', () => {
-      const ownedOrCollaboratedRooms = Array.from({ length: 3 }, () => ({ _id: uniqueId.create() }));
+      let mappedRoom;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        roomService.getRoomsByOwnerOrCollaboratorUser.resolves(ownedOrCollaboratedRooms);
+        const room = { _id: uniqueId.create() };
+        mappedRoom = cloneDeep(room);
+
+        roomService.getRoomsByOwnerOrCollaboratorUser.resolves([room]);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
 
         req = { user, query: { userRole: ROOM_USER_ROLE.ownerOrCollaborator } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -122,7 +157,7 @@ describe('room-controller', () => {
       });
 
       it('should respond with the owned/collaborated rooms', () => {
-        expect(res._getData()).toEqual(ownedOrCollaboratedRooms);
+        expect(res._getData()).toEqual({ rooms: [mappedRoom] });
       });
     });
 

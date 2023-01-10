@@ -44,9 +44,6 @@ describe('user-controller', () => {
     storageService = {
       getAllStoragePlans: sandbox.stub()
     };
-    documentService = {
-      getMetadataOfLatestPublicDocumentsCreatedByUser: sandbox.stub()
-    };
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
     };
@@ -108,8 +105,6 @@ describe('user-controller', () => {
     });
 
     describe('when the viewed user exists', () => {
-      let documents;
-      let mappedDocuments;
       let mappedViewedUser;
 
       beforeEach(() => {
@@ -122,9 +117,6 @@ describe('user-controller', () => {
         };
         const viewingUser = { _id: uniqueId.create() };
 
-        documents = [{ _id: uniqueId.create() }];
-        mappedDocuments = cloneDeep(documents);
-
         req = {
           user: viewingUser,
           params: { userId: viewedUser._id }
@@ -134,9 +126,7 @@ describe('user-controller', () => {
         mappedViewedUser = cloneDeep(viewedUser);
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
-        documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
 
-        clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
 
@@ -145,8 +135,7 @@ describe('user-controller', () => {
 
       it('should call pageRenderer.sendPage', () => {
         assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
-          user: mappedViewedUser,
-          documents: mappedDocuments
+          user: mappedViewedUser
         });
       });
     });
