@@ -227,12 +227,3 @@ export const HTTP_STATUS = {
   tooManyRequests: 429,
   internalServerError: 500
 };
-
-export const YOUTUBE_STATE = {
-  unstarted: -1,
-  ended: 0,
-  playing: 1,
-  paused: 2,
-  buffering: 3,
-  videoCued: 5
-};
