@@ -1,34 +1,43 @@
 import PropTypes from 'prop-types';
-import { Form, Input } from 'antd';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
+import { Button, Form, Input } from 'antd';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
 import { handleApiError } from '../ui/error-helper.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import BlockedLoginError from './blocked-login-error.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
+import ExternalAccountProviderDialog from './external-account-provider-dialog.js';
 
 const logger = new Logger(import.meta.url);
 
 export default function LoginForm({
   name,
+  formRef,
   fixedEmail,
+  allowExternalLogin,
+  connectExternalAccount,
+  showLoginButtons,
+  showPasswordReset,
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  onLoginBlocked,
-  formRef
+  onLoginBlocked
 }) {
   const setUser = useSetUser();
   const [form] = Form.useForm();
   const { t } = useTranslation('loginForm');
+  const clientConfig = useService(ClientConfig);
   const userApiClient = useService(UserApiClient);
   const [hasLoginFailed, setHasLoginFailed] = useState(false);
   const [isUserAccountLocked, setIsUserAccountLocked] = useState(false);
   const [hasLoginFailedTooOften, setHasLoginFailedTooOften] = useState(false);
+  const [isExternalAccountProviderDialogOpen, setIsExternalAccountProviderDialogOpen] = useState(false);
 
   if (formRef) {
     formRef.current = form;
@@ -41,10 +50,10 @@ export default function LoginForm({
   const login = async ({ email, password }) => {
     try {
       onLoginStarted();
-      const { user } = await userApiClient.login({ email, password });
+      const { user, connectedExternalAccountId } = await userApiClient.login({ email, password, connectExternalAccount });
       if (user) {
         setUser(user);
-        onLoginSucceeded();
+        onLoginSucceeded(user, connectedExternalAccountId);
       } else {
         setHasLoginFailed(true);
         onLoginFailed();
@@ -66,6 +75,11 @@ export default function LoginForm({
     }
   };
 
+  const loginUsingExternalProvider = providerKey => {
+    const provider = clientConfig.samlAuth.identityProviders.find(p => p.key === providerKey);
+    window.location = routes.getSamlAuthLoginPath(provider.key);
+  };
+
   const handleFinish = values => {
     setHasLoginFailed(false);
     setHasLoginFailedTooOften(false);
@@ -75,6 +89,28 @@ export default function LoginForm({
 
   const handlePressEnter = () => {
     form.submit();
+  };
+
+  const handleLoginButtonClick = () => {
+    form.submit();
+  };
+
+  const handleLoginWithShibbolethButtonClick = () => {
+    if (clientConfig.samlAuth.identityProviders.length === 1) {
+      const providerKey = clientConfig.samlAuth.identityProviders[0].key;
+      loginUsingExternalProvider(providerKey);
+    } else {
+      setIsExternalAccountProviderDialogOpen(true);
+    }
+  };
+
+  const handleExternalAccountProviderDialogOk = providerKey => {
+    setIsExternalAccountProviderDialogOpen(false);
+    loginUsingExternalProvider(providerKey);
+  };
+
+  const handleExternalAccountProviderDialogCancel = () => {
+    setIsExternalAccountProviderDialogOpen(false);
   };
 
   const emailValidationRules = [
@@ -97,6 +133,7 @@ export default function LoginForm({
   ];
 
   const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
+  const canLoginWithShibboleth = allowExternalLogin && clientConfig.samlAuth?.identityProviders.length;
 
   return (
     <div className="LoginForm">
@@ -129,19 +166,47 @@ export default function LoginForm({
       {!hasBlockingError && !!hasLoginFailed && (
         <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
       )}
+      {!hasBlockingError && !!showPasswordReset && (
+        <div className="LoginForm-forgotPasswordLink">
+          <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+        </div>
+      )}
+      {!hasBlockingError && !!showLoginButtons && (
+        <div className="LoginForm-loginButton">
+          <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
+            {t('common:login')}
+          </Button>
+        </div>
+      )}
+      {!hasBlockingError && !!showLoginButtons && !!canLoginWithShibboleth && (
+        <div className="LoginForm-loginButton LoginForm-loginButton--secondary">
+          <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
+            {t('loginWithShibboleth')}
+          </Button>
+        </div>
+      )}
       {!!hasBlockingError && (
         <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
       )}
+      <ExternalAccountProviderDialog
+        isOpen={isExternalAccountProviderDialogOpen}
+        onOk={handleExternalAccountProviderDialogOk}
+        onCancel={handleExternalAccountProviderDialogCancel}
+        />
     </div>
   );
 }
 
 LoginForm.propTypes = {
-  fixedEmail: PropTypes.string,
+  name: PropTypes.string,
   formRef: PropTypes.shape({
     current: PropTypes.object
   }),
-  name: PropTypes.string,
+  fixedEmail: PropTypes.string,
+  allowExternalLogin: PropTypes.bool,
+  connectExternalAccount: PropTypes.bool,
+  showLoginButtons: PropTypes.bool,
+  showPasswordReset: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
@@ -149,11 +214,15 @@ LoginForm.propTypes = {
 };
 
 LoginForm.defaultProps = {
-  fixedEmail: null,
-  formRef: null,
   name: 'login-form',
+  formRef: null,
+  fixedEmail: null,
+  allowExternalLogin: false,
+  connectExternalAccount: false,
+  showLoginButtons: false,
+  showPasswordReset: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},
-  onLoginBlocked: () => {},
+  onLoginBlocked: () => {}
 };

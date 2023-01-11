@@ -17,5 +17,6 @@ export const PAGE_NAME = {
   browserNotSupported: 'browser-not-supported',
   completeRegistration: 'complete-registration',
   completePasswordReset: 'complete-password-reset',
+  connectExternalAccount: 'connect-external-account',
   roomMembershipConfirmation: 'room-membership-confirmation'
 };

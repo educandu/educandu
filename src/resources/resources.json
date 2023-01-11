@@ -575,7 +575,9 @@
     "resources": {
       "enterEmail": "Please enter your email address",
       "enterPassword": "Please enter your password",
-      "loginFailed": "Login failed. Please check your input."
+      "loginFailed": "Login failed. Please check your input.",
+      "forgotPassword": "Forgot your password?",
+      "loginWithShibboleth": "Login with Shibboleth"
     }
   },
   {
@@ -584,7 +586,9 @@
     "resources": {
       "enterEmail": "Bitte gib deine E-Mail-Adresse an",
       "enterPassword": "Bitte gib dein Kennwort an",
-      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe."
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.",
+      "forgotPassword": "Kennwort vergessen?",
+      "loginWithShibboleth": "Mit Shibboleth anmelden"
     }
   },
   {
@@ -940,6 +944,32 @@
     }
   },
   {
+    "namespace": "connectExternalAccount",
+    "language": "en",
+    "resources": {
+      "welcomeBack": "Welcome (back)!",
+      "choicesDescription": "Please connect your Shibboleth login with your existing {appName} account or\ncreate a new account in case this is your first log in.\n",
+      "choicesLogin": "Connect to an existing account",
+      "choicesRegister": "Create a new account",
+      "choicesAbort": "I do not want to log in after all",
+      "infoBoxTitle": "Why do I see this page?",
+      "infoBoxDescription": "In case you have logged in using Shibboleth for the first time, you first of all have\nto connect your Shibboleth account with your {appName} account. The {appName} account\nwill continue to exist even if you leave the institution and therefore cannot access the\nsite using Shibboleth anymore. This way you will keep the ability to edit your content\nas well as pertain your original authorship over content you already created on {appName}.\nFor this reason, it is recommended you use your private email address for your {appName}\naccount. In case you have already connected your Shibboleth account and you are wondering\nwhy you see this page, it is because you haven't logged in over a longer period of time\nusing Shibboleth. We periodically delete logins that haven't been used for some time out\nof data protection reasons as well as to protect your own account. But you can easily\nre-establish the connection to your {appName} account on this page.\n"
+    }
+  },
+  {
+    "namespace": "connectExternalAccount",
+    "language": "de",
+    "resources": {
+      "welcomeBack": "Willkommen (zurück)!",
+      "choicesDescription": "Bitte verknüpfe deine Shibboleth-Anmeldung mit deinem vorhandenem {appName}-Konto,\noder erstelle ein neues Konto, falls du dich zum ersten mal angemeldet hast.\n",
+      "choicesLogin": "Mit vorhandenem Konto verknüpfen",
+      "choicesRegister": "Neues Konto erstellen",
+      "choicesAbort": "Ich möchte mich doch nicht einloggen",
+      "infoBoxTitle": "Warum sehe ich diese Seite?",
+      "infoBoxDescription": "Wenn du dich zum ersten Mal mit Shibboleth angemeldet hast, musst du dein Shibboleth-Konto\nerst mit deinem {appName}-Konto verknüpfen. Das {appName}-Konto bleibt erhalten, selbst\nwenn du die Institution verlässt und keinen Zugang mehr über Shibboleth hast. So kannst\ndu weiterhin deinen Content bearbeiten und als derselbe {appName}-Autor auftreten. Es empfiehlt\nsich daher, für dein {appName}-Konto deine private E-Mail-Adresse zu verwenden. Falls du dein\nShibboleth-Konto bereits einmal verknüpft hast und dich wunderst, warum du diese Seite\nsiehst, liegt das daran, dass du dich über einen längeren Zeitraum nicht mit Shibboleth\nangemeldet hast. Aus Datenschutzgründen und zu deiner eigenen Sicherheit löschen wir\nAnmeldungen, die länger nicht benutzt wurden. Du kannst die Verknüpfung zu deinem\n{appName}-Konto auf dieser Seite aber ganz einfach wieder herstellen.\n"
+    }
+  },
+  {
     "namespace": "dashboard",
     "language": "en",
     "resources": {
@@ -1009,42 +1039,6 @@
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen"
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "en",
-    "resources": {
-      "forgotPassword": "Forgot your password?",
-      "loginWithShibboleth": "Login with Shibboleth"
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "de",
-    "resources": {
-      "forgotPassword": "Kennwort vergessen?",
-      "loginWithShibboleth": "Mit Shibboleth anmelden"
-    }
-  },
-  {
-    "namespace": "register",
-    "language": "en",
-    "resources": {
-      "confirmTerms": "Please confirm your agreement with the terms and conditions",
-      "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
-      "register": "Register",
-      "registrationConfirmationMessage": "# One more step remaining ...\n\nPlease confirm your registration with the link we have just sent you via email. \\\nThe link is valid **for 24 hours**. After completing this step you will be able to log in to your account.\n\n[Go to the login page]({loginPageUrl})\n"
-    }
-  },
-  {
-    "namespace": "register",
-    "language": "de",
-    "resources": {
-      "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
-      "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
-      "register": "Registrieren",
-      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
     }
   },
   {
@@ -1337,6 +1331,26 @@
       "introduction": "Vorstellung",
       "updateSuccessMessage": "Dein Profil wurde erfolgreich aktualisiert.",
       "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
+    }
+  },
+  {
+    "namespace": "registrationForm",
+    "language": "en",
+    "resources": {
+      "confirmTerms": "Please confirm your agreement with the terms and conditions",
+      "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
+      "register": "Register",
+      "registrationConfirmationMessage": "# One more step remaining ...\n\nPlease confirm your registration with the link we have just sent you via email. \\\nThe link is valid **for 24 hours**. After completing this step you will be able to log in to your account.\n\n[Go to the login page]({loginPageUrl})\n"
+    }
+  },
+  {
+    "namespace": "registrationForm",
+    "language": "de",
+    "resources": {
+      "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
+      "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
+      "register": "Registrieren",
+      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
     }
   },
   {

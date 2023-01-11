@@ -7,3 +7,9 @@ enterPassword:
 loginFailed:
   en: Login failed. Please check your input.
   de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.
+forgotPassword:
+  en: Forgot your password?
+  de: Kennwort vergessen?
+loginWithShibboleth:
+  en: Login with Shibboleth
+  de: Mit Shibboleth anmelden

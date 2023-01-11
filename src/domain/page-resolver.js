@@ -21,6 +21,7 @@ const pageImporters = {
   [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
   [PAGE_NAME.completeRegistration]: async () => (await import('../components/pages/complete-registration.js')).default,
   [PAGE_NAME.completePasswordReset]: async () => (await import('../components/pages/complete-password-reset.js')).default,
+  [PAGE_NAME.connectExternalAccount]: async () => (await import('../components/pages/connect-external-account.js')).default,
   [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default
 };
 
