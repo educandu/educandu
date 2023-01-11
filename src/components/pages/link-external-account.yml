@@ -4,7 +4,7 @@ welcomeBack:
 choicesDescription:
   en: |
     Please connect your Shibboleth login with your existing {appName} account or
-    create a new account in case you have logged in for the first time.
+    create a new account in case this is your first log in.
   de: |
     Bitte verknüpfe deine Shibboleth-Anmeldung mit deinem vorhandenem {appName}-Konto,
     oder erstelle ein neues Konto, falls du dich zum ersten mal angemeldet hast.
@@ -31,7 +31,7 @@ infoBoxDescription:
     account. In case you have already connected your Shibboleth account and you are wondering
     why you see this page, it is because you haven't logged in over a longer period of time
     using Shibboleth. We periodically delete logins that haven't been used for some time out
-    of data protection reasons as well es to protect your own account. But you can easily
+    of data protection reasons as well as to protect your own account. But you can easily
     re-establish the connection to your {appName} account on this page.
   de: |
     Wenn du dich zum ersten Mal mit Shibboleth angemeldet hast, musst du dein Shibboleth-Konto

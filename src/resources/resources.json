@@ -1014,12 +1014,12 @@
     "language": "en",
     "resources": {
       "welcomeBack": "Welcome (back)!",
-      "choicesDescription": "Please connect your Shibboleth login with your existing {appName} account or\ncreate a new account in case you have logged in for the first time.\n",
+      "choicesDescription": "Please connect your Shibboleth login with your existing {appName} account or\ncreate a new account in case this is your first log in.\n",
       "choicesLogin": "Connect to an existing account",
       "choicesRegister": "Create a new account",
       "choicesAbort": "I do not want to log in after all",
       "infoBoxTitle": "Why do I see this page?",
-      "infoBoxDescription": "In case you have logged in using Shibboleth for the first time, you first of all have\nto connect your Shibboleth account with your {appName} account. The {appName} account\nwill continue to exist even if you leave the institution and therefore cannot access the\nsite using Shibboleth anymore. This way you will keep the ability to edit your content\nas well as pertain your original authorship over content you already created on {appName}.\nFor this reason, it is recommended you use your private email address for your {appName}\naccount. In case you have already connected your Shibboleth account and you are wondering\nwhy you see this page, it is because you haven't logged in over a longer period of time\nusing Shibboleth. We periodically delete logins that haven't been used for some time out\nof data protection reasons as well es to protect your own account. But you can easily\nre-establish the connection to your {appName} account on this page.\n"
+      "infoBoxDescription": "In case you have logged in using Shibboleth for the first time, you first of all have\nto connect your Shibboleth account with your {appName} account. The {appName} account\nwill continue to exist even if you leave the institution and therefore cannot access the\nsite using Shibboleth anymore. This way you will keep the ability to edit your content\nas well as pertain your original authorship over content you already created on {appName}.\nFor this reason, it is recommended you use your private email address for your {appName}\naccount. In case you have already connected your Shibboleth account and you are wondering\nwhy you see this page, it is because you haven't logged in over a longer period of time\nusing Shibboleth. We periodically delete logins that haven't been used for some time out\nof data protection reasons as well as to protect your own account. But you can easily\nre-establish the connection to your {appName} account on this page.\n"
     }
   },
   {
