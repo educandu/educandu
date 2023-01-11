@@ -1,9 +1,9 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
 import { useStableCallback } from '../../../ui/hooks.js';
-import { useYoutubeThumbnailUrl } from '../media-hooks.js';
 import PlayIcon from '../../icons/media-player/play-icon.js';
 import { memoAndTransformProps } from '../../../ui/react-helper.js';
+import { useMediaDurations, useYoutubeThumbnailUrl } from '../media-hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
@@ -37,14 +37,26 @@ function YoutubePlayer({
   const progressInterval = useRef(null);
   const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
 
+  const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
+  const [playbackRangeInS, setPlaybackRangeInS] = useState(null);
+
+  const sourceDurationInMs = useMemo(() => {
+    return sourceDurationInfo?.duration || 0;
+  }, [sourceDurationInfo]);
+
+  useEffect(() => {
+    if (sourceDurationInMs) {
+      const startTimeInS = Math.trunc((playbackRange[0] * sourceDurationInMs) / 1000);
+      const endTimeInS = Math.trunc((playbackRange[1] * sourceDurationInMs)  / 1000);
+      const playbackDurationInS = endTimeInS - startTimeInS;
+
+      setPlaybackRangeInS([startTimeInS, endTimeInS]);
+      onDuration(playbackDurationInS * 1000);
+    }
+  }, [playbackRange, sourceDurationInMs, onDuration]);
+
   const [player, setPlayer] = useState(null);
   const [showPosterImage, setShowPosterImage] = useState(true);
-  const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
-
-  const playbackRangeInMs = useMemo(() => [
-    playbackRange[0] * sourceDurationInMs,
-    playbackRange[1] * sourceDurationInMs
-  ], [playbackRange, sourceDurationInMs]);
 
   const posterOrThumbnailImageUrl = useMemo(() => {
     if (posterImageUrl) {
@@ -60,27 +72,32 @@ function YoutubePlayer({
   const triggerPlay = useCallback(() => {
     if (player && !!sourceDurationInMs) {
       setShowPosterImage(false);
-      const currentActualTimeInMs = player.currentTime * 1000;
-      const isEndReached = !!playbackRangeInMs[1] && currentActualTimeInMs >= playbackRangeInMs[1];
 
-      if (isEndReached) {
-        player.currentTime = playbackRangeInMs[0] / 1000;
+      const endTimeWasReached = player.currentTime >= playbackRangeInS[1];
+      if (endTimeWasReached) {
+        player.currentTime = playbackRangeInS[0];
       }
 
       player.play();
     }
-  }, [player, sourceDurationInMs, playbackRangeInMs]);
+  }, [player, playbackRangeInS, sourceDurationInMs]);
 
   const triggerPause = useCallback(() => {
     player?.pause();
   }, [player]);
 
-  const triggerSeek = useCallback(milliseconds => {
+  const triggerSeek = useCallback(seekedTimeWithinRangeInMs => {
     if (player) {
-      const actualTimeInMs = playbackRangeInMs[0] + milliseconds;
-      player.currentTime = actualTimeInMs / 1000;
+      const startTimeInMs = playbackRangeInS[0] * 1000;
+      const currentActualTimeInMs = startTimeInMs + seekedTimeWithinRangeInMs;
+      player.currentTime = currentActualTimeInMs / 1000;
+
+      if (player.paused) {
+        const currentTimeWithinRangeInMs = currentActualTimeInMs - startTimeInMs;
+        onProgress(currentTimeWithinRangeInMs);
+      }
     }
-  }, [player, playbackRangeInMs]);
+  }, [player, playbackRangeInS, onProgress]);
 
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
@@ -91,18 +108,33 @@ function YoutubePlayer({
   };
 
   useEffect(() => {
+    if (!playbackRangeInS) {
+      return;
+    }
+
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
       ratio: aspectRatio,
       clickToPlay: true,
       loadSprite: false,
-      blankVideo: null,
+      blankVideo: '',
       fullscreen: { enabled: false, fallback: false },
       // https://developers.google.com/youtube/player_parameters#Parameters
-      youtube: { autoplay: 0, rel: 0, fs: 0, showinfo: 0, disablekb: 1, iv_load_policy: 3, modestbranding: 1, controls: 0 }
+      youtube: {
+        autoplay: 0,
+        rel: 0,
+        fs: 0,
+        showinfo: 0,
+        disablekb: 1,
+        iv_load_policy: 3,
+        modestbranding: 1,
+        controls: 0,
+        start: playbackRangeInS[0],
+        end: playbackRangeInS[1],
+      }
     });
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio]);
+  }, [plyrRef, aspectRatio, playbackRangeInS]);
 
   useEffect(() => {
     if (player) {
@@ -125,50 +157,22 @@ function YoutubePlayer({
     }
   }, [player, volume]);
 
-  useEffect(() => {
-    if (player && playbackRangeInMs[0] > 0) {
-      player.currentTime = playbackRangeInMs[0] / 1000;
-    }
-  }, [player, playbackRangeInMs]);
-
   const handleEnded = useCallback(() => {
     setProgressInterval(null);
     onEnded();
   }, [onEnded]);
 
   const handleProgress = useCallback(() => {
-    if (player && sourceDurationInMs) {
+    if (player && !isNaN(player.currentTime)) {
       const currentActualTimeInMs = player.currentTime * 1000;
-      const isEndReached = currentActualTimeInMs >= playbackRangeInMs[1];
-
-      if (!isEndReached) {
-        const currentTimeWithinRangeInMs = currentActualTimeInMs - playbackRangeInMs[0];
-        onProgress(currentTimeWithinRangeInMs);
-        return;
-      }
-
-      triggerPause();
-
-      const endTimeWithinRangeInMs = playbackRangeInMs[1] - playbackRangeInMs[0];
-      onProgress(endTimeWithinRangeInMs);
-
-      handleEnded();
+      const currentTimeWithinRangeInMs = currentActualTimeInMs - (playbackRangeInS[0] * 1000);
+      onProgress(currentTimeWithinRangeInMs);
     }
-  }, [player, sourceDurationInMs, playbackRangeInMs, onProgress, triggerPause, handleEnded]);
-
-  const handleDuration = useCallback(() => {
-    if (player.duration) {
-      const actualDurationInMs = player.duration * 1000;
-      const playbackDurationInMs = actualDurationInMs * (playbackRange[1] - playbackRange[0]);
-      setSourceDurationInMs(actualDurationInMs);
-      onDuration(playbackDurationInMs);
-    }
-  }, [player, playbackRange, onDuration]);
+  }, [player, playbackRangeInS, onProgress]);
 
   const handleReady = useCallback(() => {
-    handleDuration();
     onReady();
-  }, [handleDuration, onReady]);
+  }, [onReady]);
 
   const handlePlaying = useCallback(() => {
     onPlay();

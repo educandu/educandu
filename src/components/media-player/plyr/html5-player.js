@@ -52,9 +52,9 @@ function Htlm5Player({
     player?.pause();
   }, [player]);
 
-  const triggerSeek = useCallback(milliseconds => {
+  const triggerSeek = useCallback(seekedTimeWithinRangeInMs => {
     if (player) {
-      const actualTimeInMs = playbackRangeInMs[0] + milliseconds;
+      const actualTimeInMs = playbackRangeInMs[0] + seekedTimeWithinRangeInMs;
       player.currentTime = actualTimeInMs / 1000;
     }
   }, [player, playbackRangeInMs]);
@@ -73,7 +73,7 @@ function Htlm5Player({
       ratio: aspectRatio,
       clickToPlay: true,
       loadSprite: false,
-      blankVideo: null,
+      blankVideo: '',
       fullscreen: { enabled: false, fallback: false }
     });
     setPlayer(playerInstance);
