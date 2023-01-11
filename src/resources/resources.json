@@ -574,7 +574,8 @@
       "enterEmail": "Please enter your email address",
       "enterPassword": "Please enter your password",
       "loginFailed": "Login failed. Please check your input.",
-      "forgotPassword": "Forgot your password?"
+      "forgotPassword": "Forgot your password?",
+      "loginWithShibboleth": "Login with Shibboleth"
     }
   },
   {
@@ -584,7 +585,8 @@
       "enterEmail": "Bitte gib deine E-Mail-Adresse an",
       "enterPassword": "Bitte gib dein Kennwort an",
       "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.",
-      "forgotPassword": "Kennwort vergessen?"
+      "forgotPassword": "Kennwort vergessen?",
+      "loginWithShibboleth": "Mit Shibboleth anmelden"
     }
   },
   {
@@ -1033,20 +1035,6 @@
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen"
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "en",
-    "resources": {
-      "loginWithShibboleth": "Login with Shibboleth"
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "de",
-    "resources": {
-      "loginWithShibboleth": "Mit Shibboleth anmelden"
     }
   },
   {

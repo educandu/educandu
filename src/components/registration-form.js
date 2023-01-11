@@ -66,6 +66,10 @@ function RegistrationForm({
     register({ email, password, displayName: displayName.trim() });
   };
 
+  const handleRegisterButtonClick = () => {
+    form.submit();
+  };
+
   const agreementValidationRules = [
     {
       message: t('confirmTerms'),
@@ -89,7 +93,7 @@ function RegistrationForm({
         <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" />
         <DisplayNameFormItem name="displayName" />
         <FormItem name="agreement" valuePropName="checked" rules={agreementValidationRules}>
-          <Checkbox>
+          <Checkbox className="RegistrationForm-termsAndConditionsCheckbox">
             <Trans
               t={t}
               i18nKey="termsAndConditionsConfirmation"
@@ -103,12 +107,12 @@ function RegistrationForm({
               />
           </Checkbox>
         </FormItem>
-        <FormItem >
-          <Button className="RegistrationForm-formButton" type="primary" size="large" htmlType="submit" block>
-            {t('register')}
-          </Button>
-        </FormItem>
       </Form>
+      <div className="RegistrationForm-registerButton">
+        <Button type="primary" size="large" onClick={handleRegisterButtonClick} block>
+          {t('register')}
+        </Button>
+      </div>
     </div>
   );
 

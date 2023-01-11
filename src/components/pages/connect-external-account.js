@@ -1,10 +1,10 @@
 import { Button } from 'antd';
 import Alert from '../alert.js';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
 import { useLocale } from '../locale-context.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
@@ -20,11 +20,9 @@ const VIEW = {
 
 function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
   const request = useRequest();
-  const loginFormRef = useRef();
   const { uiLanguage } = useLocale();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('connectExternalAccount');
-  const [isLoginBlocked, setIsLoginBlocked] = useState(false);
   const [currentView, setCurrentView] = useState(VIEW.choices);
 
   const handleLoginChoiceClick = () => {
@@ -39,16 +37,8 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
     throw new Error('NOT IMPLEMENTED');
   };
 
-  const handleLoginButtonClick = () => {
-    loginFormRef.current.submit();
-  };
-
   const handleLoginSucceeded = () => {
     window.location = request.query.redirect || routes.getDefaultLoginRedirectUrl();
-  };
-
-  const handleLoginBlocked = () => {
-    setIsLoginBlocked(true);
   };
 
   const handleBackButtonClick = () => {
@@ -84,20 +74,12 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
         {currentView === VIEW.login && (
           <div className="ConnectExternalAccountPage-loginView">
             <LoginForm
-              formRef={loginFormRef}
               name="connect-external-account-page-login-form"
               onLoginSucceeded={handleLoginSucceeded}
-              onLoginBlocked={handleLoginBlocked}
               connectExternalAccount
               showPasswordReset
+              showLoginButtons
               />
-            {!isLoginBlocked && (
-              <div className="ConnectExternalAccountPage-loginButton">
-                <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
-                  {t('common:login')}
-                </Button>
-              </div>
-            )}
             <div className="ConnectExternalAccountPage-backButton">
               <Button size="large" onClick={handleBackButtonClick} block>
                 {t('common:back')}
