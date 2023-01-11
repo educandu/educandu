@@ -46,11 +46,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  login({ email, password, linkExternalAccount = false }) {
+  login({ email, password, connectExternalAccount = false }) {
     return this.httpClient
       .post(
         '/api/v1/users/login',
-        { email, password, linkExternalAccount },
+        { email, password, connectExternalAccount },
         { responseType: 'json' }
       )
       .then(res => res.data);

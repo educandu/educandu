@@ -179,11 +179,11 @@ class UserController {
 
     const user = await this.userService.verifyUser(req.params.verificationCode);
 
-    let linkedExternalAccountId;
+    let connectedExternalAccountId;
     if (req.session.externalAccount) {
-      linkedExternalAccountId = req.session.externalAccount._id;
+      connectedExternalAccountId = req.session.externalAccount._id;
       await this.externalAccountService.updateExternalAccountUserId({
-        externalAccountId: linkedExternalAccountId,
+        externalAccountId: connectedExternalAccountId,
         userId: user._id
       });
 
@@ -192,10 +192,10 @@ class UserController {
         return err ? reject(err) : resolve();
       }));
     } else {
-      linkedExternalAccountId = null;
+      connectedExternalAccountId = null;
     }
 
-    const initialState = { user, linkedExternalAccountId };
+    const initialState = { user, connectedExternalAccountId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
   }
 
@@ -231,8 +231,8 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
-  handleGetLinkExternalAccountPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.linkExternalAccount, {});
+  handleGetConnectExternalAccountPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.connectExternalAccount, {});
   }
 
   async handleGetUserPage(req, res) {
@@ -314,16 +314,16 @@ class UserController {
 
       const updatedUser = await this.userService.recordUserLogIn(user._id);
 
-      let linkedExternalAccountId;
-      if (req.body.linkExternalAccount) {
-        linkedExternalAccountId = req.session.externalAccount._id;
+      let connectedExternalAccountId;
+      if (req.body.connectExternalAccount) {
+        connectedExternalAccountId = req.session.externalAccount._id;
         await this.externalAccountService.updateExternalAccountUserId({
-          externalAccountId: linkedExternalAccountId,
+          externalAccountId: connectedExternalAccountId,
           userId: updatedUser._id
         });
         req.session.externalAccount = null;
       } else {
-        linkedExternalAccountId = null;
+        connectedExternalAccountId = null;
       }
 
       await new Promise((resolve, reject) => req.login(updatedUser, err => {
@@ -332,7 +332,7 @@ class UserController {
 
       return res.status(201).send({
         user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
-        linkedExternalAccountId
+        connectedExternalAccountId
       });
     } catch (error) {
       return next(error);
@@ -507,7 +507,7 @@ class UserController {
         !externalAccount ||
         routes.isApiPath(req.originalUrl) ||
         routes.isResetPasswordPath(req.originalUrl) ||
-        routes.isLinkExternalAccountPath(req.originalUrl) ||
+        routes.isConnectExternalAccountPath(req.originalUrl) ||
         routes.isCompleteRegistrationPath(req.originalUrl) ||
         routes.isCompletePasswordResetPrefixPath(req.originalUrl)
       ) {
@@ -516,7 +516,7 @@ class UserController {
 
       return externalAccount.userId
         ? next(new InternalServerError('NOT IMPLEMENTED: User is already linked to external account'))
-        : res.redirect(routes.getLinkExternalAccountPath());
+        : res.redirect(routes.getConnectExternalAccountPath());
     });
   }
 
@@ -535,7 +535,7 @@ class UserController {
 
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
-    router.get('/link-external-account', (req, res) => this.handleGetLinkExternalAccountPage(req, res));
+    router.get('/connect-external-account', (req, res) => this.handleGetConnectExternalAccountPage(req, res));
 
     router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }

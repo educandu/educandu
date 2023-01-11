@@ -12,7 +12,7 @@ const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
 const resetPasswordPath = '/reset-password';
-const linkExternalAccountPath = '/link-external-account';
+const connectExternalAccountPath = '/connect-external-account';
 
 const apiPrefix = '/api/';
 const docsPrefix = '/docs/';
@@ -105,8 +105,8 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
-function getLinkExternalAccountPath() {
-  return linkExternalAccountPath;
+function getConnectExternalAccountPath() {
+  return connectExternalAccountPath;
 }
 
 function getSearchUrl(query) {
@@ -138,8 +138,8 @@ function isResetPasswordPath(path) {
   return path === resetPasswordPath;
 }
 
-function isLinkExternalAccountPath(path) {
-  return path === linkExternalAccountPath;
+function isConnectExternalAccountPath(path) {
+  return path === connectExternalAccountPath;
 }
 
 function isCompleteRegistrationPath(path) {
@@ -169,7 +169,7 @@ export default {
   getDashboardUrl,
   getRegisterUrl,
   getResetPasswordUrl,
-  getLinkExternalAccountPath,
+  getConnectExternalAccountPath,
   getSearchUrl,
   getBatchUrl,
   getDocIdIfDocUrl,
@@ -177,7 +177,7 @@ export default {
   getSamlAuthLoginCallbackPath,
   isApiPath,
   isResetPasswordPath,
-  isLinkExternalAccountPath,
+  isConnectExternalAccountPath,
   isCompleteRegistrationPath,
   isCompletePasswordResetPrefixPath
 };

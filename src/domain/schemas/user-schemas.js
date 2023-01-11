@@ -56,7 +56,7 @@ export const favoriteBodySchema = joi.object({
 export const loginBodySchema = joi.object({
   email: joi.string().required(),
   password: joi.string().required(),
-  linkExternalAccount: joi.boolean().required()
+  connectExternalAccount: joi.boolean().required()
 });
 
 const storageReminderDBSchema = joi.object({

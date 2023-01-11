@@ -18,7 +18,7 @@ export default function LoginForm({
   name,
   formRef,
   fixedEmail,
-  linkExternalAccount,
+  connectExternalAccount,
   showPasswordReset,
   onLoginStarted,
   onLoginSucceeded,
@@ -44,10 +44,10 @@ export default function LoginForm({
   const login = async ({ email, password }) => {
     try {
       onLoginStarted();
-      const { user, linkedExternalAccountId } = await userApiClient.login({ email, password, linkExternalAccount });
+      const { user, connectedExternalAccountId } = await userApiClient.login({ email, password, connectExternalAccount });
       if (user) {
         setUser(user);
-        onLoginSucceeded(user, linkedExternalAccountId);
+        onLoginSucceeded(user, connectedExternalAccountId);
       } else {
         setHasLoginFailed(true);
         onLoginFailed();
@@ -151,7 +151,7 @@ LoginForm.propTypes = {
   }),
   name: PropTypes.string,
   showPasswordReset: PropTypes.bool,
-  linkExternalAccount: PropTypes.bool,
+  connectExternalAccount: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
@@ -163,7 +163,7 @@ LoginForm.defaultProps = {
   formRef: null,
   name: 'login-form',
   showPasswordReset: false,
-  linkExternalAccount: false,
+  connectExternalAccount: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},

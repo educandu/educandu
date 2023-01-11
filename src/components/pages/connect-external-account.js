@@ -18,12 +18,12 @@ const VIEW = {
   register: 'register'
 };
 
-function LinkExternalAccount({ PageTemplate, SiteLogo }) {
+function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
   const request = useRequest();
   const loginFormRef = useRef();
   const { uiLanguage } = useLocale();
   const clientConfig = useService(ClientConfig);
-  const { t } = useTranslation('linkExternalAccount');
+  const { t } = useTranslation('connectExternalAccount');
   const [isLoginBlocked, setIsLoginBlocked] = useState(false);
   const [currentView, setCurrentView] = useState(VIEW.choices);
 
@@ -59,46 +59,46 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
 
   return (
     <PageTemplate fullScreen>
-      <div className="LinkExternalAccountPage">
-        <div className="LinkExternalAccountPage-title">
+      <div className="ConnectExternalAccountPage">
+        <div className="ConnectExternalAccountPage-title">
           <SiteLogo readonly />
         </div>
         {currentView === VIEW.choices && (
-          <div className="LinkExternalAccountPage-choicesView">
-            <div className="LinkExternalAccountPage-viewTitle">
+          <div className="ConnectExternalAccountPage-choicesView">
+            <div className="ConnectExternalAccountPage-viewTitle">
               <h2>{t('welcomeBack')}</h2>
             </div>
-            <div className="LinkExternalAccountPage-description">
+            <div className="ConnectExternalAccountPage-description">
               {t('choicesDescription', { appName: appNameCompound })}
             </div>
-            <div className="LinkExternalAccountPage-choices">
+            <div className="ConnectExternalAccountPage-choices">
               <Button type="primary" size="large" block onClick={handleLoginChoiceClick}>{t('choicesLogin')}</Button>
               <Button type="primary" size="large" block onClick={handleRegisterChoiceClick}>{t('choicesRegister')}</Button>
               <Button size="large" block onClick={handleAbortChoiceClick}>{t('choicesAbort')}</Button>
             </div>
-            <div className="LinkExternalAccountPage-infoBox">
+            <div className="ConnectExternalAccountPage-infoBox">
               <Alert message={t('infoBoxTitle')} description={t('infoBoxDescription', { appName: appNameCompound })} />
             </div>
           </div>
         )}
         {currentView === VIEW.login && (
-          <div className="LinkExternalAccountPage-loginView">
+          <div className="ConnectExternalAccountPage-loginView">
             <LoginForm
               formRef={loginFormRef}
-              name="link-external-account-page-login-form"
+              name="connect-external-account-page-login-form"
               onLoginSucceeded={handleLoginSucceeded}
               onLoginBlocked={handleLoginBlocked}
-              linkExternalAccount
+              connectExternalAccount
               showPasswordReset
               />
             {!isLoginBlocked && (
-              <div className="LinkExternalAccountPage-loginButton">
+              <div className="ConnectExternalAccountPage-loginButton">
                 <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
                   {t('common:login')}
                 </Button>
               </div>
             )}
-            <div className="LinkExternalAccountPage-backButton">
+            <div className="ConnectExternalAccountPage-backButton">
               <Button size="large" onClick={handleBackButtonClick} block>
                 {t('common:back')}
               </Button>
@@ -106,9 +106,9 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
           </div>
         )}
         {currentView === VIEW.register && (
-          <div className="LinkExternalAccountPage-registerView">
+          <div className="ConnectExternalAccountPage-registerView">
             <RegistrationForm />
-            <div className="LinkExternalAccountPage-backButton">
+            <div className="ConnectExternalAccountPage-backButton">
               <Button size="large" onClick={handleBackButtonClick} block>
                 {t('common:back')}
               </Button>
@@ -120,9 +120,9 @@ function LinkExternalAccount({ PageTemplate, SiteLogo }) {
   );
 }
 
-LinkExternalAccount.propTypes = {
+ConnectExternalAccount.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   SiteLogo: PropTypes.func.isRequired
 };
 
-export default LinkExternalAccount;
+export default ConnectExternalAccount;

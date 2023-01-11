@@ -15,8 +15,8 @@ export const PAGE_NAME = {
   dashboard: 'dashboard',
   resetPassword: 'reset-password',
   browserNotSupported: 'browser-not-supported',
-  linkExternalAccount: 'link-external-account',
   completeRegistration: 'complete-registration',
   completePasswordReset: 'complete-password-reset',
+  connectExternalAccount: 'connect-external-account',
   roomMembershipConfirmation: 'room-membership-confirmation'
 };
