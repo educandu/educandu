@@ -171,7 +171,7 @@ function YoutubePlayer({
     setProgressInterval(null);
     setPlaybackEnded(true);
     // compensate for cases where youtube actual source duration is shorter than reported,
-    // thus having playback end 1s earlier; likely a sounding issue on their side
+    // thus having playback end 1s earlier; likely a rounding issue on their side
     onProgress((endTimeInS - startTimeInS) * 1000);
   }, [startTimeInS, endTimeInS, onProgress, onEnded]);
 
