@@ -14,7 +14,7 @@ import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
+import MediaPlayer from '../../components/media-player/plyr/media-player.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 const RadioButton = Radio.Button;
@@ -72,7 +72,7 @@ function EarTrainingDisplay({ content }) {
       <div className="EarTrainingDisplay-soundPlayer">
         {!!url && (
           <MediaPlayer
-            source={url}
+            sourceUrl={url}
             canDownload={canDownload}
             screenMode={MEDIA_SCREEN_MODE.none}
             />
