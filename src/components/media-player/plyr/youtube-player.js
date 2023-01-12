@@ -37,23 +37,24 @@ function YoutubePlayer({
   const progressInterval = useRef(null);
   const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
 
-  const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
-  const [playbackRangeInS, setPlaybackRangeInS] = useState(null);
+  const [endTimeInS, setEndTimeInS] = useState(0);
+  const [startTimeInS, setStartTimeInS] = useState(0);
+  const [playbackEnded, setPlaybackEnded] = useState(false);
+  const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
 
-  const sourceDurationInMs = useMemo(() => {
-    return sourceDurationInfo?.duration || 0;
-  }, [sourceDurationInfo]);
+  const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
   useEffect(() => {
-    if (sourceDurationInMs) {
-      const startTimeInS = Math.trunc((playbackRange[0] * sourceDurationInMs) / 1000);
-      const endTimeInS = Math.trunc((playbackRange[1] * sourceDurationInMs)  / 1000);
-      const playbackDurationInS = endTimeInS - startTimeInS;
+    if (sourceDurationInfo.duration) {
+      const calculatedStartTimeInS = Math.trunc((playbackRange[0] * sourceDurationInfo.duration) / 1000);
+      const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration)  / 1000);
+      setStartTimeInS(calculatedStartTimeInS);
+      setEndTimeInS(calculatedEndTimeInS);
 
-      setPlaybackRangeInS([startTimeInS, endTimeInS]);
-      onDuration(playbackDurationInS * 1000);
+      onDuration((calculatedEndTimeInS - calculatedStartTimeInS) * 1000);
+      setSourceDurationInMs(sourceDurationInfo.duration);
     }
-  }, [playbackRange, sourceDurationInMs, onDuration]);
+  }, [playbackRange, sourceDurationInfo, onDuration]);
 
   const [player, setPlayer] = useState(null);
   const [showPosterImage, setShowPosterImage] = useState(true);
@@ -73,14 +74,14 @@ function YoutubePlayer({
     if (player && !!sourceDurationInMs) {
       setShowPosterImage(false);
 
-      const endTimeWasReached = player.currentTime >= playbackRangeInS[1];
-      if (endTimeWasReached) {
-        player.currentTime = playbackRangeInS[0];
+      if (playbackEnded) {
+        player.currentTime = startTimeInS;
+        setPlaybackEnded(false);
       }
 
       player.play();
     }
-  }, [player, playbackRangeInS, sourceDurationInMs]);
+  }, [player, startTimeInS, playbackEnded, sourceDurationInMs]);
 
   const triggerPause = useCallback(() => {
     player?.pause();
@@ -88,7 +89,7 @@ function YoutubePlayer({
 
   const triggerSeek = useCallback(seekedTimeWithinRangeInMs => {
     if (player) {
-      const startTimeInMs = playbackRangeInS[0] * 1000;
+      const startTimeInMs = startTimeInS * 1000;
       const currentActualTimeInMs = startTimeInMs + seekedTimeWithinRangeInMs;
       player.currentTime = currentActualTimeInMs / 1000;
 
@@ -96,8 +97,9 @@ function YoutubePlayer({
         const currentTimeWithinRangeInMs = currentActualTimeInMs - startTimeInMs;
         onProgress(currentTimeWithinRangeInMs);
       }
+      setPlaybackEnded(false);
     }
-  }, [player, playbackRangeInS, onProgress]);
+  }, [player, startTimeInS, onProgress]);
 
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
@@ -108,11 +110,10 @@ function YoutubePlayer({
   };
 
   useEffect(() => {
-    if (!playbackRangeInS) {
+    if (!sourceDurationInMs) {
       return;
     }
-
-    const playerInstance = new Plyr(plyrRef.current, {
+    const options =  {
       controls: [],
       ratio: aspectRatio,
       clickToPlay: true,
@@ -128,13 +129,21 @@ function YoutubePlayer({
         disablekb: 1,
         iv_load_policy: 3,
         modestbranding: 1,
-        controls: 0,
-        start: playbackRangeInS[0],
-        end: playbackRangeInS[1],
+        controls: 0
       }
-    });
+    };
+
+    if (startTimeInS) {
+      options.youtube.start = startTimeInS;
+    }
+
+    if (endTimeInS) {
+      options.youtube.end = endTimeInS;
+    }
+
+    const playerInstance = new Plyr(plyrRef.current, options);
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio, playbackRangeInS]);
+  }, [plyrRef, aspectRatio, sourceDurationInMs, startTimeInS, endTimeInS]);
 
   useEffect(() => {
     if (player) {
@@ -158,17 +167,21 @@ function YoutubePlayer({
   }, [player, volume]);
 
   const handleEnded = useCallback(() => {
-    setProgressInterval(null);
     onEnded();
-  }, [onEnded]);
+    setProgressInterval(null);
+    setPlaybackEnded(true);
+    // compensate for cases where youtube actual source duration is shorter than reported,
+    // thus having playback end 1s earlier; likely a sounding issue on their side
+    onProgress((endTimeInS - startTimeInS) * 1000);
+  }, [startTimeInS, endTimeInS, onProgress, onEnded]);
 
   const handleProgress = useCallback(() => {
     if (player && !isNaN(player.currentTime)) {
       const currentActualTimeInMs = player.currentTime * 1000;
-      const currentTimeWithinRangeInMs = currentActualTimeInMs - (playbackRangeInS[0] * 1000);
+      const currentTimeWithinRangeInMs = currentActualTimeInMs - (startTimeInS * 1000);
       onProgress(currentTimeWithinRangeInMs);
     }
-  }, [player, playbackRangeInS, onProgress]);
+  }, [player, startTimeInS, onProgress]);
 
   const handleReady = useCallback(() => {
     onReady();
