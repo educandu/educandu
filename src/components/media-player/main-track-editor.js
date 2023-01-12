@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
+import { Form, Radio, Switch } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import React, { Fragment, useState } from 'react';
-import { Form, Input, Radio, Switch } from 'antd';
 import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaRangeSelector from './media-range-selector.js';
-import { usePercentageFormat } from '../locale-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
+import { getMediaInformation } from '../../utils/media-utils.js';
+import MediaRangeReadonlyInput from './media-range-readonly-input.js';
 import { getAccessibleUrl, getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
@@ -26,7 +26,6 @@ const RadioButton = Radio.Button;
 function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mainTrackEditor');
-  const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const [sourceDuration, setSourceDuration] = useState(0);
   const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
@@ -93,18 +92,6 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     changeContent({ copyrightNotice: event.target.value });
   };
 
-  const renderPlaybackRangeInfo = () => {
-    const from = playbackRange[0] !== 0
-      ? formatMediaPosition({ formatPercentage, position: playbackRange[0], duration: sourceDuration })
-      : 'start';
-
-    const to = playbackRange[1] !== 1
-      ? formatMediaPosition({ formatPercentage, position: playbackRange[1], duration: sourceDuration })
-      : 'end';
-
-    return t('playbackRangeInfo', { from, to });
-  };
-
   const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     ? {}
     : validateUrl(sourceUrl, t, { allowEmpty: true });
@@ -139,9 +126,9 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
             />
         </FormItem>
       )}
-      <FormItem label={t('playbackRange')} {...FORM_ITEM_LAYOUT}>
+      <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
         <div className="u-input-and-button">
-          <Input value={renderPlaybackRangeInfo()} readOnly />
+          <MediaRangeReadonlyInput playbackRange={playbackRange} sourceDuration={sourceDuration} />
           <MediaRangeSelector
             range={playbackRange}
             onRangeChange={handlePlaybackRangeChange}

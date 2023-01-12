@@ -114,6 +114,7 @@ describe('document-service', () => {
               posterImage: {
                 sourceUrl: ''
               },
+              playbackRange: [0, 1],
               width: 100
             }
           }
@@ -272,6 +273,7 @@ describe('document-service', () => {
               posterImage: {
                 sourceUrl: ''
               },
+              playbackRange: [0, 1],
               width: 100
             }
           }
@@ -309,6 +311,7 @@ describe('document-service', () => {
               posterImage: {
                 sourceUrl: ''
               },
+              playbackRange: [0, 1],
               width: 100
             }
           }

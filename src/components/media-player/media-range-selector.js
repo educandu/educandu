@@ -105,7 +105,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     <div className="MediaRangeSelector">
       <Button type="primary" onClick={handleSelectButtonClick}>{t('common:select')}</Button>
       <Modal
-        width="80%"
+        width="70%"
         open={isModalOpen}
         title={t('modalTitle')}
         onOk={handleApply}
@@ -141,7 +141,9 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
                     {renderRangeText()}
                   </div>
                   <div className="MediaRangeSelector-rangeSelector">
-                    {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                    <span className="MediaRangeSelector-rangeSelectorLabel">
+                      {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                    </span>
                     <div className="MediaRangeSelector-rangeSelectorButtons">
                       <Button
                         onClick={handleSetAsStartClick}
