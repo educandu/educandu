@@ -35,14 +35,16 @@ class AudioInfo {
   getDefaultContent() {
     return {
       sourceUrl: '',
-      copyrightNotice: ''
+      copyrightNotice: '',
+      playbackRange: [0, 1]
     };
   }
 
   validateContent(content) {
     const schema = joi.object({
       sourceUrl: joi.string().allow('').required(),
-      copyrightNotice: joi.string().allow('').required()
+      copyrightNotice: joi.string().allow('').required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

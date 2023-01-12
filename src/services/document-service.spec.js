@@ -793,7 +793,8 @@ describe('document-service', () => {
           type: 'audio',
           content: {
             sourceUrl: 'cdn://media/audio-1.mp3',
-            copyrightNotice: 'Unmodified text'
+            copyrightNotice: 'Unmodified text',
+            playbackRange: [0, 1]
           }
         };
 
@@ -803,7 +804,8 @@ describe('document-service', () => {
           type: 'audio',
           content: {
             sourceUrl: 'cdn://media/audio-2.mp3',
-            copyrightNotice: 'Initial text'
+            copyrightNotice: 'Initial text',
+            playbackRange: [0, 1]
           }
         };
 

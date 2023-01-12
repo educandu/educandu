@@ -20,6 +20,7 @@ function AudioDisplay({ content }) {
           <MediaPlayer
             sourceUrl={url}
             canDownload={canDownload}
+            playbackRange={content.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}
             />
         )}
