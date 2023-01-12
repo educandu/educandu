@@ -7,7 +7,7 @@ import { useMediaDurations, useYoutubeThumbnailUrl } from '../media-hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
-export const YOUTUBE_STATE = {
+const YOUTUBE_STATE = {
   unstarted: -1,
   ended: 0,
   playing: 1,
