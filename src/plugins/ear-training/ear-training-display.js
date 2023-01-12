@@ -75,6 +75,7 @@ function EarTrainingDisplay({ content }) {
             sourceUrl={url}
             canDownload={canDownload}
             screenMode={MEDIA_SCREEN_MODE.none}
+            playbackRange={currentTest.sound.playbackRange}
             />
         )}
         <CopyrightNotice value={currentTest.sound.copyrightNotice} />
