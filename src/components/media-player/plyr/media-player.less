@@ -1,8 +1,32 @@
+@import (less) 'plyr/dist/plyr.css';
+
 .MediaPlayer {
 
   &.MediaPlayer--noScreen {
     padding: 15px;
     border-radius: @edu-border-radius-base;
     background-color: @edu-background-color-light;
+  }
+}
+
+.MediaPlayer-player {
+  --plyr-video-background: @edu-white;
+  cursor: pointer;
+
+  &.MediaPlayer-player--audioOnly {
+    height: 0;
+
+    iframe {
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &.MediaPlayer-player--sixteenToNine {
+    aspect-ratio: 16/9;
+  }
+
+  &.MediaPlayer-player--fourToThree {
+    aspect-ratio: 4/3;
   }
 }

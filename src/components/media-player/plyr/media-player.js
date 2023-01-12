@@ -1,21 +1,24 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import MediaPlayback from './media-playback.js';
-import React, { useRef, useState } from 'react';
+import Html5Player from './html5-player.js';
+import YoutubePlayer from './youtube-player.js';
+import React, { useMemo, useRef, useState } from 'react';
 import { useService } from '../../container-context.js';
 import HttpClient from '../../../api-clients/http-client.js';
 import MediaPlayerControls from '../media-player-controls.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaPlayerProgressBar from '../media-player-progress-bar.js';
-import { isInternalSourceType } from '../../../utils/source-utils.js';
+import { getSourceType, isInternalSourceType } from '../../../utils/source-utils.js';
 import {
   MEDIA_PLAY_STATE,
   MEDIA_SCREEN_MODE,
   MEDIA_ASPECT_RATIO,
+  SOURCE_TYPE,
 } from '../../../domain/constants.js';
 
 function MediaPlayer({
   sourceUrl,
+  playbackRange,
   screenMode,
   aspectRatio,
   canDownload,
@@ -23,7 +26,7 @@ function MediaPlayer({
   posterImageUrl,
   mediaPlayerRef
 }) {
-  const mediaPlaybackRef = useRef();
+  const player = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
@@ -31,6 +34,10 @@ function MediaPlayer({
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+
+  const sourceType = useMemo(() => {
+    return getSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  }, [sourceUrl, clientConfig]);
 
   const handleDuration = newDurationInMilliseconds => {
     setDurationInMilliseconds(newDurationInMilliseconds);
@@ -41,7 +48,7 @@ function MediaPlayer({
   };
 
   const handlePlayClick = async () => {
-    mediaPlaybackRef.current.play();
+    player.current.play();
   };
 
   const handlePlaying = () => {
@@ -49,7 +56,7 @@ function MediaPlayer({
   };
 
   const handlePauseClick = () => {
-    mediaPlaybackRef.current.pause();
+    player.current.pause();
     setPlayState(MEDIA_PLAY_STATE.pausing);
   };
 
@@ -62,7 +69,7 @@ function MediaPlayer({
   };
 
   const handleSeek = milliseconds => {
-    mediaPlaybackRef.current.seekToTimecode(milliseconds);
+    player.current.seekToTimecode(milliseconds);
   };
 
   const handleBuffering = () => {
@@ -79,27 +86,40 @@ function MediaPlayer({
   };
 
   mediaPlayerRef.current = {
-    play: mediaPlaybackRef.current?.play,
-    pause: mediaPlaybackRef.current?.pause
+    play: player.current?.play,
+    pause: player.current?.pause
   };
+
+  const Player = sourceType === SOURCE_TYPE.youtube ? YoutubePlayer : Html5Player;
+  const audioOnly = screenMode !== MEDIA_SCREEN_MODE.video;
+
+  const playerClasses = classNames(
+    'MediaPlayer-player',
+    { 'MediaPlayer-player--audioOnly': audioOnly },
+    { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
+    { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree },
+  );
 
   return (
     <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      <MediaPlayback
-        volume={volume}
-        sourceUrl={sourceUrl}
-        aspectRatio={aspectRatio}
-        playbackRate={playbackRate}
-        posterImageUrl={posterImageUrl}
-        mediaPlaybackRef={mediaPlaybackRef}
-        audioOnly={screenMode !== MEDIA_SCREEN_MODE.video}
-        onPlay={handlePlaying}
-        onPause={handlePausing}
-        onEnded={handleEnded}
-        onDuration={handleDuration}
-        onProgress={handleProgress}
-        onBuffering={handleBuffering}
-        />
+      <div className={playerClasses}>
+        <Player
+          volume={volume}
+          sourceUrl={sourceUrl}
+          aspectRatio={aspectRatio}
+          playbackRate={playbackRate}
+          playbackRange={playbackRange}
+          posterImageUrl={posterImageUrl}
+          playerRef={player}
+          audioOnly={audioOnly}
+          onPlay={handlePlaying}
+          onPause={handlePausing}
+          onEnded={handleEnded}
+          onDuration={handleDuration}
+          onProgress={handleProgress}
+          onBuffering={handleBuffering}
+          />
+      </div>
       <MediaPlayerProgressBar
         playedMilliseconds={playedMilliseconds}
         durationInMilliseconds={durationInMilliseconds}
@@ -123,6 +143,7 @@ function MediaPlayer({
 
 MediaPlayer.propTypes = {
   sourceUrl: PropTypes.string.isRequired,
+  playbackRange: PropTypes.arrayOf(PropTypes.number),
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   downloadFileName: PropTypes.string,
@@ -134,6 +155,7 @@ MediaPlayer.propTypes = {
 };
 
 MediaPlayer.defaultProps = {
+  playbackRange: [0, 1],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   screenMode: MEDIA_SCREEN_MODE.video,
   canDownload: false,
