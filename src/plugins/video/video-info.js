@@ -41,7 +41,8 @@ class VideoInfo {
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       posterImage: {
         sourceUrl: ''
-      }
+      },
+      playbackRange: [0, 1]
     };
   }
 
@@ -53,7 +54,8 @@ class VideoInfo {
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
       posterImage: joi.object({
         sourceUrl: joi.string().allow('').required()
-      }).required()
+      }).required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

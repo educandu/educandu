@@ -652,22 +652,6 @@
     }
   },
   {
-    "namespace": "mainTrackEditor",
-    "language": "en",
-    "resources": {
-      "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
-    }
-  },
-  {
-    "namespace": "mainTrackEditor",
-    "language": "de",
-    "resources": {
-      "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
-    }
-  },
-  {
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {
@@ -697,6 +681,20 @@
     "language": "de",
     "resources": {
       "trackNumberLabel": "Spur {trackNumber}"
+    }
+  },
+  {
+    "namespace": "mediaRangeReadonlyInput",
+    "language": "en",
+    "resources": {
+      "info": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+    }
+  },
+  {
+    "namespace": "mediaRangeReadonlyInput",
+    "language": "de",
+    "resources": {
+      "info": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
     }
   },
   {
@@ -2533,7 +2531,8 @@
       "searchResultInfo": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n",
       "more": "more ...",
       "less": "less ...",
-      "draft": "Draft"
+      "draft": "Draft",
+      "playbackRange": "Playback range"
     }
   },
   {
@@ -2690,7 +2689,8 @@
       "searchResultInfo": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n",
       "more": "mehr ...",
       "less": "weniger ...",
-      "draft": "Entwurf"
+      "draft": "Entwurf",
+      "playbackRange": "Abspielbereich"
     }
   },
   {

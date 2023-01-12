@@ -471,3 +471,6 @@ less:
 draft:
   en: Draft
   de: Entwurf
+playbackRange:
+  en: Playback range
+  de: Abspielbereich

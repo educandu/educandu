@@ -19,6 +19,7 @@ function VideoDisplay({ content }) {
         {!!url && (
           <MediaPlayer
             sourceUrl={url}
+            playbackRange={content.playbackRange}
             posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
             canDownload={canDownload}
