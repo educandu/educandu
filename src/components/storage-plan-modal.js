@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import ByteInput from './byte-input.js';
 import { Form, Input, Modal } from 'antd';
+import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { baseStoragePlanShape } from '../ui/default-prop-types.js';
@@ -9,8 +10,9 @@ const FormItem = Form.Item;
 
 function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, onCancel }) {
   const [form] = Form.useForm();
-  const { t } = useTranslation('storagePlanModal');
+  const isMounted = useIsMounted();
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('storagePlanModal');
 
   const nameValidationRules = [
     {
@@ -62,7 +64,7 @@ function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, on
     maxBytes: storagePlan?.maxBytes ?? 100 * 1000 * 1000
   };
 
-  return (
+  return !!isMounted.current && (
     <Modal
       title={storagePlan?._id ? t('editStoragePlan') : t('newStoragePlan')}
       open={isOpen}
@@ -70,6 +72,7 @@ function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, on
       onCancel={onCancel}
       maskClosable={false}
       okButtonProps={{ loading }}
+      forceRender
       >
       <Form form={form} onFinish={handleOnFinish} name="storage-plan-form" layout="vertical" initialValues={initialValues} className="u-modal-body">
         <FormItem name="_id" hidden>
