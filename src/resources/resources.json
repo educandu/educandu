@@ -1770,8 +1770,7 @@
     "language": "en",
     "resources": {
       "name": "ABC notation",
-      "abcCode": "ABC code",
-      "midiSound": "MIDI sound"
+      "abcCode": "ABC code"
     }
   },
   {
@@ -1779,8 +1778,7 @@
     "language": "de",
     "resources": {
       "name": "ABC-Notation",
-      "abcCode": "ABC-Code",
-      "midiSound": "MIDI-Sound"
+      "abcCode": "ABC-Code"
     }
   },
   {

@@ -42,7 +42,6 @@ class EarTrainingInfo {
 
   getDefaultSound() {
     return {
-      useMidi: false,
       sourceUrl: '',
       copyrightNotice: ''
     };
@@ -91,7 +90,6 @@ class EarTrainingInfo {
         questionAbcCode: joi.string().allow('').required(),
         answerAbcCode: joi.string().allow('').required(),
         sound: joi.object({
-          useMidi: joi.boolean().required(),
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required()
         }).required()
