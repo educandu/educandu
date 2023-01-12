@@ -157,7 +157,7 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <div className='StorageLocation-filesViewerContent'>
+            <div className="StorageLocation-filesViewerContent">
               <FilesViewer
                 isLoading={isLoading}
                 files={files}

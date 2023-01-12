@@ -47,7 +47,7 @@ function YoutubePlayer({
   useEffect(() => {
     if (sourceDurationInfo.duration) {
       const calculatedStartTimeInS = Math.trunc((playbackRange[0] * sourceDurationInfo.duration) / 1000);
-      const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration)  / 1000);
+      const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration) / 1000);
       setStartTimeInS(calculatedStartTimeInS);
       setEndTimeInS(calculatedEndTimeInS);
 
@@ -68,6 +68,7 @@ function YoutubePlayer({
         ? youtubeThumbnailUrl.highResThumbnailUrl
         : youtubeThumbnailUrl.lowResThumbnailUrl;
     }
+    return null;
   }, [posterImageUrl, youtubeThumbnailUrl]);
 
   const triggerPlay = useCallback(() => {
@@ -113,7 +114,7 @@ function YoutubePlayer({
     if (!sourceDurationInMs) {
       return;
     }
-    const options =  {
+    const options = {
       controls: [],
       ratio: aspectRatio,
       clickToPlay: true,
@@ -127,6 +128,7 @@ function YoutubePlayer({
         fs: 0,
         showinfo: 0,
         disablekb: 1,
+        // eslint-disable-next-line camelcase
         iv_load_policy: 3,
         modestbranding: 1,
         controls: 0
@@ -148,8 +150,8 @@ function YoutubePlayer({
   useEffect(() => {
     if (player) {
       player.source = {
-        type: audioOnly ? 'audio': 'video',
-        sources: [{ src: sourceUrl,  provider: 'youtube' }]
+        type: audioOnly ? 'audio' : 'video',
+        sources: [{ src: sourceUrl, provider: 'youtube' }]
       };
     }
   }, [player, sourceUrl, audioOnly]);
@@ -239,7 +241,7 @@ function YoutubePlayer({
   }), [triggerPlay, triggerPause, triggerSeek]);
 
   return (
-    <div className='YoutubePlayer'>
+    <div className="YoutubePlayer">
       <video ref={plyrRef} />
       {!audioOnly && !!posterOrThumbnailImageUrl && !!showPosterImage && (
         <div
@@ -248,7 +250,7 @@ function YoutubePlayer({
           style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }}
           >
           {!!sourceDurationInMs && (
-            <div className='YoutubePlayer-playIcon'>
+            <div className="YoutubePlayer-playIcon">
               <PlayIcon />
             </div>
           )}
@@ -270,13 +272,12 @@ YoutubePlayer.propTypes = {
   onDuration: PropTypes.func,
   onProgress: PropTypes.func,
   onBuffering: PropTypes.func,
-  onBufferingEnded: PropTypes.func,
   playbackRate: PropTypes.number,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   posterImageUrl: PropTypes.string,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  }),
+  })
 };
 
 YoutubePlayer.defaultProps = {

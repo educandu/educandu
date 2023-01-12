@@ -142,6 +142,7 @@ class StorageController {
         const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
         const locations = await this.storageService.getStorageLocations({ user, documentId });
 
+        // eslint-disable-next-line require-atomic-updates
         req.storage = { locations };
 
         let storagePlan;
@@ -149,6 +150,7 @@ class StorageController {
           storagePlan = await this.storageService.getStoragePlanById(user.storage.planId);
         }
 
+        // eslint-disable-next-line require-atomic-updates
         req.storagePlan = storagePlan || null;
 
         return next();

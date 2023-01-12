@@ -73,6 +73,7 @@ describe('url-utils', () => {
         expectedResult: ''
       },
       {
+        // eslint-disable-next-line no-undefined
         input: { a: undefined },
         expectedResult: ''
       },

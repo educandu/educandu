@@ -77,7 +77,7 @@ Root.propTypes = {
 };
 
 Root.defaultProps = {
-  initialState: undefined
+  initialState: null
 };
 
 export default Root;

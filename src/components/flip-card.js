@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -50,7 +51,6 @@ function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, o
 FlipCardFace.propTypes = {
   color: PropTypes.string,
   content: PropTypes.any,
-  disabled: PropTypes.bool,
   hidden: PropTypes.bool,
   faceType: PropTypes.oneOf(Object.values(FACE_TYPE)),
   locked: PropTypes.bool
@@ -59,7 +59,7 @@ FlipCardFace.propTypes = {
 FlipCardFace.defaultProps = {
   color: '',
   content: null,
-  disabled: false,
+  hidden: false,
   faceType: FACE_TYPE.standalone,
   locked: false
 };

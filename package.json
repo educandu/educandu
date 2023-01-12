@@ -104,13 +104,14 @@
   },
   "devDependencies": {
     "@educandu/dev-tools": "^6.0.2",
-    "@educandu/eslint-config": "^2.0.0",
+    "@educandu/eslint-config": "^2.2.0",
     "@educandu/node-jsx-loader": "^3.0.1",
     "@educandu/rooms-auth-lambda": "^3.0.0",
     "@vitest/coverage-c8": "^0.25.8",
     "del": "^7.0.0",
     "eslint": "^8.30.0",
-    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-import": "^2.27.4",
+    "eslint-plugin-react": "^7.32.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "gulp": "^4.0.2",
     "mkdirp": "^1.0.4",
@@ -120,6 +121,6 @@
     "vitest": "^0.25.8"
   },
   "resolutions": {
-    "opensheetmusicdisplay/gl": "^6.0.2"
+    "**/gl": "^6.0.2"
   }
 }

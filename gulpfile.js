@@ -123,6 +123,7 @@ export async function buildTestAppJs() {
   if (bundler?.rebuild) {
     await bundler.rebuild();
   } else {
+    // eslint-disable-next-line require-atomic-updates
     bundler = await esbuild.bundle({
       entryPoints: ['./test-app/src/bundles/main.js'],
       outdir: './test-app/dist',

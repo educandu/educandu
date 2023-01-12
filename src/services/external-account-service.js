@@ -22,7 +22,7 @@ export default class ExternalAccountService {
   }
 
   getProvider(providerKey) {
-    const provider = this.getAllProviders().find(provider => provider.key === providerKey);
+    const provider = this.getAllProviders().find(prov => prov.key === providerKey);
     if (!provider) {
       throw new NotFound();
     }

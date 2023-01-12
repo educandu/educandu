@@ -82,8 +82,8 @@ function Htlm5Player({
   useEffect(() => {
     if (player) {
       player.source = {
-        type: audioOnly ? 'audio': 'video',
-        sources: [{  src: sourceUrl,  provider: 'html5' }]
+        type: audioOnly ? 'audio' : 'video',
+        sources: [{ src: sourceUrl, provider: 'html5' }]
       };
     }
   }, [player, sourceUrl, audioOnly]);
@@ -190,7 +190,7 @@ function Htlm5Player({
     <div className="Html5Player">
       <video ref={plyrRef} />
       {!audioOnly && !!posterImageUrl && !!showPosterImage && (
-        <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }}></div>
+        <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
       )}
       {!audioOnly && !player?.playing && (
         <div className="Html5Player-playOverlay" onClick={triggerPlay} >
@@ -219,7 +219,7 @@ Htlm5Player.propTypes = {
   posterImageUrl: PropTypes.string,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  }),
+  })
 };
 
 Htlm5Player.defaultProps = {

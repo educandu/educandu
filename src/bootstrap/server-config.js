@@ -71,7 +71,7 @@ const configSchema = joi.object({
   samlAuth: joi.object({
     decryption: joi.object({
       pvk: joi.string().required(),
-      cert: joi.string().required(),
+      cert: joi.string().required()
     }).required(),
     identityProviders: joi.array().items(joi.object({
       key: joi.string().required(),
@@ -106,13 +106,15 @@ class ServerConfig {
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
       plugins: this.plugins,
-      samlAuth: this.samlAuth ? {
-        identityProviders: this.samlAuth.identityProviders.map(p => ({
-          key: p.key,
-          displayName: p.displayName,
-          logoUrl: p.logoUrl
-        }))
-      } : null
+      samlAuth: this.samlAuth
+        ? {
+          identityProviders: this.samlAuth.identityProviders.map(p => ({
+            key: p.key,
+            displayName: p.displayName,
+            logoUrl: p.logoUrl
+          }))
+        }
+        : null
     };
   }
 }

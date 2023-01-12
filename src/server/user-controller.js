@@ -179,20 +179,17 @@ class UserController {
 
     const user = await this.userService.verifyUser(req.params.verificationCode);
 
-    let connectedExternalAccountId;
-    if (req.session.externalAccount) {
-      connectedExternalAccountId = req.session.externalAccount._id;
+    const connectedExternalAccountId = req.session.externalAccount?._id || null;
+    req.session.externalAccount = null;
+
+    if (connectedExternalAccountId) {
       await this.externalAccountService.updateExternalAccountUserId({
         externalAccountId: connectedExternalAccountId,
         userId: user._id
       });
-
-      req.session.externalAccount = null;
-      await new Promise((resolve, reject) => req.login(user, err => {
-        return err ? reject(err) : resolve();
-      }));
-    } else {
-      connectedExternalAccountId = null;
+      await new Promise((resolve, reject) => {
+        req.login(user, err => err ? reject(err) : resolve());
+      });
     }
 
     const initialState = { user, connectedExternalAccountId };
@@ -209,9 +206,9 @@ class UserController {
 
   async handleGetLogoutPage(req, res) {
     if (req.isAuthenticated()) {
-      const logout = () => new Promise((resolve, reject) =>
-        req.logout(err => err ? reject(err) : resolve())
-      );
+      const logout = () => new Promise((resolve, reject) => {
+        req.logout(err => err ? reject(err) : resolve());
+      });
 
       await logout();
       res.clearCookie(this.serverConfig.sessionCookieName);
@@ -298,9 +295,11 @@ class UserController {
 
   async handlePostUserLogin(req, res, next) {
     try {
-      const user = await new Promise((resolve, reject) => passport.authenticate('local', async (err, usr) => {
-        return err ? reject(err) : resolve(usr);
-      })(req, res, next));
+      const user = await new Promise((resolve, reject) => {
+        passport.authenticate('local', (err, usr) => {
+          return err ? reject(err) : resolve(usr);
+        })(req, res, next);
+      });
 
       if (!user) {
         return res.status(201).send({ user: null });
@@ -308,21 +307,19 @@ class UserController {
 
       const updatedUser = await this.userService.recordUserLogIn(user._id);
 
-      let connectedExternalAccountId;
+      const connectedExternalAccountId = req.session.externalAccount?._id || null;
+      req.session.externalAccount = null;
+
       if (req.body.connectExternalAccount) {
-        connectedExternalAccountId = req.session.externalAccount._id;
         await this.externalAccountService.updateExternalAccountUserId({
           externalAccountId: connectedExternalAccountId,
           userId: updatedUser._id
         });
-        req.session.externalAccount = null;
-      } else {
-        connectedExternalAccountId = null;
       }
 
-      await new Promise((resolve, reject) => req.login(updatedUser, err => {
-        return err ? reject(err) : resolve();
-      }));
+      await new Promise((resolve, reject) => {
+        req.login(updatedUser, err => err ? reject(err) : resolve());
+      });
 
       return res.status(201).send({
         user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
@@ -508,6 +505,7 @@ class UserController {
           const externalUserId = profile.nameID;
 
           try {
+            // eslint-disable-next-line require-atomic-updates
             req.session.externalAccount = await this.externalAccountService
               .createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
           } catch (error) {
@@ -523,12 +521,12 @@ class UserController {
       const { externalAccount } = req.session;
 
       if (
-        !externalAccount ||
-        routes.isApiPath(req.originalUrl) ||
-        routes.isResetPasswordPath(req.originalUrl) ||
-        routes.isConnectExternalAccountPath(req.originalUrl) ||
-        routes.isCompleteRegistrationPath(req.originalUrl) ||
-        routes.isCompletePasswordResetPrefixPath(req.originalUrl)
+        !externalAccount
+        || routes.isApiPath(req.originalUrl)
+        || routes.isResetPasswordPath(req.originalUrl)
+        || routes.isConnectExternalAccountPath(req.originalUrl)
+        || routes.isCompleteRegistrationPath(req.originalUrl)
+        || routes.isCompletePasswordResetPrefixPath(req.originalUrl)
       ) {
         return next();
       }

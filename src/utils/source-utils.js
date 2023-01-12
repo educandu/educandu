@@ -4,7 +4,7 @@ import {
   SOURCE_TYPE,
   CDN_URL_PREFIX,
   ROOM_MEDIA_STORAGE_PATH_PATTERN,
-  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
+  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
 export function isCdnUrl({ url = '', cdnRootUrl = '' }) {

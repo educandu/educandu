@@ -28,7 +28,7 @@ export const FEATURE_TOGGLES = {};
 export const ROOM_USER_ROLE = {
   owner: 'owner',
   ownerOrMember: 'ownerOrMember',
-  ownerOrCollaborator: 'ownerOrCollaborator',
+  ownerOrCollaborator: 'ownerOrCollaborator'
 };
 
 export const ROOM_DOCUMENTS_MODE = {

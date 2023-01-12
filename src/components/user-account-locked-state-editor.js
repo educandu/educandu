@@ -15,7 +15,7 @@ function UserAccountLockedStateEditor({ user, onAccountLockedOnChange }) {
   };
 
   return (
-    <div className='UserAccountLockedStateEditor'>
+    <div className="UserAccountLockedStateEditor">
       <Switch
         size="small"
         checkedChildren={<CheckOutlined />}
@@ -24,7 +24,7 @@ function UserAccountLockedStateEditor({ user, onAccountLockedOnChange }) {
         onChange={handleAccountLockedStateChange}
         />
       {!!user.accountLockedOn && (
-        <div className='UserAccountLockedStateEditor-date'>
+        <div className="UserAccountLockedStateEditor-date">
           {formatDate(user.accountLockedOn)}
         </div>
       )}

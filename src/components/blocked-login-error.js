@@ -53,5 +53,5 @@ export default function BlockedLoginError({ type }) {
 }
 
 BlockedLoginError.propTypes = {
-  type: PropTypes.oneOf(['loginFailedTooOften', 'userAccountLocked'])
+  type: PropTypes.oneOf(['loginFailedTooOften', 'userAccountLocked']).isRequired
 };

@@ -9,7 +9,7 @@ class DashboardController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleGetDashboardPage(req, res) {
+  handleGetDashboardPage(req, res) {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard);
   }
 

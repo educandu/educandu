@@ -13,7 +13,7 @@ import {
   MEDIA_PLAY_STATE,
   MEDIA_SCREEN_MODE,
   MEDIA_ASPECT_RATIO,
-  SOURCE_TYPE,
+  SOURCE_TYPE
 } from '../../../domain/constants.js';
 
 function MediaPlayer({
@@ -47,7 +47,7 @@ function MediaPlayer({
     setPlayedMilliseconds(progressInMilliseconds);
   };
 
-  const handlePlayClick = async () => {
+  const handlePlayClick = () => {
     player.current.play();
   };
 
@@ -64,7 +64,7 @@ function MediaPlayer({
     setPlayState(MEDIA_PLAY_STATE.pausing);
   };
 
-  const handleEnded= () => {
+  const handleEnded = () => {
     setPlayState(MEDIA_PLAY_STATE.stopped);
   };
 
@@ -80,7 +80,7 @@ function MediaPlayer({
     setPlaybackRate(newRate);
   };
 
-  const handleDownloadClick = async () => {
+  const handleDownloadClick = () => {
     const withCredentials = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
     httpClient.download(sourceUrl, downloadFileName, withCredentials);
   };
@@ -97,7 +97,7 @@ function MediaPlayer({
     'MediaPlayer-player',
     { 'MediaPlayer-player--audioOnly': audioOnly },
     { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
-    { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree },
+    { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
 
   return (
@@ -151,7 +151,7 @@ MediaPlayer.propTypes = {
   posterImageUrl: PropTypes.string,
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
-  }),
+  })
 };
 
 MediaPlayer.defaultProps = {

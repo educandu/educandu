@@ -41,7 +41,7 @@ function WikimediaSearch({
   onSearchParamsChange,
   onSelectInitialUrlClick,
   onOpenWikimediaPageClick,
-  onSelectHighlightedFileClick,
+  onSelectHighlightedFileClick
 }) {
   const { t } = useTranslation('wikimediaSearch');
 
