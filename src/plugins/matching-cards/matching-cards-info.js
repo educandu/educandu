@@ -52,7 +52,8 @@ class MatchingCardsInfo {
   validateContent(content) {
     const tileSchema = joi.object({
       text: joi.string().allow('').required(),
-      sourceUrl: joi.string().allow('').required()
+      sourceUrl: joi.string().allow('').required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
     });
     const tilePairSchema = joi.array().items(tileSchema).length(2);
     const allowedTilePairs = getTilePairCountBySize(content.size);
