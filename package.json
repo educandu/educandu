@@ -103,10 +103,10 @@
     "umzug": "^3.2.1"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^6.0.2",
+    "@educandu/dev-tools": "^6.0.5",
     "@educandu/eslint-config": "^2.2.0",
-    "@educandu/node-jsx-loader": "^3.0.1",
-    "@educandu/rooms-auth-lambda": "^3.0.0",
+    "@educandu/node-jsx-loader": "^3.0.3",
+    "@educandu/rooms-auth-lambda": "^3.0.1",
     "@vitest/coverage-c8": "^0.25.8",
     "del": "^7.0.0",
     "eslint": "^8.30.0",
