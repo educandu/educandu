@@ -1,6 +1,7 @@
 @import (less) 'plyr/dist/plyr.css';
 
 .MediaPlayer {
+  position: relative;
 
   &.MediaPlayer--noScreen {
     padding: 15px;
@@ -10,8 +11,11 @@
 }
 
 .MediaPlayer-player {
+  position: relative;
+
   --plyr-video-background: @edu-white;
   cursor: pointer;
+  margin: 0 auto;
 
   &.MediaPlayer-player--audioOnly {
     height: 0;
@@ -29,4 +33,11 @@
   &.MediaPlayer-player--fourToThree {
     aspect-ratio: 4/3;
   }
+}
+
+.MediaPlayer-playerScreenOverlay {
+  .m-mask;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

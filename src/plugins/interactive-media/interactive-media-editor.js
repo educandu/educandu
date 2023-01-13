@@ -15,9 +15,9 @@ import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
+import MediaPlayer from '../../components/media-player/plyr/media-player.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
@@ -197,10 +197,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
-          playbackRange={playbackRange}
-          source={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           screenWidth={50}
+          playbackRange={playbackRange}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
         <Timeline
