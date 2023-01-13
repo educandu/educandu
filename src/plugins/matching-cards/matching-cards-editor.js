@@ -5,14 +5,13 @@ import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Divider, Form, Radio } from 'antd';
-import UrlInput from '../../components/url-input.js';
-import MatchingCardsTile from './matching-cards-tile.js';
 import { resizeTilePairs } from './matching-cards-utils.js';
 import { FlipCardFace } from '../../components/flip-card.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import MatchingCardsTileEditor from './matching-cards-tile-editor.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import MatchingCardsTileDisplay from './matching-cards-tile-display.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -68,7 +67,29 @@ function MatchingCardsEditor({ content, onContentChanged }) {
   const handleTileSourceUrlChange = (value, tileIndex) => {
     const newTilePairs = cloneDeep(tilePairs);
     newTilePairs[selectedTilesPairIndex][tileIndex].sourceUrl = value;
+    newTilePairs[selectedTilesPairIndex][tileIndex].playbackRange = [0, 1];
     changeContent({ tilePairs: newTilePairs });
+  };
+
+  const handleTilePlaybackRangeChange = (value, tileIndex) => {
+    const newTilePairs = cloneDeep(tilePairs);
+    newTilePairs[selectedTilesPairIndex][tileIndex].playbackRange = value;
+    changeContent({ tilePairs: newTilePairs });
+  };
+
+  const renderTileEditor = tileIndex => {
+    const tile = tilePairs[selectedTilesPairIndex][tileIndex];
+
+    return (
+      <MatchingCardsTileEditor
+        text={tile.text}
+        sourceUrl={tile.sourceUrl}
+        playbackRange={tile.playbackRange}
+        onTextChange={event => handleTileTextChange(event, tileIndex)}
+        onSourceUrlChange={event => handleTileSourceUrlChange(event, tileIndex)}
+        onPlaybackRangeChange={event => handleTilePlaybackRangeChange(event, tileIndex)}
+        />
+    );
   };
 
   const previewClasses = classNames(
@@ -101,32 +122,10 @@ function MatchingCardsEditor({ content, onContentChanged }) {
         </FormItem>
 
         <Divider plain>{t('tileA')}</Divider>
-        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput
-            value={tilePairs[selectedTilesPairIndex][0].text}
-            onChange={event => handleTileTextChange(event, 0)}
-            />
-        </FormItem>
-        <FormItem label={t('url')} {...FORM_ITEM_LAYOUT}>
-          <UrlInput
-            value={tilePairs[selectedTilesPairIndex][0].sourceUrl}
-            onChange={event => handleTileSourceUrlChange(event, 0)}
-            />
-        </FormItem>
+        {renderTileEditor(0)}
 
         <Divider plain>{t('tileB')}</Divider>
-        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput
-            value={tilePairs[selectedTilesPairIndex][1].text}
-            onChange={event => handleTileTextChange(event, 1)}
-            />
-        </FormItem>
-        <FormItem label={t('url')} {...FORM_ITEM_LAYOUT}>
-          <UrlInput
-            value={tilePairs[selectedTilesPairIndex][1].sourceUrl}
-            onChange={event => handleTileSourceUrlChange(event, 1)}
-            />
-        </FormItem>
+        {renderTileEditor(1)}
       </Form>
 
       <Divider plain>{t('preview')}</Divider>
@@ -136,9 +135,10 @@ function MatchingCardsEditor({ content, onContentChanged }) {
           <div className="MatchingCardsEditor-previewTileFace">
             <FlipCardFace
               content={(
-                <MatchingCardsTile
+                <MatchingCardsTileDisplay
                   text={tilePairs[selectedTilesPairIndex][0].text}
                   sourceUrl={tilePairs[selectedTilesPairIndex][0].sourceUrl}
+                  playbackRange={tilePairs[selectedTilesPairIndex][0].playbackRange}
                   />
               )}
               />
@@ -148,9 +148,10 @@ function MatchingCardsEditor({ content, onContentChanged }) {
           <div className="MatchingCardsEditor-previewTileFace">
             <FlipCardFace
               content={(
-                <MatchingCardsTile
+                <MatchingCardsTileDisplay
                   text={tilePairs[selectedTilesPairIndex][1].text}
                   sourceUrl={tilePairs[selectedTilesPairIndex][1].sourceUrl}
+                  playbackRange={tilePairs[selectedTilesPairIndex][1].playbackRange}
                   />
               )}
               />

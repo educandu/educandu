@@ -6,7 +6,7 @@ import { useIsMounted } from '../../ui/hooks.js';
 import { ReloadOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import FlipCard from '../../components/flip-card.js';
-import MatchingCardsTile from './matching-cards-tile.js';
+import MatchingCardsTile from './matching-cards-tile-display.js';
 import CheckIcon from '../../components/icons/general/check-icon.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
@@ -98,6 +98,7 @@ function MatchingCardsDisplay({ content }) {
           <MatchingCardsTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
+            playbackRange={tile.playbackRange}
             playMedia={isFlipped ? !wasMatched : null}
             />
         }

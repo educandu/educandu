@@ -4,7 +4,8 @@ import { shuffleItems } from '../../utils/array-utils.js';
 
 export const createDefaultTile = () => ({
   text: '',
-  sourceUrl: ''
+  sourceUrl: '',
+  playbackRange: [0, 1]
 });
 
 export const getTilePairCountBySize = size => {
