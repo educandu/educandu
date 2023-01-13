@@ -1,14 +1,12 @@
 import React from 'react';
 import memoizee from 'memoizee';
-import reactPlayerNs from 'react-player';
 import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
-
-const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
+import MediaDurationIdentifier from '../components/media-player/plyr/media-duration-identifier.js';
 
 const MEDIA_TIMEOUT_IN_MS = 5000;
 
@@ -89,22 +87,16 @@ export const determineMediaDuration = memoizee(async url => {
     }
 
     try {
-      const player = React.createElement(ReactPlayer, {
-        url: validUrl,
-        light: false,
-        playing: false,
-        onDuration: durationInSeconds => {
-          const durationInMiliseconds = Math.ceil(durationInSeconds * 1000);
+      const player = React.createElement(MediaDurationIdentifier, {
+        sourceUrl: validUrl,
+        onDuration: durationInMiliseconds => {
           resolve(durationInMiliseconds);
-          ensureCleanup();
-        },
-        onError: error => {
-          reject(error);
           ensureCleanup();
         }
       });
       root.render(player);
     } catch (error) {
+      ensureCleanup();
       reject(error);
     }
   });
