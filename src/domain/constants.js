@@ -102,9 +102,7 @@ export const MEDIA_ASPECT_RATIO = {
 export const MEDIA_SCREEN_MODE = {
   none: 'none',
   audio: 'audio',
-  video: 'video',
-  preview: 'preview',
-  overlay: 'overlay'
+  video: 'video'
 };
 
 export const SOURCE_TYPE = {
