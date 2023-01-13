@@ -5,47 +5,42 @@ import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { usePercentageFormat } from '../locale-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { formatMediaPosition, getMediaInformation } from '../../utils/media-utils.js';
+import { getSourceDuration } from '../../utils/source-utils.js';
+import { formatMediaPosition } from '../../utils/media-utils.js';
 
-function MediaRangeReadonlyInput({ playbackRange, sourceDuration, sourceUrl }) {
+function MediaRangeReadonlyInput({ sourceUrl, playbackRange }) {
   const clientConfig = useService(ClientConfig);
-  const [actualDuration, setActualDuration] = useState(0);
+  const [sourceDuration, setSourceDuration] = useState(0);
 
   useEffect(() => {
     (async () => {
-      if (sourceDuration) {
-        setActualDuration(sourceDuration);
-      } else if (sourceUrl) {
-        const mediaInfo = await getMediaInformation({ url: sourceUrl, playbackRange, cdnRootUrl: clientConfig.cdnRootUrl });
-        setActualDuration(mediaInfo.duration);
-      } else {
-        setActualDuration(0);
+      if (sourceUrl) {
+        const determinedDuration = await getSourceDuration({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+        setSourceDuration(determinedDuration);
       }
     })();
-  }, [clientConfig, playbackRange, sourceDuration, sourceUrl]);
+  }, [clientConfig, sourceDuration, sourceUrl]);
 
   const { t } = useTranslation('mediaRangeReadonlyInput');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const from = playbackRange[0] !== 0
-    ? formatMediaPosition({ formatPercentage, position: playbackRange[0], duration: actualDuration })
+    ? formatMediaPosition({ formatPercentage, position: playbackRange[0], duration: sourceDuration })
     : 'start';
 
   const to = playbackRange[1] !== 1
-    ? formatMediaPosition({ formatPercentage, position: playbackRange[1], duration: actualDuration })
+    ? formatMediaPosition({ formatPercentage, position: playbackRange[1], duration: sourceDuration })
     : 'end';
 
   return <Input value={t('info', { from, to })} readOnly />;
 }
 
 MediaRangeReadonlyInput.propTypes = {
-  playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired,
-  sourceDuration: PropTypes.number,
-  sourceUrl: PropTypes.string
+  sourceUrl: PropTypes.string,
+  playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
 MediaRangeReadonlyInput.defaultProps = {
-  sourceDuration: null,
   sourceUrl: null
 };
 

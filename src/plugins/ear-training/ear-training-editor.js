@@ -11,8 +11,8 @@ import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { getMediaInformation } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -22,7 +22,6 @@ import { swapItemsAt, removeItemAt, ensureIsExcluded } from '../../utils/array-u
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL, SOURCE_TYPE } from '../../domain/constants.js';
-import { getAccessibleUrl, getPortableUrl, isCdnUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -136,23 +135,10 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundSourceUrlChange = async (value, index, skipSanitizing = false) => {
+  const handleSoundSourceUrlChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sound.sourceUrl = value;
     changeContent({ tests: newTests });
-    if (!skipSanitizing && value) {
-      const { sanitizedUrl } = await getMediaInformation({
-        url: value,
-        playbackRange: newTests[index].sound.playbackRange,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      });
-      if (sanitizedUrl) {
-        const finalUrl = isCdnUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-          ? getPortableUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-          : sanitizedUrl;
-        handleSoundSourceUrlChange(finalUrl, index, true);
-      }
-    }
   };
 
   const handleSoundPlaybackRangeChange = (value, index) => {
@@ -266,12 +252,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
             </FormItem>
             <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
               <div className="u-input-and-button">
-                <MediaRangeReadonlyInput playbackRange={test.sound.playbackRange} sourceUrl={test.sound.sourceUrl} />
-                <MediaRangeSelector
-                  range={test.sound.playbackRange}
-                  onRangeChange={value => handleSoundPlaybackRangeChange(value, index)}
-                  sourceUrl={getAccessibleUrl({ url: test.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-                  />
+                <MediaRangeReadonlyInput sourceUrl={test.sound.sourceUrl} playbackRange={test.sound.playbackRange} />
+                <MediaRangeSelector sourceUrl={test.sound.sourceUrl} range={test.sound.playbackRange} onRangeChange={value => handleSoundPlaybackRangeChange(value, index)} />
               </div>
             </FormItem>
 

@@ -8,8 +8,6 @@ describe('media-utils', () => {
     const getDefaultResult = url => ({
       sanitizedUrl: url,
       youtubeVideoId: null,
-      startTimecode: null,
-      stopTimecode: null,
       resourceType: RESOURCE_TYPE.none
     });
 
@@ -21,8 +19,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://a/',
           youtubeVideoId: null,
-          startTimecode: null,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.none
         }
       },
@@ -31,8 +27,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://a.com/abc.mp3',
           youtubeVideoId: null,
-          startTimecode: null,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.audio
         }
       },
@@ -41,8 +35,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           youtubeVideoId: '4cn8439c2',
-          startTimecode: null,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.video
         }
       },
@@ -51,8 +43,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           youtubeVideoId: '4cn8439c2',
-          startTimecode: 5000,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.video
         }
       },
@@ -61,8 +51,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
           youtubeVideoId: '4cn8439c2',
-          startTimecode: 5000,
-          stopTimecode: 20000,
           resourceType: RESOURCE_TYPE.video
         }
       },
@@ -71,8 +59,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
           youtubeVideoId: 'j440-D5JhjI',
-          startTimecode: null,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.video
         }
       },
@@ -81,8 +67,6 @@ describe('media-utils', () => {
         expectedResult: {
           sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
           youtubeVideoId: 'j440-D5JhjI',
-          startTimecode: 804000,
-          stopTimecode: null,
           resourceType: RESOURCE_TYPE.video
         }
       }
