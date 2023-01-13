@@ -10,8 +10,8 @@ import { useService } from '../container-context.js';
 import { handleError } from '../../ui/error-helper.js';
 import { useDateFormat } from '../locale-context.js';
 import mimeTypeHelper from '../../ui/mime-type-helper.js';
-import MediaPlayer from '../media-player/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MediaPlayer from '../media-player/plyr/media-player.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import FileTextFilledIcon from '../icons/files/file-text-filled-icon.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
@@ -83,11 +83,11 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer source={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
+    <MediaPlayer sourceUrl={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
   );
 
   const renderVideo = () => (
-    <MediaPlayer source={url} canDownload />
+    <MediaPlayer sourceUrl={url} canDownload />
   );
 
   const renderImage = () => (
