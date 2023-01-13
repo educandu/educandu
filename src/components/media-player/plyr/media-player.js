@@ -18,12 +18,15 @@ import {
 function MediaPlayer({
   sourceUrl,
   playbackRange,
+  parts,
   screenMode,
   aspectRatio,
   canDownload,
   downloadFileName,
   posterImageUrl,
-  mediaPlayerRef
+  mediaPlayerRef,
+  customUnderScreenContent,
+  onProgress
 }) {
   const player = useRef();
   const [volume, setVolume] = useState(1);
@@ -40,6 +43,7 @@ function MediaPlayer({
 
   const handleProgress = progressInMilliseconds => {
     setPlayedMilliseconds(progressInMilliseconds);
+    onProgress(progressInMilliseconds);
   };
 
   const handlePlayClick = () => {
@@ -115,10 +119,12 @@ function MediaPlayer({
           onBuffering={handleBuffering}
           />
       </div>
+      {!!customUnderScreenContent && (<div>{customUnderScreenContent}</div>)}
       <MediaPlayerProgressBar
         playedMilliseconds={playedMilliseconds}
         durationInMilliseconds={durationInMilliseconds}
         onSeek={handleSeek}
+        parts={parts}
         />
       <MediaPlayerControls
         volume={volume}
@@ -139,6 +145,9 @@ function MediaPlayer({
 MediaPlayer.propTypes = {
   sourceUrl: PropTypes.string.isRequired,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
+  parts: PropTypes.arrayOf(PropTypes.shape({
+    startPosition: PropTypes.number.isRequired
+  })),
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   downloadFileName: PropTypes.string,
@@ -146,11 +155,14 @@ MediaPlayer.propTypes = {
   posterImageUrl: PropTypes.string,
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
-  })
+  }),
+  customUnderScreenContent: PropTypes.node,
+  onProgress: PropTypes.func
 };
 
 MediaPlayer.defaultProps = {
   playbackRange: [0, 1],
+  parts: [],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   screenMode: MEDIA_SCREEN_MODE.video,
   canDownload: false,
@@ -158,7 +170,9 @@ MediaPlayer.defaultProps = {
   posterImageUrl: null,
   mediaPlayerRef: {
     current: null
-  }
+  },
+  customUnderScreenContent: null,
+  onProgress: () => {}
 };
 
 export default MediaPlayer;
