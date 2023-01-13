@@ -45,8 +45,6 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
 
     return (
       <Player
-        volume={1}
-        playbackRate={1}
         audioOnly={audioOnly}
         sourceUrl={accessibleUrl}
         playbackRange={playbackRange}

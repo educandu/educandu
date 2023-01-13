@@ -1,19 +1,18 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Html5Player from './html5-player.js';
+import React, { useRef, useState } from 'react';
 import YoutubePlayer from './youtube-player.js';
-import React, { useMemo, useRef, useState } from 'react';
 import { useService } from '../../container-context.js';
 import HttpClient from '../../../api-clients/http-client.js';
 import MediaPlayerControls from '../media-player-controls.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaPlayerProgressBar from '../media-player-progress-bar.js';
-import { getSourceType, isInternalSourceType } from '../../../utils/source-utils.js';
+import { isInternalSourceType, isYoutubeSourceType } from '../../../utils/source-utils.js';
 import {
   MEDIA_PLAY_STATE,
   MEDIA_SCREEN_MODE,
-  MEDIA_ASPECT_RATIO,
-  SOURCE_TYPE
+  MEDIA_ASPECT_RATIO
 } from '../../../domain/constants.js';
 
 function MediaPlayer({
@@ -34,10 +33,6 @@ function MediaPlayer({
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
-
-  const sourceType = useMemo(() => {
-    return getSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-  }, [sourceUrl, clientConfig]);
 
   const handleDuration = newDurationInMilliseconds => {
     setDurationInMilliseconds(newDurationInMilliseconds);
@@ -90,7 +85,7 @@ function MediaPlayer({
     pause: player.current?.pause
   };
 
-  const Player = sourceType === SOURCE_TYPE.youtube ? YoutubePlayer : Html5Player;
+  const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const audioOnly = screenMode !== MEDIA_SCREEN_MODE.video;
 
   const playerClasses = classNames(

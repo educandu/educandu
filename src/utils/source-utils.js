@@ -20,6 +20,10 @@ export function isCdnPath(url = '') {
     || ROOM_MEDIA_STORAGE_PATH_PATTERN.test(url);
 }
 
+export function isYoutubeSourceType(url) {
+  return url.startsWith('https://www.youtube.com/') || url.startsWith('https://youtu.be/');
+}
+
 export function getCdnPath({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
   return url
     .replace(new RegExp(`^${escapeStringRegexp(cdnRootUrl)}/?`), '')
@@ -62,7 +66,7 @@ export function getSourceType({ url, cdnRootUrl }) {
     }
   }
 
-  if (url.startsWith('https://www.youtube.com/') || url.startsWith('https://youtu.be/')) {
+  if (isYoutubeSourceType(url)) {
     return SOURCE_TYPE.youtube;
   }
 
