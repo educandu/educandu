@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import Html5Player from './html5-player.js';
 import YoutubePlayer from './youtube-player.js';
 import { useService } from '../../container-context.js';
+import AudioIcon from '../../icons/general/audio-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
 import HttpClient from '../../../api-clients/http-client.js';
 import MediaPlayerControls from '../media-player-controls.js';
@@ -51,11 +52,11 @@ function MediaPlayer({
   aspectRatio,
   screenMode,
   screenWidth,
-  screenOverlay,
   canDownload,
   downloadFileName,
   posterImageUrl,
   mediaPlayerRef,
+  customScreenOverlay,
   customUnderScreenContent,
   onReady,
   onSeek,
@@ -179,18 +180,18 @@ function MediaPlayer({
   };
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
-  const audioOnly = screenMode !== MEDIA_SCREEN_MODE.video;
+  const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
 
   const playerClasses = classNames(
     'MediaPlayer-player',
     `u-width-${screenWidth}`,
-    { 'MediaPlayer-player--audioOnly': audioOnly },
+    { 'MediaPlayer-player--noScreen': noScreen },
     { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
 
   return (
-    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
+    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': noScreen })}>
       <div className={playerClasses}>
         <Player
           volume={volume}
@@ -200,7 +201,7 @@ function MediaPlayer({
           playbackRange={playbackRange}
           posterImageUrl={posterImageUrl}
           playerRef={player}
-          audioOnly={audioOnly}
+          audioOnly={noScreen}
           onReady={onReady}
           onPlay={handlePlaying}
           onPause={handlePausing}
@@ -209,9 +210,14 @@ function MediaPlayer({
           onProgress={handleProgress}
           onBuffering={handleBuffering}
           />
-        {!!screenOverlay && (
-          <div className="MediaPlayer-playerScreenOverlay">
-            {screenOverlay}
+        {screenMode === MEDIA_SCREEN_MODE.audio && (
+          <div className="MediaPlayer-playerAudioScreenOverlay">
+            <AudioIcon />
+          </div>
+        )}
+        {!!customScreenOverlay && (
+          <div className="MediaPlayer-playerCustomScreenOverlay">
+            {customScreenOverlay}
           </div>
         )}
       </div>
@@ -248,7 +254,6 @@ MediaPlayer.propTypes = {
   })),
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  screenOverlay: PropTypes.node,
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   downloadFileName: PropTypes.string,
   canDownload: PropTypes.bool,
@@ -256,6 +261,7 @@ MediaPlayer.propTypes = {
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
+  customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
   onReady: PropTypes.func,
   onSeek: PropTypes.func,
@@ -269,7 +275,6 @@ MediaPlayer.defaultProps = {
   parts: [],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   screenMode: MEDIA_SCREEN_MODE.video,
-  screenOverlay: null,
   screenWidth: 100,
   canDownload: false,
   downloadFileName: null,
@@ -277,6 +282,7 @@ MediaPlayer.defaultProps = {
   mediaPlayerRef: {
     current: null
   },
+  customScreenOverlay: null,
   customUnderScreenContent: null,
   onReady: () => {},
   onSeek: () => {},

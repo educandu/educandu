@@ -143,7 +143,7 @@ function InteractiveMediaDisplay({ content }) {
           parts={parts}
           sourceUrl={sourceUrl}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-          screenOverlay={renderInteractionOverlay()}
+          customScreenOverlay={renderInteractionOverlay()}
           aspectRatio={aspectRatio}
           playbackRange={playbackRange}
           onPartEndReached={handlePartEndReached}

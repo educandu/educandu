@@ -17,7 +17,7 @@
   cursor: pointer;
   margin: 0 auto;
 
-  &.MediaPlayer-player--audioOnly {
+  &.MediaPlayer-player--noScreen {
     height: 0;
 
     iframe {
@@ -35,9 +35,21 @@
   }
 }
 
-.MediaPlayer-playerScreenOverlay {
+.MediaPlayer-playerCustomScreenOverlay {
   .m-mask;
+  cursor: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.MediaPlayer-playerAudioScreenOverlay {
+  .m-mask;
+  cursor: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  background-color: @edu-white;
+  color: @edu-text-color-secondary;
 }

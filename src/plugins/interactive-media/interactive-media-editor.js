@@ -199,7 +199,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           parts={chapters}
           screenWidth={50}
           playbackRange={playbackRange}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
           sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
