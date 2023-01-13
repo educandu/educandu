@@ -56,6 +56,15 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  abortExternalAccountConnection() {
+    return this.httpClient
+      .delete(
+        '/api/v1/users/abort-external-account-connection',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   saveUserRoles({ userId, roles }) {
     return this.httpClient
       .post(

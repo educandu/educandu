@@ -330,6 +330,15 @@ class UserController {
     }
   }
 
+  handleDeleteAbortExternalAccountConnection(req, res) {
+    if (!req.session.externalAccount) {
+      throw new BadRequest();
+    }
+
+    delete req.session.externalAccount;
+    return res.status(204).end();
+  }
+
   async handlePostUserPasswordResetRequest(req, res) {
     const { email } = req.body;
     const user = await this.userService.getActiveUserByEmailAddress(email);
@@ -609,6 +618,11 @@ class UserController {
       jsonParser,
       validateBody(loginBodySchema),
       (req, res, next) => this.handlePostUserLogin(req, res, next)
+    );
+
+    router.delete(
+      '/api/v1/users/abort-external-account-connection',
+      (req, res, next) => this.handleDeleteAbortExternalAccountConnection(req, res, next)
     );
 
     router.post(

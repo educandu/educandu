@@ -8,7 +8,7 @@ import UserController from './user-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, BadRequest } = httpErrors;
 
 describe('user-controller', () => {
 
@@ -601,6 +601,43 @@ describe('user-controller', () => {
     it('should return the result object', () => {
       const response = res._getData();
       expect(response).toBe(mappedUser);
+    });
+  });
+
+  describe('handleDeleteAbortExternalAccountConnection', () => {
+    let req;
+    let res;
+
+    describe('when there is an externalAccount in the session', () => {
+      beforeEach(() => new Promise((resolve, reject) => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          session: { externalAccount: {} }
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+        res.on('end', resolve);
+        sut.handleDeleteAbortExternalAccountConnection(req, res).catch(reject);
+      }));
+      it('should delete the externalAccount from the session', () => {
+        expect(req.session).not.toHaveProperty('externalAccount');
+      });
+      it('should set the status code on the response to 204', () => {
+        expect(res.statusCode).toBe(204);
+      });
+    });
+
+    describe('when there is no externalAccount in the session', () => {
+      beforeEach(() => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          session: {}
+        });
+      });
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handleDeleteAbortExternalAccountConnection(req, res)).toThrow(BadRequest);
+      });
     });
   });
 });

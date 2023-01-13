@@ -11,6 +11,8 @@ import { useService } from '../container-context.js';
 import RegistrationForm from '../registration-form.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { makeCompoundWord } from '../../utils/string-utils.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const VIEW = {
   choices: 'choices',
@@ -24,6 +26,7 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('connectExternalAccount');
   const [currentView, setCurrentView] = useState(VIEW.choices);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const handleLoginChoiceClick = () => {
     setCurrentView(VIEW.login);
@@ -33,8 +36,9 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
     setCurrentView(VIEW.register);
   };
 
-  const handleAbortChoiceClick = () => {
-    throw new Error('NOT IMPLEMENTED');
+  const handleAbortChoiceClick = async () => {
+    await userApiClient.abortExternalAccountConnection();
+    window.location = routes.getDefaultLogoutRedirectUrl();
   };
 
   const handleLoginSucceeded = () => {
