@@ -1,4 +1,5 @@
 import escapeStringRegexp from 'escape-string-regexp';
+import { determineMediaDuration } from './media-utils.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
 import {
   SOURCE_TYPE,
@@ -90,4 +91,19 @@ export function couldAccessUrlFromRoom(url, targetRoomId) {
   const urlOrCdnPath = getCdnPath({ url });
   const sourceRoomId = urlOrCdnPath.match(ROOM_MEDIA_STORAGE_PATH_PATTERN)?.[1];
   return !sourceRoomId || sourceRoomId === targetRoomId;
+}
+
+export async function getSourceDuration({ url, cdnRootUrl }) {
+  try {
+    const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl });
+
+    if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error) {
+      return 0;
+    }
+
+    const duration = await determineMediaDuration(accessibleUrl);
+    return duration;
+  } catch (error) {
+    return 0;
+  }
 }

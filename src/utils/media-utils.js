@@ -4,8 +4,6 @@ import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import { getAccessibleUrl, isInternalSourceType } from './source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
 import MediaDurationIdentifier from '../components/media-player/plyr/media-duration-identifier.js';
 
 const MEDIA_TIMEOUT_IN_MS = 5000;
@@ -20,27 +18,20 @@ export function analyzeMediaUrl(url) {
 
   if (parsedUrl?.origin === 'https://www.youtube.com' && parsedUrl?.pathname === '/watch' && parsedUrl?.searchParams.has('v')) {
     const videoId = parsedUrl.searchParams.get('v');
-    const startSecond = Number.parseInt(parsedUrl.searchParams.get('start'), 10);
-    const endSecond = Number.parseInt(parsedUrl.searchParams.get('end'), 10);
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
       youtubeVideoId: videoId,
-      startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
-      stopTimecode: Number.isInteger(endSecond) ? endSecond * 1000 : null,
       resourceType: RESOURCE_TYPE.video
     };
   }
 
   if (parsedUrl?.origin === 'https://youtu.be' && parsedUrl?.pathname && !parsedUrl?.pathname.slice(1).includes('/')) {
     const videoId = parsedUrl.pathname.slice(1);
-    const startSecond = Number.parseInt(parsedUrl.searchParams.get('t'), 10);
 
     return {
       sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
       youtubeVideoId: videoId,
-      startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
-      stopTimecode: null,
       resourceType: RESOURCE_TYPE.video
     };
   }
@@ -48,8 +39,6 @@ export function analyzeMediaUrl(url) {
   return {
     sanitizedUrl: parsedUrl?.href || url,
     youtubeVideoId: null,
-    startTimecode: null,
-    stopTimecode: null,
     resourceType: getResourceType(url)
   };
 }
@@ -159,39 +148,4 @@ export function getSourcePositionFromTrackPosition(trackPosition, playbackRange)
 
 export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange) {
   return (playbackRange[1] - playbackRange[0]) * sourceDuration;
-}
-
-export async function getMediaInformation({ url, playbackRange, cdnRootUrl }) {
-  const defaultResult = {
-    sanitizedUrl: url,
-    duration: 0,
-    range: [0, 1],
-    resourceType: RESOURCE_TYPE.unknown,
-    error: null
-  };
-
-  if (!url) {
-    return defaultResult;
-  }
-
-  try {
-    const isInvalidSourceUrl = !isInternalSourceType({ url, cdnRootUrl })
-      && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
-
-    if (isInvalidSourceUrl) {
-      return defaultResult;
-    }
-
-    const completeUrl = getAccessibleUrl({ url, cdnRootUrl });
-
-    const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
-    const duration = await determineMediaDuration(completeUrl);
-    const range = [
-      startTimecode ? ensureValidMediaPosition(startTimecode / duration) : playbackRange[0],
-      stopTimecode ? ensureValidMediaPosition(stopTimecode / duration) : playbackRange[1]
-    ];
-    return { ...defaultResult, sanitizedUrl, duration, range, resourceType };
-  } catch (error) {
-    return { ...defaultResult, error };
-  }
 }

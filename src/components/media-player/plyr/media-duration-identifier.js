@@ -44,6 +44,10 @@ function MediaDurationIdentifier({ sourceUrl, onDuration }) {
     }
   }, [player, handleDuration]);
 
+  if (!sourceUrl) {
+    return null;
+  }
+
   return (
     <div>
       <video ref={plyrRef} />
@@ -52,8 +56,12 @@ function MediaDurationIdentifier({ sourceUrl, onDuration }) {
 }
 
 MediaDurationIdentifier.propTypes = {
-  sourceUrl: PropTypes.string.isRequired,
+  sourceUrl: PropTypes.string,
   onDuration: PropTypes.func.isRequired
+};
+
+MediaDurationIdentifier.defaultProps = {
+  sourceUrl: ''
 };
 
 export default memoAndTransformProps(MediaDurationIdentifier, ({

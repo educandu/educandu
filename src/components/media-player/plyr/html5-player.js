@@ -204,7 +204,7 @@ function Htlm5Player({
 }
 
 Htlm5Player.propTypes = {
-  volume: PropTypes.number.isRequired,
+  volume: PropTypes.number,
   audioOnly: PropTypes.bool,
   sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
@@ -223,6 +223,7 @@ Htlm5Player.propTypes = {
 };
 
 Htlm5Player.defaultProps = {
+  volume: 1,
   audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   onReady: () => {},

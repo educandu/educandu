@@ -1,23 +1,18 @@
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
+import React, { Fragment } from 'react';
 import { Form, Radio, Switch } from 'antd';
-import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
-import React, { Fragment, useState } from 'react';
 import { useService } from '../container-context.js';
-import { handleError } from '../../ui/error-helper.js';
-import { useOnComponentMounted } from '../../ui/hooks.js';
 import MediaRangeSelector from './media-range-selector.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import { getMediaInformation } from '../../utils/media-utils.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
-import { getAccessibleUrl, getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
+import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE } from '../../domain/constants.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
-import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
-
-const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -27,19 +22,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mainTrackEditor');
 
-  const [sourceDuration, setSourceDuration] = useState(0);
   const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
-
-  const determineMediaInformationFromUrl = async url => {
-    const result = await getMediaInformation({ url, playbackRange, cdnRootUrl: clientConfig.cdnRootUrl });
-    setSourceDuration(result.duration);
-
-    return result;
-  };
-
-  useOnComponentMounted(async () => {
-    await determineMediaInformationFromUrl(sourceUrl);
-  });
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -50,30 +33,21 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
-  const handleSourceUrlChange = async value => {
-    const { sanitizedUrl, range, resourceType, error } = await determineMediaInformationFromUrl(value);
-    const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isNewSourceTypeInternal = isInternalSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
-
-    const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
-      ? t('common:youtubeCopyrightNotice', { link: value })
-      : '';
-
+  const handleSourceUrlChange = value => {
     const newContent = {
-      sourceUrl: newSourceType === SOURCE_TYPE.unsupported || isNewSourceTypeInternal ? value : sanitizedUrl,
-      playbackRange: range,
-      copyrightNotice: newCopyrightNotice
+      sourceUrl: value,
+      playbackRange: [0, 1],
+      copyrightNotice: isYoutubeSourceType(value)
+        ? t('common:youtubeCopyrightNotice', { link: value })
+        : ''
     };
 
     if (useShowVideo) {
+      const { resourceType } = analyzeMediaUrl(value);
       newContent.showVideo = resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown;
     }
 
     changeContent(newContent);
-
-    if (error) {
-      handleError({ error, logger, t });
-    }
   };
 
   const handlePlaybackRangeChange = newRange => {
@@ -128,12 +102,8 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       )}
       <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
         <div className="u-input-and-button">
-          <MediaRangeReadonlyInput playbackRange={playbackRange} sourceDuration={sourceDuration} />
-          <MediaRangeSelector
-            range={playbackRange}
-            onRangeChange={handlePlaybackRangeChange}
-            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-            />
+          <MediaRangeReadonlyInput sourceUrl={sourceUrl} playbackRange={playbackRange} />
+          <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
         </div>
       </FormItem>
       <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>

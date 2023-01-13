@@ -3,11 +3,16 @@ import { Modal, Button, Spin } from 'antd';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import { useService } from '../container-context.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
+import { getAccessibleUrl, getSourceDuration } from '../../utils/source-utils.js';
+import { analyzeMediaUrl, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
 
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaRangeSelector');
+
   const [currentRange, setCurrentRange] = useState(range);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -24,9 +29,12 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     setIsModalOpen(true);
     try {
       setIsRetrievingMediaInfo(true);
-      const info = analyzeMediaUrl(sourceUrl);
-      const duration = await determineMediaDuration(sourceUrl);
-      setCurrentMediaInfo({ ...info, duration });
+      const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+      const { resourceType, sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
+      const duration = await getSourceDuration({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+      setCurrentMediaInfo({ resourceType, sanitizedUrl, duration });
     } catch (error) {
       setCurrentMediaInfo(null);
     } finally {
