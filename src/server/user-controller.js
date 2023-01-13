@@ -23,12 +23,7 @@ import ClientDataMappingService from '../services/client-data-mapping-service.js
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
-import {
-  ANTI_BRUTE_FORCE_MAX_REQUESTS,
-  ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
-  ERROR_CODES,
-  SAVE_USER_RESULT
-} from '../domain/constants.js';
+import { ANTI_BRUTE_FORCE_MAX_REQUESTS, ANTI_BRUTE_FORCE_EXPIRES_IN_MS, SAVE_USER_RESULT, ERROR_CODES } from '../domain/constants.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -46,7 +41,7 @@ import {
 const jsonParser = express.json();
 const { MultiSamlStrategy } = passportSaml;
 const { Strategy: LocalStrategy } = passportLocal;
-const { NotFound, Forbidden, BadRequest, InternalServerError } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
 
@@ -102,16 +97,8 @@ class UserController {
       usernameField: 'email',
       passwordField: 'password'
     }, (email, password, cb) => {
-      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
-        .then(user => {
-          if (user?.accountLockedOn) {
-            const err = new Error('User account is locked');
-            err.code = ERROR_CODES.userAccountLocked;
-            throw err;
-          }
-
-          return cb(null, user || false);
-        })
+      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password, throwIfLocked: true })
+        .then(user => cb(null, user || false))
         .catch(err => cb(err));
     });
 
@@ -517,7 +504,7 @@ class UserController {
       }
     );
 
-    router.use((req, res, next) => {
+    router.use(async (req, res, next) => {
       const { externalAccount } = req.session;
 
       if (
@@ -531,9 +518,34 @@ class UserController {
         return next();
       }
 
-      return externalAccount.userId
-        ? next(new InternalServerError('NOT IMPLEMENTED: User is already linked to external account'))
-        : res.redirect(routes.getConnectExternalAccountPath());
+      if (!externalAccount.userId) {
+        return res.redirect(routes.getConnectExternalAccountPath());
+      }
+
+      try {
+        const user = await this.userService.findConfirmedActiveUserById({ userId: externalAccount.userId, throwIfLocked: true });
+        if (!user) {
+          // eslint-disable-next-line require-atomic-updates
+          req.session.externalAccount = await this.externalAccountService.updateExternalAccountUserId({
+            externalAccountId: externalAccount._id,
+            userId: null
+          });
+          return res.redirect(routes.getConnectExternalAccountPath());
+        }
+
+        await new Promise((resolve, reject) => {
+          req.login(user, err => err ? reject(err) : resolve());
+        });
+        delete req.session.externalAccount;
+        // This should later redirect to the originally requested URL
+        return res.redirect(routes.getHomeUrl());
+      } catch (err) {
+        if (err.code === ERROR_CODES.userAccountLocked) {
+          delete req.session.externalAccount;
+        }
+
+        return next(err);
+      }
     });
   }
 

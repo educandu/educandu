@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import routes from '../utils/routes.js';
 import { settingsProps } from '../ui/default-prop-types.js';
+import { HTTP_STATUS } from '../domain/constants.js';
 
 function ErrorPage({ error, settings, uiLanguage, i18n }) {
-  const backHtml = `<a onclick="window.history.back();">${i18n.t('common:back')}</a>`;
+  const backHtml = error.status === HTTP_STATUS.unauthorized
+    ? `<a href="${routes.getHomeUrl()}">${i18n.t('pageNames:home')}</a>`
+    : `<a onclick="window.history.back();">${i18n.t('common:back')}</a>`;
   return (
     <div className="ErrorPage">
       <header className="ErrorPage-headerArea">

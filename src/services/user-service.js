@@ -17,10 +17,11 @@ import {
   SAVE_USER_RESULT,
   USER_ACTIVITY_TYPE,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS,
+  ERROR_CODES
 } from '../domain/constants.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Unauthorized } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const PASSWORD_SALT_ROUNDS = 1024;
@@ -405,7 +406,22 @@ class UserService {
     return user;
   }
 
-  async findConfirmedActiveUserByEmailAndPassword({ email, password }) {
+  async findConfirmedActiveUserById({ userId, throwIfLocked = false }) {
+    const user = await this.userStore.findActiveUserById(userId);
+    if (!user || user.expiresOn) {
+      return null;
+    }
+
+    if (user.accountLockedOn && throwIfLocked) {
+      const err = new Unauthorized('User account is locked');
+      err.code = ERROR_CODES.userAccountLocked;
+      throw err;
+    }
+
+    return user;
+  }
+
+  async findConfirmedActiveUserByEmailAndPassword({ email, password, throwIfLocked = false }) {
     if (!email || !password) {
       return null;
     }
@@ -413,9 +429,14 @@ class UserService {
     const lowerCasedEmail = email.toLowerCase();
 
     const user = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
-
     if (!user || user.expiresOn) {
       return null;
+    }
+
+    if (user.accountLockedOn && throwIfLocked) {
+      const err = new Unauthorized('User account is locked');
+      err.code = ERROR_CODES.userAccountLocked;
+      throw err;
     }
 
     const doesPasswordMatch = await bcrypt.compare(password, user.passwordHash);
