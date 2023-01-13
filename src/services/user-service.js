@@ -414,7 +414,7 @@ class UserService {
 
     const user = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
 
-    if (!user || user.expires) {
+    if (!user || user.expiresOn) {
       return null;
     }
 
