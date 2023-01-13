@@ -71,6 +71,16 @@ function Htlm5Player({
     }
   };
 
+  const handleDuration = useCallback(() => {
+    if (player?.duration) {
+      triggerSeek(0);
+      const actualDurationInMs = player.duration * 1000;
+      const playbackDurationInMs = actualDurationInMs * (playbackRange[1] - playbackRange[0]);
+      setSourceDurationInMs(actualDurationInMs);
+      onDuration(playbackDurationInMs);
+    }
+  }, [player, playbackRange, onDuration, triggerSeek]);
+
   useEffect(() => {
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
@@ -97,6 +107,10 @@ function Htlm5Player({
       player.speed = playbackRate;
     }
   }, [player, playbackRate]);
+
+  useEffect(() => {
+    handleDuration();
+  }, [handleDuration]);
 
   useEffect(() => {
     if (player) {
@@ -136,13 +150,8 @@ function Htlm5Player({
   }, [player, sourceDurationInMs, playbackRangeInMs, onProgress, triggerPause, handleEnded]);
 
   const handleLoadedMetadata = useCallback(() => {
-    if (player.duration) {
-      const actualDurationInMs = player.duration * 1000;
-      const playbackDurationInMs = actualDurationInMs * (playbackRange[1] - playbackRange[0]);
-      setSourceDurationInMs(actualDurationInMs);
-      onDuration(playbackDurationInMs);
-    }
-  }, [player, playbackRange, onDuration]);
+    handleDuration();
+  }, [handleDuration]);
 
   const handleReady = useCallback(() => {
     onReady();

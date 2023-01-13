@@ -44,18 +44,6 @@ function YoutubePlayer({
 
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
-  useEffect(() => {
-    if (sourceDurationInfo.duration) {
-      const calculatedStartTimeInS = Math.trunc((playbackRange[0] * sourceDurationInfo.duration) / 1000);
-      const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration) / 1000);
-      setStartTimeInS(calculatedStartTimeInS);
-      setEndTimeInS(calculatedEndTimeInS);
-
-      onDuration((calculatedEndTimeInS - calculatedStartTimeInS) * 1000);
-      setSourceDurationInMs(sourceDurationInfo.duration);
-    }
-  }, [playbackRange, sourceDurationInfo, onDuration]);
-
   const [player, setPlayer] = useState(null);
   const [showPosterImage, setShowPosterImage] = useState(true);
 
@@ -113,6 +101,19 @@ function YoutubePlayer({
       progressInterval.current = setInterval(callback, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS);
     }
   };
+
+  useEffect(() => {
+    if (sourceDurationInfo.duration) {
+      triggerSeek(0);
+      const calculatedStartTimeInS = Math.trunc((playbackRange[0] * sourceDurationInfo.duration) / 1000);
+      const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration) / 1000);
+      setStartTimeInS(calculatedStartTimeInS);
+      setEndTimeInS(calculatedEndTimeInS);
+
+      onDuration((calculatedEndTimeInS - calculatedStartTimeInS) * 1000);
+      setSourceDurationInMs(sourceDurationInfo.duration);
+    }
+  }, [playbackRange, sourceDurationInfo, onDuration, triggerSeek]);
 
   useEffect(() => {
     if (!sourceDurationInMs) {
