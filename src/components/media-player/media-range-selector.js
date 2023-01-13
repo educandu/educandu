@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Modal, Button, Spin } from 'antd';
-import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
+import MediaPlayer from './plyr/media-player.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -13,10 +13,10 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaRangeSelector');
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRange, setCurrentRange] = useState(range);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMediaInfo, setCurrentMediaInfo] = useState(null);
   const [isRetrievingMediaInfo, setIsRetrievingMediaInfo] = useState(false);
 
@@ -139,11 +139,11 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
           )}
           {!isRetrievingMediaInfo && !!currentMediaInfo && (
             <MediaPlayer
-              source={currentMediaInfo.sanitizedUrl}
+              sourceUrl={currentMediaInfo.sanitizedUrl}
               onProgress={handleProgress}
               parts={getCurrentRangeParts()}
               screenMode={getScreenMode()}
-              extraCustomContent={(
+              customUnderScreenContent={(
                 <div className="MediaRangeSelector-rangeSelectorArea">
                   <div className="MediaRangeSelector-rangeDisplay">
                     {renderRangeText()}
