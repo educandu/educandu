@@ -73,9 +73,20 @@ describe('user-service', () => {
       });
     });
 
+    describe('when userId matches but the account is not yet confirmed', () => {
+      beforeEach(async () => {
+        user.expiresOn = new Date();
+        await updateTestUser(container, user);
+        result = await sut.findConfirmedActiveUserById({ userId: user._id });
+      });
+      it('should return null', () => {
+        expect(result).toBe(null);
+      });
+    });
+
     describe('when userId matches but the account is closed', () => {
       beforeEach(async () => {
-        user.accountClosedOn = new Date('2022-12-01T12:00:00.000Z');
+        user.accountClosedOn = new Date();
         await updateTestUser(container, user);
         result = await sut.findConfirmedActiveUserById({ userId: user._id });
       });
@@ -163,9 +174,20 @@ describe('user-service', () => {
       });
     });
 
+    describe('when email and password match but the account is not yet confirmed', () => {
+      beforeEach(async () => {
+        user.expiresOn = new Date();
+        await updateTestUser(container, user);
+        result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password });
+      });
+      it('should return null', () => {
+        expect(result).toBe(null);
+      });
+    });
+
     describe('when email and password match but the account is closed', () => {
       beforeEach(async () => {
-        user.accountClosedOn = new Date('2022-12-01T12:00:00.000Z');
+        user.accountClosedOn = new Date();
         await updateTestUser(container, user);
         result = await sut.findConfirmedActiveUserByEmailAndPassword({ email: user.email, password });
       });
