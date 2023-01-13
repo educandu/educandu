@@ -59,6 +59,10 @@ function Htlm5Player({
     }
   }, [player, playbackRangeInMs]);
 
+  const triggerStop = useCallback(() => {
+    player?.stop();
+  }, [player]);
+
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
     progressInterval.current = null;
@@ -183,8 +187,9 @@ function Htlm5Player({
   playerRef.current = useMemo(() => ({
     play: triggerPlay,
     pause: triggerPause,
-    seekToTimecode: triggerSeek
-  }), [triggerPlay, triggerPause, triggerSeek]);
+    seekToTimecode: triggerSeek,
+    stop: triggerStop
+  }), [triggerPlay, triggerPause, triggerSeek, triggerStop]);
 
   return (
     <div className="Html5Player">
