@@ -17,12 +17,16 @@ class UserStore {
     return this.collection.findOne({ verificationCode }, { session });
   }
 
-  findActiveUserByEmail(email, { session } = {}) {
-    return this.collection.findOne({ $and: [{ email }, { accountClosedOn: null }] }, { session });
+  findActiveUserById(userId, { session } = {}) {
+    return this.collection.findOne({ _id: userId, accountClosedOn: null }, { session });
   }
 
-  getUserById(id, { session } = {}) {
-    return this.collection.findOne({ _id: id }, { session });
+  findActiveUserByEmail(email, { session } = {}) {
+    return this.collection.findOne({ email, accountClosedOn: null }, { session });
+  }
+
+  getUserById(userId, { session } = {}) {
+    return this.collection.findOne({ _id: userId }, { session });
   }
 
   getUsersByIds(ids, { session } = {}) {
