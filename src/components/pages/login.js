@@ -20,6 +20,7 @@ function Login({ PageTemplate, SiteLogo }) {
         <div className="LoginPage-form">
           <LoginForm
             name="login-page-login-form"
+            redirect={request.query.redirect}
             onLoginSucceeded={handleLoginSucceeded}
             showPasswordReset
             showLoginButtons

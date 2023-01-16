@@ -18,6 +18,7 @@ const logger = new Logger(import.meta.url);
 
 export default function LoginForm({
   name,
+  redirect,
   formRef,
   fixedEmail,
   allowExternalLogin,
@@ -77,7 +78,7 @@ export default function LoginForm({
 
   const loginUsingExternalProvider = providerKey => {
     const provider = clientConfig.samlAuth.identityProviders.find(p => p.key === providerKey);
-    window.location = routes.getSamlAuthLoginPath(provider.key);
+    window.location = routes.getSamlAuthLoginPath(provider.key, redirect);
   };
 
   const handleFinish = values => {
@@ -199,6 +200,7 @@ export default function LoginForm({
 
 LoginForm.propTypes = {
   name: PropTypes.string,
+  redirect: PropTypes.string,
   formRef: PropTypes.shape({
     current: PropTypes.object
   }),
@@ -215,6 +217,7 @@ LoginForm.propTypes = {
 
 LoginForm.defaultProps = {
   name: 'login-form',
+  redirect: null,
   formRef: null,
   fixedEmail: null,
   allowExternalLogin: false,

@@ -105,8 +105,8 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
-function getConnectExternalAccountPath() {
-  return connectExternalAccountPath;
+function getConnectExternalAccountPath(redirect = null) {
+  return redirect ? urlUtils.createRedirectUrl(connectExternalAccountPath, redirect) : connectExternalAccountPath;
 }
 
 function getSearchUrl(query) {
@@ -122,8 +122,9 @@ function getDocIdIfDocUrl(url) {
   return documentId || null;
 }
 
-function getSamlAuthLoginPath(providerKey) {
-  return urlUtils.concatParts(samlAuthLoginPrefix, encodeURIComponent(providerKey));
+function getSamlAuthLoginPath(providerKey, redirect = null) {
+  const fullPath = urlUtils.concatParts(samlAuthLoginPrefix, encodeURIComponent(providerKey));
+  return redirect ? urlUtils.createRedirectUrl(fullPath, redirect) : fullPath;
 }
 
 function getSamlAuthLoginCallbackPath(providerKey) {
