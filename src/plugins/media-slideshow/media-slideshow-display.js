@@ -7,7 +7,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
+import MediaPlayer from '../../components/media-player/plyr/media-player.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
@@ -30,7 +30,7 @@ function MediaSlideshowDisplay({ content }) {
   }, [clientConfig.cdnRootUrl, chapters]);
 
   const handlePlayingPartIndexChange = partIndex => {
-    setPlayingChapterIndex(partIndex);
+    setPlayingChapterIndex(Math.max(partIndex, 0));
   };
 
   const renderPlayingChapterImage = () => {
@@ -71,14 +71,14 @@ function MediaSlideshowDisplay({ content }) {
     <div className="MediaSlideshowDisplay">
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
-          mediaPlayerRef={mediaPlayerRef}
           parts={chapters}
-          source={sourceUrl}
-          screenMode={MEDIA_SCREEN_MODE.overlay}
-          aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
-          playbackRange={playbackRange}
+          sourceUrl={sourceUrl}
           canDownload={canDownload}
-          screenOverlay={renderPlayingChapter()}
+          playbackRange={playbackRange}
+          mediaPlayerRef={mediaPlayerRef}
+          screenMode={MEDIA_SCREEN_MODE.audio}
+          aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
+          customScreenOverlay={renderPlayingChapter()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />
         <CopyrightNotice value={copyrightNotice} />

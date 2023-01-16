@@ -75,6 +75,12 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
         <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
       </FormItem>
+      <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
+        <div className="u-input-and-button">
+          <MediaRangeReadonlyInput sourceUrl={sourceUrl} playbackRange={playbackRange} />
+          <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
+        </div>
+      </FormItem>
       {!!useAspectRatio && (
         <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup
@@ -100,12 +106,6 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
             />
         </FormItem>
       )}
-      <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
-        <div className="u-input-and-button">
-          <MediaRangeReadonlyInput sourceUrl={sourceUrl} playbackRange={playbackRange} />
-          <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
-        </div>
-      </FormItem>
       <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
         <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
       </FormItem>

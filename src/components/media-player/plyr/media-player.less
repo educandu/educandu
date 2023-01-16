@@ -1,6 +1,7 @@
 @import (less) 'plyr/dist/plyr.css';
 
 .MediaPlayer {
+  position: relative;
 
   &.MediaPlayer--noScreen {
     padding: 15px;
@@ -10,10 +11,13 @@
 }
 
 .MediaPlayer-player {
+  position: relative;
+
   --plyr-video-background: @edu-white;
   cursor: pointer;
+  margin: 0 auto;
 
-  &.MediaPlayer-player--audioOnly {
+  &.MediaPlayer-player--noScreen {
     height: 0;
 
     iframe {
@@ -29,4 +33,23 @@
   &.MediaPlayer-player--fourToThree {
     aspect-ratio: 4/3;
   }
+}
+
+.MediaPlayer-playerCustomScreenOverlay {
+  .m-mask;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MediaPlayer-playerAudioScreenOverlay {
+  .m-mask;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  background-color: @edu-white;
+  color: @edu-text-color-secondary;
 }

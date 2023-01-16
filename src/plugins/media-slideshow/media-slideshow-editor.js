@@ -15,10 +15,10 @@ import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
+import MediaPlayer from '../../components/media-player/plyr/media-player.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
@@ -36,7 +36,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaSlideshow');
   const mediaSlideshowInfo = useService(MediaSlideshowInfo);
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
-  const [playingChapterIndex, setPlayingChapterIndex] = useState(-1);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
 
@@ -137,7 +137,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   };
 
   const handlePlayingPartIndexChange = partIndex => {
-    setPlayingChapterIndex(partIndex);
+    setPlayingChapterIndex(Math.max(partIndex, 0));
   };
 
   const renderPlayingChapterImage = () => {
@@ -197,12 +197,12 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
-          screenMode={MEDIA_SCREEN_MODE.overlay}
           screenWidth={50}
           playbackRange={playbackRange}
-          screenOverlay={renderPlayingChapterImage()}
+          screenMode={MEDIA_SCREEN_MODE.audio}
+          customScreenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          source={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
         <Timeline

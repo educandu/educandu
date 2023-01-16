@@ -59,6 +59,10 @@ function Htlm5Player({
     }
   }, [player, playbackRangeInMs]);
 
+  const triggerStop = useCallback(() => {
+    player?.stop();
+  }, [player]);
+
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
     progressInterval.current = null;
@@ -66,6 +70,16 @@ function Htlm5Player({
       progressInterval.current = setInterval(callback, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS);
     }
   };
+
+  const handleDuration = useCallback(() => {
+    if (player?.duration) {
+      triggerSeek(0);
+      const actualDurationInMs = player.duration * 1000;
+      const playbackDurationInMs = actualDurationInMs * (playbackRange[1] - playbackRange[0]);
+      setSourceDurationInMs(actualDurationInMs);
+      onDuration(playbackDurationInMs);
+    }
+  }, [player, playbackRange, onDuration, triggerSeek]);
 
   useEffect(() => {
     const playerInstance = new Plyr(plyrRef.current, {
@@ -93,6 +107,10 @@ function Htlm5Player({
       player.speed = playbackRate;
     }
   }, [player, playbackRate]);
+
+  useEffect(() => {
+    handleDuration();
+  }, [handleDuration]);
 
   useEffect(() => {
     if (player) {
@@ -132,13 +150,8 @@ function Htlm5Player({
   }, [player, sourceDurationInMs, playbackRangeInMs, onProgress, triggerPause, handleEnded]);
 
   const handleLoadedMetadata = useCallback(() => {
-    if (player.duration) {
-      const actualDurationInMs = player.duration * 1000;
-      const playbackDurationInMs = actualDurationInMs * (playbackRange[1] - playbackRange[0]);
-      setSourceDurationInMs(actualDurationInMs);
-      onDuration(playbackDurationInMs);
-    }
-  }, [player, playbackRange, onDuration]);
+    handleDuration();
+  }, [handleDuration]);
 
   const handleReady = useCallback(() => {
     onReady();
@@ -183,8 +196,9 @@ function Htlm5Player({
   playerRef.current = useMemo(() => ({
     play: triggerPlay,
     pause: triggerPause,
-    seekToTimecode: triggerSeek
-  }), [triggerPlay, triggerPause, triggerSeek]);
+    seekToTimecode: triggerSeek,
+    stop: triggerStop
+  }), [triggerPlay, triggerPause, triggerSeek, triggerStop]);
 
   return (
     <div className="Html5Player">
