@@ -107,13 +107,14 @@ class UserController {
         const provider = this.getProviderForRequest(req);
         const { origin } = requestUtils.getHostInfo(req);
         done(null, {
-          issuer: origin,
+          issuer: `${origin}/${provider.key}`,
           entryPoint: provider.entryPoint,
           cert: provider.cert,
           callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
           decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
           wantAssertionsSigned: false,
-          forceAuthn: true
+          forceAuthn: true,
+          identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
         });
       }
     }, (profile, done) => done(null, { ...profile }));
