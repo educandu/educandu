@@ -44,6 +44,7 @@ const { Strategy: LocalStrategy } = passportLocal;
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
+const SYMBOL_REDIRECT_AFTER_SAML_LOGIN = Symbol('SYMBOL_REDIRECT_AFTER_SAML_LOGIN');
 
 class UserController {
   static get inject() {
@@ -104,6 +105,7 @@ class UserController {
 
     this.samlStrategy = new MultiSamlStrategy({
       getSamlOptions: (req, done) => {
+        const { redirect } = req.query;
         const provider = this.getProviderForRequest(req);
         const { origin } = requestUtils.getHostInfo(req);
         done(null, {
@@ -114,7 +116,10 @@ class UserController {
           decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
           wantAssertionsSigned: false,
           forceAuthn: true,
-          identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+          identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+          additionalParams: {
+            RelayState: redirect || ''
+          }
         });
       }
     }, (profile, done) => done(null, { ...profile }));
@@ -478,9 +483,7 @@ class UserController {
       '/saml-auth/login/:idpKey',
       (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
       (req, res, next) => {
-        passport.authenticate('saml', err => {
-          return err ? next(err) : res.end();
-        })(req, res, next);
+        passport.authenticate('saml', err => err ? next(err) : res.end())(req, res, next);
       }
     );
 
@@ -500,8 +503,11 @@ class UserController {
 
           const providerKey = this.getProviderForRequest(req).key;
           const externalUserId = profile.nameID;
+          const { RelayState } = req.body;
 
           try {
+            // eslint-disable-next-line require-atomic-updates
+            req[SYMBOL_REDIRECT_AFTER_SAML_LOGIN] = RelayState || null;
             // eslint-disable-next-line require-atomic-updates
             req.session.externalAccount = await this.externalAccountService
               .createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
@@ -528,8 +534,10 @@ class UserController {
         return next();
       }
 
+      const redirect = req[SYMBOL_REDIRECT_AFTER_SAML_LOGIN] || null;
+
       if (!externalAccount.userId) {
-        return res.redirect(routes.getConnectExternalAccountPath());
+        return res.redirect(routes.getConnectExternalAccountPath(redirect));
       }
 
       try {
@@ -540,15 +548,14 @@ class UserController {
             externalAccountId: externalAccount._id,
             userId: null
           });
-          return res.redirect(routes.getConnectExternalAccountPath());
+          return res.redirect(routes.getConnectExternalAccountPath(redirect));
         }
 
         await new Promise((resolve, reject) => {
           req.login(user, err => err ? reject(err) : resolve());
         });
         delete req.session.externalAccount;
-        // This should later redirect to the originally requested URL
-        return res.redirect(routes.getHomeUrl());
+        return res.redirect(redirect ? redirect : routes.getHomeUrl());
       } catch (err) {
         if (err.code === ERROR_CODES.userAccountLocked) {
           delete req.session.externalAccount;
