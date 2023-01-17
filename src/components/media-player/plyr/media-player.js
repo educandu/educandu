@@ -64,7 +64,7 @@ function MediaPlayer({
   onPartEndReached,
   onPlayingPartIndexChange
 }) {
-  const player = useRef();
+  const playerRef = useRef();
   const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
@@ -87,7 +87,7 @@ function MediaPlayer({
   };
 
   const handlePlayClick = () => {
-    player.current.play();
+    playerRef.current.play();
   };
 
   const handlePlaying = () => {
@@ -95,7 +95,7 @@ function MediaPlayer({
   };
 
   const handlePauseClick = () => {
-    player.current.pause();
+    playerRef.current.pause();
     setPlayState(MEDIA_PLAY_STATE.pausing);
   };
 
@@ -113,7 +113,7 @@ function MediaPlayer({
 
   const handleSeek = milliseconds => {
     setLastReachedPartEndIndex(-1);
-    player.current.seekToTimecode(milliseconds);
+    playerRef.current.seekToTimecode(milliseconds);
     onSeek();
   };
 
@@ -141,15 +141,15 @@ function MediaPlayer({
   const triggerSeekToPart = partIndex => {
     setLastReachedPartEndIndex(partIndex - 1);
     const partStartTimecode = (parts[partIndex]?.startPosition || 0) * durationInMilliseconds;
-    player.current.seekToTimecode(partStartTimecode);
+    playerRef.current.seekToTimecode(partStartTimecode);
     setPlayedMilliseconds(partStartTimecode);
     onSeek();
   };
 
   const triggerReset = () => {
     setLastReachedPartEndIndex(-1);
-    player.current?.stop();
-    player.current?.seekToTimecode(0);
+    playerRef.current?.stop();
+    playerRef.current?.seekToTimecode(0);
     setPlayedMilliseconds(0);
   };
 
@@ -172,11 +172,11 @@ function MediaPlayer({
   }, [isSeeking, parts, durationInMilliseconds, playedMilliseconds, lastPlayedPartIndex, lastReachedPartEndIndex, onPlayingPartIndexChange, onPartEndReached]);
 
   mediaPlayerRef.current = {
-    play: player.current?.play,
-    pause: player.current?.pause,
-    stop: player.current?.stop,
-    seekToPart: triggerSeekToPart,
-    reset: triggerReset
+    play: playerRef.current?.play,
+    pause: playerRef.current?.pause,
+    stop: playerRef.current?.stop,
+    reset: triggerReset,
+    seekToPart: triggerSeekToPart
   };
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
@@ -200,7 +200,7 @@ function MediaPlayer({
           playbackRate={playbackRate}
           playbackRange={playbackRange}
           posterImageUrl={posterImageUrl}
-          playerRef={player}
+          playerRef={playerRef}
           audioOnly={noScreen}
           onReady={onReady}
           onPlay={handlePlaying}
