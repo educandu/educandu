@@ -7,12 +7,13 @@ import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
 import { handleApiError } from '../ui/error-helper.js';
-import ClientConfig from '../bootstrap/client-config.js';
 import BlockedLoginError from './blocked-login-error.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import UserApiClient from '../api-clients/user-api-client.js';
-import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
+import { samlIdentityProviderClientShape } from '../ui/default-prop-types.js';
 import ExternalAccountProviderDialog from './external-account-provider-dialog.js';
+import { ERROR_CODES, FEATURE_TOGGLES, HTTP_STATUS } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -21,7 +22,7 @@ export default function LoginForm({
   redirect,
   formRef,
   fixedEmail,
-  allowExternalLogin,
+  samlIdentityProviders,
   connectExternalAccount,
   showLoginButtons,
   showPasswordReset,
@@ -77,7 +78,7 @@ export default function LoginForm({
   };
 
   const loginUsingExternalProvider = providerKey => {
-    const provider = clientConfig.samlAuth.identityProviders.find(p => p.key === providerKey);
+    const provider = samlIdentityProviders.find(p => p.key === providerKey);
     window.location = routes.getSamlAuthLoginPath(provider.key, redirect);
   };
 
@@ -97,8 +98,8 @@ export default function LoginForm({
   };
 
   const handleLoginWithShibbolethButtonClick = () => {
-    if (clientConfig.samlAuth.identityProviders.length === 1) {
-      const providerKey = clientConfig.samlAuth.identityProviders[0].key;
+    if (samlIdentityProviders.length === 1) {
+      const providerKey = samlIdentityProviders[0].key;
       loginUsingExternalProvider(providerKey);
     } else {
       setIsExternalAccountProviderDialogOpen(true);
@@ -134,7 +135,8 @@ export default function LoginForm({
   ];
 
   const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
-  const canLoginWithShibboleth = allowExternalLogin && clientConfig.samlAuth?.identityProviders.length;
+  const canLoginWithShibboleth = samlIdentityProviders.length
+    && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.shibbolethLoginForm);
 
   return (
     <div className="LoginForm">
@@ -190,6 +192,7 @@ export default function LoginForm({
         <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
       )}
       <ExternalAccountProviderDialog
+        providers={samlIdentityProviders}
         isOpen={isExternalAccountProviderDialogOpen}
         onOk={handleExternalAccountProviderDialogOk}
         onCancel={handleExternalAccountProviderDialogCancel}
@@ -205,7 +208,7 @@ LoginForm.propTypes = {
     current: PropTypes.object
   }),
   fixedEmail: PropTypes.string,
-  allowExternalLogin: PropTypes.bool,
+  samlIdentityProviders: PropTypes.arrayOf(samlIdentityProviderClientShape),
   connectExternalAccount: PropTypes.bool,
   showLoginButtons: PropTypes.bool,
   showPasswordReset: PropTypes.bool,
@@ -220,7 +223,7 @@ LoginForm.defaultProps = {
   redirect: null,
   formRef: null,
   fixedEmail: null,
-  allowExternalLogin: false,
+  samlIdentityProviders: [],
   connectExternalAccount: false,
   showLoginButtons: false,
   showPasswordReset: false,

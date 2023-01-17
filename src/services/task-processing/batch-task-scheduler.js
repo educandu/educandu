@@ -1,23 +1,28 @@
-import Logger from '../common/logger.js';
+import Logger from '../../common/logger.js';
 import BatchProcessor from './batch-processor.js';
-import ServerConfig from '../bootstrap/server-config.js';
-import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
+import ServerConfig from '../../bootstrap/server-config.js';
 
 const logger = new Logger(import.meta.url);
-export default class TaskScheduler {
-  static get inject() { return [BatchProcessor, ServerConfig]; }
 
-  constructor(batchProcessor, serverConfig) {
+export default class BatchTaskScheduler {
+  static get inject() { return [ServerConfig, BatchProcessor]; }
+
+  constructor(serverConfig, batchProcessor) {
     this.timeout = null;
+    this.serverConfig = serverConfig;
     this.batchProcessor = batchProcessor;
     this.currentTick = Promise.resolve();
-    this.serverConfig = serverConfig;
     this.context = { cancellationRequested: false };
   }
 
   start() {
-    logger.info('Starting task scheduler');
     this._tick();
+  }
+
+  async stop() {
+    this.context.cancellationRequested = true;
+    clearTimeout(this.timeout);
+    await this.currentTick;
   }
 
   _tick() {
@@ -28,7 +33,7 @@ export default class TaskScheduler {
       try {
         isThereMoreWork = await this.batchProcessor.process(this.context);
       } catch (error) {
-        logger.error('Error in batch processor: ', error);
+        logger.error('Error in batch processor:', error);
         isThereMoreWork = false;
       }
 
@@ -37,18 +42,5 @@ export default class TaskScheduler {
         this.timeout = setTimeout(() => this._tick(), nextPollTimeSpan);
       }
     })();
-  }
-
-  [getDisposalInfo]() {
-    return {
-      priority: DISPOSAL_PRIORITY.domain,
-      dispose: async () => {
-        logger.info('Stopping task scheduler');
-        this.context.cancellationRequested = true;
-        clearTimeout(this.timeout);
-        await this.currentTick;
-        logger.info('Task scheduler stopped');
-      }
-    };
   }
 }

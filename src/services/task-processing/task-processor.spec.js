@@ -1,13 +1,13 @@
 import { assert, createSandbox } from 'sinon';
-import LockStore from '../stores/lock-store.js';
-import TaskStore from '../stores/task-store.js';
 import TaskProcessor from './task-processor.js';
 import { serializeError } from 'serialize-error';
-import { TASK_TYPE } from '../domain/constants.js';
-import ServerConfig from '../bootstrap/server-config.js';
+import LockStore from '../../stores/lock-store.js';
+import TaskStore from '../../stores/task-store.js';
+import { TASK_TYPE } from '../../domain/constants.js';
+import ServerConfig from '../../bootstrap/server-config.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../test-helper.js';
 
 describe('task-processor', () => {
 

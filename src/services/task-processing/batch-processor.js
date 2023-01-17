@@ -1,8 +1,8 @@
-import Logger from '../common/logger.js';
-import TaskStore from '../stores/task-store.js';
+import Logger from '../../common/logger.js';
 import TaskProcessor from './task-processor.js';
 import { serializeError } from 'serialize-error';
-import BatchStore from '../stores/batch-store.js';
+import TaskStore from '../../stores/task-store.js';
+import BatchStore from '../../stores/batch-store.js';
 
 const logger = new Logger(import.meta.url);
 

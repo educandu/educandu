@@ -16,6 +16,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
+import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ExternalAccountService from '../services/external-account-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
@@ -59,7 +60,8 @@ class UserController {
       MailService,
       ClientDataMappingService,
       RoomService,
-      PageRenderer
+      PageRenderer,
+      SamlConfigService
     ];
   }
 
@@ -74,7 +76,8 @@ class UserController {
     mailService,
     clientDataMappingService,
     roomService,
-    pageRenderer
+    pageRenderer,
+    samlConfigService
   ) {
     this.userService = userService;
     this.mailService = mailService;
@@ -83,6 +86,7 @@ class UserController {
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
     this.documentService = documentService;
+    this.samlConfigService = samlConfigService;
     this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
@@ -109,9 +113,10 @@ class UserController {
         const provider = this.getProviderForRequest(req);
         const { origin } = requestUtils.getHostInfo(req);
         done(null, {
-          issuer: `${origin}/${provider.key}`,
-          entryPoint: provider.entryPoint,
-          cert: provider.cert,
+          providerName: this.serverConfig.appName,
+          issuer: `${origin}/saml-auth/id/${provider.key}`,
+          entryPoint: provider.resolvedMetadata.entryPoint,
+          cert: provider.resolvedMetadata.certificates,
           callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
           decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
           wantAssertionsSigned: false,
@@ -143,7 +148,7 @@ class UserController {
 
   setIdpKeyFromRequestParam(paramName, req, _res, next) {
     const idpKey = req.params[paramName] || '';
-    const provider = this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
+    const provider = this.samlConfigService.getIdentityProviderByKey(idpKey);
     if (!provider) {
       return next(new NotFound('Invalid identity provider key'));
     }
@@ -154,7 +159,7 @@ class UserController {
 
   getProviderForRequest(req) {
     const idpKey = req[SYMBOL_IDP_KEY];
-    return this.serverConfig.samlAuth.identityProviders.find(p => p.key === idpKey);
+    return this.samlConfigService.getIdentityProviderByKey(idpKey);
   }
 
   handleGetRegisterPage(req, res) {
@@ -194,7 +199,11 @@ class UserController {
       return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
+    const samlIdentityProviders = this.samlConfigService.getIdentityProviders()
+      .map(provider => this.clientDataMappingService.mapSamlIdentityProvider(provider));
+
+    const initialState = { samlIdentityProviders };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, initialState);
   }
 
   async handleGetLogoutPage(req, res) {

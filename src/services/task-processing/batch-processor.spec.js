@@ -1,10 +1,10 @@
 import { assert, createSandbox } from 'sinon';
-import TaskStore from '../stores/task-store.js';
 import TaskProcessor from './task-processor.js';
 import BatchProcessor from './batch-processor.js';
-import BatchStore from '../stores/batch-store.js';
+import TaskStore from '../../stores/task-store.js';
+import BatchStore from '../../stores/batch-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../test-helper.js';
 
 describe('batch-processor', () => {
 

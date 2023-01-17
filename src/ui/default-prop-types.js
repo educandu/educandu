@@ -41,6 +41,12 @@ export const wikimediaFileShape = PropTypes.shape({
 
 export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
+export const samlIdentityProviderClientShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  logoUrl: PropTypes.string
+});
+
 export const sectionDisplayProps = {
   content: PropTypes.any
 };

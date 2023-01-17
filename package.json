@@ -100,7 +100,10 @@
     "serialize-error": "^11.0.0",
     "stream-to-array": "^2.3.0",
     "thenby": "^1.3.4",
-    "umzug": "^3.2.1"
+    "toad-scheduler": "^2.2.0",
+    "umzug": "^3.2.1",
+    "xmldom": "^0.6.0",
+    "xpath": "^0.0.32"
   },
   "devDependencies": {
     "@educandu/dev-tools": "^6.0.5",
