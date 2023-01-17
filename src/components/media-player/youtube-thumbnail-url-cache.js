@@ -4,6 +4,7 @@ import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
 import { analyzeMediaUrl, verifyMediaThumbnailUrl } from '../../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
+const MIN_WIDTH_HIGH_RESOLUTION_THUMBNAIL = 500;
 
 class YoutubeThumbnailUrlCache {
   static get inject() { return []; }
@@ -59,7 +60,7 @@ class YoutubeThumbnailUrlCache {
     }
 
     try {
-      const success = await verifyMediaThumbnailUrl(entry.highResThumbnailUrl);
+      const success = await verifyMediaThumbnailUrl(entry.highResThumbnailUrl, MIN_WIDTH_HIGH_RESOLUTION_THUMBNAIL);
       if (success) {
         this._handleVerificationSuccess(entry, success);
       }
