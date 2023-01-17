@@ -98,8 +98,8 @@ export const determineMediaDuration = memoizee(async url => {
   return Promise.race([playerPromise, timeoutPromise]);
 }, { promise: true });
 
-export const verifyMediaThumbnailUrl = memoizee(url => {
-  const imagePromise = preloadImage(url);
+export const verifyMediaThumbnailUrl = memoizee((url, minAcceptedWidth) => {
+  const imagePromise = preloadImage(url, minAcceptedWidth);
 
   const timeoutPromise = new Promise((_resolve, reject) => {
     setTimeout(() => reject(new Error(`Timeout verifying thumbnail URL ${url}`)), MEDIA_TIMEOUT_IN_MS);
