@@ -76,10 +76,12 @@ const configSchema = joi.object({
     identityProviders: joi.array().items(joi.object({
       key: joi.string().required(),
       displayName: joi.string().required(),
-      entryPoint: joi.string().required(),
-      cert: joi.string().required(),
       logoUrl: joi.string().allow(null).default(null),
-      expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30)
+      expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30),
+      metadata: joi.object({
+        url: joi.string().required(),
+        entityId: joi.string().required()
+      }).required()
     })).default(null)
   }).allow(null).default(null)
 });
@@ -105,16 +107,7 @@ class ServerConfig {
       adminEmailAddress: this.adminEmailAddress,
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
-      plugins: this.plugins,
-      samlAuth: this.samlAuth
-        ? {
-          identityProviders: this.samlAuth.identityProviders.map(p => ({
-            key: p.key,
-            displayName: p.displayName,
-            logoUrl: p.logoUrl
-          }))
-        }
-        : null
+      plugins: this.plugins
     };
   }
 }

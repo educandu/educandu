@@ -3,9 +3,9 @@ import Logger from './common/logger.js';
 import { ROLE } from './domain/constants.js';
 import UserService from './services/user-service.js';
 import ServerConfig from './bootstrap/server-config.js';
-import TaskScheduler from './services/task-scheduler.js';
 import EducanduServer from './server/educandu-server.js';
 import MaintenanceService from './services/maintenance-service.js';
+import TaskScheduler from './services/task-processing/task-scheduler.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 const logger = new Logger(import.meta.url);

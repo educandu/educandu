@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
 import { useRequest } from '../request-context.js';
+import { samlIdentityProviderClientShape } from '../../ui/default-prop-types.js';
 
-function Login({ PageTemplate, SiteLogo }) {
+function Login({ initialState, PageTemplate, SiteLogo }) {
   const request = useRequest();
 
   const handleLoginSucceeded = () => {
@@ -24,7 +25,7 @@ function Login({ PageTemplate, SiteLogo }) {
             onLoginSucceeded={handleLoginSucceeded}
             showPasswordReset
             showLoginButtons
-            allowExternalLogin
+            samlIdentityProviders={initialState.samlIdentityProviders}
             />
         </div>
       </div>
@@ -34,7 +35,10 @@ function Login({ PageTemplate, SiteLogo }) {
 
 Login.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
-  SiteLogo: PropTypes.func.isRequired
+  SiteLogo: PropTypes.func.isRequired,
+  initialState: PropTypes.shape({
+    samlIdentityProviders: PropTypes.arrayOf(samlIdentityProviderClientShape).isRequired
+  }).isRequired
 };
 
 export default Login;

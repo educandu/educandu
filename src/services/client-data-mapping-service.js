@@ -194,6 +194,14 @@ class ClientDataMappingService {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
   }
 
+  mapSamlIdentityProvider(provider) {
+    return {
+      key: provider.key,
+      displayName: provider.displayName,
+      logoUrl: provider.logoUrl || null
+    };
+  }
+
   mapUserActivities(activities) {
     return activities.map(activity => ({ ...activity, timestamp: activity.timestamp.toISOString() }));
   }

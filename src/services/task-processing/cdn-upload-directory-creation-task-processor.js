@@ -1,7 +1,7 @@
-import Logger from '../common/logger.js';
-import RoomService from './room-service.js';
-import DocumentService from './document-service.js';
-import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../domain/constants.js';
+import Logger from '../../common/logger.js';
+import RoomService from '../room-service.js';
+import DocumentService from '../document-service.js';
+import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 

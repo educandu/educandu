@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import { useService } from './container-context.js';
-import ClientConfig from '../bootstrap/client-config.js';
+import { samlIdentityProviderClientShape } from '../ui/default-prop-types.js';
 
-function ExternalAccountProviderDialog({ isOpen, onCancel, onOk }) {
-  const clientConfig = useService(ClientConfig);
+function ExternalAccountProviderDialog({ providers, isOpen, onCancel, onOk }) {
   const { t } = useTranslation('externalAccountProviderDialog');
   const [selectedProvider, setSelectedProvider] = useState(null);
-  const identityProviders = clientConfig.samlAuth?.identityProviders || [];
 
   const handleProviderChange = (provider, close) => {
     setSelectedProvider(provider);
@@ -42,7 +39,7 @@ function ExternalAccountProviderDialog({ isOpen, onCancel, onOk }) {
       <div className="u-modal-body">
         <div className="ExternalAccountProviderDialog-explanation">{t('explanation')}</div>
         <div className="ExternalAccountProviderDialog-providers">
-          {identityProviders.map(provider => (
+          {providers.map(provider => (
             <div
               key={provider.key}
               onClick={() => handleProviderChange(provider, false)}
@@ -60,6 +57,7 @@ function ExternalAccountProviderDialog({ isOpen, onCancel, onOk }) {
 }
 
 ExternalAccountProviderDialog.propTypes = {
+  providers: PropTypes.arrayOf(samlIdentityProviderClientShape).isRequired,
   isOpen: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired

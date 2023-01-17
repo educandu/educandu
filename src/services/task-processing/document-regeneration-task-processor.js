@@ -1,9 +1,9 @@
-import Logger from '../common/logger.js';
-import DocumentService from './document-service.js';
+import Logger from '../../common/logger.js';
+import DocumentService from '../document-service.js';
 
 const logger = new Logger(import.meta.url);
 
-class DocumentValidationTaskProcessor {
+class DocumentRegenerationTaskProcessor {
   static get inject() {
     return [DocumentService];
   }
@@ -20,8 +20,8 @@ class DocumentValidationTaskProcessor {
     }
 
     logger.info(`Regenerating document with id ${documentId}`);
-    await this.documentService.validateDocument(documentId);
+    await this.documentService.regenerateDocument(documentId);
   }
 }
 
-export default DocumentValidationTaskProcessor;
+export default DocumentRegenerationTaskProcessor;
