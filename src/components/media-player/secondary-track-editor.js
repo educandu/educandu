@@ -33,7 +33,6 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
   const handleSourceUrlChange = value => {
     changeContent({
       sourceUrl: value,
-      playbackRange: [0, 1],
       copyrightNotice: isYoutubeSourceType(value)
         ? t('common:youtubeCopyrightNotice', { link: value })
         : ''
