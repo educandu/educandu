@@ -58,7 +58,7 @@ export function validateContent(content) {
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),
       secondaryTracks: joi.array().items(joi.number().min(0).max(1)).required()
-    })).required()
+    })).min(1).required()
   });
 
   joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });
