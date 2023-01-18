@@ -1,0 +1,176 @@
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Button, Select, Tooltip } from 'antd';
+import cloneDeep from '../../utils/clone-deep.js';
+import React, { useEffect, useState } from 'react';
+import { SettingOutlined } from '@ant-design/icons';
+import { useMediaDurations } from './media-hooks.js';
+import MediaVolumeSlider from './media-volume-slider.js';
+import DimensionsProvider from '../dimensions-provider.js';
+import VolumePresetsModal from './volume-presets-modal.js';
+import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+
+const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
+
+function TrackMixerEditor({
+  mainTrack,
+  secondaryTracks,
+  volumePresets,
+  onVolumePresetsChange
+}) {
+  const { t } = useTranslation('trackMixerEditor');
+  const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+  const [isVolumePresetsModalOpen, setIsVolumePresetsModalOpen] = useState(false);
+  const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
+
+  const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
+
+  useEffect(() => {
+
+  }, [volumePresets]);
+
+  const calculateBarWidth = (containerWidth, trackDuration) => {
+    if (!containerWidth || !trackDuration || !mainTrackDurationInMs) {
+      return 0;
+    }
+
+    const msToPxRatio = containerWidth / mainTrackDurationInMs;
+    const maxBarWidth = containerWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
+    return Math.min(maxBarWidth, trackDuration * msToPxRatio);
+  };
+
+  const handleVolumePresetsSettingsClick = () => {
+    setIsVolumePresetsModalOpen(true);
+  };
+
+  const handleVolumePresetOptionSelect = optionValue => {
+    setSelectedVolumePresetIndex(optionValue);
+  };
+
+  const handleVolumePresetsModalOk = (hasMadeChanges, updatedVolumePresets) => {
+    if (hasMadeChanges) {
+      setSelectedVolumePresetIndex(0);
+      onVolumePresetsChange(updatedVolumePresets);
+    }
+    setIsVolumePresetsModalOpen(false);
+  };
+
+  const handleVolumePresetsModalClose = () => {
+    setIsVolumePresetsModalOpen(false);
+  };
+
+  const handleMainTrackVolumeChange = newVolume => {
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets[selectedVolumePresetIndex].mainTrack = newVolume;
+    onVolumePresetsChange(newVolumePresets);
+  };
+
+  const handleSecondaryTrackVolumeChange = (newVolume, secondaryTrackIndex) => {
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets[selectedVolumePresetIndex].secondaryTracks[secondaryTrackIndex] = newVolume;
+    onVolumePresetsChange(newVolumePresets);
+  };
+
+  const tracks = [
+    {
+      name: mainTrack.name,
+      secondaryTrackIndex: -1,
+      trackDurationInMs: mainTrackDurationInMs,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs),
+      handleVolumeChange: volume => handleMainTrackVolumeChange(volume)
+    },
+    ...secondaryTracks.map((secondaryTrack, index) => ({
+      name: secondaryTrack.name,
+      secondaryTrackIndex: index,
+      trackDurationInMs: secondaryTrackDurations[index].duration,
+      getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration),
+      handleVolumeChange: volume => handleSecondaryTrackVolumeChange(volume, index)
+    }))
+  ];
+
+  return (
+    <div className="TrackMixerEditor">
+      <div className="TrackMixerEditor-tracks">
+        <div className="TrackMixerEditor-volumesColumn">
+          <div className="TrackMixerEditor-volumePresets">
+            <span>{`${t('common:volumePreset')}:`}</span>
+            <div className="TrackMixerEditor-volumePresetsSetup">
+              <Select
+                value={selectedVolumePresetIndex}
+                options={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
+                onSelect={handleVolumePresetOptionSelect}
+                className="TrackMixerEditor-volumePresetSelector"
+                />
+              <Tooltip title={t('manageVolumePresets')}>
+                <Button icon={<SettingOutlined />} onClick={handleVolumePresetsSettingsClick} />
+              </Tooltip>
+            </div>
+          </div>
+
+          {tracks.map(trackInfo => (
+            <div className="TrackMixerEditor-trackNameAndVolume" key={trackInfo.secondaryTrackIndex}>
+              <div className="TrackMixerEditor-trackName">{trackInfo.name}</div>
+              <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} />
+            </div>
+          ))}
+        </div>
+        <div className="TrackMixerEditor-barsColumn">
+          <DimensionsProvider>
+            {({ containerWidth }) => tracks.map(trackInfo => (
+              <div className="TrackMixerEditor-barRow" key={trackInfo.secondaryTrackIndex}>
+                {!!trackInfo.trackDurationInMs && (
+                <div
+                  className={classNames({
+                    'TrackMixerEditor-bar': true,
+                    'TrackMixerEditor-bar--secondaryTrack': trackInfo.secondaryTrackIndex !== -1
+                  })}
+                  style={{ width: `${trackInfo.getBarWidth(containerWidth)}px` }}
+                  >
+                  {formatMillisecondsAsDuration(trackInfo.trackDurationInMs, { millisecondsLength: 1 })}
+                </div>
+                )}
+                {!trackInfo.trackDurationInMs && (
+                <span className="TrackMixerEditor-barPlaceholderText">{t('noTrack')}</span>
+                )}
+                <div className="TrackMixerEditor-barOverflow" />
+              </div>
+            ))}
+          </DimensionsProvider>
+        </div>
+      </div>
+
+      <VolumePresetsModal
+        volumePresets={volumePresets}
+        onOk={handleVolumePresetsModalOk}
+        onClose={handleVolumePresetsModalClose}
+        isOpen={isVolumePresetsModalOpen}
+        />
+    </div>
+  );
+}
+
+TrackMixerEditor.propTypes = {
+  mainTrack: PropTypes.shape({
+    name: PropTypes.string,
+    sourceUrl: PropTypes.string,
+    volume: PropTypes.number.isRequired,
+    playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
+  }).isRequired,
+  onMainTrackVolumeChange: PropTypes.func.isRequired,
+  onSecondaryTrackVolumeChange: PropTypes.func.isRequired,
+  onVolumePresetsChange: PropTypes.func.isRequired,
+  secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    sourceUrl: PropTypes.string,
+    volume: PropTypes.number.isRequired
+  })).isRequired,
+  volumePresets: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    mainTrack: PropTypes.number,
+    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
+  })).isRequired
+};
+
+export default TrackMixerEditor;
