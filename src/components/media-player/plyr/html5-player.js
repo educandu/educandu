@@ -33,6 +33,7 @@ function Htlm5Player({
   const clientConfig = useService(ClientConfig);
 
   const [player, setPlayer] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [loadedSourceUrl, setLoadedSourceUrl] = useState(null);
   const [showPosterImage, setShowPosterImage] = useState(true);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
@@ -167,8 +168,9 @@ function Htlm5Player({
   }, [player, playbackRangeInMs]);
 
   const handleEnded = useCallback(() => {
-    setProgressInterval(null);
     onEnded();
+    setIsPlaying(false);
+    setProgressInterval(null);
   }, [onEnded]);
 
   const handleProgress = useCallback(() => {
@@ -201,11 +203,13 @@ function Htlm5Player({
 
   const handlePlaying = useCallback(() => {
     onPlay();
+    setIsPlaying(true);
     setProgressInterval(() => handleProgress());
   }, [onPlay, handleProgress]);
 
   const handlePause = useCallback(() => {
     onPause();
+    setIsPlaying(false);
     setProgressInterval(null);
   }, [onPause]);
 
@@ -248,7 +252,7 @@ function Htlm5Player({
       {!audioOnly && !!posterImageUrl && !!showPosterImage && (
         <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
       )}
-      {!audioOnly && !player?.playing && (
+      {!audioOnly && !isPlaying && (
         <div className="Html5Player-playOverlay" onClick={triggerPlay} >
           <div className="Html5Player-playOverlayIcon">
             <PlayIcon />

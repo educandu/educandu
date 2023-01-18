@@ -740,6 +740,20 @@
     }
   },
   {
+    "namespace": "multitrackMediaPlayer",
+    "language": "en",
+    "resources": {
+      "missingSourcesMessage": "Cannot play because of missing media sources"
+    }
+  },
+  {
+    "namespace": "multitrackMediaPlayer",
+    "language": "de",
+    "resources": {
+      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+    }
+  },
+  {
     "namespace": "trackMixerDisplay",
     "language": "en",
     "resources": {

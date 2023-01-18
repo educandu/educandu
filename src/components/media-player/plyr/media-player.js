@@ -10,12 +10,7 @@ import MediaPlayerControls from '../media-player-controls.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaPlayerProgressBar from '../media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../../utils/source-utils.js';
-import {
-  MEDIA_PLAY_STATE,
-  MEDIA_SCREEN_MODE,
-  MEDIA_ASPECT_RATIO,
-  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS
-} from '../../../domain/constants.js';
+import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
   const info = { currentPartIndex: -1, isPartEndReached: false };
@@ -48,6 +43,8 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 function MediaPlayer({
   sourceUrl,
   preload,
+  volume,
+  playbackRate,
   playbackRange,
   parts,
   aspectRatio,
@@ -57,29 +54,41 @@ function MediaPlayer({
   downloadFileName,
   posterImageUrl,
   mediaPlayerRef,
+  renderControls,
+  renderProgressBar,
   customScreenOverlay,
   customUnderScreenContent,
+  onDuration,
   onReady,
+  onPlay,
+  onPause,
+  onEnded,
   onSeek,
+  onSeekStart,
+  onSeekEnd,
   onProgress,
   onPartEndReached,
   onPlayingPartIndexChange
 }) {
   const playerRef = useRef();
-  const [volume, setVolume] = useState(1);
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [internalVolume, setInternalVolume] = useState(1);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
+  const [internalPlaybackRate, setInternaPlaybackRate] = useState(1);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
-  const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
 
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
 
+  const appliedVolume = volume ?? internalVolume;
+  const appliedPlaybackRate = playbackRate ?? internalPlaybackRate;
+
   const handleDuration = newDurationInMilliseconds => {
     setDurationInMilliseconds(newDurationInMilliseconds);
+    onDuration(newDurationInMilliseconds);
   };
 
   const handleProgress = progressInMilliseconds => {
@@ -92,23 +101,26 @@ function MediaPlayer({
   };
 
   const handlePlaying = () => {
-    setPlayState(MEDIA_PLAY_STATE.playing);
+    onPlay();
+    setIsPlaying(true);
   };
 
   const handlePauseClick = () => {
     playerRef.current.pause();
-    setPlayState(MEDIA_PLAY_STATE.pausing);
+    setIsPlaying(false);
   };
 
   const handlePausing = () => {
-    setPlayState(MEDIA_PLAY_STATE.pausing);
+    onPause();
+    setIsPlaying(false);
   };
 
   const handleEnded = () => {
     if (!isSeeking) {
+      onEnded();
       setLastReachedPartEndIndex(-1);
       onPartEndReached(parts.length - 1);
-      setPlayState(MEDIA_PLAY_STATE.stopped);
+      setIsPlaying(false);
     }
   };
 
@@ -120,23 +132,24 @@ function MediaPlayer({
 
   const handleSeekStart = () => {
     setIsSeeking(true);
+    onSeekStart();
   };
 
   const handleSeekEnd = () => {
     setIsSeeking(false);
-  };
-
-  const handleBuffering = () => {
-    setPlayState(MEDIA_PLAY_STATE.buffering);
-  };
-
-  const handlePlaybackRateChange = newRate => {
-    setPlaybackRate(newRate);
+    onSeekEnd();
   };
 
   const handleDownloadClick = () => {
     const withCredentials = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
     httpClient.download(sourceUrl, downloadFileName, withCredentials);
+  };
+
+  const triggerSeekToTimecode = timecodeInMilliseconds => {
+    const newPlayedMilliseconds = Math.min(timecodeInMilliseconds, durationInMilliseconds);
+    playerRef.current.seekToTimecode(newPlayedMilliseconds);
+    setPlayedMilliseconds(newPlayedMilliseconds);
+    onSeek();
   };
 
   const triggerSeekToPart = partIndex => {
@@ -177,29 +190,37 @@ function MediaPlayer({
     pause: playerRef.current?.pause,
     stop: playerRef.current?.stop,
     reset: triggerReset,
+    seekToTimecode: triggerSeekToTimecode,
     seekToPart: triggerSeekToPart
   };
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
 
+  const mainClasses = classNames(
+    'MediaPlayer',
+    { 'MediaPlayer--noScreen': noScreen },
+    { 'MediaPlayer--hidden': noScreen && !!renderControls && !!renderProgressBar }
+  );
+
   const playerClasses = classNames(
     'MediaPlayer-player',
     `u-width-${screenWidth}`,
     { 'MediaPlayer-player--noScreen': noScreen },
+    { 'MediaPlayer-player--hidden': noScreen && !!renderControls && renderProgressBar },
     { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
 
   return (
-    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': noScreen })}>
+    <div className={mainClasses}>
       <div className={playerClasses}>
         <Player
-          volume={volume}
+          volume={appliedVolume}
           sourceUrl={sourceUrl}
           preload={preload}
           aspectRatio={aspectRatio}
-          playbackRate={playbackRate}
+          playbackRate={appliedPlaybackRate}
           playbackRange={playbackRange}
           posterImageUrl={posterImageUrl}
           playerRef={playerRef}
@@ -210,7 +231,6 @@ function MediaPlayer({
           onEnded={handleEnded}
           onDuration={handleDuration}
           onProgress={handleProgress}
-          onBuffering={handleBuffering}
           />
         {screenMode === MEDIA_SCREEN_MODE.audio && (
           <div className="MediaPlayer-playerAudioScreenOverlay">
@@ -224,26 +244,33 @@ function MediaPlayer({
         )}
       </div>
       {customUnderScreenContent}
-      <MediaPlayerProgressBar
-        playedMilliseconds={playedMilliseconds}
-        durationInMilliseconds={durationInMilliseconds}
-        onSeek={handleSeek}
-        onSeekStart={handleSeekStart}
-        onSeekEnd={handleSeekEnd}
-        parts={parts}
-        />
-      <MediaPlayerControls
-        volume={volume}
-        playState={playState}
-        screenMode={screenMode}
-        playedMilliseconds={playedMilliseconds}
-        durationInMilliseconds={durationInMilliseconds}
-        onVolumeChange={setVolume}
-        onPlayClick={handlePlayClick}
-        onPauseClick={handlePauseClick}
-        onPlaybackRateChange={handlePlaybackRateChange}
-        onDownloadClick={canDownload ? handleDownloadClick : null}
-        />
+      {!!renderProgressBar && renderProgressBar()}
+      {!renderProgressBar && (
+        <MediaPlayerProgressBar
+          playedMilliseconds={playedMilliseconds}
+          durationInMilliseconds={durationInMilliseconds}
+          onSeek={handleSeek}
+          onSeekStart={handleSeekStart}
+          onSeekEnd={handleSeekEnd}
+          parts={parts}
+          />
+      )}
+
+      {!!renderControls && renderControls()}
+      {!renderControls && (
+        <MediaPlayerControls
+          volume={appliedVolume}
+          isPlaying={isPlaying}
+          screenMode={screenMode}
+          playedMilliseconds={playedMilliseconds}
+          durationInMilliseconds={durationInMilliseconds}
+          onVolumeChange={setInternalVolume}
+          onPlayClick={handlePlayClick}
+          onPauseClick={handlePauseClick}
+          onPlaybackRateChange={setInternaPlaybackRate}
+          onDownloadClick={canDownload ? handleDownloadClick : null}
+          />
+      )}
     </div>
   );
 }
@@ -251,6 +278,8 @@ function MediaPlayer({
 MediaPlayer.propTypes = {
   sourceUrl: PropTypes.string.isRequired,
   preload: PropTypes.bool,
+  volume: PropTypes.number,
+  playbackRate: PropTypes.number,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
@@ -264,10 +293,18 @@ MediaPlayer.propTypes = {
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
+  renderControls: PropTypes.func,
+  renderProgressBar: PropTypes.func,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
+  onDuration: PropTypes.func,
   onReady: PropTypes.func,
+  onPlay: PropTypes.func,
+  onPause: PropTypes.func,
+  onEnded: PropTypes.func,
   onSeek: PropTypes.func,
+  onSeekStart: PropTypes.func,
+  onSeekEnd: PropTypes.func,
   onProgress: PropTypes.func,
   onPartEndReached: PropTypes.func,
   onPlayingPartIndexChange: PropTypes.func
@@ -275,6 +312,8 @@ MediaPlayer.propTypes = {
 
 MediaPlayer.defaultProps = {
   preload: false,
+  volume: null,
+  playbackRate: null,
   playbackRange: [0, 1],
   parts: [],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -286,10 +325,18 @@ MediaPlayer.defaultProps = {
   mediaPlayerRef: {
     current: null
   },
+  renderControls: null,
+  renderProgressBar: null,
   customScreenOverlay: null,
   customUnderScreenContent: null,
+  onDuration: () => {},
   onReady: () => {},
+  onPlay: () => {},
+  onPause: () => {},
+  onEnded: () => {},
   onSeek: () => {},
+  onSeekStart: () => {},
+  onSeekEnd: () => {},
   onProgress: () => {},
   onPartEndReached: () => {},
   onPlayingPartIndexChange: () => {}

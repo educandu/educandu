@@ -30,8 +30,7 @@ function YoutubePlayer({
   onPause,
   onEnded,
   onDuration,
-  onProgress,
-  onBuffering
+  onProgress
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
@@ -219,9 +218,8 @@ function YoutubePlayer({
     }
     if (event.detail.code === YOUTUBE_STATE.buffering) {
       setProgressInterval(null);
-      onBuffering();
     }
-  }, [handlePlaying, handlePause, handleEnded, handleProgress, onBuffering]);
+  }, [handlePlaying, handlePause, handleEnded, handleProgress]);
 
   useEffect(() => {
     if (player) {
@@ -277,7 +275,6 @@ YoutubePlayer.propTypes = {
   onEnded: PropTypes.func,
   onDuration: PropTypes.func,
   onProgress: PropTypes.func,
-  onBuffering: PropTypes.func,
   playbackRate: PropTypes.number,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   posterImageUrl: PropTypes.string,
@@ -296,7 +293,6 @@ YoutubePlayer.defaultProps = {
   onEnded: () => {},
   onDuration: () => {},
   onProgress: () => {},
-  onBuffering: () => {},
   playbackRate: 1,
   playbackRange: [0, 1],
   posterImageUrl: null,
@@ -312,7 +308,6 @@ export default memoAndTransformProps(YoutubePlayer, ({
   onEnded,
   onDuration,
   onProgress,
-  onBuffering,
   ...rest
 }) => ({
   onReady: useStableCallback(onReady),
@@ -321,6 +316,5 @@ export default memoAndTransformProps(YoutubePlayer, ({
   onEnded: useStableCallback(onEnded),
   onDuration: useStableCallback(onDuration),
   onProgress: useStableCallback(onProgress),
-  onBuffering: useStableCallback(onBuffering),
   ...rest
 }));

@@ -158,8 +158,6 @@ TrackMixerEditor.propTypes = {
     volume: PropTypes.number.isRequired,
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
   }).isRequired,
-  onMainTrackVolumeChange: PropTypes.func.isRequired,
-  onSecondaryTrackVolumeChange: PropTypes.func.isRequired,
   onVolumePresetsChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
