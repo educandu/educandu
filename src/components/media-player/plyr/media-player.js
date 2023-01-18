@@ -47,6 +47,7 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 
 function MediaPlayer({
   sourceUrl,
+  preload,
   playbackRange,
   parts,
   aspectRatio,
@@ -196,6 +197,7 @@ function MediaPlayer({
         <Player
           volume={volume}
           sourceUrl={sourceUrl}
+          preload={preload}
           aspectRatio={aspectRatio}
           playbackRate={playbackRate}
           playbackRange={playbackRange}
@@ -248,6 +250,7 @@ function MediaPlayer({
 
 MediaPlayer.propTypes = {
   sourceUrl: PropTypes.string.isRequired,
+  preload: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
@@ -271,6 +274,7 @@ MediaPlayer.propTypes = {
 };
 
 MediaPlayer.defaultProps = {
+  preload: false,
   playbackRange: [0, 1],
   parts: [],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,

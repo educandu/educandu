@@ -1,13 +1,18 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useStableCallback } from '../../../ui/hooks.js';
+import { useService } from '../../container-context.js';
 import PlayIcon from '../../icons/media-player/play-icon.js';
+import HttpClient from '../../../api-clients/http-client.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
 import { memoAndTransformProps } from '../../../ui/react-helper.js';
+import { isInternalSourceType } from '../../../utils/source-utils.js';
+import { useOnComponentUnmount, useStableCallback } from '../../../ui/hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
 function Htlm5Player({
   volume,
+  preload,
   audioOnly,
   sourceUrl,
   aspectRatio,
@@ -24,10 +29,14 @@ function Htlm5Player({
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
+  const httpClient = useService(HttpClient);
+  const clientConfig = useService(ClientConfig);
 
   const [player, setPlayer] = useState(null);
+  const [loadedSourceUrl, setLoadedSourceUrl] = useState(null);
   const [showPosterImage, setShowPosterImage] = useState(true);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
+  const [lastLoadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
 
   const playbackRangeInMs = useMemo(() => [
     playbackRange[0] * sourceDurationInMs,
@@ -82,6 +91,39 @@ function Htlm5Player({
   }, [player, playbackRange, onDuration, triggerSeek]);
 
   useEffect(() => {
+    if (sourceUrl === lastLoadingSourceUrl) {
+      return;
+    }
+
+    setLastLoadingSourceUrl(sourceUrl);
+
+    if (!preload || !isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })) {
+      setLoadedSourceUrl(sourceUrl);
+      return;
+    }
+
+    (async () => {
+      const response = await httpClient.get(sourceUrl, { responseType: 'blob', withCredentials: true });
+
+      const newLoadedSourceUrl = URL.createObjectURL(response.data);
+
+      const oldLoadedSourceUrl = loadedSourceUrl;
+
+      setLoadedSourceUrl(newLoadedSourceUrl);
+
+      if (oldLoadedSourceUrl) {
+        URL.revokeObjectURL(oldLoadedSourceUrl);
+      }
+    })();
+  }, [sourceUrl, preload, loadedSourceUrl, lastLoadingSourceUrl, httpClient, clientConfig]);
+
+  useOnComponentUnmount(() => {
+    if (loadedSourceUrl && loadedSourceUrl !== sourceUrl) {
+      URL.revokeObjectURL(loadedSourceUrl);
+    }
+  });
+
+  useEffect(() => {
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
       ratio: aspectRatio,
@@ -97,10 +139,10 @@ function Htlm5Player({
     if (player) {
       player.source = {
         type: audioOnly ? 'audio' : 'video',
-        sources: [{ src: sourceUrl, provider: 'html5' }]
+        sources: [{ src: loadedSourceUrl, provider: 'html5' }]
       };
     }
-  }, [player, sourceUrl, audioOnly]);
+  }, [player, loadedSourceUrl, audioOnly]);
 
   useEffect(() => {
     if (player) {
@@ -219,6 +261,7 @@ function Htlm5Player({
 
 Htlm5Player.propTypes = {
   volume: PropTypes.number,
+  preload: PropTypes.bool,
   audioOnly: PropTypes.bool,
   sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
@@ -238,6 +281,7 @@ Htlm5Player.propTypes = {
 
 Htlm5Player.defaultProps = {
   volume: 1,
+  preload: false,
   audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   onReady: () => {},
