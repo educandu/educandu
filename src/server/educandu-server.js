@@ -56,17 +56,24 @@ export default class EducanduServer {
     logger.info('Registering maintenance middleware');
     this.registerMaintenanceMiddleware(router);
 
-    logger.info('Registering basic auth middleware');
-    this.registerBasicAuthMiddleware(router);
-
     logger.info('Registering session middleware');
     this.registerSessionMiddleware(router);
 
-    logger.info('Registering controllers');
     const controllers = this.controllerFactory.getAllControllers();
+
+    logger.info('Registering controller middlewares');
     controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
-    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
+
+    logger.info('Registering APIs');
     controllers.filter(c => c.registerApi).forEach(c => c.registerApi(router));
+
+    logger.info('Registering basic auth middleware');
+    this.registerBasicAuthMiddleware(router);
+
+    logger.info('Registering  pages');
+    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
+
+    logger.info('Registering error handlers');
     controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
   }
 
@@ -99,7 +106,7 @@ export default class EducanduServer {
 
   registerBasicAuthMiddleware(router) {
     if (Object.keys(this.serverConfig.basicAuthUsers).length) {
-      router.use(/^\/(?!api\/)/, basicAuth({
+      router.use(basicAuth({
         users: this.serverConfig.basicAuthUsers,
         challenge: true
       }));
