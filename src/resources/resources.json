@@ -740,6 +740,36 @@
     }
   },
   {
+    "namespace": "trackMixerDisplay",
+    "language": "en",
+    "resources": {
+      "trackNumberLabel": "Track {trackNumber}"
+    }
+  },
+  {
+    "namespace": "trackMixerDisplay",
+    "language": "de",
+    "resources": {
+      "trackNumberLabel": "Spur {trackNumber}"
+    }
+  },
+  {
+    "namespace": "trackMixerEditor",
+    "language": "en",
+    "resources": {
+      "noTrack": "no track",
+      "manageVolumePresets": "Manage volume presets"
+    }
+  },
+  {
+    "namespace": "trackMixerEditor",
+    "language": "de",
+    "resources": {
+      "noTrack": "keine Spur",
+      "manageVolumePresets": "Lautstärke-Voreinstellungen bearbeiten"
+    }
+  },
+  {
     "namespace": "trackMixer",
     "language": "en",
     "resources": {
