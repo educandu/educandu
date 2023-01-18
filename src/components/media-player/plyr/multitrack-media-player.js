@@ -75,7 +75,11 @@ function MultitrackMediaPlayer({
   }, [sources, volumePresets, selectedVolumePresetIndex]);
 
   const triggerPlay = () => {
-    Object.values(trackRefs.current).forEach(trackRef => trackRef.current.play());
+    trackStates.forEach(trackState => {
+      if (trackState.isMainTrack || playedMilliseconds < trackState.durationInMilliseconds) {
+        getTrackRef(trackState.key).current.play();
+      }
+    });
   };
 
   const triggerPause = () => {
