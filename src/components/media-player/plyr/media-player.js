@@ -155,9 +155,7 @@ function MediaPlayer({
   const triggerSeekToPart = partIndex => {
     setLastReachedPartEndIndex(partIndex - 1);
     const partStartTimecode = (parts[partIndex]?.startPosition || 0) * durationInMilliseconds;
-    playerRef.current.seekToTimecode(partStartTimecode);
-    setPlayedMilliseconds(partStartTimecode);
-    onSeek();
+    triggerSeekToTimecode(partStartTimecode);
   };
 
   const triggerReset = () => {

@@ -9,11 +9,17 @@ import MediaPlayerControls from '../media-player-controls.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../../domain/constants.js';
 
 function MultitrackMediaPlayer({
+  customUnderScreenContent,
+  multitrackMediaPlayerRef,
+  parts,
   screenWidth,
   selectedVolumePresetIndex,
   showTrackMixer,
   sources,
   volumePresets,
+  onEnded,
+  onPause,
+  onPlay,
   onReady
 }) {
   const [mixVolume, setMixVolume] = useState(1);
@@ -76,7 +82,18 @@ function MultitrackMediaPlayer({
     setTrackVolumes([volumePresets[appliedSelectedVolumePresetIndex].mainTrack, ...volumePresets[appliedSelectedVolumePresetIndex].secondaryTracks]);
   }, [volumePresets, appliedSelectedVolumePresetIndex]);
 
-  const triggerPlay = () => {
+  const triggerPlayMainTrack = () => {
+    const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
+    getTrackRef(mainTrack.key).current.play();
+  };
+
+  const triggerSeekToPartAll = partIndex => {
+    trackStates.forEach(trackState => {
+      getTrackRef(trackState.key).current.seekToPart(partIndex);
+    });
+  };
+
+  const triggerPlayAll = () => {
     trackStates.forEach(trackState => {
       if (trackState.isMainTrack || playedMilliseconds < trackState.durationInMilliseconds) {
         getTrackRef(trackState.key).current.play();
@@ -84,11 +101,11 @@ function MultitrackMediaPlayer({
     });
   };
 
-  const triggerPause = () => {
+  const triggerPauseAll = () => {
     Object.values(trackRefs.current).forEach(trackRef => trackRef.current.pause());
   };
 
-  const triggerStop = () => {
+  const triggerStopAll = () => {
     Object.values(trackRefs.current).forEach(trackRef => trackRef.current.stop());
   };
 
@@ -128,17 +145,20 @@ function MultitrackMediaPlayer({
   };
 
   const handleMainTrackPlay = () => {
-    triggerPlay();
+    onPlay();
+    triggerPlayAll();
     setIsPlaying(true);
   };
 
   const handleMainTrackPause = () => {
-    triggerPause();
+    onPause();
+    triggerPauseAll();
     setIsPlaying(false);
   };
 
   const handleMainTrackEnded = () => {
-    triggerStop();
+    onEnded();
+    triggerStopAll();
     setIsPlaying(false);
   };
 
@@ -160,8 +180,8 @@ function MultitrackMediaPlayer({
           playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={trackStates[0]?.durationInMilliseconds || 0}
           onVolumeChange={setMixVolume}
-          onPlayClick={triggerPlay}
-          onPauseClick={triggerPause}
+          onPlayClick={triggerPlayAll}
+          onPauseClick={triggerPauseAll}
           onPlaybackRateChange={setPlaybackRate}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
@@ -180,6 +200,11 @@ function MultitrackMediaPlayer({
     );
   };
 
+  multitrackMediaPlayerRef.current = {
+    play: triggerPlayMainTrack,
+    seekToPart: triggerSeekToPartAll
+  };
+
   const allSourcesAreSet = trackStates.every(trackState => !!trackState.sourceUrl);
 
   if (!allSourcesAreSet) {
@@ -196,6 +221,8 @@ function MultitrackMediaPlayer({
         <MediaPlayer
           key={trackState.key}
           aspectRatio={trackState.aspectRatio}
+          customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
+          parts={parts}
           playbackRange={trackState.playbackRange}
           playbackRate={playbackRate}
           preload
@@ -221,6 +248,13 @@ function MultitrackMediaPlayer({
 }
 
 MultitrackMediaPlayer.propTypes = {
+  customUnderScreenContent: PropTypes.node,
+  multitrackMediaPlayerRef: PropTypes.shape({
+    current: PropTypes.any
+  }),
+  parts: PropTypes.arrayOf(PropTypes.shape({
+    startPosition: PropTypes.number.isRequired
+  })),
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
@@ -242,13 +276,24 @@ MultitrackMediaPlayer.propTypes = {
     mainTrack: PropTypes.number,
     secondaryTracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
   onReady: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
+  customUnderScreenContent: null,
+  multitrackMediaPlayerRef: {
+    current: null
+  },
+  parts: [],
   screenWidth: 100,
   selectedVolumePresetIndex: null,
   showTrackMixer: false,
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {},
   onReady: () => {}
 };
 

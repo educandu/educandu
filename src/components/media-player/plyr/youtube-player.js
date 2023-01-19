@@ -39,8 +39,8 @@ function YoutubePlayer({
   const [endTimeInS, setEndTimeInS] = useState(0);
   const [startTimeInS, setStartTimeInS] = useState(0);
   const [playbackEnded, setPlaybackEnded] = useState(false);
+  const [lastPlaybackRange, setLastPlaybackRange] = useState(null);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
-  const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
 
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
@@ -103,7 +103,7 @@ function YoutubePlayer({
   };
 
   useEffect(() => {
-    const playbackRangeChanged = playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1];
+    const playbackRangeChanged = !lastPlaybackRange || playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1];
     if (sourceDurationInfo.duration && playbackRangeChanged) {
       setLastPlaybackRange(playbackRange);
       triggerSeek(0);
