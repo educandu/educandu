@@ -24,7 +24,7 @@ export function createDefaultVolumePreset(t, secondaryTracksCount) {
   return {
     name: t('common:defaultVolumePreset'),
     mainTrack: 1,
-    secondaryTracks: new Array(secondaryTracksCount).fill(1)
+    secondaryTracks: Array.from({ length: secondaryTracksCount }, () => 1)
   };
 }
 
@@ -34,7 +34,7 @@ export function createDefaultContent(t) {
     width: 100,
     mainTrack: createDefaultMainTrack(t),
     secondaryTracks,
-    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
+    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.length)]
   };
 }
 
@@ -58,7 +58,7 @@ export function validateContent(content) {
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),
       secondaryTracks: joi.array().items(joi.number().min(0).max(1)).required()
-    })).required()
+    })).min(1).required()
   });
 
   joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

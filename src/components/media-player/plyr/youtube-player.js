@@ -17,21 +17,20 @@ const YOUTUBE_STATE = {
 };
 
 function YoutubePlayer({
-  volume,
-  audioOnly,
-  sourceUrl,
   aspectRatio,
-  playbackRate,
+  audioOnly,
   playbackRange,
-  posterImageUrl,
+  playbackRate,
   playerRef,
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
+  posterImageUrl,
+  sourceUrl,
+  volume,
   onDuration,
+  onEnded,
+  onPause,
+  onPlay,
   onProgress,
-  onBuffering
+  onReady
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
@@ -41,11 +40,12 @@ function YoutubePlayer({
   const [startTimeInS, setStartTimeInS] = useState(0);
   const [playbackEnded, setPlaybackEnded] = useState(false);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
+  const [lastPlaybackRange, setLastPlaybackRange] = useState(playbackRange);
 
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
   const [player, setPlayer] = useState(null);
-  const [showPosterImage, setShowPosterImage] = useState(true);
+  const [wasPlayTriggeredOnce, setWasPlayTriggeredOnce] = useState(false);
 
   const posterOrThumbnailImageUrl = useMemo(() => {
     if (posterImageUrl) {
@@ -61,7 +61,7 @@ function YoutubePlayer({
 
   const triggerPlay = useCallback(() => {
     if (player && !!sourceDurationInMs) {
-      setShowPosterImage(false);
+      setWasPlayTriggeredOnce(true);
 
       if (playbackEnded) {
         player.currentTime = startTimeInS;
@@ -103,7 +103,9 @@ function YoutubePlayer({
   };
 
   useEffect(() => {
-    if (sourceDurationInfo.duration) {
+    const playbackRangeChanged = playbackRange[0] !== lastPlaybackRange[0] || playbackRange[1] !== lastPlaybackRange[1];
+    if (sourceDurationInfo.duration && playbackRangeChanged) {
+      setLastPlaybackRange(playbackRange);
       triggerSeek(0);
       const calculatedStartTimeInS = Math.trunc((playbackRange[0] * sourceDurationInfo.duration) / 1000);
       const calculatedEndTimeInS = Math.trunc((playbackRange[1] * sourceDurationInfo.duration) / 1000);
@@ -113,7 +115,7 @@ function YoutubePlayer({
       onDuration((calculatedEndTimeInS - calculatedStartTimeInS) * 1000);
       setSourceDurationInMs(sourceDurationInfo.duration);
     }
-  }, [playbackRange, sourceDurationInfo, onDuration, triggerSeek]);
+  }, [playbackRange, lastPlaybackRange, sourceDurationInfo, onDuration, triggerSeek]);
 
   useEffect(() => {
     if (!sourceDurationInMs) {
@@ -168,10 +170,10 @@ function YoutubePlayer({
   }, [player, playbackRate]);
 
   useEffect(() => {
-    if (player) {
+    if (player && wasPlayTriggeredOnce) {
       player.volume = volume;
     }
-  }, [player, volume]);
+  }, [player, volume, wasPlayTriggeredOnce]);
 
   const handleEnded = useCallback(() => {
     onEnded();
@@ -219,14 +221,12 @@ function YoutubePlayer({
     }
     if (event.detail.code === YOUTUBE_STATE.buffering) {
       setProgressInterval(null);
-      onBuffering();
     }
-  }, [handlePlaying, handlePause, handleEnded, handleProgress, onBuffering]);
+  }, [handlePlaying, handlePause, handleEnded, handleProgress]);
 
   useEffect(() => {
     if (player) {
-      player.off('ready', handleReady);
-      player.on('ready', handleReady);
+      player.once('ready', handleReady);
 
       player.off('progress', handleProgress);
       player.on('progress', handleProgress);
@@ -249,7 +249,7 @@ function YoutubePlayer({
   return (
     <div className="YoutubePlayer">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterOrThumbnailImageUrl && !!showPosterImage && (
+      {!audioOnly && !!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
         <div
           onClick={triggerPlay}
           className="YoutubePlayer-posterImage"
@@ -267,60 +267,56 @@ function YoutubePlayer({
 }
 
 YoutubePlayer.propTypes = {
-  volume: PropTypes.number,
-  audioOnly: PropTypes.bool,
-  sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  onReady: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
-  onEnded: PropTypes.func,
-  onDuration: PropTypes.func,
-  onProgress: PropTypes.func,
-  onBuffering: PropTypes.func,
-  playbackRate: PropTypes.number,
+  audioOnly: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
-  posterImageUrl: PropTypes.string,
+  playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  })
+  }),
+  posterImageUrl: PropTypes.string,
+  sourceUrl: PropTypes.string.isRequired,
+  volume: PropTypes.number,
+  onDuration: PropTypes.func,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
+  onProgress: PropTypes.func,
+  onReady: PropTypes.func
 };
 
 YoutubePlayer.defaultProps = {
-  volume: 1,
-  audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  onReady: () => {},
-  onPlay: () => {},
-  onPause: () => {},
-  onEnded: () => {},
-  onDuration: () => {},
-  onProgress: () => {},
-  onBuffering: () => {},
-  playbackRate: 1,
+  audioOnly: false,
   playbackRange: [0, 1],
-  posterImageUrl: null,
+  playbackRate: 1,
   playerRef: {
     current: null
-  }
+  },
+  posterImageUrl: null,
+  volume: 1,
+  onDuration: () => {},
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {},
+  onProgress: () => {},
+  onReady: () => {}
 };
 
 export default memoAndTransformProps(YoutubePlayer, ({
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
   onDuration,
+  onEnded,
+  onPause,
+  onPlay,
   onProgress,
-  onBuffering,
+  onReady,
   ...rest
 }) => ({
-  onReady: useStableCallback(onReady),
-  onPlay: useStableCallback(onPlay),
-  onPause: useStableCallback(onPause),
-  onEnded: useStableCallback(onEnded),
   onDuration: useStableCallback(onDuration),
+  onEnded: useStableCallback(onEnded),
+  onPause: useStableCallback(onPause),
+  onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),
-  onBuffering: useStableCallback(onBuffering),
+  onReady: useStableCallback(onReady),
   ...rest
 }));

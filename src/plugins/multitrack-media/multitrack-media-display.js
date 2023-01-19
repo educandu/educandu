@@ -1,58 +1,36 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
 
 function MultitrackMediaDisplay({ content }) {
-  const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
 
   const { width, mainTrack, secondaryTracks, volumePresets } = content;
 
-  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
-
-  const sources = {
+  const sources = useMemo(() => ({
     mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: getAccessibleUrl({
-        url: mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-      playbackRange: mainTrack.playbackRange
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     },
-    secondaryTracks: secondaryTracks.map((track, index) => ({
-      name: track.name,
-      sourceUrl: getAccessibleUrl({
-        url: track.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
+    secondaryTracks: secondaryTracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
-  };
+  }), [mainTrack, secondaryTracks, clientConfig]);
 
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)].filter(text => !!text).join('\n\n');
-
-  const handleSelectedVolumePresetChange = volumePresetIndex => {
-    setSelectedVolumePresetIndex(volumePresetIndex);
-  };
 
   return (
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
         <MultitrackMediaPlayer
+          showTrackMixer
           sources={sources}
-          aspectRatio={mainTrack.aspectRatio}
-          screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-          mediaPlayerRef={playerRef}
-          showTrackMixer={secondaryTracks.length > 0}
-          selectedVolumePreset={selectedVolumePresetIndex}
-          onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
-          volumePresetOptions={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
+          volumePresets={volumePresets}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />
       </div>

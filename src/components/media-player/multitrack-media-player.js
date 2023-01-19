@@ -298,14 +298,14 @@ function MultitrackMediaPlayer({
 
   if (!sourcesAvailable) {
     return (
-      <div className="MultitrackMediaPlayer">
-        <div className="MultitrackMediaPlayer-errorMessage">{t('missingSourcesMessage')}</div>
+      <div className="MultitrackMediaPlayerOld">
+        <div className="MultitrackMediaPlayerOld-errorMessage">{t('missingSourcesMessage')}</div>
       </div>
     );
   }
 
   return (
-    <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
+    <div className={classNames('MultitrackMediaPlayerOld', { 'MultitrackMediaPlayerOld--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       {!!loadedSources && (
         <MediaPlayerTrackGroup
           sources={loadedSources}
@@ -335,7 +335,7 @@ function MultitrackMediaPlayer({
         durationInMilliseconds={durationInMilliseconds}
         />
       <MediaPlayerControls
-        playState={playState}
+        isPlaying={playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering}
         screenMode={screenMode}
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
@@ -347,7 +347,7 @@ function MultitrackMediaPlayer({
         onDownloadClick={canDownload ? handleDownloadClick : null}
         />
       {!!loadedSources && !!showTrackMixer && (
-        <div className="MultitrackMediaPlayer-trackMixer">
+        <div className="MultitrackMediaPlayerOld-trackMixer">
           <MediaPlayerTrackMixer
             mainTrack={loadedSources.mainTrack}
             secondaryTracks={loadedSources.secondaryTracks}

@@ -1,33 +1,43 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useStableCallback } from '../../../ui/hooks.js';
+import { useService } from '../../container-context.js';
 import PlayIcon from '../../icons/media-player/play-icon.js';
+import HttpClient from '../../../api-clients/http-client.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
 import { memoAndTransformProps } from '../../../ui/react-helper.js';
+import { isInternalSourceType } from '../../../utils/source-utils.js';
+import { useOnComponentUnmount, useStableCallback } from '../../../ui/hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
 function Htlm5Player({
-  volume,
-  audioOnly,
-  sourceUrl,
   aspectRatio,
-  playbackRate,
+  audioOnly,
   playbackRange,
-  posterImageUrl,
+  playbackRate,
   playerRef,
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
+  preload,
+  posterImageUrl,
+  sourceUrl,
+  volume,
   onDuration,
-  onProgress
+  onEnded,
+  onPause,
+  onPlay,
+  onProgress,
+  onReady
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
+  const httpClient = useService(HttpClient);
+  const clientConfig = useService(ClientConfig);
 
   const [player, setPlayer] = useState(null);
-  const [showPosterImage, setShowPosterImage] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [loadedSourceUrl, setLoadedSourceUrl] = useState(null);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
+  const [lastLoadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
+  const [wasPlayTriggeredOnce, setWasPlayTriggeredOnce] = useState(false);
 
   const playbackRangeInMs = useMemo(() => [
     playbackRange[0] * sourceDurationInMs,
@@ -36,7 +46,7 @@ function Htlm5Player({
 
   const triggerPlay = useCallback(() => {
     if (player) {
-      setShowPosterImage(false);
+      setWasPlayTriggeredOnce(true);
       const currentActualTimeInMs = player.currentTime * 1000;
       const isEndReached = !!playbackRangeInMs[1] && currentActualTimeInMs >= playbackRangeInMs[1];
 
@@ -82,6 +92,39 @@ function Htlm5Player({
   }, [player, playbackRange, onDuration, triggerSeek]);
 
   useEffect(() => {
+    if (sourceUrl === lastLoadingSourceUrl) {
+      return;
+    }
+
+    setLastLoadingSourceUrl(sourceUrl);
+
+    if (!preload || !isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })) {
+      setLoadedSourceUrl(sourceUrl);
+      return;
+    }
+
+    (async () => {
+      const response = await httpClient.get(sourceUrl, { responseType: 'blob', withCredentials: true });
+
+      const newLoadedSourceUrl = URL.createObjectURL(response.data);
+
+      const oldLoadedSourceUrl = loadedSourceUrl;
+
+      setLoadedSourceUrl(newLoadedSourceUrl);
+
+      if (oldLoadedSourceUrl) {
+        URL.revokeObjectURL(oldLoadedSourceUrl);
+      }
+    })();
+  }, [sourceUrl, preload, loadedSourceUrl, lastLoadingSourceUrl, httpClient, clientConfig]);
+
+  useOnComponentUnmount(() => {
+    if (loadedSourceUrl && loadedSourceUrl !== sourceUrl) {
+      URL.revokeObjectURL(loadedSourceUrl);
+    }
+  });
+
+  useEffect(() => {
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
       ratio: aspectRatio,
@@ -97,10 +140,10 @@ function Htlm5Player({
     if (player) {
       player.source = {
         type: audioOnly ? 'audio' : 'video',
-        sources: [{ src: sourceUrl, provider: 'html5' }]
+        sources: [{ src: loadedSourceUrl, provider: 'html5' }]
       };
     }
-  }, [player, sourceUrl, audioOnly]);
+  }, [player, loadedSourceUrl, audioOnly]);
 
   useEffect(() => {
     if (player) {
@@ -109,14 +152,10 @@ function Htlm5Player({
   }, [player, playbackRate]);
 
   useEffect(() => {
-    handleDuration();
-  }, [handleDuration]);
-
-  useEffect(() => {
-    if (player) {
+    if (player && wasPlayTriggeredOnce) {
       player.volume = volume;
     }
-  }, [player, volume]);
+  }, [player, volume, wasPlayTriggeredOnce]);
 
   useEffect(() => {
     if (player && playbackRangeInMs[0] > 0) {
@@ -125,8 +164,9 @@ function Htlm5Player({
   }, [player, playbackRangeInMs]);
 
   const handleEnded = useCallback(() => {
-    setProgressInterval(null);
     onEnded();
+    setIsPlaying(false);
+    setProgressInterval(null);
   }, [onEnded]);
 
   const handleProgress = useCallback(() => {
@@ -159,11 +199,13 @@ function Htlm5Player({
 
   const handlePlaying = useCallback(() => {
     onPlay();
+    setIsPlaying(true);
     setProgressInterval(() => handleProgress());
   }, [onPlay, handleProgress]);
 
   const handlePause = useCallback(() => {
     onPause();
+    setIsPlaying(false);
     setProgressInterval(null);
   }, [onPause]);
 
@@ -203,10 +245,10 @@ function Htlm5Player({
   return (
     <div className="Html5Player">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterImageUrl && !!showPosterImage && (
+      {!audioOnly && !!posterImageUrl && !wasPlayTriggeredOnce && (
         <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
       )}
-      {!audioOnly && !player?.playing && (
+      {!audioOnly && !isPlaying && (
         <div className="Html5Player-playOverlay" onClick={triggerPlay} >
           <div className="Html5Player-playOverlayIcon">
             <PlayIcon />
@@ -218,56 +260,58 @@ function Htlm5Player({
 }
 
 Htlm5Player.propTypes = {
-  volume: PropTypes.number,
-  audioOnly: PropTypes.bool,
-  sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  onReady: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
-  onEnded: PropTypes.func,
-  onDuration: PropTypes.func,
-  onProgress: PropTypes.func,
-  playbackRate: PropTypes.number,
+  audioOnly: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
-  posterImageUrl: PropTypes.string,
+  playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  })
+  }),
+  preload: PropTypes.bool,
+  posterImageUrl: PropTypes.string,
+  sourceUrl: PropTypes.string.isRequired,
+  volume: PropTypes.number,
+  onDuration: PropTypes.func,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
+  onProgress: PropTypes.func,
+  onReady: PropTypes.func
 };
 
 Htlm5Player.defaultProps = {
-  volume: 1,
-  audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  onReady: () => {},
-  onPlay: () => {},
-  onPause: () => {},
-  onEnded: () => {},
-  onDuration: () => {},
-  onProgress: () => {},
-  playbackRate: 1,
+  audioOnly: false,
   playbackRange: [0, 1],
-  posterImageUrl: null,
+  playbackRate: 1,
   playerRef: {
     current: null
-  }
+  },
+  preload: false,
+  posterImageUrl: null,
+  volume: 1,
+  onDuration: () => {},
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {},
+  onProgress: () => {},
+  onReady: () => {}
 };
 
 export default memoAndTransformProps(Htlm5Player, ({
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
   onDuration,
+  onEnded,
+  onPause,
+  onPlay,
   onProgress,
+  onReady,
   ...rest
 }) => ({
-  onReady: useStableCallback(onReady),
-  onPlay: useStableCallback(onPlay),
-  onPause: useStableCallback(onPause),
-  onEnded: useStableCallback(onEnded),
   onDuration: useStableCallback(onDuration),
+  onEnded: useStableCallback(onEnded),
+  onPause: useStableCallback(onPause),
+  onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),
+  onReady: useStableCallback(onReady),
   ...rest
 }));

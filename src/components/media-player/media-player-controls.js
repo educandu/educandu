@@ -8,10 +8,10 @@ import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import DownloadIcon from '../icons/general/download-icon.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const NORMAL_PLAYBACK_RATE = 1;
 const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -19,7 +19,7 @@ const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 function MediaPlayerControls({
   durationInMilliseconds,
   playedMilliseconds,
-  playState,
+  isPlaying,
   volume,
   onPauseClick,
   onPlayClick,
@@ -31,8 +31,6 @@ function MediaPlayerControls({
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
   const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
-
-  const isPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
 
   const handleSettingsMenuItemClick = ({ key }) => {
     if (key === 'download') {
@@ -118,7 +116,7 @@ MediaPlayerControls.propTypes = {
   onPlayClick: PropTypes.func.isRequired,
   onPlaybackRateChange: PropTypes.func,
   onVolumeChange: PropTypes.func.isRequired,
-  playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
+  isPlaying: PropTypes.bool.isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   volume: PropTypes.number.isRequired

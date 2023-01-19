@@ -1,53 +1,42 @@
 import { Button, Form, Input } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import TrackMixer from '../../components/media-player/track-mixer.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
-import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
+import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
 
 const FormItem = Form.Item;
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
-  const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('multitrackMedia');
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
   const { width, mainTrack, secondaryTracks, volumePresets } = content;
 
-  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
-
-  const sources = {
+  const sources = useMemo(() => ({
     mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: getAccessibleUrl({
-        url: mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-      playbackRange: mainTrack.playbackRange
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     },
-    secondaryTracks: secondaryTracks.map((track, index) => ({
-      name: track.name,
-      sourceUrl: getAccessibleUrl({
-        url: track.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
+    secondaryTracks: secondaryTracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
-  };
+  }), [mainTrack, secondaryTracks, clientConfig]);
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -75,22 +64,39 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handleMoveTrackUp = index => {
-    changeContent({ secondaryTracks: swapItemsAt(secondaryTracks, index, index - 1) });
+    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index - 1);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index - 1);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleMoveTrackDown = index => {
-    changeContent({ secondaryTracks: swapItemsAt(secondaryTracks, index, index + 1) });
+    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index + 1);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index + 1);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleDeleteTrack = index => {
-    changeContent({ secondaryTracks: removeItemAt(secondaryTracks, index) });
+    const newSecondaryTracks = removeItemAt(secondaryTracks, index);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks = removeItemAt(preset.secondaryTracks, index);
+    });
+    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
   const handleAddTrackButtonClick = () => {
-    const newSecondaryTracks = secondaryTracks.slice();
+    const newSecondaryTracks = cloneDeep(secondaryTracks);
     newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
-    const newVolumePresets = volumePresets.slice();
-    newVolumePresets.forEach(preset => preset.secondaryTracks.push(1));
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks.push(1);
+    });
     changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
@@ -100,18 +106,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const handleVolumePresetsChange = updatedVolumePresets => {
     changeContent({ volumePresets: updatedVolumePresets });
-  };
-
-  const handleMainTrackVolumeChange = volume => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].mainTrack = volume;
-    changeContent({ volumePresets: newVolumePresets });
-  };
-
-  const handleSecondaryTrackVolumeChange = (volume, secondaryTrackIndex) => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].secondaryTracks[secondaryTrackIndex] = volume;
-    changeContent({ volumePresets: newVolumePresets });
   };
 
   return (
@@ -151,22 +145,20 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
             <MultitrackMediaPlayer
-              sources={sources}
-              aspectRatio={mainTrack.aspectRatio}
-              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-              mediaPlayerRef={playerRef}
               screenWidth={50}
+              selectedVolumePresetIndex={selectedVolumePresetIndex}
+              showTrackMixer={false}
+              sources={sources}
+              volumePresets={volumePresets}
               />
           </div>
-          <TrackMixer
-            volumePresets={volumePresets}
+          <TrackMixerEditor
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
-            selectedVolumePreset={selectedVolumePresetIndex}
+            volumePresets={volumePresets}
             onVolumePresetsChange={handleVolumePresetsChange}
-            onMainTrackVolumeChange={handleMainTrackVolumeChange}
-            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
-            onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
+            selectedVolumePresetIndex={selectedVolumePresetIndex}
+            onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
 
