@@ -141,11 +141,3 @@ export function formatMediaPosition({ formatPercentage, position, duration = 0 }
     ? formatMillisecondsAsDuration(position * duration)
     : formatPercentage(position);
 }
-
-export function getSourcePositionFromTrackPosition(trackPosition, playbackRange) {
-  return playbackRange[0] + ((playbackRange[1] - playbackRange[0]) * trackPosition);
-}
-
-export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange) {
-  return (playbackRange[1] - playbackRange[0]) * sourceDuration;
-}

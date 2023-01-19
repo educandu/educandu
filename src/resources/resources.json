@@ -670,20 +670,6 @@
     }
   },
   {
-    "namespace": "mediaPlayerTrackMixer",
-    "language": "en",
-    "resources": {
-      "trackNumberLabel": "Track {trackNumber}"
-    }
-  },
-  {
-    "namespace": "mediaPlayerTrackMixer",
-    "language": "de",
-    "resources": {
-      "trackNumberLabel": "Spur {trackNumber}"
-    }
-  },
-  {
     "namespace": "mediaRangeReadonlyInput",
     "language": "en",
     "resources": {
@@ -740,20 +726,6 @@
     }
   },
   {
-    "namespace": "multitrackMediaPlayer",
-    "language": "en",
-    "resources": {
-      "missingSourcesMessage": "Cannot play because of missing media sources"
-    }
-  },
-  {
-    "namespace": "multitrackMediaPlayer",
-    "language": "de",
-    "resources": {
-      "missingSourcesMessage": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
-    }
-  },
-  {
     "namespace": "trackMixerDisplay",
     "language": "en",
     "resources": {
@@ -777,22 +749,6 @@
   },
   {
     "namespace": "trackMixerEditor",
-    "language": "de",
-    "resources": {
-      "noTrack": "keine Spur",
-      "manageVolumePresets": "Lautstärke-Voreinstellungen bearbeiten"
-    }
-  },
-  {
-    "namespace": "trackMixer",
-    "language": "en",
-    "resources": {
-      "noTrack": "no track",
-      "manageVolumePresets": "Manage volume presets"
-    }
-  },
-  {
-    "namespace": "trackMixer",
     "language": "de",
     "resources": {
       "noTrack": "keine Spur",

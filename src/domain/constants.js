@@ -88,14 +88,6 @@ export const RESOURCE_TYPE = {
   pdf: 'pdf'
 };
 
-export const MEDIA_PLAY_STATE = {
-  initializing: 'initializing',
-  buffering: 'buffering',
-  stopped: 'stopped',
-  playing: 'playing',
-  pausing: 'pausing'
-};
-
 export const MEDIA_ASPECT_RATIO = {
   sixteenToNine: '16:9',
   fourToThree: '4:3'
