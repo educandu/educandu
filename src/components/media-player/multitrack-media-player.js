@@ -88,8 +88,10 @@ function MultitrackMediaPlayer({
   };
 
   const triggerSeekToPartAll = partIndex => {
+    const mainDuration = trackStates.find(ts => ts.isMainTrack).durationInMilliseconds;
+    const partStartTimecode = (parts[partIndex]?.startPosition || 0) * mainDuration;
     trackStates.forEach(trackState => {
-      getTrackRef(trackState.key).current.seekToPart(partIndex);
+      getTrackRef(trackState.key).current.seekToTimecode(partStartTimecode);
     });
   };
 
