@@ -9,53 +9,44 @@ import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
 
 function MediaAnalysisDisplay({ content }) {
-  const playerRef = useRef(null);
+  const multitrackMediaPlayerRef = useRef(null);
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
-  const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
-  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
   const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
 
-  const sources = useMemo(() => {
-    return {
-      mainTrack: {
-        name: mainTrack.name,
-        sourceUrl: getAccessibleUrl({
-          url: mainTrack.sourceUrl,
-          cdnRootUrl: clientConfig.cdnRootUrl
-        }),
-        volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-        playbackRange: mainTrack.playbackRange
-      },
-      secondaryTracks: secondaryTracks.map((track, index) => ({
-        name: track.name,
-        sourceUrl: getAccessibleUrl({
-          url: track.sourceUrl,
-          cdnRootUrl: clientConfig.cdnRootUrl
-        }),
-        volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
-      }))
-    };
-  }, [mainTrack, secondaryTracks, volumePresets, clientConfig, selectedVolumePresetIndex]);
+  const sources = useMemo(() => ({
+    mainTrack: {
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    },
+    secondaryTracks: secondaryTracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    }))
+  }), [mainTrack, secondaryTracks, clientConfig]);
 
   const canRenderMediaPlayer = sources.mainTrack.sourceUrl && sources.secondaryTracks.every(track => track.sourceUrl);
 
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
     .filter(text => !!text).join('\n\n');
 
-  const handlePlayStateChange = newPlayState => {
-    setPlayState(newPlayState);
+  const handlePlay = () => {
+    setIsPlaying(true);
   };
 
-  const handleSelectedVolumePresetChange = volumePresetIndex => {
-    setSelectedVolumePresetIndex(volumePresetIndex);
+  const handlePause = () => {
+    setIsPlaying(false);
+  };
+
+  const handleEnded = () => {
+    setIsPlaying(false);
   };
 
   const handleChaptersTextsToggleClick = () => {
@@ -63,11 +54,11 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const handleChapterClick = chapterIndex => {
-    if (playState === MEDIA_PLAY_STATE.playing) {
-      playerRef.current.seekToPart(chapterIndex);
+    if (isPlaying) {
+      multitrackMediaPlayerRef.current.seekToPart(chapterIndex);
     } else {
-      playerRef.current.play();
-      setTimeout(() => playerRef.current.seekToPart(chapterIndex), 0);
+      multitrackMediaPlayerRef.current.play();
+      setTimeout(() => multitrackMediaPlayerRef.current.seekToPart(chapterIndex), 0);
     }
   };
 
@@ -141,17 +132,15 @@ function MediaAnalysisDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              customUnderScreenContent={renderChapters()}
+              multitrackMediaPlayerRef={multitrackMediaPlayerRef}
               parts={chapters}
+              showTrackMixer
               sources={sources}
-              aspectRatio={mainTrack.aspectRatio}
-              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-              mediaPlayerRef={playerRef}
-              showTrackMixer={secondaryTracks.length > 0}
-              extraCustomContent={renderChapters()}
-              onPlayStateChange={handlePlayStateChange}
-              selectedVolumePreset={selectedVolumePresetIndex}
-              onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
-              volumePresetOptions={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
+              volumePresets={volumePresets}
+              onEnded={handleEnded}
+              onPause={handlePause}
+              onPlay={handlePlay}
               />
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>
