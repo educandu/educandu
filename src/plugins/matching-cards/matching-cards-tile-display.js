@@ -7,9 +7,9 @@ import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
 import { RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
-import Html5Player from '../../components/media-player/plyr/html5-player.js';
+import Html5Player from '../../components/media-player/html5-player.js';
+import YoutubePlayer from '../../components/media-player/youtube-player.js';
 import { getAccessibleUrl, getSourceType } from '../../utils/source-utils.js';
-import YoutubePlayer from '../../components/media-player/plyr/youtube-player.js';
 
 function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia }) {
   const playerRef = useRef();

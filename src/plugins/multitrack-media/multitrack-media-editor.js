@@ -16,7 +16,7 @@ import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 const FormItem = Form.Item;
 

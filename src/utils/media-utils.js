@@ -4,7 +4,7 @@ import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import MediaDurationIdentifier from '../components/media-player/plyr/media-duration-identifier.js';
+import MediaDurationIdentifier from '../components/media-player/media-duration-identifier.js';
 
 const MEDIA_TIMEOUT_IN_MS = 5000;
 
@@ -140,12 +140,4 @@ export function formatMediaPosition({ formatPercentage, position, duration = 0 }
   return duration
     ? formatMillisecondsAsDuration(position * duration)
     : formatPercentage(position);
-}
-
-export function getSourcePositionFromTrackPosition(trackPosition, playbackRange) {
-  return playbackRange[0] + ((playbackRange[1] - playbackRange[0]) * trackPosition);
-}
-
-export function getTrackDurationFromSourceDuration(sourceDuration, playbackRange) {
-  return (playbackRange[1] - playbackRange[0]) * sourceDuration;
 }

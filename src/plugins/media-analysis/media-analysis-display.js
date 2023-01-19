@@ -9,7 +9,7 @@ import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 function MediaAnalysisDisplay({ content }) {
   const multitrackMediaPlayerRef = useRef(null);

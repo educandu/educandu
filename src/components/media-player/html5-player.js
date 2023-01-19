@@ -1,14 +1,14 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useService } from '../../container-context.js';
-import PlayIcon from '../../icons/media-player/play-icon.js';
-import HttpClient from '../../../api-clients/http-client.js';
-import ClientConfig from '../../../bootstrap/client-config.js';
-import { memoAndTransformProps } from '../../../ui/react-helper.js';
-import { isInternalSourceType } from '../../../utils/source-utils.js';
-import { useOnComponentUnmount, useStableCallback } from '../../../ui/hooks.js';
+import { useService } from '../container-context.js';
+import PlayIcon from '../icons/media-player/play-icon.js';
+import HttpClient from '../../api-clients/http-client.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { memoAndTransformProps } from '../../ui/react-helper.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
+import { useOnComponentUnmount, useStableCallback } from '../../ui/hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 function Htlm5Player({
   aspectRatio,
