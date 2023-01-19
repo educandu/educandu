@@ -27,7 +27,7 @@ import { useMediaDurations } from '../../components/media-player/media-hooks.js'
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;

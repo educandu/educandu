@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Modal, Button, Spin } from 'antd';
+import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
-import MediaPlayer from './plyr/media-player.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';

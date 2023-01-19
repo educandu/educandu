@@ -1,8 +1,8 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useStableCallback } from '../../../ui/hooks.js';
-import { memoAndTransformProps } from '../../../ui/react-helper.js';
-import { isYoutubeSourceType } from '../../../utils/source-utils.js';
+import { useStableCallback } from '../../ui/hooks.js';
+import { memoAndTransformProps } from '../../ui/react-helper.js';
+import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 function MediaDurationIdentifier({ sourceUrl, onDuration }) {

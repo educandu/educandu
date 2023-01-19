@@ -2,15 +2,15 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Html5Player from './html5-player.js';
 import YoutubePlayer from './youtube-player.js';
-import { useService } from '../../container-context.js';
-import AudioIcon from '../../icons/general/audio-icon.js';
+import { useService } from '../container-context.js';
+import AudioIcon from '../icons/general/audio-icon.js';
+import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
-import HttpClient from '../../../api-clients/http-client.js';
-import MediaPlayerControls from '../media-player-controls.js';
-import ClientConfig from '../../../bootstrap/client-config.js';
-import MediaPlayerProgressBar from '../media-player-progress-bar.js';
-import { isInternalSourceType, isYoutubeSourceType } from '../../../utils/source-utils.js';
-import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
+import ClientConfig from '../../bootstrap/client-config.js';
+import MediaPlayerControls from './media-player-controls.js';
+import MediaPlayerProgressBar from './media-player-progress-bar.js';
+import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
+import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
   const info = { currentPartIndex: -1, isPartEndReached: false };

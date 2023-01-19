@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../../utils/unique-id.js';
-import cloneDeep from '../../../utils/clone-deep.js';
-import TrackMixerDisplay from '../track-mixer-display.js';
+import uniqueId from '../../utils/unique-id.js';
+import cloneDeep from '../../utils/clone-deep.js';
+import TrackMixerDisplay from './track-mixer-display.js';
 import React, { useEffect, useRef, useState } from 'react';
-import MediaPlayerControls from '../media-player-controls.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../../domain/constants.js';
+import MediaPlayerControls from './media-player-controls.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 function MultitrackMediaPlayer({
   customUnderScreenContent,

@@ -4,7 +4,7 @@ import ReactDOMClient from 'react-dom/client';
 import { preloadImage } from './image-utils.js';
 import { getResourceType } from './resource-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import MediaDurationIdentifier from '../components/media-player/plyr/media-duration-identifier.js';
+import MediaDurationIdentifier from '../components/media-player/media-duration-identifier.js';
 
 const MEDIA_TIMEOUT_IN_MS = 5000;
 

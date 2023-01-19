@@ -4,7 +4,7 @@ import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MultitrackMediaPlayer from '../../components/media-player/plyr/multitrack-media-player.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 function MultitrackMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);

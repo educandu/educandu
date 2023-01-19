@@ -1,11 +1,11 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useStableCallback } from '../../../ui/hooks.js';
-import PlayIcon from '../../icons/media-player/play-icon.js';
-import { memoAndTransformProps } from '../../../ui/react-helper.js';
-import { useMediaDurations, useYoutubeThumbnailUrl } from '../media-hooks.js';
+import { useStableCallback } from '../../ui/hooks.js';
+import PlayIcon from '../icons/media-player/play-icon.js';
+import { memoAndTransformProps } from '../../ui/react-helper.js';
+import { useMediaDurations, useYoutubeThumbnailUrl } from './media-hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
 
 const YOUTUBE_STATE = {
   unstarted: -1,
