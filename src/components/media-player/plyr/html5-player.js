@@ -152,10 +152,6 @@ function Htlm5Player({
   }, [player, playbackRate]);
 
   useEffect(() => {
-    handleDuration();
-  }, [handleDuration]);
-
-  useEffect(() => {
     if (player && wasPlayTriggeredOnce) {
       player.volume = volume;
     }

@@ -202,7 +202,7 @@ function MultitrackMediaPlayer({
           sourceUrl={trackState.sourceUrl}
           screenMode={trackState.screenMode}
           aspectRatio={trackState.aspectRatio}
-          // playbackRange={trackState.playbackRange}
+          playbackRange={trackState.playbackRange}
           renderControls={trackState.isMainTrack ? renderControls : () => null}
           renderProgressBar={trackState.isMainTrack ? null : () => null}
           mediaPlayerRef={getTrackRef(trackState.key)}
