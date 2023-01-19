@@ -41,34 +41,34 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 };
 
 function MediaPlayer({
-  sourceUrl,
-  preload,
-  volume,
-  playbackRate,
-  playbackRange,
-  parts,
   aspectRatio,
-  screenMode,
-  screenWidth,
   canDownload,
-  downloadFileName,
-  posterImageUrl,
-  mediaPlayerRef,
-  renderControls,
-  renderProgressBar,
   customScreenOverlay,
   customUnderScreenContent,
+  downloadFileName,
+  mediaPlayerRef,
+  parts,
+  playbackRange,
+  playbackRate,
+  posterImageUrl,
+  preload,
+  renderControls,
+  renderProgressBar,
+  screenMode,
+  screenWidth,
+  sourceUrl,
+  volume,
   onDuration,
-  onReady,
-  onPlay,
-  onPause,
   onEnded,
-  onSeek,
-  onSeekStart,
-  onSeekEnd,
-  onProgress,
   onPartEndReached,
-  onPlayingPartIndexChange
+  onPause,
+  onPlay,
+  onPlayingPartIndexChange,
+  onProgress,
+  onReady,
+  onSeek,
+  onSeekEnd,
+  onSeekStart
 }) {
   const playerRef = useRef();
   const httpClient = useService(HttpClient);
@@ -216,21 +216,21 @@ function MediaPlayer({
     <div className={mainClasses}>
       <div className={playerClasses}>
         <Player
-          volume={appliedVolume}
-          sourceUrl={sourceUrl}
-          preload={preload}
           aspectRatio={aspectRatio}
-          playbackRate={appliedPlaybackRate}
-          playbackRange={playbackRange}
-          posterImageUrl={posterImageUrl}
-          playerRef={playerRef}
           audioOnly={noScreen}
-          onReady={onReady}
-          onPlay={handlePlaying}
-          onPause={handlePausing}
-          onEnded={handleEnded}
+          playbackRange={playbackRange}
+          playbackRate={appliedPlaybackRate}
+          playerRef={playerRef}
+          preload={preload}
+          posterImageUrl={posterImageUrl}
+          sourceUrl={sourceUrl}
+          volume={appliedVolume}
           onDuration={handleDuration}
+          onEnded={handleEnded}
+          onPause={handlePausing}
+          onPlay={handlePlaying}
           onProgress={handleProgress}
+          onReady={onReady}
           />
         {screenMode === MEDIA_SCREEN_MODE.audio && (
           <div className="MediaPlayer-playerAudioScreenOverlay">
@@ -247,28 +247,28 @@ function MediaPlayer({
       {!!renderProgressBar && renderProgressBar()}
       {!renderProgressBar && (
         <MediaPlayerProgressBar
-          playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={durationInMilliseconds}
-          onSeek={handleSeek}
-          onSeekStart={handleSeekStart}
-          onSeekEnd={handleSeekEnd}
           parts={parts}
+          playedMilliseconds={playedMilliseconds}
+          onSeek={handleSeek}
+          onSeekEnd={handleSeekEnd}
+          onSeekStart={handleSeekStart}
           />
       )}
 
       {!!renderControls && renderControls()}
       {!renderControls && (
         <MediaPlayerControls
-          volume={appliedVolume}
-          isPlaying={isPlaying}
-          screenMode={screenMode}
-          playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={durationInMilliseconds}
-          onVolumeChange={setInternalVolume}
-          onPlayClick={handlePlayClick}
+          isPlaying={isPlaying}
+          playedMilliseconds={playedMilliseconds}
+          screenMode={screenMode}
+          volume={appliedVolume}
+          onDownloadClick={canDownload ? handleDownloadClick : null}
           onPauseClick={handlePauseClick}
           onPlaybackRateChange={setInternaPlaybackRate}
-          onDownloadClick={canDownload ? handleDownloadClick : null}
+          onPlayClick={handlePlayClick}
+          onVolumeChange={setInternalVolume}
           />
       )}
     </div>
@@ -276,70 +276,70 @@ function MediaPlayer({
 }
 
 MediaPlayer.propTypes = {
-  sourceUrl: PropTypes.string.isRequired,
-  preload: PropTypes.bool,
-  volume: PropTypes.number,
-  playbackRate: PropTypes.number,
-  playbackRange: PropTypes.arrayOf(PropTypes.number),
-  parts: PropTypes.arrayOf(PropTypes.shape({
-    startPosition: PropTypes.number.isRequired
-  })),
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  screenWidth: PropTypes.oneOf([...Array(101).keys()]),
-  downloadFileName: PropTypes.string,
   canDownload: PropTypes.bool,
-  posterImageUrl: PropTypes.string,
+  customScreenOverlay: PropTypes.node,
+  customUnderScreenContent: PropTypes.node,
+  downloadFileName: PropTypes.string,
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
+  parts: PropTypes.arrayOf(PropTypes.shape({
+    startPosition: PropTypes.number.isRequired
+  })),
+  playbackRange: PropTypes.arrayOf(PropTypes.number),
+  playbackRate: PropTypes.number,
+  posterImageUrl: PropTypes.string,
+  preload: PropTypes.bool,
   renderControls: PropTypes.func,
   renderProgressBar: PropTypes.func,
-  customScreenOverlay: PropTypes.node,
-  customUnderScreenContent: PropTypes.node,
+  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
+  screenWidth: PropTypes.oneOf([...Array(101).keys()]),
+  sourceUrl: PropTypes.string.isRequired,
+  volume: PropTypes.number,
   onDuration: PropTypes.func,
-  onReady: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
   onEnded: PropTypes.func,
-  onSeek: PropTypes.func,
-  onSeekStart: PropTypes.func,
-  onSeekEnd: PropTypes.func,
-  onProgress: PropTypes.func,
   onPartEndReached: PropTypes.func,
-  onPlayingPartIndexChange: PropTypes.func
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
+  onPlayingPartIndexChange: PropTypes.func,
+  onProgress: PropTypes.func,
+  onReady: PropTypes.func,
+  onSeek: PropTypes.func,
+  onSeekEnd: PropTypes.func,
+  onSeekStart: PropTypes.func
 };
 
 MediaPlayer.defaultProps = {
-  preload: false,
-  volume: null,
-  playbackRate: null,
-  playbackRange: [0, 1],
-  parts: [],
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  screenMode: MEDIA_SCREEN_MODE.video,
-  screenWidth: 100,
   canDownload: false,
+  customScreenOverlay: null,
+  customUnderScreenContent: null,
   downloadFileName: null,
-  posterImageUrl: null,
   mediaPlayerRef: {
     current: null
   },
+  parts: [],
+  playbackRange: [0, 1],
+  playbackRate: null,
+  posterImageUrl: null,
+  preload: false,
   renderControls: null,
   renderProgressBar: null,
-  customScreenOverlay: null,
-  customUnderScreenContent: null,
+  screenMode: MEDIA_SCREEN_MODE.video,
+  screenWidth: 100,
+  volume: null,
   onDuration: () => {},
-  onReady: () => {},
-  onPlay: () => {},
-  onPause: () => {},
   onEnded: () => {},
-  onSeek: () => {},
-  onSeekStart: () => {},
-  onSeekEnd: () => {},
-  onProgress: () => {},
   onPartEndReached: () => {},
-  onPlayingPartIndexChange: () => {}
+  onPause: () => {},
+  onPlay: () => {},
+  onPlayingPartIndexChange: () => {},
+  onProgress: () => {},
+  onReady: () => {},
+  onSeek: () => {},
+  onSeekEnd: () => {},
+  onSeekStart: () => {}
 };
 
 export default MediaPlayer;

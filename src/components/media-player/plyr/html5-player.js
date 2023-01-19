@@ -11,21 +11,21 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../../domain/constants.js';
 
 function Htlm5Player({
-  volume,
-  preload,
-  audioOnly,
-  sourceUrl,
   aspectRatio,
-  playbackRate,
+  audioOnly,
   playbackRange,
-  posterImageUrl,
+  playbackRate,
   playerRef,
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
+  preload,
+  posterImageUrl,
+  sourceUrl,
+  volume,
   onDuration,
-  onProgress
+  onEnded,
+  onPause,
+  onPlay,
+  onProgress,
+  onReady
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
@@ -260,58 +260,58 @@ function Htlm5Player({
 }
 
 Htlm5Player.propTypes = {
-  volume: PropTypes.number,
-  preload: PropTypes.bool,
-  audioOnly: PropTypes.bool,
-  sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  onReady: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
-  onEnded: PropTypes.func,
-  onDuration: PropTypes.func,
-  onProgress: PropTypes.func,
-  playbackRate: PropTypes.number,
+  audioOnly: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
-  posterImageUrl: PropTypes.string,
+  playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  })
+  }),
+  preload: PropTypes.bool,
+  posterImageUrl: PropTypes.string,
+  sourceUrl: PropTypes.string.isRequired,
+  volume: PropTypes.number,
+  onDuration: PropTypes.func,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
+  onProgress: PropTypes.func,
+  onReady: PropTypes.func
 };
 
 Htlm5Player.defaultProps = {
-  volume: 1,
-  preload: false,
-  audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  onReady: () => {},
-  onPlay: () => {},
-  onPause: () => {},
-  onEnded: () => {},
-  onDuration: () => {},
-  onProgress: () => {},
-  playbackRate: 1,
+  audioOnly: false,
   playbackRange: [0, 1],
-  posterImageUrl: null,
+  playbackRate: 1,
   playerRef: {
     current: null
-  }
+  },
+  preload: false,
+  posterImageUrl: null,
+  volume: 1,
+  onDuration: () => {},
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {},
+  onProgress: () => {},
+  onReady: () => {}
 };
 
 export default memoAndTransformProps(Htlm5Player, ({
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
   onDuration,
+  onEnded,
+  onPause,
+  onPlay,
   onProgress,
+  onReady,
   ...rest
 }) => ({
-  onReady: useStableCallback(onReady),
-  onPlay: useStableCallback(onPlay),
-  onPause: useStableCallback(onPause),
-  onEnded: useStableCallback(onEnded),
   onDuration: useStableCallback(onDuration),
+  onEnded: useStableCallback(onEnded),
+  onPause: useStableCallback(onPause),
+  onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),
+  onReady: useStableCallback(onReady),
   ...rest
 }));

@@ -9,11 +9,11 @@ import MediaPlayerControls from '../media-player-controls.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../../domain/constants.js';
 
 function MultitrackMediaPlayer({
-  sources,
   screenWidth,
-  volumePresets,
   selectedVolumePresetIndex,
   showTrackMixer,
+  sources,
+  volumePresets,
   onReady
 }) {
   const [mixVolume, setMixVolume] = useState(1);
@@ -194,26 +194,26 @@ function MultitrackMediaPlayer({
     <div>
       {trackStates.map((trackState, trackIndex) => (
         <MediaPlayer
-          preload
           key={trackState.key}
-          volume={mixVolume * trackVolumes[trackIndex]}
-          playbackRate={playbackRate}
-          screenWidth={screenWidth}
-          sourceUrl={trackState.sourceUrl}
-          screenMode={trackState.screenMode}
           aspectRatio={trackState.aspectRatio}
           playbackRange={trackState.playbackRange}
+          playbackRate={playbackRate}
+          preload
+          mediaPlayerRef={getTrackRef(trackState.key)}
           renderControls={trackState.isMainTrack ? renderControls : () => null}
           renderProgressBar={trackState.isMainTrack ? null : () => null}
-          mediaPlayerRef={getTrackRef(trackState.key)}
-          onReady={() => handleReady(trackState.key)}
+          screenMode={trackState.screenMode}
+          screenWidth={screenWidth}
+          sourceUrl={trackState.sourceUrl}
+          volume={mixVolume * trackVolumes[trackIndex]}
           onDuration={value => handleDuration(value, trackState.key)}
-          onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
-          onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
-          onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onEnded={() => trackState.isMainTrack ? handleMainTrackEnded() : null}
-          onSeekStart={() => trackState.isMainTrack ? handleMainTrackSeekStart() : null}
+          onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
+          onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
+          onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
+          onReady={() => handleReady(trackState.key)}
           onSeekEnd={() => trackState.isMainTrack ? handleMainTrackSeekEnd() : null}
+          onSeekStart={() => trackState.isMainTrack ? handleMainTrackSeekStart() : null}
           />
       ))}
     </div>
@@ -221,6 +221,9 @@ function MultitrackMediaPlayer({
 }
 
 MultitrackMediaPlayer.propTypes = {
+  screenWidth: PropTypes.oneOf([...Array(101).keys()]),
+  selectedVolumePresetIndex: PropTypes.number,
+  showTrackMixer: PropTypes.bool,
   sources: PropTypes.shape({
     mainTrack: PropTypes.shape({
       name: PropTypes.string,
@@ -234,21 +237,18 @@ MultitrackMediaPlayer.propTypes = {
       sourceUrl: PropTypes.string
     }))
   }).isRequired,
-  screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   volumePresets: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     mainTrack: PropTypes.number,
     secondaryTracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired,
-  selectedVolumePresetIndex: PropTypes.number,
-  showTrackMixer: PropTypes.bool,
   onReady: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
   screenWidth: 100,
-  showTrackMixer: false,
   selectedVolumePresetIndex: null,
+  showTrackMixer: false,
   onReady: () => {}
 };
 

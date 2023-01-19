@@ -17,20 +17,20 @@ const YOUTUBE_STATE = {
 };
 
 function YoutubePlayer({
-  volume,
-  audioOnly,
-  sourceUrl,
   aspectRatio,
-  playbackRate,
+  audioOnly,
   playbackRange,
-  posterImageUrl,
+  playbackRate,
   playerRef,
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
+  posterImageUrl,
+  sourceUrl,
+  volume,
   onDuration,
-  onProgress
+  onEnded,
+  onPause,
+  onPlay,
+  onProgress,
+  onReady
 }) {
   const plyrRef = useRef(null);
   const progressInterval = useRef(null);
@@ -267,56 +267,56 @@ function YoutubePlayer({
 }
 
 YoutubePlayer.propTypes = {
-  volume: PropTypes.number,
-  audioOnly: PropTypes.bool,
-  sourceUrl: PropTypes.string.isRequired,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  onReady: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
-  onEnded: PropTypes.func,
-  onDuration: PropTypes.func,
-  onProgress: PropTypes.func,
-  playbackRate: PropTypes.number,
+  audioOnly: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
-  posterImageUrl: PropTypes.string,
+  playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
     current: PropTypes.any
-  })
+  }),
+  posterImageUrl: PropTypes.string,
+  sourceUrl: PropTypes.string.isRequired,
+  volume: PropTypes.number,
+  onDuration: PropTypes.func,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func,
+  onProgress: PropTypes.func,
+  onReady: PropTypes.func
 };
 
 YoutubePlayer.defaultProps = {
-  volume: 1,
-  audioOnly: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  onReady: () => {},
-  onPlay: () => {},
-  onPause: () => {},
-  onEnded: () => {},
-  onDuration: () => {},
-  onProgress: () => {},
-  playbackRate: 1,
+  audioOnly: false,
   playbackRange: [0, 1],
-  posterImageUrl: null,
+  playbackRate: 1,
   playerRef: {
     current: null
-  }
+  },
+  posterImageUrl: null,
+  volume: 1,
+  onDuration: () => {},
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {},
+  onProgress: () => {},
+  onReady: () => {}
 };
 
 export default memoAndTransformProps(YoutubePlayer, ({
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
   onDuration,
+  onEnded,
+  onPause,
+  onPlay,
   onProgress,
+  onReady,
   ...rest
 }) => ({
-  onReady: useStableCallback(onReady),
-  onPlay: useStableCallback(onPlay),
-  onPause: useStableCallback(onPause),
-  onEnded: useStableCallback(onEnded),
   onDuration: useStableCallback(onDuration),
+  onEnded: useStableCallback(onEnded),
+  onPause: useStableCallback(onPause),
+  onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),
+  onReady: useStableCallback(onReady),
   ...rest
 }));
