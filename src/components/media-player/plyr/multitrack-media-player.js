@@ -57,8 +57,8 @@ function MultitrackMediaPlayer({
         isReady: false,
         durationInMilliseconds: 0,
         sourceUrl: secondaryTrack.sourceUrl,
-        aspectRatio: null,
-        playbackRange: null,
+        aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+        playbackRange: [0, 1],
         screenMode: MEDIA_SCREEN_MODE.none
       }))
     ];
