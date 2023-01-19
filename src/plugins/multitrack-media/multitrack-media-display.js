@@ -18,8 +18,7 @@ function MultitrackMediaDisplay({ content }) {
       sourceUrl: getAccessibleUrl({
         url: mainTrack.sourceUrl,
         cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      playbackRange: mainTrack.playbackRange
+      })
     },
     secondaryTracks: secondaryTracks.map(track => ({
       name: track.name,
@@ -32,9 +31,6 @@ function MultitrackMediaDisplay({ content }) {
 
   const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)].filter(text => !!text).join('\n\n');
 
-  const handleReady = () => {
-  };
-
   return (
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
@@ -42,9 +38,9 @@ function MultitrackMediaDisplay({ content }) {
           showTrackMixer
           sources={sources}
           aspectRatio={mainTrack.aspectRatio}
+          playbackRange={mainTrack.playbackRange}
           screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           volumePresets={volumePresets}
-          onReady={handleReady}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />
       </div>

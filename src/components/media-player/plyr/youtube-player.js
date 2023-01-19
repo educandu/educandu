@@ -44,7 +44,7 @@ function YoutubePlayer({
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
   const [player, setPlayer] = useState(null);
-  const [showPosterImage, setShowPosterImage] = useState(true);
+  const [wasPlayTriggeredOnce, setWasPlayTriggeredOnce] = useState(false);
 
   const posterOrThumbnailImageUrl = useMemo(() => {
     if (posterImageUrl) {
@@ -60,7 +60,7 @@ function YoutubePlayer({
 
   const triggerPlay = useCallback(() => {
     if (player && !!sourceDurationInMs) {
-      setShowPosterImage(false);
+      setWasPlayTriggeredOnce(true);
 
       if (playbackEnded) {
         player.currentTime = startTimeInS;
@@ -167,10 +167,10 @@ function YoutubePlayer({
   }, [player, playbackRate]);
 
   useEffect(() => {
-    if (player) {
+    if (player && wasPlayTriggeredOnce) {
       player.volume = volume;
     }
-  }, [player, volume]);
+  }, [player, volume, wasPlayTriggeredOnce]);
 
   const handleEnded = useCallback(() => {
     onEnded();
@@ -223,8 +223,7 @@ function YoutubePlayer({
 
   useEffect(() => {
     if (player) {
-      player.off('ready', handleReady);
-      player.on('ready', handleReady);
+      player.once('ready', handleReady);
 
       player.off('progress', handleProgress);
       player.on('progress', handleProgress);
@@ -247,7 +246,7 @@ function YoutubePlayer({
   return (
     <div className="YoutubePlayer">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterOrThumbnailImageUrl && !!showPosterImage && (
+      {!audioOnly && !!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
         <div
           onClick={triggerPlay}
           className="YoutubePlayer-posterImage"

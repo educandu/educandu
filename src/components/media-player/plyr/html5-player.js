@@ -35,9 +35,9 @@ function Htlm5Player({
   const [player, setPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loadedSourceUrl, setLoadedSourceUrl] = useState(null);
-  const [showPosterImage, setShowPosterImage] = useState(true);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
   const [lastLoadingSourceUrl, setLastLoadingSourceUrl] = useState(null);
+  const [wasPlayTriggeredOnce, setWasPlayTriggeredOnce] = useState(false);
 
   const playbackRangeInMs = useMemo(() => [
     playbackRange[0] * sourceDurationInMs,
@@ -46,7 +46,7 @@ function Htlm5Player({
 
   const triggerPlay = useCallback(() => {
     if (player) {
-      setShowPosterImage(false);
+      setWasPlayTriggeredOnce(true);
       const currentActualTimeInMs = player.currentTime * 1000;
       const isEndReached = !!playbackRangeInMs[1] && currentActualTimeInMs >= playbackRangeInMs[1];
 
@@ -156,10 +156,10 @@ function Htlm5Player({
   }, [handleDuration]);
 
   useEffect(() => {
-    if (player) {
+    if (player && wasPlayTriggeredOnce) {
       player.volume = volume;
     }
-  }, [player, volume]);
+  }, [player, volume, wasPlayTriggeredOnce]);
 
   useEffect(() => {
     if (player && playbackRangeInMs[0] > 0) {
@@ -249,7 +249,7 @@ function Htlm5Player({
   return (
     <div className="Html5Player">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterImageUrl && !!showPosterImage && (
+      {!audioOnly && !!posterImageUrl && !wasPlayTriggeredOnce && (
         <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
       )}
       {!audioOnly && !isPlaying && (

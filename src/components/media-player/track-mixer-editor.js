@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Select, Tooltip } from 'antd';
 import cloneDeep from '../../utils/clone-deep.js';
-import React, { useEffect, useState } from 'react';
 import { SettingOutlined } from '@ant-design/icons';
 import { useMediaDurations } from './media-hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
@@ -17,19 +17,16 @@ function TrackMixerEditor({
   mainTrack,
   secondaryTracks,
   volumePresets,
-  onVolumePresetsChange
+  onVolumePresetsChange,
+  selectedVolumePresetIndex,
+  onSelectedVolumePresetIndexChange
 }) {
   const { t } = useTranslation('trackMixerEditor');
   const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
-  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
   const [isVolumePresetsModalOpen, setIsVolumePresetsModalOpen] = useState(false);
   const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
 
   const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
-
-  useEffect(() => {
-
-  }, [volumePresets]);
 
   const calculateBarWidth = (containerWidth, trackDuration) => {
     if (!containerWidth || !trackDuration || !mainTrackDurationInMs) {
@@ -45,13 +42,9 @@ function TrackMixerEditor({
     setIsVolumePresetsModalOpen(true);
   };
 
-  const handleVolumePresetOptionSelect = optionValue => {
-    setSelectedVolumePresetIndex(optionValue);
-  };
-
   const handleVolumePresetsModalOk = (hasMadeChanges, updatedVolumePresets) => {
     if (hasMadeChanges) {
-      setSelectedVolumePresetIndex(0);
+      onSelectedVolumePresetIndexChange(0);
       onVolumePresetsChange(updatedVolumePresets);
     }
     setIsVolumePresetsModalOpen(false);
@@ -62,20 +55,21 @@ function TrackMixerEditor({
   };
 
   const handleMainTrackVolumeChange = newVolume => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].mainTrack = newVolume;
-    onVolumePresetsChange(newVolumePresets);
+    const newPresets = cloneDeep(volumePresets);
+    newPresets[selectedVolumePresetIndex].mainTrack = newVolume;
+    onVolumePresetsChange(newPresets);
   };
 
-  const handleSecondaryTrackVolumeChange = (newVolume, secondaryTrackIndex) => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].secondaryTracks[secondaryTrackIndex] = newVolume;
-    onVolumePresetsChange(newVolumePresets);
+  const handleSecondaryTrackVolumeChange = (newVolume, index) => {
+    const newPresets = cloneDeep(volumePresets);
+    newPresets[selectedVolumePresetIndex].secondaryTracks[index] = newVolume;
+    onVolumePresetsChange(newPresets);
   };
 
   const tracks = [
     {
       name: mainTrack.name,
+      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
       secondaryTrackIndex: -1,
       trackDurationInMs: mainTrackDurationInMs,
       getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs),
@@ -83,6 +77,7 @@ function TrackMixerEditor({
     },
     ...secondaryTracks.map((secondaryTrack, index) => ({
       name: secondaryTrack.name,
+      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index],
       secondaryTrackIndex: index,
       trackDurationInMs: secondaryTrackDurations[index].duration,
       getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration),
@@ -100,7 +95,7 @@ function TrackMixerEditor({
               <Select
                 value={selectedVolumePresetIndex}
                 options={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
-                onSelect={handleVolumePresetOptionSelect}
+                onSelect={onSelectedVolumePresetIndexChange}
                 className="TrackMixerEditor-volumePresetSelector"
                 />
               <Tooltip title={t('manageVolumePresets')}>
@@ -155,20 +150,20 @@ TrackMixerEditor.propTypes = {
   mainTrack: PropTypes.shape({
     name: PropTypes.string,
     sourceUrl: PropTypes.string,
-    volume: PropTypes.number.isRequired,
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
   }).isRequired,
-  onVolumePresetsChange: PropTypes.func.isRequired,
   secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    sourceUrl: PropTypes.string,
-    volume: PropTypes.number.isRequired
+    sourceUrl: PropTypes.string
   })).isRequired,
   volumePresets: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     mainTrack: PropTypes.number,
     secondaryTracks: PropTypes.arrayOf(PropTypes.number)
-  })).isRequired
+  })).isRequired,
+  onVolumePresetsChange: PropTypes.func.isRequired,
+  selectedVolumePresetIndex: PropTypes.number.isRequired,
+  onSelectedVolumePresetIndexChange: PropTypes.func.isRequired
 };
 
 export default TrackMixerEditor;
