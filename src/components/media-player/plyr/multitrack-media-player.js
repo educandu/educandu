@@ -76,9 +76,6 @@ function MultitrackMediaPlayer({
     setTrackVolumes([volumePresets[appliedSelectedVolumePresetIndex].mainTrack, ...volumePresets[appliedSelectedVolumePresetIndex].secondaryTracks]);
   }, [volumePresets, appliedSelectedVolumePresetIndex]);
 
-  useEffect(() => {
-  }, [volumePresets, appliedSelectedVolumePresetIndex]);
-
   const triggerPlay = () => {
     trackStates.forEach(trackState => {
       if (trackState.isMainTrack || playedMilliseconds < trackState.durationInMilliseconds) {

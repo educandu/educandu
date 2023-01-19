@@ -6,13 +6,13 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
-import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
@@ -29,21 +29,14 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const sources = useMemo(() => ({
     mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: getAccessibleUrl({
-        url: mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      playbackRange: mainTrack.playbackRange
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     },
     secondaryTracks: secondaryTracks.map(track => ({
-      name: track.name,
-      sourceUrl: getAccessibleUrl({
-        url: track.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      })
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
-  }), [clientConfig, mainTrack, secondaryTracks]);
+  }), [mainTrack, secondaryTracks, clientConfig]);
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -153,9 +146,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           <div className="MultitrackMediaEditor-trackMixerPreview">
             <MultitrackMediaPlayer
               sources={sources}
-              playbackRange={mainTrack.playbackRange}
-              aspectRatio={mainTrack.aspectRatio}
-              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
               screenWidth={50}
               volumePresets={volumePresets}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
