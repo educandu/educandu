@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -14,18 +13,12 @@ function MultitrackMediaDisplay({ content }) {
 
   const sources = useMemo(() => ({
     mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: getAccessibleUrl({
-        url: mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      })
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     },
     secondaryTracks: secondaryTracks.map(track => ({
-      name: track.name,
-      sourceUrl: getAccessibleUrl({
-        url: track.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      })
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
   }), [mainTrack, secondaryTracks, clientConfig]);
 
@@ -37,9 +30,6 @@ function MultitrackMediaDisplay({ content }) {
         <MultitrackMediaPlayer
           showTrackMixer
           sources={sources}
-          aspectRatio={mainTrack.aspectRatio}
-          playbackRange={mainTrack.playbackRange}
-          screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
           volumePresets={volumePresets}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />
