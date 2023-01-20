@@ -1,5 +1,13 @@
 .MultitrackMediaPlayer {}
 
+.MultitrackMediaPlayer-loadingOverlay {
+  .m-mask;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
+}
+
 .MultitrackMediaPlayer-errorMessage {
   text-align: center;
   color: @edu-error-color;
