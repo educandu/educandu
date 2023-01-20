@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
-import { shuffleItems } from '../../utils/array-utils.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
@@ -15,6 +14,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 const RadioButton = Radio.Button;
@@ -43,17 +43,22 @@ function EarTrainingDisplay({ content }) {
   const handleTestCardSelected = testIndex => {
     if (currentTestIndex !== testIndex) {
       setCurrentTestIndex(testIndex);
+      setViewedTestIndices(ensureIsIncluded(viewedTestIndices, testIndex));
       setIsCurrentTestAnswerVisible(false);
     }
   };
 
   const handlePreviousTestClick = () => {
-    setCurrentTestIndex(index => index - 1);
+    const previousTestIndex = currentTestIndex - 1;
+    setCurrentTestIndex(previousTestIndex);
+    setViewedTestIndices(ensureIsIncluded(viewedTestIndices, previousTestIndex));
     setIsCurrentTestAnswerVisible(false);
   };
 
   const handleNextTestClick = () => {
-    setCurrentTestIndex(index => index + 1);
+    const nextTestIndex = currentTestIndex + 1;
+    setCurrentTestIndex(nextTestIndex);
+    setViewedTestIndices(ensureIsIncluded(viewedTestIndices, nextTestIndex));
     setIsCurrentTestAnswerVisible(false);
   };
 
