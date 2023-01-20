@@ -86,3 +86,20 @@
   width: 100%;
   padding: @edu-content-padding;
 }
+
+.u-panel {
+  margin: 0;
+  width: 100%;
+  padding: 24px;
+  position: relative;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-dark;
+
+  & > *:first-child {
+    margin-top: 0;
+  }
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+}

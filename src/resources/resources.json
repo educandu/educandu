@@ -2530,7 +2530,8 @@
       "more": "more ...",
       "less": "less ...",
       "draft": "Draft",
-      "playbackRange": "Playback range"
+      "playbackRange": "Playback range",
+      "or": "or"
     }
   },
   {
@@ -2688,7 +2689,8 @@
       "more": "mehr ...",
       "less": "weniger ...",
       "draft": "Entwurf",
-      "playbackRange": "Abspielbereich"
+      "playbackRange": "Abspielbereich",
+      "or": "oder"
     }
   },
   {

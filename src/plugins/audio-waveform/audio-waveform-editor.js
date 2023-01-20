@@ -112,29 +112,27 @@ function AudioWaveformEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
         {displayMode === DISPLAY_MODE.interactive && (
-          <div className="Panel">
-            <div className="Panel-content">
-              <FormItem label={t('penColor')} {...FORM_ITEM_LAYOUT}>
-                <ColorPicker color={penColor} onChange={handlePenColorChange} />
-              </FormItem>
-              <FormItem label={t('baselineColor')} {...FORM_ITEM_LAYOUT}>
-                <ColorPicker color={baselineColor} onChange={handleBaselineColorChange} />
-              </FormItem>
-              <FormItem label={t('backgroundColor')} {...FORM_ITEM_LAYOUT}>
-                <ColorPicker color={backgroundColor} onChange={handleBackgroundColorChange} />
-              </FormItem>
-              <FormItem label={t('opacityWhenResolved')} {...FORM_ITEM_LAYOUT}>
-                <StepSlider
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  labelsStep={0.25}
-                  value={opacityWhenResolved}
-                  formatter={formatPercentage}
-                  onChange={handleOpacityWhenResolvedChange}
-                  />
-              </FormItem>
-            </div>
+          <div className="u-panel">
+            <FormItem label={t('penColor')} {...FORM_ITEM_LAYOUT}>
+              <ColorPicker color={penColor} onChange={handlePenColorChange} />
+            </FormItem>
+            <FormItem label={t('baselineColor')} {...FORM_ITEM_LAYOUT}>
+              <ColorPicker color={baselineColor} onChange={handleBaselineColorChange} />
+            </FormItem>
+            <FormItem label={t('backgroundColor')} {...FORM_ITEM_LAYOUT}>
+              <ColorPicker color={backgroundColor} onChange={handleBackgroundColorChange} />
+            </FormItem>
+            <FormItem label={t('opacityWhenResolved')} {...FORM_ITEM_LAYOUT}>
+              <StepSlider
+                min={0}
+                max={1}
+                step={0.01}
+                labelsStep={0.25}
+                value={opacityWhenResolved}
+                formatter={formatPercentage}
+                onChange={handleOpacityWhenResolvedChange}
+                />
+            </FormItem>
           </div>
         )}
       </Form>

@@ -188,73 +188,71 @@ function ImageEditor({ content, onContentChanged }) {
         </Form.Item>
 
         {effectType !== EFFECT_TYPE.none && (
-          <div className="Panel">
-            <div className="Panel-content">
-              {effectType === EFFECT_TYPE.hover && (
-              <Fragment>
-                <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
-                  <UrlInput
-                    value={hoverEffect.sourceUrl}
-                    allowedSourceTypes={allowedSourceTypes}
-                    onChange={handleHoverEffectSourceUrlChange}
-                    />
-                </FormItem>
-                {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
-              </Fragment>
-              )}
+          <div className="u-panel">
+            {effectType === EFFECT_TYPE.hover && (
+            <Fragment>
+              <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+                <UrlInput
+                  value={hoverEffect.sourceUrl}
+                  allowedSourceTypes={allowedSourceTypes}
+                  onChange={handleHoverEffectSourceUrlChange}
+                  />
+              </FormItem>
+              {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
+            </Fragment>
+            )}
 
-              {effectType === EFFECT_TYPE.reveal && (
-              <Fragment>
-                <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
-                  <UrlInput
-                    value={revealEffect.sourceUrl}
-                    allowedSourceTypes={allowedSourceTypes}
-                    onChange={handleRevealEffectSourceUrlChange}
-                    />
-                </FormItem>
-                {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
-                <FormItem label={t('startPosition')} {...FORM_ITEM_LAYOUT}>
-                  <InputNumber
-                    defaultValue={revealEffect.startPosition}
-                    min={0}
-                    max={100}
-                    formatter={value => `${value}%`}
-                    parser={value => value.replace('%', '')}
-                    onChange={handleRevealEffectStartPositionChange}
-                    />
-                </FormItem>
-                <FormItem label={t('orientationLabel')} {...FORM_ITEM_LAYOUT}>
-                  <RadioGroup value={revealEffect.orientation} onChange={handleRevealEffectOrientationChange}>
-                    <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
-                    <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
-                  </RadioGroup>
-                </FormItem>
-              </Fragment>
-              )}
+            {effectType === EFFECT_TYPE.reveal && (
+            <Fragment>
+              <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
+                <UrlInput
+                  value={revealEffect.sourceUrl}
+                  allowedSourceTypes={allowedSourceTypes}
+                  onChange={handleRevealEffectSourceUrlChange}
+                  />
+              </FormItem>
+              {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
+              <FormItem label={t('startPosition')} {...FORM_ITEM_LAYOUT}>
+                <InputNumber
+                  defaultValue={revealEffect.startPosition}
+                  min={0}
+                  max={100}
+                  formatter={value => `${value}%`}
+                  parser={value => value.replace('%', '')}
+                  onChange={handleRevealEffectStartPositionChange}
+                  />
+              </FormItem>
+              <FormItem label={t('orientationLabel')} {...FORM_ITEM_LAYOUT}>
+                <RadioGroup value={revealEffect.orientation} onChange={handleRevealEffectOrientationChange}>
+                  <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
+                  <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
+                </RadioGroup>
+              </FormItem>
+            </Fragment>
+            )}
 
-              {effectType === EFFECT_TYPE.clip && (
-                <div className="ImageEditor-clipEffect">
-                  {!!currentImageSource && (
-                    <Fragment>
-                      <div className="ImageEditor-clipEffectHint">{t('clipEffectHint')}</div>
-                      <RegionSelect
-                        constraint
-                        maxRegions={1}
-                        regions={[{ ...clipEffect.region, data: {} }]}
-                        onChange={handleClipRegionsChanged}
-                        regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
-                        >
-                        <img src={currentImageSource} className="ImageEditor-clipEffectImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
-                      </RegionSelect>
-                    </Fragment>
-                  )}
-                  <div className="ImageEditor-clipEffectRegion">
-                    <div>{t('clippedWidth')}: {`${clipSizeInPx.width} px`}</div>
-                    <div>{t('clippedHeight')}: {`${clipSizeInPx.height} px`}</div>
-                  </div>
+            {effectType === EFFECT_TYPE.clip && (
+              <div className="ImageEditor-clipEffect">
+                {!!currentImageSource && (
+                  <Fragment>
+                    <div className="ImageEditor-clipEffectHint">{t('clipEffectHint')}</div>
+                    <RegionSelect
+                      constraint
+                      maxRegions={1}
+                      regions={[{ ...clipEffect.region, data: {} }]}
+                      onChange={handleClipRegionsChanged}
+                      regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
+                      >
+                      <img src={currentImageSource} className="ImageEditor-clipEffectImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
+                    </RegionSelect>
+                  </Fragment>
+                )}
+                <div className="ImageEditor-clipEffectRegion">
+                  <div>{t('clippedWidth')}: {`${clipSizeInPx.width} px`}</div>
+                  <div>{t('clippedHeight')}: {`${clipSizeInPx.height} px`}</div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 

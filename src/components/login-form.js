@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
-import { Button, Form, Input } from 'antd';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
+import { Button, Divider, Form, Input } from 'antd';
 import { handleApiError } from '../ui/error-helper.js';
 import BlockedLoginError from './blocked-login-error.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -135,61 +136,64 @@ export default function LoginForm({
   ];
 
   const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
-  const canLoginWithShibboleth = samlIdentityProviders.length
+  const showExternalLogin = showLoginButtons && samlIdentityProviders.length
     && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.shibbolethLoginForm);
 
   return (
     <div className="LoginForm">
-      <Form
-        form={form}
-        name={name}
-        layout="vertical"
-        onFinish={handleFinish}
-        scrollToFirstError
-        validateTrigger="onSubmit"
-        hidden={hasBlockingError}
-        >
-        <Form.Item
-          label={t('common:emailAddress')}
-          name="email"
-          rules={fixedEmail ? [] : emailValidationRules}
-          initialValue={fixedEmail || ''}
-          hidden={!!fixedEmail}
+      <div className={classNames('LoginForm-internalLogin', { 'u-panel': showExternalLogin })}>
+        <Form
+          form={form}
+          name={name}
+          layout="vertical"
+          onFinish={handleFinish}
+          scrollToFirstError
+          validateTrigger="onSubmit"
+          hidden={hasBlockingError}
           >
-          <Input onPressEnter={handlePressEnter} />
-        </Form.Item>
-        <Form.Item
-          label={t('common:password')}
-          name="password"
-          rules={passwordValidationRules}
-          >
-          <Input type="password" onPressEnter={handlePressEnter} />
-        </Form.Item>
-      </Form>
-      {!hasBlockingError && !!hasLoginFailed && (
-        <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
-      )}
-      {!hasBlockingError && !!showPasswordReset && (
-        <div className="LoginForm-forgotPasswordLink">
-          <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
-        </div>
-      )}
-      {!hasBlockingError && !!showLoginButtons && (
-        <div className="LoginForm-loginButton">
-          <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
-            {t('common:login')}
-          </Button>
-        </div>
-      )}
-      {!hasBlockingError && !!showLoginButtons && !!canLoginWithShibboleth && (
-        <div className="LoginForm-loginButton LoginForm-loginButton--secondary">
+          <Form.Item
+            label={t('common:emailAddress')}
+            name="email"
+            rules={fixedEmail ? [] : emailValidationRules}
+            initialValue={fixedEmail || ''}
+            hidden={!!fixedEmail}
+            >
+            <Input onPressEnter={handlePressEnter} />
+          </Form.Item>
+          <Form.Item
+            label={t('common:password')}
+            name="password"
+            rules={passwordValidationRules}
+            >
+            <Input type="password" onPressEnter={handlePressEnter} />
+          </Form.Item>
+        </Form>
+        {!hasBlockingError && !!hasLoginFailed && (
+          <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
+        )}
+        {!hasBlockingError && !!showPasswordReset && (
+          <div className="LoginForm-forgotPasswordLink">
+            <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+          </div>
+        )}
+        {!hasBlockingError && !!showLoginButtons && (
+          <div className="LoginForm-loginButton">
+            <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
+              {t('common:login')}
+            </Button>
+          </div>
+        )}
+        {!!hasBlockingError && (
+          <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
+        )}
+      </div>
+      {!!showExternalLogin && (
+        <div className="LoginForm-externalLogin">
+          <Divider>{t('common:or')}</Divider>
           <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
             {t('loginWithShibboleth')}
           </Button>
         </div>
-      )}
-      {!!hasBlockingError && (
-        <BlockedLoginError type={hasLoginFailedTooOften ? 'loginFailedTooOften' : 'userAccountLocked'} />
       )}
       <ExternalAccountProviderDialog
         providers={samlIdentityProviders}
