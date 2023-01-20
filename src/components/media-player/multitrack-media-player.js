@@ -1,11 +1,12 @@
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
-import React, { useEffect, useRef, useState } from 'react';
 import MediaPlayerControls from './media-player-controls.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 function MultitrackMediaPlayer({
@@ -19,8 +20,7 @@ function MultitrackMediaPlayer({
   volumePresets,
   onEnded,
   onPause,
-  onPlay,
-  onReady
+  onPlay
 }) {
   const [mixVolume, setMixVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
@@ -31,10 +31,11 @@ function MultitrackMediaPlayer({
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
+  const isReady = useMemo(() => trackStates.every(ts => ts.isReady), [trackStates]);
+  const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
+
   const trackRefs = useRef({});
   const { t } = useTranslation('multitrackMediaPlayer');
-
-  const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
 
   const getTrackRef = key => {
     let trackRef = trackRefs.current[key];
@@ -116,11 +117,6 @@ function MultitrackMediaPlayer({
       const newTrackStates = cloneDeep(previousTrackStates);
       const trackState = newTrackStates.find(ts => ts.key === key);
       trackState.isReady = true;
-
-      if (newTrackStates.every(ts => ts.isReady)) {
-        onReady();
-      }
-
       return newTrackStates;
     });
   };
@@ -197,6 +193,11 @@ function MultitrackMediaPlayer({
             onSelectedVolumePresetIndexChange={setInternalSelectedVolumePresetIndex}
             />
         </div>
+        )}
+        {!isReady && (
+          <div className="MultitrackMediaPlayer-loadingOverlay">
+            <Spin />
+          </div>
         )}
       </div>
     );
@@ -280,8 +281,7 @@ MultitrackMediaPlayer.propTypes = {
   })).isRequired,
   onEnded: PropTypes.func,
   onPause: PropTypes.func,
-  onPlay: PropTypes.func,
-  onReady: PropTypes.func
+  onPlay: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
@@ -295,8 +295,7 @@ MultitrackMediaPlayer.defaultProps = {
   showTrackMixer: false,
   onEnded: () => {},
   onPause: () => {},
-  onPlay: () => {},
-  onReady: () => {}
+  onPlay: () => {}
 };
 
 export default MultitrackMediaPlayer;
