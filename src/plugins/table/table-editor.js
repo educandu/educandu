@@ -41,10 +41,8 @@ function TableEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>
-      <div className="Panel">
-        <div className="Panel-content">
-          <TableDesigner content={content} onContentChange={updateContent} />
-        </div>
+      <div className="u-panel">
+        <TableDesigner content={content} onContentChange={updateContent} />
       </div>
     </div>
   );
