@@ -5,11 +5,11 @@ noFavorites:
   en: You have not marked any favorites so far.
   de: Du hast noch keine Favoriten markiert.
 favoriteUsers:
-  en: Users you have added to favorites
-  de: Benutzer, die du zu den Favoriten hinzugefügt hast
+  en: Favorite users ({count})
+  de: Lieblingsnutzern ({count})
 favoriteRooms:
-  en: Rooms you have added to favorites
-  de: Räume, die du zu den Favoriten hinzugefügt hast
+  en: Favorite rooms ({count})
+  de: Lieblingsräume ({count})
 favoriteDocuments:
-  en: Documents you have added to favorites
-  de: Dokumente, die du zu den Favoriten hinzugefügt hast
+  en: Favorite documents ({count})
+  de: Lieblingsdokumente ({count})

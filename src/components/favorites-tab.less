@@ -25,42 +25,15 @@
 
 .FavoritesTab-cardWrapper {
   position: relative;
+
+  &.FavoritesTab-cardWrapper--document {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .FavoritesTab-cardStar {
   position: absolute;
   top: -14px;
   right: -5px;
-}
-
-.FavoritesTab-userCard {
-  width: 250px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  border-radius: @edu-border-radius-base;
-  border: 1px solid @edu-border-color-light;
-  border-radius: @edu-border-radius-base;
-}
-
-.FavoritesTab-userCardAvatar {
-  display: flex;
-  align-items: center;
-  padding: @edu-content-padding;
-}
-
-.FavoritesTab-userCardTitle {
-  .m-overflow-ellipsis;
-  width: 100%;
-  line-height: 40px;
-  font-weight: bold;
-  text-align: center;
-  background-color: @edu-background-color-base;
-  border-bottom-left-radius: @edu-border-radius-base;
-  border-bottom-right-radius: @edu-border-radius-base;
-
-  &:hover {
-    cursor: pointer;
-    background-color: lighten(@edu-background-color-base, 2%);
-  }
 }
