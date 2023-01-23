@@ -26,7 +26,8 @@ import RequestLimitRecordService from '../services/request-limit-record-service.
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import { ANTI_BRUTE_FORCE_MAX_REQUESTS, ANTI_BRUTE_FORCE_EXPIRES_IN_MS, SAVE_USER_RESULT, ERROR_CODES } from '../domain/constants.js';
 import {
-  postUserBodySchema,
+  postUserRegistrationRequestBodySchema,
+  postUserRegistrationCompletionBodySchema,
   postUserAccountBodySchema,
   postUserProfileBodySchema,
   postUserPasswordResetRequestBodySchema,
@@ -170,30 +171,6 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
   }
 
-  async handleCompleteRegistrationPage(req, res) {
-    if (req.isAuthenticated()) {
-      return res.redirect(routes.getDefaultLoginRedirectUrl());
-    }
-
-    const user = await this.userService.verifyUser(req.params.verificationCode);
-
-    const connectedExternalAccountId = req.session.externalAccount?._id || null;
-    req.session.externalAccount = null;
-
-    if (connectedExternalAccountId) {
-      await this.externalAccountService.updateExternalAccountUserId({
-        externalAccountId: connectedExternalAccountId,
-        userId: user._id
-      });
-      await new Promise((resolve, reject) => {
-        req.login(user, err => err ? reject(err) : resolve());
-      });
-    }
-
-    const initialState = { user, connectedExternalAccountId };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
-  }
-
   handleGetLoginPage(req, res) {
     if (req.isAuthenticated()) {
       return res.redirect(routes.getDefaultLoginRedirectUrl());
@@ -260,18 +237,44 @@ class UserController {
     res.send({ users: mappedUsers });
   }
 
-  async handlePostUser(req, res) {
+  async handlePostUserRegistrationRequest(req, res) {
     const { email, password, displayName } = req.body;
 
     const { result, user } = await this.userService.createUser({ email, password, displayName });
 
     if (result === SAVE_USER_RESULT.success) {
-      const { origin } = requestUtils.getHostInfo(req);
-      const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
-      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationLink });
+      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationCode: user.verificationCode });
     }
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
+  }
+
+  async handlePostUserRegistrationCompletion(req, res) {
+    const { userId, verificationCode } = req.body;
+
+    const user = await this.userService.verifyUser(userId, verificationCode);
+    if (!user) {
+      throw new NotFound();
+    }
+
+    const connectedExternalAccountId = req.session.externalAccount?._id || null;
+    req.session.externalAccount = null;
+
+    if (connectedExternalAccountId) {
+      await this.externalAccountService.updateExternalAccountUserId({
+        externalAccountId: connectedExternalAccountId,
+        userId: user._id
+      });
+    }
+
+    await new Promise((resolve, reject) => {
+      req.login(user, err => err ? reject(err) : resolve());
+    });
+
+    res.status(201).send({
+      user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null,
+      connectedExternalAccountId: user ? connectedExternalAccountId : null
+    });
   }
 
   async handlePostUserAccount(req, res) {
@@ -582,8 +585,6 @@ class UserController {
 
     router.get('/reset-password', (req, res) => this.handleGetResetPasswordPage(req, res));
 
-    router.get('/complete-registration/:verificationCode', (req, res) => this.handleCompleteRegistrationPage(req, res));
-
     router.get('/login', (req, res) => this.handleGetLoginPage(req, res));
 
     router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
@@ -603,10 +604,17 @@ class UserController {
     );
 
     router.post(
-      '/api/v1/users',
+      '/api/v1/users/request-registration',
       jsonParser,
-      validateBody(postUserBodySchema),
-      (req, res) => this.handlePostUser(req, res)
+      validateBody(postUserRegistrationRequestBodySchema),
+      (req, res) => this.handlePostUserRegistrationRequest(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/complete-registration',
+      jsonParser,
+      validateBody(postUserRegistrationCompletionBodySchema),
+      (req, res) => this.handlePostUserRegistrationCompletion(req, res)
     );
 
     router.post(

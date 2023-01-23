@@ -7,10 +7,15 @@ const emailSchema = joi.string().case('lower');
 const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
 const displayNameSchema = joi.string().min(minDisplayNameLength).max(maxDisplayNameLength);
 
-export const postUserBodySchema = joi.object({
+export const postUserRegistrationRequestBodySchema = joi.object({
   email: emailSchema.required(),
   password: passwordSchema.required(),
   displayName: displayNameSchema.required()
+});
+
+export const postUserRegistrationCompletionBodySchema = joi.object({
+  userId: idOrKeySchema.required(),
+  verificationCode: idOrKeySchema.required()
 });
 
 export const postUserAccountBodySchema = joi.object({

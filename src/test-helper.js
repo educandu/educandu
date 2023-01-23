@@ -135,7 +135,7 @@ export async function setupTestUser(container, userValues) {
     throw new Error(JSON.stringify({ result, email, password, displayName }));
   }
 
-  const verifiedUser = await userService.verifyUser(user.verificationCode);
+  const verifiedUser = await userService.verifyUser(user._id, user.verificationCode);
 
   verifiedUser.roles = userValues?.roles || [ROLE.user];
   verifiedUser.organization = userValues?.organization || '';

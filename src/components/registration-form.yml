@@ -7,18 +7,39 @@ termsAndConditionsConfirmation:
 register:
   en: Register
   de: Registrieren
-registrationConfirmationMessage:
+step_enterData:
+  en: Enter data
+  de: Daten eingeben
+step_enterCode:
+  en: Confirm
+  de: Bestätigen
+step_completed:
+  en: Done
+  de: Fertig
+verificationCode:
+  en: Verification code
+  de: Verifizierungs-Code
+enterVerificationCode:
+  en: Please enter your verification code
+  de: Bitte gib deinen Verifizierungscode ein
+verificationCodeIsInvalid:
+  en: The verification code is invalid or expired
+  de: Der Verifizierungscode ist ungültig oder abgelaufen
+verificationMessage:
   en: |
-    # One more step remaining ...
+    We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.
 
-    Please confirm your registration with the link we have just sent you via email. \
-    The link is valid **for 24 hours**. After completing this step you will be able to log in to your account.
-
-    [Go to the login page]({loginPageUrl})
+    The code is valid **for {validityInMinutes}**.
   de: |
-    # Ein Schritt fehlt noch ...
+    Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.
 
-    Bitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \
-    Der Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.
-
-    [Zur Anmeldeseite gehen]({loginPageUrl})
+    Der Code ist **{validityInMinutes} lang** gültig.
+completedMessageTitle:
+  en: Welcome!
+  de: Willkommen!
+completedMessageSubTitle:
+  en: You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below.
+  de: Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren.
+gotoDashboard:
+  en: Show my personal dashboard
+  de: Mein persönliches Dashboard anzeigen

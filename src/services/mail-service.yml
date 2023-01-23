@@ -6,19 +6,51 @@ registrationVerificationEmail.text:
     Welcome!
 
     You have registered with educandu as {displayName}.
-    To complete your registration, please confirm your email address through the following link: {verificationLink}
-    The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
+    Please complete your registration using the following code:
+
+    {verificationCode}
+
+    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
   de: |
     Willkommen!
 
     Du hast dich als {displayName} auf educandu registriert.
-    Zum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: {verificationLink}
-    Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
+    Bitte schließe deine Registrierung mit dem folgendem Code ab:
+
+    {verificationCode}
+
+    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
 registrationVerificationEmail.html:
   en: |
-    <p>Welcome!<br/><br/>You have registered with educandu as {displayName}.<br/>To complete your registration, please confirm your email address through the following link: <a href="{verificationLink}">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
+    <p>
+    Welcome!
+    <br/>
+    <br/>
+    You have registered with educandu as {displayName}.
+    <br/>
+    Please complete your registration using the following code:
+    <br>
+    <br>
+    <b><pre>{verificationCode}</pre></b>
+    <br />
+    <br/>
+    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
+    </p>
   de: |
-    <p>Willkommen!<br/><br/>Du hast dich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: <a href="{verificationLink}">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
+    <p>
+    Willkommen!
+    <br/>
+    <br/>
+    Du hast dich als {displayName} auf educandu registriert.
+    <br/>
+    Bitte schließe deine Registrierung mit dem folgendem Code ab:
+    <br>
+    <br>
+    <b><pre>{verificationCode}</pre></b>
+    <br />
+    <br/>
+    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
+    </p>
 passwordResetEmail.subject:
   en: Your password for educandu
   de: Dein Kennwort auf educandu

@@ -3,7 +3,7 @@ import { validate } from '../validation.js';
 import { describe, expect, it } from 'vitest';
 import { maxDisplayNameLength, minDisplayNameLength } from '../validation-constants.js';
 import {
-  postUserBodySchema,
+  postUserRegistrationRequestBodySchema,
   postUserAccountBodySchema,
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
@@ -70,7 +70,7 @@ const validEmailCases = [
   }
 ];
 
-describe('postUserBodySchema', () => {
+describe('postUserRegistrationRequestBodySchema', () => {
   const validBody = { email, password, displayName };
 
   const validTestCases = [...validDisplayNameCases, ...validPasswordCases, ...validEmailCases]
@@ -82,33 +82,33 @@ describe('postUserBodySchema', () => {
   describe('when displayName is missing', () => {
     it('should fail validation', () => {
       const body = { password, email };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserRegistrationRequestBodySchema)).toThrow();
     });
   });
 
   describe('when password is missing', () => {
     it('should fail validation', () => {
       const body = { email, displayName };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserRegistrationRequestBodySchema)).toThrow();
     });
   });
 
   describe('when email is missing', () => {
     it('should fail validation', () => {
       const body = { password, displayName };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserRegistrationRequestBodySchema)).toThrow();
     });
   });
 
   validTestCases.forEach(({ description, body }) => {
     describe(description, () => {
-      it('should pass validation', () => expect(() => validate(body, postUserBodySchema)).not.toThrow());
+      it('should pass validation', () => expect(() => validate(body, postUserRegistrationRequestBodySchema)).not.toThrow());
     });
   });
 
   invalidTestCases.forEach(({ description, body }) => {
     describe(description, () => {
-      it('should fail validation', () => expect(() => validate(body, postUserBodySchema)).toThrow());
+      it('should fail validation', () => expect(() => validate(body, postUserRegistrationRequestBodySchema)).toThrow());
     });
   });
 });
@@ -127,7 +127,7 @@ describe('postUserAccountBodySchema', () => {
   describe('when email is missing', () => {
     it('should fail validation', () => {
       const body = { };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserAccountBodySchema)).toThrow();
     });
   });
 
@@ -151,7 +151,7 @@ describe('postUserPasswordResetRequestBodySchema', () => {
 
   describe('when email is missing', () => {
     it('should fail validation', () => {
-      expect(() => validate({}, postUserBodySchema)).toThrow();
+      expect(() => validate({}, postUserPasswordResetRequestBodySchema)).toThrow();
     });
   });
 
@@ -182,14 +182,14 @@ describe('postUserPasswordResetCompletionBodySchema', () => {
   describe('when password is missing', () => {
     it('should fail validation', () => {
       const body = { passwordResetRequestId: '123' };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserPasswordResetCompletionBodySchema)).toThrow();
     });
   });
 
   describe('when passwordResetRequestId is missing', () => {
     it('should fail validation', () => {
       const body = { password };
-      expect(() => validate(body, postUserBodySchema)).toThrow();
+      expect(() => validate(body, postUserPasswordResetCompletionBodySchema)).toThrow();
     });
   });
 

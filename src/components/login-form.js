@@ -119,7 +119,7 @@ export default function LoginForm({
   const emailValidationRules = [
     {
       required: true,
-      message: t('enterEmail'),
+      message: t('common:enterEmail'),
       whitespace: true
     },
     {

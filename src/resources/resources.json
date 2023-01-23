@@ -445,7 +445,6 @@
     "namespace": "emailFormItem",
     "language": "en",
     "resources": {
-      "enterEmail": "Please enter an email address",
       "emailIsInUse": "The email address is already registered"
     }
   },
@@ -453,7 +452,6 @@
     "namespace": "emailFormItem",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte gib eine E-Mail-Adresse an",
       "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
@@ -573,7 +571,6 @@
     "namespace": "loginForm",
     "language": "en",
     "resources": {
-      "enterEmail": "Please enter your email address",
       "enterPassword": "Please enter your password",
       "loginFailed": "Login failed. Please check your input.",
       "forgotPassword": "Forgot your password?",
@@ -584,7 +581,6 @@
     "namespace": "loginForm",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte gib deine E-Mail-Adresse an",
       "enterPassword": "Bitte gib dein Kennwort an",
       "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.",
       "forgotPassword": "Kennwort vergessen?",
@@ -922,26 +918,6 @@
     }
   },
   {
-    "namespace": "completeRegistration",
-    "language": "en",
-    "resources": {
-      "registrationSuccess": "Congratulations! You are now successfully registered.",
-      "registrationFailure": "The confirmation code is invalid or expired.",
-      "homeLink": "Home",
-      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
-    }
-  },
-  {
-    "namespace": "completeRegistration",
-    "language": "de",
-    "resources": {
-      "registrationSuccess": "Gratulation! Du hast deine Registrierung erfolgreich abgeschlossen.",
-      "registrationFailure": "Der Registrierungs-Code ist ungültig oder abgelaufen.",
-      "homeLink": "Home",
-      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
-    }
-  },
-  {
     "namespace": "connectExternalAccount",
     "language": "en",
     "resources": {
@@ -1043,8 +1019,6 @@
     "namespace": "resetPassword",
     "language": "en",
     "resources": {
-      "enterEmail": "Please enter an email address",
-      "emailIsInvalid": "The value you provided is not a valid email address",
       "requestReset": "Request reset",
       "resetInProgressConfirmation": "We have received your request.",
       "resetInProgressNextSteps": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
@@ -1055,8 +1029,6 @@
     "namespace": "resetPassword",
     "language": "de",
     "resources": {
-      "enterEmail": "Bitte gib eine E-Mail-Adresse an",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
       "requestReset": "Reset anfordern",
       "resetInProgressConfirmation": "Deine Anfrage ist bei uns eingegangen.",
       "resetInProgressNextSteps": "Falls die von dir angegebene E-Mail-Adresse bei uns registriert ist, wirst du in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
@@ -1236,24 +1208,6 @@
     }
   },
   {
-    "namespace": "passwordConfirmationFormItem",
-    "language": "en",
-    "resources": {
-      "passwordConfirmation": "Password confirmation",
-      "confirmPassword": "Please confirm your password",
-      "passwordsDoNotMatch": "The passwords do not match"
-    }
-  },
-  {
-    "namespace": "passwordConfirmationFormItem",
-    "language": "de",
-    "resources": {
-      "passwordConfirmation": "Kennwortbestätigung",
-      "confirmPassword": "Bitte bestätige dein Kennwort",
-      "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
-    }
-  },
-  {
     "namespace": "passwordFormItem",
     "language": "en",
     "resources": {
@@ -1338,7 +1292,16 @@
       "confirmTerms": "Please confirm your agreement with the terms and conditions",
       "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
       "register": "Register",
-      "registrationConfirmationMessage": "# One more step remaining ...\n\nPlease confirm your registration with the link we have just sent you via email. \\\nThe link is valid **for 24 hours**. After completing this step you will be able to log in to your account.\n\n[Go to the login page]({loginPageUrl})\n"
+      "step_enterData": "Enter data",
+      "step_enterCode": "Confirm",
+      "step_completed": "Done",
+      "verificationCode": "Verification code",
+      "enterVerificationCode": "Please enter your verification code",
+      "verificationCodeIsInvalid": "The verification code is invalid or expired",
+      "verificationMessage": "We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.\n\nThe code is valid **for {validityInMinutes}**.\n",
+      "completedMessageTitle": "Welcome!",
+      "completedMessageSubTitle": "You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below.",
+      "gotoDashboard": "Show my personal dashboard"
     }
   },
   {
@@ -1348,7 +1311,16 @@
       "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätige deine Registrierung mit dem Link, den wir dir gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt kannst du dich in dein Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
+      "step_enterData": "Daten eingeben",
+      "step_enterCode": "Bestätigen",
+      "step_completed": "Fertig",
+      "verificationCode": "Verifizierungs-Code",
+      "enterVerificationCode": "Bitte gib deinen Verifizierungscode ein",
+      "verificationCodeIsInvalid": "Der Verifizierungscode ist ungültig oder abgelaufen",
+      "verificationMessage": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n",
+      "completedMessageTitle": "Willkommen!",
+      "completedMessageSubTitle": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren.",
+      "gotoDashboard": "Mein persönliches Dashboard anzeigen"
     }
   },
   {
@@ -2506,7 +2478,6 @@
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
-      "emailIsInvalid": "The value you provided is not a valid email address",
       "verifiedDocumentBadge": "This document was verified by a maintainer",
       "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
       "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
@@ -2531,7 +2502,9 @@
       "less": "less ...",
       "draft": "Draft",
       "playbackRange": "Playback range",
-      "or": "or"
+      "or": "or",
+      "enterEmail": "Please enter an email address",
+      "emailIsInvalid": "The value you provided is not a valid email address"
     }
   },
   {
@@ -2665,7 +2638,6 @@
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
       "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
       "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
       "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
@@ -2690,7 +2662,9 @@
       "less": "weniger ...",
       "draft": "Entwurf",
       "playbackRange": "Abspielbereich",
-      "or": "oder"
+      "or": "oder",
+      "enterEmail": "Bitte gib eine E-Mail-Adresse an",
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
     }
   },
   {
@@ -2722,8 +2696,8 @@
     "language": "en",
     "resources": {
       "registrationVerificationEmail.subject": "Welcome to educandu!",
-      "registrationVerificationEmail.text": "Welcome!\n\nYou have registered with educandu as {displayName}.\nTo complete your registration, please confirm your email address through the following link: {verificationLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "registrationVerificationEmail.html": "<p>Welcome!<br/><br/>You have registered with educandu as {displayName}.<br/>To complete your registration, please confirm your email address through the following link: <a href=\"{verificationLink}\">confirm registration</a><br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
+      "registrationVerificationEmail.text": "Welcome!\n\nYou have registered with educandu as {displayName}.\nPlease complete your registration using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "registrationVerificationEmail.html": "<p>\nWelcome!\n<br/>\n<br/>\nYou have registered with educandu as {displayName}.\n<br/>\nPlease complete your registration using the following code:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n</p>\n",
       "passwordResetEmail.subject": "Your password for educandu",
       "passwordResetEmail.text": "Hello {displayName}!\n\nYou have requested a password reset on educandu.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
       "passwordResetEmail.html": "<p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href=\"{completionLink}\">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
@@ -2746,8 +2720,8 @@
     "language": "de",
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
-      "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nZum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Du hast dich als {displayName} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätige bitte deine E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n",
+      "registrationVerificationEmail.html": "<p>\nWillkommen!\n<br/>\n<br/>\nDu hast dich als {displayName} auf educandu registriert.\n<br/>\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n</p>\n",
       "passwordResetEmail.subject": "Dein Kennwort auf educandu",
       "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
       "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
