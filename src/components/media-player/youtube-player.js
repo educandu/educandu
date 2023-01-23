@@ -37,10 +37,10 @@ function YoutubePlayer({
   const youtubeThumbnailUrl = useYoutubeThumbnailUrl(sourceUrl);
 
   const [endTimeInS, setEndTimeInS] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [startTimeInS, setStartTimeInS] = useState(0);
-  const [playbackEnded, setPlaybackEnded] = useState(false);
-  const [lastPlaybackRange, setLastPlaybackRange] = useState(null);
   const [sourceDurationInMs, setSourceDurationInMs] = useState(0);
+  const [lastPlaybackRange, setLastPlaybackRange] = useState(null);
 
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
@@ -63,14 +63,17 @@ function YoutubePlayer({
     if (player && !!sourceDurationInMs) {
       setWasPlayTriggeredOnce(true);
 
-      if (playbackEnded) {
+      const isCurrentTimeOutsideRange
+        = (!!startTimeInS && player.currentTime < startTimeInS)
+        || (!!endTimeInS && player.currentTime >= endTimeInS);
+
+      if (isCurrentTimeOutsideRange) {
         player.currentTime = startTimeInS;
-        setPlaybackEnded(false);
       }
 
       player.play();
     }
-  }, [player, startTimeInS, playbackEnded, sourceDurationInMs]);
+  }, [player, startTimeInS, endTimeInS, sourceDurationInMs]);
 
   const triggerPause = useCallback(() => {
     player?.pause();
@@ -82,17 +85,21 @@ function YoutubePlayer({
       const currentActualTimeInMs = startTimeInMs + seekedTimeWithinRangeInMs;
       player.currentTime = currentActualTimeInMs / 1000;
 
-      if (player.paused) {
+      if (!isPlaying) {
         const currentTimeWithinRangeInMs = currentActualTimeInMs - startTimeInMs;
         onProgress(currentTimeWithinRangeInMs);
       }
-      setPlaybackEnded(false);
     }
-  }, [player, startTimeInS, onProgress]);
+  }, [player, isPlaying, startTimeInS, onProgress]);
 
   const triggerStop = useCallback(() => {
     player?.stop();
   }, [player]);
+
+  const triggerReset = useCallback(() => {
+    triggerSeek(startTimeInS);
+    player?.stop();
+  }, [player, startTimeInS, triggerSeek]);
 
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
@@ -177,8 +184,9 @@ function YoutubePlayer({
 
   const handleEnded = useCallback(() => {
     onEnded();
+    setIsPlaying(false);
     setProgressInterval(null);
-    setPlaybackEnded(true);
+
     // compensate for cases where youtube actual source duration is shorter than reported,
     // thus having playback end 1s earlier; likely a rounding issue on their side
     onProgress((endTimeInS - startTimeInS) * 1000);
@@ -188,9 +196,20 @@ function YoutubePlayer({
     if (player && !isNaN(player.currentTime)) {
       const currentActualTimeInMs = player.currentTime * 1000;
       const currentTimeWithinRangeInMs = currentActualTimeInMs - (startTimeInS * 1000);
-      onProgress(currentTimeWithinRangeInMs);
+
+      if (player.currentTime <= endTimeInS) {
+        onProgress(currentTimeWithinRangeInMs);
+        return;
+      }
+
+      triggerPause();
+
+      const endTimeWithinRangeInS = endTimeInS - startTimeInS;
+      onProgress(endTimeInS - endTimeWithinRangeInS);
+
+      handleEnded();
     }
-  }, [player, startTimeInS, onProgress]);
+  }, [player, startTimeInS, endTimeInS, triggerPause, onProgress, handleEnded]);
 
   const handleReady = useCallback(() => {
     onReady();
@@ -198,12 +217,14 @@ function YoutubePlayer({
 
   const handlePlaying = useCallback(() => {
     onPlay();
+    setIsPlaying(true);
     setProgressInterval(() => handleProgress());
   }, [onPlay, handleProgress]);
 
   const handlePause = useCallback(() => {
-    setProgressInterval(null);
     onPause();
+    setIsPlaying(false);
+    setProgressInterval(null);
   }, [onPause]);
 
   const handleYoutubeStateChange = useCallback(event => {
@@ -243,13 +264,14 @@ function YoutubePlayer({
     play: triggerPlay,
     pause: triggerPause,
     seekToTimecode: triggerSeek,
-    stop: triggerStop
-  }), [triggerPlay, triggerPause, triggerSeek, triggerStop]);
+    stop: triggerStop,
+    reset: triggerReset
+  }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
     <div className="YoutubePlayer">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
+      {!audioOnly && !!posterOrThumbnailImageUrl && !isPlaying && (
         <div
           onClick={triggerPlay}
           className="YoutubePlayer-posterImage"
