@@ -75,8 +75,8 @@ class DocumentService {
     return documentsMetadata.sort(by(doc => doc.createdOn, 'asc'));
   }
 
-  async getMetadataOfLatestPublicDocumentsCreatedByUser(createdBy) {
-    const documentsMetadata = await this.documentStore.getPublicDocumentsMetadataByCreatedBy(createdBy);
+  async getExtendedMetadataOfLatestPublicDocumentsCreatedByUser(createdBy) {
+    const documentsMetadata = await this.documentStore.getPublicDocumentsExtendedMetadataByCreatedBy(createdBy);
     return documentsMetadata.sort(by(doc => doc.createdOn, 'desc'));
   }
 

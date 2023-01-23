@@ -40,9 +40,7 @@ export default function User({ PageTemplate, initialState }) {
       return null;
     }
     return (
-      <div key={doc._id}>
-        <DocumentCard doc={doc} />
-      </div>
+      <DocumentCard doc={doc} key={doc._id} />
     );
   };
 
@@ -76,7 +74,7 @@ export default function User({ PageTemplate, initialState }) {
 
         {!!fetchingDocuments && <Spin className="u-spin" />}
 
-        {!fetchingDocuments && !documents.length && (
+        {!fetchingDocuments && !!documents.length && (
           <section>
             <div className="UserPage-sectionHeadline">{t('documentsHeadline')}</div>
             <div className="UserPage-sectionCards">

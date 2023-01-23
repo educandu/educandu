@@ -444,7 +444,7 @@ class UserController {
   async handleGetCreatedDocuments(req, res) {
     const { userId } = req.params;
 
-    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(userId);
+    const createdDocuments = await this.documentService.getExtendedMetadataOfLatestPublicDocumentsCreatedByUser(userId);
     const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
 
     return res.send({ documents: mappedCreatedDocuments });

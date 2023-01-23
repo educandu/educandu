@@ -297,6 +297,17 @@
   }
 }
 
+.m-card-wrapper-wide {
+  display: grid;
+  gap: 25px;
+  grid-template-columns: 1fr 1fr;
+
+  @media @edu-media-phone {
+    gap: 15px;
+    grid-template-columns: auto;
+  }
+}
+
 .m-control-group {
   display: grid;
   align-items: center;
