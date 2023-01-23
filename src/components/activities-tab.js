@@ -14,9 +14,9 @@ import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite
 import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
-function NewsTab({ activities, loading }) {
+function ActivitiesTab({ activities, loading }) {
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('newsTab');
+  const { t } = useTranslation('activitiesTab');
 
   const renderActivity = ({ type, icon, timestamp, description, title, href, isDeprecated }) => {
     let deprecatedTitle;
@@ -41,15 +41,15 @@ function NewsTab({ activities, loading }) {
     }
 
     return (
-      <div className="NewsTab-activity">
-        <div className="NewsTab-activityMetadata">
-          <div className="NewsTab-activityMetadataIcon">{icon}</div>
+      <div className="ActivitiesTab-activity">
+        <div className="ActivitiesTab-activityMetadata">
+          <div className="ActivitiesTab-activityMetadataIcon">{icon}</div>
           <div>{formatDate(timestamp)}</div>
         </div>
-        <div className="NewsTab-activityData">
-          <span className="NewsTab-activityDataDescription">{description}:</span>
+        <div className="ActivitiesTab-activityData">
+          <span className="ActivitiesTab-activityDataDescription">{description}:</span>
           {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
-          {!isDeprecated && <span className="NewsTab-activityDataLink"><a href={href}>{title}</a></span>}
+          {!isDeprecated && <span className="ActivitiesTab-activityDataLink"><a href={href}>{title}</a></span>}
         </div>
       </div>
     );
@@ -183,21 +183,18 @@ function NewsTab({ activities, loading }) {
   return (
     <div>
       <section>
-        <div className="NewsTab-info">{t('info')}</div>
-        <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
-        <div className="NewsTab-activities">
-          {!!loading && <Spin className="u-spin" />}
-          {!loading && renderActivities()}
-          {!loading && !activities.length && <span>{t('noActivities')}</span>}
-        </div>
+        <div className="ActivitiesTab-info">{t('info')}</div>
+        {!!loading && <Spin className="u-spin" />}
+        {!loading && renderActivities()}
+        {!loading && !activities.length && <span>{t('noActivities')}</span>}
       </section>
     </div>
   );
 }
 
-NewsTab.propTypes = {
+ActivitiesTab.propTypes = {
   activities: PropTypes.arrayOf(userActivitiesShape).isRequired,
   loading: PropTypes.bool.isRequired
 };
 
-export default NewsTab;
+export default ActivitiesTab;

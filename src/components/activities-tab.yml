@@ -1,9 +1,6 @@
 info:
-  en: Here you can find news about the website and your latest activities.
-  de: Hier findest du Neuigkeiten über die Website und deine letzten Aktivitäten.
-latestActivitiesHeader:
-  en: Your latest activities
-  de: Deine letzten Aktivitäten
+  en: Here you can find your latest activities.
+  de: Hier findest du deine letzten Aktivitäten.
 noActivities:
   en: No activities have been recorded so far.
   de: Bisher wurden keine Aktivitäten aufgezeichnet.

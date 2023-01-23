@@ -26,6 +26,38 @@
     }
   },
   {
+    "namespace": "activitiesTab",
+    "language": "en",
+    "resources": {
+      "info": "Here you can find your latest activities.",
+      "noActivities": "No activities have been recorded so far.",
+      "documentCreatedActivity": "New document created",
+      "documentUpdatedActivity": "Document updated",
+      "documentMarkedFavoriteActivity": "Document marked as favorite",
+      "roomCreatedActivity": "New room created",
+      "roomUpdatedActivity": "Room updated",
+      "roomMarkedFavoriteActivity": "Room marked as favorite",
+      "roomJoinedActivity": "Room joined",
+      "userMarkedFavoriteActivity": "User marked as favorite"
+    }
+  },
+  {
+    "namespace": "activitiesTab",
+    "language": "de",
+    "resources": {
+      "info": "Hier findest du deine letzten Aktivitäten.",
+      "noActivities": "Bisher wurden keine Aktivitäten aufgezeichnet.",
+      "documentCreatedActivity": "Neues Dokument erstellt",
+      "documentUpdatedActivity": "Dokument bearbeitet",
+      "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
+      "roomCreatedActivity": "Neuen Raum erstellt",
+      "roomUpdatedActivity": "Raum bearbeitet",
+      "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
+      "roomJoinedActivity": "Raum beigetreten",
+      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
+    }
+  },
+  {
     "namespace": "settingsDocumentsTable",
     "language": "en",
     "resources": {
@@ -766,40 +798,6 @@
     }
   },
   {
-    "namespace": "newsTab",
-    "language": "en",
-    "resources": {
-      "info": "Here you can find news about the website and your latest activities.",
-      "latestActivitiesHeader": "Your latest activities",
-      "noActivities": "No activities have been recorded so far.",
-      "documentCreatedActivity": "New document created",
-      "documentUpdatedActivity": "Document updated",
-      "documentMarkedFavoriteActivity": "Document marked as favorite",
-      "roomCreatedActivity": "New room created",
-      "roomUpdatedActivity": "Room updated",
-      "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Room joined",
-      "userMarkedFavoriteActivity": "User marked as favorite"
-    }
-  },
-  {
-    "namespace": "newsTab",
-    "language": "de",
-    "resources": {
-      "info": "Hier findest du Neuigkeiten über die Website und deine letzten Aktivitäten.",
-      "latestActivitiesHeader": "Deine letzten Aktivitäten",
-      "noActivities": "Bisher wurden keine Aktivitäten aufgezeichnet.",
-      "documentCreatedActivity": "Neues Dokument erstellt",
-      "documentUpdatedActivity": "Dokument bearbeitet",
-      "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
-      "roomCreatedActivity": "Neuen Raum erstellt",
-      "roomUpdatedActivity": "Raum bearbeitet",
-      "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Raum beigetreten",
-      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
-    }
-  },
-  {
     "namespace": "notSupportedSection",
     "language": "en",
     "resources": {
@@ -947,7 +945,7 @@
     "namespace": "dashboard",
     "language": "en",
     "resources": {
-      "newsTabTitle": "News",
+      "activitiesTabTitle": "Activities",
       "favoritesTabTitle": "Favorites",
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
@@ -961,7 +959,7 @@
     "namespace": "dashboard",
     "language": "de",
     "resources": {
-      "newsTabTitle": "Neuigkeiten",
+      "activitiesTabTitle": "Aktivitäten",
       "favoritesTabTitle": "Favoriten",
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
