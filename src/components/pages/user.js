@@ -52,6 +52,7 @@ export default function User({ PageTemplate, initialState }) {
         <div className="UserPage-header">
           <div className="UserPage-headerProfile">
             <ProfileHeader
+              includeMailTo
               email={user.email}
               avatarUrl={user.avatarUrl}
               displayName={user.displayName}
