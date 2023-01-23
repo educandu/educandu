@@ -1,6 +1,6 @@
 import React from 'react';
-import { Spin } from 'antd';
 import PropTypes from 'prop-types';
+import { Spin, Timeline } from 'antd';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
@@ -13,6 +13,8 @@ import DocumentCreatedIcon from './icons/user-activities/document-created-icon.j
 import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
 import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
+
+const TimelineItem = Timeline.Item;
 
 function ActivitiesTab({ activities, loading }) {
   const { formatDate } = useDateFormat();
@@ -41,17 +43,17 @@ function ActivitiesTab({ activities, loading }) {
     }
 
     return (
-      <div className="ActivitiesTab-activity">
-        <div className="ActivitiesTab-activityMetadata">
-          <div className="ActivitiesTab-activityMetadataIcon">{icon}</div>
-          <div>{formatDate(timestamp)}</div>
-        </div>
-        <div className="ActivitiesTab-activityData">
-          <span className="ActivitiesTab-activityDataDescription">{description}:</span>
+      <TimelineItem
+        dot={icon}
+        key={timestamp}
+        label={<span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>}
+        >
+        <div>
+          <span className="ActivitiesTab-activityDescription">{description}: </span>
           {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
-          {!isDeprecated && <span className="ActivitiesTab-activityDataLink"><a href={href}>{title}</a></span>}
+          {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}
         </div>
-      </div>
+      </TimelineItem>
     );
   };
 
@@ -175,18 +177,22 @@ function ActivitiesTab({ activities, loading }) {
   };
 
   const renderActivities = () => {
-    return activities
-      .map(activity => <div key={JSON.stringify(activity)}>{renderActivityByType(activity)}</div>)
-      .filter(activity => activity);
+    return (
+      <Timeline mode="left">
+        {activities.map(renderActivityByType).filter(activity => activity)}
+      </Timeline>
+    );
   };
 
   return (
     <div>
       <section>
         <div className="ActivitiesTab-info">{t('info')}</div>
-        {!!loading && <Spin className="u-spin" />}
-        {!loading && renderActivities()}
-        {!loading && !activities.length && <span>{t('noActivities')}</span>}
+        <div className="ActivitiesTab-timeline">
+          {!!loading && <Spin className="u-spin" />}
+          {!loading && renderActivities()}
+          {!loading && !activities.length && <span>{t('noActivities')}</span>}
+        </div>
       </section>
     </div>
   );
