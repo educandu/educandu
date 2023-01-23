@@ -120,8 +120,8 @@ function MediaPlayer({
       onEnded();
       setLastReachedPartEndIndex(-1);
       onPartEndReached(parts.length - 1);
-      setIsPlaying(false);
     }
+    setIsPlaying(false);
   };
 
   const handleSeek = milliseconds => {
@@ -160,9 +160,7 @@ function MediaPlayer({
 
   const triggerReset = () => {
     setLastReachedPartEndIndex(-1);
-    playerRef.current?.stop();
-    playerRef.current?.seekToTimecode(0);
-    setPlayedMilliseconds(0);
+    playerRef.current?.reset();
   };
 
   useEffect(() => {

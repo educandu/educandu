@@ -48,9 +48,12 @@ function Htlm5Player({
     if (player) {
       setWasPlayTriggeredOnce(true);
       const currentActualTimeInMs = player.currentTime * 1000;
-      const isEndReached = !!playbackRangeInMs[1] && currentActualTimeInMs >= playbackRangeInMs[1];
 
-      if (isEndReached) {
+      const isCurrentTimeOutsideRange
+        = (!!playbackRangeInMs[0] && currentActualTimeInMs < playbackRangeInMs[0])
+        || (!!playbackRangeInMs[1] && currentActualTimeInMs >= playbackRangeInMs[1]);
+
+      if (isCurrentTimeOutsideRange) {
         player.currentTime = playbackRangeInMs[0] / 1000;
       }
 
@@ -72,6 +75,12 @@ function Htlm5Player({
   const triggerStop = useCallback(() => {
     player?.stop();
   }, [player]);
+
+  const triggerReset = useCallback(() => {
+    triggerSeek(0);
+    onProgress(0);
+    player?.stop();
+  }, [player, triggerSeek, onProgress]);
 
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
@@ -239,8 +248,9 @@ function Htlm5Player({
     play: triggerPlay,
     pause: triggerPause,
     seekToTimecode: triggerSeek,
-    stop: triggerStop
-  }), [triggerPlay, triggerPause, triggerSeek, triggerStop]);
+    stop: triggerStop,
+    reset: triggerReset
+  }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
     <div className="Html5Player">

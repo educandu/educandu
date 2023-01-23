@@ -97,9 +97,11 @@ function YoutubePlayer({
   }, [player]);
 
   const triggerReset = useCallback(() => {
-    triggerSeek(startTimeInS);
+    triggerSeek(0);
+    onProgress(0);
+    // Call stop after seeking, to stop the video from re-playing automatically
     player?.stop();
-  }, [player, startTimeInS, triggerSeek]);
+  }, [player, triggerSeek, onProgress]);
 
   const setProgressInterval = callback => {
     clearInterval(progressInterval.current);
@@ -187,10 +189,12 @@ function YoutubePlayer({
     setIsPlaying(false);
     setProgressInterval(null);
 
+    if (player.currentTime > startTimeInS) {
     // compensate for cases where youtube actual source duration is shorter than reported,
     // thus having playback end 1s earlier; likely a rounding issue on their side
-    onProgress((endTimeInS - startTimeInS) * 1000);
-  }, [startTimeInS, endTimeInS, onProgress, onEnded]);
+      onProgress((endTimeInS - startTimeInS) * 1000);
+    }
+  }, [player, startTimeInS, endTimeInS, onProgress, onEnded]);
 
   const handleProgress = useCallback(() => {
     if (player && !isNaN(player.currentTime)) {
