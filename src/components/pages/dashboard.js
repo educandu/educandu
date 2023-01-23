@@ -2,8 +2,6 @@ import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import RoomsTab from '../rooms-tab.js';
 import routes from '../../utils/routes.js';
-import AccountTab from '../account-tab.js';
-import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
 import FavoritesTab from '../favorites-tab.js';
@@ -15,6 +13,7 @@ import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
 import { ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useStoragePlan } from '../storage-plan-context.js';
+import AccountSettingsTab from '../account-settings-tab.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -23,9 +22,8 @@ const TAB_KEYS = {
   activities: 'activities',
   favorites: 'favorites',
   rooms: 'rooms',
-  profile: 'profile',
-  account: 'account',
-  storage: 'storage'
+  storage: 'storage',
+  settings: 'settings'
 };
 
 function Dashboard({ PageTemplate }) {
@@ -101,24 +99,6 @@ function Dashboard({ PageTemplate }) {
           <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
         </div>
       )
-    },
-    {
-      key: TAB_KEYS.profile,
-      label: t('profileTabTitle'),
-      children: (
-        <div className="Tabs-tabPane">
-          <ProfileTab />
-        </div>
-      )
-    },
-    {
-      key: TAB_KEYS.account,
-      label: t('accountTabTitle'),
-      children: (
-        <div className="Tabs-tabPane">
-          <AccountTab />
-        </div>
-      )
     }
   ];
 
@@ -143,6 +123,16 @@ function Dashboard({ PageTemplate }) {
       )
     });
   }
+
+  items.push({
+    key: TAB_KEYS.settings,
+    label: t('settingsTabTitle'),
+    children: (
+      <div className="Tabs-tabPane">
+        <AccountSettingsTab />
+      </div>
+    )
+  });
 
   return (
     <PageTemplate>

@@ -1,9 +1,15 @@
 [
   {
-    "namespace": "accountTab",
+    "namespace": "accountSettingsTab",
     "language": "en",
     "resources": {
-      "info": "Here you can change your account information as well as close your account.",
+      "info": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
+      "personalInfoHeadline": "Personal info",
+      "changePicture": "Change profile picture",
+      "avatarTitle": "Gravatar profile picture",
+      "organization": "Organization",
+      "introduction": "Introduction",
+      "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
       "credentialsHeadline": "Credentials",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
@@ -13,10 +19,16 @@
     }
   },
   {
-    "namespace": "accountTab",
+    "namespace": "accountSettingsTab",
     "language": "de",
     "resources": {
-      "info": "Hier kannst du deine Konto-Informationen bearbeiten sowie dein Konto schließen.",
+      "info": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
+      "personalInfoHeadline": "Persönlichen Daten",
+      "changePicture": "Profilbild ändern",
+      "avatarTitle": "Gravatar Profilbild",
+      "organization": "Organisation",
+      "introduction": "Vorstellung",
+      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n",
       "credentialsHeadline": "Zugangsdaten",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Dein Konto wurde erfolgreich aktualisiert.",
@@ -951,8 +963,7 @@
     "resources": {
       "activitiesTabTitle": "Activities",
       "favoritesTabTitle": "Favorites",
-      "profileTabTitle": "Profile",
-      "accountTabTitle": "Account",
+      "settingsTabTitle": "Settings",
       "roomsTabTitle": "Rooms",
       "storageTabTitle": "Your storage plan",
       "storageTabInfo": "Here you can find details about your storage plan and current space status.",
@@ -965,8 +976,7 @@
     "resources": {
       "activitiesTabTitle": "Aktivitäten",
       "favoritesTabTitle": "Favoriten",
-      "profileTabTitle": "Profil",
-      "accountTabTitle": "Konto",
+      "settingsTabTitle": "Einstellungen",
       "roomsTabTitle": "Räume",
       "storageTabTitle": "Dein Speicherplan",
       "storageTabInfo": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.",
@@ -1257,34 +1267,6 @@
     "language": "de",
     "resources": {
       "title": "Plugin auswählen"
-    }
-  },
-  {
-    "namespace": "profileTab",
-    "language": "en",
-    "resources": {
-      "info": "Here you can provide additional information about yourself. This information is publicly accessible through your <0>profile page</0>.",
-      "personalInfoHeadline": "Personal info",
-      "changePicture": "Change profile picture",
-      "howToChangePicture": "How can I change my profile picture?",
-      "organization": "Organization",
-      "introduction": "Introduction",
-      "updateSuccessMessage": "Your profile was updated successfully.",
-      "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
-    }
-  },
-  {
-    "namespace": "profileTab",
-    "language": "de",
-    "resources": {
-      "info": "Hier kannst du zusätzliche Informationen zu deiner Person angeben. Die Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
-      "personalInfoHeadline": "Persönlichen Daten",
-      "changePicture": "Profilbild ändern",
-      "howToChangePicture": "Wie ändere ich mein Profilbild?",
-      "organization": "Organisation",
-      "introduction": "Vorstellung",
-      "updateSuccessMessage": "Dein Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {

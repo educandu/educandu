@@ -1,0 +1,46 @@
+.AccountSettingsTab {}
+
+.AccountSettingsTab-tabInfo {
+  .m-info-card;
+}
+
+.AccountSettingsTab-headline {
+  .m-section-headline;
+}
+
+.AccountSettingsTab-section {
+  .m-section-content;
+
+  @media @edu-media-phone {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.AccountSettingsTab-input {
+  max-width: 50%;
+
+  @media @edu-media-phone {
+    max-width: none;
+  }
+}
+
+.AccountSettingsTab-avatar {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-content-padding;
+  margin-bottom: 20px;
+}
+
+.AccountSettingsTab-avatarTitle {
+  margin-bottom: 10px;
+}
+
+.AccountSettingsTab-avatarDescription {
+  font-size: @edu-font-size-sm;
+}
+
+.AccountSettingsTab-closeAccountButton {
+  margin-top: 15px;
+}
