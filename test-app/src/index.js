@@ -47,6 +47,16 @@ const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
         }
       },
       {
+        key: 'hfmn',
+        displayName: 'Hochschule für Musik Nürnberg',
+        logoUrl: 'https://www.hfm-nuernberg.de/fileadmin/templates/images/layout/logo-hfmn.png',
+        expiryTimeoutInDays: 6 * 30,
+        metadata: {
+          url: 'https://www.aai.dfn.de/metadata/dfn-aai-idp-metadata.xml',
+          entityId: 'https://sso.hfm-nuernberg.de/idp/shibboleth'
+        }
+      },
+      {
         key: 'samltest',
         displayName: 'SAMLTEST.ID',
         logoUrl: 'https://samltest.id/wp-content/uploads/2018/08/Logo-2-73x73.png',
