@@ -76,7 +76,7 @@ function FavoritesTab() {
 
   const renderFavoriteDocument = favoriteDocument => {
     return (
-      <div className="FavoritesTab-cardWrapper FavoritesTab-cardWrapper--document" key={favoriteDocument.id}>
+      <div className="FavoritesTab-cardWrapper" key={favoriteDocument.id}>
         <DocumentCard doc={favoriteDocument.data} />
         <div className="FavoritesTab-cardStar">
           <FavoriteStar type={FAVORITE_TYPE.document} id={favoriteDocument.id} onToggle={handleFavoriteStarToggle} />
@@ -101,7 +101,7 @@ function FavoritesTab() {
         {favoriteRooms.map(renderFavoriteRoom)}
       </section>
       <div className="FavoriteTab-headline">{t('favoriteDocuments', { count: favoriteDocuments.length })}</div>
-      <section className="FavoritesTab-cards">
+      <section className="FavoritesTab-cards FavoritesTab-cards--documents">
         {favoriteDocuments.map(renderFavoriteDocument)}
       </section>
     </div>

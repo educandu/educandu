@@ -390,13 +390,20 @@ describe('user-service', () => {
         const favoriteDocument = await createTestDocument(container, user, { title: 'Favorite document', createdBy: user._id });
         favoriteDocumentMetadata = {
           _id: favoriteDocument._id,
+          order: favoriteDocument.order,
           slug: favoriteDocument.slug,
           title: favoriteDocument.title,
           language: favoriteDocument.language,
+          description: favoriteDocument.description,
+          createdBy: favoriteDocument.createdBy,
           createdOn: favoriteDocument.createdOn,
           updatedOn: favoriteDocument.updatedOn,
+          updatedBy: favoriteDocument.updatedBy,
           revision: favoriteDocument.revision,
-          roomId: favoriteDocument.roomId
+          roomId: favoriteDocument.roomId,
+          tags: favoriteDocument.tags,
+          contributors: favoriteDocument.contributors,
+          publicContext: favoriteDocument.publicContext
         };
         favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
         favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });

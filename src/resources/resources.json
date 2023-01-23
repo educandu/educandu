@@ -334,7 +334,9 @@
     "language": "en",
     "resources": {
       "coauthors": "Co-authors",
-      "toDocument": "To document"
+      "documentButton": "View document",
+      "creationDetail": "Created on {date} by",
+      "updateDetail": "Last updated on {date} by"
     }
   },
   {
@@ -342,7 +344,9 @@
     "language": "de",
     "resources": {
       "coauthors": "Mitautoren",
-      "toDocument": "Zum Dokument"
+      "documentButton": "Dokument ansehen",
+      "creationDetail": "Erstellt am {date} von",
+      "updateDetail": "Zuletzt geändert am {date} von"
     }
   },
   {
@@ -525,9 +529,9 @@
     "resources": {
       "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
       "noFavorites": "You have not marked any favorites so far.",
-      "favoriteUsers": "Users you have added to favorites",
-      "favoriteRooms": "Rooms you have added to favorites",
-      "favoriteDocuments": "Documents you have added to favorites"
+      "favoriteUsers": "Favorite users ({count})",
+      "favoriteRooms": "Favorite rooms ({count})",
+      "favoriteDocuments": "Favorite documents ({count})"
     }
   },
   {
@@ -536,9 +540,9 @@
     "resources": {
       "info": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.",
       "noFavorites": "Du hast noch keine Favoriten markiert.",
-      "favoriteUsers": "Benutzer, die du zu den Favoriten hinzugefügt hast",
-      "favoriteRooms": "Räume, die du zu den Favoriten hinzugefügt hast",
-      "favoriteDocuments": "Dokumente, die du zu den Favoriten hinzugefügt hast"
+      "favoriteUsers": "Lieblingsnutzern ({count})",
+      "favoriteRooms": "Lieblingsräume ({count})",
+      "favoriteDocuments": "Lieblingsdokumente ({count})"
     }
   },
   {
@@ -1733,6 +1737,20 @@
     "resources": {
       "label": "Genutzter Speicherplatz",
       "storageSpaceExceeded": "Überschreitung"
+    }
+  },
+  {
+    "namespace": "userCard",
+    "language": "en",
+    "resources": {
+      "profileButton": "view profile"
+    }
+  },
+  {
+    "namespace": "userCard",
+    "language": "de",
+    "resources": {
+      "profileButton": "Profil ansehen"
     }
   },
   {
