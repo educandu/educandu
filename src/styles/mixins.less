@@ -169,24 +169,30 @@
   overflow: hidden;
 }
 
+.m-circle(@diameter) {
+  width: @diameter;
+  height: @diameter;
+  border-radius: 50%;
+}
+
 .m-box-shadow {
   border-radius: @edu-border-radius-base;
-  box-shadow: 0px 0px 8px @edu-border-color-base;
+  box-shadow: 0px 0px @edu-box-shadow-base @edu-border-color-base;
 }
 
 .m-box-shadow-dark {
   border-radius: @edu-border-radius-base;
-  box-shadow: 0px 0px 8px @edu-border-color-dark;
+  box-shadow: 0px 0px @edu-box-shadow-base @edu-border-color-dark;
 }
 
 .m-border-glow-success {
   border-color: @edu-success-color;
-  box-shadow: 0px 0px 8px @edu-success-color;
+  box-shadow: 0px 0px @edu-box-shadow-base @edu-success-color;
 }
 
 .m-border-glow-error {
   border-color: @edu-error-color;
-  box-shadow: 0px 0px 8px @edu-error-color;
+  box-shadow: 0px 0px @edu-box-shadow-base @edu-error-color;
 }
 
 .m-control-border-transition {
