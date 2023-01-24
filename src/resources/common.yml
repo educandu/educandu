@@ -480,3 +480,9 @@ enterEmail:
 emailIsInvalid:
   en: The value you provided is not a valid email address
   de: Deine Eingabe ist keine gültige E-Mail-Adresse
+removeFavorite:
+  en: Remove from favorites
+  de: Von den Favoriten entfernen
+addFavorite:
+  en: Add to favorites
+  de: Zu den Favoriten hinzufügen

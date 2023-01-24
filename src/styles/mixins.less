@@ -285,6 +285,10 @@
   }
 }
 
+.m-card {
+  width: 250px;
+}
+
 .m-card-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -296,6 +300,17 @@
     align-items: center;
     flex-direction: column;
     .m-fake-flex-gap(15px);
+  }
+}
+
+.m-card-wrapper-wide {
+  display: grid;
+  gap: 25px;
+  grid-template-columns: 1fr 1fr;
+
+  @media @edu-media-phone {
+    gap: 15px;
+    grid-template-columns: auto;
   }
 }
 

@@ -16,6 +16,7 @@ import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import PermanentActionsCard from '../permanent-actions-card.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -449,24 +450,20 @@ export default function Room({ PageTemplate, initialState }) {
                         {t('common:update')}
                       </Button>
                     </Card>
-                    <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
-                      <div className="RoomPage-cardDangerAction">
-                        <div>
-                          <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
-                          <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
-                        </div>
-                        <div className="RoomPage-cardDangerActionButtonContainer">
-                          <Button
-                            danger
-                            type="primary"
-                            icon={<DeleteIcon />}
-                            onClick={handleDeleteRoomClick}
-                            >
-                            {t('deleteRoomButton')}
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
+                    <PermanentActionsCard
+                      className="RoomPage-card"
+                      actions={[
+                        {
+                          name: t('deleteRoomTitle'),
+                          description: t('deleteRoomDescription'),
+                          button: {
+                            text: t('deleteRoomButton'),
+                            icon: <DeleteIcon />,
+                            onClick: handleDeleteRoomClick
+                          }
+                        }
+                      ]}
+                      />
                   </div>
                 )
               }

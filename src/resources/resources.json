@@ -1,9 +1,15 @@
 [
   {
-    "namespace": "accountTab",
+    "namespace": "accountSettingsTab",
     "language": "en",
     "resources": {
-      "info": "Here you can change your account information as well as close your account.",
+      "info": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
+      "personalInfoHeadline": "Personal info",
+      "changePicture": "Change profile picture",
+      "avatarTitle": "Gravatar profile picture",
+      "organization": "Organization",
+      "introduction": "Introduction",
+      "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
       "credentialsHeadline": "Credentials",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
@@ -13,16 +19,54 @@
     }
   },
   {
-    "namespace": "accountTab",
+    "namespace": "accountSettingsTab",
     "language": "de",
     "resources": {
-      "info": "Hier kannst du deine Konto-Informationen bearbeiten sowie dein Konto schließen.",
+      "info": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
+      "personalInfoHeadline": "Persönlichen Daten",
+      "changePicture": "Profilbild ändern",
+      "avatarTitle": "Gravatar Profilbild",
+      "organization": "Organisation",
+      "introduction": "Vorstellung",
+      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n",
       "credentialsHeadline": "Zugangsdaten",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Dein Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
       "closeAccountDetails": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
+    }
+  },
+  {
+    "namespace": "activitiesTab",
+    "language": "en",
+    "resources": {
+      "info": "Here you can find your latest activities.",
+      "noActivities": "No activities have been recorded so far.",
+      "documentCreatedActivity": "New document created",
+      "documentUpdatedActivity": "Document updated",
+      "documentMarkedFavoriteActivity": "Document marked as favorite",
+      "roomCreatedActivity": "New room created",
+      "roomUpdatedActivity": "Room updated",
+      "roomMarkedFavoriteActivity": "Room marked as favorite",
+      "roomJoinedActivity": "Room joined",
+      "userMarkedFavoriteActivity": "User marked as favorite"
+    }
+  },
+  {
+    "namespace": "activitiesTab",
+    "language": "de",
+    "resources": {
+      "info": "Hier findest du deine letzten Aktivitäten.",
+      "noActivities": "Bisher wurden keine Aktivitäten aufgezeichnet.",
+      "documentCreatedActivity": "Neues Dokument erstellt",
+      "documentUpdatedActivity": "Dokument bearbeitet",
+      "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
+      "roomCreatedActivity": "Neuen Raum erstellt",
+      "roomUpdatedActivity": "Raum bearbeitet",
+      "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
+      "roomJoinedActivity": "Raum beigetreten",
+      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
     }
   },
   {
@@ -302,7 +346,9 @@
     "language": "en",
     "resources": {
       "coauthors": "Co-authors",
-      "toDocument": "To document"
+      "documentButton": "View document",
+      "creationDetail": "Created on {date} by",
+      "updateDetail": "Last updated on {date} by"
     }
   },
   {
@@ -310,7 +356,9 @@
     "language": "de",
     "resources": {
       "coauthors": "Mitautoren",
-      "toDocument": "Zum Dokument"
+      "documentButton": "Dokument ansehen",
+      "creationDetail": "Erstellt am {date} von",
+      "updateDetail": "Zuletzt geändert am {date} von"
     }
   },
   {
@@ -472,30 +520,14 @@
     }
   },
   {
-    "namespace": "favoriteStar",
-    "language": "en",
-    "resources": {
-      "removeFavorite": "Remove from favorites",
-      "addFavorite": "Add to favorites"
-    }
-  },
-  {
-    "namespace": "favoriteStar",
-    "language": "de",
-    "resources": {
-      "removeFavorite": "Von den Favoriten entfernen",
-      "addFavorite": "Zu den Favoriten hinzufügen"
-    }
-  },
-  {
     "namespace": "favoritesTab",
     "language": "en",
     "resources": {
       "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
       "noFavorites": "You have not marked any favorites so far.",
-      "favoriteUsers": "Users you have added to favorites",
-      "favoriteRooms": "Rooms you have added to favorites",
-      "favoriteDocuments": "Documents you have added to favorites"
+      "favoriteUsers": "Your favorite users ({count})",
+      "favoriteRooms": "Your favorite rooms ({count})",
+      "favoriteDocuments": "Your favorite documents ({count})"
     }
   },
   {
@@ -504,9 +536,9 @@
     "resources": {
       "info": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.",
       "noFavorites": "Du hast noch keine Favoriten markiert.",
-      "favoriteUsers": "Benutzer, die du zu den Favoriten hinzugefügt hast",
-      "favoriteRooms": "Räume, die du zu den Favoriten hinzugefügt hast",
-      "favoriteDocuments": "Dokumente, die du zu den Favoriten hinzugefügt hast"
+      "favoriteUsers": "Deine Lieblingsnutzer ({count})",
+      "favoriteRooms": "Deine Lieblingsräume ({count})",
+      "favoriteDocuments": "Deine Lieblingsdokumente ({count})"
     }
   },
   {
@@ -766,40 +798,6 @@
     }
   },
   {
-    "namespace": "newsTab",
-    "language": "en",
-    "resources": {
-      "info": "Here you can find news about the website and your latest activities.",
-      "latestActivitiesHeader": "Your latest activities",
-      "noActivities": "No activities have been recorded so far.",
-      "documentCreatedActivity": "New document created",
-      "documentUpdatedActivity": "Document updated",
-      "documentMarkedFavoriteActivity": "Document marked as favorite",
-      "roomCreatedActivity": "New room created",
-      "roomUpdatedActivity": "Room updated",
-      "roomMarkedFavoriteActivity": "Room marked as favorite",
-      "roomJoinedActivity": "Room joined",
-      "userMarkedFavoriteActivity": "User marked as favorite"
-    }
-  },
-  {
-    "namespace": "newsTab",
-    "language": "de",
-    "resources": {
-      "info": "Hier findest du Neuigkeiten über die Website und deine letzten Aktivitäten.",
-      "latestActivitiesHeader": "Deine letzten Aktivitäten",
-      "noActivities": "Bisher wurden keine Aktivitäten aufgezeichnet.",
-      "documentCreatedActivity": "Neues Dokument erstellt",
-      "documentUpdatedActivity": "Dokument bearbeitet",
-      "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
-      "roomCreatedActivity": "Neuen Raum erstellt",
-      "roomUpdatedActivity": "Raum bearbeitet",
-      "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
-      "roomJoinedActivity": "Raum beigetreten",
-      "userMarkedFavoriteActivity": "Benutzer als Favorit hinzugefügt"
-    }
-  },
-  {
     "namespace": "notSupportedSection",
     "language": "en",
     "resources": {
@@ -947,10 +945,9 @@
     "namespace": "dashboard",
     "language": "en",
     "resources": {
-      "newsTabTitle": "News",
+      "activitiesTabTitle": "Activities",
       "favoritesTabTitle": "Favorites",
-      "profileTabTitle": "Profile",
-      "accountTabTitle": "Account",
+      "settingsTabTitle": "Settings",
       "roomsTabTitle": "Rooms",
       "storageTabTitle": "Your storage plan",
       "storageTabInfo": "Here you can find details about your storage plan and current space status.",
@@ -961,10 +958,9 @@
     "namespace": "dashboard",
     "language": "de",
     "resources": {
-      "newsTabTitle": "Neuigkeiten",
+      "activitiesTabTitle": "Aktivitäten",
       "favoritesTabTitle": "Favoriten",
-      "profileTabTitle": "Profil",
-      "accountTabTitle": "Konto",
+      "settingsTabTitle": "Einstellungen",
       "roomsTabTitle": "Räume",
       "storageTabTitle": "Dein Speicherplan",
       "storageTabInfo": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.",
@@ -1080,7 +1076,6 @@
       "deleteRoomButton": "Delete room",
       "updateRoomCardTitle": "Update room metadata",
       "updateRoomSuccessMessage": "The room metadata was updated successfully.",
-      "roomDangerZoneCardTitle": "Danger zone",
       "deleteRoomTitle": "Delete this room",
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
@@ -1105,7 +1100,6 @@
       "deleteRoomButton": "Raum löschen",
       "updateRoomCardTitle": "Raum-Metadaten aktualisieren",
       "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
-      "roomDangerZoneCardTitle": "Gefahrenzone",
       "deleteRoomTitle": "Diesen Raum löschen",
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
@@ -1244,6 +1238,20 @@
     }
   },
   {
+    "namespace": "permanentActionsCard",
+    "language": "en",
+    "resources": {
+      "title": "Irreversible actions"
+    }
+  },
+  {
+    "namespace": "permanentActionsCard",
+    "language": "de",
+    "resources": {
+      "title": "Unwiderrufbare Aktionen"
+    }
+  },
+  {
     "namespace": "pluginSelectorDialog",
     "language": "en",
     "resources": {
@@ -1255,34 +1263,6 @@
     "language": "de",
     "resources": {
       "title": "Plugin auswählen"
-    }
-  },
-  {
-    "namespace": "profileTab",
-    "language": "en",
-    "resources": {
-      "info": "Here you can provide additional information about yourself. This information is publicly accessible through your <0>profile page</0>.",
-      "personalInfoHeadline": "Personal info",
-      "changePicture": "Change profile picture",
-      "howToChangePicture": "How can I change my profile picture?",
-      "organization": "Organization",
-      "introduction": "Introduction",
-      "updateSuccessMessage": "Your profile was updated successfully.",
-      "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
-    }
-  },
-  {
-    "namespace": "profileTab",
-    "language": "de",
-    "resources": {
-      "info": "Hier kannst du zusätzliche Informationen zu deiner Person angeben. Die Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
-      "personalInfoHeadline": "Persönlichen Daten",
-      "changePicture": "Profilbild ändern",
-      "howToChangePicture": "Wie ändere ich mein Profilbild?",
-      "organization": "Organisation",
-      "introduction": "Vorstellung",
-      "updateSuccessMessage": "Dein Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
@@ -1490,11 +1470,12 @@
     "language": "en",
     "resources": {
       "documentsMode": "Mode",
-      "button": "Enter room",
+      "enterButton": "Enter room",
+      "joinButton": "Accept invitation",
       "joined": "Joined",
       "invited": "Invited",
       "members": "Members",
-      "acceptInvitation": "The invitation received by email is valid until **{date}**."
+      "acceptInvitation": "The invitation is valid until **{date}**."
     }
   },
   {
@@ -1502,11 +1483,12 @@
     "language": "de",
     "resources": {
       "documentsMode": "Modus",
-      "button": "Raum betreten",
+      "enterButton": "Raum betreten",
+      "joinButton": "Einladung annehmen",
       "joined": "Eingetreten",
       "invited": "Eingeladen",
       "members": "Mitglieder",
-      "acceptInvitation": "Die per E-Mail geschickte Einladung ist bis **{date}** gültig."
+      "acceptInvitation": "Die Einladung ist bis **{date}** gültig."
     }
   },
   {
@@ -1735,6 +1717,20 @@
     "resources": {
       "label": "Genutzter Speicherplatz",
       "storageSpaceExceeded": "Überschreitung"
+    }
+  },
+  {
+    "namespace": "userCard",
+    "language": "en",
+    "resources": {
+      "profileButton": "View profile"
+    }
+  },
+  {
+    "namespace": "userCard",
+    "language": "de",
+    "resources": {
+      "profileButton": "Profil ansehen"
     }
   },
   {
@@ -2504,7 +2500,9 @@
       "playbackRange": "Playback range",
       "or": "or",
       "enterEmail": "Please enter an email address",
-      "emailIsInvalid": "The value you provided is not a valid email address"
+      "emailIsInvalid": "The value you provided is not a valid email address",
+      "removeFavorite": "Remove from favorites",
+      "addFavorite": "Add to favorites"
     }
   },
   {
@@ -2664,7 +2662,9 @@
       "playbackRange": "Abspielbereich",
       "or": "oder",
       "enterEmail": "Bitte gib eine E-Mail-Adresse an",
-      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse"
+      "emailIsInvalid": "Deine Eingabe ist keine gültige E-Mail-Adresse",
+      "removeFavorite": "Von den Favoriten entfernen",
+      "addFavorite": "Zu den Favoriten hinzufügen"
     }
   },
   {

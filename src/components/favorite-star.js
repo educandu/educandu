@@ -52,7 +52,7 @@ function FavoriteStar({ type, id, disabled, onToggle }) {
         count={1}
         value={isSet ? 1 : 0}
         onChange={handleChange}
-        tooltips={[t(isSet ? 'removeFavorite' : 'addFavorite')]}
+        tooltips={[t(isSet ? 'common:removeFavorite' : 'common:addFavorite')]}
         disabled={disabled}
         />
     </div>

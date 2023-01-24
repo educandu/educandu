@@ -1,15 +1,12 @@
-newsTabTitle:
-  en: News
-  de: Neuigkeiten
+activitiesTabTitle:
+  en: Activities
+  de: Aktivitäten
 favoritesTabTitle:
   en: Favorites
   de: Favoriten
-profileTabTitle:
-  en: Profile
-  de: Profil
-accountTabTitle:
-  en: Account
-  de: Konto
+settingsTabTitle:
+  en: Settings
+  de: Einstellungen
 roomsTabTitle:
   en: Rooms
   de: Räume

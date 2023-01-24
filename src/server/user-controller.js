@@ -435,7 +435,7 @@ class UserController {
 
   async handleGetActivities(req, res) {
     const { user } = req;
-    const activities = await this.userService.getActivities({ userId: user._id, limit: 10 });
+    const activities = await this.userService.getActivities({ userId: user._id, limit: 25 });
 
     const mappedActivities = await this.clientDataMappingService.mapUserActivities(activities);
     return res.send({ activities: mappedActivities });
@@ -444,7 +444,7 @@ class UserController {
   async handleGetCreatedDocuments(req, res) {
     const { userId } = req.params;
 
-    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(userId);
+    const createdDocuments = await this.documentService.getExtendedMetadataOfLatestPublicDocumentsCreatedByUser(userId);
     const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
 
     return res.send({ documents: mappedCreatedDocuments });
@@ -453,7 +453,7 @@ class UserController {
   async handleGetRoomsInvitations(req, res) {
     const { user } = req;
     const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
-    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapRoomInvitationWithBasicRoomData(invitation)));
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
 
     return res.send({ invitations: mappedInvitations });
   }

@@ -143,15 +143,17 @@ class ClientDataMappingService {
     return mappedBatches[0];
   }
 
-  async mapRoomInvitationWithBasicRoomData(invitation) {
+  async mapUserOwnRoomInvitations(invitation) {
     const room = await this.roomStore.getRoomById(invitation.roomId);
     const owner = await this.userStore.getUserById(room.owner);
 
     return {
       _id: invitation._id,
+      token: invitation.token,
       sentOn: invitation.sentOn.toISOString(),
       expiresOn: invitation.expiresOn.toISOString(),
       room: {
+        _id: room._id,
         name: room.name,
         documentsMode: room.documentsMode,
         owner: {

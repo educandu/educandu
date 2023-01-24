@@ -62,10 +62,10 @@ class DocumentStore {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
-  getPublicDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
+  getPublicDocumentsExtendedMetadataByCreatedBy(createdBy, { session } = {}) {
     return this.collection.find(
       { createdBy, 'roomId': null, 'publicContext.archived': false },
-      { projection: documentMetadataProjection, session }
+      { projection: documentExtendedMetadataProjection, session }
     ).toArray();
   }
 

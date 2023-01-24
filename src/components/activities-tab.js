@@ -1,6 +1,6 @@
 import React from 'react';
-import { Spin } from 'antd';
 import PropTypes from 'prop-types';
+import { Spin, Timeline } from 'antd';
 import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
@@ -14,9 +14,11 @@ import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite
 import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
-function NewsTab({ activities, loading }) {
+const TimelineItem = Timeline.Item;
+
+function ActivitiesTab({ activities, loading }) {
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('newsTab');
+  const { t } = useTranslation('activitiesTab');
 
   const renderActivity = ({ type, icon, timestamp, description, title, href, isDeprecated }) => {
     let deprecatedTitle;
@@ -41,17 +43,17 @@ function NewsTab({ activities, loading }) {
     }
 
     return (
-      <div className="NewsTab-activity">
-        <div className="NewsTab-activityMetadata">
-          <div className="NewsTab-activityMetadataIcon">{icon}</div>
-          <div>{formatDate(timestamp)}</div>
-        </div>
-        <div className="NewsTab-activityData">
-          <span className="NewsTab-activityDataDescription">{description}:</span>
+      <TimelineItem
+        dot={icon}
+        key={timestamp}
+        label={<span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>}
+        >
+        <div className="ActivitiesTab-activity">
+          <span className="ActivitiesTab-activityDescription">{description}: </span>
           {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
-          {!isDeprecated && <span className="NewsTab-activityDataLink"><a href={href}>{title}</a></span>}
+          {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}
         </div>
-      </div>
+      </TimelineItem>
     );
   };
 
@@ -175,17 +177,18 @@ function NewsTab({ activities, loading }) {
   };
 
   const renderActivities = () => {
-    return activities
-      .map(activity => <div key={JSON.stringify(activity)}>{renderActivityByType(activity)}</div>)
-      .filter(activity => activity);
+    return (
+      <Timeline mode="left">
+        {activities.map(renderActivityByType).filter(activity => activity)}
+      </Timeline>
+    );
   };
 
   return (
     <div>
       <section>
-        <div className="NewsTab-info">{t('info')}</div>
-        <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
-        <div className="NewsTab-activities">
+        <div className="ActivitiesTab-info">{t('info')}</div>
+        <div className="ActivitiesTab-timeline">
           {!!loading && <Spin className="u-spin" />}
           {!loading && renderActivities()}
           {!loading && !activities.length && <span>{t('noActivities')}</span>}
@@ -195,9 +198,9 @@ function NewsTab({ activities, loading }) {
   );
 }
 
-NewsTab.propTypes = {
+ActivitiesTab.propTypes = {
   activities: PropTypes.arrayOf(userActivitiesShape).isRequired,
   loading: PropTypes.bool.isRequired
 };
 
-export default NewsTab;
+export default ActivitiesTab;

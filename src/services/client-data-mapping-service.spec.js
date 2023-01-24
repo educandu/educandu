@@ -406,7 +406,7 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapRoomInvitationWithBasicRoomData', () => {
+  describe('mapUserOwnRoomInvitations', () => {
     let result;
     let room;
     let invitation;
@@ -415,15 +415,17 @@ describe('client-data-mapping-service', () => {
       room = await createTestRoom(container, { owner: user1._id });
       invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expiresOn: new Date() };
 
-      result = await sut.mapRoomInvitationWithBasicRoomData(invitation);
+      result = await sut.mapUserOwnRoomInvitations(invitation);
     });
 
     it('shoult map room data into the basic invitation data', () => {
       expect(result).toEqual({
         _id: invitation._id,
+        token: invitation.token,
         sentOn: invitation.sentOn.toISOString(),
         expiresOn: invitation.expiresOn.toISOString(),
         room: {
+          _id: room._id,
           name: room.name,
           documentsMode: room.documentsMode,
           owner: {
