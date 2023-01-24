@@ -69,6 +69,7 @@ function MultitrackMediaPlayer({
     const newStates = [
       {
         key: uniqueId.create(),
+        name: sources.mainTrack.name,
         isMainTrack: true,
         isReady: false,
         durationInMilliseconds: 0,
@@ -79,6 +80,7 @@ function MultitrackMediaPlayer({
       },
       ...sources.secondaryTracks.map(secondaryTrack => ({
         key: uniqueId.create(),
+        name: secondaryTrack.name,
         isMainTrack: false,
         isReady: false,
         durationInMilliseconds: 0,
