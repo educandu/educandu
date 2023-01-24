@@ -37,9 +37,6 @@ updateRoomCardTitle:
 updateRoomSuccessMessage:
   en: The room metadata was updated successfully.
   de: Die Raum-Metadaten wurden erfolgreich aktualisiert.
-roomDangerZoneCardTitle:
-  en: Danger zone
-  de: Gefahrenzone
 deleteRoomTitle:
   en: Delete this room
   de: Diesen Raum löschen

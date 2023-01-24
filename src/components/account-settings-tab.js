@@ -8,12 +8,14 @@ import EmailFormItem from './email-form-item.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
+import DeleteIcon from './icons/general/delete-icon.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, Input, Avatar, Button, message } from 'antd';
 import DisplayNameFormItem from './displayName-form-item.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import PermanentActionsCard from './permanent-actions-card.js';
 import { confirmCloseAccount } from './confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
@@ -183,18 +185,20 @@ function AccountSettingsTab() {
         </Form>
       </section>
 
-      <div className="AccountSettingsTab-headline">{t('closeAccount')}</div>
-      <section className="AccountSettingsTab-section">
-        <div>{t('closeAccountDetails')}</div>
-        <Button
-          danger
-          type="primary"
-          className="AccountSettingsTab-closeAccountButton"
-          onClick={handleCloseAccountClick}
-          >
-          {t('closeAccount')}
-        </Button>
-      </section>
+      <PermanentActionsCard
+        className="AccountSettingsTab-permanentActionsCard"
+        actions={[
+          {
+            name: t('closeAccount'),
+            description: t('closeAccountDetails'),
+            button: {
+              text: t('closeAccount'),
+              icon: <DeleteIcon />,
+              onClick: handleCloseAccountClick
+            }
+          }
+        ]}
+        />
     </div>
   );
 }

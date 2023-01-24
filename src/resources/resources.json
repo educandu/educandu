@@ -1076,7 +1076,6 @@
       "deleteRoomButton": "Delete room",
       "updateRoomCardTitle": "Update room metadata",
       "updateRoomSuccessMessage": "The room metadata was updated successfully.",
-      "roomDangerZoneCardTitle": "Danger zone",
       "deleteRoomTitle": "Delete this room",
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
@@ -1101,7 +1100,6 @@
       "deleteRoomButton": "Raum löschen",
       "updateRoomCardTitle": "Raum-Metadaten aktualisieren",
       "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
-      "roomDangerZoneCardTitle": "Gefahrenzone",
       "deleteRoomTitle": "Diesen Raum löschen",
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
@@ -1237,6 +1235,20 @@
       "errorRenderingPage": "Die Seite kann nicht angezeigt werden",
       "noDocument": "Kein Dokument angegeben",
       "loadingDocument": "Dokument wird geladen"
+    }
+  },
+  {
+    "namespace": "permanentActionsCard",
+    "language": "en",
+    "resources": {
+      "title": "Permanent actions"
+    }
+  },
+  {
+    "namespace": "permanentActionsCard",
+    "language": "de",
+    "resources": {
+      "title": "Ständige Aktionen"
     }
   },
   {
