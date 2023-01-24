@@ -7,13 +7,13 @@ import DeleteButton from './delete-button.js';
 import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
-import React, { Fragment, useState } from 'react';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { confirmCommentDelete } from './confirmation-dialogs.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
+import React, { Fragment, useState, useMemo, useEffect } from 'react';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxCommentTextLength, maxCommentTopicLength } from '../domain/validation-constants.js';
 
@@ -24,23 +24,30 @@ const MODE = {
   write: 'write'
 };
 
+const NEW_TOPIC_PANEL_KEY = 'newTopic';
+
 function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('commentsPanel');
-  const commentGroups = groupCommentsByTopic(comments);
 
   const [mode, setMode] = useState(MODE.read);
   const [newTopic, setNewTopic] = useState('');
   const [editedTopic, setEditedTopic] = useState('');
-  const [currentTopic, setCurrentTopic] = useState('');
   const [currentComment, setCurrentComment] = useState('');
+  const [topicToReExpand, setTopicToReExpand] = useState('');
   const [editedTopicNewText, setEditedTopicNewText] = useState('');
+  const [expandedTopic, setExpandedTopic] = useState(NEW_TOPIC_PANEL_KEY);
+  const commentGroups = useMemo(() => groupCommentsByTopic(comments), [comments]);
 
-  const handleCollapseChange = panelIndex => {
+  useEffect(() => {
+    setExpandedTopic(topicToReExpand || NEW_TOPIC_PANEL_KEY);
+  }, [topicToReExpand]);
+
+  const handleCollapseChange = panelTopic => {
     setMode(MODE.read);
     setCurrentComment('');
-    setCurrentTopic(Object.keys(commentGroups)[panelIndex] || '');
+    setExpandedTopic(panelTopic);
   };
 
   const handleAddCommentClick = () => {
@@ -48,13 +55,16 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
   };
 
   const handlePostCommentClick = () => {
-    onCommentPostClick({
-      topic: currentTopic || newTopic.trim(),
+    const newComment = {
+      topic: expandedTopic === NEW_TOPIC_PANEL_KEY ? newTopic.trim() : expandedTopic,
       text: currentComment.trim()
-    });
+    };
     setNewTopic('');
-    setCurrentComment('');
     setMode(MODE.read);
+    setCurrentComment('');
+    setTopicToReExpand(newComment.topic);
+
+    onCommentPostClick(newComment);
   };
 
   const handleCurrentCommentChange = event => {
@@ -91,8 +101,14 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
   const handleSaveEditedTopicClick = event => {
     event.stopPropagation();
     const newTopicText = editedTopicNewText.trim();
+    const isEditingExistingTopic = editedTopic !== newTopicText;
+    const isEditingExpandedTopic = editedTopic === expandedTopic;
 
-    if (editedTopic !== newTopicText) {
+    if (isEditingExistingTopic) {
+      if (isEditingExpandedTopic) {
+        setTopicToReExpand(newTopicText);
+      }
+
       onTopicChangeClick({ oldTopic: editedTopic, newTopic: newTopicText });
     }
     setEditedTopic('');
@@ -183,10 +199,10 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
     );
   };
 
-  const renderTopicPanel = (topic, index) => {
+  const renderTopicPanel = topic => {
     return (
       <Panel
-        key={index}
+        key={topic}
         className="CommentsPanel-topicPanel"
         header={renderTopicHeader(topic)}
         extra={renderEditTopicButton(topic)}
@@ -232,7 +248,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
     }
     return (
       <Panel
-        key="newTopic"
+        key={NEW_TOPIC_PANEL_KEY}
         className="CommentsPanel-topicPanel"
         header={
           <div className="CommentsPanel-topicHeader">
@@ -273,7 +289,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
     <Fragment>
       {!!loading && <Spin className="u-spin" />}
       {!loading && (
-        <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" defaultActiveKey="newTopic">
+        <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" activeKey={expandedTopic}>
           {topics.map(renderTopicPanel)}
           {renderNewTopicPanel()}
         </Collapse>
