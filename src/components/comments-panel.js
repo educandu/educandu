@@ -110,7 +110,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
     return (
       <div className="CommentsPanel-comment" key={comment._id}>
         <div className="CommentsPanel-metadata">
-          <a className="CommentsPanel-author" href={userUrl}>{comment.createdBy.displayName}</a>
+          <a href={userUrl}>{comment.createdBy.displayName}</a>
           <div className="CommentsPanel-date">{formatDate(comment.createdOn)}</div>
         </div>
         {!comment.deletedOn && (
@@ -133,19 +133,24 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
   };
 
   const renderTopicHeader = topic => {
-    if (topic === editedTopic) {
-      return (
-        <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
-          <MarkdownInput
-            inline
-            value={editedTopicNewText}
-            onChange={handleEditedTopicChange}
-            maxLength={maxCommentTopicLength}
-            />
-        </div>
-      );
-    }
-    return <Markdown inline>{topic}</Markdown>;
+    return (
+      <div className="CommentsPanel-topicHeader">
+        <div className="CommentsPanel-topicInputPrefix">{t('topicHeaderPrefix')}:</div>
+        {topic === editedTopic && (
+          <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
+            <MarkdownInput
+              inline
+              value={editedTopicNewText}
+              onChange={handleEditedTopicChange}
+              maxLength={maxCommentTopicLength}
+              />
+          </div>
+        )}
+        {topic !== editedTopic && (
+          <Markdown inline>{topic}</Markdown>
+        )}
+      </div>
+    );
   };
 
   const renderEditTopicButton = topic => {
@@ -157,7 +162,6 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
       return (
         <div className="CommentsPanel-editTopicButtonsGroup">
           <Button
-            type="default"
             icon={<CloseOutlined />}
             onClick={handleCancelEditedTopicClick}
             />
@@ -173,7 +177,6 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
 
     return (
       <Button
-        type="link"
         icon={<EditIcon />}
         onClick={event => handleEditTopicClick(event, topic)}
         />
@@ -192,31 +195,31 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
 
         <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
           {mode === MODE.read && (
-          <Button
-            type="primary"
-            className="CommentsPanel-addButton"
-            onClick={handleAddCommentClick}
-            >
-            {t('addCommentButtonText')}
-          </Button>
-          )}
-          {mode === MODE.write && (
-          <div className="CommentsPanel-comment">
-            <MarkdownInput
-              preview
-              value={currentComment}
-              maxLength={maxCommentTextLength}
-              onChange={handleCurrentCommentChange}
-              />
             <Button
               type="primary"
               className="CommentsPanel-addButton"
-              onClick={handlePostCommentClick}
-              disabled={currentComment.trim().length === 0}
+              onClick={handleAddCommentClick}
               >
-              {t('postCommentButtonText')}
+              {t('addCommentButtonText')}
             </Button>
-          </div>
+          )}
+          {mode === MODE.write && (
+            <div className="CommentsPanel-comment">
+              <MarkdownInput
+                preview
+                value={currentComment}
+                maxLength={maxCommentTextLength}
+                onChange={handleCurrentCommentChange}
+                />
+              <Button
+                type="primary"
+                className="CommentsPanel-addButton"
+                onClick={handlePostCommentClick}
+                disabled={currentComment.trim().length === 0}
+                >
+                {t('postCommentButtonText')}
+              </Button>
+            </div>
           )}
         </Restricted>
       </Panel>
@@ -232,14 +235,17 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
         key="newTopic"
         className="CommentsPanel-topicPanel"
         header={
-          <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
-            <MarkdownInput
-              inline
-              value={newTopic}
-              onChange={handleNewTopicChange}
-              maxLength={maxCommentTopicLength}
-              placeholder={t('newTopicPlaceholder')}
-              />
+          <div className="CommentsPanel-topicHeader">
+            <div className="CommentsPanel-topicInputPrefix">{t('topicHeaderPrefix')}:</div>
+            <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
+              <MarkdownInput
+                inline
+                value={newTopic}
+                onChange={handleNewTopicChange}
+                maxLength={maxCommentTopicLength}
+                placeholder={t('newTopicPlaceholder')}
+                />
+            </div>
           </div>
         }
         >

@@ -209,6 +209,7 @@
     "resources": {
       "addCommentButtonText": "Write comment",
       "postCommentButtonText": "Post comment",
+      "topicHeaderPrefix": "Topic",
       "newTopicPlaceholder": "New topic",
       "commentDeleted": "The content of this comment was deleted by maintainers."
     }
@@ -219,6 +220,7 @@
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
       "postCommentButtonText": "Kommentar abschicken",
+      "topicHeaderPrefix": "Thema",
       "newTopicPlaceholder": "Neues Thema",
       "commentDeleted": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
     }
@@ -991,7 +993,7 @@
       "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
       "documentMetadataUpdated": "Document updated successfully",
       "commentsPanelTitle": "You are viewing the document page in \"comments\" mode",
-      "commentsHeader": "Comment topics"
+      "commentsHeader": "Comments"
     }
   },
   {
@@ -1002,7 +1004,7 @@
       "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
       "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert",
       "commentsPanelTitle": "Du befindest dich im Kommentar-Modus",
-      "commentsHeader": "Kommentar-Themen"
+      "commentsHeader": "Kommentare"
     }
   },
   {
