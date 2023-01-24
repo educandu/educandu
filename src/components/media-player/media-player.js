@@ -8,6 +8,7 @@ import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MediaPlayerControls from './media-player-controls.js';
+import { remountOnPropChanges } from '../../ui/react-helper.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
 import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
@@ -181,14 +182,16 @@ function MediaPlayer({
     }
   }, [isSeeking, parts, durationInMilliseconds, playedMilliseconds, lastPlayedPartIndex, lastReachedPartEndIndex, onPlayingPartIndexChange, onPartEndReached]);
 
-  mediaPlayerRef.current = {
-    play: playerRef.current?.play,
-    pause: playerRef.current?.pause,
-    stop: playerRef.current?.stop,
-    reset: triggerReset,
-    seekToTimecode: triggerSeekToTimecode,
-    seekToPart: triggerSeekToPart
-  };
+  mediaPlayerRef.current = playerRef.current
+    ? {
+      play: playerRef.current.play,
+      pause: playerRef.current.pause,
+      stop: playerRef.current.stop,
+      reset: triggerReset,
+      seekToTimecode: triggerSeekToTimecode,
+      seekToPart: triggerSeekToPart
+    }
+    : null;
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
@@ -203,7 +206,7 @@ function MediaPlayer({
     'MediaPlayer-player',
     `u-width-${screenWidth}`,
     { 'MediaPlayer-player--noScreen': noScreen },
-    { 'MediaPlayer-player--hidden': noScreen && !!renderControls && renderProgressBar },
+    { 'MediaPlayer-player--hidden': noScreen && !!renderControls && !!renderProgressBar },
     { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
@@ -338,4 +341,6 @@ MediaPlayer.defaultProps = {
   onSeekStart: () => {}
 };
 
-export default MediaPlayer;
+export default remountOnPropChanges(MediaPlayer, ({ sourceUrl, playbackRange = [0, 1] }) => {
+  return [sourceUrl, ...playbackRange].join('|');
+});

@@ -6,3 +6,9 @@ export function memoAndTransformProps(Component, transformProps) {
     return <MemoizedComponent {...transformProps(props)} />;
   };
 }
+
+export function remountOnPropChanges(Component, createMountKeyFromProps) {
+  return function RemountWrapper(props) {
+    return <Component key={createMountKeyFromProps(props)} {...props} />;
+  };
+}
