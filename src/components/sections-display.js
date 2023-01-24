@@ -1,5 +1,6 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Divider } from 'antd';
+import classNames from 'classnames';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
@@ -97,17 +98,15 @@ function SectionsDisplay({
 
   const renderSectionDivider = insertIndex => {
     return (
-      <Divider className={`${isDragging ? 'u-hidden' : ''}`}>
+      <div className={classNames('SectionsDisplay-divider', { 'is-hidden': isDragging })}>
         <Button
           shape="circle"
-          size="small"
           type="primary"
+          icon={<PlusOutlined />}
+          className="SectionsDisplay-dividerButton"
           onClick={() => handleNewSectionClick(insertIndex)}
-          icon={<PlusOutlined style={{ fontSize: '12px' }} />}
-          style={{ transition: 'none', height: '18px', minWidth: 'unset', width: '18px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           />
-
-      </Divider>
+      </div>
     );
   };
 
