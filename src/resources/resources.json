@@ -525,9 +525,9 @@
     "resources": {
       "info": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
       "noFavorites": "You have not marked any favorites so far.",
-      "favoriteUsers": "Favorite users ({count})",
-      "favoriteRooms": "Favorite rooms ({count})",
-      "favoriteDocuments": "Favorite documents ({count})"
+      "favoriteUsers": "Your favorite users ({count})",
+      "favoriteRooms": "Your favorite rooms ({count})",
+      "favoriteDocuments": "Your favorite documents ({count})"
     }
   },
   {
@@ -536,9 +536,9 @@
     "resources": {
       "info": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.",
       "noFavorites": "Du hast noch keine Favoriten markiert.",
-      "favoriteUsers": "Lieblingsnutzern ({count})",
-      "favoriteRooms": "Lieblingsräume ({count})",
-      "favoriteDocuments": "Lieblingsdokumente ({count})"
+      "favoriteUsers": "Deine Lieblingsnutzer ({count})",
+      "favoriteRooms": "Deine Lieblingsräume ({count})",
+      "favoriteDocuments": "Deine Lieblingsdokumente ({count})"
     }
   },
   {
@@ -1241,14 +1241,14 @@
     "namespace": "permanentActionsCard",
     "language": "en",
     "resources": {
-      "title": "Permanent actions"
+      "title": "Irreversible actions"
     }
   },
   {
     "namespace": "permanentActionsCard",
     "language": "de",
     "resources": {
-      "title": "Ständige Aktionen"
+      "title": "Unwiderrufbare Aktionen"
     }
   },
   {
