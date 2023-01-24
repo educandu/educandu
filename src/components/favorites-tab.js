@@ -1,11 +1,11 @@
 import by from 'thenby';
-import { Spin } from 'antd';
 import RoomCard from './room-card.js';
 import UserCard from './user-card.js';
 import Logger from '../common/logger.js';
+import { Button, Spin, Tooltip } from 'antd';
 import DocumentCard from './document-card.js';
-import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
+import CloseIcon from './icons/general/close-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import UserApiClient from '../api-clients/user-api-client.js';
@@ -44,8 +44,24 @@ function FavoritesTab() {
     })();
   }, [updateFavorites]);
 
-  const handleFavoriteStarToggle = async () => {
+  const handleFavoriteRemoveClick = async (type, id) => {
+    await userApiClient.removeFavorite({ type, id });
     await updateFavorites();
+  };
+
+  const renderRemoveFavoriteButton = (type, id) => {
+    return (
+      <Tooltip title={t('common:removeFavorite')}>
+        <div className="FavoritesTab-cardRemoveButton">
+          <Button
+            size="small"
+            type="secondary"
+            icon={<CloseIcon />}
+            onClick={() => handleFavoriteRemoveClick(type, id)}
+            />
+        </div>
+      </Tooltip>
+    );
   };
 
   const renderFavoriteUser = favoriteUser => {
@@ -56,9 +72,7 @@ function FavoritesTab() {
           displayName={favoriteUser.data.displayName}
           avatarUrl={favoriteUser.data.avatarUrl}
           />
-        <div className="FavoritesTab-cardStar">
-          <FavoriteStar type={FAVORITE_TYPE.user} id={favoriteUser.id} onToggle={handleFavoriteStarToggle} />
-        </div>
+        {renderRemoveFavoriteButton(FAVORITE_TYPE.user, favoriteUser.id)}
       </div>
     );
   };
@@ -67,9 +81,7 @@ function FavoritesTab() {
     return (
       <div className="FavoritesTab-cardWrapper" key={favoriteRoom.id}>
         <RoomCard room={favoriteRoom.data} alwaysRenderOwner />
-        <div className="FavoritesTab-cardStar">
-          <FavoriteStar type={FAVORITE_TYPE.room} id={favoriteRoom.id} onToggle={handleFavoriteStarToggle} />
-        </div>
+        {renderRemoveFavoriteButton(FAVORITE_TYPE.room, favoriteRoom.id)}
       </div>
     );
   };
@@ -78,9 +90,7 @@ function FavoritesTab() {
     return (
       <div className="FavoritesTab-cardWrapper" key={favoriteDocument.id}>
         <DocumentCard doc={favoriteDocument.data} />
-        <div className="FavoritesTab-cardStar">
-          <FavoriteStar type={FAVORITE_TYPE.document} id={favoriteDocument.id} onToggle={handleFavoriteStarToggle} />
-        </div>
+        {renderRemoveFavoriteButton(FAVORITE_TYPE.document, favoriteDocument.id)}
       </div>
     );
   };
