@@ -63,11 +63,12 @@ function YoutubePlayer({
     if (player && !!sourceDurationInMs) {
       setWasPlayTriggeredOnce(true);
 
-      const isCurrentTimeOutsideRange
-        = (!!startTimeInS && player.currentTime < startTimeInS)
-        || (!!endTimeInS && player.currentTime >= endTimeInS);
-
-      if (isCurrentTimeOutsideRange) {
+      // Once player.stop is called, youtube no longer respects the start/end limits.
+      // Having stopped progress manually on end detected while playing, the video was paused.
+      // The currentTime correction is however done here, on the next play, as progress needed to be kept
+      // until this point.
+      const wasEndPreviouslyReached = !!endTimeInS && player.currentTime >= endTimeInS;
+      if (wasEndPreviouslyReached) {
         player.currentTime = startTimeInS;
       }
 
@@ -99,8 +100,8 @@ function YoutubePlayer({
   const triggerReset = useCallback(() => {
     triggerSeek(0);
     onProgress(0);
-    // Call stop after seeking, to stop the video from re-playing automatically
-    player?.stop();
+    // Calling pause after seeking, to stop the video from re-playing automatically
+    setTimeout(player?.pause(), 100);
   }, [player, triggerSeek, onProgress]);
 
   const setProgressInterval = callback => {
@@ -190,28 +191,42 @@ function YoutubePlayer({
     setProgressInterval(null);
 
     if (player.currentTime > startTimeInS) {
-    // compensate for cases where youtube actual source duration is shorter than reported,
-    // thus having playback end 1s earlier; likely a rounding issue on their side
+    // Compensate for cases where youtube actual source duration is shorter than reported,
+    // thus having playback end 1s earlier. Likely a rounding issue on their side
       onProgress((endTimeInS - startTimeInS) * 1000);
     }
   }, [player, startTimeInS, endTimeInS, onProgress, onEnded]);
 
   const handleProgress = useCallback(() => {
     if (player && !isNaN(player.currentTime)) {
-      const currentActualTimeInMs = player.currentTime * 1000;
-      const currentTimeWithinRangeInMs = currentActualTimeInMs - (startTimeInS * 1000);
-
-      if (player.currentTime <= endTimeInS) {
+      // Once player.stop is called, youtube no longer respects the start/end limits.
+      // The currentTime correction needs to be done here, because it is the only place where this irregularity can be
+      // identified with confidence (without impacting normal scenario when start/end is respected)
+      if (player.currentTime < startTimeInS) {
+        player.currentTime = startTimeInS;
+        const currentTimeWithinRangeInMs = 0;
         onProgress(currentTimeWithinRangeInMs);
         return;
       }
 
-      triggerPause();
+      // Once player.stop is called, youtube no longer respects the start/end limits.
+      // The player is therefore manually paused and the player.currentTime is not reset, in order to keep consistency
+      // with normal stop state, when the progress stays at the end of the video.
+      // Time reset is therefore made on triggering player.play.
+      if (player.currentTime > endTimeInS) {
+        triggerPause();
 
-      const endTimeWithinRangeInS = endTimeInS - startTimeInS;
-      onProgress(endTimeInS - endTimeWithinRangeInS);
+        const endTimeWithinRangeInS = endTimeInS - startTimeInS;
+        const currentTimeWithinRangeInMs = endTimeInS - endTimeWithinRangeInS;
+        onProgress(currentTimeWithinRangeInMs);
 
-      handleEnded();
+        handleEnded();
+        return;
+      }
+
+      const currentActualTimeInMs = player.currentTime * 1000;
+      const currentTimeWithinRangeInMs = currentActualTimeInMs - (startTimeInS * 1000);
+      onProgress(currentTimeWithinRangeInMs);
     }
   }, [player, startTimeInS, endTimeInS, triggerPause, onProgress, handleEnded]);
 
