@@ -389,9 +389,6 @@ youtubeCopyrightNotice:
     Source: [Youtube]({link})
   de: |
     Quelle: [Youtube]({link})
-emailIsInvalid:
-  en: The value you provided is not a valid email address
-  de: Deine Eingabe ist keine gültige E-Mail-Adresse
 verifiedDocumentBadge:
   en: This document was verified by a maintainer
   de: Dieses Dokument wurde von einem Maintainer überprüft
@@ -477,3 +474,9 @@ playbackRange:
 or:
   en: or
   de: oder
+enterEmail:
+  en: Please enter an email address
+  de: Bitte gib eine E-Mail-Adresse an
+emailIsInvalid:
+  en: The value you provided is not a valid email address
+  de: Deine Eingabe ist keine gültige E-Mail-Adresse

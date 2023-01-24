@@ -16,11 +16,21 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  register({ email, password, displayName }) {
+  requestRegistration({ email, password, displayName }) {
     return this.httpClient
       .post(
-        '/api/v1/users',
+        '/api/v1/users/request-registration',
         { email, password, displayName },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  completeRegistration({ userId, verificationCode }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/complete-registration',
+        { userId, verificationCode },
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -9,7 +9,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import PasswordFormItem from '../password-form-item.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
-import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -63,7 +62,6 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
     <div className="CompletePasswordResetPage-form">
       <Form onFinish={handleFinish} scrollToFirstError>
         <PasswordFormItem name="password" {...formItemLayout} />
-        <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" {...formItemLayout} />
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('savePassword')}</Button>
         </FormItem>

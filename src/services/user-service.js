@@ -16,7 +16,7 @@ import {
   FAVORITE_TYPE,
   SAVE_USER_RESULT,
   USER_ACTIVITY_TYPE,
-  PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
+  PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
   PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS,
   ERROR_CODES
 } from '../domain/constants.js';
@@ -373,7 +373,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       displayName,
       roles,
-      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES, 'minutes').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
 
@@ -386,13 +386,13 @@ class UserService {
     return this.userStore.updateUserLastLoggedInOn({ userId, lastLoggedInOn: new Date() });
   }
 
-  async verifyUser(verificationCode) {
+  async verifyUser(userId, verificationCode) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
       user = await this.userStore.findUserByVerificationCode(verificationCode);
-      if (user) {
-        logger.info(`Found user with id ${user._id}`);
+      if (user && user._id === userId) {
+        logger.info(`Verifying user with id ${user._id}`);
         user.expiresOn = null;
         user.verificationCode = null;
         await this.userStore.saveUser(user);

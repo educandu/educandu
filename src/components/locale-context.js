@@ -101,10 +101,12 @@ export function useDateFormat() {
 
     const formatDate = date => date ? moment(date).locale(uiLocale).format(localePattern) : '';
     const formatNumber = value => numberFormat(value);
+    const formatDuration = (...args) => args.length ? moment.duration(...args).locale(uiLocale).humanize() : '';
 
     return {
       formatDate,
       formatNumber,
+      formatDuration,
       dateTimeFormat
     };
   }, [uiLocale]);

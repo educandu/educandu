@@ -9,7 +9,7 @@ import ResourceManager from '../resources/resource-manager.js';
 import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
 import {
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
-  PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
+  PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
   PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
 } from '../domain/constants.js';
 
@@ -27,8 +27,8 @@ class MailService {
     this.translators = SUPPORTED_UI_LANGUAGES.map(language => this.resourceManager.createI18n(language).t);
   }
 
-  sendRegistrationVerificationEmail({ email, displayName, verificationLink }) {
-    logger.info(`Creating email with registration verification link ${verificationLink}`);
+  sendRegistrationVerificationEmail({ email, displayName, verificationCode }) {
+    logger.info(`Creating email with registration verification code ${verificationCode}`);
 
     const subject = this.translators
       .map(t => t('mailService:registrationVerificationEmail.subject'))
@@ -37,16 +37,16 @@ class MailService {
     const text = this.translators
       .map(t => t('mailService:registrationVerificationEmail.text', {
         displayName,
-        verificationLink,
-        hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES
       }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:registrationVerificationEmail.html', {
         displayName: htmlescape(displayName),
-        verificationLink,
-        hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES
       }))
       .join('\n');
 
