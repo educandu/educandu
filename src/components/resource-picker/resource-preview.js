@@ -24,7 +24,6 @@ const logger = new Logger(import.meta.url);
 
 export const RESOURCE_PREVIEW_LAYOUT = {
   default: 'default',
-  compact: 'compact',
   thumbnailOnly: 'thumbnail-only'
 };
 
@@ -228,26 +227,19 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
     <div
       className={classNames({
         'FilePreview': true,
-        'FilePreview--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
         'FilePreview--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
       })}
       >
       <div
         className={classNames({
           'FilePreview-previewArea': true,
-          'FilePreview-previewArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
           'FilePreview-previewArea--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
         })}
         >
         {renderPreview()}
       </div>
       {layout !== RESOURCE_PREVIEW_LAYOUT.thumbnailOnly && (
-        <div
-          className={classNames({
-            'FilePreview-detailsArea': true,
-            'FilePreview-detailsArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact
-          })}
-          >
+        <div className="FilePreview-detailsArea">
           {renderDetails()}
         </div>
       )}
