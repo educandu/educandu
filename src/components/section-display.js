@@ -22,8 +22,8 @@ import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
-import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -182,11 +182,12 @@ function SectionDisplay({
   const renderEditAction = (action, index) => (
     <Tooltip key={index} title={action.tooltip} placement="topRight">
       <Button
-        className={`SectionDisplay-actionButton SectionDisplay-actionButton--${action.type}`}
+        type="text"
         size="small"
         icon={action.icon}
-        onClick={action.handleAction}
         disabled={!action.isEnabled}
+        onClick={action.handleAction}
+        className={`SectionDisplay-actionButton SectionDisplay-actionButton--${action.type}`}
         />
     </Tooltip>
   );
@@ -194,10 +195,11 @@ function SectionDisplay({
   const renderHardDeleteAction = () => (
     <Tooltip title={t('common:hardDelete')} placement="topRight">
       <Button
-        className="SectionDisplay-actionButton SectionDisplay-actionButton--hardDelete"
         size="small"
+        type="text"
         icon={<HardDeleteIcon />}
         onClick={onSectionHardDelete}
+        className="SectionDisplay-actionButton SectionDisplay-actionButton--delete"
         />
     </Tooltip>
   );
@@ -210,7 +212,11 @@ function SectionDisplay({
     if (!section.revision) {
       return null;
     }
-    return (<span className="SectionDisplay-sectionRevision">{`${t('common:revision')}: ${section.revision}`}</span>);
+    return (
+      <span className="SectionDisplay-sectionRevision">
+        {`${t('common:revision')}: ${section.revision}`}
+      </span>
+    );
   };
 
   const handleSectionClick = event => {
@@ -238,16 +244,13 @@ function SectionDisplay({
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
       {!!canEdit && (
-        <Fragment>
-          <div className="SectionDisplay-actions SectionDisplay-actions--left">
-            <div className="SectionDisplay-sectionInfo" {...dragHandleProps}>
-              <DragOutlined />
-              {renderSectionType()}
-              {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
-              {renderSectionRevision()}
-            </div>
+        <div className={classNames('SectionDisplay-toolbar', { 'is-editing': isEditing })}>
+          <div className="SectionDisplay-toolbarInfo" {...dragHandleProps}>
+            {renderSectionType()}
+            {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
+            {renderSectionRevision()}
           </div>
-          <div className="SectionDisplay-actions SectionDisplay-actions--right">
+          <div className="SectionDisplay-toolbarButtons">
             {editActions.map(renderEditAction)}
           </div>
           {!!isPending && (
@@ -267,7 +270,7 @@ function SectionDisplay({
                   <Button
                     type="link"
                     onClick={onPendingSectionDiscard}
-                    className="SectionDisplay-overlayButton  SectionDisplay-overlayButton--discard"
+                    className="SectionDisplay-overlayButton SectionDisplay-overlayButton--discard"
                     >
                     <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
                   </Button>
@@ -275,20 +278,18 @@ function SectionDisplay({
               </div>
             </Fragment>
           )}
-        </Fragment>
+        </div>
       )}
 
       {!!isHardDeleteEnabled && (
-        <Fragment>
-          <div className="SectionDisplay-actions SectionDisplay-actions--left">
-            <div className="SectionDisplay-sectionInfo SectionDisplay-sectionInfo--hardDelete">
-              {renderSectionRevision()}
-            </div>
+        <div className="SectionDisplay-toolbar is-hidden">
+          <div className="SectionDisplay-toolbarInfo">
+            {renderSectionRevision()}
           </div>
-          <div className="SectionDisplay-actions SectionDisplay-actions--right">
+          <div className="SectionDisplay-toolbarButtons">
             {renderHardDeleteAction()}
           </div>
-        </Fragment>
+        </div>
       )}
 
       <Modal
