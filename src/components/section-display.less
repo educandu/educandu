@@ -155,27 +155,24 @@
 }
 
 .SectionDisplay-overlayButton {
-  .m-box-shadow;
-  border-radius: 50%;
-  background-color: @edu-white;
-  display: block;
+  .m-box-shadow !important;
+  .m-circle(40px) !important;
+  background-color: @edu-white !important;
+  display: block !important;
   margin: 0 7px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
 
   &:hover {
-    .m-box-shadow-dark;
-    border-radius: 50%;
-    background-color: @edu-white;
+    .m-box-shadow-dark !important;
+    .m-circle(40px) !important;
+    background-color: @edu-white !important;
   }
 
   &.SectionDisplay-overlayButton--apply {
-    color: @edu-success-color;
+    color: @edu-success-color !important;
   }
 
   &.SectionDisplay-overlayButton--discard {
-    color: @edu-error-color;
+    color: @edu-error-color !important;
   }
 }
 
@@ -184,10 +181,5 @@
   justify-content: center;
   font-size: 140%;
   line-height: 70%;
-  text-align: center;
-}
-
-.SectionDisplay-overlayButtonText {
-  font-size: 80%;
   text-align: center;
 }
