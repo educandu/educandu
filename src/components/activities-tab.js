@@ -48,7 +48,7 @@ function ActivitiesTab({ activities, loading }) {
         key={timestamp}
         label={<span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>}
         >
-        <div>
+        <div className="ActivitiesTab-activity">
           <span className="ActivitiesTab-activityDescription">{description}: </span>
           {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
           {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}

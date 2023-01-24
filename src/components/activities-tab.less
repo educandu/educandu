@@ -6,8 +6,6 @@
 }
 
 .ActivitiesTab-timeline {
-  display: flex;
-
   .ant-timeline-item-last {
     .ant-timeline-item-tail {
       display: none;
@@ -25,7 +23,7 @@
 
   .ant-timeline-item-content {
     inset-inline-start: @activities-item-content-inset-inline-start !important;
-    width: %(~"calc(100% - %s) !important", '12px');
+    width: 80% !important;
   }
 
   @media @edu-media-phone {
@@ -39,6 +37,10 @@
       inset-inline-start: 0px !important;
     }
   }
+}
+
+.ActivitiesTab-activity {
+  .m-overflow-ellipsis;
 }
 
 .ActivitiesTab-activityLabel {
