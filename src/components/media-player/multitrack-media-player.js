@@ -128,8 +128,12 @@ function MultitrackMediaPlayer({
     Object.values(trackRefs.current).forEach(trackRef => trackRef.current.pause());
   };
 
-  const triggerStopAll = () => {
-    Object.values(trackRefs.current).forEach(trackRef => trackRef.current.stop());
+  const triggerStopAllSecondaryTracks = () => {
+    trackStates.forEach(trackState => {
+      if (!trackState.isMainTrack) {
+        getTrackRef(trackState.key).current.stop();
+      }
+    });
   };
 
   const handleReady = key => {
@@ -176,8 +180,10 @@ function MultitrackMediaPlayer({
 
   const handleMainTrackEnded = () => {
     onEnded();
-    triggerStopAll();
     setIsPlaying(false);
+    // Stop only secondary tracks, as to not reset progress to 0.
+    // Main track is internally (at player level) paused within range, not stopped.
+    triggerStopAllSecondaryTracks();
   };
 
   const handleMainTrackSeekStart = () => {
