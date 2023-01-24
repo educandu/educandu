@@ -57,6 +57,7 @@ const createDefaultSteps = () => [
 
 const setStepError = (steps, key) => steps.map(step => step.key === key ? { ...step, status: STEP_STATE.error } : step);
 const setStepSuccess = (steps, key) => steps.map(step => step.key === key ? { ...step, status: STEP_STATE.finish } : step);
+const setStepProcess = (steps, key) => steps.map(step => step.key === key ? { ...step, status: STEP_STATE.process } : step);
 
 function RegistrationForm() {
   const setUser = useSetUser();
@@ -79,16 +80,10 @@ function RegistrationForm() {
       setCreatedUser(null);
       setForbiddenEmails([]);
       setInvalidVerificationCodes([]);
+      setSteps(setStepProcess(createDefaultSteps(), currentStepKey));
+    } else {
+      setSteps(prev => setStepProcess(prev, currentStepKey));
     }
-    setSteps(previousSteps => {
-      const newSteps = currentStepKey === STEP.enterData ? createDefaultSteps() : previousSteps.map(step => ({ ...step }));
-      for (const step of newSteps) {
-        if (step.key === currentStepKey) {
-          step.status = STEP_STATE.process;
-        }
-      }
-      return newSteps;
-    });
   }, [currentStepKey]);
 
   const handleEnterDataButtonClick = () => {
@@ -103,7 +98,7 @@ function RegistrationForm() {
     try {
       setIsLoading(true);
       const { result, user } = await userApiClient.requestRegistration({
-        email,
+        email: email.trim(),
         password,
         displayName: displayName.trim()
       });

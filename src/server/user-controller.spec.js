@@ -242,7 +242,7 @@ describe('user-controller', () => {
 
           res.on('end', resolve);
 
-          userService.verifyUser.resolves(dbUser);
+          userService.verifyUser.withArgs(req.body.userId, req.body.verificationCode).resolves(dbUser);
           clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
           sut.handlePostUserRegistrationCompletion(req, res).catch(reject);
