@@ -9,6 +9,20 @@ import MediaPlayerControls from './media-player-controls.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
+const sourcesCanBeConsideredEqual = (source1, source2) => {
+  if (!source1 || !source2 || source1 === source2) {
+    return source1 === source2;
+  }
+
+  return source1.mainTrack.sourceUrl === source2.mainTrack.sourceUrl
+    && source1.mainTrack.aspectRatio === source2.mainTrack.aspectRatio
+    && source1.mainTrack.playbackRange[0] === source2.mainTrack.playbackRange[0]
+    && source1.mainTrack.playbackRange[1] === source2.mainTrack.playbackRange[1]
+    && source1.mainTrack.showVideo === source2.mainTrack.showVideo
+    && source1.secondaryTracks.length === source2.secondaryTracks.length
+    && source1.secondaryTracks.every((track, index) => track.sourceUrl === source2.secondaryTracks[index].sourceUrl);
+};
+
 function MultitrackMediaPlayer({
   customUnderScreenContent,
   multitrackMediaPlayerRef,
@@ -27,6 +41,7 @@ function MultitrackMediaPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackStates, setTrackStates] = useState([]);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
@@ -47,6 +62,10 @@ function MultitrackMediaPlayer({
   };
 
   useEffect(() => {
+    if (sourcesCanBeConsideredEqual(sources, lastSources)) {
+      return;
+    }
+
     const newStates = [
       {
         key: uniqueId.create(),
@@ -71,8 +90,9 @@ function MultitrackMediaPlayer({
     ];
 
     setPlaybackRate(1);
+    setLastSources(sources);
     setTrackStates(newStates);
-  }, [sources]);
+  }, [sources, lastSources]);
 
   useEffect(() => {
     const currentKeys = trackStates.map(trackState => trackState.key);
