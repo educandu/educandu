@@ -453,7 +453,7 @@ class UserController {
   async handleGetRoomsInvitations(req, res) {
     const { user } = req;
     const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
-    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapRoomInvitationWithBasicRoomData(invitation)));
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
 
     return res.send({ invitations: mappedInvitations });
   }

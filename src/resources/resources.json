@@ -1458,11 +1458,12 @@
     "language": "en",
     "resources": {
       "documentsMode": "Mode",
-      "button": "Enter room",
+      "enterButton": "Enter room",
+      "joinButton": "Accept invitation",
       "joined": "Joined",
       "invited": "Invited",
       "members": "Members",
-      "acceptInvitation": "The invitation received by email is valid until **{date}**."
+      "acceptInvitation": "The invitation is valid until **{date}**."
     }
   },
   {
@@ -1470,11 +1471,12 @@
     "language": "de",
     "resources": {
       "documentsMode": "Modus",
-      "button": "Raum betreten",
+      "enterButton": "Raum betreten",
+      "joinButton": "Einladung annehmen",
       "joined": "Eingetreten",
       "invited": "Eingeladen",
       "members": "Mitglieder",
-      "acceptInvitation": "Die per E-Mail geschickte Einladung ist bis **{date}** gültig."
+      "acceptInvitation": "Die Einladung ist bis **{date}** gültig."
     }
   },
   {
