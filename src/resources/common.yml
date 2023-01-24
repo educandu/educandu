@@ -132,9 +132,6 @@ urlCopiedToClipboard:
 copyUrlToClipboardError:
   en: Error copying the URL to the clipboard due to missing access permissions.
   de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
-accept:
-  en: Accept
-  de: Akzeptieren
 login:
   en: Login
   de: Anmelden

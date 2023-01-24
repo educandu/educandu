@@ -246,6 +246,22 @@
     }
   },
   {
+    "namespace": "consentDialog",
+    "language": "en",
+    "resources": {
+      "title": "This website uses cookies",
+      "acceptButton": "Accept"
+    }
+  },
+  {
+    "namespace": "consentDialog",
+    "language": "de",
+    "resources": {
+      "title": "Diese Website verwendet Cookies",
+      "acceptButton": "Akzeptieren"
+    }
+  },
+  {
     "namespace": "creditsFooter",
     "language": "en",
     "resources": {
@@ -2393,7 +2409,6 @@
       "copyUrlToClipboard": "Copy URL to the clipboard",
       "urlCopiedToClipboard": "The URL was copied to the clipboard",
       "copyUrlToClipboardError": "Error copying the URL to the clipboard due to missing access permissions.",
-      "accept": "Accept",
       "login": "Login",
       "logout": "Logout",
       "created": "Created",
@@ -2553,7 +2568,6 @@
       "copyUrlToClipboard": "URL in die Zwischenablage kopieren",
       "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert",
       "copyUrlToClipboardError": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
-      "accept": "Akzeptieren",
       "login": "Anmelden",
       "logout": "Abmelden",
       "created": "Erstellt",
