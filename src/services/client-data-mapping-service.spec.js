@@ -364,7 +364,7 @@ describe('client-data-mapping-service', () => {
       expect(result).toEqual({
         ...room,
         createdOn: room.createdOn.toISOString(),
-        updatedOn: room.createdOn.toISOString(),
+        updatedOn: room.updatedOn.toISOString(),
         owner: {
           displayName: owner.displayName,
           email: owner.email,
