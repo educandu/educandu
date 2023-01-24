@@ -130,7 +130,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleAddTrackButtonClick = () => {
     const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
+    newSecondaryTracks.push(createDefaultSecondaryTrack());
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks.push(1);
@@ -192,7 +192,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const handleChapterAdd = startPosition => {
-    const chapter = { ...createDefaultChapter(t), startPosition };
+    const chapter = { ...createDefaultChapter(), startPosition };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
     changeContent({ chapters: newChapters });
   };

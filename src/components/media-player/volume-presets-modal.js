@@ -51,7 +51,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
     setManagedVolumePresets(oldPresets => [
       ...oldPresets,
       {
-        name: `[${t('common:name')}]`,
+        name: '',
         mainTrack: 1,
         secondaryTracks: new Array(volumePresets[0].secondaryTracks.length).fill(1)
       }

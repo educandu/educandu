@@ -92,7 +92,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const handleAddTrackButtonClick = () => {
     const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
+    newSecondaryTracks.push(createDefaultSecondaryTrack());
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks.push(1);

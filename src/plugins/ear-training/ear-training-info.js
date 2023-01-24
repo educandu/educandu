@@ -59,9 +59,9 @@ class EarTrainingInfo {
     };
   }
 
-  getDefaultContent(t) {
+  getDefaultContent() {
     return {
-      title: `[${t('common:title')}]`,
+      title: '',
       width: 100,
       tests: [this.getDefaultTest()],
       testsOrder: TESTS_ORDER.given

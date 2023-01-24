@@ -1,17 +1,17 @@
 import joi from 'joi';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 
-export function createDefaultSecondaryTrack(index, t) {
+export function createDefaultSecondaryTrack() {
   return {
-    name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: ''
   };
 }
 
-export function createDefaultMainTrack(t) {
+export function createDefaultMainTrack() {
   return {
-    name: `[${t('common:mainTrack')}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -32,7 +32,7 @@ export function createDefaultContent(t) {
   const secondaryTracks = [];
   return {
     width: 100,
-    mainTrack: createDefaultMainTrack(t),
+    mainTrack: createDefaultMainTrack(),
     secondaryTracks,
     volumePresets: [createDefaultVolumePreset(t, secondaryTracks.length)]
   };
