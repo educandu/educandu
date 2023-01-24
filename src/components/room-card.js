@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
+import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
-import { Button, Divider, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
@@ -28,16 +28,8 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
     );
   };
 
-  const handleButtonClick = event => {
-    if (isDeletedRoom) {
-      event.preventDefault();
-      Modal.error({
-        title: t('common:error'),
-        content: t('common:targetDeletedMessage')
-      });
-    } else {
-      window.location = routes.getRoomUrl(room._id, room.slug);
-    }
+  const handleButtonClick = () => {
+    window.location = routes.getRoomUrl(room._id, room.slug);
   };
 
   const roomName = isDeletedRoom ? `[${t('common:deletedRoom')}]` : room.name;
@@ -90,7 +82,10 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>
+      <Button className="RoomCard-button" type="primary" disabled={!!isDeletedRoom} onClick={handleButtonClick}>
+        <RoomJoinedIcon />
+        {t('button')}
+      </Button>
       {!!invitation && <div className="RoomCard-disablingOverlay" />}
     </div>
   );
