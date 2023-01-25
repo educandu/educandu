@@ -8,11 +8,12 @@ import CloseIcon from './icons/general/close-icon.js';
 function ControlPanel({
   startOpen,
   openIcon,
-  onOpen,
-  onClose,
+  disabled,
   leftSideContent,
   contentBeforeClose,
-  contentAfterClose
+  contentAfterClose,
+  onOpen,
+  onClose
 }) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -67,35 +68,44 @@ function ControlPanel({
 
   const renderOpenButton = () => {
     return (
-      <Button className="ControlPanel-openButton" type="link" icon={openIcon} onClick={handleOpenClick} loading={isLoading} />
+      <Button
+        type="link"
+        icon={openIcon}
+        disabled={disabled}
+        loading={isLoading}
+        onClick={handleOpenClick}
+        className="ControlPanel-openButton"
+        />
     );
   };
 
   return (
     <div className={classNames('ControlPanel', { 'is-open': isOpen })}>
       {!!isOpen && !!isContentVisible && renderContent()}
-      {!isOpen && renderOpenButton()}
+      {(!isOpen || !!disabled) && renderOpenButton()}
     </div>
   );
 }
 
 ControlPanel.propTypes = {
-  contentAfterClose: PropTypes.node,
-  contentBeforeClose: PropTypes.node,
-  leftSideContent: PropTypes.node,
-  onClose: PropTypes.func,
-  onOpen: PropTypes.func,
+  startOpen: PropTypes.bool,
   openIcon: PropTypes.node.isRequired,
-  startOpen: PropTypes.bool
+  disabled: PropTypes.bool,
+  leftSideContent: PropTypes.node,
+  contentBeforeClose: PropTypes.node,
+  contentAfterClose: PropTypes.node,
+  onOpen: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 ControlPanel.defaultProps = {
-  contentAfterClose: null,
-  contentBeforeClose: null,
+  startOpen: false,
+  disabled: false,
   leftSideContent: null,
-  onClose: () => Promise.resolve(true),
+  contentBeforeClose: null,
+  contentAfterClose: null,
   onOpen: () => Promise.resolve(),
-  startOpen: false
+  onClose: () => Promise.resolve(true)
 };
 
 export default ControlPanel;

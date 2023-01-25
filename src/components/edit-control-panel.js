@@ -17,13 +17,14 @@ export const EDIT_CONTROL_PANEL_STATUS = {
 };
 
 function EditControlPanel({
+  status,
   startOpen,
+  disabled,
+  canEditMetadata,
   onOpen,
   onMetadataOpen,
   onSave,
-  onClose,
-  status,
-  canEditMetadata
+  onClose
 }) {
   const { t } = useTranslation('editControlPanel');
 
@@ -79,9 +80,18 @@ function EditControlPanel({
   const renderEditMetadataButton = () => (
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
-        <Button className="EditControlPanel-editButton" size="small" icon={<EditIcon />} onClick={onMetadataOpen} ghost>
-          {t('editMetadata')}
-        </Button>
+        <Tooltip title={canEditMetadata ? null : t('editMetadataDisabledTooltip')}>
+          <Button
+            ghost
+            size="small"
+            icon={<EditIcon />}
+            disabled={!canEditMetadata}
+            className="EditControlPanel-editButton"
+            onClick={onMetadataOpen}
+            >
+            {t('editMetadata')}
+          </Button>
+        </Tooltip>
       </span>
     </span>
   );
@@ -108,32 +118,35 @@ function EditControlPanel({
       className="EditControlPanel"
       startOpen={startOpen}
       openIcon={<EditDocIcon />}
+      disabled={disabled}
+      leftSideContent={renderEditMetadataButton()}
+      contentAfterClose={renderButtons()}
       onOpen={handleOpen}
       onClose={handleClose}
-      leftSideContent={canEditMetadata ? renderEditMetadataButton() : null}
-      contentAfterClose={renderButtons()}
       />
   );
 }
 
 EditControlPanel.propTypes = {
-  canEditMetadata: PropTypes.bool,
-  onClose: PropTypes.func,
-  onMetadataOpen: PropTypes.func,
-  onOpen: PropTypes.func,
-  onSave: PropTypes.func,
+  status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS)),
   startOpen: PropTypes.bool,
-  status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS))
+  disabled: PropTypes.bool,
+  canEditMetadata: PropTypes.bool,
+  onOpen: PropTypes.func,
+  onMetadataOpen: PropTypes.func,
+  onSave: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 EditControlPanel.defaultProps = {
+  status: EDIT_CONTROL_PANEL_STATUS.none,
+  startOpen: false,
+  disabled: false,
   canEditMetadata: false,
-  onClose: () => Promise.resolve(true),
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),
   onSave: () => {},
-  startOpen: false,
-  status: EDIT_CONTROL_PANEL_STATUS.none
+  onClose: () => Promise.resolve(true)
 };
 
 export default EditControlPanel;
