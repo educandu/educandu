@@ -22,9 +22,21 @@ invalidTags:
 tagsPlaceholder:
   en: Enter keywords
   de: Stichwörter angeben
-useTemplateDocument:
-  en: Use default template
-  de: Standardvorlage benutzen
+tagsInfo:
+  en: Tags make the document discoverable when searching by words that match them
+  de: Tags make the document discoverable when searching by words that match them [but in German]
+content:
+  en: Content
+  de: Inhalt
+contentEmpty:
+  en: empty
+  de: Lehr
+contentFromTemplate:
+  en: from template
+  de: aus Vorlage
+contentInfo:
+  en: Either start with an empty document or with proposed content meant to help you with setting up your document
+  de: Either start with an empty document or with proposed content meant to help you with setting up your document [but in German]
 review:
   en: Review
   de: Review
