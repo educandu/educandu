@@ -464,7 +464,8 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'markdown',
           content: {
-            text: 'Unmodified text'
+            text: 'Unmodified text',
+            width: 100
           }
         };
 
@@ -473,7 +474,8 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'markdown',
           content: {
-            text: 'Initial text'
+            text: 'Initial text',
+            width: 100
           }
         };
 
@@ -494,7 +496,7 @@ describe('document-service', () => {
             title: 'Revision 3',
             slug: 'rev-3',
             roomId: 'room-1',
-            sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text' } }]
+            sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text', width: 100 } }]
           }
         ]);
       });
