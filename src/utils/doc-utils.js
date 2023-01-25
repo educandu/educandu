@@ -51,11 +51,11 @@ export function getEditDocContentRestrictionTooltip({ t, user, doc, room }) {
   const restrictionReason = getEditDocContentRestrictionReason({ user, doc, room });
   switch (restrictionReason) {
     case DOCUMENT_EDIT_RESTRICTION_REASON.archive:
-      return t('doc:archiveReasonTooltip');
+      return t('doc:editRestrictionTooltip_archive');
     case DOCUMENT_EDIT_RESTRICTION_REASON.room:
-      return t('doc:roomReasonTooltip');
+      return t('doc:editRestrictionTooltip_room');
     case DOCUMENT_EDIT_RESTRICTION_REASON.openContribution:
-      return t('doc:openContributionReasonTooltip');
+      return t('doc:editRestrictionTooltip_openContribution');
     default:
       return null;
   }

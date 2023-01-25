@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
-import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -100,9 +99,14 @@ function Doc({ initialState, PageTemplate }) {
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
+  const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
+  const userCanViewHistory = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
-  const editDocContentRestrictionTooltip = getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room });
+  const viewDocHistoryRestrictionTooltip = userCanViewHistory ? null : t('viewHistoryRestrictionTooltip_annonymousUser');
+  const editDocRestrictionTooltip = userCanEdit
+    ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
+    : t('editRestrictionTooltip_annonymousUser');
 
   const [isDirty, setIsDirty] = useState(false);
   const [comments, setComments] = useState([]);
@@ -571,21 +575,22 @@ function Doc({ initialState, PageTemplate }) {
         className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
         >
         {!!showHistoryPanel && (
-          <Restricted to={permissions.EDIT_DOC}>
+          <Tooltip title={viewDocHistoryRestrictionTooltip}>
             <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
               <HistoryControlPanel
                 revisions={historyRevisions}
                 selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+                canRestoreRevisions={userCanEditDocContent}
+                disabled={!userCanViewHistory}
                 startOpen={initialView === VIEW.history}
                 onOpen={handleHistoryOpen}
                 onClose={handleHistoryClose}
-                canRestoreRevisions={userCanEditDocContent}
                 onPermalinkRequest={handlePermalinkRequest}
                 onSelectedRevisionChange={handleSelectedRevisionChange}
                 onRestoreRevision={handleRestoreRevision}
                 />
             </div>
-          </Restricted>
+          </Tooltip>
         )}
         {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
@@ -601,22 +606,20 @@ function Doc({ initialState, PageTemplate }) {
           </div>
         )}
         {!!showEditPanel && (
-          <Restricted to={permissions.EDIT_DOC}>
-            <Tooltip title={editDocContentRestrictionTooltip}>
-              <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
-                <EditControlPanel
-                  status={controlStatus}
-                  startOpen={initialView === VIEW.edit}
-                  disabled={!userCanEditDocContent}
-                  canEditMetadata={userCanEditDocMetadata}
-                  onOpen={handleEditOpen}
-                  onMetadataOpen={handleEditMetadataOpen}
-                  onSave={handleEditSave}
-                  onClose={handleEditClose}
-                  />
-              </div>
-            </Tooltip>
-          </Restricted>
+          <Tooltip title={editDocRestrictionTooltip}>
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
+              <EditControlPanel
+                status={controlStatus}
+                startOpen={initialView === VIEW.edit}
+                disabled={!userCanEdit || !userCanEditDocContent}
+                canEditMetadata={userCanEditDocMetadata}
+                onOpen={handleEditOpen}
+                onMetadataOpen={handleEditMetadataOpen}
+                onSave={handleEditSave}
+                onClose={handleEditClose}
+                />
+            </div>
+          </Tooltip>
         )}
       </div>
 

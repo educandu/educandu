@@ -16,6 +16,7 @@ function HistoryControlPanel({
   revisions,
   selectedRevisionIndex,
   canRestoreRevisions,
+  disabled,
   startOpen,
   onOpen,
   onClose,
@@ -111,36 +112,39 @@ function HistoryControlPanel({
       className="HistoryControlPanel"
       startOpen={startOpen}
       openIcon={<ViewHistoryIcon />}
-      onOpen={handleOpen}
-      onClose={handleClose}
+      disabled={disabled}
       leftSideContent={renderSlider()}
       contentBeforeClose={renderButtons()}
+      onOpen={handleOpen}
+      onClose={handleClose}
       />
   );
 }
 
 HistoryControlPanel.propTypes = {
-  canRestoreRevisions: PropTypes.bool,
-  onClose: PropTypes.func,
-  onOpen: PropTypes.func,
-  onPermalinkRequest: PropTypes.func,
-  onRestoreRevision: PropTypes.func,
-  onSelectedRevisionChange: PropTypes.func,
   revisions: PropTypes.arrayOf(documentRevisionShape),
   selectedRevisionIndex: PropTypes.number,
-  startOpen: PropTypes.bool
+  canRestoreRevisions: PropTypes.bool,
+  disabled: PropTypes.bool,
+  startOpen: PropTypes.bool,
+  onOpen: PropTypes.func,
+  onClose: PropTypes.func,
+  onPermalinkRequest: PropTypes.func,
+  onRestoreRevision: PropTypes.func,
+  onSelectedRevisionChange: PropTypes.func
 };
 
 HistoryControlPanel.defaultProps = {
-  canRestoreRevisions: false,
-  onClose: () => Promise.resolve(true),
-  onOpen: () => Promise.resolve(),
-  onPermalinkRequest: () => { },
-  onRestoreRevision: () => { },
-  onSelectedRevisionChange: () => { },
   revisions: [],
   selectedRevisionIndex: 0,
-  startOpen: false
+  canRestoreRevisions: false,
+  disabled: false,
+  startOpen: false,
+  onOpen: () => Promise.resolve(),
+  onClose: () => Promise.resolve(true),
+  onPermalinkRequest: () => { },
+  onRestoreRevision: () => { },
+  onSelectedRevisionChange: () => { }
 };
 
 export default HistoryControlPanel;
