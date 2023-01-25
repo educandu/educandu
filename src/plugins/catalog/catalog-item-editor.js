@@ -75,7 +75,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
         <FormItem
-          label={t('common:externalUrl')}
+          label={t('catalog:externalUrl')}
           {...FORM_ITEM_LAYOUT}
           {...validateUrl(link.sourceUrl, t, { allowHttp: true, allowMailto: true })}
           hasFeedback

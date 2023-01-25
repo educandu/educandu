@@ -69,7 +69,7 @@ function CatalogEditor({ content, onContentChanged }) {
   };
 
   const handleItemAdd = () => {
-    triggerChange({ items: [...items, createDefaultItem(items.length, t)] });
+    triggerChange({ items: [...items, createDefaultItem()] });
   };
 
   return (

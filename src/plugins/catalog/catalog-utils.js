@@ -9,9 +9,9 @@ function createDefaultItemImage() {
   };
 }
 
-export function createDefaultItem(index, t) {
+export function createDefaultItem() {
   return {
-    title: `[${t('catalog:itemNumber', { number: index + 1 })}]`,
+    title: '',
     image: createDefaultItemImage(),
     link: {
       sourceType: LINK_SOURCE_TYPE.document,
@@ -33,7 +33,7 @@ export function createDefaultContent(t) {
     displayMode: DISPLAY_MODE.linkList,
     title: `[${t('common:title')}]`,
     width: 100,
-    items: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, (_, index) => createDefaultItem(index, t)),
+    items: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, createDefaultItem),
     imageTilesConfig: ceateDefaultImageTileConfig()
   };
 }
@@ -78,11 +78,11 @@ export function consolidateForDisplayMode(content) {
 export function isItemInvalid(item, cdnRootUrl) {
   const isInvalidImageSourceUrl
     = !isInternalSourceType({ url: item.image.sourceUrl, cdnRootUrl })
-    && getUrlValidationStatus(item.image.sourceUrl) === URL_VALIDATION_STATUS.error;
+    && getUrlValidationStatus(item.image.sourceUrl) !== URL_VALIDATION_STATUS.valid;
 
   const isInvalidLinkSourceUrl
     = item.link.sourceType === LINK_SOURCE_TYPE.external
-    && getUrlValidationStatus(item.link.sourceUrl, { allowHttp: true, allowMailto: true }) === URL_VALIDATION_STATUS.error;
+    && getUrlValidationStatus(item.link.sourceUrl, { allowHttp: true, allowMailto: true }) !== URL_VALIDATION_STATUS.valid;
 
   return isInvalidImageSourceUrl || isInvalidLinkSourceUrl;
 }
