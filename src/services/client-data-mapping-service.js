@@ -173,11 +173,13 @@ class ClientDataMappingService {
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
     mappedRoom.members = room.members.map(member => {
-      const memberDetails = memberUsers.find(memberUser => member.userId === memberUser._id);
+      const memberUser = memberUsers.find(m => member.userId === m._id);
+      const mappedMemberUser = this.mapWebsitePublicUser({ viewedUser: memberUser, viewingUser: user });
       return {
         userId: member.userId,
         joinedOn: member.joinedOn && member.joinedOn.toISOString(),
-        displayName: memberDetails.displayName
+        displayName: mappedMemberUser.displayName,
+        avatarUrl: mappedMemberUser.avatarUrl
       };
     });
 

@@ -94,11 +94,11 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
       {!invitation && (
         <Button className="RoomCard-button" type="primary" disabled={!!isDeletedRoom} onClick={handleEnterButtonClick}>
           <RoomJoinedIcon />
-          {t('enterButton')}
+          {t('common:enterRoom')}
         </Button>
       )}
       {!!invitation && (
-        <Button className="RoomCard-button" type="primary" onClick={handleJoinButtonClick}>
+        <Button className="RoomCard-button" onClick={handleJoinButtonClick}>
           <MailOutlined />
           {t('joinButton')}
         </Button>

@@ -471,3 +471,9 @@ removeFavorite:
 addFavorite:
   en: Add to favorites
   de: Zu den Favoriten hinzufügen
+createDocument:
+  en: Create document
+  de: Dokument erstellen
+enterRoom:
+  en: Enter room
+  de: Raum betreten

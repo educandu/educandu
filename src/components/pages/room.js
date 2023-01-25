@@ -1,13 +1,15 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Markdown from '../markdown.js';
+import UserCard from '../user-card.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
+import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
@@ -26,9 +28,9 @@ import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { ensureIsExcluded, swapItemsAt } from '../../utils/array-utils.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
-import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
@@ -266,104 +268,90 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderDocument = (doc, index, documentsSubset) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+    const showMenu = !!isUserRoomOwnerOrInvitedCollaborator;
+    const classes = classNames(
+      'RoomPage-document',
+      { 'RoomPage-document--withMenu': showMenu }
+    );
 
     return (
-      <div key={doc._id} className="RoomPage-documentRow">
-        <div className="RoomPage-documentRowTitle">
+      <div key={doc._id} className={classes}>
+        <div className="RoomPage-documentTitle">
           <a href={url}>{doc.title}</a>
         </div>
-        <div className="RoomPage-documentRowMenu">
+        <div className="RoomPage-documentMenu">
           {!!doc.roomContext.draft && (<div className="RoomPage-documentRowDraftLabel">{t('common:draft')}</div>)}
-          {!!isUserRoomOwnerOrInvitedCollaborator && renderDocumentMenu(doc, index, documentsSubset)}
+          {!!showMenu && renderDocumentMenu(doc, index, documentsSubset)}
         </div>
       </div>
     );
   };
 
-  const renderRoomMembers = () => {
-    const title = isUserRoomOwner && t('roomMembersHeader', { count: room.members.length });
+  const renderRoomMember = member => {
     return (
-      <Card className="RoomPage-card" title={title}>
-        <List
-          dataSource={room.members}
-          renderItem={member => (
-            <List.Item className="RoomPage-membersRow">
-              <Space>
-                <Tooltip title={t('removeMember')}>
-                  <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
-                </Tooltip>
-                <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
-                <span>{member.displayName}</span>
-              </Space>
-            </List.Item>)}
+      <div className="RoomPage-member" key={member.userId}>
+        <UserCard
+          userId={member.userId}
+          displayName={member.displayName}
+          avatarUrl={member.avatarUrl}
+          detail={
+            <div className="RoomPage-memberDetail">
+              {`${t('memberSince')}: ${formatDate(member.joinedOn)}`}
+            </div>
+          }
           />
-      </Card>
+        <Tooltip title={t('removeMember')}>
+          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
+        </Tooltip>
+      </div>
     );
   };
 
-  const renderRoomInvitations = () => (
-    <Card
-      className="RoomPage-card"
-      title={t('invitationsHeader', { count: invitations.length })}
-      actions={[
-        <Button
-          className="RoomPage-cardButton"
-          key="createRoomInvitation"
-          type="primary"
-          shape="circle"
-          icon={<PlusOutlined />}
-          size="medium"
-          onClick={handleCreateInvitationButtonClick}
+  const renderRoomInvitation = invitation => {
+    return (
+      <div className="RoomPage-member" key={invitation._id}>
+        <UserCard
+          userId={invitation.userId}
+          displayName={invitation.email}
+          avatarUrl={invitation.avatarUrl}
+          detail={
+            <div className="RoomPage-memberDetail">
+              <span>{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
+              <span>{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
+            </div>
+          }
           />
-      ]}
-      >
-      <List
-        dataSource={invitations}
-        renderItem={invitation => (
-          <List.Item className="RoomPage-membersRow">
-            <Space>
-              {!!isUserRoomOwner && (
-                <Tooltip title={t('revokeInvitation')}>
-                  <DeleteButton className="RoomPage-deleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
-                </Tooltip>
-              )}
-              <span className="RoomPage-membersRowDate">{formatDate(invitation.sentOn)}</span>
-              <span>{invitation.email}</span>
-            </Space>
-            <Space>
-              <span>{t('expires')}:</span>
-              <span className="RoomPage-membersRowDate">{formatDate(invitation.expiresOn)}</span>
-            </Space>
-          </List.Item>
+        {!!isUserRoomOwner && (
+        <Tooltip title={t('revokeInvitation')}>
+          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
+        </Tooltip>
         )}
-        />
-    </Card>
-  );
+      </div>
+    );
+  };
 
-  const renderRoomDocumentsCard = () => {
+  const renderRoomDocuments = () => {
     const nonDraftDocuments = documents.filter(doc => !doc.roomContext.draft);
     const draftDocuments = documents.filter(doc => doc.roomContext.draft);
 
     return (
-      <Card
-        className="RoomPage-card"
-        actions={!!isUserRoomOwnerOrInvitedCollaborator && [
-          <Button
-            className="RoomPage-cardButton"
-            key="createDocument"
-            type="primary"
-            shape="circle"
-            icon={<PlusOutlined />}
-            size="medium"
-            onClick={() => handleNewDocumentClick()}
-            />
-        ]}
-        >
+      <div>
         {!!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
-        {!documents.length && t('documentsPlaceholder')}
-        {nonDraftDocuments.map((doc, index) => renderDocument(doc, index, nonDraftDocuments))}
-        {draftDocuments.map((doc, index) => renderDocument(doc, index, draftDocuments))}
-      </Card>
+        {!!isUserRoomOwnerOrInvitedCollaborator && (
+          <Button
+            type="primary"
+            className="RoomPage-tabCreateItemButton"
+            onClick={() => handleNewDocumentClick()}
+            >
+            {t('common:createDocument')}
+          </Button>
+        )}
+        <div className="RoomPage-documents">
+          {!documents.length && t('documentsPlaceholder')}
+          {nonDraftDocuments.map((doc, index) => renderDocument(doc, index, nonDraftDocuments))}
+          {draftDocuments.map((doc, index) => renderDocument(doc, index, draftDocuments))}
+        </div>
+      </div>
     );
   };
 
@@ -373,6 +361,10 @@ export default function Room({ PageTemplate, initialState }) {
       {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
     </Fragment>
   );
+
+  const membersTabCount = invitations.length
+    ? `${room.members.length}/${room.members.length + invitations.length}`
+    : room.members.length;
 
   return (
     <PageTemplate>
@@ -394,7 +386,11 @@ export default function Room({ PageTemplate, initialState }) {
           )}
         </div>
 
-        {!isUserRoomOwner && renderRoomDocumentsCard()}
+        {!isUserRoomOwner && (
+          <div className="RoomPage-documents RoomPage-documents--roomMemberView">
+            {renderRoomDocuments()}
+          </div>
+        )}
 
         {!!isUserRoomOwner && (
           <Tabs
@@ -405,20 +401,30 @@ export default function Room({ PageTemplate, initialState }) {
             items={[
               {
                 key: '1',
-                label: t('documentsTabTitle'),
+                label: t('documentsTabTitle', { count: documents.length }),
                 children: (
                   <div className="Tabs-tabPane">
-                    {renderRoomDocumentsCard()}
+                    {renderRoomDocuments()}
                   </div>
                 )
               },
               {
                 key: '2',
-                label: t('membersTabTitle'),
+                label: t('membersTabTitle', { count: membersTabCount }),
                 children: (
                   <div className="Tabs-tabPane">
-                    {renderRoomMembers()}
-                    {renderRoomInvitations()}
+                    <Button
+                      type="primary"
+                      icon={<MailOutlined />}
+                      className="RoomPage-tabCreateItemButton"
+                      onClick={handleCreateInvitationButtonClick}
+                      >
+                      {t('inviteMembersButton')}
+                    </Button>
+                    <div className="RoomPage-members">
+                      {room.members.map(renderRoomMember)}
+                      {invitations.map(renderRoomInvitation)}
+                    </div>
                     <RoomInvitationCreationModal
                       isOpen={isRoomInvitationModalOpen}
                       onOk={handleInvitationModalClose}

@@ -374,12 +374,14 @@ describe('client-data-mapping-service', () => {
           {
             userId: room.members[0].userId,
             displayName: member1.displayName,
-            joinedOn: room.members[0].joinedOn.toISOString()
+            joinedOn: room.members[0].joinedOn.toISOString(),
+            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
           },
           {
             userId: room.members[1].userId,
             displayName: member2.displayName,
-            joinedOn: room.members[1].joinedOn.toISOString()
+            joinedOn: room.members[1].joinedOn.toISOString(),
+            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
           }
         ]
       });

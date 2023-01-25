@@ -4,21 +4,12 @@ exclusiveDocumentsSubtitle:
 collaborativeDocumentsSubtitle:
   en: Collaborative documents
   de: kollaborative Dokumente
-expires:
-  en: Invitation expires on
-  de: Einladung läuft ab am
-roomMembersHeader:
-  en: Room members ({count})
-  de: Raummitglieder ({count})
-invitationsHeader:
-  en: Outstanding invitations ({count})
-  de: Ausstehende Einladungen ({count})
 documentsTabTitle:
-  en: Documents
-  de: Dokumente
+  en: Documents ({count})
+  de: Dokumente ({count})
 membersTabTitle:
-  en: Room members
-  de: Raummitglieder
+  en: members ({count})
+  de: Mitglieder ({count})
 settingsTabTitle:
   en: Settings
   de: Einstellungen
@@ -52,3 +43,15 @@ revokeInvitation:
 cancelRoomMembership:
   en: Cancel room membership
   de: Raum-Mitgliedschaft beenden
+invitedOn:
+  en: Invited on
+  de: Eingeladen am
+expiresOn:
+  en: Expires on
+  de: Läuft ab am
+memberSince:
+  en: Member since
+  de: Mitglied seit
+inviteMembersButton:
+  en: Invite members
+  de: Mitglieder einladen
