@@ -4,15 +4,13 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { BATCH_TYPE } from '../domain/constants.js';
 import requestUtils from '../utils/request-utils.js';
 import BatchService from '../services/batch-service.js';
-import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class AdminController {
-  static get inject() { return [StorageService, BatchService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [BatchService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(storageService, batchService, clientDataMappingService, pageRenderer) {
-    this.storageService = storageService;
+  constructor(batchService, clientDataMappingService, pageRenderer) {
     this.batchService = batchService;
     this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
@@ -22,13 +20,11 @@ class AdminController {
     const { user } = req;
 
     const [
-      storagePlans,
       lastDocumentRegenerationBatch,
       lastDocumentValidationBatch,
       lastCdnResourcesConsolidationBatch,
       lastCdnUploadDirectoryCreationBatch
     ] = await Promise.all([
-      this.storageService.getAllStoragePlansWithAssignedUserCount(),
       this.batchService.getLastBatch(BATCH_TYPE.documentRegeneration),
       this.batchService.getLastBatch(BATCH_TYPE.documentValidation),
       this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation),
@@ -36,7 +32,6 @@ class AdminController {
     ]);
 
     const initialState = {
-      storagePlans,
       lastDocumentRegenerationBatch: lastDocumentRegenerationBatch
         ? await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user)
         : null,

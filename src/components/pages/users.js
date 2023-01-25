@@ -18,7 +18,7 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
-import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
+import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
 import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js';
 
 const logger = new Logger(import.meta.url);
@@ -517,7 +517,7 @@ Users.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     users: PropTypes.arrayOf(userShape).isRequired,
-    storagePlans: PropTypes.arrayOf(baseStoragePlanShape).isRequired
+    storagePlans: PropTypes.arrayOf(storagePlanShape).isRequired
   }).isRequired
 };
 

@@ -4,22 +4,20 @@ import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import SettingsTab from '../admin/settings-tab.js';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
+import { batchShape } from '../../ui/default-prop-types.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
-import { batchShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
 function Admin({ initialState, PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('admin');
   const [isCurrentTabDirty, setIsCurrentTabDirty] = useState(false);
   const [currentTab, setCurrentTab] = useState(request.query.tab || 'settings');
-  const [storagePlans, setStoragePlans] = useState(cloneDeep(initialState.storagePlans));
 
   useBeforeunload(event => {
     if (isCurrentTabDirty) {
@@ -56,10 +54,7 @@ function Admin({ initialState, PageTemplate }) {
       label: t('storagePlansTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <StoragePlansTab
-            initialStoragePlans={storagePlans}
-            onStoragePlansSaved={setStoragePlans}
-            />
+          <StoragePlansTab />
         </div>
       )
     },
@@ -102,8 +97,6 @@ function Admin({ initialState, PageTemplate }) {
 Admin.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    settings: settingsShape.isRequired,
-    storagePlans: PropTypes.arrayOf(storagePlanWithAssignedUserCountShape).isRequired,
     lastCdnResourcesConsolidationBatch: batchShape,
     lastDocumentRegenerationBatch: batchShape,
     lastDocumentValidationBatch: batchShape,

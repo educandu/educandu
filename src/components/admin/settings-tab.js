@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
-import { Button, Collapse, Spin, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
+import { Button, Collapse, Spin, Tabs } from 'antd';
 import { useService } from '../container-context.js';
 import DocumentSelector from '../document-selector.js';
 import { handleApiError } from '../../ui/error-helper.js';
