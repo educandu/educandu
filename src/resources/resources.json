@@ -1023,7 +1023,9 @@
       "newDocument": "New document",
       "initialAuthor": "Initial author",
       "filterPlaceholder": "Filter by title or initial author",
-      "badges": "Badges"
+      "badges": "Badges",
+      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
+      "allowedOpenContributionBadge_content": "Open contribution to this document's content is allowed"
     }
   },
   {
@@ -1034,7 +1036,9 @@
       "newDocument": "Neues Dokument",
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
-      "badges": "Kennzeichen"
+      "badges": "Kennzeichen",
+      "allowedOpenContributionBadge_metadataAndContent": "Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_content": "Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden"
     }
   },
   {
@@ -2499,9 +2503,6 @@
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
       "verifiedDocumentBadge": "This document was verified by a maintainer",
-      "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
-      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
-      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed",
       "duration": "Duration",
       "determiningDuration": "Determining media duration ...",
       "startTimecode": "Start time",
@@ -2659,9 +2660,6 @@
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
       "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
-      "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
-      "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
-      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden",
       "duration": "Zeitdauer",
       "determiningDuration": "Mediendauer wird ermittelt ...",
       "startTimecode": "Startzeit",

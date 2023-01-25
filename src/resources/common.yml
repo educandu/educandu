@@ -386,15 +386,6 @@ youtubeCopyrightNotice:
 verifiedDocumentBadge:
   en: This document was verified by a maintainer
   de: Dieses Dokument wurde von einem Maintainer überprüft
-allowedOpenContributionBadge_none:
-  en: Open contribution to this document is not allowed
-  de: Dieses Dokument kann nicht öffentlich bearbeitet werden
-allowedOpenContributionBadge_metadataAndContent:
-  en: Open contribution to this document's metadata and content is allowed
-  de: Dieses Dokument kann vollständig öffentlich bearbeitet werden
-allowedOpenContributionBadge_content:
-  en: Open contribution to this document's metadata is not allowed
-  de: Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden
 duration:
   en: Duration
   de: Zeitdauer
