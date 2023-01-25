@@ -10,7 +10,6 @@ import { useLocale } from '../../../src/components/locale-context.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import HomeIcon from '../../../src/components/icons/main-menu/home-icon.js';
 import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
-import UsersIcon from '../../../src/components/icons/main-menu/users-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
 import LogoutIcon from '../../../src/components/icons/main-menu/logout-icon.js';
 import LanguageIcon from '../../../src/components/icons/main-menu/language-icon.js';
@@ -47,13 +46,6 @@ function PageHeader({ onUiLanguageClick }) {
       icon: <DocumentsIcon />,
       onClick: () => { window.location = routes.getDocsUrl(); },
       showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
-    },
-    {
-      key: 'users',
-      label: t('pageNames:users'),
-      icon: <UsersIcon />,
-      onClick: () => { window.location = routes.getUsersUrl(); },
-      showWhen: hasUserPermission(user, permissions.EDIT_USERS)
     },
     {
       key: 'admin',

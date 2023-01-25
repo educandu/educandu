@@ -1,5 +1,4 @@
 import by from 'thenby';
-import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -7,29 +6,29 @@ import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
-import { Table, Tabs, Select, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
+import { Table, Tabs, Select, Input, Radio } from 'antd';
 import { replaceItem } from '../../utils/array-utils.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
-import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
 import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js';
 
 const logger = new Logger(import.meta.url);
 
 const { Search } = Input;
 const { Option } = Select;
+const RadioGroup = Radio.Group;
 
-const availableRoles = Object.values(ROLE);
-
-const TABS = {
+const VIEW = {
   internalUsers: 'internal-users',
+  externalUsers: 'external-users',
   storageUsers: 'storage-users',
   closedAccountUsers: 'closed-accounts'
 };
@@ -59,21 +58,44 @@ function createUserSubsets(users, storagePlans) {
   return { internalUsers, storageUsers, closedAccountUsers };
 }
 
-function Users({ initialState, PageTemplate }) {
-  const executingUser = useUser();
+function UsersTab() {
   const { locale } = useLocale();
+  const executingUser = useUser();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('users');
-  const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-
+  const [users, setUsers] = useState([]);
+  const { t } = useTranslation('usersTab');
   const [isSaving, setIsSaving] = useState(false);
-  const [users, setUsers] = useState(initialState.users);
   const [filterText, setFilterText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [storagePlans, setStoragePlans] = useState([]);
+  const [storageUsers, setStorageUsers] = useState([]);
   const [usersById, setUsersById] = useState(new Map());
   const [internalUsers, setInternalUsers] = useState([]);
-  const [storageUsers, setStorageUsers] = useState([]);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [closedAccountUsers, setClosedAccountUsers] = useState([]);
+  const [currentView, setCurrentView] = useState(VIEW.internalUsers);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+
+  const refreshData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [userApiResponse, currentStoragePlans] = await Promise.all([
+        userApiClient.getUsers(),
+        storageApiClient.getAllStoragePlans(false)
+      ]);
+      setUsers(userApiResponse.users);
+      setStoragePlans(currentStoragePlans);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userApiClient, storageApiClient, t]);
+
+  useEffect(() => {
+    refreshData();
+  }, [refreshData]);
 
   useEffect(() => {
     setUsersById(new Map(users.map(user => [user._id, user])));
@@ -86,11 +108,11 @@ function Users({ initialState, PageTemplate }) {
       })
       : users;
 
-    const subsets = createUserSubsets(filteredUsers, initialState.storagePlans);
+    const subsets = createUserSubsets(filteredUsers, storagePlans);
     setInternalUsers(subsets.internalUsers);
     setStorageUsers(subsets.storageUsers);
     setClosedAccountUsers(subsets.closedAccountUsers);
-  }, [users, filterText, initialState.storagePlans]);
+  }, [users, storagePlans, filterText]);
 
   const handleRoleChange = async (user, newRoles) => {
     const oldRoles = user.roles;
@@ -227,10 +249,6 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const handleFilterTextChange = event => {
-    setFilterText(event.target.value);
-  };
-
   const renderDisplayName = (displayName, user) => {
     return <a href={routes.getUserUrl(user._id)}>{displayName}</a>;
   };
@@ -240,7 +258,7 @@ function Users({ initialState, PageTemplate }) {
   };
 
   const renderRoleTags = (_, user) => {
-    return availableRoles.map(role => {
+    return Object.values(ROLE).map(role => {
       return (
         <UserRoleTagEditor
           key={role}
@@ -260,17 +278,17 @@ function Users({ initialState, PageTemplate }) {
     return (
       <Select
         size="small"
-        className="UsersPage-storagePlanSelect"
+        className="UsersTab-storagePlanSelect"
         placeholder={t('selectPlan')}
         value={user.storage.planId}
         onChange={value => handleStoragePlanChange(user, value)}
         allowClear
         >
-        {initialState.storagePlans.map(plan => (
+        {storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
-            <div className="UsersPage-storagePlanOption">
+            <div className="UsersTab-storagePlanOption">
               <div>{plan.name}</div>
-              <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
+              <div className="UsersTab-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
             </div>
           </Option>
         ))}
@@ -290,7 +308,7 @@ function Users({ initialState, PageTemplate }) {
     }
 
     return (
-      <ol className="UsersPage-reminders">
+      <ol className="UsersTab-reminders">
         {user.storage.reminders.map(reminder => (
           <li key={reminder.timestamp}>
             {formatDate(reminder.timestamp)} ({usersById.get(reminder.createdBy)?.displayName || t('common:unknown')})
@@ -302,16 +320,16 @@ function Users({ initialState, PageTemplate }) {
 
   const renderActions = (_, user) => {
     return (
-      <div className="UsersPage-actions">
-        <a className="UsersPage-actionButton" onClick={() => handleAddReminderClick(user)}>
+      <div className="UsersTab-actions">
+        <a className="UsersTab-actionButton" onClick={() => handleAddReminderClick(user)}>
           {t('addReminder')}
         </a>
         {!!user.storage.reminders.length && (
-        <a className="UsersPage-actionButton" onClick={() => handleRemoveRemindersClick(user)}>
+        <a className="UsersTab-actionButton" onClick={() => handleRemoveRemindersClick(user)}>
           {t('removeAllReminders')}
         </a>
         )}
-        <a className="UsersPage-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(user)}>
+        <a className="UsersTab-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(user)}>
           {t('deleteAllOwnedRooms')}
         </a>
       </div>
@@ -329,39 +347,45 @@ function Users({ initialState, PageTemplate }) {
       key: 'displayName',
       sorter: by(x => x.displayName, { ignoreCase: true }),
       render: renderDisplayName
-    }, {
+    },
+    {
       title: () => t('common:email'),
       dataIndex: 'email',
       key: 'email',
       render: renderEmail,
       sorter: by(x => x.email, { ignoreCase: true })
-    }, {
+    },
+    {
       title: () => t('expires'),
       dataIndex: 'expiresOn',
       key: 'expiresOn',
       sorter: by(x => x.expiresOn || ''),
       render: expiresOn => formatDate(expiresOn),
       responsive: ['lg']
-    }, {
+    },
+    {
       title: () => t('lastLogIn'),
       dataIndex: 'lastLoggedInOn',
       key: 'lastLoggedInOn',
       sorter: by(x => x.lastLoggedInOn || ''),
       render: lastLoggedInOn => formatDate(lastLoggedInOn),
       responsive: ['lg']
-    }, {
+    },
+    {
       title: () => t('accountLocked'),
       dataIndex: 'accountLockedOn',
       key: 'accountLockedOn',
       sorter: by(x => x.accountLockedOn || ''),
       render: renderAccountLockedOn,
       responsive: ['md']
-    }, {
+    },
+    {
       title: () => t('roles'),
       dataIndex: 'roles',
       key: 'roles',
       render: renderRoleTags
-    }, {
+    },
+    {
       title: () => t('common:storage'),
       dataIndex: 'storage',
       key: 'storage',
@@ -378,20 +402,23 @@ function Users({ initialState, PageTemplate }) {
       key: 'displayName',
       sorter: by(x => x.displayName, { ignoreCase: true }),
       render: renderDisplayName
-    }, {
+    },
+    {
       title: () => t('common:email'),
       dataIndex: 'email',
       key: 'email',
       render: renderEmail,
       sorter: by(x => x.email, { ignoreCase: true })
-    }, {
+    },
+    {
       title: () => t('common:storage'),
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
       sorter: by(x => x.storagePlan?.name || '', { ignoreCase: true }),
       responsive: ['md']
-    }, {
+    },
+    {
       title: () => t('storageSpace'),
       dataIndex: 'storageSpace',
       key: 'storageSpace',
@@ -408,14 +435,16 @@ function Users({ initialState, PageTemplate }) {
         return x.storage.usedBytes / x.storagePlan.maxBytes;
       }),
       responsive: ['md']
-    }, {
+    },
+    {
       title: () => t('reminders'),
       dataIndex: 'reminders',
       key: 'reminders',
       render: renderReminders,
       sorter: by(x => x.reminders.length),
       responsive: ['lg']
-    }, {
+    },
+    {
       title: () => t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
@@ -433,6 +462,14 @@ function Users({ initialState, PageTemplate }) {
       render: renderDisplayName
     },
     {
+      title: () => t('common:email'),
+      dataIndex: 'email',
+      key: 'email',
+      render: renderEmail,
+      sorter: by(x => x.email, { ignoreCase: true })
+    },
+    {
+
       title: () => t('accountClosedOn'),
       dataIndex: 'accountClosedOn',
       key: 'accountClosedOn',
@@ -441,84 +478,80 @@ function Users({ initialState, PageTemplate }) {
     }
   ];
 
+  const renderTabChildren = (dataSource, columns) => (
+    <div className="Tabs-tabPane Tabs-tabPane--noIndentation">
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        rowKey="_id"
+        size="middle"
+        loading={{ size: 'large', spinning: isLoading || isSaving, delay: 500 }}
+        bordered
+        />
+    </div>
+  );
+
+  const views = [
+    {
+      key: VIEW.internalUsers,
+      value: VIEW.internalUsers,
+      label: t('internalUsers'),
+      children: renderTabChildren(internalUsers, internalUserTableColumns)
+    },
+    {
+      key: VIEW.externalUsers,
+      value: VIEW.externalUsers,
+      label: t('externalUsers'),
+      children: renderTabChildren(internalUsers, internalUserTableColumns)
+    },
+    {
+      key: VIEW.storageUsers,
+      value: VIEW.storageUsers,
+      label: t('storageUsers'),
+      children: renderTabChildren(storageUsers, storageUserTableColumns)
+    },
+    {
+      key: VIEW.closedAccountUsers,
+      value: VIEW.closedAccountUsers,
+      label: t('closedAccountUsers'),
+      children: renderTabChildren(closedAccountUsers, closedAccountUserTableColumns)
+    }
+  ];
+
   return (
-    <PageTemplate>
-      <div className="UsersPage">
-        <h1>{t('pageNames:users')}</h1>
+    <div className="UsersTab">
+      <div className="UsersTab-header">
+        <RadioGroup
+          className="UsersTab-viewSwitcher UsersTab-viewSwitcher--wide"
+          options={views}
+          value={currentView}
+          onChange={event => setCurrentView(event.target.value)}
+          optionType="button"
+          buttonStyle="solid"
+          />
+        <Select
+          className="UsersTab-viewSwitcher UsersTab-viewSwitcher--narrow"
+          options={views}
+          value={currentView}
+          onChange={value => setCurrentView(value)}
+          />
         <Search
-          size="large"
-          className="UsersPage-filter"
+          className="UsersTab-filter"
           value={filterText}
           enterButton={<SearchOutlined />}
-          onChange={handleFilterTextChange}
+          onChange={event => setFilterText(event.target.value)}
           placeholder={t('filterPlaceholder')}
           />
-        <Tabs
-          className="Tabs Tabs--smallPadding"
-          defaultActiveKey={TABS.internalUsers}
-          type="line"
-          size="middle"
-          disabled={isSaving}
-          items={[
-            {
-              label: t('internalUsers'),
-              key: TABS.internalUsers,
-              children: (
-                <div className="Tabs-tabPane">
-                  <Table
-                    dataSource={internalUsers}
-                    columns={internalUserTableColumns}
-                    rowKey="_id"
-                    size="middle"
-                    loading={isSaving}
-                    bordered
-                    />
-                </div>
-              )
-            },
-            {
-              label: t('storageUsers'),
-              key: TABS.storageUsers,
-              children: (
-                <div className="Tabs-tabPane">
-                  <Table
-                    dataSource={storageUsers}
-                    columns={storageUserTableColumns}
-                    rowKey="_id"
-                    size="middle"
-                    bordered
-                    />
-                </div>
-              )
-            },
-            {
-              label: t('closedAccountUsers'),
-              key: TABS.closedAccountUsers,
-              children: (
-                <div className="Tabs-tabPane">
-                  <Table
-                    dataSource={closedAccountUsers}
-                    columns={closedAccountUserTableColumns}
-                    rowKey="_id"
-                    size="middle"
-                    bordered
-                    />
-                </div>
-              )
-            }
-          ]}
-          />
       </div>
-    </PageTemplate>
+      <Tabs
+        className="Tabs Tabs--smallPadding"
+        activeKey={currentView}
+        disabled={isSaving}
+        items={views}
+        renderTabBar={() => null}
+        />
+    </div>
   );
 }
 
-Users.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    users: PropTypes.arrayOf(userShape).isRequired,
-    storagePlans: PropTypes.arrayOf(storagePlanShape).isRequired
-  }).isRequired
-};
-
-export default Users;
+export default UsersTab;

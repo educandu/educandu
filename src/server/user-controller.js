@@ -225,12 +225,6 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
   }
 
-  async handleGetUsersPage(req, res) {
-    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
-    const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
-  }
-
   async handleGetUsers(req, res) {
     const users = await this.userService.getAllUsers();
     const mappedUsers = this.clientDataMappingService.mapUsersForAdminArea(users);
@@ -591,8 +585,6 @@ class UserController {
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
     router.get('/connect-external-account', (req, res) => this.handleGetConnectExternalAccountPage(req, res));
-
-    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }
 
   registerApi(router) {

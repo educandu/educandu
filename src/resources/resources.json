@@ -184,6 +184,64 @@
     }
   },
   {
+    "namespace": "usersTab",
+    "language": "en",
+    "resources": {
+      "lastLogIn": "Last log in",
+      "expires": "Expires",
+      "accountLocked": "Locked",
+      "roles": "Roles",
+      "firstName": "First name(s)",
+      "lastName": "Last name",
+      "street": "Street",
+      "streetSupplement": "Street supplement",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "internalUsers": "Internal users",
+      "externalUsers": "External users",
+      "storageUsers": "Users with storage",
+      "closedAccountUsers": "Closed accounts",
+      "selectPlan": "Select plan",
+      "addReminder": "Add reminder",
+      "removeAllReminders": "Remove reminders",
+      "deleteAllOwnedRooms": "Delete rooms",
+      "storageSpace": "Storage space",
+      "reminders": "Reminders",
+      "accountClosedOn": "Account closing date",
+      "filterPlaceholder": "Filter by display name or email"
+    }
+  },
+  {
+    "namespace": "usersTab",
+    "language": "de",
+    "resources": {
+      "lastLogIn": "Zuletzt angemeldet",
+      "expires": "Verfallsdatum",
+      "accountLocked": "Ausgesperrt",
+      "roles": "Rollen",
+      "firstName": "Vorname(n)",
+      "lastName": "Nachname",
+      "street": "Straße",
+      "streetSupplement": "Straße (Zusatz)",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "country": "Land",
+      "internalUsers": "Interne Benutzer",
+      "externalUsers": "Externe Benutzer",
+      "storageUsers": "Benutzer mit Speicher",
+      "closedAccountUsers": "Geschlossene Kontos",
+      "selectPlan": "Plan auswählen",
+      "addReminder": "Erinnerung hinzufügen",
+      "removeAllReminders": "Erinnerungen entfernen",
+      "deleteAllOwnedRooms": "Räume löschen",
+      "storageSpace": "Speicherplatz",
+      "reminders": "Erinnerungen",
+      "accountClosedOn": "Kontoschlussdatum",
+      "filterPlaceholder": "Nach Anzeigename oder E-Mail filtern"
+    }
+  },
+  {
     "namespace": "blockedLoginError",
     "language": "en",
     "resources": {
@@ -1191,62 +1249,6 @@
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
       "documentsHeadline": "Letzte erstellte Dokumente"
-    }
-  },
-  {
-    "namespace": "users",
-    "language": "en",
-    "resources": {
-      "lastLogIn": "Last log in",
-      "expires": "Expires",
-      "accountLocked": "Locked",
-      "roles": "Roles",
-      "firstName": "First name(s)",
-      "lastName": "Last name",
-      "street": "Street",
-      "streetSupplement": "Street supplement",
-      "postalCode": "Postal code",
-      "city": "City",
-      "country": "Country",
-      "internalUsers": "Internal users",
-      "storageUsers": "Users with storage",
-      "closedAccountUsers": "Closed accounts",
-      "selectPlan": "Select plan",
-      "addReminder": "Add reminder",
-      "removeAllReminders": "Remove reminders",
-      "deleteAllOwnedRooms": "Delete rooms",
-      "storageSpace": "Storage space",
-      "reminders": "Reminders",
-      "accountClosedOn": "Account closing date",
-      "filterPlaceholder": "Filter by display name or email"
-    }
-  },
-  {
-    "namespace": "users",
-    "language": "de",
-    "resources": {
-      "lastLogIn": "Zuletzt angemeldet",
-      "expires": "Verfallsdatum",
-      "accountLocked": "Ausgesperrt",
-      "roles": "Rollen",
-      "firstName": "Vorname(n)",
-      "lastName": "Nachname",
-      "street": "Straße",
-      "streetSupplement": "Straße (Zusatz)",
-      "postalCode": "Postleitzahl",
-      "city": "Ort",
-      "country": "Land",
-      "internalUsers": "Interne Benutzer",
-      "storageUsers": "Benutzer mit Speicher",
-      "closedAccountUsers": "Geschlossene Kontos",
-      "selectPlan": "Plan auswählen",
-      "addReminder": "Erinnerung hinzufügen",
-      "removeAllReminders": "Erinnerungen entfernen",
-      "deleteAllOwnedRooms": "Räume löschen",
-      "storageSpace": "Speicherplatz",
-      "reminders": "Erinnerungen",
-      "accountClosedOn": "Kontoschlussdatum",
-      "filterPlaceholder": "Nach Anzeigename oder E-Mail filtern"
     }
   },
   {
@@ -2712,7 +2714,6 @@
     "language": "en",
     "resources": {
       "home": "Home",
-      "users": "Users",
       "dashboard": "Dashboard",
       "admin": "Administration",
       "batches": "Batch details",
@@ -2724,7 +2725,6 @@
     "language": "de",
     "resources": {
       "home": "Home",
-      "users": "Benutzer",
       "dashboard": "Dashboard",
       "admin": "Verwaltung",
       "batches": "Chargen-Details",

@@ -10,7 +10,6 @@ import { useSettings } from './settings-context.js';
 import { QuestionOutlined } from '@ant-design/icons';
 import MenuIcon from './icons/main-menu/menu-icon.js';
 import HomeIcon from './icons/main-menu/home-icon.js';
-import UsersIcon from './icons/main-menu/users-icon.js';
 import DefaultHeaderLogo from './default-header-logo.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
@@ -47,13 +46,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       icon: <DocumentsIcon />,
       onClick: () => { window.location = routes.getDocsUrl(); },
       showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
-    },
-    {
-      key: 'users',
-      label: t('pageNames:users'),
-      icon: <UsersIcon />,
-      onClick: () => { window.location = routes.getUsersUrl(); },
-      showWhen: hasUserPermission(user, permissions.EDIT_USERS)
     },
     {
       key: 'admin',

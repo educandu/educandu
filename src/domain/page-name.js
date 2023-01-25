@@ -5,7 +5,6 @@ export const PAGE_NAME = {
   user: 'user',
   index: 'index',
   login: 'login',
-  users: 'users',
   admin: 'admin',
   tests: 'tests',
   search: 'search',

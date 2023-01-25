@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
+import UsersTab from '../admin/users-tab.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import SettingsTab from '../admin/settings-tab.js';
@@ -14,6 +15,7 @@ import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 
 const TABS = {
   settings: 'settings',
+  users: 'users',
   storagePlans: 'storage-plans',
   technicalMaintenance: 'technical-maintenance'
 };
@@ -57,6 +59,15 @@ function Admin({ PageTemplate }) {
       )
     },
     {
+      key: TABS.users,
+      label: t('usersTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <UsersTab />
+        </div>
+      )
+    },
+    {
       key: TABS.storagePlans,
       label: t('storagePlansTabTitle'),
       children: (
@@ -83,6 +94,7 @@ function Admin({ PageTemplate }) {
         <Restricted
           to={[
             permissions.MANAGE_SETTINGS,
+            permissions.EDIT_USERS,
             permissions.MANAGE_STORAGE_PLANS,
             permissions.MANAGE_BATCHES
           ]}

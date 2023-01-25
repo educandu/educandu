@@ -4,7 +4,6 @@ import escapeStringRegexp from 'escape-string-regexp';
 const homePath = '/';
 const docsPath = '/docs';
 const adminPath = '/admin';
-const usersPath = '/users';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
@@ -28,10 +27,6 @@ const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0
 
 function getDocsUrl() {
   return docsPath;
-}
-
-function getUsersUrl() {
-  return usersPath;
 }
 
 function getUserUrl(id) {
@@ -145,7 +140,6 @@ function isCompletePasswordResetPrefixPath(path) {
 export default {
   getUserUrl,
   getDocsUrl,
-  getUsersUrl,
   getDocUrl,
   getDocumentRevisionUrl,
   getRoomUrl,
