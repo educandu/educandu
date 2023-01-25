@@ -8,16 +8,23 @@ import { useRequest } from '../request-context.js';
 import SettingsTab from '../admin/settings-tab.js';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
-import { batchShape } from '../../ui/default-prop-types.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 
-function Admin({ initialState, PageTemplate }) {
+const TABS = {
+  settings: 'settings',
+  storagePlans: 'storage-plans',
+  technicalMaintenance: 'technical-maintenance'
+};
+
+const determineTab = query => Object.values(TABS).find(val => val === query) || TABS.settings;
+
+function Admin({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('admin');
   const [isCurrentTabDirty, setIsCurrentTabDirty] = useState(false);
-  const [currentTab, setCurrentTab] = useState(request.query.tab || 'settings');
+  const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
 
   useBeforeunload(event => {
     if (isCurrentTabDirty) {
@@ -41,7 +48,7 @@ function Admin({ initialState, PageTemplate }) {
 
   const items = [
     {
-      key: 'settings',
+      key: TABS.settings,
       label: t('settingsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
@@ -50,7 +57,7 @@ function Admin({ initialState, PageTemplate }) {
       )
     },
     {
-      key: 'storage-plans',
+      key: TABS.storagePlans,
       label: t('storagePlansTabTitle'),
       children: (
         <div className="Tabs-tabPane">
@@ -59,16 +66,11 @@ function Admin({ initialState, PageTemplate }) {
       )
     },
     {
-      key: 'technical-maintenance',
+      key: TABS.technicalMaintenance,
       label: t('technicalMaintenanceTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <TechnicalMaintenanceTab
-            lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
-            lastDocumentValidationBatch={initialState.lastDocumentValidationBatch}
-            lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
-            lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
-            />
+          <TechnicalMaintenanceTab />
         </div>
       )
     }
@@ -78,7 +80,13 @@ function Admin({ initialState, PageTemplate }) {
     <PageTemplate>
       <div className="AdminPage">
         <h1>{t('pageNames:admin')}</h1>
-        <Restricted to={[permissions.MANAGE_SETTINGS, permissions.MANAGE_STORAGE_PLANS]}>
+        <Restricted
+          to={[
+            permissions.MANAGE_SETTINGS,
+            permissions.MANAGE_STORAGE_PLANS,
+            permissions.MANAGE_BATCHES
+          ]}
+          >
           <Tabs
             className="Tabs"
             type="line"
@@ -95,13 +103,7 @@ function Admin({ initialState, PageTemplate }) {
 }
 
 Admin.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    lastCdnResourcesConsolidationBatch: batchShape,
-    lastDocumentRegenerationBatch: batchShape,
-    lastDocumentValidationBatch: batchShape,
-    lastCdnUploadDirectoryCreationBatch: batchShape
-  }).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
 export default Admin;

@@ -320,8 +320,6 @@ export const commonBatchProps = {
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
 };
 
-export const batchShape = PropTypes.shape(commonBatchProps);
-
 export const documentValidationBatchDetailsShape = PropTypes.shape({
   ...commonBatchProps,
   batchType: PropTypes.oneOf([BATCH_TYPE.documentValidation]).isRequired,

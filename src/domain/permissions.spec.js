@@ -116,7 +116,7 @@ describe('permissions', () => {
           permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.ADMIN,
           permissions.EDIT_USERS,
-          permissions.VIEW_BATCHES,
+          permissions.MANAGE_BATCHES,
           permissions.MIGRATE_DATA,
           permissions.MANAGE_SETTINGS,
           permissions.MANAGE_STORAGE_PLANS,

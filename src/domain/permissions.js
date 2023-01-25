@@ -12,7 +12,7 @@ const EDIT_USERS = 'edit-users';
 const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
 const MIGRATE_DATA = 'migrate-data';
-const VIEW_BATCHES = 'view-batches';
+const MANAGE_BATCHES = 'manage-batches';
 const SEE_USER_EMAIL = 'see-user-email';
 const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
@@ -61,7 +61,7 @@ const adminPermissions = [
     ...maintainerPermissions,
     ADMIN,
     EDIT_USERS,
-    VIEW_BATCHES,
+    MANAGE_BATCHES,
     MIGRATE_DATA,
     MANAGE_SETTINGS,
     MANAGE_STORAGE_PLANS,
@@ -96,7 +96,7 @@ export default {
   DELETE_OWN_FILES,
   CREATE_FILE,
   EDIT_USERS,
-  VIEW_BATCHES,
+  MANAGE_BATCHES,
   MANAGE_SETTINGS,
   MANAGE_STORAGE_PLANS,
   HARD_DELETE_SECTION,

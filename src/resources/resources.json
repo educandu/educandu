@@ -154,14 +154,14 @@
     "language": "en",
     "resources": {
       "tabInfo": "You can trigger different tasks from here, in order to execute technical maintenance over the database and the internal storage.",
-      "documentsValidationHeader": "Documents validation",
-      "documentsValidationDescription": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
-      "documentsRegenerationHeader": "Documents regeneration",
-      "documentsRegenerationDescription": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
-      "cdnResourcesConsolidationHeader": "Consolidation of resources within the internal storage",
-      "cdnResourcesConsolidationDescription": "Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
-      "cdnDirectoriesCreationHeader": "Creation of upload directories within the internal storage",
-      "cdnDirectoriesCreationDescription": "Ensure the internal storage contains a public upload directory for each existing document (including private documents in rooms). This task updates the internal storage by adding the missing directories.",
+      "batchSectionHeader_document-regeneration": "Documents regeneration",
+      "batchSectionDescription_document-regeneration": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
+      "batchSectionHeader_document-validation": "Documents validation",
+      "batchSectionDescription_document-validation": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
+      "batchSectionHeader_cdn-resources-consolidation": "Consolidation of resources within the internal storage",
+      "batchSectionDescription_cdn-resources-consolidation": "Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
+      "batchSectionHeader_cdn-upload-directory-creation": "Creation of upload directories within the internal storage",
+      "batchSectionDescription_cdn-upload-directory-creation": "Ensure the internal storage contains a public upload directory for each existing document (including private documents in rooms). This task updates the internal storage by adding the missing directories.",
       "lastExecution": "Last execution",
       "start": "Start task"
     }
@@ -171,14 +171,14 @@
     "language": "de",
     "resources": {
       "tabInfo": "Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des internen Speichers starten.",
-      "documentsValidationHeader": "Dokumente validieren",
-      "documentsValidationDescription": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.",
-      "documentsRegenerationHeader": "Dokumente neu erstellen",
-      "documentsRegenerationDescription": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.",
-      "cdnResourcesConsolidationHeader": "Ressourcen auf dem internen Speicher konsolidieren",
-      "cdnResourcesConsolidationDescription": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.",
-      "cdnDirectoriesCreationHeader": "Upload-Verzichnisse auf dem internen Speicher erstellen",
-      "cdnDirectoriesCreationDescription": "Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im internen Speicher existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.",
+      "batchSectionHeader_document-regeneration": "Dokumente neu erstellen",
+      "batchSectionDescription_document-regeneration": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.",
+      "batchSectionHeader_document-validation": "Dokumente validieren",
+      "batchSectionDescription_document-validation": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.",
+      "batchSectionHeader_cdn-resources-consolidation": "Ressourcen auf dem internen Speicher konsolidieren",
+      "batchSectionDescription_cdn-resources-consolidation": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.",
+      "batchSectionHeader_cdn-upload-directory-creation": "Upload-Verzichnisse auf dem internen Speicher erstellen",
+      "batchSectionDescription_cdn-upload-directory-creation": "Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im internen Speicher existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.",
       "lastExecution": "Letzte Ausführung",
       "start": "Task starten"
     }
@@ -846,6 +846,7 @@
     "language": "en",
     "resources": {
       "settingsTabTitle": "Settings",
+      "usersTabTitle": "Users",
       "storagePlansTabTitle": "Storage plans",
       "technicalMaintenanceTabTitle": "Technical maintenance"
     }
@@ -855,6 +856,7 @@
     "language": "de",
     "resources": {
       "settingsTabTitle": "Einstellungen",
+      "usersTabTitle": "Benutzer",
       "storagePlansTabTitle": "Speicherpläne",
       "technicalMaintenanceTabTitle": "Technische Instandhaltung"
     }
