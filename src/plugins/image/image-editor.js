@@ -168,7 +168,7 @@ function ImageEditor({ content, onContentChanged }) {
 
   return (
     <div className="ImageEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput
             value={sourceUrl}

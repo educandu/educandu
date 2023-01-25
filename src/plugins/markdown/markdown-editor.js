@@ -26,7 +26,7 @@ export default function MarkdownEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form>
+      <Form labelAlign="left">
         <Form.Item label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChanged} renderAnchors />
         </Form.Item>

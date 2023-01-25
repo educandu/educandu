@@ -43,7 +43,7 @@ function IframeEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem
           {...FORM_ITEM_LAYOUT}
           label={t('common:url')}

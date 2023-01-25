@@ -120,7 +120,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
 
   return (
     <div className="DiagramNetEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         {!!image && (
           <Form.Item label={t('name')} {...FORM_ITEM_LAYOUT}>
             <img className="DiagramNetEditor-preview" src={image} />

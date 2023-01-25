@@ -27,7 +27,7 @@ function TableEditor({ content, onContentChanged }) {
 
   return (
     <div className="TableEditor">
-      <Form>
+      <Form labelAlign="left">
         <Form.Item label={t('columnDistribution')} {...FORM_ITEM_LAYOUT}>
           <Radio.Group value={columnDistribution} onChange={handleColumnDistributionChange}>
             <Radio.Button value={COLUMN_DISTRIBUTION.automatic}>{t('columnDistribution_automatic')}</Radio.Button>

@@ -168,7 +168,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>

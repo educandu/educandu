@@ -87,7 +87,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <Divider plain>{t('chooseImageDividerText')}</Divider>
         <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />

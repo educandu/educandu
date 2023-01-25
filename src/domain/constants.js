@@ -139,24 +139,38 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
 };
 
 export const FORM_ITEM_LAYOUT = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
+  labelCol: {
+    xl: { span: 3, offset: 3 },
+    lg: { span: 3, offset: 2 },
+    sm: { span: 4, offset: 0 }
+  },
+  wrapperCol: {
+    xl: { span: 15 },
+    lg: { span: 16 },
+    sm: { span: 19 }
+  }
 };
 
-export const TAIL_FORM_ITEM_LAYOUT = {
+export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
   wrapperCol: {
-    xs: { span: 18, offset: 0 },
-    sm: { span: 14, offset: 4 }
+    xl: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.xl.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.xl.span + FORM_ITEM_LAYOUT.labelCol.xl.offset
+    },
+    lg: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.lg.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.lg.span + FORM_ITEM_LAYOUT.labelCol.lg.offset
+    },
+    sm: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.sm.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.sm.span + FORM_ITEM_LAYOUT.labelCol.sm.offset
+    }
   }
 };
 
 export const FORM_ITEM_LAYOUT_VERTICAL = {
   labelCol: { span: 24 },
   wrapperCol: { span: 24 }
-};
-
-export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
-  wrapperCol: { span: 14, offset: 4 }
 };
 
 export const DOCUMENT_PARTIAL_SEARCH_THRESHOLD = 3;

@@ -179,7 +179,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   return (
     <div className="MediaSlideshowEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <MainTrackEditor
           content={content}
           useShowVideo={false}

@@ -66,7 +66,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form>
+      <Form labelAlign="left">
         <FormItem label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
         </FormItem>
