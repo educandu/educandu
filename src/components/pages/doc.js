@@ -91,7 +91,8 @@ function Doc({ initialState, PageTemplate }) {
   const { room } = initialState;
 
   const ensureControlPanelPosition = useCallback(() => {
-    setControlPanelTopInPx(window.innerHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    const windowHeight = Math.min(window.innerHeight, window.outerHeight);
+    setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
   }, [controlPanelsRef]);
 
   useOnComponentMounted(() => {
@@ -299,6 +300,7 @@ function Doc({ initialState, PageTemplate }) {
     };
     const newSections = insertItemAt(currentSections, newSection, index);
     setCurrentSections(newSections);
+    setEditedSectionKeys(keys => ensureIsIncluded(keys, newSection.key));
     setIsDirty(true);
   };
 
@@ -313,6 +315,7 @@ function Doc({ initialState, PageTemplate }) {
     if (invalidSectionKeys.includes(originalSection.key)) {
       setInvalidSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
     }
+    setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
   };
 
   const handleSectionCopyToClipboard = async index => {
