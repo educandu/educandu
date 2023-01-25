@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
+import { RESOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useEffect, useRef } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import AudioIcon from '../../components/icons/general/audio-icon.js';
-import { RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
-import Html5Player from '../../components/media-player/html5-player.js';
-import YoutubePlayer from '../../components/media-player/youtube-player.js';
-import { getAccessibleUrl, getSourceType } from '../../utils/source-utils.js';
+import MediaPlayer from '../../components/media-player/media-player.js';
 
 function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia }) {
-  const playerRef = useRef();
+  const mediaPlayerRef = useRef();
   const isMounted = useIsMounted();
   const timeoutToPlayMedia = useRef();
   const clientConfig = useService(ClientConfig);
@@ -24,31 +23,30 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
     clearTimeout(timeoutToPlayMedia.current);
     timeoutToPlayMedia.current = null;
 
-    if (playerRef.current) {
+    if (mediaPlayerRef.current) {
       if (!playMedia) {
-        playerRef.current.pause();
+        mediaPlayerRef.current.pause();
         return;
       }
 
-      playerRef.current.seekToTimecode(0);
+      mediaPlayerRef.current.seekToTimecode(0);
       timeoutToPlayMedia.current = setTimeout(() => {
         if (isMounted.current && playMedia) {
-          playerRef.current.play();
+          mediaPlayerRef.current.play();
         }
       }, 500);
     }
-  }, [playerRef, playMedia, isMounted]);
+  }, [mediaPlayerRef, playMedia, isMounted]);
 
   const renderMediaPlayer = audioOnly => {
-    const sourceType = getSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const Player = sourceType === SOURCE_TYPE.youtube ? YoutubePlayer : Html5Player;
-
     return (
-      <Player
+      <MediaPlayer
         audioOnly={audioOnly}
         sourceUrl={accessibleUrl}
+        renderControls={() => null}
         playbackRange={playbackRange}
-        playerRef={playerRef}
+        renderProgressBar={() => null}
+        mediaPlayerRef={mediaPlayerRef}
         />
     );
   };

@@ -1,8 +1,8 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import { useStableCallback } from '../../ui/hooks.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import { memoAndTransformProps } from '../../ui/react-helper.js';
+import { useOnComponentUnmount, useStableCallback } from '../../ui/hooks.js';
 import { useMediaDurations, useYoutubeThumbnailUrl } from './media-hooks.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
@@ -265,19 +265,25 @@ function YoutubePlayer({
   }, [handlePlaying, handlePause, handleEnded, handleProgress]);
 
   useEffect(() => {
-    if (player) {
-      player.once('ready', handleReady);
-
-      player.off('progress', handleProgress);
-      player.on('progress', handleProgress);
-
-      player.off('timeupdate', handleProgress);
-      player.on('timeupdate', handleProgress);
-
-      player.off('statechange', handleYoutubeStateChange);
-      player.on('statechange', handleYoutubeStateChange);
+    if (!player) {
+      return () => {};
     }
+
+    player.on('ready', handleReady);
+    player.on('progress', handleProgress);
+    player.on('timeupdate', handleProgress);
+    player.on('statechange', handleYoutubeStateChange);
+    return () => {
+      player.off('ready', handleReady);
+      player.off('progress', handleProgress);
+      player.off('timeupdate', handleProgress);
+      player.off('statechange', handleYoutubeStateChange);
+    };
   }, [player, handleReady, handleProgress, handleYoutubeStateChange]);
+
+  useOnComponentUnmount(() => {
+    setProgressInterval(null);
+  });
 
   playerRef.current = useMemo(() => ({
     play: triggerPlay,
