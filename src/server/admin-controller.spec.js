@@ -8,7 +8,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 describe('admin-controller', () => {
   const sandbox = createSandbox();
 
-  let settingService;
   let storageService;
   let batchService;
   let clientDataMappingService;
@@ -21,7 +20,6 @@ describe('admin-controller', () => {
 
   beforeEach(() => {
     pageRenderer = {};
-    settingService = {};
     storageService = {};
     clientDataMappingService = {};
 
@@ -31,7 +29,7 @@ describe('admin-controller', () => {
 
     user = { _id: uniqueId.create() };
 
-    sut = new AdminController(settingService, storageService, batchService, clientDataMappingService, pageRenderer);
+    sut = new AdminController(storageService, batchService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {

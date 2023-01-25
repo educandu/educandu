@@ -18,7 +18,6 @@ function Admin({ initialState, PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('admin');
   const [isCurrentTabDirty, setIsCurrentTabDirty] = useState(false);
-  const [settings, setSettings] = useState(cloneDeep(initialState.settings));
   const [currentTab, setCurrentTab] = useState(request.query.tab || 'settings');
   const [storagePlans, setStoragePlans] = useState(cloneDeep(initialState.storagePlans));
 
@@ -48,11 +47,7 @@ function Admin({ initialState, PageTemplate }) {
       label: t('settingsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <SettingsTab
-            initialSettings={settings}
-            onSettingsSaved={setSettings}
-            onDirtyStateChange={setIsCurrentTabDirty}
-            />
+          <SettingsTab onDirtyStateChange={setIsCurrentTabDirty} />
         </div>
       )
     },
