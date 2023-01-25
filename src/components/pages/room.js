@@ -26,9 +26,9 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { ensureIsExcluded, swapItemsAt } from '../../utils/array-utils.js';
+import { Button, Tabs, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import { Button, Tabs, Card, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
@@ -439,25 +439,25 @@ export default function Room({ PageTemplate, initialState }) {
                 label: t('settingsTabTitle'),
                 children: (
                   <div className="Tabs-tabPane" >
-                    <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
+                    <div className="RoomPage-sectionHeadline">{t('roomMetadataHeadline')}</div>
+                    <section className="RoomPage-metadataSection">
                       <RoomMetadataForm
                         formRef={formRef}
                         room={room}
+                        editMode
                         onSubmit={handleRoomMetadataFormSubmitted}
                         onFieldsChange={handleRoomMetadataFormFieldsChanged}
-                        editMode
                         />
                       <Button
-                        className="RoomPage-cardEditButton"
                         type="primary"
-                        onClick={handleUpdateRoomClick}
                         disabled={isRoomUpdateButtonDisabled}
+                        onClick={handleUpdateRoomClick}
                         >
                         {t('common:update')}
                       </Button>
-                    </Card>
+                    </section>
                     <PermanentActionsCard
-                      className="RoomPage-card"
+                      className="RoomPage-permanentActionsCard"
                       actions={[
                         {
                           name: t('deleteRoomTitle'),

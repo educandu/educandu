@@ -22,9 +22,9 @@ thisWeek:
 deleteRoomButton:
   en: Delete room
   de: Raum löschen
-updateRoomCardTitle:
-  en: Update room metadata
-  de: Raum-Metadaten aktualisieren
+roomMetadataHeadline:
+  en: Room metadata
+  de: Raum-Metadaten
 updateRoomSuccessMessage:
   en: The room metadata was updated successfully.
   de: Die Raum-Metadaten wurden erfolgreich aktualisiert.
