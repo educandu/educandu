@@ -99,7 +99,7 @@ function TrackMixerEditor({
                 className="TrackMixerEditor-volumePresetSelector"
                 />
               <Tooltip title={t('manageVolumePresets')}>
-                <Button icon={<SettingOutlined />} onClick={handleVolumePresetsSettingsClick} />
+                <Button icon={<SettingOutlined />} type="primary" onClick={handleVolumePresetsSettingsClick} />
               </Tooltip>
             </div>
           </div>

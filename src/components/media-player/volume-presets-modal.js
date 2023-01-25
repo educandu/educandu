@@ -31,7 +31,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
     const { value } = event.target;
     setManagedVolumePresets(oldPresets => {
       const newPresets = cloneDeep(oldPresets);
-      newPresets[index].name = value;
+      newPresets[index].name = value.trim();
       return newPresets;
     });
     setIsDirty(true);
@@ -79,6 +79,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
           />
         <Input
           value={preset.name}
+          status={preset.name ? null : 'error'}
           onChange={event => handleNameChange(event, index)}
           />
         <DeleteButton
@@ -89,12 +90,21 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
     );
   };
 
+  const isModalOkButtonDisable = managedVolumePresets.some(preset => !preset.name.trim());
+
   return (
     <Modal
       title={t('modalTitle')}
       open={isOpen}
-      onOk={handleOk}
       onCancel={handleCancel}
+      footer={[
+        <Button key="cancel" onClick={handleCancel}>
+          {t('common:cancel')}
+        </Button>,
+        <Button key="ok" type="primary" disabled={isModalOkButtonDisable} onClick={handleOk}>
+          {t('common:ok')}
+        </Button>
+      ]}
       >
       <div className="u-modal-body">
         {managedVolumePresets.map(renderVolumePreset)}
