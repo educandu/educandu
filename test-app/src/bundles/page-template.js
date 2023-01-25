@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import PageHeader from './page-header.js';
 import PageFooter from './page-footer.js';
 import Alert from '../../../src/components/alert.js';
-import ConsentDrawer from '../../../src/components/consent-drawer.js';
+import ConsentDialog from '../../../src/components/consent-dialog.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
 
 function PageTemplate({ children, fullScreen, alerts }) {
@@ -55,7 +55,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
       </main>
       <PageFooter />
       <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
-      <ConsentDrawer />
+      <ConsentDialog />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import PageFooter from './page-footer.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../src/components/markdown.js';
 import HomePageIllustration from './home-page-illustration.js';
-import ConsentDrawer from '../../../src/components/consent-drawer.js';
+import ConsentDialog from '../../../src/components/consent-dialog.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
 
@@ -45,7 +45,7 @@ function HomePageTemplate({ children }) {
       </main>
       <PageFooter />
       <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
-      <ConsentDrawer />
+      <ConsentDialog />
     </div>
   );
 }
