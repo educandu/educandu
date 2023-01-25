@@ -1,11 +1,11 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import { Button, Spin } from 'antd';
 import Countdown from '../countdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
-import React, { Fragment, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { handleApiError } from '../../ui/error-helper.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { INVALID_ROOM_INVITATION_REASON } from '../../domain/constants.js';
@@ -14,54 +14,45 @@ const logger = new Logger(import.meta.url);
 
 function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const { t } = useTranslation('roomMembershipConfirmation');
-  const [hasConfirmed, setHasConfirmed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const { token, roomId, roomName, roomSlug, invalidInvitationReason } = initialState;
 
-  const handleConfirmButtonClick = async () => {
-    try {
-      setIsLoading(true);
-      await roomApiClient.confirmInvitation({ token });
-      setHasConfirmed(true);
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    } finally {
-      setIsLoading(false);
-    }
+  useEffect(() => {
+    (async () => {
+      if (!invalidInvitationReason && !confirmed) {
+        try {
+          await roomApiClient.confirmInvitation({ token });
+          setConfirmed(true);
+        } catch (error) {
+          handleApiError({ error, logger, t });
+        }
+      }
+    })();
+  }, [token, invalidInvitationReason, confirmed, t, roomApiClient]);
+
+  const redirectToRoom = () => {
+    window.location = routes.getRoomUrl(roomId, roomSlug);
   };
 
-  const renderConfirmationMessage = () => (
-    <Fragment>
-      <p>
-        <Trans t={t} i18nKey="invitationConfirmation" values={{ roomName }} components={[<b key="room-name-bold" />]} />
-      </p>
-      <p>
-        <Button type="primary" loading={isLoading} onClick={handleConfirmButtonClick}>
-          {t('joinButton')}
-        </Button>
-      </p>
-    </Fragment>
+  const renderSpinner = () => (
+    <Spin className="u-spin" tip={t('confirmationInProgress')} />
   );
 
-  const renderSuccessMessage = () => (
-    <Fragment>
-      <p>
-        <Trans t={t} i18nKey="confirmationSuccess" values={{ roomName }} components={[<b key="room-name-bold" />]} />
-      </p>
-      <Countdown isRunning seconds={10} onComplete={() => { window.location = routes.getRoomUrl(roomId, roomSlug); }}>
-        {seconds => (
-          <Trans
-            t={t}
-            i18nKey="redirectMessage"
-            values={{ roomName, seconds }}
-            components={[<a key="login-link" href={routes.getRoomUrl(roomId, roomSlug)} />]}
-            />
-        )}
-      </Countdown>
-    </Fragment>
-  );
+  const renderSuccessMessage = () => {
+    return (
+      <Fragment>
+        <p>
+          <Trans t={t} i18nKey="confirmationSuccess" values={{ roomName }} components={[<b key="room-name-bold" />]} />
+        </p>
+        <Countdown isRunning seconds={10} onComplete={redirectToRoom}>
+          {seconds => t('redirectMessage', { roomName, seconds })}
+        </Countdown>
+        <Button type="primary" onClick={redirectToRoom}>{t('common:enterRoom')}</Button>
+      </Fragment>
+    );
+  };
 
   const renderInvalidMessage = text => (
     <Fragment>
@@ -77,8 +68,8 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
           <SiteLogo readonly />
         </div>
         <div className="RoomMembershipConfirmationPage-message">
-          {!invalidInvitationReason && !hasConfirmed && renderConfirmationMessage()}
-          {!invalidInvitationReason && !!hasConfirmed && renderSuccessMessage()}
+          {!invalidInvitationReason && !confirmed && renderSpinner()}
+          {!invalidInvitationReason && !!confirmed && renderSuccessMessage()}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.token && renderInvalidMessage(t('invalidToken'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.user && renderInvalidMessage(t('invalidUser'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.room && renderInvalidMessage(t('invalidRoom'))}
