@@ -2,7 +2,6 @@ import React from 'react';
 import Info from '../../components/info.js';
 import { Form, Input, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { validateUrl } from '../../ui/validation.js';
 import StepSlider from '../../components/step-slider.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -19,8 +18,7 @@ function IframeEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidUrl = validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
-    onContentChanged(newContent, isInvalidUrl);
+    onContentChanged(newContent);
   };
 
   const handleExternalUrlValueChanged = event => {
@@ -47,7 +45,6 @@ function IframeEditor({ content, onContentChanged }) {
         <FormItem
           {...FORM_ITEM_LAYOUT}
           label={t('common:url')}
-          {...validateUrl(url, t)}
           hasFeedback
           >
           <Input value={url} onChange={handleExternalUrlValueChanged} />

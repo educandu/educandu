@@ -4,9 +4,6 @@ urlRequired:
 urlInvalid:
   en: Please specify a URL with a valid format
   de: Bitte gib eine Adresse im gültigen Format an
-urlInvalidProtocol:
-  en: Please specify an address starting with {allowedProtocols}
-  de: Bitte gib eine Adresse an, die mit {allowedProtocols} beginnt
 markdownBoldOrItalicWithinHeaders:
   en: Bold or italic should not be used within headers
   de: Überschriften sollten keine fette oder kursive Auszeichnung enthalten

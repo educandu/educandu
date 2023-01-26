@@ -40,8 +40,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalid = false;
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackNameChanged = event => {

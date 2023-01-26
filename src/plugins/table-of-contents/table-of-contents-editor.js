@@ -11,7 +11,7 @@ export default function TableOfContentsEditor({ content, onContentChanged }) {
   const { minLevel, maxLevel, text } = content;
 
   const triggerContentChanged = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleLevelRangeChange = ([newMinLevel, newMaxLevel]) => {

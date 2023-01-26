@@ -1,6 +1,7 @@
+
+import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import { determineMediaDuration } from './media-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
 import {
   SOURCE_TYPE,
   CDN_URL_PREFIX,
@@ -75,7 +76,7 @@ export function getSourceType({ url, cdnRootUrl }) {
     return SOURCE_TYPE.wikimedia;
   }
 
-  if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.valid) {
+  if (urlUtils.isFullyQualifiedUrl(url)) {
     return SOURCE_TYPE.external;
   }
 
@@ -97,7 +98,7 @@ export async function getSourceDuration({ url, cdnRootUrl }) {
   try {
     const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl });
 
-    if (getUrlValidationStatus(url) !== URL_VALIDATION_STATUS.valid) {
+    if (urlUtils.isFullyQualifiedUrl(url)) {
       return 0;
     }
 

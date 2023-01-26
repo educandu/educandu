@@ -41,7 +41,7 @@ function MatchingCardsEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    onContentChanged(newContent, false);
+    onContentChanged(newContent);
   };
 
   const handleWidthChange = value => {

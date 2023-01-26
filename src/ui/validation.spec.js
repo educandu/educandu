@@ -2,8 +2,6 @@ import { createSandbox } from 'sinon';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   validateUrl,
-  URL_VALIDATION_STATUS,
-  getUrlValidationStatus,
   MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS
 } from './validation.js';
 
@@ -51,113 +49,46 @@ describe('validation', () => {
 
   });
 
-  describe('getUrlValidationStatus', () => {
-    const testCases = [
-      {
-        input: '',
-        options: { allowEmpty: true, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.valid
-      },
-      {
-        input: '',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.empty
-      },
-      {
-        input: 'https://google.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.valid
-      },
-      {
-        input: 'http://google.com',
-        options: { allowEmpty: false, allowHttp: true, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.valid
-      },
-      {
-        input: 'http://google.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.invalidProtocol
-      },
-      {
-        input: 'mailto:test@test.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: true },
-        expectedResult: URL_VALIDATION_STATUS.valid
-      },
-      {
-        input: 'mailto:test@test.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.invalidProtocol
-      },
-      {
-        input: 'google',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: URL_VALIDATION_STATUS.invalidFormat
-      }
-    ];
-
-    testCases.forEach(({ input, options, expectedResult }) => {
-      describe(`when input is '${input}'`, () => {
-        describe(`and options are '${JSON.stringify(options)}'`, () => {
-          it(`should return '${expectedResult}'`, () => {
-            expect(getUrlValidationStatus(input, options)).toBe(expectedResult);
-          });
-        });
-      });
-    });
-  });
-
   describe('validateUrl', () => {
     const t = sandbox.fake();
 
     const testCases = [
       {
-        input: '',
-        options: { allowEmpty: true, allowHttp: false, allowMailto: false },
+        url: '',
+        allowEmpty: true,
         expectedResult: 'success'
       },
       {
         input: '',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: 'warning'
+        allowEmpty: false,
+        expectedResult: 'error'
       },
       {
         input: 'https://google.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
+        allowEmpty: true,
         expectedResult: 'success'
       },
       {
         input: 'http://google.com',
-        options: { allowEmpty: false, allowHttp: true, allowMailto: false },
+        allowEmpty: true,
         expectedResult: 'success'
       },
       {
-        input: 'http://google.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
-        expectedResult: 'error'
-      },
-      {
         input: 'mailto:test@test.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
+        allowEmpty: true,
         expectedResult: 'error'
-      },
-      {
-        input: 'mailto:test@test.com',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: true },
-        expectedResult: 'success'
       },
       {
         input: 'google',
-        options: { allowEmpty: false, allowHttp: false, allowMailto: false },
+        allowEmpty: true,
         expectedResult: 'error'
       }
     ];
 
-    testCases.forEach(({ input, options, expectedResult }) => {
-      describe(`when input is '${input}'`, () => {
-        describe(`and options are '${JSON.stringify(options)}'`, () => {
-          it(`should return '${expectedResult}'`, () => {
-            expect(validateUrl(input, t, options).validateStatus).toBe(expectedResult);
-          });
+    testCases.forEach(({ input, allowEmpty, expectedResult }) => {
+      describe(`when input is '${input}' and allowEmpty is ${allowEmpty}`, () => {
+        it(`should return '${expectedResult}'`, () => {
+          expect(validateUrl({ url: input, allowEmpty, t }).validateStatus).toBe(expectedResult);
         });
       });
     });

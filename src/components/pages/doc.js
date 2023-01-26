@@ -112,7 +112,6 @@ function Doc({ initialState, PageTemplate }) {
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [fetchingComments, setFetchingComments] = useState(false);
-  const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
@@ -243,7 +242,6 @@ function Doc({ initialState, PageTemplate }) {
         setIsDirty(false);
         setView(VIEW.display);
         setEditedSectionKeys([]);
-        setInvalidSectionKeys([]);
         setPendingTemplateSectionKeys([]);
         resolve(true);
       };
@@ -268,7 +266,7 @@ function Doc({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleSectionContentChange = (index, newContent, isInvalid) => {
+  const handleSectionContentChange = (index, newContent) => {
     const modifiedSection = {
       ...currentSections[index],
       content: newContent
@@ -276,7 +274,6 @@ function Doc({ initialState, PageTemplate }) {
 
     const newSections = replaceItemAt(currentSections, modifiedSection, index);
     setCurrentSections(newSections);
-    setInvalidSectionKeys(keys => isInvalid ? ensureIsIncluded(keys, modifiedSection.key) : ensureIsExcluded(keys, modifiedSection.key));
     setIsDirty(true);
   };
 
@@ -307,9 +304,6 @@ function Doc({ initialState, PageTemplate }) {
     const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
     setCurrentSections(expandedSections);
     setIsDirty(true);
-    if (invalidSectionKeys.includes(originalSection.key)) {
-      setInvalidSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
-    }
     setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
   };
 
@@ -352,7 +346,6 @@ function Doc({ initialState, PageTemplate }) {
         const section = currentSections[index];
         const reducedSections = removeItemAt(currentSections, index);
         setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
-        setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setCurrentSections(reducedSections);
         setIsDirty(true);
       }

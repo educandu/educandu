@@ -10,6 +10,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
@@ -20,8 +21,6 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -49,11 +48,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalidSourceUrl);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackContentChange = changedContent => {

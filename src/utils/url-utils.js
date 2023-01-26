@@ -1,6 +1,9 @@
 import gravatar from 'gravatar';
 import { AVATAR_SIZE } from '../domain/constants.js';
 
+// Copied from: https://urlregex.com/
+const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/;
+
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
 }
@@ -43,6 +46,10 @@ function isFullyQualifiedUrl(pathOrUrl) {
   return (/^\w+?:\//).test(pathOrUrl);
 }
 
+function isValidUrl(url) {
+  return URL_REGEX.test(url);
+}
+
 function ensureIsFullyQualifiedUrl(pathOrUrl, fallbackBase) {
   return isFullyQualifiedUrl(pathOrUrl) ? pathOrUrl : new URL(pathOrUrl, fallbackBase).href;
 }
@@ -61,5 +68,6 @@ export default {
   createRedirectUrl,
   isFullyQualifiedUrl,
   ensureIsFullyQualifiedUrl,
-  getGravatarUrl
+  getGravatarUrl,
+  isValidUrl
 };

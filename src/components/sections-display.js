@@ -90,7 +90,7 @@ function SectionsDisplay({
         onSectionEditLeave={() => onSectionEditLeave(index)}
         onSectionMoveUp={() => handleSectionMove(index, index - 1)}
         onSectionMoveDown={() => handleSectionMove(index, index + 1)}
-        onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
+        onSectionContentChange={newContent => onSectionContentChange(index, newContent)}
         onSectionHardDelete={() => onSectionHardDelete(index)}
         />
     );

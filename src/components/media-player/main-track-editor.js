@@ -4,33 +4,25 @@ import React, { Fragment } from 'react';
 import { Form, Radio, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
-import { useService } from '../container-context.js';
 import MediaRangeSelector from './media-range-selector.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getResourceType } from '../../utils/resource-utils.js';
+import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
-import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE } from '../../domain/constants.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mainTrackEditor');
 
   const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalidSourceUrl);
+    onContentChanged(newContent);
   };
 
   const handleSourceUrlChange = value => {
@@ -66,13 +58,9 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     changeContent({ copyrightNotice: event.target.value });
   };
 
-  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(sourceUrl, t, { allowEmpty: true });
-
   return (
     <Fragment>
-      <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+      <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
         <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
       </FormItem>
       <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>

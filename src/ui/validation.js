@@ -1,5 +1,4 @@
-// Copied from: https://urlregex.com/
-const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/;
+import urlUtils from '../utils/url-utils.js';
 
 export function formatListWithOr(list, t) {
   return list.reduce((message, item, index) => {
@@ -15,60 +14,19 @@ export function formatListWithOr(list, t) {
 
 export const MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS = /^[#]+\s*[_*]+.+[_*]+\s*[#]*\s*$/m;
 
-export const URL_VALIDATION_STATUS = {
-  valid: 'valid',
-  empty: 'empty',
-  invalidFormat: 'invalid-format',
-  invalidProtocol: 'invalid-protocol'
+export const validateUrl = ({ url, allowEmpty, allowMailto, t }) => {
+  if (!url && allowEmpty) {
+    return { validateStatus: 'success', help: null };
+  }
+
+  if ((url || '').startsWith('mailto') && !allowMailto) {
+    return { validateStatus: 'error', help: t('validation:urlInvalid') };
+  }
+
+  return urlUtils.isValidUrl(url)
+    ? { validateStatus: 'success', help: null }
+    : { validateStatus: 'error', help: t('validation:urlInvalid') };
 };
-
-function getAllowedProtocols({ allowHttp, allowMailto } = {}) {
-  const allowedProtocols = ['https'];
-  if (allowHttp) {
-    allowedProtocols.push('http');
-  }
-  if (allowMailto) {
-    allowedProtocols.push('mailto');
-  }
-  return allowedProtocols;
-}
-
-export function getUrlValidationStatus(url, { allowEmpty, allowHttp, allowMailto } = {}) {
-  const protocol = (url || '').split(':')[0] || '';
-
-  const allowedProtocols = getAllowedProtocols({ allowHttp, allowMailto });
-
-  if (!url) {
-    return allowEmpty ? URL_VALIDATION_STATUS.valid : URL_VALIDATION_STATUS.empty;
-  }
-
-  if (!URL_REGEX.test(url)) {
-    return URL_VALIDATION_STATUS.invalidFormat;
-  }
-
-  if (!allowedProtocols.includes(protocol)) {
-    return URL_VALIDATION_STATUS.invalidProtocol;
-  }
-
-  return URL_VALIDATION_STATUS.valid;
-}
-
-export function validateUrl(url, t, { allowEmpty, allowHttp, allowMailto } = {}) {
-  const validationStatus = getUrlValidationStatus(url, { allowEmpty, allowHttp, allowMailto });
-  switch (validationStatus) {
-    case URL_VALIDATION_STATUS.empty:
-      return { validateStatus: 'warning', help: t('validation:urlRequired') };
-    case URL_VALIDATION_STATUS.invalidFormat:
-      return { validateStatus: 'error', help: t('validation:urlInvalid') };
-    case URL_VALIDATION_STATUS.invalidProtocol:
-    {
-      const allowedProtocols = getAllowedProtocols({ allowHttp, allowMailto });
-      return { validateStatus: 'error', help: t('validation:urlInvalidProtocol', { allowedProtocols: formatListWithOr(allowedProtocols, t) }) };
-    }
-    default:
-      return { validateStatus: 'success', help: null };
-  }
-}
 
 export function validateMarkdown(markdown, t) {
   let validateStatus;

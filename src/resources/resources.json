@@ -2815,7 +2815,6 @@
     "resources": {
       "urlRequired": "Please specify a URL",
       "urlInvalid": "Please specify a URL with a valid format",
-      "urlInvalidProtocol": "Please specify an address starting with {allowedProtocols}",
       "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers",
       "orListFirstItem": "“{item}”",
       "orListLastItem": " or “{item}”",
@@ -2828,7 +2827,6 @@
     "resources": {
       "urlRequired": "Bitte gib eine Adresse an",
       "urlInvalid": "Bitte gib eine Adresse im gültigen Format an",
-      "urlInvalidProtocol": "Bitte gib eine Adresse an, die mit {allowedProtocols} beginnt",
       "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
       "orListFirstItem": "»{item}«",
       "orListLastItem": " oder »{item}«",

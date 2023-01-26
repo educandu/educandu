@@ -6,15 +6,13 @@ import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
 import CatalogItemEditor from './catalog-item-editor.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { createDefaultItem, consolidateForDisplayMode } from './catalog-utils.js';
 import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
-import { createDefaultItem, consolidateForDisplayMode, isContentInvalid } from './catalog-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -22,14 +20,12 @@ const FormItem = Form.Item;
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
-  const clientConfig = useService(ClientConfig);
 
   const { title, displayMode, width, items, imageTilesConfig } = content;
 
   const triggerChange = newContentValues => {
     const newContent = consolidateForDisplayMode({ ...content, ...newContentValues });
-    const isInvalid = isContentInvalid(newContent, clientConfig.cdnRootUrl);
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleTitleChange = event => {
