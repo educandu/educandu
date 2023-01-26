@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
-import UsersTab from '../admin/users-tab.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import SettingsTab from '../admin/settings-tab.js';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
+import UserAccountsTab from '../admin/user-accounts-tab.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 
 const TABS = {
   settings: 'settings',
-  users: 'users',
+  userAccounts: 'user-accounts',
   storagePlans: 'storage-plans',
   technicalMaintenance: 'technical-maintenance'
 };
@@ -59,11 +59,11 @@ function Admin({ PageTemplate }) {
       )
     },
     {
-      key: TABS.users,
-      label: t('usersTabTitle'),
+      key: TABS.userAccounts,
+      label: t('userAccountsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <UsersTab />
+          <UserAccountsTab />
         </div>
       )
     },

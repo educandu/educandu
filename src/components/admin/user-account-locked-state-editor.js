@@ -2,16 +2,15 @@ import React from 'react';
 import { Switch } from 'antd';
 import PropTypes from 'prop-types';
 import { CheckOutlined } from '@ant-design/icons';
-import { useDateFormat } from './locale-context.js';
-import CloseIcon from './icons/general/close-icon.js';
-import { userShape } from '../ui/default-prop-types.js';
+import { useDateFormat } from '../locale-context.js';
+import CloseIcon from '../icons/general/close-icon.js';
 
-function UserAccountLockedStateEditor({ user, onAccountLockedOnChange }) {
+function UserAccountLockedStateEditor({ userAccountLockedOn, onAccountLockedOnChange }) {
   const { formatDate } = useDateFormat();
 
   const handleAccountLockedStateChange = isAccountLocked => {
     const accountLockedOn = isAccountLocked ? new Date().toISOString() : null;
-    onAccountLockedOnChange(user, accountLockedOn);
+    onAccountLockedOnChange(accountLockedOn);
   };
 
   return (
@@ -20,12 +19,12 @@ function UserAccountLockedStateEditor({ user, onAccountLockedOnChange }) {
         size="small"
         checkedChildren={<CheckOutlined />}
         unCheckedChildren={<CloseIcon />}
-        checked={!!user.accountLockedOn}
+        checked={!!userAccountLockedOn}
         onChange={handleAccountLockedStateChange}
         />
-      {!!user.accountLockedOn && (
+      {!!userAccountLockedOn && (
         <div className="UserAccountLockedStateEditor-date">
-          {formatDate(user.accountLockedOn)}
+          {formatDate(userAccountLockedOn)}
         </div>
       )}
     </div>
@@ -33,8 +32,12 @@ function UserAccountLockedStateEditor({ user, onAccountLockedOnChange }) {
 }
 
 UserAccountLockedStateEditor.propTypes = {
-  onAccountLockedOnChange: PropTypes.func.isRequired,
-  user: userShape.isRequired
+  userAccountLockedOn: PropTypes.string,
+  onAccountLockedOnChange: PropTypes.func.isRequired
+};
+
+UserAccountLockedStateEditor.defaultProps = {
+  userAccountLockedOn: PropTypes.null
 };
 
 export default UserAccountLockedStateEditor;

@@ -1,22 +1,21 @@
 import React from 'react';
 import { Tag } from 'antd';
 import PropTypes from 'prop-types';
-import { userShape } from './../ui/default-prop-types.js';
 
 const { CheckableTag } = Tag;
 
-function UserRoleTagEditor({ user, roleName, onRoleChange }) {
+function UserRoleTagEditor({ userRoles, roleName, onRoleChange }) {
   const handleRoleChange = () => {
     let newRoles;
-    if (user.roles.includes(roleName)) {
-      newRoles = user.roles.filter(x => x !== roleName);
+    if (userRoles.includes(roleName)) {
+      newRoles = userRoles.filter(x => x !== roleName);
     } else {
-      newRoles = [...user.roles, roleName];
+      newRoles = [...userRoles, roleName];
     }
-    onRoleChange(user, newRoles);
+    onRoleChange(newRoles);
   };
 
-  const isUserInRole = user.roles.includes(roleName);
+  const isUserInRole = userRoles.includes(roleName);
   return (
     <CheckableTag
       key={roleName}
@@ -29,9 +28,9 @@ function UserRoleTagEditor({ user, roleName, onRoleChange }) {
 }
 
 UserRoleTagEditor.propTypes = {
-  onRoleChange: PropTypes.func.isRequired,
+  userRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
   roleName: PropTypes.string.isRequired,
-  user: userShape.isRequired
+  onRoleChange: PropTypes.func.isRequired
 };
 
 export default UserRoleTagEditor;

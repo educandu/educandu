@@ -8,9 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import { SearchOutlined } from '@ant-design/icons';
 import { Table, Tabs, Select, Input, Radio } from 'antd';
-import { replaceItem } from '../../utils/array-utils.js';
+import UserRoleTagEditor from './user-role-tag-editor.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -18,113 +17,113 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
-import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js';
+import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
 
 const logger = new Logger(import.meta.url);
 
 const { Option } = Select;
 const RadioGroup = Radio.Group;
 
-const VIEW = {
-  internalUsers: 'internal-users',
-  externalUsers: 'external-users',
-  storageUsers: 'storage-users',
-  closedAccountUsers: 'closed-accounts'
+const TABLE = {
+  activeAccounts: 'active-accounts',
+  externalAccounts: 'external-accounts',
+  accountsWithStorage: 'accounts-with-storage',
+  closedAccounts: 'closed-accounts'
 };
 
-function createTableItems(users, externalAccounts, storagePlans) {
-  const usersById = new Map();
+function createTableItemSubsets(users, externalAccounts, storagePlans) {
+  const accountTableItemsById = new Map();
   const storagePlansById = new Map(storagePlans.map(plan => [plan._id, plan]));
 
-  const internalUsers = [];
-  const externalAccountUsers = [];
-  const storageUsers = [];
-  const closedAccountUsers = [];
+  const activeAccountsTableItems = [];
+  const closedAccountsTableItems = [];
+  const externalAccountsTableItems = [];
+  const accountsWithStorageTableItems = [];
 
   for (const user of users) {
-    const enrichedUserObject = {
+    const accountTableItem = {
       ...user,
+      key: user._id,
       storagePlan: storagePlansById.get(user.storage.planId) || null
     };
 
-    if (user.accountClosedO) {
-      closedAccountUsers.push(enrichedUserObject);
+    if (user.accountClosedOn) {
+      closedAccountsTableItems.push(accountTableItem);
     } else {
-      internalUsers.push(enrichedUserObject);
+      activeAccountsTableItems.push(accountTableItem);
     }
 
     if (user.storage.planId || user.storage.usedBytes || user.storage.reminders.length) {
-      storageUsers.push(enrichedUserObject);
+      accountsWithStorageTableItems.push(accountTableItem);
     }
 
-    usersById.set(user._id, user);
+    accountTableItemsById.set(user._id, accountTableItem);
   }
 
   for (const externalAccount of externalAccounts) {
-    const enrichedExternalAccountObject = {
+    const accountTableItem = {
       ...externalAccount,
-      connectedUser: usersById.get(externalAccount.userId) || null
+      key: externalAccount._id,
+      connectedUser: accountTableItemsById.get(externalAccount.userId) || null
     };
 
-    externalAccountUsers.push(enrichedExternalAccountObject);
+    externalAccountsTableItems.push(accountTableItem);
   }
 
-  return { internalUsers, externalAccountUsers, storageUsers, closedAccountUsers };
+  return {
+    activeAccountsTableItems,
+    closedAccountsTableItems,
+    externalAccountsTableItems,
+    accountsWithStorageTableItems
+  };
 }
 
-const filterUserItems = (items, filterText) => {
+const filterTableItems = (items, filterText) => {
   return filterText
-    ? items.filter(user => {
+    ? items.filter(item => {
       const text = filterText.toLowerCase();
-      return user.displayName.toLowerCase().includes(text)
-        || user.email?.toLowerCase().includes(text);
+      return item.displayName?.toLowerCase().includes(text)
+        || item.email?.toLowerCase().includes(text)
+        || item.providerKey?.toLowerCase().includes(text)
+        || item.externalUserId?.toLowerCase().includes(text)
+        || item.connectedUser?.displayName.toLowerCase().includes(text);
     })
     : items;
 };
 
-const filterExternalAccountItems = (items, filterText) => {
-  return filterText
-    ? items.filter(account => {
-      const text = filterText.toLowerCase();
-      return account.providerKey.toLowerCase().includes(text)
-        || account.externalUserId.toLowerCase().includes(text)
-        || account.connectedUser?.displayName.toLowerCase().includes(text);
-    })
-    : items;
-};
-
-function UsersTab() {
+function UserAccountsTab() {
   const { locale } = useLocale();
   const executingUser = useUser();
   const { formatDate } = useDateFormat();
   const [users, setUsers] = useState([]);
-  const { t } = useTranslation('usersTab');
+  const { t } = useTranslation('userAccountsTab');
   const [isSaving, setIsSaving] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [storagePlans, setStoragePlans] = useState([]);
-  const [storageUsers, setStorageUsers] = useState([]);
   const [usersById, setUsersById] = useState(new Map());
-  const [internalUsers, setInternalUsers] = useState([]);
   const [externalAccounts, setExternalAccounts] = useState([]);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const [closedAccountUsers, setClosedAccountUsers] = useState([]);
-  const [currentView, setCurrentView] = useState(VIEW.internalUsers);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [externalAccountUsers, setExternalAccountUsers] = useState([]);
+  const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
+
+  const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
+  const [activeAccountsTableItems, setInternalAccountsTableItems] = useState([]);
+  const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
+  const [accountsWithStorageTableItems, setAccountsWithStorageTableItems] = useState([]);
 
   const refreshData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const [userResponse, externalAccountResponse, currentStoragePlans] = await Promise.all([
+      const [usersResponse, externalAccountsResponse, storagePlansResponse] = await Promise.all([
         userApiClient.getUsers(),
         userApiClient.getExternalAccounts(),
         storageApiClient.getAllStoragePlans(false)
       ]);
-      setUsers(userResponse.users);
-      setExternalAccounts(externalAccountResponse.externalAccounts);
-      setStoragePlans(currentStoragePlans);
+      setUsers(usersResponse.users);
+      setExternalAccounts(externalAccountsResponse.externalAccounts);
+      setStoragePlans(storagePlansResponse);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -138,50 +137,46 @@ function UsersTab() {
 
   useEffect(() => {
     setUsersById(new Map(users.map(user => [user._id, user])));
-    const subsets = createTableItems(users, externalAccounts, storagePlans);
-    setInternalUsers(filterUserItems(subsets.internalUsers, filterText));
-    setStorageUsers(filterUserItems(subsets.storageUsers, filterText));
-    setClosedAccountUsers(filterUserItems(subsets.closedAccountUsers, filterText));
-    setExternalAccountUsers(filterExternalAccountItems(subsets.externalAccountUsers, filterText));
+    const tableItemSubsets = createTableItemSubsets(users, externalAccounts, storagePlans);
+    setInternalAccountsTableItems(filterTableItems(tableItemSubsets.activeAccountsTableItems, filterText));
+    setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
+    setClosedAccountsTableItems(filterTableItems(tableItemSubsets.closedAccountsTableItems, filterText));
+    setExternalAccountsTableItems(filterTableItems(tableItemSubsets.externalAccountsTableItems, filterText));
   }, [users, externalAccounts, storagePlans, filterText]);
 
-  const handleRoleChange = async (user, newRoles) => {
-    const oldRoles = user.roles;
-
+  const handleUserRolesChange = async (userId, newRoles) => {
     setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, roles: newRoles }));
+    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, roles: newRoles } : user));
 
     try {
-      await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
+      await userApiClient.saveUserRoles({ userId, roles: newRoles });
     } catch (error) {
       handleApiError({ error, logger, t });
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, roles: oldRoles }));
+      refreshData();
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleAccountLockedOnChange = async (user, newAccountLockedOn) => {
-    const oldAccountLockedOn = user.accountLockedOn;
-
+  const handleUserAccountLockedOnChange = async (userId, newAccountLockedOn) => {
     setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, accountLockedOn: newAccountLockedOn }));
+    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, accountLockedOn: newAccountLockedOn } : user));
 
     try {
-      const updatedUser = await userApiClient.saveUserAccountLockedOnState({ userId: user._id, accountLockedOn: newAccountLockedOn });
-      setUsers(oldUsers => replaceItem(oldUsers, { ...updatedUser }));
+      const updatedUser = await userApiClient.saveUserAccountLockedOnState({ userId, accountLockedOn: newAccountLockedOn });
+      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? updatedUser : user));
     } catch (error) {
       handleApiError({ error, logger, t });
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, accountLockedOn: oldAccountLockedOn }));
+      refreshData();
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleRemoveExternalUserClick = async externalAccount => {
+  const handleRemoveExternalAccountClick = async externalAccountId => {
     setIsSaving(true);
-    const externalAccountId = externalAccount._id;
     setExternalAccounts(oldAccounts => oldAccounts.filter(account => account._id !== externalAccountId));
+
     try {
       await userApiClient.deleteExternalAccount({ externalAccountId });
     } catch (error) {
@@ -192,110 +187,109 @@ function UsersTab() {
     }
   };
 
-  const handleStoragePlanChange = async (user, newStoragePlanId) => {
-    const oldStorage = user.storage;
-
-    const newStorage = {
-      ...oldStorage,
-      plan: newStoragePlanId
-    };
-
+  const handleStoragePlanChange = async (userId, newStoragePlanId) => {
     setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: { ...user.storage, plan: newStoragePlanId } } : user));
 
-    let finalStorage;
     try {
-      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId || null });
+      const updatedStorage = await userApiClient.saveUserStoragePlan({ userId, storagePlanId: newStoragePlanId || null });
+      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
     } catch (error) {
       handleApiError({ error, logger, t });
-      finalStorage = oldStorage;
+      refreshData();
     } finally {
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
       setIsSaving(false);
     }
   };
 
-  const handleAddReminderClick = async user => {
-    const oldStorage = user.storage;
-
-    const newStorage = {
-      ...oldStorage,
-      reminders: [
-        ...oldStorage.reminders,
-        {
-          timestamp: new Date().toISOString(),
-          createdBy: executingUser._id
+  const handleAddReminderClick = async userId => {
+    setIsSaving(true);
+    setUsers(oldUsers => oldUsers.map(user => {
+      return user._id === userId
+        ? {
+          ...user,
+          storage: {
+            ...user.storage,
+            reminders: [
+              ...user.storage.reminders,
+              {
+                timestamp: new Date().toISOString(),
+                createdBy: executingUser._id
+              }
+            ]
+          }
         }
-      ]
-    };
+        : user;
+    }));
 
-    setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
-
-    let finalStorage;
     try {
-      finalStorage = await userApiClient.addUserStorageReminder({ userId: user._id });
+      const updatedStorage = await userApiClient.addUserStorageReminder({ userId });
+      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
     } catch (error) {
       handleApiError({ error, logger, t });
-      finalStorage = oldStorage;
+      refreshData();
     } finally {
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
       setIsSaving(false);
     }
   };
 
-  const handleRemoveRemindersClick = async user => {
-    const oldStorage = user.storage;
-
-    const newStorage = {
-      ...oldStorage,
-      reminders: []
-    };
-
+  const handleRemoveRemindersClick = async userId => {
     setIsSaving(true);
-    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+    setUsers(oldUsers => oldUsers.map(user => {
+      return user._id === userId
+        ? {
+          ...user,
+          storage: {
+            ...user.storage,
+            reminders: []
+          }
+        }
+        : user;
+    }));
 
-    let finalStorage;
     try {
-      finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
+      const updatedStorage = await userApiClient.deleteAllUserStorageReminders({ userId });
+      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
     } catch (error) {
       handleApiError({ error, logger, t });
-      finalStorage = oldStorage;
+      refreshData();
     } finally {
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
       setIsSaving(false);
     }
   };
 
-  const handleDeleteAllOwnedRoomsClick = user => {
-    confirmAllOwnedRoomsDelete(t, user.displayName, async () => {
-      const oldStorage = user.storage;
-
-      const newStorage = {
-        plan: oldStorage.planId,
-        usedBytes: 0,
-        reminders: []
-      };
-
+  const handleDeleteAllOwnedRoomsClick = userId => {
+    const displayName = usersById.get(userId)?.displayName || null;
+    confirmAllOwnedRoomsDelete(t, displayName, async () => {
       setIsSaving(true);
-      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+      setUsers(oldUsers => oldUsers.map(user => {
+        return user._id === userId
+          ? {
+            ...user,
+            storage: {
+              ...user.storage,
+              usedBytes: 0,
+              reminders: []
+            }
+          }
+          : user;
+      }));
 
-      let finalStorage;
       try {
-        await roomApiClient.deleteAllRoomsForUser({ ownerId: user._id });
-        finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
+        await roomApiClient.deleteAllRoomsForUser({ ownerId: userId });
+        const updatedStorage = await userApiClient.deleteAllUserStorageReminders({ userId });
+        setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
       } catch (error) {
         handleApiError({ error, logger, t });
-        finalStorage = oldStorage;
+        refreshData();
       } finally {
-        setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
         setIsSaving(false);
       }
     });
   };
 
-  const renderDisplayName = (_, user) => {
-    return <a href={routes.getUserUrl(user._id)}>{user.displayName}</a>;
+  const renderDisplayName = (_, item) => {
+    return <a href={routes.getUserUrl(item.key)}>{item.displayName}</a>;
   };
 
   const renderConnectedUser = connectedUser => {
@@ -308,38 +302,49 @@ function UsersTab() {
     return <a href={`mailto:${encodeURI(email)}`}>{email}</a>;
   };
 
-  const renderRoleTags = (_, user) => {
+  const renderRoleTags = (_, item) => {
+    const userId = item.key;
+
     return Object.values(ROLE).map(role => {
       return (
         <UserRoleTagEditor
           key={role}
-          user={user}
           roleName={role}
-          onRoleChange={handleRoleChange}
+          userRoles={item.roles}
+          onRoleChange={newRoles => handleUserRolesChange(userId, newRoles)}
           />
       );
     });
   };
 
-  const renderAccountLockedOn = (_, user) => {
-    return <UserAccountLockedStateEditor user={user} onAccountLockedOnChange={handleAccountLockedOnChange} />;
+  const renderAccountLockedOn = (_, item) => {
+    const userId = item.key;
+
+    return (
+      <UserAccountLockedStateEditor
+        userAccountLockedOn={item.accountLockedOn}
+        onAccountLockedOnChange={newAccountLockedOn => handleUserAccountLockedOnChange(userId, newAccountLockedOn)}
+        />
+    );
   };
 
-  const renderStorage = (_, user) => {
+  const renderStorage = (_, item) => {
+    const userId = item.key;
+
     return (
       <Select
         size="small"
-        className="UsersTab-storagePlanSelect"
+        className="UserAccountsTab-storagePlanSelect"
         placeholder={t('selectPlan')}
-        value={user.storage.planId}
-        onChange={value => handleStoragePlanChange(user, value)}
+        value={item.storage.planId}
+        onChange={newStoragePlanId => handleStoragePlanChange(userId, newStoragePlanId)}
         allowClear
         >
         {storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
-            <div className="UsersTab-storagePlanOption">
+            <div className="UserAccountsTab-storagePlanOption">
               <div>{plan.name}</div>
-              <div className="UsersTab-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
+              <div className="UserAccountsTab-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
             </div>
           </Option>
         ))}
@@ -347,20 +352,20 @@ function UsersTab() {
     );
   };
 
-  const renderStorageSpace = (_, user) => {
+  const renderStorageSpace = (_, item) => {
     return (
-      <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={user.storagePlan?.maxBytes || 0} />
+      <UsedStorage usedBytes={item.storage.usedBytes} maxBytes={item.storagePlan?.maxBytes || 0} />
     );
   };
 
-  const renderReminders = (_, user) => {
-    if (!user.storage.reminders.length) {
+  const renderReminders = (_, item) => {
+    if (!item.storage.reminders.length) {
       return null;
     }
 
     return (
-      <ol className="UsersTab-reminders">
-        {user.storage.reminders.map(reminder => (
+      <ol className="UserAccountsTab-reminders">
+        {item.storage.reminders.map(reminder => (
           <li key={reminder.timestamp}>
             {formatDate(reminder.timestamp)} ({usersById.get(reminder.createdBy)?.displayName || t('common:unknown')})
           </li>
@@ -369,28 +374,32 @@ function UsersTab() {
     );
   };
 
-  const renderExternalUserActions = (_, externalUser) => {
+  const renderExternalAccountsTableActions = (_, item) => {
+    const externalAccountId = item.key;
+
     return (
-      <div className="UsersTab-actions">
-        <a className="UsersTab-actionButton" onClick={() => handleRemoveExternalUserClick(externalUser)}>
+      <div className="UserAccountsTab-actions">
+        <a className="UserAccountsTab-actionButton" onClick={() => handleRemoveExternalAccountClick(externalAccountId)}>
           {t('common:delete')}
         </a>
       </div>
     );
   };
 
-  const renderStorageUserActions = (_, user) => {
+  const renderAccountsWithStorageTableActions = (_, item) => {
+    const userId = item.key;
+
     return (
-      <div className="UsersTab-actions">
-        <a className="UsersTab-actionButton" onClick={() => handleAddReminderClick(user)}>
+      <div className="UserAccountsTab-actions">
+        <a className="UserAccountsTab-actionButton" onClick={() => handleAddReminderClick(userId)}>
           {t('addReminder')}
         </a>
-        {!!user.storage.reminders.length && (
-        <a className="UsersTab-actionButton" onClick={() => handleRemoveRemindersClick(user)}>
+        {!!item.storage.reminders.length && (
+        <a className="UserAccountsTab-actionButton" onClick={() => handleRemoveRemindersClick(userId)}>
           {t('removeAllReminders')}
         </a>
         )}
-        <a className="UsersTab-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(user)}>
+        <a className="UserAccountsTab-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(userId)}>
           {t('deleteAllOwnedRooms')}
         </a>
       </div>
@@ -401,7 +410,7 @@ function UsersTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
-  const internalUserTableColumns = [
+  const internalAccountsTableColumns = [
     {
       title: () => t('common:displayName'),
       dataIndex: 'displayName',
@@ -417,7 +426,7 @@ function UsersTab() {
       sorter: by(x => x.email, { ignoreCase: true })
     },
     {
-      title: () => t('expires'),
+      title: () => t('expiryDate'),
       dataIndex: 'expiresOn',
       key: 'expiresOn',
       sorter: by(x => x.expiresOn || ''),
@@ -425,7 +434,7 @@ function UsersTab() {
       responsive: ['lg']
     },
     {
-      title: () => t('lastLogIn'),
+      title: () => t('lastLogin'),
       dataIndex: 'lastLoggedInOn',
       key: 'lastLoggedInOn',
       sorter: by(x => x.lastLoggedInOn || ''),
@@ -456,7 +465,7 @@ function UsersTab() {
     }
   ];
 
-  const externalUserTableColumns = [
+  const externalAccountsTableColumns = [
     {
       title: () => t('providerKey'),
       dataIndex: 'providerKey',
@@ -477,7 +486,7 @@ function UsersTab() {
       render: renderConnectedUser
     },
     {
-      title: () => t('expires'),
+      title: () => t('expiryDate'),
       dataIndex: 'expiresOn',
       key: 'expiresOn',
       sorter: by(x => x.expiresOn || ''),
@@ -485,7 +494,7 @@ function UsersTab() {
       responsive: ['lg']
     },
     {
-      title: () => t('lastLogIn'),
+      title: () => t('lastLogin'),
       dataIndex: 'lastLoggedInOn',
       key: 'lastLoggedInOn',
       sorter: by(x => x.lastLoggedInOn || ''),
@@ -496,12 +505,12 @@ function UsersTab() {
       title: () => t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderExternalUserActions,
+      render: renderExternalAccountsTableActions,
       responsive: ['lg']
     }
   ];
 
-  const storageUserTableColumns = [
+  const accountsWithStorageTableColumns = [
     {
       title: () => t('common:displayName'),
       dataIndex: 'displayName',
@@ -554,12 +563,12 @@ function UsersTab() {
       title: () => t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderStorageUserActions,
+      render: renderAccountsWithStorageTableActions,
       responsive: ['lg']
     }
   ];
 
-  const closedAccountUserTableColumns = [
+  const closedAccountsTableColumns = [
     {
       title: () => t('common:displayName'),
       dataIndex: 'displayName',
@@ -589,7 +598,6 @@ function UsersTab() {
       <Table
         dataSource={dataSource}
         columns={columns}
-        rowKey="_id"
         size="middle"
         loading={{ size: 'large', spinning: isLoading || isSaving, delay: 500 }}
         bordered
@@ -599,49 +607,49 @@ function UsersTab() {
 
   const views = [
     {
-      key: VIEW.internalUsers,
-      label: t('internalUsers'),
-      content: renderTabChildren(internalUsers, internalUserTableColumns)
+      key: TABLE.activeAccounts,
+      label: t('activeAccounts'),
+      tabContent: renderTabChildren(activeAccountsTableItems, internalAccountsTableColumns)
     },
     {
-      key: VIEW.externalUsers,
-      label: t('externalUsers'),
-      content: renderTabChildren(externalAccountUsers, externalUserTableColumns)
+      key: TABLE.externalAccounts,
+      label: t('externalAccounts'),
+      tabContent: renderTabChildren(externalAccountsTableItems, externalAccountsTableColumns)
     },
     {
-      key: VIEW.storageUsers,
-      label: t('storageUsers'),
-      content: renderTabChildren(storageUsers, storageUserTableColumns)
+      key: TABLE.accountsWithStorage,
+      label: t('accountsWithStorage'),
+      tabContent: renderTabChildren(accountsWithStorageTableItems, accountsWithStorageTableColumns)
     },
     {
-      key: VIEW.closedAccountUsers,
-      label: t('closedAccountUsers'),
-      content: renderTabChildren(closedAccountUsers, closedAccountUserTableColumns)
+      key: TABLE.closedAccounts,
+      label: t('closedAccounts'),
+      tabContent: renderTabChildren(closedAccountsTableItems, closedAccountsTableColumns)
     }
   ];
 
-  const tabs = views.map(view => ({ key: view.key, children: view.content }));
   const options = views.map(view => ({ value: view.key, label: view.label }));
+  const tabs = views.map(view => ({ key: view.key, children: view.tabContent }));
 
   return (
-    <div className="UsersTab">
-      <div className="UsersTab-header">
+    <div className="UserAccountsTab">
+      <div className="UserAccountsTab-header">
         <RadioGroup
-          className="UsersTab-viewSwitcher UsersTab-viewSwitcher--wide"
+          className="UserAccountsTab-tableSwitcher UserAccountsTab-tableSwitcher--wide"
           options={options}
-          value={currentView}
-          onChange={event => setCurrentView(event.target.value)}
+          value={currentTable}
+          onChange={event => setCurrentTable(event.target.value)}
           optionType="button"
           buttonStyle="solid"
           />
         <Select
-          className="UsersTab-viewSwitcher UsersTab-viewSwitcher--narrow"
+          className="UserAccountsTab-tableSwitcher UserAccountsTab-tableSwitcher--narrow"
           options={options}
-          value={currentView}
-          onChange={value => setCurrentView(value)}
+          value={currentTable}
+          onChange={value => setCurrentTable(value)}
           />
         <Input
-          className="UsersTab-filter"
+          className="UserAccountsTab-filter"
           value={filterText}
           onChange={event => setFilterText(event.target.value)}
           placeholder={t('filterPlaceholder')}
@@ -651,7 +659,7 @@ function UsersTab() {
       </div>
       <Tabs
         className="Tabs Tabs--smallPadding"
-        activeKey={currentView}
+        activeKey={currentTable}
         disabled={isSaving}
         items={tabs}
         renderTabBar={() => null}
@@ -660,4 +668,4 @@ function UsersTab() {
   );
 }
 
-export default UsersTab;
+export default UserAccountsTab;

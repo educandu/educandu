@@ -1,6 +1,6 @@
-.UsersTab {}
+.UserAccountsTab {}
 
-.UsersTab-header {
+.UserAccountsTab-header {
   display: grid;
   justify-items: end;
   grid-template-rows: auto;
@@ -8,18 +8,18 @@
   gap: @edu-control-spacing-wide;
 }
 
-.UsersTab-viewSwitcher {
+.UserAccountsTab-tableSwitcher {
   grid-row: 1;
   grid-column: 1;
 
-  &.UsersTab-viewSwitcher--wide {
+  &.UserAccountsTab-tableSwitcher--wide {
     display: block !important;
     @media @edu-media-not-desktop {
       display: none !important;
     }
   }
 
-  &.UsersTab-viewSwitcher--narrow {
+  &.UserAccountsTab-tableSwitcher--narrow {
     min-width: 200px;
     display: none !important;
     @media @edu-media-not-desktop {
@@ -28,31 +28,31 @@
   }
 }
 
-.UsersTab-filter {
+.UserAccountsTab-filter {
   grid-row: 1;
   grid-column: 2;
   max-width: 320px;
 }
 
-.UsersTab-storagePlanSelect {
+.UserAccountsTab-storagePlanSelect {
   width: 100%;
 }
 
-.UsersTab-storagePlanOption {}
+.UserAccountsTab-storagePlanOption {}
 
-.UsersTab-storagePlanOptionSize {
+.UserAccountsTab-storagePlanOptionSize {
   font-size: 75%;
 }
 
-.UsersTab-reminders {
+.UserAccountsTab-reminders {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.UsersTab-actions {}
+.UserAccountsTab-actions {}
 
-.UsersTab-actionButton {
+.UserAccountsTab-actionButton {
   display: block;
   padding: 0;
 }

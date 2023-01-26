@@ -184,20 +184,20 @@
     }
   },
   {
-    "namespace": "usersTab",
+    "namespace": "userAccountsTab",
     "language": "en",
     "resources": {
-      "lastLogIn": "Last log in",
-      "expires": "Expires",
+      "lastLogin": "Last login",
+      "expiryDate": "Expiry date",
       "accountLocked": "Locked",
       "roles": "Roles",
       "providerKey": "Provider key",
       "externalUserId": "External ID",
       "connectedUser": "Connected user",
-      "internalUsers": "Internal users",
-      "externalUsers": "External users",
-      "storageUsers": "Users with storage",
-      "closedAccountUsers": "Closed accounts",
+      "activeAccounts": "Active accounts",
+      "externalAccounts": "External accounts",
+      "accountsWithStorage": "Accounts with storage",
+      "closedAccounts": "Closed accounts",
       "selectPlan": "Select plan",
       "addReminder": "Add reminder",
       "removeAllReminders": "Remove reminders",
@@ -209,20 +209,20 @@
     }
   },
   {
-    "namespace": "usersTab",
+    "namespace": "userAccountsTab",
     "language": "de",
     "resources": {
-      "lastLogIn": "Zuletzt angemeldet",
-      "expires": "Verfallsdatum",
-      "accountLocked": "Ausgesperrt",
+      "lastLogin": "Letzte Anmeldung",
+      "expiryDate": "Ablaufdatum",
+      "accountLocked": "Gesperrt",
       "roles": "Rollen",
       "providerKey": "Provider-Schlüssel",
       "externalUserId": "Externe ID",
       "connectedUser": "Verknüpfter Benutzer",
-      "internalUsers": "Interne Benutzer",
-      "externalUsers": "Externe Benutzer",
-      "storageUsers": "Benutzer mit Speicher",
-      "closedAccountUsers": "Geschlossene Kontos",
+      "activeAccounts": "Aktive Konten",
+      "externalAccounts": "Externe Konten",
+      "accountsWithStorage": "Konten mit Speicher",
+      "closedAccounts": "Geschlossene Konten",
       "selectPlan": "Plan auswählen",
       "addReminder": "Erinnerung hinzufügen",
       "removeAllReminders": "Erinnerungen entfernen",
@@ -896,7 +896,7 @@
     "language": "en",
     "resources": {
       "settingsTabTitle": "Settings",
-      "usersTabTitle": "Users",
+      "userAccountsTabTitle": "User accounts",
       "storagePlansTabTitle": "Storage plans",
       "technicalMaintenanceTabTitle": "Technical maintenance"
     }
@@ -906,7 +906,7 @@
     "language": "de",
     "resources": {
       "settingsTabTitle": "Einstellungen",
-      "usersTabTitle": "Benutzer",
+      "userAccountsTabTitle": "Benutzerkonten",
       "storagePlansTabTitle": "Speicherpläne",
       "technicalMaintenanceTabTitle": "Technische Instandhaltung"
     }
