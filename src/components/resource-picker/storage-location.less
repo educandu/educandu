@@ -10,6 +10,7 @@
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
   overflow: hidden;
+  position: relative;
 
   & .ant-table-placeholder .ant-table-cell {
     border: none;
@@ -19,10 +20,9 @@
 .StorageLocation-filesViewerContent {
   height: 100%;
   overflow: auto;
-  position: relative;
 }
 
-.StorageLocation-filesViewerContentOverlay {
+.StorageLocation-filesViewerOverlay {
   .m-mask;
   display: grid;
   align-content: center;

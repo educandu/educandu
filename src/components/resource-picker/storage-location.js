@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useRef } from 'react';
-import FilesViewer from './files-viewer.js';
 import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
+import FilesGridViewer from './files-grid-viewer.js';
+import FilesListViewer from './files-list-viewer.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import { Alert, Button, Input, Radio, Spin, Tooltip } from 'antd';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
@@ -37,14 +38,6 @@ function StorageLocation({
   const dropzoneRef = useRef();
 
   const canAcceptFiles = !isLoading;
-
-  const handleFileClick = file => {
-    onFileClick(file);
-  };
-
-  const handleFileDoubleClick = file => {
-    onFileDoubleClick(file);
-  };
 
   const handleSelectHighlightedFileClick = () => {
     onSelectHighlightedFileClick(highlightedFile.portableUrl);
@@ -90,6 +83,10 @@ function StorageLocation({
     'u-cannot-drop': isDragActive && !!isLoading
   });
 
+  const FilesViewer = filesViewerDisplay === FILES_VIEWER_DISPLAY.grid
+    ? FilesGridViewer
+    : FilesListViewer;
+
   return (
     <div className="StorageLocation">
       <div className="StorageLocation-buttonsLine">
@@ -128,20 +125,19 @@ function StorageLocation({
             <div className="StorageLocation-filesViewerContent">
               <FilesViewer
                 files={files}
-                display={filesViewerDisplay}
-                onFileClick={handleFileClick}
-                onFileDoubleClick={handleFileDoubleClick}
-                selectedFileUrl={highlightedFile?.portableUrl}
+                selectedFileUrl={highlightedFile?.portableUrl || null}
+                canDelete={storageLocation.isDeletionEnabled}
+                onFileClick={onFileClick}
+                onFileDoubleClick={onFileDoubleClick}
                 onDeleteFileClick={onDeleteFileClick}
                 onPreviewFileClick={onPreviewFileClick}
-                canDelete={storageLocation.isDeletionEnabled}
                 />
-              {!!isLoading && (
-                <div className={classNames('StorageLocation-filesViewerContentOverlay')}>
-                  <Spin size="large" />
-                </div>
-              )}
             </div>
+            {!!isLoading && (
+              <div className={classNames('StorageLocation-filesViewerOverlay')}>
+                <Spin size="large" />
+              </div>
+            )}
           </div>
         )}
       </ReactDropzone>
