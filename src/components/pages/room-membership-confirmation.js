@@ -37,7 +37,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   };
 
   const renderSpinner = () => (
-    <Spin className="u-spin" tip={t('confirmationInProgress')} />
+    <Spin className="u-spin" tip={t('spinnerMessage')} />
   );
 
   const renderSuccessMessage = () => {

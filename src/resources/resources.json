@@ -1079,7 +1079,7 @@
     "namespace": "roomMembershipConfirmation",
     "language": "en",
     "resources": {
-      "confirmationInProgress": "Confirmation in progress...",
+      "spinnerMessage": "Please wait...",
       "confirmationSuccess": "Congratulations! You are now a member of room <0>{roomName}</0>.",
       "invitationConfirmation": "Please click on the button in order to join room <0>{roomName}</0>.",
       "invalidToken": "The invitation code is invalid or expired.",
@@ -1093,7 +1093,7 @@
     "namespace": "roomMembershipConfirmation",
     "language": "de",
     "resources": {
-      "confirmationInProgress": "Confirmation in progress... [in German]",
+      "spinnerMessage": "Bitte warte...",
       "confirmationSuccess": "Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.",
       "invitationConfirmation": "Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
       "invalidToken": "Der Einladungs-Code ist ungültig oder abgelaufen.",

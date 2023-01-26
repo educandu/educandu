@@ -1,6 +1,6 @@
-confirmationInProgress:
-  en: Confirmation in progress...
-  de: Confirmation in progress... [in German]
+spinnerMessage:
+  en: Please wait...
+  de: Bitte warte...
 confirmationSuccess:
   en: Congratulations! You are now a member of room <0>{roomName}</0>.
   de: Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.
