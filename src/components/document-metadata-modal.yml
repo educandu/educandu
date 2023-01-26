@@ -23,20 +23,20 @@ tagsPlaceholder:
   en: Enter keywords
   de: Stichwörter angeben
 tagsInfo:
-  en: Tags make the document discoverable when searching by words that match them
-  de: Tags make the document discoverable when searching by words that match them [but in German]
+  en: Here you can specify search terms with which your document can be found by other users
+  de: Hier kannst du Suchbegriffe angeben, mit denen dein Dokument von anderen Nutzern gefunden werden kann
 content:
   en: Content
   de: Inhalt
 contentEmpty:
-  en: empty
-  de: Lehr
+  en: none
+  de: Kein Inhalt
 contentFromTemplate:
   en: from template
-  de: aus Vorlage
+  de: Inhalt aus Vorlage
 contentInfo:
-  en: Either start with an empty document or with proposed content meant to help you with setting up your document
-  de: Either start with an empty document or with proposed content meant to help you with setting up your document [but in German]
+  en: Begin with either an empty document or with a template of suggested content, which you can then modify as you please
+  de: Starte entweder mit einem leeren Dokument oder mit einer Vorlage mit Inhaltvorschlägen, die du dann nach deinen Wünschen verändern kannst
 review:
   en: Review
   de: Review
