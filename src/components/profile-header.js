@@ -8,7 +8,7 @@ export default function ProfileHeader({ avatarUrl, displayName, organization, em
   return (
     <section className="ProfileHeader">
       <div className="ProfileHeader-avatar">
-        <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={avatarUrl} alt={displayName} />
+        <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE} src={avatarUrl} alt={displayName} />
       </div>
       <div>
         <span className="ProfileHeader-displayName">{displayName}</span>

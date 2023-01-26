@@ -131,7 +131,7 @@ function AccountSettingsTab() {
       <div className="AccountSettingsTab-headline">{t('personalInfoHeadline')}</div>
       <section className="AccountSettingsTab-section">
         <div className="AccountSettingsTab-avatar">
-          <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
+          <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
           <div>
             <div className="AccountSettingsTab-avatarTitle">{t('avatarTitle')}</div>
             <div className="AccountSettingsTab-avatarDescription">
