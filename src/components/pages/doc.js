@@ -588,18 +588,16 @@ function Doc({ initialState, PageTemplate }) {
           </div>
         )}
         {!!showCommentsPanel && (
-          <Tooltip title={t('commentsControlPanelTooltip')}>
-            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
-              <ControlPanel
-                startOpen={initialView === VIEW.comments}
-                openIcon={<CommentsIcon />}
-                onOpen={handleCommentsOpen}
-                onClose={handleCommentsClose}
-                leftSideContent={<div>{t('commentsPanelTitle')}</div>}
-                tooltipWhenClosed={t('commentsControlPanelTooltip')}
-                />
-            </div>
-          </Tooltip>
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
+            <ControlPanel
+              startOpen={initialView === VIEW.comments}
+              openIcon={<CommentsIcon />}
+              onOpen={handleCommentsOpen}
+              onClose={handleCommentsClose}
+              leftSideContent={<div>{t('commentsPanelTitle')}</div>}
+              tooltipWhenClosed={t('commentsControlPanelTooltip')}
+              />
+          </div>
         )}
         {!!showEditPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
