@@ -10,6 +10,7 @@
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
   overflow: hidden;
+  position: relative;
 
   & .ant-table-placeholder .ant-table-cell {
     border: none;
@@ -19,6 +20,14 @@
 .StorageLocation-filesViewerContent {
   height: 100%;
   overflow: auto;
+}
+
+.StorageLocation-filesViewerOverlay {
+  .m-mask;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
 }
 
 .StorageLocation-buttonsLine {
@@ -34,10 +43,6 @@
   &.StorageLocation-buttonsLineItem--select {
     min-width: 100px;
   }
-}
-
-.StorageLocation-select {
-  width: 100%;
 }
 
 .StorageLocation-locationInfo {
