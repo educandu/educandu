@@ -1,18 +1,18 @@
+filterPlaceholder:
+  en: Filter
+  de: Filter
 filesView_list:
-  en: List
-  de: Liste
+  en: List view
+  de: Listenansicht
 filesView_grid:
-  en: Grid
-  de: Grid
+  en: Grid view
+  de: Grid-Ansicht
 privateStorageMessage:
-  en: Private directory!
-  de: Privates Verzeichnis!
+  en: Private directory
+  de: Privates Verzeichnis
 publicStorageMessage:
-  en: Public directory!
-  de: Öffentliches Verzeichnis!
-clearSearch:
-  en: Clear search
-  de: Suche löschen
+  en: Public directory
+  de: Öffentliches Verzeichnis
 uploadFiles:
   en: Upload files
   de: Dateien hochladen

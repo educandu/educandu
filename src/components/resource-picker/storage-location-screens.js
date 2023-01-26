@@ -32,7 +32,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [files, setFiles] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
@@ -48,8 +48,8 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
   const displayedFiles = useMemo(() => {
-    return files.filter(file => file.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [searchTerm, files]);
+    return files.filter(file => file.displayName.toLowerCase().includes(filterText.toLowerCase()));
+  }, [filterText, files]);
 
   const fetchStorageContent = useCallback(async () => {
     if (!storageLocation) {
@@ -106,6 +106,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
 
   const handleFilesUploadScreenBackClick = async () => {
     popScreen();
+    setFilterText('');
     setUploadQueue([]);
     setCurrentEditedFileIndex(-1);
     await fetchStorageContent();
@@ -115,8 +116,8 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
     setUploadQueue(fs.map(f => ({ file: f, isPristine: true })));
   };
 
-  const handleSearchTermChange = newSearchTerm => {
-    setSearchTerm(newSearchTerm);
+  const handleFilterTextChange = value => {
+    setFilterText(value);
   };
 
   const handleEditFileClick = fileIndex => {
@@ -200,7 +201,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
         <StorageLocation
           files={displayedFiles}
           isLoading={isLoading}
-          searchTerm={searchTerm}
+          filterText={filterText}
           highlightedFile={highlightedFile}
           storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
@@ -209,7 +210,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
           onCancelClick={onCancel}
           onDeleteFileClick={handleDeleteFileClick}
           onPreviewFileClick={handlePreviewFileClick}
-          onSearchTermChange={handleSearchTermChange}
+          onFilterTextChange={handleFilterTextChange}
           onFilesViewerDisplayChange={handleFilesViewerDisplayChange}
           onFilesDropped={handleFilesDropped}
           onFileDoubleClick={handleFileDoubleClick}

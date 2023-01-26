@@ -1445,11 +1445,11 @@
     "namespace": "storageLocation",
     "language": "en",
     "resources": {
-      "filesView_list": "List",
-      "filesView_grid": "Grid",
-      "privateStorageMessage": "Private directory!",
-      "publicStorageMessage": "Public directory!",
-      "clearSearch": "Clear search",
+      "filterPlaceholder": "Filter",
+      "filesView_list": "List view",
+      "filesView_grid": "Grid view",
+      "privateStorageMessage": "Private directory",
+      "publicStorageMessage": "Public directory",
       "uploadFiles": "Upload files"
     }
   },
@@ -1457,11 +1457,11 @@
     "namespace": "storageLocation",
     "language": "de",
     "resources": {
-      "filesView_list": "Liste",
-      "filesView_grid": "Grid",
-      "privateStorageMessage": "Privates Verzeichnis!",
-      "publicStorageMessage": "Öffentliches Verzeichnis!",
-      "clearSearch": "Suche löschen",
+      "filterPlaceholder": "Filter",
+      "filesView_list": "Listenansicht",
+      "filesView_grid": "Grid-Ansicht",
+      "privateStorageMessage": "Privates Verzeichnis",
+      "publicStorageMessage": "Öffentliches Verzeichnis",
       "uploadFiles": "Dateien hochladen"
     }
   },
