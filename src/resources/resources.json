@@ -1459,7 +1459,7 @@
     "resources": {
       "filterPlaceholder": "Filter",
       "filesView_list": "Listenansicht",
-      "filesView_grid": "Grid-Ansicht",
+      "filesView_grid": "Kachelansicht",
       "privateStorageMessage": "Privates Verzeichnis",
       "publicStorageMessage": "Öffentliches Verzeichnis",
       "uploadFiles": "Dateien hochladen"

@@ -8,9 +8,9 @@ import FilesGridViewer from './files-grid-viewer.js';
 import FilesListViewer from './files-list-viewer.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import { Alert, Button, Input, Radio, Spin, Tooltip } from 'antd';
-import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { SearchOutlined, TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -94,6 +94,7 @@ function StorageLocation({
           <Input
             allowClear
             value={filterText}
+            prefix={<SearchOutlined />}
             placeholder={t('filterPlaceholder')}
             onChange={handleFilterTextChange}
             />
