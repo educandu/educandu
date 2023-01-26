@@ -1,17 +1,18 @@
-import { Spin } from 'antd';
 import PropTypes from 'prop-types';
+import { Button, Spin } from 'antd';
 import Markdown from '../markdown.js';
 import { useTranslation } from 'react-i18next';
 import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';
 import ProfileHeader from '../profile-header.js';
+import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
-const CARD_BATCH_SIZE = 8;
+const DOCUMENTS_BATCH_SIZE = 8;
 
 export default function UserProfile({ PageTemplate, initialState }) {
   const { t } = useTranslation('userProfile');
@@ -20,7 +21,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
   const { user } = initialState;
   const [documents, setDocuments] = useState([]);
   const [fetchingDocuments, setFetchingDocuments] = useState(true);
-  const [visibleDocumentsCount, setVisibleDocumentsCount] = useState(CARD_BATCH_SIZE);
+  const [visibleDocumentsCount, setVisibleDocumentsCount] = useState(DOCUMENTS_BATCH_SIZE);
 
   useEffect(() => {
     (async () => {
@@ -32,7 +33,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
   }, [user, userApiClient]);
 
   const handleMoreDocumentsClick = () => {
-    setVisibleDocumentsCount(visibleDocumentsCount + CARD_BATCH_SIZE);
+    setVisibleDocumentsCount(visibleDocumentsCount + DOCUMENTS_BATCH_SIZE);
   };
 
   const renderDocumentCard = (doc, index) => {
@@ -43,6 +44,9 @@ export default function UserProfile({ PageTemplate, initialState }) {
       <DocumentCard doc={doc} key={doc._id} />
     );
   };
+
+  const notShownDocumentsCount = Math.max(documents.length - visibleDocumentsCount, 0);
+  const nextBatchSize = Math.min(DOCUMENTS_BATCH_SIZE, notShownDocumentsCount);
 
   return (
     <PageTemplate>
@@ -80,8 +84,12 @@ export default function UserProfile({ PageTemplate, initialState }) {
             <div className="UserProfilePage-sectionCards">
               {documents.map(renderDocumentCard)}
             </div>
-            {visibleDocumentsCount < documents.length && (
-              <a className="UserProfilePage-sectionLink" onClick={handleMoreDocumentsClick}>{t('common:more')}</a>
+            {!!nextBatchSize && (
+              <div className="UserProfilePage-sectionMoreButton" >
+                <Button type="primary" icon={<PlusOutlined />} onClick={handleMoreDocumentsClick}>
+                  {t('moreButton', { count: nextBatchSize })}
+                </Button>
+              </div>
             )}
           </section>
         )}
