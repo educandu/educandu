@@ -9,13 +9,11 @@ function PageFooter() {
 
   return (
     <footer className="PageFooter">
-      <div>
-        {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
-          <span key={index.toString()} className="PageFooter-linkWrapper">
-            <a className="PageFooter-link" href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
-          </span>
-        ))}
-      </div>
+      {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
+        <span key={index.toString()} className="PageFooter-linkWrapper">
+          <a className="PageFooter-link" href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+        </span>
+      ))}
     </footer>
   );
 }
