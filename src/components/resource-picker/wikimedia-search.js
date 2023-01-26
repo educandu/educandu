@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
 import DebouncedInput from '../debounced-input.js';
 import { SearchOutlined } from '@ant-design/icons';
+import { Alert, Button, Checkbox, Empty } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import { SEARCH_FILE_TYPE } from './wikimedia-utils.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Alert, Button, Modal, Checkbox, Empty } from 'antd';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
@@ -94,16 +94,7 @@ function WikimediaSearch({
     setSelectedSearchFileTypes(newValues);
   };
 
-  const tryStartSearch = newSearchParams => {
-    if (newSearchParams.searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
-      Modal.error({
-        title: t('common:error'),
-        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
-      });
-
-      return;
-    }
-
+  const startSearch = newSearchParams => {
     setHasSearchedAtLeastOnce(true);
     onSearchParamsChange(newSearchParams);
   };
@@ -111,11 +102,11 @@ function WikimediaSearch({
   const handleSearchEnterKey = event => {
     const newSearchTerm = event.target.value;
     setTypedInSearchTerm(newSearchTerm);
-    tryStartSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    startSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const handleSearchButtonClick = () => {
-    tryStartSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    startSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const renderSearchInfo = () => {
@@ -137,6 +128,8 @@ function WikimediaSearch({
 
     return searchMessage ? <Alert type="info" message={searchMessage} showIcon /> : null;
   };
+
+  const isSearchButtonDisabled = typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH || !selectedSearchFileTypes.length || isLoading;
 
   return (
     <div className={classNames('WikimediaSearch', { 'is-hidden': isHidden })}>
@@ -161,7 +154,7 @@ function WikimediaSearch({
           <Button
             type="primary"
             icon={<SearchOutlined />}
-            disabled={!selectedSearchFileTypes.length || isLoading}
+            disabled={isSearchButtonDisabled}
             onClick={handleSearchButtonClick}
             >
             {t('common:search')}
