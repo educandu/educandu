@@ -4,3 +4,6 @@ accountClosed:
 documentsHeadline:
   en: Recently created documents
   de: Letzte erstellte Dokumente
+moreButton:
+  en: Show {count} more
+  de: Zeig {count} weitere an / {count} weitere anzeige[n] ?

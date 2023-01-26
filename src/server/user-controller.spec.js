@@ -92,7 +92,7 @@ describe('user-controller', () => {
     sandbox.restore();
   });
 
-  describe('handleGetUserPage', () => {
+  describe('handleGetUserProfilePage', () => {
     let req;
     let res;
 
@@ -106,7 +106,7 @@ describe('user-controller', () => {
       });
 
       it('should throw NotFound', async () => {
-        await expect(() => sut.handleGetUserPage(req, res)).rejects.toThrow(NotFound);
+        await expect(() => sut.handleGetUserProfilePage(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -136,11 +136,11 @@ describe('user-controller', () => {
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
 
-        return sut.handleGetUserPage(req, res);
+        return sut.handleGetUserProfilePage(req, res);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
+        assert.calledWith(pageRenderer.sendPage, req, res, 'user-profile', {
           user: mappedViewedUser
         });
       });

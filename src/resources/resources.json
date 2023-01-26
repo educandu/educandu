@@ -1228,7 +1228,7 @@
     }
   },
   {
-    "namespace": "user",
+    "namespace": "userProfile",
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
@@ -1236,7 +1236,7 @@
     }
   },
   {
-    "namespace": "user",
+    "namespace": "userProfile",
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",

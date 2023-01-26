@@ -10,7 +10,7 @@ function UserCard({ userId, displayName, avatarUrl, detail }) {
   const { t } = useTranslation('userCard');
 
   const handleButtonClick = () => {
-    window.location = routes.getUserUrl(userId);
+    window.location = routes.getUserProfileUrl(userId);
   };
 
   return (

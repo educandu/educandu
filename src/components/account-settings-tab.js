@@ -46,7 +46,7 @@ function AccountSettingsTab() {
     <Trans
       t={t}
       i18nKey="info"
-      components={[<a key="user-page-link" href={routes.getUserUrl(user._id)} rel="noopener noreferrer" />]}
+      components={[<a key="user-page-link" href={routes.getUserProfileUrl(user._id)} rel="noopener noreferrer" />]}
       />
   );
 

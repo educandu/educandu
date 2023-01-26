@@ -15,9 +15,9 @@ const connectExternalAccountPath = '/connect-external-account';
 
 const apiPrefix = '/api/';
 const docsPrefix = '/docs/';
-const usersPrefix = '/users/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
+const userProfilePrefix = '/user-profile/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
 const completePasswordResetPrefix = '/complete-password-reset/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
@@ -29,8 +29,8 @@ function getDocsUrl() {
   return docsPath;
 }
 
-function getUserUrl(id) {
-  return urlUtils.concatParts(usersPrefix, encodeURIComponent(id));
+function getUserProfileUrl(id) {
+  return urlUtils.concatParts(userProfilePrefix, encodeURIComponent(id));
 }
 
 function getDocUrl({ id, slug, view, templateDocumentId }) {
@@ -138,7 +138,7 @@ function isCompletePasswordResetPrefixPath(path) {
 }
 
 export default {
-  getUserUrl,
+  getUserProfileUrl,
   getDocsUrl,
   getDocUrl,
   getDocumentRevisionUrl,

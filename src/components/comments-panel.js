@@ -122,7 +122,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
   };
 
   const renderComment = comment => {
-    const userUrl = routes.getUserUrl(comment.createdBy._id);
+    const userUrl = routes.getUserProfileUrl(comment.createdBy._id);
     return (
       <div className="CommentsPanel-comment" key={comment._id}>
         <div className="CommentsPanel-metadata">

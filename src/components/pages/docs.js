@@ -165,7 +165,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderCreatedBy = (_user, row) => {
-    return <a href={routes.getUserUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
+    return <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
   };
 
   const renderActions = (_actions, row) => {

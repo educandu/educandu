@@ -13,8 +13,8 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const CARD_BATCH_SIZE = 8;
 
-export default function User({ PageTemplate, initialState }) {
-  const { t } = useTranslation('user');
+export default function UserProfile({ PageTemplate, initialState }) {
+  const { t } = useTranslation('userProfile');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const { user } = initialState;
@@ -46,9 +46,9 @@ export default function User({ PageTemplate, initialState }) {
 
   return (
     <PageTemplate>
-      <div className="UserPage">
-        <div className="UserPage-header">
-          <div className="UserPage-headerProfile">
+      <div className="UserProfilePage">
+        <div className="UserProfilePage-header">
+          <div className="UserProfilePage-headerProfile">
             <ProfileHeader
               includeMailTo
               email={user.email}
@@ -57,31 +57,31 @@ export default function User({ PageTemplate, initialState }) {
               organization={user.organization}
               />
           </div>
-          <div className="UserPage-headerStar">
+          <div className="UserProfilePage-headerStar">
             <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
           </div>
         </div>
 
         {!!user.introduction && (
-          <section className="UserPage-introduction">
+          <section className="UserProfilePage-introduction">
             <Markdown>{user.introduction}</Markdown>
           </section>
         )}
 
         {!!user.accountClosedOn && (
-          <div className="UserPage-accountClosed">{t('accountClosed')}</div>
+          <div className="UserProfilePage-accountClosed">{t('accountClosed')}</div>
         )}
 
         {!!fetchingDocuments && <Spin className="u-spin" />}
 
         {!fetchingDocuments && !!documents.length && (
           <section>
-            <div className="UserPage-sectionHeadline">{t('documentsHeadline')}</div>
-            <div className="UserPage-sectionCards">
+            <div className="UserProfilePage-sectionHeadline">{t('documentsHeadline')}</div>
+            <div className="UserProfilePage-sectionCards">
               {documents.map(renderDocumentCard)}
             </div>
             {visibleDocumentsCount < documents.length && (
-              <a className="UserPage-sectionLink" onClick={handleMoreDocumentsClick}>{t('common:more')}</a>
+              <a className="UserProfilePage-sectionLink" onClick={handleMoreDocumentsClick}>{t('common:more')}</a>
             )}
           </section>
         )}
@@ -90,7 +90,7 @@ export default function User({ PageTemplate, initialState }) {
   );
 }
 
-User.propTypes = {
+UserProfile.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     user: publicUserShape.isRequired

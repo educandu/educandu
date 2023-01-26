@@ -212,7 +212,7 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.connectExternalAccount, {});
   }
 
-  async handleGetUserPage(req, res) {
+  async handleGetUserProfilePage(req, res) {
     const { userId } = req.params;
     const viewingUser = req.user;
 
@@ -223,7 +223,7 @@ class UserController {
 
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser });
   }
 
   async handleGetUsers(req, res) {
@@ -585,7 +585,7 @@ class UserController {
   }
 
   registerPages(router) {
-    router.get('/users/:userId', (req, res) => this.handleGetUserPage(req, res));
+    router.get('/user-profile/:userId', (req, res) => this.handleGetUserProfilePage(req, res));
 
     router.get('/register', (req, res) => this.handleGetRegisterPage(req, res));
 

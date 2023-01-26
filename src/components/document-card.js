@@ -25,10 +25,10 @@ function DocumentCard({ doc }) {
             <div className="DocumentCard-description">{doc.description}</div>
             <div className="DocumentCard-dateDetails">
               <div className="DocumentCard-dateDetail">
-                {t('creationDetail', { date: formatDate(doc.createdOn) })} <a href={routes.getUserUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
+                {t('creationDetail', { date: formatDate(doc.createdOn) })} <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
               </div>
               <div className="DocumentCard-dateDetail">
-                {t('updateDetail', { date: formatDate(doc.updatedOn) })} <a href={routes.getUserUrl(doc.updatedBy._id)}>{doc.createdBy.displayName}</a>
+                {t('updateDetail', { date: formatDate(doc.updatedOn) })} <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.createdBy.displayName}</a>
               </div>
             </div>
           </Fragment>
