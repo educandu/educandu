@@ -103,15 +103,15 @@ function FavoritesTab() {
         <span>{t('noFavorites')}</span>
       )}
       <div className="FavoriteTab-headline">{t('favoriteUsers', { count: favoriteUsers.length })}</div>
-      <section className="FavoritesTab-cards">
+      <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteUsers.map(renderFavoriteUser)}
       </section>
       <div className="FavoriteTab-headline">{t('favoriteRooms', { count: favoriteRooms.length })}</div>
-      <section className="FavoritesTab-cards">
+      <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteRooms.map(renderFavoriteRoom)}
       </section>
       <div className="FavoriteTab-headline">{t('favoriteDocuments', { count: favoriteDocuments.length })}</div>
-      <section className="FavoritesTab-cards FavoritesTab-cards--documents">
+      <section className="FavoritesTab-cards FavoritesTab-cards--wide">
         {favoriteDocuments.map(renderFavoriteDocument)}
       </section>
     </div>
