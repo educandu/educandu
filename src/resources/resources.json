@@ -1110,7 +1110,7 @@
       "exclusiveDocumentsSubtitle": "Exclusive documents",
       "collaborativeDocumentsSubtitle": "Collaborative documents",
       "documentsTabTitle": "Documents ({count})",
-      "membersTabTitle": "members ({count})",
+      "membersTabTitle": "Members ({count})",
       "settingsTabTitle": "Settings",
       "documentsPlaceholder": "The room does not contain any documents",
       "thisWeek": "This week",

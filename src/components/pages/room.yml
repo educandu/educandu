@@ -8,7 +8,7 @@ documentsTabTitle:
   en: Documents ({count})
   de: Dokumente ({count})
 membersTabTitle:
-  en: members ({count})
+  en: Members ({count})
   de: Mitglieder ({count})
 settingsTabTitle:
   en: Settings
