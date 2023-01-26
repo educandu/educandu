@@ -1,6 +1,6 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import CloseIcon from './icons/general/close-icon.js';
@@ -8,16 +8,22 @@ import CloseIcon from './icons/general/close-icon.js';
 function ControlPanel({
   startOpen,
   openIcon,
-  onOpen,
-  onClose,
+  disabled,
   leftSideContent,
   contentBeforeClose,
-  contentAfterClose
+  contentAfterClose,
+  tooltipWhenClosed,
+  tooltipWhenDisabled,
+  onOpen,
+  onClose
 }) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(startOpen);
   const [isContentVisible, setIsContentVisible] = useState(false);
+
+  const isPanelClosed = !isOpen || !!disabled;
+  const isPanelFullyOpen = !disabled && !!isOpen && isContentVisible;
 
   useEffect(() => {
     if (startOpen) {
@@ -67,35 +73,50 @@ function ControlPanel({
 
   const renderOpenButton = () => {
     return (
-      <Button className="ControlPanel-openButton" type="link" icon={openIcon} onClick={handleOpenClick} loading={isLoading} />
+      <Tooltip title={disabled ? tooltipWhenDisabled : tooltipWhenClosed}>
+        <Button
+          type="link"
+          icon={openIcon}
+          disabled={disabled}
+          loading={isLoading}
+          onClick={handleOpenClick}
+          className={classNames('ControlPanel-openButton', { 'is-disabled': disabled })}
+          />
+      </Tooltip>
     );
   };
 
   return (
     <div className={classNames('ControlPanel', { 'is-open': isOpen })}>
-      {!!isOpen && !!isContentVisible && renderContent()}
-      {!isOpen && renderOpenButton()}
+      {!!isPanelFullyOpen && renderContent()}
+      {!!isPanelClosed && renderOpenButton()}
     </div>
   );
 }
 
 ControlPanel.propTypes = {
-  contentAfterClose: PropTypes.node,
-  contentBeforeClose: PropTypes.node,
-  leftSideContent: PropTypes.node,
-  onClose: PropTypes.func,
-  onOpen: PropTypes.func,
+  startOpen: PropTypes.bool,
   openIcon: PropTypes.node.isRequired,
-  startOpen: PropTypes.bool
+  disabled: PropTypes.bool,
+  leftSideContent: PropTypes.node,
+  contentBeforeClose: PropTypes.node,
+  contentAfterClose: PropTypes.node,
+  tooltipWhenClosed: PropTypes.string,
+  tooltipWhenDisabled: PropTypes.string,
+  onOpen: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 ControlPanel.defaultProps = {
-  contentAfterClose: null,
-  contentBeforeClose: null,
+  startOpen: false,
+  disabled: false,
   leftSideContent: null,
-  onClose: () => Promise.resolve(true),
+  contentBeforeClose: null,
+  contentAfterClose: null,
+  tooltipWhenClosed: null,
+  tooltipWhenDisabled: null,
   onOpen: () => Promise.resolve(),
-  startOpen: false
+  onClose: () => Promise.resolve(true)
 };
 
 export default ControlPanel;

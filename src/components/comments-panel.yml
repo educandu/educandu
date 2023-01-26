@@ -4,6 +4,9 @@ addCommentButtonText:
 postCommentButtonText:
   en: Post comment
   de: Kommentar abschicken
+topicHeaderPrefix:
+  en: Topic
+  de: Thema
 newTopicPlaceholder:
   en: New topic
   de: Neues Thema

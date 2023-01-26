@@ -1,10 +1,26 @@
-.Info {}
+@info-label-offset: 18px;
+
+.Info {
+  position: relative;
+}
 
 .Info-icon {
-  margin: 0 @edu-control-spacing-base;
+  position: absolute;
+  left: -@info-label-offset;
+  height: 100%;
+  vertical-align: baseline;
   color: @edu-secondary-color-dark !important;
 
   &.Info-icon--help {
     cursor: help !important;
   }
+
+  &.Info-icon--afterContent {
+    position: initial;
+    margin: 0 @edu-control-spacing-base;
+  }
+}
+
+.ant-form-item-label {
+  padding-left: @info-label-offset;
 }

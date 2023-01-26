@@ -12,17 +12,17 @@ const chapterSchema = joi.object({
   text: joi.string().allow('').required()
 });
 
-export function createDefaultSecondaryTrack(index, t) {
+export function createDefaultSecondaryTrack() {
   return {
-    name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: ''
   };
 }
 
-export function createDefaultMainTrack(t) {
+export function createDefaultMainTrack() {
   return {
-    name: `[${t('common:mainTrack')}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -39,13 +39,13 @@ export function createDefaultVolumePreset(t, secondaryTracksCount) {
   };
 }
 
-export function createDefaultChapter(t) {
+export function createDefaultChapter() {
   return {
     key: uniqueId.create(),
     startPosition: 0,
     color: '#6D8BB1',
-    title: `[${t('common:chapter')}]`,
-    text: `[${t('common:text')}]`
+    title: '',
+    text: ''
   };
 }
 
@@ -54,9 +54,9 @@ export function createDefaultContent(t) {
 
   return {
     width: 100,
-    mainTrack: createDefaultMainTrack(t),
+    mainTrack: createDefaultMainTrack(),
     secondaryTracks,
-    chapters: [createDefaultChapter(t)],
+    chapters: [createDefaultChapter()],
     volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
   };
 }

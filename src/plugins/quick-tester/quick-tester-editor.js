@@ -69,7 +69,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   return (
     <div className="QuickTesterEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
         </FormItem>

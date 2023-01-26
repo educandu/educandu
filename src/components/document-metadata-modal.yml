@@ -22,9 +22,21 @@ invalidTags:
 tagsPlaceholder:
   en: Enter keywords
   de: Stichwörter angeben
-useTemplateDocument:
-  en: Use default template
-  de: Standardvorlage benutzen
+tagsInfo:
+  en: Here you can specify search terms with which your document can be found by other users
+  de: Hier kannst du Suchbegriffe angeben, mit denen dein Dokument von anderen Nutzern gefunden werden kann
+content:
+  en: Content
+  de: Inhalt
+contentEmpty:
+  en: none
+  de: Kein Inhalt
+contentFromTemplate:
+  en: from template
+  de: Inhalt aus Vorlage
+contentInfo:
+  en: Begin with either an empty document or with a template of suggested content, which you can then modify as you please
+  de: Starte entweder mit einem leeren Dokument oder mit einer Vorlage mit Inhaltvorschlägen, die du dann nach deinen Wünschen verändern kannst
 review:
   en: Review
   de: Review

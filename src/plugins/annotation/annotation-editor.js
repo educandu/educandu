@@ -43,7 +43,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form>
+      <Form labelAlign="left">
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={title} onChange={handleTitleChange} inline />
         </FormItem>

@@ -11,5 +11,20 @@ commentsPanelTitle:
   en: You are viewing the document page in "comments" mode
   de: Du befindest dich im Kommentar-Modus
 commentsHeader:
-  en: Comment topics
-  de: Kommentar-Themen
+  en: Comments
+  de: Kommentare
+editRestrictionTooltip_annonymousUser:
+  en: Log in in order to edit this document
+  de: Melde dich an, um dieses Dokument zu bearbeiten
+editRestrictionTooltip_openContribution:
+  en: Editing this document was disabled by a maintainer
+  de: Die Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert
+editRestrictionTooltip_archive:
+  en: This document cannot be edited because it is archived
+  de: Dieses Dokument kann nicht bearbeitet werden da es archiviert ist
+editRestrictionTooltip_room:
+  en: Editing this document is only allowed for the room owner
+  de: Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt
+commentsControlPanelTooltip:
+  en: Comments
+  de: Komentare

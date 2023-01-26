@@ -244,41 +244,43 @@ function SectionDisplay({
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
       {!!canEdit && (
-        <div className={classNames('SectionDisplay-toolbar', { 'is-editing': isEditing })}>
-          <div className="SectionDisplay-toolbarInfo" {...dragHandleProps}>
-            {renderSectionType()}
-            {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
-            {renderSectionRevision()}
-          </div>
-          <div className="SectionDisplay-toolbarButtons">
-            {editActions.map(renderEditAction)}
+        <Fragment>
+          <div className={classNames('SectionDisplay-toolbar', { 'is-editing': isEditing })}>
+            <div className="SectionDisplay-toolbarInfo" {...dragHandleProps}>
+              {renderSectionType()}
+              {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
+              {renderSectionRevision()}
+            </div>
+            <div className="SectionDisplay-toolbarButtons">
+              {editActions.map(renderEditAction)}
+            </div>
           </div>
           {!!isPending && (
-            <Fragment>
-              <div className="SectionDisplay-overlay" />
-              <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
-                <Tooltip title={t('common:apply')}>
-                  <Button
-                    type="link"
-                    onClick={onPendingSectionApply}
-                    className="SectionDisplay-overlayButton SectionDisplay-overlayButton--apply"
-                    >
-                    <div className="SectionDisplay-overlayButtonIcon"><CheckOutlined /></div>
-                  </Button>
-                </Tooltip>
-                <Tooltip title={t('common:discard')}>
-                  <Button
-                    type="link"
-                    onClick={onPendingSectionDiscard}
-                    className="SectionDisplay-overlayButton SectionDisplay-overlayButton--discard"
-                    >
-                    <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
-                  </Button>
-                </Tooltip>
-              </div>
-            </Fragment>
+          <Fragment>
+            <div className="SectionDisplay-overlay" />
+            <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
+              <Tooltip title={t('common:apply')}>
+                <Button
+                  type="link"
+                  onClick={onPendingSectionApply}
+                  className="SectionDisplay-overlayButton SectionDisplay-overlayButton--apply"
+                  >
+                  <div className="SectionDisplay-overlayButtonIcon"><CheckOutlined /></div>
+                </Button>
+              </Tooltip>
+              <Tooltip title={t('common:discard')}>
+                <Button
+                  type="link"
+                  onClick={onPendingSectionDiscard}
+                  className="SectionDisplay-overlayButton SectionDisplay-overlayButton--discard"
+                  >
+                  <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
+                </Button>
+              </Tooltip>
+            </div>
+          </Fragment>
           )}
-        </div>
+        </Fragment>
       )}
 
       {!!isHardDeleteEnabled && (

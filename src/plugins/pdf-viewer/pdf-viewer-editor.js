@@ -43,7 +43,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
 
   return (
     <div className="PdfViewerEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>

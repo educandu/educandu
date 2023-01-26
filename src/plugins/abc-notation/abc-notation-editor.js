@@ -34,7 +34,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
           <InputAndPreview
             input={<NeverScrollingTextArea minRows={6} value={abcCode} onChange={handleCurrentAbcCodeChanged} />}

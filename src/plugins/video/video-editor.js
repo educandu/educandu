@@ -77,7 +77,7 @@ function VideoEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT} {...validationPropsSourceUrl}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
         </FormItem>

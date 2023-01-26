@@ -97,7 +97,7 @@ export async function getSourceDuration({ url, cdnRootUrl }) {
   try {
     const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl });
 
-    if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error) {
+    if (getUrlValidationStatus(url) !== URL_VALIDATION_STATUS.valid) {
       return 0;
     }
 

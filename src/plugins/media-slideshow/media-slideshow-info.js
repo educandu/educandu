@@ -52,13 +52,13 @@ class MediaSlideshowInfo {
     };
   }
 
-  getDefaultContent(t) {
+  getDefaultContent() {
     return {
       sourceUrl: '',
       copyrightNotice: '',
       playbackRange: [0, 1],
       width: 100,
-      chapters: [this.getDefaultChapter(t)]
+      chapters: [this.getDefaultChapter()]
     };
   }
 

@@ -5,8 +5,8 @@ initialPageNumber:
   en: Initially displayed page
   de: Zuerst angezeigte Seite
 showTextOverlay:
-  en: Show text overlay
-  de: Text-Overlay anzeigen
+  en: Text overlay
+  de: Text-Overlay
 showTextOverlayInfo:
   en: |
       Shows a transparent layer on top of the document enabling users to select text.

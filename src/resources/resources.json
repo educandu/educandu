@@ -209,6 +209,7 @@
     "resources": {
       "addCommentButtonText": "Write comment",
       "postCommentButtonText": "Post comment",
+      "topicHeaderPrefix": "Topic",
       "newTopicPlaceholder": "New topic",
       "commentDeleted": "The content of this comment was deleted by maintainers."
     }
@@ -219,6 +220,7 @@
     "resources": {
       "addCommentButtonText": "Kommentar schreiben",
       "postCommentButtonText": "Kommentar abschicken",
+      "topicHeaderPrefix": "Thema",
       "newTopicPlaceholder": "Neues Thema",
       "commentDeleted": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
     }
@@ -405,7 +407,11 @@
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "invalidTags": "Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}",
       "tagsPlaceholder": "Enter keywords",
-      "useTemplateDocument": "Use default template",
+      "tagsInfo": "Here you can specify search terms with which your document can be found by other users",
+      "content": "Content",
+      "contentEmpty": "none",
+      "contentFromTemplate": "from template",
+      "contentInfo": "Begin with either an empty document or with a template of suggested content, which you can then modify as you please",
       "review": "Review",
       "verified": "Verified document",
       "generateSequence": "Create sequence of documents",
@@ -444,7 +450,11 @@
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "invalidTags": "Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein",
       "tagsPlaceholder": "Stichwörter angeben",
-      "useTemplateDocument": "Standardvorlage benutzen",
+      "tagsInfo": "Hier kannst du Suchbegriffe angeben, mit denen dein Dokument von anderen Nutzern gefunden werden kann",
+      "content": "Inhalt",
+      "contentEmpty": "Kein Inhalt",
+      "contentFromTemplate": "Inhalt aus Vorlage",
+      "contentInfo": "Starte entweder mit einem leeren Dokument oder mit einer Vorlage mit Inhaltvorschlägen, die du dann nach deinen Wünschen verändern kannst",
       "review": "Review",
       "verified": "Überprüftes Dokument",
       "generateSequence": "Dokument-Reihe anlegen",
@@ -492,7 +502,8 @@
       "statusIconTooltipSaved": "There are no unsaved changes",
       "statusIconTooltipDirty": "There are unsaved changes",
       "statusIconTooltipInvalid": "Please correct all errors before saving",
-      "editMetadata": "Edit metadata"
+      "editMetadata": "Edit metadata",
+      "editMetadataDisabledTooltip": "Editing the metadata of this document was disabled by a maintainer"
     }
   },
   {
@@ -502,7 +513,8 @@
       "statusIconTooltipSaved": "Keine ungespeicherten Änderungen",
       "statusIconTooltipDirty": "Änderungen nicht gespeichert",
       "statusIconTooltipInvalid": "Bitte korrigiere alle Fehler vor dem Speichern",
-      "editMetadata": "Metadaten bearbeiten"
+      "editMetadata": "Metadaten bearbeiten",
+      "editMetadataDisabledTooltip": "Die Metadaten-Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert"
     }
   },
   {
@@ -563,7 +575,8 @@
     "resources": {
       "restoredFrom": "Restored from",
       "permalink": "Permalink",
-      "restore": "Restore"
+      "restore": "Restore",
+      "tooltip": "Document versions"
     }
   },
   {
@@ -572,7 +585,8 @@
     "resources": {
       "restoredFrom": "Wiederhergestellt aus",
       "permalink": "Permalink",
-      "restore": "Wiederherstellen"
+      "restore": "Wiederherstellen",
+      "tooltip": "Dokumentversionen"
     }
   },
   {
@@ -991,7 +1005,12 @@
       "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
       "documentMetadataUpdated": "Document updated successfully",
       "commentsPanelTitle": "You are viewing the document page in \"comments\" mode",
-      "commentsHeader": "Comment topics"
+      "commentsHeader": "Comments",
+      "editRestrictionTooltip_annonymousUser": "Log in in order to edit this document",
+      "editRestrictionTooltip_openContribution": "Editing this document was disabled by a maintainer",
+      "editRestrictionTooltip_archive": "This document cannot be edited because it is archived",
+      "editRestrictionTooltip_room": "Editing this document is only allowed for the room owner",
+      "commentsControlPanelTooltip": "Comments"
     }
   },
   {
@@ -1002,7 +1021,12 @@
       "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
       "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert",
       "commentsPanelTitle": "Du befindest dich im Kommentar-Modus",
-      "commentsHeader": "Kommentar-Themen"
+      "commentsHeader": "Kommentare",
+      "editRestrictionTooltip_annonymousUser": "Melde dich an, um dieses Dokument zu bearbeiten",
+      "editRestrictionTooltip_openContribution": "Die Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert",
+      "editRestrictionTooltip_archive": "Dieses Dokument kann nicht bearbeitet werden da es archiviert ist",
+      "editRestrictionTooltip_room": "Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt",
+      "commentsControlPanelTooltip": "Komentare"
     }
   },
   {
@@ -1013,7 +1037,9 @@
       "newDocument": "New document",
       "initialAuthor": "Initial author",
       "filterPlaceholder": "Filter by title or initial author",
-      "badges": "Badges"
+      "badges": "Badges",
+      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
+      "allowedOpenContributionBadge_content": "Open contribution to this document's content is allowed"
     }
   },
   {
@@ -1024,7 +1050,9 @@
       "newDocument": "Neues Dokument",
       "initialAuthor": "Erstautor",
       "filterPlaceholder": "Nach Titel oder Erstautor filtern",
-      "badges": "Kennzeichen"
+      "badges": "Kennzeichen",
+      "allowedOpenContributionBadge_metadataAndContent": "Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden",
+      "allowedOpenContributionBadge_content": "Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden"
     }
   },
   {
@@ -1876,7 +1904,7 @@
       "linkSource": "Link source",
       "documentLink": "document link",
       "externalLink": "external link",
-      "externalUrl": "external URL",
+      "externalUrl": "External URL",
       "adoptDocumentTitle": "Adopt as title"
     }
   },
@@ -2203,7 +2231,7 @@
     "resources": {
       "name": "PDF viewer",
       "initialPageNumber": "Initially displayed page",
-      "showTextOverlay": "Show text overlay",
+      "showTextOverlay": "Text overlay",
       "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n"
     }
   },
@@ -2213,7 +2241,7 @@
     "resources": {
       "name": "PDF-Anzeige",
       "initialPageNumber": "Zuerst angezeigte Seite",
-      "showTextOverlay": "Text-Overlay anzeigen",
+      "showTextOverlay": "Text-Overlay",
       "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
     }
   },
@@ -2391,7 +2419,6 @@
       "status": "Status",
       "language": "Language",
       "invalidSlug": "The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
-      "archivedAlert": "This document is archived and cannot be edited",
       "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "revision": "Revision",
       "document": "Document",
@@ -2490,9 +2517,6 @@
       "randomizedTests": "The tests are arranged in random order",
       "youtubeCopyrightNotice": "Source: [Youtube]({link})\n",
       "verifiedDocumentBadge": "This document was verified by a maintainer",
-      "allowedOpenContributionBadge_none": "Open contribution to this document is not allowed",
-      "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
-      "allowedOpenContributionBadge_content": "Open contribution to this document's metadata is not allowed",
       "duration": "Duration",
       "determiningDuration": "Determining media duration ...",
       "startTimecode": "Start time",
@@ -2552,7 +2576,6 @@
       "status": "Status",
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.",
-      "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
       "proposedSectionsAlert": "Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n",
       "revision": "Revision",
       "document": "Dokument",
@@ -2651,9 +2674,6 @@
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
       "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n",
       "verifiedDocumentBadge": "Dieses Dokument wurde von einem Maintainer überprüft",
-      "allowedOpenContributionBadge_none": "Dieses Dokument kann nicht öffentlich bearbeitet werden",
-      "allowedOpenContributionBadge_metadataAndContent": "Dieses Dokument kann vollständig öffentlich bearbeitet werden",
-      "allowedOpenContributionBadge_content": "Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden",
       "duration": "Zeitdauer",
       "determiningDuration": "Mediendauer wird ermittelt ...",
       "startTimecode": "Startzeit",

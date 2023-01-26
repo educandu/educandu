@@ -101,7 +101,7 @@ function MatchingCardsEditor({ content, onContentChanged }) {
 
   return (
     <div className="MatchingCardsEditor">
-      <Form>
+      <Form labelAlign="left">
         <FormItem label={t('common:size')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={size} onChange={handleSizeChange}>
             <RadioButton value={SIZE.threeByThree}>3 x 3</RadioButton>

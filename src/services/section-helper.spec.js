@@ -9,7 +9,8 @@ const createSection = () => ({
   deletedBy: null,
   deletedBecause: null,
   content: {
-    text: 'section content'
+    text: 'section content',
+    width: 100
   }
 });
 
@@ -21,7 +22,8 @@ const createAncestorSection = () => ({
   deletedBy: null,
   deletedBecause: null,
   content: {
-    text: 'ancestor section content'
+    text: 'ancestor section content',
+    width: 100
   }
 });
 

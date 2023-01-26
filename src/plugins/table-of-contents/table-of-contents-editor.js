@@ -24,7 +24,7 @@ export default function TableOfContentsEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form>
+      <Form labelAlign="left">
         <Form.Item label={t('levelRange')} {...FORM_ITEM_LAYOUT}>
           <StepSlider
             range

@@ -82,9 +82,6 @@ language:
 invalidSlug:
   en: The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
   de: Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
-archivedAlert:
-  en: This document is archived and cannot be edited
-  de: Dieses Dokument ist archiviert und kann nicht editiert werden
 proposedSectionsAlert:
   en: |
     Apply or discard the proposed sections. Unapplied sections are
@@ -389,15 +386,6 @@ youtubeCopyrightNotice:
 verifiedDocumentBadge:
   en: This document was verified by a maintainer
   de: Dieses Dokument wurde von einem Maintainer überprüft
-allowedOpenContributionBadge_none:
-  en: Open contribution to this document is not allowed
-  de: Dieses Dokument kann nicht öffentlich bearbeitet werden
-allowedOpenContributionBadge_metadataAndContent:
-  en: Open contribution to this document's metadata and content is allowed
-  de: Dieses Dokument kann vollständig öffentlich bearbeitet werden
-allowedOpenContributionBadge_content:
-  en: Open contribution to this document's metadata is not allowed
-  de: Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden
 duration:
   en: Duration
   de: Zeitdauer

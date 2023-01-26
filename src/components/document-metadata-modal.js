@@ -14,8 +14,8 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
@@ -33,6 +33,8 @@ import {
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
@@ -70,20 +72,20 @@ function DocumentMetadataModal({
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [slug, setSlug] = useState('');
   const [tags, setTags] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
+  const [title, setTitle] = useState('');
   const [language, setLanguage] = useState(null);
-  const [publicContext, setPublicContext] = useState(null);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [description, setDescription] = useState('');
   const [roomContext, setRoomContext] = useState(null);
+  const [publicContext, setPublicContext] = useState(null);
 
-  const [generateSequence, setGenerateSequence] = useState(false);
   const [sequenceCount, setSequenceCount] = useState(0);
+  const [generateSequence, setGenerateSequence] = useState(false);
+  const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
   const [useTemplateDocument, setUseTemplateDocument] = useState(false);
   const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.none);
-  const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
 
   const documentRoomId = useMemo(() => determineDocumentRoomId({
     mode,
@@ -225,8 +227,8 @@ function DocumentMetadataModal({
   };
 
   const handleUseTemplateDocumentChange = event => {
-    const { checked } = event.target;
-    setUseTemplateDocument(checked);
+    const { value } = event.target;
+    setUseTemplateDocument(value);
   };
 
   const handleArchivedChange = event => {
@@ -355,7 +357,12 @@ function DocumentMetadataModal({
         <FormItem label={t('common:slug')} {...validationState.slug}>
           <Input value={slug} onChange={handleSlugChange} />
         </FormItem>
-        <FormItem label={t('common:tags')} {...validationState.tags}>
+        <FormItem
+          {...validationState.tags}
+          label={
+            <Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>
+          }
+          >
           <Select
             mode="tags"
             value={tags}
@@ -383,10 +390,15 @@ function DocumentMetadataModal({
           </FormItem>
         )}
         {!!canUseTemplateDocument && (
-          <FormItem>
-            <Checkbox checked={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
-              <span className="u-label">{t('useTemplateDocument')}</span>
-            </Checkbox>
+          <FormItem
+            label={
+              <Info tooltip={t('contentInfo')} iconAfterContent>{t('content')}</Info>
+            }
+            >
+            <RadioGroup value={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
+              <RadioButton value={false}>{t('contentEmpty')}</RadioButton>
+              <RadioButton value={Boolean('true')}>{t('contentFromTemplate')}</RadioButton>
+            </RadioGroup>
           </FormItem>
         )}
         {!!isDocInPublicContext && (

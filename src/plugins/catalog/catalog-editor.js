@@ -69,12 +69,12 @@ function CatalogEditor({ content, onContentChanged }) {
   };
 
   const handleItemAdd = () => {
-    triggerChange({ items: [...items, createDefaultItem(items.length, t)] });
+    triggerChange({ items: [...items, createDefaultItem()] });
   };
 
   return (
     <div className="CatalogEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={title} onChange={handleTitleChange} />
         </FormItem>

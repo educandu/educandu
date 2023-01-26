@@ -92,7 +92,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const handleAddTrackButtonClick = () => {
     const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
+    newSecondaryTracks.push(createDefaultSecondaryTrack());
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks.push(1);
@@ -110,7 +110,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   return (
     <div className="MultitrackMediaEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <ItemPanel header={t('common:mainTrack')}>
           <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
             <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />

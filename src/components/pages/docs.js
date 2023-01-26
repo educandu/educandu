@@ -23,9 +23,6 @@ import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.j
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { CheckOutlined, LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
-import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
-import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -206,16 +203,20 @@ function Docs({ initialState, PageTemplate }) {
             <LikeOutlined className="u-verified-badge" />
           </Tooltip>
         )}
-        <Tooltip title={t(`common:allowedOpenContributionBadge_${row.allowedOpenContribution}`)}>
-          <div className="u-allowed-open-contribution-badge">
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
-              && <AllowedOpenContributionNoneIcon />}
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
-              && <AllowedOpenContributionContentIcon />}
-            {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-              && <AllowedOpenContributionMetadataAndContentIcon />}
-          </div>
-        </Tooltip>
+        {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content && (
+          <Tooltip title={t('allowedOpenContributionBadge_content')}>
+            <div className="u-badge">
+              C
+            </div>
+          </Tooltip>
+        )}
+        {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent && (
+          <Tooltip title={t('allowedOpenContributionBadge_metadataAndContent')}>
+            <div className="u-badge">
+              M C
+            </div>
+          </Tooltip>
+        )}
       </div>
     );
   };

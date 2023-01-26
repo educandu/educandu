@@ -53,7 +53,7 @@ function AudioEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
         </FormItem>

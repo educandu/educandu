@@ -22,7 +22,7 @@ import MainTrackEditor from '../../components/media-player/main-track-editor.js'
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
-import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, TAIL_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 
@@ -181,7 +181,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   return (
     <div className="InteractiveMediaEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <MainTrackEditor
           content={content}
           onContentChanged={handleMainTrackContentChange}
@@ -240,7 +240,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 value={chapters?.[selectedChapterIndex].text || ''}
                 />
             </FormItem>
-            <FormItem {...TAIL_FORM_ITEM_LAYOUT}>
+            <FormItem {...FORM_ITEM_LAYOUT_WITHOUT_LABEL}>
               <div>{t('addAnswerInfo')}</div>
             </FormItem>
             <FormItem label={t('answers')} {...FORM_ITEM_LAYOUT}>

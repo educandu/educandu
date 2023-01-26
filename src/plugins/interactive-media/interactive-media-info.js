@@ -34,18 +34,18 @@ class InteractiveMediaInfo {
     return (await import('./interactive-media-editor.js')).default;
   }
 
-  getDefaultChapter(t) {
+  getDefaultChapter() {
     return {
       key: uniqueId.create(),
       startPosition: 0,
-      title: `[${t('common:chapter')}]`,
-      text: `[${t('common:text')}]`,
+      title: '',
+      text: '',
       answers: [],
       correctAnswerIndex: -1
     };
   }
 
-  getDefaultContent(t) {
+  getDefaultContent() {
     return {
       sourceUrl: '',
       copyrightNotice: '',
@@ -53,7 +53,7 @@ class InteractiveMediaInfo {
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       showVideo: false,
-      chapters: [this.getDefaultChapter(t)]
+      chapters: [this.getDefaultChapter()]
     };
   }
 

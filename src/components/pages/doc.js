@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
-import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -28,16 +27,13 @@ import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { canEditDocContent, canEditDocMetadata } from '../../utils/doc-utils.js';
+import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
-import AllowedOpenContributionNoneIcon from '../icons/general/allowed-open-contribution-none-icon.js';
-import AllowedOpenContributionContentIcon from '../icons/general/allowed-open-contribution-content-icon.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
-import AllowedOpenContributionMetadataAndContentIcon from '../icons/general/allowed-open-contribution-metadata-and-content-icon.js';
+import { canEditDocContent, canEditDocMetadata, getEditDocContentRestrictionTooltip } from '../../utils/doc-utils.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -59,11 +55,6 @@ const VIEW = {
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
   const alerts = [];
   const review = docRevision ? docRevision.publicContext?.review : doc.publicContext?.review;
-  const archived = docRevision ? docRevision.publicContext?.archived : doc.publicContext?.archived;
-
-  if (archived) {
-    alerts.push({ message: t('common:archivedAlert') });
-  }
 
   if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
     alerts.push({ message: t('common:proposedSectionsAlert') });
@@ -108,8 +99,12 @@ function Doc({ initialState, PageTemplate }) {
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
+  const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
+  const editDocRestrictionTooltip = userCanEdit
+    ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
+    : t('editRestrictionTooltip_annonymousUser');
 
   const [isDirty, setIsDirty] = useState(false);
   const [comments, setComments] = useState([]);
@@ -516,7 +511,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const showHistoryPanel = view === VIEW.display || view === VIEW.history;
   const showCommentsPanel = view === VIEW.display || view === VIEW.comments;
-  const showEditPanel = userCanEditDocContent && (view === VIEW.display || view === VIEW.edit);
+  const showEditPanel = view === VIEW.display || view === VIEW.edit;
 
   return (
     <Fragment>
@@ -533,18 +528,6 @@ function Doc({ initialState, PageTemplate }) {
             {!!doc.publicContext?.verified && (
               <Tooltip title={t('common:verifiedDocumentBadge')}>
                 <LikeOutlined className="u-verified-badge" />
-              </Tooltip>
-            )}
-            {!!doc.publicContext?.allowedOpenContribution && (
-              <Tooltip title={t(`common:allowedOpenContributionBadge_${doc.publicContext.allowedOpenContribution}`)}>
-                <div className="u-allowed-open-contribution-badge">
-                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.none
-                    && <AllowedOpenContributionNoneIcon />}
-                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
-                    && <AllowedOpenContributionContentIcon />}
-                  {doc.publicContext.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-                    && <AllowedOpenContributionMetadataAndContentIcon />}
-                </div>
               </Tooltip>
             )}
             <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
@@ -590,21 +573,19 @@ function Doc({ initialState, PageTemplate }) {
         className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
         >
         {!!showHistoryPanel && (
-          <Restricted to={permissions.EDIT_DOC}>
-            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
-              <HistoryControlPanel
-                revisions={historyRevisions}
-                selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-                startOpen={initialView === VIEW.history}
-                onOpen={handleHistoryOpen}
-                onClose={handleHistoryClose}
-                canRestoreRevisions={userCanEditDocContent}
-                onPermalinkRequest={handlePermalinkRequest}
-                onSelectedRevisionChange={handleSelectedRevisionChange}
-                onRestoreRevision={handleRestoreRevision}
-                />
-            </div>
-          </Restricted>
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
+            <HistoryControlPanel
+              revisions={historyRevisions}
+              selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+              canRestoreRevisions={userCanEditDocContent}
+              startOpen={initialView === VIEW.history}
+              onOpen={handleHistoryOpen}
+              onClose={handleHistoryClose}
+              onPermalinkRequest={handlePermalinkRequest}
+              onSelectedRevisionChange={handleSelectedRevisionChange}
+              onRestoreRevision={handleRestoreRevision}
+              />
+          </div>
         )}
         {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
@@ -613,26 +594,25 @@ function Doc({ initialState, PageTemplate }) {
               openIcon={<CommentsIcon />}
               onOpen={handleCommentsOpen}
               onClose={handleCommentsClose}
-              leftSideContent={
-                <div>{t('commentsPanelTitle')}</div>
-              }
+              leftSideContent={<div>{t('commentsPanelTitle')}</div>}
+              tooltipWhenClosed={t('commentsControlPanelTooltip')}
               />
           </div>
         )}
         {!!showEditPanel && (
-          <Restricted to={permissions.EDIT_DOC}>
-            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
-              <EditControlPanel
-                canEditMetadata={userCanEditDocMetadata}
-                startOpen={initialView === VIEW.edit}
-                onOpen={handleEditOpen}
-                onMetadataOpen={handleEditMetadataOpen}
-                onSave={handleEditSave}
-                onClose={handleEditClose}
-                status={controlStatus}
-                />
-            </div>
-          </Restricted>
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
+            <EditControlPanel
+              status={controlStatus}
+              startOpen={initialView === VIEW.edit}
+              disabled={!userCanEdit || !userCanEditDocContent}
+              canEditMetadata={userCanEditDocMetadata}
+              tooltipWhenDisabled={editDocRestrictionTooltip}
+              onOpen={handleEditOpen}
+              onMetadataOpen={handleEditMetadataOpen}
+              onSave={handleEditSave}
+              onClose={handleEditClose}
+              />
+          </div>
         )}
       </div>
 
