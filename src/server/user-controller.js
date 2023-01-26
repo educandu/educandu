@@ -540,7 +540,6 @@ class UserController {
         || routes.isApiPath(req.originalUrl)
         || routes.isResetPasswordPath(req.originalUrl)
         || routes.isConnectExternalAccountPath(req.originalUrl)
-        || routes.isCompleteRegistrationPath(req.originalUrl)
         || routes.isCompletePasswordResetPrefixPath(req.originalUrl)
       ) {
         return next();
