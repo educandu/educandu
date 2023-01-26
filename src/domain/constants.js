@@ -140,30 +140,30 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
 
 export const FORM_ITEM_LAYOUT = {
   labelCol: {
-    xl: { span: 3, offset: 3 },
-    lg: { span: 3, offset: 2 },
-    sm: { span: 4, offset: 0 }
+    sm: { span: 6, offset: 0 },
+    md: { span: 5, offset: 1 },
+    lg: { span: 4, offset: 2 }
   },
   wrapperCol: {
-    xl: { span: 15 },
-    lg: { span: 16 },
-    sm: { span: 19 }
+    sm: { span: 17 },
+    md: { span: 16 },
+    lg: { span: 15 }
   }
 };
 
 export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
   wrapperCol: {
-    xl: {
-      span: FORM_ITEM_LAYOUT.wrapperCol.xl.span,
-      offset: FORM_ITEM_LAYOUT.labelCol.xl.span + FORM_ITEM_LAYOUT.labelCol.xl.offset
+    sm: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.sm.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.sm.span + FORM_ITEM_LAYOUT.labelCol.sm.offset
+    },
+    md: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.md.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.md.span + FORM_ITEM_LAYOUT.labelCol.md.offset
     },
     lg: {
       span: FORM_ITEM_LAYOUT.wrapperCol.lg.span,
       offset: FORM_ITEM_LAYOUT.labelCol.lg.span + FORM_ITEM_LAYOUT.labelCol.lg.offset
-    },
-    sm: {
-      span: FORM_ITEM_LAYOUT.wrapperCol.sm.span,
-      offset: FORM_ITEM_LAYOUT.labelCol.sm.span + FORM_ITEM_LAYOUT.labelCol.sm.offset
     }
   }
 };
