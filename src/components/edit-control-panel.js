@@ -7,19 +7,12 @@ import SaveIcon from './icons/general/save-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
 import { useBeforeunload } from 'react-beforeunload';
 import EditDocIcon from './icons/multi-color/edit-doc-icon.js';
-import { CloudOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
-
-export const EDIT_CONTROL_PANEL_STATUS = {
-  saved: 'saved',
-  dirty: 'dirty',
-  invalid: 'invalid',
-  none: 'none'
-};
+import { CloudOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
 function EditControlPanel({
-  status,
   startOpen,
   disabled,
+  isDirtyState,
   canEditMetadata,
   tooltipWhenDisabled,
   onOpen,
@@ -42,40 +35,26 @@ function EditControlPanel({
   };
 
   useBeforeunload(event => {
-    if (status === EDIT_CONTROL_PANEL_STATUS.dirty) {
+    if (isDirtyState) {
       event.preventDefault();
     }
   });
 
   const renderStatusIcon = () => {
-    switch (status) {
-      case EDIT_CONTROL_PANEL_STATUS.saved:
-        return (
-          <Tooltip title={t('statusIconTooltipSaved')} placement="topRight">
-            <CloudOutlined
-              className="EditControlPanel-statusIcon EditControlPanel-statusIcon--saved"
-              />
-          </Tooltip>
-        );
-      case EDIT_CONTROL_PANEL_STATUS.dirty:
-        return (
-          <Tooltip title={t('statusIconTooltipDirty')} placement="topRight">
-            <CloudUploadOutlined
-              className="EditControlPanel-statusIcon EditControlPanel-statusIcon--dirty"
-              />
-          </Tooltip>
-        );
-      case EDIT_CONTROL_PANEL_STATUS.invalid:
-        return (
-          <Tooltip title={t('statusIconTooltipInvalid')} placement="topRight">
-            <WarningOutlined
-              className="EditControlPanel-statusIcon EditControlPanel-statusIcon--invalid"
-              />
-          </Tooltip>
-        );
-      default:
-        return null;
+    if (isDirtyState) {
+      <Tooltip title={t('statusIconTooltipDirty')} placement="topRight">
+        <CloudUploadOutlined
+          className="EditControlPanel-statusIcon EditControlPanel-statusIcon--dirty"
+          />
+      </Tooltip>;
     }
+    return (
+      <Tooltip title={t('statusIconTooltipSaved')} placement="topRight">
+        <CloudOutlined
+          className="EditControlPanel-statusIcon EditControlPanel-statusIcon--saved"
+          />
+      </Tooltip>
+    );
   };
 
   const renderEditMetadataButton = () => (
@@ -103,10 +82,10 @@ function EditControlPanel({
         ghost
         size="small"
         loading={isSaving}
-        onClick={handleSave}
         icon={<SaveIcon />}
+        disabled={!isDirtyState}
         className="EditControlPanel-rightSideButton"
-        disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty}
+        onClick={handleSave}
         >
         {t('common:save')}
       </Button>
@@ -131,7 +110,7 @@ function EditControlPanel({
 }
 
 EditControlPanel.propTypes = {
-  status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS)),
+  isDirtyState: PropTypes.bool.isRequired,
   startOpen: PropTypes.bool,
   disabled: PropTypes.bool,
   canEditMetadata: PropTypes.bool,
@@ -143,7 +122,6 @@ EditControlPanel.propTypes = {
 };
 
 EditControlPanel.defaultProps = {
-  status: EDIT_CONTROL_PANEL_STATUS.none,
   startOpen: false,
   disabled: false,
   canEditMetadata: false,

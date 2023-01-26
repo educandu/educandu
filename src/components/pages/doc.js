@@ -17,6 +17,7 @@ import { useRequest } from '../request-context.js';
 import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import EditControlPanel from '../edit-control-panel.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
@@ -30,7 +31,6 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import { canEditDocContent, canEditDocMetadata, getEditDocContentRestrictionTooltip } from '../../utils/doc-utils.js';
@@ -500,15 +500,6 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  let controlStatus;
-  if (invalidSectionKeys.length) {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
-  } else if (isDirty) {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.dirty;
-  } else {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
-  }
-
   const showHistoryPanel = view === VIEW.display || view === VIEW.history;
   const showCommentsPanel = view === VIEW.display || view === VIEW.comments;
   const showEditPanel = view === VIEW.display || view === VIEW.edit;
@@ -602,7 +593,7 @@ function Doc({ initialState, PageTemplate }) {
         {!!showEditPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
             <EditControlPanel
-              status={controlStatus}
+              isDirtyState={isDirty}
               startOpen={initialView === VIEW.edit}
               disabled={!userCanEdit || !userCanEditDocContent}
               canEditMetadata={userCanEditDocMetadata}
