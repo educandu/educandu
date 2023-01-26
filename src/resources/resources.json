@@ -1623,16 +1623,14 @@
     "namespace": "searchBar",
     "language": "en",
     "resources": {
-      "searchPlaceholder": "Search terms",
-      "searchTermRequired": "Please specify at least one search term"
+      "searchPlaceholder": "Search terms"
     }
   },
   {
     "namespace": "searchBar",
     "language": "de",
     "resources": {
-      "searchPlaceholder": "Suchbegriffe",
-      "searchTermRequired": "Bitte gib mindestens einen Suchbegriff an"
+      "searchPlaceholder": "Suchbegriffe"
     }
   },
   {
