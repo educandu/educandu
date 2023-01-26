@@ -94,7 +94,7 @@ function Admin({ PageTemplate }) {
         <Restricted
           to={[
             permissions.MANAGE_SETTINGS,
-            permissions.EDIT_USERS,
+            permissions.MANAGE_USERS,
             permissions.MANAGE_STORAGE_PLANS,
             permissions.MANAGE_BATCHES
           ]}

@@ -22,7 +22,6 @@ import UserAccountLockedStateEditor from '../user-account-locked-state-editor.js
 
 const logger = new Logger(import.meta.url);
 
-const { Search } = Input;
 const { Option } = Select;
 const RadioGroup = Radio.Group;
 
@@ -33,30 +32,66 @@ const VIEW = {
   closedAccountUsers: 'closed-accounts'
 };
 
-function createUserSubsets(users, storagePlans) {
+function createTableItems(users, externalAccounts, storagePlans) {
+  const usersById = new Map();
   const storagePlansById = new Map(storagePlans.map(plan => [plan._id, plan]));
 
   const internalUsers = [];
+  const externalAccountUsers = [];
   const storageUsers = [];
+  const closedAccountUsers = [];
 
-  const activeAccountUsers = users.filter(user => !user.accountClosedOn);
-  const closedAccountUsers = users.filter(user => user.accountClosedOn);
-
-  for (const user of activeAccountUsers) {
+  for (const user of users) {
     const enrichedUserObject = {
       ...user,
       storagePlan: storagePlansById.get(user.storage.planId) || null
     };
 
-    internalUsers.push(enrichedUserObject);
+    if (user.accountClosedO) {
+      closedAccountUsers.push(enrichedUserObject);
+    } else {
+      internalUsers.push(enrichedUserObject);
+    }
 
     if (user.storage.planId || user.storage.usedBytes || user.storage.reminders.length) {
       storageUsers.push(enrichedUserObject);
     }
+
+    usersById.set(user._id, user);
   }
 
-  return { internalUsers, storageUsers, closedAccountUsers };
+  for (const externalAccount of externalAccounts) {
+    const enrichedExternalAccountObject = {
+      ...externalAccount,
+      connectedUser: usersById.get(externalAccount.userId) || null
+    };
+
+    externalAccountUsers.push(enrichedExternalAccountObject);
+  }
+
+  return { internalUsers, externalAccountUsers, storageUsers, closedAccountUsers };
 }
+
+const filterUserItems = (items, filterText) => {
+  return filterText
+    ? items.filter(user => {
+      const text = filterText.toLowerCase();
+      return user.displayName.toLowerCase().includes(text)
+        || user.email?.toLowerCase().includes(text);
+    })
+    : items;
+};
+
+const filterExternalAccountItems = (items, filterText) => {
+  return filterText
+    ? items.filter(account => {
+      const text = filterText.toLowerCase();
+      return account.providerKey.toLowerCase().includes(text)
+        || account.externalUserId.toLowerCase().includes(text)
+        || account.connectedUser?.displayName.toLowerCase().includes(text);
+    })
+    : items;
+};
 
 function UsersTab() {
   const { locale } = useLocale();
@@ -71,20 +106,24 @@ function UsersTab() {
   const [storageUsers, setStorageUsers] = useState([]);
   const [usersById, setUsersById] = useState(new Map());
   const [internalUsers, setInternalUsers] = useState([]);
+  const [externalAccounts, setExternalAccounts] = useState([]);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [closedAccountUsers, setClosedAccountUsers] = useState([]);
   const [currentView, setCurrentView] = useState(VIEW.internalUsers);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const [externalAccountUsers, setExternalAccountUsers] = useState([]);
 
   const refreshData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const [userApiResponse, currentStoragePlans] = await Promise.all([
+      const [userResponse, externalAccountResponse, currentStoragePlans] = await Promise.all([
         userApiClient.getUsers(),
+        userApiClient.getExternalAccounts(),
         storageApiClient.getAllStoragePlans(false)
       ]);
-      setUsers(userApiResponse.users);
+      setUsers(userResponse.users);
+      setExternalAccounts(externalAccountResponse.externalAccounts);
       setStoragePlans(currentStoragePlans);
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -99,20 +138,12 @@ function UsersTab() {
 
   useEffect(() => {
     setUsersById(new Map(users.map(user => [user._id, user])));
-
-    const filteredUsers = filterText
-      ? users.filter(user => {
-        const text = filterText.toLowerCase();
-        return user.displayName.toLowerCase().includes(text)
-        || user.email?.toLowerCase().includes(text);
-      })
-      : users;
-
-    const subsets = createUserSubsets(filteredUsers, storagePlans);
-    setInternalUsers(subsets.internalUsers);
-    setStorageUsers(subsets.storageUsers);
-    setClosedAccountUsers(subsets.closedAccountUsers);
-  }, [users, storagePlans, filterText]);
+    const subsets = createTableItems(users, externalAccounts, storagePlans);
+    setInternalUsers(filterUserItems(subsets.internalUsers, filterText));
+    setStorageUsers(filterUserItems(subsets.storageUsers, filterText));
+    setClosedAccountUsers(filterUserItems(subsets.closedAccountUsers, filterText));
+    setExternalAccountUsers(filterExternalAccountItems(subsets.externalAccountUsers, filterText));
+  }, [users, externalAccounts, storagePlans, filterText]);
 
   const handleRoleChange = async (user, newRoles) => {
     const oldRoles = user.roles;
@@ -142,6 +173,20 @@ function UsersTab() {
     } catch (error) {
       handleApiError({ error, logger, t });
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, accountLockedOn: oldAccountLockedOn }));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleRemoveExternalUserClick = async externalAccount => {
+    setIsSaving(true);
+    const externalAccountId = externalAccount._id;
+    setExternalAccounts(oldAccounts => oldAccounts.filter(account => account._id !== externalAccountId));
+    try {
+      await userApiClient.deleteExternalAccount({ externalAccountId });
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      refreshData();
     } finally {
       setIsSaving(false);
     }
@@ -249,8 +294,14 @@ function UsersTab() {
     });
   };
 
-  const renderDisplayName = (displayName, user) => {
-    return <a href={routes.getUserUrl(user._id)}>{displayName}</a>;
+  const renderDisplayName = (_, user) => {
+    return <a href={routes.getUserUrl(user._id)}>{user.displayName}</a>;
+  };
+
+  const renderConnectedUser = connectedUser => {
+    return connectedUser
+      ? renderDisplayName(connectedUser.displayName, connectedUser)
+      : '';
   };
 
   const renderEmail = email => {
@@ -318,7 +369,17 @@ function UsersTab() {
     );
   };
 
-  const renderActions = (_, user) => {
+  const renderExternalUserActions = (_, externalUser) => {
+    return (
+      <div className="UsersTab-actions">
+        <a className="UsersTab-actionButton" onClick={() => handleRemoveExternalUserClick(externalUser)}>
+          {t('common:delete')}
+        </a>
+      </div>
+    );
+  };
+
+  const renderStorageUserActions = (_, user) => {
     return (
       <div className="UsersTab-actions">
         <a className="UsersTab-actionButton" onClick={() => handleAddReminderClick(user)}>
@@ -395,6 +456,51 @@ function UsersTab() {
     }
   ];
 
+  const externalUserTableColumns = [
+    {
+      title: () => t('providerKey'),
+      dataIndex: 'providerKey',
+      key: 'providerKey',
+      sorter: by(x => x.providerKey, { ignoreCase: true })
+    },
+    {
+      title: () => t('externalUserId'),
+      dataIndex: 'externalUserId',
+      key: 'externalUserId',
+      sorter: by(x => x.externalUserId, { ignoreCase: true })
+    },
+    {
+      title: () => t('connectedUser'),
+      dataIndex: 'connectedUser',
+      key: 'connectedUser',
+      sorter: by(x => x.connectedUser?.displayName || '', { ignoreCase: true }),
+      render: renderConnectedUser
+    },
+    {
+      title: () => t('expires'),
+      dataIndex: 'expiresOn',
+      key: 'expiresOn',
+      sorter: by(x => x.expiresOn || ''),
+      render: expiresOn => formatDate(expiresOn),
+      responsive: ['lg']
+    },
+    {
+      title: () => t('lastLogIn'),
+      dataIndex: 'lastLoggedInOn',
+      key: 'lastLoggedInOn',
+      sorter: by(x => x.lastLoggedInOn || ''),
+      render: lastLoggedInOn => formatDate(lastLoggedInOn),
+      responsive: ['lg']
+    },
+    {
+      title: () => t('common:actions'),
+      dataIndex: 'actions',
+      key: 'actions',
+      render: renderExternalUserActions,
+      responsive: ['lg']
+    }
+  ];
+
   const storageUserTableColumns = [
     {
       title: () => t('common:displayName'),
@@ -448,7 +554,7 @@ function UsersTab() {
       title: () => t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderActions,
+      render: renderStorageUserActions,
       responsive: ['lg']
     }
   ];
@@ -494,36 +600,35 @@ function UsersTab() {
   const views = [
     {
       key: VIEW.internalUsers,
-      value: VIEW.internalUsers,
       label: t('internalUsers'),
-      children: renderTabChildren(internalUsers, internalUserTableColumns)
+      content: renderTabChildren(internalUsers, internalUserTableColumns)
     },
     {
       key: VIEW.externalUsers,
-      value: VIEW.externalUsers,
       label: t('externalUsers'),
-      children: renderTabChildren(internalUsers, internalUserTableColumns)
+      content: renderTabChildren(externalAccountUsers, externalUserTableColumns)
     },
     {
       key: VIEW.storageUsers,
-      value: VIEW.storageUsers,
       label: t('storageUsers'),
-      children: renderTabChildren(storageUsers, storageUserTableColumns)
+      content: renderTabChildren(storageUsers, storageUserTableColumns)
     },
     {
       key: VIEW.closedAccountUsers,
-      value: VIEW.closedAccountUsers,
       label: t('closedAccountUsers'),
-      children: renderTabChildren(closedAccountUsers, closedAccountUserTableColumns)
+      content: renderTabChildren(closedAccountUsers, closedAccountUserTableColumns)
     }
   ];
+
+  const tabs = views.map(view => ({ key: view.key, children: view.content }));
+  const options = views.map(view => ({ value: view.key, label: view.label }));
 
   return (
     <div className="UsersTab">
       <div className="UsersTab-header">
         <RadioGroup
           className="UsersTab-viewSwitcher UsersTab-viewSwitcher--wide"
-          options={views}
+          options={options}
           value={currentView}
           onChange={event => setCurrentView(event.target.value)}
           optionType="button"
@@ -531,23 +636,24 @@ function UsersTab() {
           />
         <Select
           className="UsersTab-viewSwitcher UsersTab-viewSwitcher--narrow"
-          options={views}
+          options={options}
           value={currentView}
           onChange={value => setCurrentView(value)}
           />
-        <Search
+        <Input
           className="UsersTab-filter"
           value={filterText}
-          enterButton={<SearchOutlined />}
           onChange={event => setFilterText(event.target.value)}
           placeholder={t('filterPlaceholder')}
+          prefix={<SearchOutlined />}
+          allowClear
           />
       </div>
       <Tabs
         className="Tabs Tabs--smallPadding"
         activeKey={currentView}
         disabled={isSaving}
-        items={views}
+        items={tabs}
         renderTabBar={() => null}
         />
     </div>

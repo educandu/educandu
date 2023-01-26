@@ -88,6 +88,14 @@ class ClientDataMappingService {
     return users.map(this.mapUserForAdminArea);
   }
 
+  mapExternalAccountForAdminArea(externalAccount) {
+    return externalAccount;
+  }
+
+  mapExternalAccountsForAdminArea(externalAccounts) {
+    return externalAccounts.map(this.mapExternalAccountForAdminArea);
+  }
+
   createProposedSections(docOrRevision, targetRoomId) {
     return docOrRevision.sections.reduce((proposedSections, section) => {
       if (!this._isDeletedSection(section)) {

@@ -115,7 +115,7 @@ describe('permissions', () => {
           permissions.RESTRICT_OPEN_CONTRIBUTION,
           permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.ADMIN,
-          permissions.EDIT_USERS,
+          permissions.MANAGE_USERS,
           permissions.MANAGE_BATCHES,
           permissions.MIGRATE_DATA,
           permissions.MANAGE_SETTINGS,

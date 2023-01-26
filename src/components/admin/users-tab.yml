@@ -10,27 +10,15 @@ accountLocked:
 roles:
   en: Roles
   de: Rollen
-firstName:
-  en: First name(s)
-  de: Vorname(n)
-lastName:
-  en: Last name
-  de: Nachname
-street:
-  en: Street
-  de: Straße
-streetSupplement:
-  en: Street supplement
-  de: Straße (Zusatz)
-postalCode:
-  en: Postal code
-  de: Postleitzahl
-city:
-  en: City
-  de: Ort
-country:
-  en: Country
-  de: Land
+providerKey:
+  en: Provider key
+  de: Provider-Schlüssel
+externalUserId:
+  en: External ID
+  de: Externe ID
+connectedUser:
+  en: Connected user
+  de: Verknüpfter Benutzer
 internalUsers:
   en: Internal users
   de: Interne Benutzer
@@ -65,5 +53,5 @@ accountClosedOn:
   en: Account closing date
   de: Kontoschlussdatum
 filterPlaceholder:
-  en: Filter by display name or email
-  de: Nach Anzeigename oder E-Mail filtern
+  en: Filter by name, email, etc.
+  de: Nach Name, E-Mail, etc. filtern

@@ -8,10 +8,10 @@ const OWN_ROOMS = 'own-rooms';
 const REVIEW_DOC = 'review-doc';
 const VERIFY_DOC = 'verify-doc';
 const VIEW_FILES = 'view-files';
-const EDIT_USERS = 'edit-users';
 const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
 const MIGRATE_DATA = 'migrate-data';
+const MANAGE_USERS = 'manage-users';
 const MANAGE_BATCHES = 'manage-batches';
 const SEE_USER_EMAIL = 'see-user-email';
 const MANAGE_SETTINGS = 'manage-settings';
@@ -60,7 +60,7 @@ const adminPermissions = [
     ...userPermissions,
     ...maintainerPermissions,
     ADMIN,
-    EDIT_USERS,
+    MANAGE_USERS,
     MANAGE_BATCHES,
     MIGRATE_DATA,
     MANAGE_SETTINGS,
@@ -95,7 +95,7 @@ export default {
   VIEW_FILES,
   DELETE_OWN_FILES,
   CREATE_FILE,
-  EDIT_USERS,
+  MANAGE_USERS,
   MANAGE_BATCHES,
   MANAGE_SETTINGS,
   MANAGE_STORAGE_PLANS,

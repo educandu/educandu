@@ -10,9 +10,17 @@ class ExternalAccountStore {
     this.collection = db.externalAccounts;
   }
 
+  getAllExternalAccounts({ session } = {}) {
+    return this.collection.find({}, { session }).toArray();
+  }
+
   saveExternalAccount(externalAccount, { session } = {}) {
     validate(externalAccount, externalAccountDbSchema);
     return this.collection.replaceOne({ _id: externalAccount._id }, externalAccount, { session, upsert: true });
+  }
+
+  deleteExternalAccount(externalAccountId, { session } = {}) {
+    return this.collection.deleteOne({ _id: externalAccountId }, { session });
   }
 
   async createOrUpdateExternalAccountByProviderKeyAndExternalUserId({ providerKey, externalUserId, lastLoggedInOn, expiresOn }, { session } = {}) {

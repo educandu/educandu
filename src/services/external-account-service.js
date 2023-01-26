@@ -29,6 +29,14 @@ export default class ExternalAccountService {
     return provider;
   }
 
+  getAllExternalAccounts() {
+    return this.externalAccountStore.getAllExternalAccounts();
+  }
+
+  deleteExternalAccount({ externalAccountId }) {
+    return this.externalAccountStore.deleteExternalAccount(externalAccountId);
+  }
+
   createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId }) {
     if (!providerKey || !externalUserId) {
       throw new BadRequest();
