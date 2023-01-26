@@ -98,15 +98,19 @@ function WikimediaFilesViewer({
     );
   };
 
+  const isInitialLoad = !!isLoading && !files.length;
+
   return (
     <div ref={rootRef} className="WikimediaFilesViewer">
       <div className="WikimediaFilesViewer-files">
         {files.map(file => renderFile(file))}
         {renderSentry()}
       </div>
-      <div className={classNames('WikimediaFilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
-        <Spin size="large" />
-      </div>
+      {!!isInitialLoad && (
+        <div className="WikimediaFilesViewer-loadingOverlay">
+          <Spin size="large" />
+        </div>
+      )}
     </div>
 
   );
