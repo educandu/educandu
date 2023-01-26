@@ -10,7 +10,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 export default function MarkdownWithImageDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
-  const { text, textOffsetInEm, image } = content;
+  const { text, textOffsetInEm, width, image } = content;
 
   const imageSrc = getAccessibleUrl({ url: image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
@@ -22,7 +22,7 @@ export default function MarkdownWithImageDisplay({ content }) {
   );
 
   return (
-    <div className="MarkdownWithImageDisplay">
+    <div className={`MarkdownWithImageDisplay u-horizontally-centered u-width-${width}`}>
       <div className={imageWrapperClasses}>
         <img src={imageSrc} className="MarkdownWithImageDisplay-image" />
         {!!image.copyrightNotice && <CopyrightNotice value={image.copyrightNotice} />}

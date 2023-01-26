@@ -25,7 +25,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
   const { t } = useTranslation('markdownWithImage');
   const emFormatter = useNumberWithUnitFormat({ unit: 'em' });
 
-  const { text, textOffsetInEm, image } = content;
+  const { text, textOffsetInEm, width, image } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -42,6 +42,10 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
 
   const handleTextOffsetInEmChange = value => {
     changeContent({ textOffsetInEm: value });
+  };
+
+  const handleWidthChange = value => {
+    changeContent({ width: value });
   };
 
   const handleImageSourceUrlChange = value => {
@@ -95,18 +99,25 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={image.copyrightNotice} onChange={handleImageCopyrightNoticeChange} />
         </Form.Item>
-        <FormItem
-          className="ImageEditor-widthInput"
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={image.width} onChange={handleImageWidthChange} />
-        </FormItem>
         <FormItem label={t('imagePosition')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={image.position} onChange={handleImagePositionChange}>
             <RadioButton value={IMAGE_POSITION.left}>{t('left')}</RadioButton>
             <RadioButton value={IMAGE_POSITION.right}>{t('right')}</RadioButton>
           </RadioGroup>
+        </FormItem>
+        <FormItem
+          className="ImageEditor-widthInput"
+          label={<Info tooltip={t('imageWidthInfo')}>{t('imageWidth')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={image.width} onChange={handleImageWidthChange} />
+        </FormItem>
+        <FormItem
+          className="ImageEditor-widthInput"
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
       </Form>
     </div>
