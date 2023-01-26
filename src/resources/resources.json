@@ -2084,6 +2084,7 @@
       "textOffsetInfo": "1em corresponds to the current paragraph font size",
       "imageUrl": "Image URL",
       "imageWidth": "Image width",
+      "imageWidthInfo": "Represents the width taken by the image, from the total allocated space",
       "imagePosition": "Image position",
       "left": "left",
       "right": "right"
@@ -2098,6 +2099,7 @@
       "textOffsetInfo": "1 em entspricht der verwendeten Absatz-Schriftgröße",
       "imageUrl": "Bild-URL",
       "imageWidth": "Bildbreite",
+      "imageWidthInfo": "Represents the width taken by the image, from the total allocated space [but in German]",
       "imagePosition": "Bildstelle",
       "left": "Links",
       "right": "Rechts"

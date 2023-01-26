@@ -13,6 +13,9 @@ imageUrl:
 imageWidth:
   en: Image width
   de: Bildbreite
+imageWidthInfo:
+  en: Represents the width taken by the image, from the total allocated space
+  de: Represents the width taken by the image, from the total allocated space [but in German]
 imagePosition:
   en: Image position
   de: Bildstelle
