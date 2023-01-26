@@ -100,10 +100,8 @@ function Doc({ initialState, PageTemplate }) {
 
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
-  const userCanViewHistory = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
   const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
-  const viewDocHistoryRestrictionTooltip = userCanViewHistory ? null : t('viewHistoryRestrictionTooltip_annonymousUser');
   const editDocRestrictionTooltip = userCanEdit
     ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
     : t('editRestrictionTooltip_annonymousUser');
@@ -575,51 +573,48 @@ function Doc({ initialState, PageTemplate }) {
         className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
         >
         {!!showHistoryPanel && (
-          <Tooltip title={viewDocHistoryRestrictionTooltip}>
-            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
-              <HistoryControlPanel
-                revisions={historyRevisions}
-                selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-                canRestoreRevisions={userCanEditDocContent}
-                disabled={!userCanViewHistory}
-                startOpen={initialView === VIEW.history}
-                onOpen={handleHistoryOpen}
-                onClose={handleHistoryClose}
-                onPermalinkRequest={handlePermalinkRequest}
-                onSelectedRevisionChange={handleSelectedRevisionChange}
-                onRestoreRevision={handleRestoreRevision}
-                />
-            </div>
-          </Tooltip>
-        )}
-        {!!showCommentsPanel && (
-          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
-            <ControlPanel
-              startOpen={initialView === VIEW.comments}
-              openIcon={<CommentsIcon />}
-              onOpen={handleCommentsOpen}
-              onClose={handleCommentsClose}
-              leftSideContent={
-                <div>{t('commentsPanelTitle')}</div>
-              }
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
+            <HistoryControlPanel
+              revisions={historyRevisions}
+              selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+              canRestoreRevisions={userCanEditDocContent}
+              startOpen={initialView === VIEW.history}
+              onOpen={handleHistoryOpen}
+              onClose={handleHistoryClose}
+              onPermalinkRequest={handlePermalinkRequest}
+              onSelectedRevisionChange={handleSelectedRevisionChange}
+              onRestoreRevision={handleRestoreRevision}
               />
           </div>
         )}
-        {!!showEditPanel && (
-          <Tooltip title={editDocRestrictionTooltip}>
-            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
-              <EditControlPanel
-                status={controlStatus}
-                startOpen={initialView === VIEW.edit}
-                disabled={!userCanEdit || !userCanEditDocContent}
-                canEditMetadata={userCanEditDocMetadata}
-                onOpen={handleEditOpen}
-                onMetadataOpen={handleEditMetadataOpen}
-                onSave={handleEditSave}
-                onClose={handleEditClose}
+        {!!showCommentsPanel && (
+          <Tooltip title={t('commentsControlPanelTooltip')}>
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
+              <ControlPanel
+                startOpen={initialView === VIEW.comments}
+                openIcon={<CommentsIcon />}
+                onOpen={handleCommentsOpen}
+                onClose={handleCommentsClose}
+                leftSideContent={<div>{t('commentsPanelTitle')}</div>}
+                tooltipWhenClosed={t('commentsControlPanelTooltip')}
                 />
             </div>
           </Tooltip>
+        )}
+        {!!showEditPanel && (
+          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
+            <EditControlPanel
+              status={controlStatus}
+              startOpen={initialView === VIEW.edit}
+              disabled={!userCanEdit || !userCanEditDocContent}
+              canEditMetadata={userCanEditDocMetadata}
+              tooltipWhenDisabled={editDocRestrictionTooltip}
+              onOpen={handleEditOpen}
+              onMetadataOpen={handleEditMetadataOpen}
+              onSave={handleEditSave}
+              onClose={handleEditClose}
+              />
+          </div>
         )}
       </div>
 

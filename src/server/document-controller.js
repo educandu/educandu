@@ -215,9 +215,14 @@ class DocumentController {
     const { user } = req;
     const { documentId } = req.query;
 
+    const document = await this.documentService.getDocumentById(documentId);
     const revisions = await this.documentService.getAllDocumentRevisionsByDocumentId(documentId);
-    if (!revisions.length) {
+    if (!document || !revisions.length) {
       throw new NotFound();
+    }
+
+    if (document.roomId && !user) {
+      throw new Forbidden();
     }
 
     const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
@@ -377,7 +382,7 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(documentIdParamsOrQuerySchema)],
+      [validateQuery(documentIdParamsOrQuerySchema)],
       (req, res) => this.handleGetDocs(req, res)
     );
 

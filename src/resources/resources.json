@@ -575,7 +575,8 @@
     "resources": {
       "restoredFrom": "Restored from",
       "permalink": "Permalink",
-      "restore": "Restore"
+      "restore": "Restore",
+      "tooltip": "Document versions"
     }
   },
   {
@@ -584,7 +585,8 @@
     "resources": {
       "restoredFrom": "Wiederhergestellt aus",
       "permalink": "Permalink",
-      "restore": "Wiederherstellen"
+      "restore": "Wiederherstellen",
+      "tooltip": "Dokumentversionen"
     }
   },
   {
@@ -1004,11 +1006,11 @@
       "documentMetadataUpdated": "Document updated successfully",
       "commentsPanelTitle": "You are viewing the document page in \"comments\" mode",
       "commentsHeader": "Comments",
-      "viewHistoryRestrictionTooltip_annonymousUser": "Viewing document history is only allowed for logged in users",
       "editRestrictionTooltip_annonymousUser": "Log in in order to edit this document",
       "editRestrictionTooltip_openContribution": "Editing this document was disabled by a maintainer",
       "editRestrictionTooltip_archive": "This document cannot be edited because it is archived",
-      "editRestrictionTooltip_room": "Editing this document is only allowed for the room owner"
+      "editRestrictionTooltip_room": "Editing this document is only allowed for the room owner",
+      "commentsControlPanelTooltip": "Comments"
     }
   },
   {
@@ -1020,11 +1022,11 @@
       "documentMetadataUpdated": "Das Dokument wurde erfolgreich aktualisiert",
       "commentsPanelTitle": "Du befindest dich im Kommentar-Modus",
       "commentsHeader": "Kommentare",
-      "viewHistoryRestrictionTooltip_annonymousUser": "Ansehen von vorherige Versionen ?? is nur für angemeldet Benutzern elaubt",
       "editRestrictionTooltip_annonymousUser": "Melde dich an, um dieses Dokument zu bearbeiten",
       "editRestrictionTooltip_openContribution": "Die Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert",
       "editRestrictionTooltip_archive": "Dieses Dokument kann nicht bearbeitet werden da es archiviert ist",
-      "editRestrictionTooltip_room": "Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt"
+      "editRestrictionTooltip_room": "Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt",
+      "commentsControlPanelTooltip": "Komentare"
     }
   },
   {

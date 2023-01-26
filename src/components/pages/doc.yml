@@ -13,9 +13,6 @@ commentsPanelTitle:
 commentsHeader:
   en: Comments
   de: Kommentare
-viewHistoryRestrictionTooltip_annonymousUser:
-  en: Viewing document history is only allowed for logged in users
-  de: Ansehen von vorherige Versionen ?? is nur für angemeldet Benutzern elaubt
 editRestrictionTooltip_annonymousUser:
   en: Log in in order to edit this document
   de: Melde dich an, um dieses Dokument zu bearbeiten
@@ -28,3 +25,6 @@ editRestrictionTooltip_archive:
 editRestrictionTooltip_room:
   en: Editing this document is only allowed for the room owner
   de: Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt
+commentsControlPanelTooltip:
+  en: Comments
+  de: Komentare

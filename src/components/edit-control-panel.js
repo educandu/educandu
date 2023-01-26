@@ -21,6 +21,7 @@ function EditControlPanel({
   startOpen,
   disabled,
   canEditMetadata,
+  tooltipWhenDisabled,
   onOpen,
   onMetadataOpen,
   onSave,
@@ -121,6 +122,8 @@ function EditControlPanel({
       disabled={disabled}
       leftSideContent={renderEditMetadataButton()}
       contentAfterClose={renderButtons()}
+      tooltipWhenClosed={t('common:edit')}
+      tooltipWhenDisabled={tooltipWhenDisabled}
       onOpen={handleOpen}
       onClose={handleClose}
       />
@@ -132,6 +135,7 @@ EditControlPanel.propTypes = {
   startOpen: PropTypes.bool,
   disabled: PropTypes.bool,
   canEditMetadata: PropTypes.bool,
+  tooltipWhenDisabled: PropTypes.string,
   onOpen: PropTypes.func,
   onMetadataOpen: PropTypes.func,
   onSave: PropTypes.func,
@@ -143,6 +147,7 @@ EditControlPanel.defaultProps = {
   startOpen: false,
   disabled: false,
   canEditMetadata: false,
+  tooltipWhenDisabled: null,
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),
   onSave: () => {},

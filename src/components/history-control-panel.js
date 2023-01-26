@@ -16,7 +16,6 @@ function HistoryControlPanel({
   revisions,
   selectedRevisionIndex,
   canRestoreRevisions,
-  disabled,
   startOpen,
   onOpen,
   onClose,
@@ -112,7 +111,7 @@ function HistoryControlPanel({
       className="HistoryControlPanel"
       startOpen={startOpen}
       openIcon={<ViewHistoryIcon />}
-      disabled={disabled}
+      tooltipWhenClosed={t('tooltip')}
       leftSideContent={renderSlider()}
       contentBeforeClose={renderButtons()}
       onOpen={handleOpen}
@@ -125,7 +124,6 @@ HistoryControlPanel.propTypes = {
   revisions: PropTypes.arrayOf(documentRevisionShape),
   selectedRevisionIndex: PropTypes.number,
   canRestoreRevisions: PropTypes.bool,
-  disabled: PropTypes.bool,
   startOpen: PropTypes.bool,
   onOpen: PropTypes.func,
   onClose: PropTypes.func,
@@ -138,7 +136,6 @@ HistoryControlPanel.defaultProps = {
   revisions: [],
   selectedRevisionIndex: 0,
   canRestoreRevisions: false,
-  disabled: false,
   startOpen: false,
   onOpen: () => Promise.resolve(),
   onClose: () => Promise.resolve(true),

@@ -49,12 +49,15 @@
   border-radius: 0 !important;
   height: @control-panel-height !important;
   width: @control-panel-height !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 
   & .anticon {
     font-size: 0.5 * @control-panel-height;
   }
 
-  &:disabled {
-    background-color: @edu-background-color-base !important;
+  &.is-disabled {
+    background-color: @edu-background-color-base;
   }
 }
