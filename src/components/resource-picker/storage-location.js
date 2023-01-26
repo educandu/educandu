@@ -6,7 +6,7 @@ import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
-import { Alert, Button, Input, Radio, Tooltip } from 'antd';
+import { Alert, Button, Input, Radio, Spin, Tooltip } from 'antd';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
@@ -127,7 +127,6 @@ function StorageLocation({
             <input {...getInputProps()} hidden />
             <div className="StorageLocation-filesViewerContent">
               <FilesViewer
-                isLoading={isLoading}
                 files={files}
                 display={filesViewerDisplay}
                 onFileClick={handleFileClick}
@@ -137,6 +136,11 @@ function StorageLocation({
                 onPreviewFileClick={onPreviewFileClick}
                 canDelete={storageLocation.isDeletionEnabled}
                 />
+              {!!isLoading && (
+                <div className={classNames('StorageLocation-filesViewerContentOverlay')}>
+                  <Spin size="large" />
+                </div>
+              )}
             </div>
           </div>
         )}

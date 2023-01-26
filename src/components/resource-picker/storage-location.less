@@ -19,6 +19,15 @@
 .StorageLocation-filesViewerContent {
   height: 100%;
   overflow: auto;
+  position: relative;
+}
+
+.StorageLocation-filesViewerContentOverlay {
+  .m-mask;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
 }
 
 .StorageLocation-buttonsLine {
