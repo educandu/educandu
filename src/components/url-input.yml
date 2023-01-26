@@ -16,3 +16,6 @@ tooltip_external:
 tooltip_unsupported:
   en: unsupported
   de: nicht unterstützt
+unsecureUrl:
+  en: "URLs not starting with 'https' are not secure!"
+  de: "URLs, die nicht mit 'https' beginnen, sind unsicher!"
