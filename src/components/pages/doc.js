@@ -17,6 +17,7 @@ import { useRequest } from '../request-context.js';
 import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import EditControlPanel from '../edit-control-panel.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
@@ -30,7 +31,6 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import { canEditDocContent, canEditDocMetadata, getEditDocContentRestrictionTooltip } from '../../utils/doc-utils.js';
@@ -112,7 +112,6 @@ function Doc({ initialState, PageTemplate }) {
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [fetchingComments, setFetchingComments] = useState(false);
-  const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
@@ -243,7 +242,6 @@ function Doc({ initialState, PageTemplate }) {
         setIsDirty(false);
         setView(VIEW.display);
         setEditedSectionKeys([]);
-        setInvalidSectionKeys([]);
         setPendingTemplateSectionKeys([]);
         resolve(true);
       };
@@ -268,7 +266,7 @@ function Doc({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleSectionContentChange = (index, newContent, isInvalid) => {
+  const handleSectionContentChange = (index, newContent) => {
     const modifiedSection = {
       ...currentSections[index],
       content: newContent
@@ -276,7 +274,6 @@ function Doc({ initialState, PageTemplate }) {
 
     const newSections = replaceItemAt(currentSections, modifiedSection, index);
     setCurrentSections(newSections);
-    setInvalidSectionKeys(keys => isInvalid ? ensureIsIncluded(keys, modifiedSection.key) : ensureIsExcluded(keys, modifiedSection.key));
     setIsDirty(true);
   };
 
@@ -307,9 +304,6 @@ function Doc({ initialState, PageTemplate }) {
     const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
     setCurrentSections(expandedSections);
     setIsDirty(true);
-    if (invalidSectionKeys.includes(originalSection.key)) {
-      setInvalidSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
-    }
     setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
   };
 
@@ -352,7 +346,6 @@ function Doc({ initialState, PageTemplate }) {
         const section = currentSections[index];
         const reducedSections = removeItemAt(currentSections, index);
         setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
-        setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setCurrentSections(reducedSections);
         setIsDirty(true);
       }
@@ -500,15 +493,6 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  let controlStatus;
-  if (invalidSectionKeys.length) {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
-  } else if (isDirty) {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.dirty;
-  } else {
-    controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
-  }
-
   const showHistoryPanel = view === VIEW.display || view === VIEW.history;
   const showCommentsPanel = view === VIEW.display || view === VIEW.comments;
   const showEditPanel = view === VIEW.display || view === VIEW.edit;
@@ -602,7 +586,7 @@ function Doc({ initialState, PageTemplate }) {
         {!!showEditPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
             <EditControlPanel
-              status={controlStatus}
+              isDirtyState={isDirty}
               startOpen={initialView === VIEW.edit}
               disabled={!userCanEdit || !userCanEditDocContent}
               canEditMetadata={userCanEditDocMetadata}

@@ -3,7 +3,6 @@ import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import { BEHAVIOR, INTENT } from './constants.js';
-import { validateMarkdown } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -18,7 +17,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
   const { title, text, behavior, intent, width } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleTitleChange = event => {
@@ -47,7 +46,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={title} onChange={handleTitleChange} inline />
         </FormItem>
-        <FormItem label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} />
         </FormItem>
         <FormItem label={t('behavior')} {...FORM_ITEM_LAYOUT}>

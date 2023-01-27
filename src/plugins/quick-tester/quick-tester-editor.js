@@ -19,7 +19,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
   const { tests, testsOrder, teaser, title } = content;
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleTeaserValueChanged = event => {

@@ -2,30 +2,22 @@ import React from 'react';
 import { Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { useService } from '../../components/container-context.js';
+import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
-import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 
 function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
-  const clientConfig = useService(ClientConfig);
-
   const { sourceUrl, playbackRange, copyrightNotice } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalid = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleSourceUrlChange = value => {
@@ -47,14 +39,10 @@ function AudioEditor({ content, onContentChanged }) {
     changeContent({ copyrightNotice: newValue });
   };
 
-  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(sourceUrl, t, { allowEmpty: true });
-
   return (
     <div>
       <Form layout="horizontal" labelAlign="left">
-        <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
         </FormItem>
         <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>

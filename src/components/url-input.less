@@ -1,4 +1,14 @@
-.UrlInput {}
+.UrlInput {
+  position: relative;
+
+  &.UrlInput--warning {
+
+    .ant-input-group-addon,
+    .ant-input {
+      border-color: @edu-warning-color;
+    }
+  }
+}
 
 .UrlInput-prefix {
   width: 15px;
@@ -6,4 +16,15 @@
   &.UrlInput-prefix--error {
     color: @edu-error-color;
   }
+
+  &.UrlInput-prefix--warning {
+    color: @edu-warning-color;
+  }
+}
+
+.UrlInput-warning {
+  position: absolute;
+  bottom: -1.6em;
+  color: @edu-warning-color;
+  font-size: @edu-font-size-sm;
 }

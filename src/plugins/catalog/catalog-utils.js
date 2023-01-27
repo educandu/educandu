@@ -1,6 +1,4 @@
 import joi from 'joi';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import { DISPLAY_MODE, DEFAULT_MAX_TILES_PER_ROW, TILES_HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 
 function createDefaultItemImage() {
@@ -73,20 +71,4 @@ export function consolidateForDisplayMode(content) {
   }
 
   return content;
-}
-
-export function isItemInvalid(item, cdnRootUrl) {
-  const isInvalidImageSourceUrl
-    = !isInternalSourceType({ url: item.image.sourceUrl, cdnRootUrl })
-    && getUrlValidationStatus(item.image.sourceUrl) !== URL_VALIDATION_STATUS.valid;
-
-  const isInvalidLinkSourceUrl
-    = item.link.sourceType === LINK_SOURCE_TYPE.external
-    && getUrlValidationStatus(item.link.sourceUrl, { allowHttp: true, allowMailto: true }) !== URL_VALIDATION_STATUS.valid;
-
-  return isInvalidImageSourceUrl || isInvalidLinkSourceUrl;
-}
-
-export function isContentInvalid(content, cdnRootUrl) {
-  return content.items.some(item => isItemInvalid(item, cdnRootUrl));
 }

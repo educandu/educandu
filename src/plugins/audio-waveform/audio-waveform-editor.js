@@ -7,6 +7,7 @@ import UrlInput from '../../components/url-input.js';
 import StepSlider from '../../components/step-slider.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getPortableUrl } from '../../utils/source-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -14,8 +15,6 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
-import { getPortableUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_WITHOUT_LABEL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -33,10 +32,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalid = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleSourceUrlChange = value => {
@@ -81,15 +77,12 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   };
 
   const allowedSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
-  const validationProps = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(sourceUrl, t, { allowEmpty: true });
 
   return (
     <div>
       <Form layout="horizontal" labelAlign="left">
         <Divider plain>{t('chooseImageDividerText')}</Divider>
-        <FormItem {...FORM_ITEM_LAYOUT} {...validationProps} label={t('common:url')}>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
         <Divider plain>{t('generateImageDividerText')}</Divider>

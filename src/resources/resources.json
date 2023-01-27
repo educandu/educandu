@@ -1726,7 +1726,8 @@
       "tooltip_document-media": "document media storage",
       "tooltip_room-media": "room media storage",
       "tooltip_external": "external",
-      "tooltip_unsupported": "unsupported"
+      "tooltip_unsupported": "unsupported",
+      "unsecureUrl": "URLs not starting with 'https' are not secure!"
     }
   },
   {
@@ -1738,7 +1739,8 @@
       "tooltip_document-media": "Dokument-Medien Speicher",
       "tooltip_room-media": "Raum-Medien Speicher",
       "tooltip_external": "extern",
-      "tooltip_unsupported": "nicht unterstützt"
+      "tooltip_unsupported": "nicht unterstützt",
+      "unsecureUrl": "URLs, die nicht mit 'https' beginnen, sind unsicher!"
     }
   },
   {
@@ -2815,7 +2817,6 @@
     "resources": {
       "urlRequired": "Please specify a URL",
       "urlInvalid": "Please specify a URL with a valid format",
-      "urlInvalidProtocol": "Please specify an address starting with {allowedProtocols}",
       "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers",
       "orListFirstItem": "“{item}”",
       "orListLastItem": " or “{item}”",
@@ -2828,7 +2829,6 @@
     "resources": {
       "urlRequired": "Bitte gib eine Adresse an",
       "urlInvalid": "Bitte gib eine Adresse im gültigen Format an",
-      "urlInvalidProtocol": "Bitte gib eine Adresse an, die mit {allowedProtocols} beginnt",
       "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
       "orListFirstItem": "»{item}«",
       "orListLastItem": " oder »{item}«",

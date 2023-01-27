@@ -20,7 +20,7 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
   const { sourceUrl, zoom, width, caption } = content;
 
   const triggerContentChanged = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleSourceUrlChange = value => {

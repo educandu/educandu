@@ -5,23 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { IMAGE_POSITION } from './constants.js';
 import UrlInput from '../../components/url-input.js';
 import StepSlider from '../../components/step-slider.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { useService } from '../../components/container-context.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import { useNumberWithUnitFormat } from '../../components/locale-context.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateMarkdown } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 export default function MarkdownWithImageEditor({ content, onContentChanged }) {
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('markdownWithImage');
   const emFormatter = useNumberWithUnitFormat({ unit: 'em' });
 
@@ -29,11 +24,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const isInvalid = !isInternalSourceType({ url: newContent.image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-      && getUrlValidationStatus(newContent.image.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleTextChange = event => {
@@ -71,7 +62,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form labelAlign="left">
-        <FormItem label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
         </FormItem>
         <FormItem

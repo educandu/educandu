@@ -53,7 +53,6 @@ function SectionDisplay({
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
-  const [isInvalid, setIsInvalid] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
@@ -61,7 +60,6 @@ function SectionDisplay({
   const sectionClasses = classNames({
     'SectionDisplay': true,
     'is-editable': canEdit,
-    'is-invalid': isInvalid,
     'is-hard-deletable': isHardDeleteEnabled,
     'is-dragged': isDragged,
     'is-other-section-dragged': isOtherSectionDragged
@@ -160,9 +158,8 @@ function SectionDisplay({
     return <DeletedSection section={section} />;
   };
 
-  const handleContentChange = (content, newIsInvalid) => {
-    setIsInvalid(newIsInvalid);
-    onSectionContentChange(content, newIsInvalid);
+  const handleContentChange = content => {
+    onSectionContentChange(content);
   };
 
   const renderEditorComponent = () => {

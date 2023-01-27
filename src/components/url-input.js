@@ -19,6 +19,8 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
 
+  const unsecureUrl = value && value.startsWith('http://');
+
   const sourceType = useMemo(() => {
     const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
     return allowedSourceTypes.includes(newSourceType) ? newSourceType : SOURCE_TYPE.unsupported;
@@ -37,11 +39,11 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
       case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:
-        return <GlobalOutlined />;
+        return unsecureUrl ? <WarningOutlined /> : <GlobalOutlined />;
       default:
         return <WarningOutlined />;
     }
-  }, [sourceType]);
+  }, [sourceType, unsecureUrl]);
 
   const handleInputValueChange = newValue => {
     const accessibleUrl = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -55,23 +57,38 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
 
   const renderInputPrefix = () => {
     const tooltipTitle = `${t('common:source')}: ${t(`tooltip_${sourceType}`)}`;
+    const classes = classNames(
+      'UrlInput-prefix',
+      { 'UrlInput-prefix--error': sourceType === SOURCE_TYPE.unsupported },
+      { 'UrlInput-prefix--warning': unsecureUrl }
+    );
+
     return (
       <Tooltip title={tooltipTitle}>
-        <div className={classNames('UrlInput-prefix', { 'UrlInput-prefix--error': sourceType === SOURCE_TYPE.unsupported })}>
+        <div className={classes}>
           {inputPrefixIcon}
         </div>
       </Tooltip>
     );
   };
 
+  const classes = classNames(
+    'UrlInput',
+    'u-input-and-button',
+    { 'UrlInput--warning': unsecureUrl }
+  );
+
   return (
-    <div className="UrlInput u-input-and-button">
+    <div className={classes}>
       <DebouncedInput
         value={value}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
         />
       <ResourcePicker url={value} onUrlChange={handleInputValueChange} />
+      {!!unsecureUrl && (
+        <div className="UrlInput-warning">{t('unsecureUrl')}</div>
+      )}
     </div>
   );
 }

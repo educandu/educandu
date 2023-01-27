@@ -14,7 +14,7 @@ function TableEditor({ content, onContentChanged }) {
   const { columnDistribution, width } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleColumnDistributionChange = event => {

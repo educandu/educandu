@@ -11,6 +11,7 @@ import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -21,9 +22,7 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -54,10 +53,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalid = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackContentChange = changedContent => {
@@ -166,10 +162,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     );
   };
 
-  const getValidationProps = url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(url, t, { allowEmpty: true });
-
   const timelineParts = chapters.map((chapter, index) => ({
     ...chapter,
     title: `${t('common:chapter')} ${index + 1}`
@@ -238,7 +230,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                 <FormItem
                   label={t('common:url')}
                   {...FORM_ITEM_LAYOUT}
-                  {...getValidationProps(chapters[selectedChapterIndex].image.sourceUrl)}
                   >
                   <UrlInput
                     value={chapters[selectedChapterIndex].image.sourceUrl}

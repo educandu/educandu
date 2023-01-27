@@ -7,19 +7,19 @@ describe('source-utils', () => {
     const cdnRootUrl = 'http://cdn-root/';
     const testCases = [
       { url: '', expectedResult: SOURCE_TYPE.none },
-      { url: 'cdn://resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { url: 'cdn://resource.jpeg', expectedResult: SOURCE_TYPE.external },
       { url: 'cdn://media/resource.jpeg', expectedResult: SOURCE_TYPE.documentMedia },
       { url: 'cdn://rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.roomMedia },
       { url: 'media/resource.jpeg', expectedResult: SOURCE_TYPE.documentMedia },
       { url: 'rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.roomMedia },
-      { url: 'http://cdn-root/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { url: 'http://cdn-root/resource.jpeg', expectedResult: SOURCE_TYPE.external },
       { url: 'http://cdn-root/media/resource.jpeg', expectedResult: SOURCE_TYPE.documentMedia },
       { url: 'http://cdn-root/rooms/vQHrRHX4X3HSj49Eq4dqyG/media/resource.jpeg', expectedResult: SOURCE_TYPE.roomMedia },
       { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/resource.jpg', expectedResult: SOURCE_TYPE.wikimedia },
       { url: 'https://www.youtube.com/resource', expectedResult: SOURCE_TYPE.youtube },
       { url: 'https://youtu.be/resource', expectedResult: SOURCE_TYPE.youtube },
       { url: 'https://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.external },
-      { url: 'http://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported },
+      { url: 'http://other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.external },
       { url: 'other.domain/resource.jpeg', expectedResult: SOURCE_TYPE.unsupported }
     ];
 

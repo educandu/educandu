@@ -6,14 +6,13 @@ import UrlInput from '../../components/url-input.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { isInternalSourceType, getAccessibleUrl } from '../../utils/source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
 import {
   createDefaultClipEffect,
   createDefaultHoverEffect,
@@ -72,19 +71,9 @@ function ImageEditor({ content, onContentChanged }) {
     updateClipEffectState();
   }, [updateClipEffectState, clipEffect.region]);
 
-  const isInvalidUrl = url => !isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
-
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const isInvalidSourceUrl = isInvalidUrl(newContent.sourceUrl);
-    const isInvalidHoverEffectSourceUrl = newContent.effectType === EFFECT_TYPE.hover
-      && isInvalidUrl(newContent.hoverEffect.sourceUrl);
-    const isInvalidRevealEffectSourceUrl = newContent.effectType === EFFECT_TYPE.reveal
-      && isInvalidUrl(newContent.revealEffect.sourceUrl);
-
-    onContentChanged(newContent, isInvalidSourceUrl || isInvalidHoverEffectSourceUrl || isInvalidRevealEffectSourceUrl);
+    onContentChanged(newContent);
   };
 
   const handleSourceUrlChange = value => {
