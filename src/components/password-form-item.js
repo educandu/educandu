@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import inputValidators from '../utils/input-validators.js';
-import { minPasswordLength } from '../domain/validation-constants.js';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { minUserPasswordLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 const { Password } = Input;
@@ -24,7 +24,7 @@ function PasswordFormItem({ name, skipLengthValidation, onPressEnter, ...formIte
     passwordValidationRules.push({
       validator: (_rule, value) => {
         return value && !inputValidators.isValidPassword(value)
-          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minPasswordLength })))
+          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minUserPasswordLength })))
           : Promise.resolve();
       }
     });

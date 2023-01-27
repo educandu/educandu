@@ -17,6 +17,7 @@ import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import PermanentActionsCard from './permanent-actions-card.js';
 import { confirmCloseAccount } from './confirmation-dialogs.js';
+import { maxUserIntroductionLength, maxUserOrganizationLength } from '../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -125,6 +126,12 @@ function AccountSettingsTab() {
     }
   };
 
+  const renderOrganizationInputCount = ({ count, maxLength }) => {
+    return (
+      <div className="u-input-count">{`${count} / ${maxLength}`}</div>
+    );
+  };
+
   return (
     <div className="AccountSettingsTab">
       <div className="AccountSettingsTab-tabInfo">{renderInfo()}</div>
@@ -152,14 +159,18 @@ function AccountSettingsTab() {
             className="AccountSettingsTab-input"
             initialValue={user.organization || ''}
             >
-            <Input type="text" />
+            <Input
+              type="text"
+              maxLength={maxUserOrganizationLength}
+              showCount={{ formatter: renderOrganizationInputCount }}
+              />
           </FormItem>
           <FormItem
             name="introduction"
             label={t('introduction')}
             initialValue={user.introduction || ''}
             >
-            <MarkdownInput preview minRows={5} />
+            <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit">{t('common:save')}</Button>

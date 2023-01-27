@@ -1,23 +1,22 @@
+export const minDocumentTagLength = 1;
+export const maxDocumentTagLength = 30;
+export const documentTagValidationPattern = /^\S{1,30}$/;
+export const maxDocumentDescriptionLength = 1000;
+export const maxDocumentCommentTopicLength = 200;
+export const maxDocumentCommentTextLength = 2000;
+
+export const minUserDisplayNameLength = 6;
+export const maxUserDisplayNameLength = 30;
+export const maxUserOrganizationLength = 100;
+export const maxUserIntroductionLength = 1500;
+export const minUserPasswordLength = 8;
+
 export const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
 
-export const minTagLength = 1;
-export const maxTagLength = 30;
-export const tagValidationPattern = /^\S{1,30}$/;
-
-export const minDisplayNameLength = 6;
-export const maxDisplayNameLength = 30;
+export const hexCodeValidationPattern = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 
 // At least 1 letter and at least 1 digit
 export const passwordValidationPattern = /^(?=.*[A-Za-z])(?=.*\d).*$/;
-
-export const minPasswordLength = 8;
-
-export const maxDocumentDescriptionLength = 1000;
-
-export const maxCommentTopicLength = 200;
-export const maxCommentTextLength = 2000;
-
-export const hexCodeValidationPattern = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 
 // Antd uses the `async-validator` package, which in turn uses the following regex from http://emailregex.com/
 // eslint-disable-next-line no-useless-escape

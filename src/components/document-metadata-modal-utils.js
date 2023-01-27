@@ -1,6 +1,6 @@
 import inputValidators from '../utils/input-validators.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
-import { maxDocumentDescriptionLength, maxTagLength, minTagLength } from '../domain/validation-constants.js';
+import { maxDocumentDescriptionLength, maxDocumentTagLength, minDocumentTagLength } from '../domain/validation-constants.js';
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
@@ -89,7 +89,7 @@ export function getValidationState({ cloningStrategy, cloningTargetRoomId, title
     },
     tags: {
       validateStatus: areValidTags ? 'success' : 'error',
-      help: areValidTags ? null : t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })
+      help: areValidTags ? null : t('invalidTags', { minChars: minDocumentTagLength, maxChars: maxDocumentTagLength })
     }
   };
 }

@@ -396,8 +396,7 @@
     "language": "en",
     "resources": {
       "enterDisplayName": "Please enter a display name",
-      "displayNameIsTooShort": "The display name must be at least {length} characters long",
-      "displayNameIsTooLong": "The display name must be at most {length} characters long"
+      "displayNameIsTooShort": "The display name must be at least {length} characters long"
     }
   },
   {
@@ -405,8 +404,7 @@
     "language": "de",
     "resources": {
       "enterDisplayName": "Bitte gib einen Anzeigenamen an",
-      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
-      "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
+      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein"
     }
   },
   {

@@ -1,7 +1,7 @@
 import { ROLE } from '../constants.js';
 import { validate } from '../validation.js';
 import { describe, expect, it } from 'vitest';
-import { maxDisplayNameLength, minDisplayNameLength } from '../validation-constants.js';
+import { maxUserDisplayNameLength, minUserDisplayNameLength } from '../validation-constants.js';
 import {
   postUserRegistrationRequestBodySchema,
   postUserAccountBodySchema,
@@ -18,21 +18,21 @@ const email = 'joedoe78@gmail.com';
 const invalidDisplayNameCases = [
   {
     description: 'displayName is shorter than min length',
-    body: { displayName: Array.from({ length: minDisplayNameLength - 1 }, () => 'x').join('') }
+    body: { displayName: Array.from({ length: minUserDisplayNameLength - 1 }, () => 'x').join('') }
   },
   {
     description: 'displayName is longer than max length',
-    body: { displayName: Array.from({ length: maxDisplayNameLength + 1 }, () => 'x').join('') }
+    body: { displayName: Array.from({ length: maxUserDisplayNameLength + 1 }, () => 'x').join('') }
   }
 ];
 const validDisplayNameCases = [
   {
     description: 'displayName is as long as min length',
-    body: { displayName: Array.from({ length: minDisplayNameLength }, () => 'x').join('') }
+    body: { displayName: Array.from({ length: minUserDisplayNameLength }, () => 'x').join('') }
   },
   {
     description: 'displayName is as long as max length',
-    body: { displayName: Array.from({ length: maxDisplayNameLength }, () => 'x').join('') }
+    body: { displayName: Array.from({ length: maxUserDisplayNameLength }, () => 'x').join('') }
   }
 ];
 

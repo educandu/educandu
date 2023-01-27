@@ -1,11 +1,18 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { FAVORITE_TYPE, ROLE } from '../constants.js';
-import { minPasswordLength, minDisplayNameLength, passwordValidationPattern, maxDisplayNameLength } from '../validation-constants.js';
+import {
+  minUserPasswordLength,
+  minUserDisplayNameLength,
+  passwordValidationPattern,
+  maxUserDisplayNameLength,
+  maxUserIntroductionLength,
+  maxUserOrganizationLength
+} from '../validation-constants.js';
 
 const emailSchema = joi.string().case('lower');
-const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
-const displayNameSchema = joi.string().min(minDisplayNameLength).max(maxDisplayNameLength);
+const passwordSchema = joi.string().min(minUserPasswordLength).pattern(passwordValidationPattern);
+const displayNameSchema = joi.string().min(minUserDisplayNameLength).max(maxUserDisplayNameLength);
 
 export const postUserRegistrationRequestBodySchema = joi.object({
   email: emailSchema.required(),
@@ -98,6 +105,6 @@ export const userDBSchema = joi.object({
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),
   displayName: joi.string().required(),
-  introduction: joi.string().allow('').required(),
-  organization: joi.string().allow('').required()
+  introduction: joi.string().allow('').max(maxUserIntroductionLength).required(),
+  organization: joi.string().allow('').max(maxUserOrganizationLength).required()
 });
