@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
 import { Button, Divider, Form, Input } from 'antd';
+import PasswordFormItem from './password-form-item.js';
 import { handleApiError } from '../ui/error-helper.js';
 import BlockedLoginError from './blocked-login-error.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -128,13 +129,6 @@ export default function LoginForm({
     }
   ];
 
-  const passwordValidationRules = [
-    {
-      required: true,
-      message: t('enterPassword')
-    }
-  ];
-
   const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
   const showExternalLogin = showLoginButtons && samlIdentityProviders.length
     && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.shibbolethLoginForm);
@@ -160,13 +154,7 @@ export default function LoginForm({
             >
             <Input onPressEnter={handlePressEnter} />
           </Form.Item>
-          <Form.Item
-            label={t('common:password')}
-            name="password"
-            rules={passwordValidationRules}
-            >
-            <Input type="password" onPressEnter={handlePressEnter} />
-          </Form.Item>
+          <PasswordFormItem name="password" skipLengthValidation onPressEnter={handlePressEnter} />
         </Form>
         {!hasBlockingError && !!hasLoginFailed && (
           <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
