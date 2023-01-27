@@ -5,9 +5,9 @@ import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import { Button, Switch, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import SortingSelector from '../sorting-selector.js';
-import { Input, Button, Switch, Tooltip } from 'antd';
 import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -18,13 +18,13 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { CheckOutlined, LikeOutlined, PlusOutlined } from '@ant-design/icons';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { CheckOutlined, LikeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import FilterInput from '../filter-input.js';
 
-const { Search } = Input;
 const logger = new Logger(import.meta.url);
 
 function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = false }) {
@@ -275,13 +275,12 @@ function Docs({ initialState, PageTemplate }) {
       <div className="DocsPage">
         <h1>{t('pageNames:docs')}</h1>
         <div className="DocsPage-controls">
-          <Search
+          <FilterInput
             size="large"
             className="DocsPage-filter"
             value={filterText}
-            enterButton={<SearchOutlined />}
             onChange={handleSearchChange}
-            placeholder={t('placeholder')}
+            placeholder={t('filterPlaceholder')}
             />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>

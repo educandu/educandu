@@ -1086,7 +1086,7 @@
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
       "initialAuthor": "Initial author",
-      "placeholder": "Search by title or initial author",
+      "filterPlaceholder": "Filter by title or initial author",
       "badges": "Badges",
       "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
       "allowedOpenContributionBadge_content": "Open contribution to this document's content is allowed"
@@ -1099,7 +1099,7 @@
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
       "initialAuthor": "Erstautor",
-      "placeholder": "Nach Titel oder Erstautor suchen",
+      "filterPlaceholder": "Nach Titel oder Erstautor filtern",
       "badges": "Kennzeichen",
       "allowedOpenContributionBadge_metadataAndContent": "Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden",
       "allowedOpenContributionBadge_content": "Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden"
