@@ -33,7 +33,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
-import { canEditDocContent, canEditDocMetadata, getEditDocContentRestrictionTooltip } from '../../utils/doc-utils.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -42,6 +41,13 @@ import {
   confirmSectionDelete,
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
+import {
+  canEditDocContent,
+  canEditDocMetadata,
+  findCurrentlyWorkedOnSectionKey,
+  getEditDocContentRestrictionTooltip,
+  tryBringSectionIntoView
+} from '../../utils/doc-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -109,6 +115,7 @@ function Doc({ initialState, PageTemplate }) {
   const [isDirty, setIsDirty] = useState(false);
   const [comments, setComments] = useState([]);
   const [doc, setDoc] = useState(initialState.doc);
+  const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [fetchingComments, setFetchingComments] = useState(false);
@@ -124,6 +131,21 @@ function Doc({ initialState, PageTemplate }) {
     view,
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
+
+  const switchView = newView => {
+    setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
+    setView(newView);
+  };
+
+  useEffect(() => {
+    if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
+      setTimeout(() => tryBringSectionIntoView(lastViewInfo.sectionKeyToScrollTo), 500);
+    }
+
+    if (view === VIEW.comments && !!commentsSectionRef.current) {
+      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [view, lastViewInfo, commentsSectionRef]);
 
   const fetchComments = useCallback(async () => {
     try {
@@ -175,12 +197,6 @@ function Doc({ initialState, PageTemplate }) {
     history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
 
-  useEffect(() => {
-    if (view === VIEW.comments && !!commentsSectionRef.current) {
-      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [view, commentsSectionRef]);
-
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalOpen(true);
   };
@@ -196,7 +212,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleEditOpen = () => {
-    setView(VIEW.edit);
+    switchView(VIEW.edit);
     setCurrentSections(cloneDeep(doc.sections));
   };
 
@@ -240,7 +256,7 @@ function Doc({ initialState, PageTemplate }) {
       const exitEditMode = () => {
         setCurrentSections(doc.sections);
         setIsDirty(false);
-        setView(VIEW.display);
+        switchView(VIEW.display);
         setEditedSectionKeys([]);
         setPendingTemplateSectionKeys([]);
         resolve(true);
@@ -256,11 +272,11 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsOpen = async () => {
     await fetchComments();
-    setView(VIEW.comments);
+    switchView(VIEW.comments);
   };
 
   const handleCommentsClose = () => {
-    setView(VIEW.display);
+    switchView(VIEW.display);
     setComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
@@ -379,7 +395,7 @@ function Doc({ initialState, PageTemplate }) {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
       setHistoryRevisions(documentRevisions);
       setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
-      setView(VIEW.history);
+      switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -388,7 +404,7 @@ function Doc({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setHistoryRevisions([]);
     setSelectedHistoryRevision(null);
-    setView(VIEW.display);
+    switchView(VIEW.display);
     return true;
   };
 
