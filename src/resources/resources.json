@@ -204,8 +204,7 @@
       "deleteAllOwnedRooms": "Delete rooms",
       "storageSpace": "Storage space",
       "reminders": "Reminders",
-      "accountClosedOn": "Account closing date",
-      "filterPlaceholder": "Filter by name, email, etc."
+      "accountClosedOn": "Account closing date"
     }
   },
   {
@@ -229,8 +228,7 @@
       "deleteAllOwnedRooms": "Räume löschen",
       "storageSpace": "Speicherplatz",
       "reminders": "Erinnerungen",
-      "accountClosedOn": "Kontoschlussdatum",
-      "filterPlaceholder": "Nach Name, E-Mail, etc. filtern"
+      "accountClosedOn": "Kontoschlussdatum"
     }
   },
   {
@@ -1088,7 +1086,7 @@
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
       "initialAuthor": "Initial author",
-      "filterPlaceholder": "Filter by title or initial author",
+      "placeholder": "Search by title or initial author",
       "badges": "Badges",
       "allowedOpenContributionBadge_metadataAndContent": "Open contribution to this document's metadata and content is allowed",
       "allowedOpenContributionBadge_content": "Open contribution to this document's content is allowed"
@@ -1101,7 +1099,7 @@
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
       "initialAuthor": "Erstautor",
-      "filterPlaceholder": "Nach Titel oder Erstautor filtern",
+      "placeholder": "Nach Titel oder Erstautor suchen",
       "badges": "Kennzeichen",
       "allowedOpenContributionBadge_metadataAndContent": "Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden",
       "allowedOpenContributionBadge_content": "Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden"
@@ -1211,7 +1209,6 @@
     "resources": {
       "headlineSearching": "Searching ...",
       "headlineDocumentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
       "sorting": "Sorting"
     }
@@ -1222,7 +1219,6 @@
     "resources": {
       "headlineSearching": "Suchen ...",
       "headlineDocumentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
-      "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
       "sorting": "Sortierung"
     }
@@ -1443,7 +1439,6 @@
     "namespace": "storageLocation",
     "language": "en",
     "resources": {
-      "filterPlaceholder": "Filter",
       "filesView_list": "List view",
       "filesView_grid": "Grid view",
       "privateStorageMessage": "Private directory",
@@ -1455,7 +1450,6 @@
     "namespace": "storageLocation",
     "language": "de",
     "resources": {
-      "filterPlaceholder": "Filter",
       "filesView_list": "Listenansicht",
       "filesView_grid": "Kachelansicht",
       "privateStorageMessage": "Privates Verzeichnis",
@@ -2543,7 +2537,8 @@
       "createDocument": "Create document",
       "createRoom": "Create room",
       "enterRoom": "Enter room",
-      "changesSavedSuccessfully": "Your changes have been saved"
+      "changesSavedSuccessfully": "Your changes have been saved",
+      "filter": "Filter"
     }
   },
   {
@@ -2704,7 +2699,8 @@
       "createDocument": "Dokument erstellen",
       "createRoom": "Raum erstellen",
       "enterRoom": "Raum betreten",
-      "changesSavedSuccessfully": "Deine Änderungen wurden gespeichert"
+      "changesSavedSuccessfully": "Deine Änderungen wurden gespeichert",
+      "filter": "Filter"
     }
   },
   {
@@ -2811,30 +2807,6 @@
       "mimeTypeCategoryProgram": "Programm",
       "mimeTypeCategoryFolder": "Verzeichnis",
       "mimeTypeCategoryUnknown": "Unbekannt"
-    }
-  },
-  {
-    "namespace": "validation",
-    "language": "en",
-    "resources": {
-      "urlRequired": "Please specify a URL",
-      "urlInvalid": "Please specify a URL with a valid format",
-      "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers",
-      "orListFirstItem": "“{item}”",
-      "orListLastItem": " or “{item}”",
-      "orListOtherItem": ", “{item}”"
-    }
-  },
-  {
-    "namespace": "validation",
-    "language": "de",
-    "resources": {
-      "urlRequired": "Bitte gib eine Adresse an",
-      "urlInvalid": "Bitte gib eine Adresse im gültigen Format an",
-      "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
-      "orListFirstItem": "»{item}«",
-      "orListLastItem": " oder »{item}«",
-      "orListOtherItem": ", »{item}«"
     }
   }
 ]

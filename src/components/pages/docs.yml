@@ -7,9 +7,9 @@ newDocument:
 initialAuthor:
   en: Initial author
   de: Erstautor
-filterPlaceholder:
-  en: Filter by title or initial author
-  de: Nach Titel oder Erstautor filtern
+placeholder:
+  en: Search by title or initial author
+  de: Nach Titel oder Erstautor suchen
 badges:
   en: Badges
   de: Kennzeichen

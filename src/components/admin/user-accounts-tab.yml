@@ -52,6 +52,3 @@ reminders:
 accountClosedOn:
   en: Account closing date
   de: Kontoschlussdatum
-filterPlaceholder:
-  en: Filter by name, email, etc.
-  de: Nach Name, E-Mail, etc. filtern

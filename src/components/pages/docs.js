@@ -281,7 +281,7 @@ function Docs({ initialState, PageTemplate }) {
             value={filterText}
             enterButton={<SearchOutlined />}
             onChange={handleSearchChange}
-            placeholder={t('filterPlaceholder')}
+            placeholder={t('placeholder')}
             />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
