@@ -174,7 +174,7 @@ function Search({ PageTemplate }) {
           {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
         </div>
 
-        <DocumentsTable dataSource={[...displayedRows]} columns={columns} loading={isSearching} />
+        <DocumentsTable key={searchText} dataSource={[...displayedRows]} columns={columns} loading={isSearching} />
       </div>
     </PageTemplate>
   );
