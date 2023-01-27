@@ -1681,8 +1681,7 @@
     "namespace": "tagSelector",
     "language": "en",
     "resources": {
-      "linkTextSelectMore": "+ More",
-      "linkTextSelectFirst": "+ Add tag filter",
+      "linkText": "+ Add tag filter",
       "searchPlaceholder": "Search"
     }
   },
@@ -1690,8 +1689,7 @@
     "namespace": "tagSelector",
     "language": "de",
     "resources": {
-      "linkTextSelectMore": "+ Mehr",
-      "linkTextSelectFirst": "+ Tag-Filter hinzufügen",
+      "linkText": "+ Tag-Filter hinzufügen",
       "searchPlaceholder": "Suchen"
     }
   },

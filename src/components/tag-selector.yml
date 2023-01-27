@@ -1,7 +1,4 @@
-linkTextSelectMore:
-  en: + More
-  de: + Mehr
-linkTextSelectFirst:
+linkText:
   en: + Add tag filter
   de: + Tag-Filter hinzufügen
 searchPlaceholder:
