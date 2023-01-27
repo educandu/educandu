@@ -39,7 +39,7 @@ function SpecialPageSettings({ settings, onChange }) {
   const handleChange = (index, key, value) => {
     const pageList = settingsToPageList(supportedUiLanguages, settings);
     const updatedPageList = pageList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
-    onChange(pageListToSettings(updatedPageList), { isValid: true });
+    onChange(pageListToSettings(updatedPageList));
   };
 
   const renderLanguage = (text, record) => (

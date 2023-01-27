@@ -15,7 +15,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
-import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
 const logger = new Logger(import.meta.url);
@@ -26,10 +25,9 @@ function SettingsTab({ onDirtyStateChange }) {
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
 
   const [settings, setSettings] = useState({});
-  const [dirtyKeys, setDirtyKeys] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [invalidKeys, setInvalidKeys] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -46,55 +44,52 @@ function SettingsTab({ onDirtyStateChange }) {
   }, [settingsApiClient, t]);
 
   useEffect(() => {
-    onDirtyStateChange(!!dirtyKeys.length || !!invalidKeys.length);
-  }, [dirtyKeys, invalidKeys, onDirtyStateChange]);
+    onDirtyStateChange(isDirty);
+  }, [isDirty, onDirtyStateChange]);
 
-  const handleChange = useCallback((key, value, isValid) => {
+  const handleChange = useCallback((key, value) => {
+    setIsDirty(true);
     setSettings(prev => ({ ...prev, [key]: value }));
-    setDirtyKeys(prev => ensureIsIncluded(prev, key));
-    setInvalidKeys(prev => isValid ? ensureIsExcluded(prev, key) : ensureIsIncluded(prev, key));
-  }, [setSettings, setDirtyKeys, setInvalidKeys]);
+  }, [setSettings, setIsDirty]);
 
   const handleHomepageInfoChange = useCallback(event => {
-    handleChange('homepageInfo', event.target.value, true);
+    handleChange('homepageInfo', event.target.value);
   }, [handleChange]);
 
-  const handleConsentTextChange = useCallback((value, { isValid }) => {
-    handleChange('consentText', value, isValid);
+  const handleConsentTextChange = useCallback(value => {
+    handleChange('consentText', value);
   }, [handleChange]);
 
   const handleTemplateDocumentChange = useCallback(documentId => {
-    handleChange('templateDocument', { documentId }, true);
+    handleChange('templateDocument', { documentId });
   }, [handleChange]);
 
-  const handleHelpPageChange = useCallback((value, { isValid }) => {
-    handleChange('helpPage', value, isValid);
+  const handleHelpPageChange = useCallback(value => {
+    handleChange('helpPage', value);
   }, [handleChange]);
 
-  const handleTermsPageChange = useCallback((value, { isValid }) => {
-    handleChange('termsPage', value, isValid);
+  const handleTermsPageChange = useCallback(value => {
+    handleChange('termsPage', value);
   }, [handleChange]);
 
-  const handleFooterLinksChange = useCallback((value, { isValid }) => {
-    handleChange('footerLinks', value, isValid);
+  const handleFooterLinksChange = useCallback(value => {
+    handleChange('footerLinks', value);
   }, [handleChange]);
 
-  const handlePluginHelpTextChange = useCallback((pluginType, value, { isValid }) => {
+  const handlePluginHelpTextChange = useCallback((pluginType, value) => {
     const newPluginsHelpTexts = { ...cloneDeep(settings.pluginsHelpTexts), [pluginType]: value };
-    handleChange('pluginsHelpTexts', newPluginsHelpTexts, isValid);
+    handleChange('pluginsHelpTexts', newPluginsHelpTexts);
   }, [settings, handleChange]);
 
-  const handleLicenseChange = useCallback((value, { isValid }) => {
-    handleChange('license', value, isValid);
+  const handleLicenseChange = useCallback(value => {
+    handleChange('license', value);
   }, [handleChange]);
 
   const handleSaveButtonClick = async () => {
-    const changedSettings = dirtyKeys.reduce((map, key) => ({ ...map, [key]: settings[key] }), {});
     try {
       setIsSaving(true);
-      const res = await settingsApiClient.saveSettings({ settings: changedSettings });
-      setDirtyKeys([]);
-      setInvalidKeys([]);
+      const res = await settingsApiClient.saveSettings({ settings });
+      setIsDirty(false);
       setSettings(res.settings);
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -118,7 +113,6 @@ function SettingsTab({ onDirtyStateChange }) {
         <Collapse className="SettingsTab-collapse">
           <Collapse.Panel header={t('consentHeader')} key="consent">
             <MarkdownSettingInSupportedLanguages
-              required
               settingValue={settings.consentText}
               onChange={handleConsentTextChange}
               />
@@ -167,7 +161,7 @@ function SettingsTab({ onDirtyStateChange }) {
                   <div className="SettingsTab-collapseTabPane">
                     <MarkdownSettingInSupportedLanguages
                       settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
-                      onChange={(value, { isValid }) => handlePluginHelpTextChange(pluginInfo.type, value, { isValid })}
+                      onChange={value => handlePluginHelpTextChange(pluginInfo.type, value)}
                       />
                   </div>
                 )
@@ -188,7 +182,7 @@ function SettingsTab({ onDirtyStateChange }) {
           loading={isSaving}
           onClick={handleSaveButtonClick}
           className="SettingsTab-saveButton"
-          disabled={!!invalidKeys.length || !dirtyKeys.length}
+          disabled={isLoading}
           >
           {t('common:save')}
         </Button>

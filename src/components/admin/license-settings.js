@@ -10,16 +10,12 @@ function LicenseSettings({ license, onChange }) {
   const name = license?.name || '';
   const url = license?.url || '';
 
-  const handleChange = newLicense => {
-    onChange(newLicense, { isValid: true });
-  };
-
   const handleNameChange = event => {
-    handleChange({ name: event.target.value, url });
+    onChange({ name: event.target.value, url });
   };
 
   const handleUrlChange = event => {
-    handleChange({ name, url: event.target.value });
+    onChange({ name, url: event.target.value });
   };
 
   return (
