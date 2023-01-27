@@ -16,6 +16,24 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  getExternalAccounts() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/external-accounts',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteExternalAccount({ externalAccountId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/users/external-accounts/${encodeURIComponent(externalAccountId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   requestRegistration({ email, password, displayName }) {
     return this.httpClient
       .post(

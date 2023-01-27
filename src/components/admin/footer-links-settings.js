@@ -5,10 +5,6 @@ import SettingsDocumentsTable from './settings-documents-table.js';
 import { settingsDocumentShape } from '../../ui/default-prop-types.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
-const hasValue = value => value && String(value).trim();
-
-const isValidFooterLinkItem = item => [item.linkTitle, item.documentId].every(hasValue);
-
 function FooterLinksSettings({ footerLinks, onChange }) {
   const { supportedUiLanguages } = useLocale();
 
@@ -17,10 +13,7 @@ function FooterLinksSettings({ footerLinks, onChange }) {
       map[sl] = sl !== lang ? footerLinks?.[sl] || [] : items;
       return map;
     }, {});
-    const isInvalid = Object.values(updatedFooterLinks).some(fl => {
-      return fl.some(item => !isValidFooterLinkItem(item));
-    });
-    onChange(updatedFooterLinks, { isValid: !isInvalid });
+    onChange(updatedFooterLinks);
   };
 
   return (

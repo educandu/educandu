@@ -477,3 +477,6 @@ createDocument:
 enterRoom:
   en: Enter room
   de: Raum betreten
+changesSavedSuccessfully:
+  en: Your changes have been saved
+  de: Deine Änderungen wurden gespeichert

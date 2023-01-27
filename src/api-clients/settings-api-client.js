@@ -7,6 +7,15 @@ class SettingsApiClient {
     this.httpClient = httpClient;
   }
 
+  getSettings() {
+    return this.httpClient
+      .get(
+        '/api/v1/settings',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   saveSettings({ settings }) {
     return this.httpClient
       .post(

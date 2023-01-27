@@ -54,6 +54,8 @@ describe('user-controller', () => {
       resetCount: sandbox.stub()
     };
     externalAccountService = {
+      getAllExternalAccounts: sandbox.stub(),
+      deleteExternalAccount: sandbox.stub(),
       updateExternalAccountUserId: sandbox.stub()
     };
     mailService = {
@@ -64,7 +66,8 @@ describe('user-controller', () => {
       mapRooms: sandbox.stub(),
       mapWebsiteUser: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
-      mapWebsitePublicUser: sandbox.stub()
+      mapWebsitePublicUser: sandbox.stub(),
+      mapExternalAccountsForAdminArea: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
@@ -754,6 +757,67 @@ describe('user-controller', () => {
       it('should throw BadRequest', async () => {
         await expect(() => sut.handleDeleteAbortExternalAccountConnection(req, res)).toThrow(BadRequest);
       });
+    });
+  });
+
+  describe('handleGetExternalUserAccounts', () => {
+    let req;
+    let res;
+    const externalAccounts = [{ _id: 'original-account' }];
+    const mappedExternalAccounts = [{ _id: 'mapped-account' }];
+
+    beforeEach(() => new Promise((resolve, reject) => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+      res.on('end', resolve);
+      externalAccountService.getAllExternalAccounts.resolves(externalAccounts);
+      clientDataMappingService.mapExternalAccountsForAdminArea.returns(mappedExternalAccounts);
+      sut.handleGetExternalUserAccounts(req, res).catch(reject);
+    }));
+
+    it('should call externalAccountService.getAllExternalAccounts', () => {
+      assert.calledOnce(externalAccountService.getAllExternalAccounts);
+    });
+
+    it('should call clientDataMappingService.mapExternalAccountsForAdminArea', () => {
+      assert.calledWith(clientDataMappingService.mapExternalAccountsForAdminArea, externalAccounts);
+    });
+
+    it('should set the status code on the response to 200', () => {
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return the external accounts', () => {
+      expect(res._getData()).toEqual({ externalAccounts: mappedExternalAccounts });
+    });
+  });
+
+  describe('handleDeleteExternalUserAccount', () => {
+    let req;
+    let res;
+    const externalAccountId = '23xjnzx7xtnxn8x1';
+
+    beforeEach(() => new Promise((resolve, reject) => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        params: { externalAccountId }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+      res.on('end', resolve);
+      externalAccountService.deleteExternalAccount.withArgs({ externalAccountId }).resolves();
+      sut.handleDeleteExternalUserAccount(req, res).catch(reject);
+    }));
+
+    it('should call externalAccountService.deleteExternalAccount with the external account ID', () => {
+      assert.calledWith(externalAccountService.deleteExternalAccount, { externalAccountId });
+    });
+
+    it('should set the status code on the response to 204', () => {
+      expect(res.statusCode).toBe(204);
     });
   });
 });

@@ -1,13 +1,11 @@
 import by from 'thenby';
-import { Button } from 'antd';
 import Table from '../table.js';
-import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
+import { Button, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { PlusOutlined } from '@ant-design/icons';
-import cloneDeep from '../../utils/clone-deep.js';
 import SortingSelector from '../sorting-selector.js';
 import StoragePlanModal from '../storage-plan-modal.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -15,20 +13,35 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmStoragePlanDeletion } from '../confirmation-dialogs.js';
-import { storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
-function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
+function StoragePlansTab() {
   const { uiLocale } = useLocale();
   const { t } = useTranslation('storagePlansTab');
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [storagePlans, setStoragePlans] = useState(cloneDeep(initialStoragePlans));
+  const [storagePlans, setStoragePlans] = useState([]);
   const [editedStoragePlan, setEditedStoragePlan] = useState(null);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [storagePlanNamesInUse, setStoragePlanNamesInUse] = useState([]);
+  const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
   const [isStoragePlanModalOpen, setIsStoragePlanModalOpen] = useState(false);
   const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
-  const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
+        setStoragePlans(currentStoragePlans);
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [storageApiClient, t]);
 
   const handleEditClick = storagePlan => {
     const { _id, name, maxBytes } = storagePlan;
@@ -46,19 +59,22 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
   const handleDeleteClick = storagePlan => {
     confirmStoragePlanDeletion(t, storagePlan, async () => {
       try {
+        setIsSaving(true);
         await storageApiClient.deleteStoragePlan(storagePlan._id);
         const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
         setStoragePlans(currentStoragePlans);
-        onStoragePlansSaved(currentStoragePlans);
       } catch (error) {
         handleApiError({ error, logger, t });
-        throw error;
+      } finally {
+        setIsSaving(false);
       }
     });
   };
 
   const handleModalOk = async storagePlan => {
     try {
+      setIsSaving(true);
+
       if (storagePlan._id) {
         await storageApiClient.updateStoragePlan({
           storagePlanId: storagePlan._id,
@@ -74,12 +90,14 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
 
       const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
       setStoragePlans(currentStoragePlans);
-      onStoragePlansSaved(currentStoragePlans);
       setEditedStoragePlan(null);
       setStoragePlanNamesInUse([]);
       setIsStoragePlanModalOpen(false);
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -160,7 +178,13 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
         options={sortingOptions}
         onChange={handleSortingChange}
         />
-      <Table dataSource={[...displayedStoragePlans]} rowKey="_id" columns={columns} pagination />
+      <Table
+        dataSource={displayedStoragePlans}
+        rowKey="_id"
+        columns={columns}
+        loading={{ size: 'large', spinning: isLoading, delay: 500 }}
+        pagination
+        />
       <Button
         className="StoragePlansTab-newStoragePlanButton"
         type="primary"
@@ -170,6 +194,7 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
         onClick={handleNewStoragePlanClick}
         />
       <StoragePlanModal
+        isLoading={isSaving}
         isOpen={isStoragePlanModalOpen}
         storagePlan={editedStoragePlan}
         storagePlanNamesInUse={storagePlanNamesInUse}
@@ -179,10 +204,5 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
     </div>
   );
 }
-
-StoragePlansTab.propTypes = {
-  initialStoragePlans: PropTypes.arrayOf(storagePlanWithAssignedUserCountShape).isRequired,
-  onStoragePlansSaved: PropTypes.func.isRequired
-};
 
 export default StoragePlansTab;

@@ -53,6 +53,10 @@ export const userIdParamsSchema = joi.object({
   userId: idOrKeySchema.required()
 });
 
+export const externalAccountIdParamsSchema = joi.object({
+  externalAccountId: idOrKeySchema.required()
+});
+
 export const favoriteBodySchema = joi.object({
   type: joi.string().valid(...Object.values(FAVORITE_TYPE)).required(),
   id: idOrKeySchema.required()

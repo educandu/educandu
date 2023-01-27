@@ -37,7 +37,8 @@ import {
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
   favoriteBodySchema,
-  loginBodySchema
+  loginBodySchema,
+  externalAccountIdParamsSchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -225,16 +226,22 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, { user: mappedViewedUser });
   }
 
-  async handleGetUsersPage(req, res) {
-    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
-    const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
-  }
-
   async handleGetUsers(req, res) {
     const users = await this.userService.getAllUsers();
     const mappedUsers = this.clientDataMappingService.mapUsersForAdminArea(users);
     res.send({ users: mappedUsers });
+  }
+
+  async handleGetExternalUserAccounts(_req, res) {
+    const externalAccounts = await this.externalAccountService.getAllExternalAccounts();
+    const mappedExternalAccounts = this.clientDataMappingService.mapExternalAccountsForAdminArea(externalAccounts);
+    res.send({ externalAccounts: mappedExternalAccounts });
+  }
+
+  async handleDeleteExternalUserAccount(req, res) {
+    const { externalAccountId } = req.params;
+    await this.externalAccountService.deleteExternalAccount({ externalAccountId });
+    res.status(204).end();
   }
 
   async handlePostUserRegistrationRequest(req, res) {
@@ -591,15 +598,26 @@ class UserController {
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
     router.get('/connect-external-account', (req, res) => this.handleGetConnectExternalAccountPage(req, res));
-
-    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
   }
 
   registerApi(router) {
     router.get(
       '/api/v1/users',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       (req, res) => this.handleGetUsers(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/external-accounts',
+      needsPermission(permissions.MANAGE_USERS),
+      (req, res) => this.handleGetExternalUserAccounts(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/external-accounts/:externalAccountId',
+      needsPermission(permissions.MANAGE_USERS),
+      validateParams(externalAccountIdParamsSchema),
+      (req, res) => this.handleDeleteExternalUserAccount(req, res)
     );
 
     router.post(
@@ -663,7 +681,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/roles',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserRolesBodySchema),
@@ -672,7 +690,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/accountLockedOn',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserAccountLockedOnBodySchema),
@@ -681,7 +699,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/storagePlan',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserStoragePlanBodySchema),
@@ -690,14 +708,14 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/storageReminders',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       validateParams(userIdParamsSchema),
       (req, res) => this.handlePostUserStorageReminder(req, res)
     );
 
     router.delete(
       '/api/v1/users/:userId/storageReminders',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       validateParams(userIdParamsSchema),
       (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
     );

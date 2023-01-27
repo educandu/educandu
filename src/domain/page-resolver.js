@@ -9,7 +9,6 @@ const pageImporters = {
   [PAGE_NAME.user]: async () => (await import('../components/pages/user.js')).default,
   [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,
   [PAGE_NAME.login]: async () => (await import('../components/pages/login.js')).default,
-  [PAGE_NAME.users]: async () => (await import('../components/pages/users.js')).default,
   [PAGE_NAME.admin]: async () => (await import('../components/pages/admin.js')).default,
   [PAGE_NAME.tests]: async () => (await import('../components/pages/tests.js')).default,
   [PAGE_NAME.search]: async () => (await import('../components/pages/search.js')).default,

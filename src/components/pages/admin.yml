@@ -1,6 +1,9 @@
 settingsTabTitle:
   en: Settings
   de: Einstellungen
+userAccountsTabTitle:
+  en: User accounts
+  de: Benutzerkonten
 storagePlansTabTitle:
   en: Storage plans
   de: Speicherpläne
