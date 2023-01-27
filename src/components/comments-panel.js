@@ -15,7 +15,7 @@ import { confirmCommentDelete } from './confirmation-dialogs.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
 import React, { Fragment, useState, useMemo, useEffect } from 'react';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { maxCommentTextLength, maxCommentTopicLength } from '../domain/validation-constants.js';
+import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../domain/validation-constants.js';
 
 const { Panel } = Collapse;
 
@@ -122,7 +122,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
   };
 
   const renderComment = comment => {
-    const userUrl = routes.getUserUrl(comment.createdBy._id);
+    const userUrl = routes.getUserProfileUrl(comment.createdBy._id);
     return (
       <div className="CommentsPanel-comment" key={comment._id}>
         <div className="CommentsPanel-metadata">
@@ -158,7 +158,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
               inline
               value={editedTopicNewText}
               onChange={handleEditedTopicChange}
-              maxLength={maxCommentTopicLength}
+              maxLength={maxDocumentCommentTopicLength}
               />
           </div>
         )}
@@ -224,7 +224,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
               <MarkdownInput
                 preview
                 value={currentComment}
-                maxLength={maxCommentTextLength}
+                maxLength={maxDocumentCommentTextLength}
                 onChange={handleCurrentCommentChange}
                 />
               <Button
@@ -258,7 +258,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
                 inline
                 value={newTopic}
                 onChange={handleNewTopicChange}
-                maxLength={maxCommentTopicLength}
+                maxLength={maxDocumentCommentTopicLength}
                 placeholder={t('newTopicPlaceholder')}
                 />
             </div>
@@ -268,7 +268,7 @@ function CommentsPanel({ comments, loading, onCommentPostClick, onTopicChangeCli
         <MarkdownInput
           preview
           value={currentComment}
-          maxLength={maxCommentTextLength}
+          maxLength={maxDocumentCommentTextLength}
           onChange={handleCurrentCommentChange}
           />
         <Button

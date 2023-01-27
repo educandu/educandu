@@ -200,15 +200,6 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  getCreatedDocuments({ userId }) {
-    return this.httpClient
-      .get(
-        `/api/v1/users/${encodeURIComponent(userId)}/created-documents`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
   getRoomsInvitations() {
     return this.httpClient
       .get(

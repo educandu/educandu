@@ -203,6 +203,16 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
+export const userProfileDocumentMetadataShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: otherUserShape.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired
+});
+
 export const documentPublicContextShape = PropTypes.shape({
   archived: PropTypes.bool,
   verified: PropTypes.bool,

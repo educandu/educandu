@@ -358,7 +358,7 @@ export default function Room({ PageTemplate, initialState }) {
   const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
   const renderOwnerLink = () => (
     <Fragment>
-      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserUrl(room.owner._id)}>{room.owner.displayName}</a>
+      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
     </Fragment>
   );
 

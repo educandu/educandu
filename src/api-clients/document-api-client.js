@@ -25,6 +25,36 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getDocumentRevisions(documentId) {
+    return this.httpClient
+      .get(
+        '/api/v1/docs',
+        {
+          params: { documentId },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
+  getDocumentTagSuggestions(tagsSuggestionQuery) {
+    return this.httpClient
+      .get(
+        `/api/v1/docs/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getDocumentsByContributingUser(userId) {
+    return this.httpClient
+      .get(
+        `/api/v1/docs/users/${encodeURIComponent(userId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   createDocument(data) {
     return this.httpClient
       .post(
@@ -65,18 +95,6 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getDocumentRevisions(documentId) {
-    return this.httpClient
-      .get(
-        '/api/v1/docs',
-        {
-          params: { documentId },
-          responseType: 'json'
-        }
-      )
-      .then(res => res.data);
-  }
-
   hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     return this.httpClient
       .delete(
@@ -103,15 +121,6 @@ class DocumentApiClient {
           data: { documentId },
           responseType: 'json'
         }
-      )
-      .then(res => res.data);
-  }
-
-  getDocumentTagSuggestions(tagsSuggestionQuery) {
-    return this.httpClient
-      .get(
-        `/api/v1/docs/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
-        { responseType: 'json' }
       )
       .then(res => res.data);
   }

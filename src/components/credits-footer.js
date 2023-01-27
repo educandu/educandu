@@ -32,7 +32,7 @@ function CreditsFooter({ doc, revision }) {
   const renderUrl = () => <LiteralUrlLink href={url} targetBlank />;
 
   const renderUser = user => {
-    return <a href={routes.getUserUrl(user._id)}>{user.displayName}</a>;
+    return <a href={routes.getUserProfileUrl(user._id)}>{user.displayName}</a>;
   };
 
   const renderDocumentContributors = () => {

@@ -4,15 +4,16 @@
     "language": "en",
     "resources": {
       "info": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
-      "personalInfoHeadline": "Personal info",
+      "userProfileHeadline": "Public profile",
       "changePicture": "Change profile picture",
       "avatarTitle": "Gravatar profile picture",
       "organization": "Organization",
       "introduction": "Introduction",
       "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
-      "credentialsHeadline": "Credentials",
+      "accountAccessHeadline": "Account access",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
+      "updateErrorMessage": "There was an error updating your account.",
       "passwordResetEmailSent": "The password reset link has been sent to {email}",
       "closeAccountDetails": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
       "closeAccount": "Close account"
@@ -23,15 +24,16 @@
     "language": "de",
     "resources": {
       "info": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.",
-      "personalInfoHeadline": "Persönlichen Daten",
+      "userProfileHeadline": "Öffentliches Profil",
       "changePicture": "Profilbild ändern",
       "avatarTitle": "Gravatar Profilbild",
       "organization": "Organisation",
       "introduction": "Vorstellung",
       "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n",
-      "credentialsHeadline": "Zugangsdaten",
+      "accountAccessHeadline": "Konto-Zugangsdaten",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Dein Konto wurde erfolgreich aktualisiert.",
+      "updateErrorMessage": "Fehler beim Aktualisieren deines Kontos.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
       "closeAccountDetails": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden.",
       "closeAccount": "Konto schließen"
@@ -394,8 +396,7 @@
     "language": "en",
     "resources": {
       "enterDisplayName": "Please enter a display name",
-      "displayNameIsTooShort": "The display name must be at least {length} characters long",
-      "displayNameIsTooLong": "The display name must be at most {length} characters long"
+      "displayNameIsTooShort": "The display name must be at least {length} characters long"
     }
   },
   {
@@ -403,8 +404,7 @@
     "language": "de",
     "resources": {
       "enterDisplayName": "Bitte gib einen Anzeigenamen an",
-      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein",
-      "displayNameIsTooLong": "Der Anzeigename darf höchstens {length} Zeichen lang sein"
+      "displayNameIsTooShort": "Der Anzeigename muss mindestens {length} Zeichen lang sein"
     }
   },
   {
@@ -1224,19 +1224,21 @@
     }
   },
   {
-    "namespace": "user",
+    "namespace": "userProfile",
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
-      "documentsHeadline": "Recently created documents"
+      "documentsHeadline": "Recent contributions",
+      "moreButton": "Show {count} more"
     }
   },
   {
-    "namespace": "user",
+    "namespace": "userProfile",
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
-      "documentsHeadline": "Letzte erstellte Dokumente"
+      "documentsHeadline": "Letzte Beiträge",
+      "moreButton": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen\n"
     }
   },
   {

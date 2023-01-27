@@ -8,7 +8,16 @@ import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
-import { createTestDocument, createTestRevisions, createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import {
+  createTestDocument,
+  updateTestDocument,
+  createTestRevisions,
+  createTestRoom,
+  destroyTestEnvironment,
+  pruneTestEnvironment,
+  setupTestEnvironment,
+  setupTestUser
+} from '../test-helper.js';
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -1290,4 +1299,118 @@ describe('document-service', () => {
     });
   });
 
+  describe('getDocumentsByContributingUser', () => {
+    let result;
+    let otherUser;
+
+    beforeEach(async () => {
+      otherUser = await setupTestUser(container);
+    });
+
+    describe('when the user did not contribute to any documents', () => {
+      beforeEach(async () => {
+        result = await sut.getDocumentsByContributingUser(user._id);
+      });
+
+      it('should return an empty array', () => {
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('when the user is the first and only contributor on 2 document', () => {
+
+      beforeEach(async () => {
+        await createTestDocument(container, user, { title: 'Created doc 1' });
+
+        sandbox.clock.tick(1000);
+        await createTestDocument(container, otherUser, {});
+
+        sandbox.clock.tick(1000);
+        await createTestDocument(container, user, { title: 'Created doc 2' });
+
+        result = await sut.getDocumentsByContributingUser(user._id);
+      });
+
+      it('should return the user created documents sorted by last update descending', () => {
+        expect(result).toMatchObject([
+          { title: 'Created doc 2' },
+          { title: 'Created doc 1' }
+        ]);
+      });
+    });
+
+    describe('when the user is the last contributor on someone else\'s documents', () => {
+      beforeEach(async () => {
+        let doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Updated doc 1' } });
+
+        sandbox.clock.tick(1000);
+        await createTestDocument(container, otherUser, {});
+
+        sandbox.clock.tick(1000);
+        doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Updated doc 2' } });
+
+        result = await sut.getDocumentsByContributingUser(user._id);
+      });
+
+      it('should return the user updated documents sorted by last update descending', () => {
+        expect(result).toMatchObject([
+          { title: 'Updated doc 2' },
+          { title: 'Updated doc 1' }
+        ]);
+      });
+    });
+
+    describe('when the user contributed on multiple documents in different contribution stages (first, mid, last)', () => {
+      beforeEach(async () => {
+        sandbox.clock.tick(1000);
+        let doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Doc 1 - Last updated by contributor' } });
+
+        sandbox.clock.tick(1000);
+        doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Doc 2 - Mid updated by contributor' } });
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user: otherUser, data: {} });
+
+        doc = await createTestDocument(container, user, { title: 'Doc 3 - Created by contributor' });
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user: otherUser, data: {} });
+
+        sandbox.clock.tick(1000);
+        doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Doc 4 - Last updated by contributor' } });
+
+        sandbox.clock.tick(1000);
+        doc = await createTestDocument(container, otherUser, {});
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Doc 5 - Mid updated by contributor' } });
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user: otherUser, data: {} });
+
+        doc = await createTestDocument(container, user, { title: 'Doc 6 - Created by contributor' });
+        sandbox.clock.tick(1000);
+        await updateTestDocument({ container, documentId: doc._id, user: otherUser, data: {} });
+
+        result = await sut.getDocumentsByContributingUser(user._id);
+      });
+
+      it('should return the documents sorted by last, first, mid contribution stages, then by last update date', () => {
+        expect(result).toMatchObject([
+          { title: 'Doc 4 - Last updated by contributor' },
+          { title: 'Doc 1 - Last updated by contributor' },
+          { title: 'Doc 6 - Created by contributor' },
+          { title: 'Doc 3 - Created by contributor' },
+          { title: 'Doc 5 - Mid updated by contributor' },
+          { title: 'Doc 2 - Mid updated by contributor' }
+        ]);
+      });
+    });
+  });
 });

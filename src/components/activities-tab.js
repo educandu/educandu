@@ -148,7 +148,7 @@ function ActivitiesTab({ activities, loading }) {
       timestamp: activity.timestamp,
       description: t('userMarkedFavoriteActivity'),
       title: activity.data.displayName,
-      href: routes.getUserUrl(activity.data._id),
+      href: routes.getUserProfileUrl(activity.data._id),
       isDeprecated: activity.isDeprecated
     });
   };

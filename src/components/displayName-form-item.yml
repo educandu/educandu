@@ -4,6 +4,3 @@ enterDisplayName:
 displayNameIsTooShort:
   en: The display name must be at least {length} characters long
   de: Der Anzeigename muss mindestens {length} Zeichen lang sein
-displayNameIsTooLong:
-  en: The display name must be at most {length} characters long
-  de: Der Anzeigename darf höchstens {length} Zeichen lang sein

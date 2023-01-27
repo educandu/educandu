@@ -7,6 +7,10 @@ export const getSearchableDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().allow('').required()
 });
 
+export const getDocumentsByContributingUserParams = joi.object({
+  userId: idOrKeySchema.required()
+});
+
 export const documentIdParamsOrQuerySchema = joi.object({
   documentId: idOrKeySchema.required()
 });

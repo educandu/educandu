@@ -296,7 +296,7 @@ function UserAccountsTab() {
   };
 
   const renderDisplayName = (_, item) => {
-    return <a href={routes.getUserUrl(item.key)}>{item.displayName}</a>;
+    return <a href={routes.getUserProfileUrl(item.key)}>{item.displayName}</a>;
   };
 
   const renderConnectedUser = connectedUser => {

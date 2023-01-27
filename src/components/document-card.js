@@ -3,7 +3,7 @@ import routes from '../utils/routes.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
-import { documentExtendedMetadataShape } from '../ui/default-prop-types.js';
+import { userProfileDocumentMetadataShape } from '../ui/default-prop-types.js';
 
 function DocumentCard({ doc }) {
   const { formatDate } = useDateFormat();
@@ -25,10 +25,10 @@ function DocumentCard({ doc }) {
             <div className="DocumentCard-description">{doc.description}</div>
             <div className="DocumentCard-dateDetails">
               <div className="DocumentCard-dateDetail">
-                {t('creationDetail', { date: formatDate(doc.createdOn) })} <a href={routes.getUserUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
+                {t('creationDetail', { date: formatDate(doc.createdOn) })} <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
               </div>
               <div className="DocumentCard-dateDetail">
-                {t('updateDetail', { date: formatDate(doc.updatedOn) })} <a href={routes.getUserUrl(doc.updatedBy._id)}>{doc.createdBy.displayName}</a>
+                {t('updateDetail', { date: formatDate(doc.updatedOn) })} <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.createdBy.displayName}</a>
               </div>
             </div>
           </Fragment>
@@ -42,7 +42,7 @@ function DocumentCard({ doc }) {
 }
 
 DocumentCard.propTypes = {
-  doc: documentExtendedMetadataShape
+  doc: userProfileDocumentMetadataShape
 };
 
 DocumentCard.defaultProps = {
