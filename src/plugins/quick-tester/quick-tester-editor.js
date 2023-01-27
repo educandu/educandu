@@ -49,7 +49,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   const handleAddButtonClick = () => {
     const newTests = tests.slice();
-    newTests.push({ question: `[${t('common:question')}]`, answer: `[${t('common:answer')}]` });
+    newTests.push({ question: '', answer: '' });
     changeContent({ tests: newTests });
   };
 
