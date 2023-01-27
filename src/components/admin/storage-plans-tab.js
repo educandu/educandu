@@ -1,7 +1,7 @@
 import by from 'thenby';
-import { Button } from 'antd';
 import Table from '../table.js';
 import prettyBytes from 'pretty-bytes';
+import { Button, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
@@ -93,6 +93,7 @@ function StoragePlansTab() {
       setEditedStoragePlan(null);
       setStoragePlanNamesInUse([]);
       setIsStoragePlanModalOpen(false);
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {

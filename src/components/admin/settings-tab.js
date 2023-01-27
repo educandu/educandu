@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
-import { Button, Collapse, Spin, Tabs } from 'antd';
 import { useService } from '../container-context.js';
 import DocumentSelector from '../document-selector.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
+import { Button, Collapse, message, Spin, Tabs } from 'antd';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -91,6 +91,7 @@ function SettingsTab({ onDirtyStateChange }) {
       const res = await settingsApiClient.saveSettings({ settings });
       setIsDirty(false);
       setSettings(res.settings);
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -182,7 +183,7 @@ function SettingsTab({ onDirtyStateChange }) {
           loading={isSaving}
           onClick={handleSaveButtonClick}
           className="SettingsTab-saveButton"
-          disabled={isLoading}
+          disabled={isLoading || !isDirty}
           >
           {t('common:save')}
         </Button>

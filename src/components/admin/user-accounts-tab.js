@@ -7,7 +7,6 @@ import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import { SearchOutlined } from '@ant-design/icons';
-import { Table, Tabs, Select, Input, Radio } from 'antd';
 import UserRoleTagEditor from './user-role-tag-editor.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
@@ -15,6 +14,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Table, Tabs, Select, Input, Radio, message } from 'antd';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
@@ -150,6 +150,7 @@ function UserAccountsTab() {
 
     try {
       await userApiClient.saveUserRoles({ userId, roles: newRoles });
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -165,6 +166,7 @@ function UserAccountsTab() {
     try {
       const updatedUser = await userApiClient.saveUserAccountLockedOnState({ userId, accountLockedOn: newAccountLockedOn });
       setUsers(oldUsers => oldUsers.map(user => user._id === userId ? updatedUser : user));
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -179,6 +181,7 @@ function UserAccountsTab() {
 
     try {
       await userApiClient.deleteExternalAccount({ externalAccountId });
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -194,6 +197,7 @@ function UserAccountsTab() {
     try {
       const updatedStorage = await userApiClient.saveUserStoragePlan({ userId, storagePlanId: newStoragePlanId || null });
       setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -225,6 +229,7 @@ function UserAccountsTab() {
     try {
       const updatedStorage = await userApiClient.addUserStorageReminder({ userId });
       setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -250,6 +255,7 @@ function UserAccountsTab() {
     try {
       const updatedStorage = await userApiClient.deleteAllUserStorageReminders({ userId });
       setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
+      message.success({ content: t('common:changesSavedSuccessfully') });
     } catch (error) {
       handleApiError({ error, logger, t });
       refreshData();
@@ -279,6 +285,7 @@ function UserAccountsTab() {
         await roomApiClient.deleteAllRoomsForUser({ ownerId: userId });
         const updatedStorage = await userApiClient.deleteAllUserStorageReminders({ userId });
         setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
+        message.success({ content: t('common:changesSavedSuccessfully') });
       } catch (error) {
         handleApiError({ error, logger, t });
         refreshData();
