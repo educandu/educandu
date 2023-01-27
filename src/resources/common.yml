@@ -483,3 +483,6 @@ enterRoom:
 changesSavedSuccessfully:
   en: Your changes have been saved
   de: Deine Änderungen wurden gespeichert
+filter:
+  en: Filter
+  de: Filter

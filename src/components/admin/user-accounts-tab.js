@@ -4,17 +4,17 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
+import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
-import { SearchOutlined } from '@ant-design/icons';
 import UserRoleTagEditor from './user-role-tag-editor.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { Table, Tabs, Select, Radio, message } from 'antd';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { Table, Tabs, Select, Input, Radio, message } from 'antd';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
@@ -655,13 +655,10 @@ function UserAccountsTab() {
           value={currentTable}
           onChange={value => setCurrentTable(value)}
           />
-        <Input
-          className="UserAccountsTab-filter"
+        <FilterInput
           value={filterText}
+          className="UserAccountsTab-filter"
           onChange={event => setFilterText(event.target.value)}
-          placeholder={t('filterPlaceholder')}
-          prefix={<SearchOutlined />}
-          allowClear
           />
       </div>
       <Tabs
