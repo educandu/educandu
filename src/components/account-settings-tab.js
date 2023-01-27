@@ -30,17 +30,19 @@ function AccountSettingsTab() {
   const setUser = useSetUser();
   const dialogs = useDialogs();
   const { uiLanguage } = useLocale();
-  const credentialsFormRef = useRef();
+  const accountAccessFormRef = useRef();
+
   const { t } = useTranslation('accountSettingsTab');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
-  const [credenatialsFormState, setCredenatialsFormState] = useState({ email: null, forbiddenEmails: [] });
+  const [isUserProfileFormDirty, setIsUserProfileFormDirty] = useState(false);
+  const [accountAccessFormState, setAccountAccessFormState] = useState({ isDirty: false, email: null, forbiddenEmails: [] });
 
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const gravatarRegistrationUrl = `https://${uiLanguage}.gravatar.com/`;
 
   useEffect(() => {
-    setCredenatialsFormState(prev => ({ ...prev, email: user.email }));
+    setAccountAccessFormState(prev => ({ ...prev, email: user.email, isDirty: false }));
   }, [user]);
 
   const renderInfo = () => (
@@ -61,24 +63,27 @@ function AccountSettingsTab() {
     </div>
   );
 
-  const saveCredentialsData = async ({ email }) => {
+  const saveAccountAccessData = async ({ email }) => {
     try {
       const { result, user: updatedUser } = await userApiClient.saveUserAccount({ email });
 
       switch (result) {
         case SAVE_USER_RESULT.success:
           setUser(updatedUser);
+          setAccountAccessFormState(prevState => ({ ...prevState, isDirty: false }));
           await message.success(t('updateSuccessMessage'));
           break;
         case SAVE_USER_RESULT.duplicateEmail:
-          setCredenatialsFormState(prevState => ({
+          setAccountAccessFormState(prevState => ({
             ...prevState,
+            isDirty: true,
             forbiddenEmails: [
               ...prevState.forbiddenEmails,
               email.toLowerCase()
             ]
           }));
-          credentialsFormRef.current.validateFields(['email'], { force: true });
+          await message.error(t('updateErrorMessage'));
+          accountAccessFormRef.current.validateFields(['email'], { force: true });
           break;
         default:
           throw new Error(`Unknown result: ${result}`);
@@ -88,7 +93,11 @@ function AccountSettingsTab() {
     }
   };
 
-  const handlePersonalDataFormFinish = async values => {
+  const handleUserProfileFormValuesChange = () => {
+    setIsUserProfileFormDirty(true);
+  };
+
+  const handleUserProfileFormFinish = async values => {
     try {
       const { user: updatedUser } = await userApiClient.saveUserProfile({
         displayName: values.displayName,
@@ -96,14 +105,19 @@ function AccountSettingsTab() {
         introduction: values.introduction
       });
       setUser({ ...updatedUser });
+      setIsUserProfileFormDirty(false);
       message.success(t('updateSuccessMessage'));
     } catch (error) {
       handleApiError({ error, logger, t });
     }
   };
 
-  const handleCredentialsFormFinish = ({ email }) => {
-    dialogs.confirmWithPassword(user.email, () => saveCredentialsData({ email }));
+  const handleAccountAccessFormValuesChange = () => {
+    setAccountAccessFormState(prevState => ({ ...prevState, isDirty: true }));
+  };
+
+  const handleAccountAccessFormFinish = ({ email }) => {
+    dialogs.confirmWithPassword(user.email, () => saveAccountAccessData({ email }));
   };
 
   const handleResetPasswordClick = async () => {
@@ -135,7 +149,7 @@ function AccountSettingsTab() {
   return (
     <div className="AccountSettingsTab">
       <div className="AccountSettingsTab-tabInfo">{renderInfo()}</div>
-      <div className="AccountSettingsTab-headline">{t('personalInfoHeadline')}</div>
+      <div className="AccountSettingsTab-headline">{t('userProfileHeadline')}</div>
       <section className="AccountSettingsTab-section">
         <div className="AccountSettingsTab-avatar">
           <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.displayName} />
@@ -147,7 +161,11 @@ function AccountSettingsTab() {
           </div>
         </div>
 
-        <Form onFinish={handlePersonalDataFormFinish} scrollToFirstError layout="vertical">
+        <Form
+          layout="vertical"
+          onValuesChange={handleUserProfileFormValuesChange}
+          onFinish={handleUserProfileFormFinish}
+          >
           <DisplayNameFormItem
             name="displayName"
             className="AccountSettingsTab-input"
@@ -173,25 +191,30 @@ function AccountSettingsTab() {
             <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} />
           </FormItem>
           <FormItem>
-            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+            <Button type="primary" htmlType="submit" disabled={!isUserProfileFormDirty}>{t('common:save')}</Button>
           </FormItem>
         </Form>
       </section>
 
-      <div className="AccountSettingsTab-headline">{t('credentialsHeadline')}</div>
+      <div className="AccountSettingsTab-headline">{t('accountAccessHeadline')}</div>
       <section className="AccountSettingsTab-section">
-        <Form ref={credentialsFormRef} onFinish={handleCredentialsFormFinish} scrollToFirstError layout="vertical">
+        <Form
+          layout="vertical"
+          ref={accountAccessFormRef}
+          onValuesChange={handleAccountAccessFormValuesChange}
+          onFinish={handleAccountAccessFormFinish}
+          >
           <EmailFormItem
             name="email"
             className="AccountSettingsTab-input"
             initialValue={user.email}
-            emailsInUse={credenatialsFormState.forbiddenEmails}
+            emailsInUse={accountAccessFormState.forbiddenEmails}
             />
           <FormItem>
             <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
           </FormItem>
           <FormItem>
-            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+            <Button type="primary" htmlType="submit" disabled={!accountAccessFormState.isDirty}>{t('common:save')}</Button>
           </FormItem>
         </Form>
       </section>

@@ -1,9 +1,9 @@
 info:
   en: Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.
   de: Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar.
-personalInfoHeadline:
-  en: Personal info
-  de: Persönlichen Daten
+userProfileHeadline:
+  en: Public profile
+  de: Öffentliches Profil
 changePicture:
   en: Change profile picture
   de: Profilbild ändern
@@ -29,15 +29,18 @@ avatarDescription:
     Dieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.
     Beachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.
     Wenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.
-credentialsHeadline:
-  en: Credentials
-  de: Zugangsdaten
+accountAccessHeadline:
+  en: Account access
+  de: Konto-Zugangsdaten
 resetPassword:
   en: Reset password
   de: Kennwort wiederherstellen
 updateSuccessMessage:
   en: Your account was updated successfully.
   de: Dein Konto wurde erfolgreich aktualisiert.
+updateErrorMessage:
+  en: There was an error updating your account.
+  de: Fehler beim Aktualisieren deines Kontos.
 passwordResetEmailSent:
   en: The password reset link has been sent to {email}
   de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet
