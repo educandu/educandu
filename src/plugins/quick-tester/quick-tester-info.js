@@ -33,14 +33,14 @@ class QuickTesterInfo {
     return (await import('./quick-tester-editor.js')).default;
   }
 
-  getDefaultContent(t) {
+  getDefaultContent() {
     return {
-      title: `[${t('common:title')}]`,
-      teaser: `[${t('quickTester:teaser')}]`,
+      title: '',
+      teaser: '',
       tests: [
         {
-          question: `[${t('common:question')}]`,
-          answer: `[${t('common:answer')}]`
+          question: '',
+          answer: ''
         }
       ],
       testsOrder: TESTS_ORDER.given
