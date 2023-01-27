@@ -7,16 +7,16 @@ import DocumentCard from '../document-card.js';
 import ProfileHeader from '../profile-header.js';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import { useService } from '../container-context.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
-import UserApiClient from '../../api-clients/user-api-client.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 
 const DOCUMENTS_BATCH_SIZE = 8;
 
 export default function UserProfile({ PageTemplate, initialState }) {
   const { t } = useTranslation('userProfile');
-  const userApiClient = useSessionAwareApiClient(UserApiClient);
+  const documentApiClient = useService(DocumentApiClient);
 
   const { user } = initialState;
   const [documents, setDocuments] = useState([]);
@@ -26,11 +26,11 @@ export default function UserProfile({ PageTemplate, initialState }) {
   useEffect(() => {
     (async () => {
       setFetchingDocuments(true);
-      const userApiClientResponse = await userApiClient.getCreatedDocuments({ userId: user._id });
+      const documentApiClientResponse = await documentApiClient.getDocumentsByContributingUser(user._id);
       setFetchingDocuments(false);
-      setDocuments(userApiClientResponse.documents);
+      setDocuments(documentApiClientResponse.documents);
     })();
-  }, [user, userApiClient]);
+  }, [user, documentApiClient]);
 
   const handleMoreDocumentsClick = () => {
     setVisibleDocumentsCount(visibleDocumentsCount + DOCUMENTS_BATCH_SIZE);

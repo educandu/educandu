@@ -75,9 +75,32 @@ class DocumentService {
     return documentsMetadata.sort(by(doc => doc.createdOn, 'asc'));
   }
 
-  async getExtendedMetadataOfLatestPublicDocumentsCreatedByUser(createdBy) {
-    const documentsMetadata = await this.documentStore.getPublicDocumentsExtendedMetadataByCreatedBy(createdBy);
-    return documentsMetadata.sort(by(doc => doc.createdOn, 'desc'));
+  async getDocumentsByContributingUser(contributingUserId) {
+    const documentsMetadata = await this.documentStore.getDocumentsByContributingUser(contributingUserId);
+    const sortedDocumentsMetadata = documentsMetadata
+      .map(doc => {
+        const userIsMidContributorOnly = doc.createdBy !== contributingUserId && doc.updatedBy !== contributingUserId;
+        const userIsFirstContributor = doc.createdBy === contributingUserId;
+        const userIsLastContributor = doc.updatedBy === contributingUserId;
+
+        if (userIsMidContributorOnly) {
+          doc.relevance = 0;
+        }
+        if (userIsFirstContributor) {
+          doc.relevance = 1;
+        }
+        if (userIsLastContributor) {
+          doc.relevance = 2;
+        }
+        return doc;
+      })
+      .sort(by(doc => doc.relevance, 'desc').thenBy(doc => doc.updatedOn, 'desc'))
+      .map(doc => {
+        delete doc.relevance;
+        return doc;
+      });
+
+    return sortedDocumentsMetadata;
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {

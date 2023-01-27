@@ -3,7 +3,7 @@ import routes from '../utils/routes.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
-import { documentExtendedMetadataShape } from '../ui/default-prop-types.js';
+import { userProfileDocumentMetadataShape } from '../ui/default-prop-types.js';
 
 function DocumentCard({ doc }) {
   const { formatDate } = useDateFormat();
@@ -42,7 +42,7 @@ function DocumentCard({ doc }) {
 }
 
 DocumentCard.propTypes = {
-  doc: documentExtendedMetadataShape
+  doc: userProfileDocumentMetadataShape
 };
 
 DocumentCard.defaultProps = {

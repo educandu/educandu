@@ -15,7 +15,6 @@ import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
 import StorageService from '../services/storage-service.js';
-import DocumentService from '../services/document-service.js';
 import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ExternalAccountService from '../services/external-account-service.js';
@@ -55,7 +54,6 @@ class UserController {
       ServerConfig,
       UserService,
       StorageService,
-      DocumentService,
       PasswordResetRequestService,
       RequestLimitRecordService,
       ExternalAccountService,
@@ -71,7 +69,6 @@ class UserController {
     serverConfig,
     userService,
     storageService,
-    documentService,
     passwordResetRequestService,
     requestLimitRecordService,
     externalAccountService,
@@ -87,7 +84,6 @@ class UserController {
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
-    this.documentService = documentService;
     this.samlConfigService = samlConfigService;
     this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
@@ -448,15 +444,6 @@ class UserController {
     return res.send({ activities: mappedActivities });
   }
 
-  async handleGetCreatedDocuments(req, res) {
-    const { userId } = req.params;
-
-    const createdDocuments = await this.documentService.getExtendedMetadataOfLatestPublicDocumentsCreatedByUser(userId);
-    const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
-
-    return res.send({ documents: mappedCreatedDocuments });
-  }
-
   async handleGetRoomsInvitations(req, res) {
     const { user } = req;
     const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
@@ -746,12 +733,6 @@ class UserController {
       '/api/v1/users/activities',
       needsAuthentication(),
       (req, res) => this.handleGetActivities(req, res)
-    );
-
-    router.get(
-      '/api/v1/users/:userId/created-documents',
-      needsAuthentication(),
-      (req, res) => this.handleGetCreatedDocuments(req, res)
     );
 
     router.get(

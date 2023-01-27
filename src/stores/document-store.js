@@ -13,6 +13,16 @@ const documentMetadataProjection = {
   roomId: 1
 };
 
+const userProfileDocumentMetadataProjection = {
+  _id: 1,
+  title: 1,
+  description: 1,
+  createdOn: 1,
+  createdBy: 1,
+  updatedOn: 1,
+  updatedBy: 1
+};
+
 const documentExtendedMetadataProjection = {
   '_id': 1,
   'roomId': 1,
@@ -62,10 +72,10 @@ class DocumentStore {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
-  getPublicDocumentsExtendedMetadataByCreatedBy(createdBy, { session } = {}) {
+  getDocumentsByContributingUser(contributingUserId, { session } = {}) {
     return this.collection.find(
-      { createdBy, 'roomId': null, 'publicContext.archived': false },
-      { projection: documentExtendedMetadataProjection, session }
+      { contributors: contributingUserId },
+      { projection: userProfileDocumentMetadataProjection, session }
     ).toArray();
   }
 

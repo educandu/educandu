@@ -18,7 +18,6 @@ describe('user-controller', () => {
   let requestLimitRecordService;
   let clientDataMappingService;
   let externalAccountService;
-  let documentService;
   let storageService;
   let pageRenderer;
   let serverConfig;
@@ -77,7 +76,6 @@ describe('user-controller', () => {
       serverConfig,
       userService,
       storageService,
-      documentService,
       passwordResetRequestService,
       requestLimitRecordService,
       externalAccountService,
