@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { IMAGE_POSITION } from './constants.js';
 import UrlInput from '../../components/url-input.js';
 import StepSlider from '../../components/step-slider.js';
-import { validateMarkdown } from '../../ui/validation.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -63,7 +62,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form labelAlign="left">
-        <FormItem label={t('common:text')} {...validateMarkdown(text, t)} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChange} renderAnchors />
         </FormItem>
         <FormItem
