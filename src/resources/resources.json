@@ -1207,8 +1207,8 @@
     "namespace": "search",
     "language": "en",
     "resources": {
-      "headlineSearching": "Searching ...",
-      "headlineDocumentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
+      "searching": "Searching ...",
+      "documentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
       "deselectTags": "Remove all tags",
       "sorting": "Sorting"
     }
@@ -1217,8 +1217,8 @@
     "namespace": "search",
     "language": "de",
     "resources": {
-      "headlineSearching": "Suchen ...",
-      "headlineDocumentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
+      "searching": "Suchen ...",
+      "documentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
       "deselectTags": "Alle Tags löschen",
       "sorting": "Sortierung"
     }

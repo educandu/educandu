@@ -151,14 +151,13 @@ function Search({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="SearchPage">
-        <div className="SearchPage-headline">
-          {!!showSearchingHeadline && <h1>{t('headlineSearching')}</h1>}
-          {!showSearchingHeadline && <h1>{t('headlineDocumentsFound', { count: displayedRows.length })}</h1>}
-        </div>
+        <h1 className="SearchPage-headline">{t('common:search')}</h1>
+
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
+
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
           <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
@@ -169,6 +168,12 @@ function Search({ PageTemplate }) {
             </a>
           )}
         </div>
+
+        <div className="SearchPage-resultsCount">
+          {!!showSearchingHeadline && t('searching')}
+          {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
+        </div>
+
         <Table dataSource={[...displayedRows]} columns={columns} loading={isSearching} pagination />
       </div>
     </PageTemplate>
