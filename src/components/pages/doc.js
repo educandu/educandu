@@ -1,4 +1,3 @@
-import by from 'thenby';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ALERT_TYPE } from '../alert.js';
@@ -24,6 +23,7 @@ import HistoryControlPanel from '../history-control-panel.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -33,8 +33,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
-import { getViewportMeasurementsForElement, supportsClipboardPaste } from '../../ui/browser-helper.js';
-import { canEditDocContent, canEditDocMetadata, getEditDocContentRestrictionTooltip } from '../../utils/doc-utils.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -43,6 +41,13 @@ import {
   confirmSectionDelete,
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
+import {
+  canEditDocContent,
+  canEditDocMetadata,
+  findCurrentlyWorkedOnSectionKey,
+  getEditDocContentRestrictionTooltip,
+  tryBringSectionIntoView
+} from '../../utils/doc-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -127,49 +132,8 @@ function Doc({ initialState, PageTemplate }) {
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
 
-  const findSectionKeyToScrollTo = () => {
-    if (!window.scrollY) {
-      return null;
-    }
-
-    const measurements = [...window.document.body.querySelectorAll('[data-section-key]')]
-      .map(element => ({ element, ...getViewportMeasurementsForElement(element) }));
-
-    if (!measurements.length) {
-      return null;
-    }
-
-    if (measurements.length === 1) {
-      return measurements[0].element.getAttribute('data-section-key');
-    }
-
-    const firstElementStartingInViewport = measurements.find(m => m.elementTopIsInViewport);
-    if (firstElementStartingInViewport) {
-      return firstElementStartingInViewport.element.getAttribute('data-section-key');
-    }
-
-    const elementCoveringMostViewport = measurements.sort(by(x => x.viewportCoverage, 'desc'))[0];
-    if (elementCoveringMostViewport) {
-      return elementCoveringMostViewport.element.getAttribute('data-section-key');
-    }
-
-    return null;
-  };
-
-  const tryBringSectionIntoView = sectionKey => {
-    const element = window.document.querySelector(`[data-section-key="${sectionKey}"]`);
-    if (!element) {
-      return;
-    }
-
-    const measurement = getViewportMeasurementsForElement(element);
-    if (!measurement.elementTopIsInViewport) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const switchView = newView => {
-    setLastViewInfo({ view, sectionKeyToScrollTo: findSectionKeyToScrollTo() });
+    setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setView(newView);
   };
 

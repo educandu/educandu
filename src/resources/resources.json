@@ -2812,29 +2812,5 @@
       "mimeTypeCategoryFolder": "Verzeichnis",
       "mimeTypeCategoryUnknown": "Unbekannt"
     }
-  },
-  {
-    "namespace": "validation",
-    "language": "en",
-    "resources": {
-      "urlRequired": "Please specify a URL",
-      "urlInvalid": "Please specify a URL with a valid format",
-      "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers",
-      "orListFirstItem": "“{item}”",
-      "orListLastItem": " or “{item}”",
-      "orListOtherItem": ", “{item}”"
-    }
-  },
-  {
-    "namespace": "validation",
-    "language": "de",
-    "resources": {
-      "urlRequired": "Bitte gib eine Adresse an",
-      "urlInvalid": "Bitte gib eine Adresse im gültigen Format an",
-      "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
-      "orListFirstItem": "»{item}«",
-      "orListLastItem": " oder »{item}«",
-      "orListOtherItem": ", »{item}«"
-    }
   }
 ]

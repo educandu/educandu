@@ -23,6 +23,7 @@ import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { getSectionElementDataAttributes } from '../utils/doc-utils.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 
 function SectionDisplay({
@@ -237,7 +238,7 @@ function SectionDisplay({
   };
 
   return (
-    <section data-section-key={section.key} className={sectionClasses} onClick={handleSectionClick}>
+    <section className={sectionClasses} {...getSectionElementDataAttributes(section)} onClick={handleSectionClick}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
       {!!canEdit && (
