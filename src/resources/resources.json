@@ -1207,9 +1207,9 @@
     "namespace": "search",
     "language": "en",
     "resources": {
-      "headlineSearching": "Searching ...",
-      "headlineDocumentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "deselectTags": "Remove all tags",
+      "searching": "Searching ...",
+      "documentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
+      "deselectTags": "Remove all",
       "sorting": "Sorting"
     }
   },
@@ -1217,9 +1217,9 @@
     "namespace": "search",
     "language": "de",
     "resources": {
-      "headlineSearching": "Suchen ...",
-      "headlineDocumentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
-      "deselectTags": "Alle Tags löschen",
+      "searching": "Suchen ...",
+      "documentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
+      "deselectTags": "Alle löschen",
       "sorting": "Sortierung"
     }
   },
@@ -1664,27 +1664,10 @@
     }
   },
   {
-    "namespace": "table",
-    "language": "en",
-    "resources": {
-      "prev": "‹ back",
-      "next": "› forward"
-    }
-  },
-  {
-    "namespace": "table",
-    "language": "de",
-    "resources": {
-      "prev": "‹ zurück",
-      "next": "› weiter"
-    }
-  },
-  {
     "namespace": "tagSelector",
     "language": "en",
     "resources": {
-      "linkTextSelectMore": "+ More",
-      "linkTextSelectFirst": "+ Add tag filter",
+      "linkText": "+ Add tag filter",
       "searchPlaceholder": "Search"
     }
   },
@@ -1692,8 +1675,7 @@
     "namespace": "tagSelector",
     "language": "de",
     "resources": {
-      "linkTextSelectMore": "+ Mehr",
-      "linkTextSelectFirst": "+ Tag-Filter hinzufügen",
+      "linkText": "+ Tag-Filter hinzufügen",
       "searchPlaceholder": "Suchen"
     }
   },

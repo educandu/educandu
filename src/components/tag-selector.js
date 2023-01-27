@@ -55,11 +55,9 @@ function TagSelector({ tags, selectedCount, onSelect, size }) {
     'is-active': isActive
   });
 
-  const linkText = selectedCount ? t('linkTextSelectMore') : t('linkTextSelectFirst');
-
   return (
     <div className={mainClasses} ref={relativeElemRef}>
-      <a className={linkClasses} onClick={handleClick}>{linkText}</a>
+      <a className={linkClasses} onClick={handleClick}>{t('linkText')}</a>
       {!!isActive && (
         <div ref={absoluteElemRef} className="TagSelector-selectWrapper" style={{ left: selectLeftOffset }}>
           <Select

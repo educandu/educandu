@@ -1,14 +1,14 @@
-headlineSearching:
+searching:
   en: Searching ...
   de: Suchen ...
-headlineDocumentsFound:
+documentsFound:
   en: |
     {count, plural, =1 {# document} other {# documents}} found
   de: |
     {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
 deselectTags:
-  en: Remove all tags
-  de: Alle Tags löschen
+  en: Remove all
+  de: Alle löschen
 sorting:
   en: Sorting
   de: Sortierung

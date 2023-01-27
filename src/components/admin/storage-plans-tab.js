@@ -1,8 +1,7 @@
 import by from 'thenby';
-import Table from '../table.js';
 import prettyBytes from 'pretty-bytes';
-import { Button, message } from 'antd';
 import Logger from '../../common/logger.js';
+import { Button, message, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { PlusOutlined } from '@ant-design/icons';
@@ -179,11 +178,12 @@ function StoragePlansTab() {
         onChange={handleSortingChange}
         />
       <Table
-        dataSource={displayedStoragePlans}
         rowKey="_id"
         columns={columns}
+        dataSource={displayedStoragePlans}
+        bordered
+        pagination={false}
         loading={{ size: 'large', spinning: isLoading, delay: 500 }}
-        pagination
         />
       <Button
         className="StoragePlansTab-newStoragePlanButton"

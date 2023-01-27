@@ -1,10 +1,10 @@
-@tag-font-size: 12px;
+@tag-font-size: @edu-font-size-sm;
 @tag-padding: 3px 16px;
 @tag-border-radius: 22px;
 
 .Tag {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   padding: @tag-padding;
   border-radius: @tag-border-radius;
@@ -23,6 +23,10 @@
 
     & > .ant-tag-close-icon {
       color: @edu-white;
+    }
+
+    .ant-tag-close-icon {
+      padding-left: 3px;
     }
   }
 }
