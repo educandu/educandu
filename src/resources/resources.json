@@ -1242,7 +1242,7 @@
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
       "documentsHeadline": "Letzte Beiträge",
-      "moreButton": "Zeig {count} weitere an / {count} weitere anzeige[n] ?"
+      "moreButton": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen\n"
     }
   },
   {

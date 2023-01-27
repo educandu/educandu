@@ -6,4 +6,5 @@ documentsHeadline:
   de: Letzte Beiträge
 moreButton:
   en: Show {count} more
-  de: Zeig {count} weitere an / {count} weitere anzeige[n] ?
+  de: |
+    {count, plural, =1 {# weiteren} other {# weitere}} anzeigen
