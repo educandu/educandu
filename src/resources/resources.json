@@ -1209,7 +1209,7 @@
     "resources": {
       "searching": "Searching ...",
       "documentsFound": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "deselectTags": "Remove all tags",
+      "deselectTags": "Remove all",
       "sorting": "Sorting"
     }
   },
@@ -1219,7 +1219,7 @@
     "resources": {
       "searching": "Suchen ...",
       "documentsFound": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
-      "deselectTags": "Alle Tags löschen",
+      "deselectTags": "Alle löschen",
       "sorting": "Sortierung"
     }
   },

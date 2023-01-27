@@ -7,8 +7,8 @@ documentsFound:
   de: |
     {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
 deselectTags:
-  en: Remove all tags
-  de: Alle Tags löschen
+  en: Remove all
+  de: Alle löschen
 sorting:
   en: Sorting
   de: Sortierung
