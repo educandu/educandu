@@ -1,5 +1,4 @@
 import by from 'thenby';
-import Table from '../table.js';
 import PropTypes from 'prop-types';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
@@ -7,6 +6,7 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { Button, Switch, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import DocumentsTable from '../documents-table.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
@@ -284,7 +284,7 @@ function Docs({ initialState, PageTemplate }) {
             />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
-        <Table dataSource={[...displayedRows]} columns={columns} pagination />
+        <DocumentsTable dataSource={[...displayedRows]} columns={columns} />
         <aside>
           <Restricted to={permissions.EDIT_DOC}>
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
