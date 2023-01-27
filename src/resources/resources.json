@@ -1232,7 +1232,7 @@
     "language": "en",
     "resources": {
       "accountClosed": "This user account was closed.",
-      "documentsHeadline": "Recently created documents",
+      "documentsHeadline": "Recently edited documents",
       "moreButton": "Show {count} more"
     }
   },
@@ -1241,7 +1241,7 @@
     "language": "de",
     "resources": {
       "accountClosed": "Dieses Benutzerkonto wurde geschlossen.",
-      "documentsHeadline": "Letzte erstellte Dokumente",
+      "documentsHeadline": "Zuletzt bearbeitete Dokumente",
       "moreButton": "Zeig {count} weitere an / {count} weitere anzeige[n] ?"
     }
   },

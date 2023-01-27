@@ -2,8 +2,8 @@ accountClosed:
   en: This user account was closed.
   de: Dieses Benutzerkonto wurde geschlossen.
 documentsHeadline:
-  en: Recently created documents
-  de: Letzte erstellte Dokumente
+  en: Recent contributions
+  de: Letzte Beiträge
 moreButton:
   en: Show {count} more
   de: Zeig {count} weitere an / {count} weitere anzeige[n] ?
