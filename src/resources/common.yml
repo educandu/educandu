@@ -474,6 +474,9 @@ addFavorite:
 createDocument:
   en: Create document
   de: Dokument erstellen
+createRoom:
+  en: Create room
+  de: Raum erstellen
 enterRoom:
   en: Enter room
   de: Raum betreten

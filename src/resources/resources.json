@@ -2541,6 +2541,7 @@
       "removeFavorite": "Remove from favorites",
       "addFavorite": "Add to favorites",
       "createDocument": "Create document",
+      "createRoom": "Create room",
       "enterRoom": "Enter room",
       "changesSavedSuccessfully": "Your changes have been saved"
     }
@@ -2701,6 +2702,7 @@
       "removeFavorite": "Von den Favoriten entfernen",
       "addFavorite": "Zu den Favoriten hinzufügen",
       "createDocument": "Dokument erstellen",
+      "createRoom": "Raum erstellen",
       "enterRoom": "Raum betreten",
       "changesSavedSuccessfully": "Deine Änderungen wurden gespeichert"
     }

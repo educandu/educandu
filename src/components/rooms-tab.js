@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
 import RoomCreationModal from './room-creation-modal.js';
 
@@ -33,14 +32,18 @@ function RoomsTab({ rooms, invitations, loading }) {
   return (
     <div className="RoomsTab">
       <div className="RoomsTab-info">{t('info')}</div>
+
+      <Restricted to={permissions.OWN_ROOMS}>
+        <Button className="RoomsTab-createRoomButton" type="primary" onClick={handleCreateRoomClick}>
+          {t('common:createRoom')}
+        </Button>
+      </Restricted>
+
       <div className="RoomsTab-roomsGroupHeadline">{t('ownedRoomsHeadline')}</div>
       <section className="RoomsTab-roomsGroup">
         {!!loading && <Spin className="u-spin" />}
         {!loading && ownedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
         {!loading && !ownedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noOwnedRooms')}</div>}
-        <Restricted to={permissions.OWN_ROOMS}>
-          <Button size="large" type="primary" shape="circle" icon={<PlusOutlined />} onClick={handleCreateRoomClick} />
-        </Restricted>
       </section>
 
       <div className="RoomsTab-roomsGroupHeadline">{t('memberRoomsHeadline')}</div>
