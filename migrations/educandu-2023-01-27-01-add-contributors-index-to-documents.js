@@ -1,4 +1,4 @@
-export default class Educandu_2023_01_27_01_add_controbutors_index_to_documents {
+export default class Educandu_2023_01_27_01_add_contributors_index_to_documents {
   constructor(db) {
     this.db = db;
   }
