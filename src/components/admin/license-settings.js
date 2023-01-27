@@ -2,10 +2,7 @@ import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { validateUrl } from '../../ui/validation.js';
 import { settingsLicenseShape } from '../../ui/default-prop-types.js';
-
-const urlValidationOptions = { allowEmpty: true, allowHttp: true };
 
 function LicenseSettings({ license, onChange }) {
   const { t } = useTranslation();
@@ -13,12 +10,8 @@ function LicenseSettings({ license, onChange }) {
   const name = license?.name || '';
   const url = license?.url || '';
 
-  const isUrlValid = newUrl => {
-    return validateUrl(newUrl, t, urlValidationOptions).validateStatus !== 'error';
-  };
-
   const handleChange = newLicense => {
-    onChange(newLicense, { isValid: isUrlValid(newLicense.url) });
+    onChange(newLicense, { isValid: true });
   };
 
   const handleNameChange = event => {
@@ -34,7 +27,7 @@ function LicenseSettings({ license, onChange }) {
       <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={t('common:name')}>
         <Input value={name} onChange={handleNameChange} />
       </Form.Item>
-      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={t('common:url')} {...validateUrl(url, t, urlValidationOptions)}>
+      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={t('common:url')}>
         <Input value={url} onChange={handleUrlChange} />
       </Form.Item>
     </div>
