@@ -237,7 +237,7 @@ function SectionDisplay({
   };
 
   return (
-    <section className={sectionClasses} onClick={handleSectionClick}>
+    <section data-section-key={section.key} className={sectionClasses} onClick={handleSectionClick}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
       {!!canEdit && (
