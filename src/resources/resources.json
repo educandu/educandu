@@ -481,7 +481,7 @@
       "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
     }
   },
-  "accountSettingsTab": {
+  "settingsTab": {
     "info": {
       "en": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
       "de": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar."
