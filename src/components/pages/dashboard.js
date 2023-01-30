@@ -1,19 +1,19 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import RoomsTab from '../rooms-tab.js';
 import routes from '../../utils/routes.js';
 import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
-import FavoritesTab from '../favorites-tab.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
+import RoomsTab from '../dashboard/rooms-tab.js';
 import ProfileHeader from '../profile-header.js';
-import ActivitiesTab from '../activities-tab.js';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
+import SettingsTab from '../dashboard/settings-tab.js';
+import FavoritesTab from '../dashboard/favorites-tab.js';
+import ActivitiesTab from '../dashboard/activities-tab.js';
 import { ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useStoragePlan } from '../storage-plan-context.js';
-import AccountSettingsTab from '../account-settings-tab.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -129,7 +129,7 @@ function Dashboard({ PageTemplate }) {
     label: t('settingsTabTitle'),
     children: (
       <div className="Tabs-tabPane">
-        <AccountSettingsTab />
+        <SettingsTab />
       </div>
     )
   });

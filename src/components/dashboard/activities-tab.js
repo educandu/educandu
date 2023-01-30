@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Spin, Timeline } from 'antd';
-import routes from '../utils/routes.js';
+import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import { useDateFormat } from './locale-context.js';
-import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
-import { userActivitiesShape } from '../ui/default-prop-types.js';
-import ItemEditedIcon from './icons/user-activities/item-edited-icon.js';
-import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
-import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
-import DocumentCreatedIcon from './icons/user-activities/document-created-icon.js';
-import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
-import UserMarkedFavoriteIcon from './icons/user-activities/user-marked-favorite-icon.js';
-import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
+import { useDateFormat } from '../locale-context.js';
+import { USER_ACTIVITY_TYPE } from '../../domain/constants.js';
+import { userActivitiesShape } from '../../ui/default-prop-types.js';
+import ItemEditedIcon from '../icons/user-activities/item-edited-icon.js';
+import RoomJoinedIcon from '../icons/user-activities/room-joined-icon.js';
+import RoomCreatedIcon from '../icons/user-activities/room-created-icon.js';
+import DocumentCreatedIcon from '../icons/user-activities/document-created-icon.js';
+import RoomMarkedFavoriteIcon from '../icons/user-activities/room-marked-favorite-icon.js';
+import UserMarkedFavoriteIcon from '../icons/user-activities/user-marked-favorite-icon.js';
+import DocumentMarkedFavoriteIcon from '../icons/user-activities/document-marked-favorite-icon.js';
 
 const TimelineItem = Timeline.Item;
 

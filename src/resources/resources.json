@@ -1,111 +1,5 @@
 {
-  "accountSettingsTab": {
-    "info": {
-      "en": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
-      "de": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar."
-    },
-    "userProfileHeadline": {
-      "en": "Public profile",
-      "de": "Öffentliches Profil"
-    },
-    "changePicture": {
-      "en": "Change profile picture",
-      "de": "Profilbild ändern"
-    },
-    "avatarTitle": {
-      "en": "Gravatar profile picture",
-      "de": "Gravatar Profilbild"
-    },
-    "organization": {
-      "en": "Organization",
-      "de": "Organisation"
-    },
-    "introduction": {
-      "en": "Introduction",
-      "de": "Vorstellung"
-    },
-    "avatarDescription": {
-      "en": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
-      "de": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
-    },
-    "accountAccessHeadline": {
-      "en": "Account access",
-      "de": "Konto-Zugangsdaten"
-    },
-    "resetPassword": {
-      "en": "Reset password",
-      "de": "Kennwort wiederherstellen"
-    },
-    "updateSuccessMessage": {
-      "en": "Your account was updated successfully.",
-      "de": "Dein Konto wurde erfolgreich aktualisiert."
-    },
-    "updateErrorMessage": {
-      "en": "There was an error updating your account.",
-      "de": "Fehler beim Aktualisieren deines Kontos."
-    },
-    "closeAccountDetails": {
-      "en": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
-      "de": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden."
-    },
-    "closeAccount": {
-      "en": "Close account",
-      "de": "Konto schließen"
-    }
-  },
-  "activitiesTab": {
-    "info": {
-      "en": "Here you can find your latest activities.",
-      "de": "Hier findest du deine letzten Aktivitäten."
-    },
-    "noActivities": {
-      "en": "No activities have been recorded so far.",
-      "de": "Bisher wurden keine Aktivitäten aufgezeichnet."
-    },
-    "documentCreatedActivity": {
-      "en": "New document created",
-      "de": "Neues Dokument erstellt"
-    },
-    "documentUpdatedActivity": {
-      "en": "Document updated",
-      "de": "Dokument bearbeitet"
-    },
-    "documentMarkedFavoriteActivity": {
-      "en": "Document marked as favorite",
-      "de": "Dokument als Favorit hinzugefügt"
-    },
-    "roomCreatedActivity": {
-      "en": "New room created",
-      "de": "Neuen Raum erstellt"
-    },
-    "roomUpdatedActivity": {
-      "en": "Room updated",
-      "de": "Raum bearbeitet"
-    },
-    "roomMarkedFavoriteActivity": {
-      "en": "Room marked as favorite",
-      "de": "Raum als Favorit hinzugefügt"
-    },
-    "roomJoinedActivity": {
-      "en": "Room joined",
-      "de": "Raum beigetreten"
-    },
-    "userMarkedFavoriteActivity": {
-      "en": "User marked as favorite",
-      "de": "Benutzer als Favorit hinzugefügt"
-    }
-  },
-  "settingsDocumentsTable": {
-    "rank": {
-      "en": "Rank",
-      "de": "Rang"
-    },
-    "linkTitle": {
-      "en": "Link title",
-      "de": "Link-Titel"
-    }
-  },
-  "settingsTab": {
+  "adminSettingsTab": {
     "homepageInfoHeader": {
       "en": "Homepage info",
       "de": "Homepage-Info"
@@ -137,6 +31,16 @@
     "pluginsHelpTextsHeader": {
       "en": "Help texts for plugins",
       "de": "Hilfetexte für Plugins"
+    }
+  },
+  "settingsDocumentsTable": {
+    "rank": {
+      "en": "Rank",
+      "de": "Rang"
+    },
+    "linkTitle": {
+      "en": "Link title",
+      "de": "Link-Titel"
     }
   },
   "specialPageSettings": {
@@ -465,6 +369,166 @@
       "de": "Revision erstellt von"
     }
   },
+  "activitiesTab": {
+    "info": {
+      "en": "Here you can find your latest activities.",
+      "de": "Hier findest du deine letzten Aktivitäten."
+    },
+    "noActivities": {
+      "en": "No activities have been recorded so far.",
+      "de": "Bisher wurden keine Aktivitäten aufgezeichnet."
+    },
+    "documentCreatedActivity": {
+      "en": "New document created",
+      "de": "Neues Dokument erstellt"
+    },
+    "documentUpdatedActivity": {
+      "en": "Document updated",
+      "de": "Dokument bearbeitet"
+    },
+    "documentMarkedFavoriteActivity": {
+      "en": "Document marked as favorite",
+      "de": "Dokument als Favorit hinzugefügt"
+    },
+    "roomCreatedActivity": {
+      "en": "New room created",
+      "de": "Neuen Raum erstellt"
+    },
+    "roomUpdatedActivity": {
+      "en": "Room updated",
+      "de": "Raum bearbeitet"
+    },
+    "roomMarkedFavoriteActivity": {
+      "en": "Room marked as favorite",
+      "de": "Raum als Favorit hinzugefügt"
+    },
+    "roomJoinedActivity": {
+      "en": "Room joined",
+      "de": "Raum beigetreten"
+    },
+    "userMarkedFavoriteActivity": {
+      "en": "User marked as favorite",
+      "de": "Benutzer als Favorit hinzugefügt"
+    }
+  },
+  "favoritesTab": {
+    "info": {
+      "en": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
+      "de": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen."
+    },
+    "noFavorites": {
+      "en": "You have not marked any favorites so far.",
+      "de": "Du hast noch keine Favoriten markiert."
+    },
+    "favoriteUsers": {
+      "en": "Your favorite users ({count})",
+      "de": "Deine Lieblingsnutzer ({count})"
+    },
+    "favoriteRooms": {
+      "en": "Your favorite rooms ({count})",
+      "de": "Deine Lieblingsräume ({count})"
+    },
+    "favoriteDocuments": {
+      "en": "Your favorite documents ({count})",
+      "de": "Deine Lieblingsdokumente ({count})"
+    }
+  },
+  "roomsTab": {
+    "info": {
+      "en": "Here you find all the rooms you have created and the rooms that you are a member of.",
+      "de": "Hier findest du alle Räume, die du erstellt hast und in denen du Mitglied bist."
+    },
+    "joined": {
+      "en": "Joined",
+      "de": "Eingetreten"
+    },
+    "role": {
+      "en": "Role",
+      "de": "Rolle"
+    },
+    "member": {
+      "en": "Member",
+      "de": "Mitglied"
+    },
+    "sortedByOwner": {
+      "en": "Sorted by owner",
+      "de": "Nach Eigentümer sortiert"
+    },
+    "sortedByRole": {
+      "en": "Sorted by role",
+      "de": "Nach Rolle sortiert"
+    },
+    "ownedRoomsHeadline": {
+      "en": "Rooms that you created",
+      "de": "Räume, die du erstellt hast"
+    },
+    "memberRoomsHeadline": {
+      "en": "Rooms that you are a member of",
+      "de": "Räume, in denen du Mitglied bist"
+    },
+    "noOwnedRooms": {
+      "en": "You have not created any rooms yet.",
+      "de": "Du hast noch keine Räume erstellt."
+    },
+    "noMemberRooms": {
+      "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
+      "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
+    }
+  },
+  "accountSettingsTab": {
+    "info": {
+      "en": "Here you can update your account information. The personal information is publicly accessible through your <0>profile page</0>.",
+      "de": "Hier kannst du deine Konto-Informationen bearbeiten. Die Persönlichen Daten sind auf deiner <0>Profilseite</0> öffentlich sichtbar."
+    },
+    "userProfileHeadline": {
+      "en": "Public profile",
+      "de": "Öffentliches Profil"
+    },
+    "changePicture": {
+      "en": "Change profile picture",
+      "de": "Profilbild ändern"
+    },
+    "avatarTitle": {
+      "en": "Gravatar profile picture",
+      "de": "Gravatar Profilbild"
+    },
+    "organization": {
+      "en": "Organization",
+      "de": "Organisation"
+    },
+    "introduction": {
+      "en": "Introduction",
+      "de": "Vorstellung"
+    },
+    "avatarDescription": {
+      "en": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
+      "de": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit deiner E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachte bitte, dass unsere Website keinen Einfluss auf die Verwendung deiner Daten bei diesem Dienst hat.\nWenn du damit einverstanden bist, kannst du <0>hier</0> ein Profil erstellen.\n"
+    },
+    "accountAccessHeadline": {
+      "en": "Account access",
+      "de": "Konto-Zugangsdaten"
+    },
+    "resetPassword": {
+      "en": "Reset password",
+      "de": "Kennwort wiederherstellen"
+    },
+    "updateSuccessMessage": {
+      "en": "Your account was updated successfully.",
+      "de": "Dein Konto wurde erfolgreich aktualisiert."
+    },
+    "updateErrorMessage": {
+      "en": "There was an error updating your account.",
+      "de": "Fehler beim Aktualisieren deines Kontos."
+    },
+    "closeAccountDetails": {
+      "en": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
+      "de": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden."
+    },
+    "closeAccount": {
+      "en": "Close account",
+      "de": "Konto schließen"
+    }
+  },
   "deletedSection": {
     "messageTitle": {
       "en": "This content has been deleted",
@@ -701,28 +765,6 @@
     "explanation": {
       "en": "Please select the institution you're associated with in order to login.",
       "de": "Bitte wähle die Institution aus, der du angehörst, um dich einzuloggen."
-    }
-  },
-  "favoritesTab": {
-    "info": {
-      "en": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
-      "de": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen."
-    },
-    "noFavorites": {
-      "en": "You have not marked any favorites so far.",
-      "de": "Du hast noch keine Favoriten markiert."
-    },
-    "favoriteUsers": {
-      "en": "Your favorite users ({count})",
-      "de": "Deine Lieblingsnutzer ({count})"
-    },
-    "favoriteRooms": {
-      "en": "Your favorite rooms ({count})",
-      "de": "Deine Lieblingsräume ({count})"
-    },
-    "favoriteDocuments": {
-      "en": "Your favorite documents ({count})",
-      "de": "Deine Lieblingsdokumente ({count})"
     }
   },
   "historyControlPanel": {
@@ -1617,48 +1659,6 @@
     "documentsModeInfo": {
       "en": "In exclusive rooms documents can be managed only by the owner. In collaborative rooms all room members can add and modify documents, however only the owner can delete them.",
       "de": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden. In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen."
-    }
-  },
-  "roomsTab": {
-    "info": {
-      "en": "Here you find all the rooms you have created and the rooms that you are a member of.",
-      "de": "Hier findest du alle Räume, die du erstellt hast und in denen du Mitglied bist."
-    },
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
-    },
-    "role": {
-      "en": "Role",
-      "de": "Rolle"
-    },
-    "member": {
-      "en": "Member",
-      "de": "Mitglied"
-    },
-    "sortedByOwner": {
-      "en": "Sorted by owner",
-      "de": "Nach Eigentümer sortiert"
-    },
-    "sortedByRole": {
-      "en": "Sorted by role",
-      "de": "Nach Rolle sortiert"
-    },
-    "ownedRoomsHeadline": {
-      "en": "Rooms that you created",
-      "de": "Räume, die du erstellt hast"
-    },
-    "memberRoomsHeadline": {
-      "en": "Rooms that you are a member of",
-      "de": "Räume, in denen du Mitglied bist"
-    },
-    "noOwnedRooms": {
-      "en": "You have not created any rooms yet.",
-      "de": "Du hast noch keine Räume erstellt."
-    },
-    "noMemberRooms": {
-      "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
-      "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
     }
   },
   "searchBar": {

@@ -1,16 +1,16 @@
 import by from 'thenby';
-import RoomCard from './room-card.js';
-import UserCard from './user-card.js';
-import Logger from '../common/logger.js';
+import RoomCard from '../room-card.js';
+import UserCard from '../user-card.js';
+import Logger from '../../common/logger.js';
 import { Button, Spin, Tooltip } from 'antd';
-import DocumentCard from './document-card.js';
+import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
-import CloseIcon from './icons/general/close-icon.js';
-import { handleApiError } from '../ui/error-helper.js';
-import { FAVORITE_TYPE } from '../domain/constants.js';
-import UserApiClient from '../api-clients/user-api-client.js';
-import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import CloseIcon from '../icons/general/close-icon.js';
+import { handleApiError } from '../../ui/error-helper.js';
+import { FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { useCallback, useEffect, useState } from 'react';
+import UserApiClient from '../../api-clients/user-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const logger = new Logger(import.meta.url);
 
