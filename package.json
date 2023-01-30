@@ -105,7 +105,7 @@
     "xpath": "^0.0.32"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^6.0.5",
+    "@educandu/dev-tools": "^7.0.1",
     "@educandu/eslint-config": "^2.2.0",
     "@educandu/node-jsx-loader": "^3.0.3",
     "@educandu/rooms-auth-lambda": "^3.0.1",

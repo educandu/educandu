@@ -1,27 +1,28 @@
-name:
-  en: Interactive media
-  de: Interaktive Medien
-answers:
-  en: Answers
-  de: Antworten
-addAnswer:
-  en: Add answer
-  de: Antwort hinzufügen
-addAnswerInfo:
-  en: "In order to allow the user to review their knowledge, you can put the text above into a question and add possible answers here:"
-  de: "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, kannst du den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:"
-markCorrectAnswer:
-  en: Mark as correct answer
-  de: Als richtige Antwort markieren
-continue:
-  en: Continue
-  de: Fortfahren
-replay:
-  en: Replay
-  de: Wiederholen
-results:
-  en: Results
-  de: Ergebnisse
-currentProgress:
-  en: Your current progress
-  de: Dein aktueller Fortschritt
+interactiveMedia:
+  name:
+    en: Interactive media
+    de: Interaktive Medien
+  answers:
+    en: Answers
+    de: Antworten
+  addAnswer:
+    en: Add answer
+    de: Antwort hinzufügen
+  addAnswerInfo:
+    en: "In order to allow the user to review their knowledge, you can put the text above into a question and add possible answers here:"
+    de: "Um dem Benutzer die Möglichkeit zur Wissensüberprüfung zu geben, kannst du den Text oben als Frage formulieren und hier mögliche Antworten hinzufügen:"
+  markCorrectAnswer:
+    en: Mark as correct answer
+    de: Als richtige Antwort markieren
+  continue:
+    en: Continue
+    de: Fortfahren
+  replay:
+    en: Replay
+    de: Wiederholen
+  results:
+    en: Results
+    de: Ergebnisse
+  currentProgress:
+    en: Your current progress
+    de: Dein aktueller Fortschritt

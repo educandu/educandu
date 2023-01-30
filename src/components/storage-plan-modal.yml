@@ -1,15 +1,16 @@
-newStoragePlan:
-  en: New storage plan
-  de: Neuer Speicherplan
-editStoragePlan:
-  en: Edit storage plan
-  de: Speicherplan bearbeiten
-storagePlanNameIsInUse:
-  en: This name is already in use
-  de: Dieser Name ist bereits in Benutzung
-nameRequired:
-  en: Please specify a name
-  de: Bitte gib einen Namen an
-numberTooSmallOrTooBig:
-  en: The value is beyond the permissible range
-  de: Der Wert liegt außerhalb des zulässigen Bereichs
+storagePlanModal:
+  newStoragePlan:
+    en: New storage plan
+    de: Neuer Speicherplan
+  editStoragePlan:
+    en: Edit storage plan
+    de: Speicherplan bearbeiten
+  storagePlanNameIsInUse:
+    en: This name is already in use
+    de: Dieser Name ist bereits in Benutzung
+  nameRequired:
+    en: Please specify a name
+    de: Bitte gib einen Namen an
+  numberTooSmallOrTooBig:
+    en: The value is beyond the permissible range
+    de: Der Wert liegt außerhalb des zulässigen Bereichs

@@ -7,9 +7,25 @@ const HTML_REPLACEMENT_MAP = {
   '"': '&quot;'
 };
 
+const MARKDOWN_REPLACEMENT_MAP = {
+  '*': '\\*',
+  '#': '\\#',
+  '/': '\\/',
+  '(': '\\(',
+  ')': '\\)',
+  '[': '\\[',
+  ']': '\\]',
+  '<': '&lt;',
+  '>': '&gt;',
+  '_': '\\_',
+  '`': '\\`'
+};
+
 const HTML_ESCAPE_TEST_PATTERN = new RegExp(`[${Object.keys(HTML_REPLACEMENT_MAP).map(escapeStringRegexp).join('')}]`);
+const MARKDOWN_ESCAPE_TEST_PATTERN = new RegExp(`[${Object.keys(MARKDOWN_REPLACEMENT_MAP).map(escapeStringRegexp).join('')}]`);
 
 const HTML_ESCAPE_REPLACEMENT_PATTERN = new RegExp(HTML_ESCAPE_TEST_PATTERN.source, 'g');
+const MARKDOWN_ESCAPE_REPLACEMENT_PATTERN = new RegExp(MARKDOWN_ESCAPE_TEST_PATTERN.source, 'g');
 
 export const NO_BREAK_SPACE = '\u00A0';
 export const ZERO_WIDTH_SPACE = '\u200B';
@@ -17,6 +33,12 @@ export const ZERO_WIDTH_SPACE = '\u200B';
 export function escapeHtml(str) {
   return HTML_ESCAPE_TEST_PATTERN.test(str)
     ? str.replace(HTML_ESCAPE_REPLACEMENT_PATTERN, c => HTML_REPLACEMENT_MAP[c])
+    : str;
+}
+
+export function escapeMarkdown(str) {
+  return MARKDOWN_ESCAPE_TEST_PATTERN.test(str)
+    ? str.replace(MARKDOWN_ESCAPE_REPLACEMENT_PATTERN, c => MARKDOWN_REPLACEMENT_MAP[c])
     : str;
 }
 

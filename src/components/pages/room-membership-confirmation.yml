@@ -1,24 +1,25 @@
-spinnerMessage:
-  en: Please wait...
-  de: Bitte warte...
-confirmationSuccess:
-  en: Congratulations! You are now a member of room <0>{roomName}</0>.
-  de: Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.
-invitationConfirmation:
-  en: Please click on the button in order to join room <0>{roomName}</0>.
-  de: Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
-invalidToken:
-  en: The invitation code is invalid or expired.
-  de: Der Einladungs-Code ist ungültig oder abgelaufen.
-invalidUser:
-  en: The invitation was addressed to a different user.
-  de: Der Einladung war an einen anderen Benutzer adressiert.
-invalidRoom:
-  en: The room no longer exists.
-  de: Der Raum existiert nicht mehr.
-homeLink:
-  en: Home
-  de: Home
-redirectMessage:
-  en: You will be redirected in {seconds, plural, =1 {# second} other {# seconds}}.
-  de: Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} weitergeleitet.
+roomMembershipConfirmation:
+  spinnerMessage:
+    en: Please wait...
+    de: Bitte warte...
+  confirmationSuccess:
+    en: Congratulations! You are now a member of room <0>{roomName}</0>.
+    de: Gratulation! Du bist nun ein Mitglied des Raumes <0>{roomName}</0>.
+  invitationConfirmation:
+    en: Please click on the button in order to join room <0>{roomName}</0>.
+    de: Bitte klicke auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
+  invalidToken:
+    en: The invitation code is invalid or expired.
+    de: Der Einladungs-Code ist ungültig oder abgelaufen.
+  invalidUser:
+    en: The invitation was addressed to a different user.
+    de: Der Einladung war an einen anderen Benutzer adressiert.
+  invalidRoom:
+    en: The room no longer exists.
+    de: Der Raum existiert nicht mehr.
+  homeLink:
+    en: Home
+    de: Home
+  redirectMessage:
+    en: You will be redirected in {seconds, plural, =1 {# second} other {# seconds}}.
+    de: Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} weitergeleitet.

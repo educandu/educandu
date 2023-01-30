@@ -1,30 +1,31 @@
-info:
-  en: Here you can find your latest activities.
-  de: Hier findest du deine letzten Aktivitäten.
-noActivities:
-  en: No activities have been recorded so far.
-  de: Bisher wurden keine Aktivitäten aufgezeichnet.
-documentCreatedActivity:
-  en: New document created
-  de: Neues Dokument erstellt
-documentUpdatedActivity:
-  en: Document updated
-  de: Dokument bearbeitet
-documentMarkedFavoriteActivity:
-  en: Document marked as favorite
-  de: Dokument als Favorit hinzugefügt
-roomCreatedActivity:
-  en: New room created
-  de: Neuen Raum erstellt
-roomUpdatedActivity:
-  en: Room updated
-  de: Raum bearbeitet
-roomMarkedFavoriteActivity:
-  en: Room marked as favorite
-  de: Raum als Favorit hinzugefügt
-roomJoinedActivity:
-  en: Room joined
-  de: Raum beigetreten
-userMarkedFavoriteActivity:
-  en: User marked as favorite
-  de: Benutzer als Favorit hinzugefügt
+activitiesTab:
+  info:
+    en: Here you can find your latest activities.
+    de: Hier findest du deine letzten Aktivitäten.
+  noActivities:
+    en: No activities have been recorded so far.
+    de: Bisher wurden keine Aktivitäten aufgezeichnet.
+  documentCreatedActivity:
+    en: New document created
+    de: Neues Dokument erstellt
+  documentUpdatedActivity:
+    en: Document updated
+    de: Dokument bearbeitet
+  documentMarkedFavoriteActivity:
+    en: Document marked as favorite
+    de: Dokument als Favorit hinzugefügt
+  roomCreatedActivity:
+    en: New room created
+    de: Neuen Raum erstellt
+  roomUpdatedActivity:
+    en: Room updated
+    de: Raum bearbeitet
+  roomMarkedFavoriteActivity:
+    en: Room marked as favorite
+    de: Raum als Favorit hinzugefügt
+  roomJoinedActivity:
+    en: Room joined
+    de: Raum beigetreten
+  userMarkedFavoriteActivity:
+    en: User marked as favorite
+    de: Benutzer als Favorit hinzugefügt

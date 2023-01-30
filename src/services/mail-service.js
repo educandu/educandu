@@ -1,12 +1,13 @@
-import htmlescape from 'htmlescape';
 import nodemailer from 'nodemailer';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import urlUtils from '../utils/url-utils.js';
 import UserStore from '../stores/user-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { escapeMarkdown } from '../utils/string-utils.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import {
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
@@ -15,13 +16,18 @@ import {
 
 const logger = new Logger(import.meta.url);
 
-class MailService {
-  static get inject() { return [ServerConfig, UserStore, ResourceManager]; }
+const SUBJECT_LANGUAGE_SEPARATOR = ' / ';
+const TEXT_LANGUAGE_SEPARATOR = '\n\n';
+const MARKDOWN_LANGUAGE_SEPARATOR = '\n---\n';
 
-  constructor(serverConfig, userStore, resourceManager) {
+class MailService {
+  static get inject() { return [GithubFlavoredMarkdown, ServerConfig, UserStore, ResourceManager]; }
+
+  constructor(gfm, serverConfig, userStore, resourceManager) {
+    this.gfm = gfm;
+    this.serverConfig = serverConfig;
     this.userStore = userStore;
     this.resourceManager = resourceManager;
-    this.emailSenderAddress = serverConfig.emailSenderAddress;
     this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
 
     this.translators = SUPPORTED_UI_LANGUAGES.map(language => this.resourceManager.createI18n(language).t);
@@ -31,26 +37,28 @@ class MailService {
     logger.info(`Creating email with registration verification code ${verificationCode}`);
 
     const subject = this.translators
-      .map(t => t('mailService:registrationVerificationEmail.subject'))
-      .join(' / ');
+      .map(t => t('mailService:registrationVerificationEmail.subject', { appName: this.serverConfig.appName }))
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:registrationVerificationEmail.text', {
+        appName: this.serverConfig.appName,
         displayName,
         verificationCode,
         minutes: PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES
       }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:registrationVerificationEmail.html', {
-        displayName: htmlescape(displayName),
-        verificationCode,
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:registrationVerificationEmail.markdown', {
+        appName: escapeMarkdown(this.serverConfig.appName),
+        displayName: escapeMarkdown(displayName),
+        verificationCode: escapeMarkdown(verificationCode),
         minutes: PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 
@@ -58,26 +66,28 @@ class MailService {
     logger.info(`Creating email with password reset request completion link ${completionLink}`);
 
     const subject = this.translators
-      .map(t => t('mailService:passwordResetEmail.subject'))
-      .join(' / ');
+      .map(t => t('mailService:passwordResetEmail.subject', { appName: this.serverConfig.appName }))
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:passwordResetEmail.text', {
+        appName: this.serverConfig.appName,
         displayName,
         completionLink,
         hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
       }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:passwordResetEmail.html', {
-        displayName: htmlescape(displayName),
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:passwordResetEmail.markdown', {
+        appName: escapeMarkdown(this.serverConfig.appName),
+        displayName: escapeMarkdown(displayName),
         completionLink,
         hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 
@@ -101,19 +111,21 @@ class MailService {
 
     const subject = this.translators
       .map(t => t('mailService:roomMemberRemovalNotificationEmail.subject', { ownerName, roomName }))
-      .join(' / ');
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:roomMemberRemovalNotificationEmail.text', { displayName: memberUser.displayName, ownerName, roomName }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:roomMemberRemovalNotificationEmail.html', {
-        displayName: htmlescape(memberUser.displayName), ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:roomMemberRemovalNotificationEmail.markdown', {
+        displayName: escapeMarkdown(memberUser.displayName),
+        ownerName: escapeMarkdown(ownerName),
+        roomName: escapeMarkdown(roomName)
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: memberUser.email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: memberUser.email, subject, text, html };
     return this._sendMail(message);
   }
 
@@ -122,19 +134,20 @@ class MailService {
 
     const subject = this.translators
       .map(t => t('mailService:roomInvitationDeletionNotificationEmail.subject', { ownerName, roomName }))
-      .join(' / ');
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:roomInvitationDeletionNotificationEmail.text', { ownerName, roomName }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:roomInvitationDeletionNotificationEmail.html', {
-        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:roomInvitationDeletionNotificationEmail.markdown', {
+        ownerName: escapeMarkdown(ownerName),
+        roomName: escapeMarkdown(roomName)
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 
@@ -145,7 +158,7 @@ class MailService {
 
     const subject = this.translators
       .map(t => t('mailService:roomInvitationEmail.subject'))
-      .join(' / ');
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:roomInvitationEmail.text', {
@@ -154,18 +167,18 @@ class MailService {
         invitationLink,
         days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
       }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:roomInvitationEmail.html', {
-        ownerName: htmlescape(ownerName),
-        roomName: htmlescape(roomName),
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:roomInvitationEmail.markdown', {
+        ownerName: escapeMarkdown(ownerName),
+        roomName: escapeMarkdown(roomName),
         invitationLink,
         days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 
@@ -174,19 +187,20 @@ class MailService {
 
     const subject = this.translators
       .map(t => t('mailService:roomDeletionNotificationEmail.subject', { ownerName, roomName }))
-      .join(' / ');
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
 
     const text = this.translators
       .map(t => t('mailService:roomDeletionNotificationEmail.text', { ownerName, roomName }))
-      .join('\n\n');
+      .join(TEXT_LANGUAGE_SEPARATOR);
 
-    const html = this.translators
-      .map(t => t('mailService:roomDeletionNotificationEmail.html', {
-        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:roomDeletionNotificationEmail.markdown', {
+        ownerName: escapeMarkdown(ownerName),
+        roomName: escapeMarkdown(roomName)
       }))
-      .join('\n');
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
-    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 

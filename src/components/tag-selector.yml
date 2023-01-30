@@ -1,6 +1,7 @@
-linkText:
-  en: + Add tag filter
-  de: + Tag-Filter hinzufügen
-searchPlaceholder:
-  en: Search
-  de: Suchen
+tagSelector:
+  linkText:
+    en: + Add tag filter
+    de: + Tag-Filter hinzufügen
+  searchPlaceholder:
+    en: Search
+    de: Suchen

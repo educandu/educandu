@@ -1,6 +1,7 @@
-changeSortingValue:
-  en: Change sorting
-  de: Sortierung ändern
-changeSortingDirection:
-  en: Change sorting direction
-  de: Sortierungsrichtung ändern
+sortingSelector:
+  changeSortingValue:
+    en: Change sorting
+    de: Sortierung ändern
+  changeSortingDirection:
+    en: Change sorting direction
+    de: Sortierungsrichtung ändern

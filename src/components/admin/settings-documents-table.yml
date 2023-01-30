@@ -1,6 +1,7 @@
-rank:
-  en: Rank
-  de: Rang
-linkTitle:
-  en: Link title
-  de: Link-Titel
+settingsDocumentsTable:
+  rank:
+    en: Rank
+    de: Rang
+  linkTitle:
+    en: Link title
+    de: Link-Titel

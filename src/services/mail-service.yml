@@ -1,140 +1,167 @@
-registrationVerificationEmail.subject:
-  en: Welcome to educandu!
-  de: Willkommen auf educandu!
-registrationVerificationEmail.text:
-  en: |
-    Welcome!
+mailService:
+  registrationVerificationEmail.subject:
+    en: Welcome to {appName}!
+    de: Willkommen auf {appName}!
+  registrationVerificationEmail.text:
+    en: |
+      Welcome!
 
-    You have registered with educandu as {displayName}.
-    Please complete your registration using the following code:
+      You have registered with {appName} as {displayName}.
+      Please complete your registration using the following code:
 
-    {verificationCode}
+      {verificationCode}
 
-    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
-  de: |
-    Willkommen!
+      The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
+    de: |
+      Willkommen!
 
-    Du hast dich als {displayName} auf educandu registriert.
-    Bitte schließe deine Registrierung mit dem folgendem Code ab:
+      Du hast dich als {displayName} auf {appName} registriert.
+      Bitte schließe deine Registrierung mit dem folgendem Code ab:
 
-    {verificationCode}
+      {verificationCode}
 
-    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
-registrationVerificationEmail.html:
-  en: |
-    <p>
-    Welcome!
-    <br/>
-    <br/>
-    You have registered with educandu as {displayName}.
-    <br/>
-    Please complete your registration using the following code:
-    <br>
-    <br>
-    <b><pre>{verificationCode}</pre></b>
-    <br />
-    <br/>
-    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
-    </p>
-  de: |
-    <p>
-    Willkommen!
-    <br/>
-    <br/>
-    Du hast dich als {displayName} auf educandu registriert.
-    <br/>
-    Bitte schließe deine Registrierung mit dem folgendem Code ab:
-    <br>
-    <br>
-    <b><pre>{verificationCode}</pre></b>
-    <br />
-    <br/>
-    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
-    </p>
-passwordResetEmail.subject:
-  en: Your password for educandu
-  de: Dein Kennwort auf educandu
-passwordResetEmail.text:
-  en: |
-    Hello {displayName}!
+      Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
+  registrationVerificationEmail.markdown:
+    en: |
+      Welcome!
 
-    You have requested a password reset on educandu.
-    To assign a new password, please follow this link: {completionLink}
-    The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
-  de: |
-    Hallo {displayName}!
+      You have registered with {appName} as {displayName}. \
+      Please complete your registration using the following code:
 
-    Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.
-    Zur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}
-    Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
-passwordResetEmail.html:
-  en: |
-    <p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href="{completionLink}">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
-  de: |
-    <p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href="{completionLink}">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
-roomInvitationEmail.subject:
-  en: You have been invited to a room
-  de: Du wurdest in einen Raum eingeladen.
-roomInvitationEmail.text:
-  en: |
-    Hello!
+      **`{verificationCode}`**
 
-    User {ownerName} has invited you to the room {roomName}.
-    To accept the invitation, please follow this link: {invitationLink}
-    The link remains valid for {days, plural, =1 {one day} other {# days}}.
-  de: |
-    Hallo!
+      The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
+    de: |
+      Willkommen!
 
-    Der Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.
-    Um die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}
-    Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.
-roomInvitationEmail.html:
-  en: |
-    <p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href="{invitationLink}">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>
-  de: |
-    <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung anzunehmen, folge bitte diesem Link: <a href="{invitationLink}">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>
-roomDeletionNotificationEmail.subject:
-  en: A room you were a member of has been deleted
-  de: Ein Raum, in dem du Mitglied warst, wurde gelöscht
-roomDeletionNotificationEmail.text:
-  en: |
-    Hello!
+      Du hast dich als {displayName} auf {appName} registriert. \
+      Bitte schließe deine Registrierung mit dem folgendem Code ab:
 
-    User {ownerName} has deleted the room {roomName}.
-  de: |
-    Hallo!
+      **`{verificationCode}`**
 
-    Der Benutzer {ownerName} hat den Raum {roomName} gelöscht.
-roomDeletionNotificationEmail.html:
-  en: <p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.
-  de: <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.
-roomMemberRemovalNotificationEmail.subject:
-  en: Your membership to a room has ended
-  de: Deine Mitgliedschaft in einem Raum wurde beendet
-roomMemberRemovalNotificationEmail.text:
-  en: |
-    Hello {displayName}!
+      Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
+  passwordResetEmail.subject:
+    en: Your password for {appName}
+    de: Dein Kennwort auf {appName}
+  passwordResetEmail.text:
+    en: |
+      Hello {displayName}!
 
-    User {ownerName} has ended your membership in room {roomName}.
-  de: |
-    Hallo {displayName}!
+      You have requested a password reset on {appName}.
+      To assign a new password, please follow this link: {completionLink}
+      The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
+    de: |
+      Hallo {displayName}!
 
-    Der Benutzer {ownerName} hat deine Mitgliedschaft im Raum {roomName} beendet.
-roomMemberRemovalNotificationEmail.html:
-  en: <p>Hello {displayName}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.
-  de: <p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Mitgliedschaft im Raum <b>{roomName}</b> beendet.
-roomInvitationDeletionNotificationEmail.subject:
-  en: Your membership invitation to a room has been revoked
-  de: Deine Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen
-roomInvitationDeletionNotificationEmail.text:
-  en: |
-    Hello!
+      Du hast das Zurücksetzen deines Kennworts auf {appName} angefordert.
+      Zur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}
+      Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
+  passwordResetEmail.markdown:
+    en: |
+      Hello {displayName}!
 
-    User {ownerName} has revoked your membership invitation to room {roomName}.
-  de: |
-    Hallo!
+      You have requested a password reset on {appName}. \
+      To assign a new password, please follow this link: [Change password]({completionLink}).
 
-    Der Benutzer {ownerName} hat deine Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.
-roomInvitationDeletionNotificationEmail.html:
-  en: <p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>.
-  de: <p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen.
+      The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
+    de: |
+      Hallo {displayName}!
+
+      Du hast das Zurücksetzen deines Kennworts auf {appName} angefordert. \
+      Zur Vergabe eines neuen Kennworts folge bitte diesem Link: [Kennwort ändern]({completionLink}).
+
+      Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
+  roomInvitationEmail.subject:
+    en: You have been invited to a room
+    de: Du wurdest in einen Raum eingeladen.
+  roomInvitationEmail.text:
+    en: |
+      Hello!
+
+      User {ownerName} has invited you to the room {roomName}.
+      To accept the invitation, please follow this link: {invitationLink}
+      The link remains valid for {days, plural, =1 {one day} other {# days}}.
+    de: |
+      Hallo!
+
+      Der Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.
+      Um die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}
+      Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.
+  roomInvitationEmail.markdown:
+    en: |
+      Hello!
+
+      User **{ownerName}** has invited you to the room **{roomName}**. \
+      To accept the invitation, please follow this link: [Join room]({invitationLink}).
+
+      The link remains valid for {days, plural, =1 {one day} other {# days}}.
+    de: |
+      Hallo!
+
+      Der Benutzer **{ownerName}** hat dich in den Raum **{roomName}** eingeladen. \
+      Um die Einladung anzunehmen, folge bitte diesem Link: [Raum beitreten]({invitationLink}).
+
+      Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.
+  roomDeletionNotificationEmail.subject:
+    en: A room you were a member of has been deleted
+    de: Ein Raum, in dem du Mitglied warst, wurde gelöscht
+  roomDeletionNotificationEmail.text:
+    en: |
+      Hello!
+
+      User {ownerName} has deleted the room {roomName}.
+    de: |
+      Hallo!
+
+      Der Benutzer {ownerName} hat den Raum {roomName} gelöscht.
+  roomDeletionNotificationEmail.markdown:
+    en: |
+      Hello!
+
+      User **{ownerName}** has deleted the room **{roomName}**.
+    de: |
+      Hallo!
+
+      Der Benutzer **{ownerName}** hat den Raum **{roomName}** gelöscht.
+  roomMemberRemovalNotificationEmail.subject:
+    en: Your membership to a room has ended
+    de: Deine Mitgliedschaft in einem Raum wurde beendet
+  roomMemberRemovalNotificationEmail.text:
+    en: |
+      Hello {displayName}!
+
+      User {ownerName} has ended your membership in room {roomName}.
+    de: |
+      Hallo {displayName}!
+
+      Der Benutzer {ownerName} hat deine Mitgliedschaft im Raum {roomName} beendet.
+  roomMemberRemovalNotificationEmail.markdown:
+    en: |
+      Hello {displayName}!
+
+      User **{ownerName}** has ended your membership in room **{roomName}**.
+    de: |
+      Hallo {displayName}!
+
+      Der Benutzer **{ownerName}** hat deine Mitgliedschaft im Raum **{roomName}** beendet.
+  roomInvitationDeletionNotificationEmail.subject:
+    en: Your membership invitation to a room has been revoked
+    de: Deine Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen
+  roomInvitationDeletionNotificationEmail.text:
+    en: |
+      Hello!
+
+      User {ownerName} has revoked your membership invitation to room {roomName}.
+    de: |
+      Hallo!
+
+      Der Benutzer {ownerName} hat deine Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.
+  roomInvitationDeletionNotificationEmail.markdown:
+    en: |
+      Hello
+
+      User **{ownerName}** has revoked your membership invitation to room **{roomName}**.
+    de: |
+      Hallo
+
+      Der Benutzer **{ownerName}** hat deine Einladung zur Mitgliedschaft in dem Raum **{roomName}** zurückgezogen.

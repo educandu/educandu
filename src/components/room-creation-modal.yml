@@ -1,3 +1,4 @@
-newRoom:
-  en: New room
-  de: Neuer Raum
+roomCreationModal:
+  newRoom:
+    en: New room
+    de: Neuer Raum
