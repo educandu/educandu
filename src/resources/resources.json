@@ -1087,8 +1087,8 @@
     "resources": {
       "newPassword": "New password",
       "requestPasswordReset": "Change password",
-      "completedMessageTitle": "Your password was changed successfully.",
-      "completedMessageSubTitle": "TBD"
+      "completedMessageTitle": "Password changed successfully!",
+      "completedMessageSubTitle": "You are now logged in with your updated account. You can navigate to your personal dashboard by clicking the button below."
     }
   },
   {
@@ -1097,8 +1097,8 @@
     "resources": {
       "newPassword": "Neues Kennwort",
       "requestPasswordReset": "Kennwort ändern",
-      "completedMessageTitle": "Dein Kennwort wurde erfolgreich geändert.",
-      "completedMessageSubTitle": "TBD"
+      "completedMessageTitle": "Kennwort erfolgreich geändert!",
+      "completedMessageSubTitle": "Du bist nun mit deinem aktualisierten Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
     }
   },
   {

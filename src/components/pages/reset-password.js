@@ -1,17 +1,18 @@
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import EmailFormItem from '../email-form-item.js';
 import UserStepsForm from '../user-steps-form.js';
 import React, { Fragment, useState } from 'react';
 import { useService } from '../container-context.js';
 import PasswordFormItem from '../password-form-item.js';
+import { useSetUser, useUser } from '../user-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES } from '../../domain/constants.js';
 
 function ResetPassword({ PageTemplate, SiteLogo }) {
   const user = useUser();
+  const setUser = useSetUser();
   const [enterDataForm] = Form.useForm();
   const { t } = useTranslation('resetPassword');
   const userApiClient = useService(UserApiClient);
@@ -29,10 +30,14 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
   };
 
   const handleEnterCodeFinish = async ({ verificationCode }) => {
-    await userApiClient.completePasswordReset({
+    const response = await userApiClient.completePasswordReset({
       passwordResetRequestId,
       verificationCode: verificationCode.trim()
     });
+
+    if (response.user) {
+      setUser(response.user);
+    }
   };
 
   return (
