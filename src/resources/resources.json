@@ -411,6 +411,12 @@
       "de": "Benutzer als Favorit hinzugefügt"
     }
   },
+  "documentsTab": {
+    "info": {
+      "en": "Here you can find the documents you have created or contributed to.",
+      "de": "Hier findest du die Dokumente, die du erstellt oder bearbeitet hast."
+    }
+  },
   "favoritesTab": {
     "info": {
       "en": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
@@ -1147,6 +1153,10 @@
     "settingsTabTitle": {
       "en": "Settings",
       "de": "Einstellungen"
+    },
+    "documentsTabTitle": {
+      "en": "Documents",
+      "de": "Dokumente"
     },
     "roomsTabTitle": {
       "en": "Rooms",

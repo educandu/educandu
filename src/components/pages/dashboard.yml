@@ -8,6 +8,9 @@ dashboard:
   settingsTabTitle:
     en: Settings
     de: Einstellungen
+  documentsTabTitle:
+    en: Documents
+    de: Dokumente
   roomsTabTitle:
     en: Rooms
     de: Räume

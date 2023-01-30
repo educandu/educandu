@@ -11,6 +11,7 @@ import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
+import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
 import { ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useStoragePlan } from '../storage-plan-context.js';
@@ -21,6 +22,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 const TAB_KEYS = {
   activities: 'activities',
   favorites: 'favorites',
+  documents: 'documents',
   rooms: 'rooms',
   storage: 'storage',
   settings: 'settings'
@@ -88,6 +90,15 @@ function Dashboard({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <FavoritesTab />
+        </div>
+      )
+    },
+    {
+      key: TAB_KEYS.documents,
+      label: t('documentsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <DocumentsTab />
         </div>
       )
     },
