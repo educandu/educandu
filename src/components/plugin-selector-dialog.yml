@@ -1,3 +1,4 @@
-title:
-  en: Select plugin
-  de: Plugin auswählen
+pluginSelectorDialog:
+  title:
+    en: Select plugin
+    de: Plugin auswählen

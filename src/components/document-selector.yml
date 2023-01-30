@@ -1,3 +1,4 @@
-searchPlaceholder:
-  en: Search document title
-  de: Nach Dokument-Titel suchen
+documentSelector:
+  searchPlaceholder:
+    en: Search document title
+    de: Nach Dokument-Titel suchen

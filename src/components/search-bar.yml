@@ -1,3 +1,4 @@
-searchPlaceholder:
-  en: Search terms
-  de: Suchbegriffe
+searchBar:
+  searchPlaceholder:
+    en: Search terms
+    de: Suchbegriffe

@@ -1,12 +1,13 @@
-loginFailedTooOften:
-  en: Too many failed login attempts within a short time period. Please try again later.
-  de: Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal.
-userAccountLocked:
-  en: You currently cannot login because your user account is locked.
-  de: Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist.
-contactAdminWithoutEmail:
-  en: Please contact an administrator.
-  de: Bitte kontaktiere einen Administrator.
-contactAdminWithEmail:
-  en: Please contact an <0>administrator</0>.
-  de: Bitte kontaktiere einen <0>Administrator</0>.
+blockedLoginError:
+  loginFailedTooOften:
+    en: Too many failed login attempts within a short time period. Please try again later.
+    de: Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal.
+  userAccountLocked:
+    en: You currently cannot login because your user account is locked.
+    de: Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist.
+  contactAdminWithoutEmail:
+    en: Please contact an administrator.
+    de: Bitte kontaktiere einen Administrator.
+  contactAdminWithEmail:
+    en: Please contact an <0>administrator</0>.
+    de: Bitte kontaktiere einen <0>Administrator</0>.

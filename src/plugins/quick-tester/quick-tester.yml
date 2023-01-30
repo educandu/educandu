@@ -1,21 +1,22 @@
-name:
-  en: Quick tester
-  de: Schnelltester
-teaser:
-  en: Teaser
-  de: Teaser
-testsOrder:
-  en: Display order
-  de: Anzeigereihenfolge
-testsOrderGiven:
-  en: as specified
-  de: wie angegeben
-testsOrderRandom:
-  en: random
-  de: zufällig
-testNumber:
-  en: Test {number}
-  de: Test {number}
-addTest:
-  en: Add test
-  de: Test hinzufügen
+quickTester:
+  name:
+    en: Quick tester
+    de: Schnelltester
+  teaser:
+    en: Teaser
+    de: Teaser
+  testsOrder:
+    en: Display order
+    de: Anzeigereihenfolge
+  testsOrderGiven:
+    en: as specified
+    de: wie angegeben
+  testsOrderRandom:
+    en: random
+    de: zufällig
+  testNumber:
+    en: Test {number}
+    de: Test {number}
+  addTest:
+    en: Add test
+    de: Test hinzufügen

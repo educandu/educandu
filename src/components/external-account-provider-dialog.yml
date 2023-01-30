@@ -1,6 +1,7 @@
-title:
-  en: Choose institution
-  de: Institution auswählen
-explanation:
-  en: Please select the institution you're associated with in order to login.
-  de: Bitte wähle die Institution aus, der du angehörst, um dich einzuloggen.
+externalAccountProviderDialog:
+  title:
+    en: Choose institution
+    de: Institution auswählen
+  explanation:
+    en: Please select the institution you're associated with in order to login.
+    de: Bitte wähle die Institution aus, der du angehörst, um dich einzuloggen.

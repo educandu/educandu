@@ -1,45 +1,46 @@
-name:
-  en: Ear training
-  de: Gehörbildung
-nextExercise:
-  en: Next exercise
-  de: Nächste Übung
-abcCode:
-  en: ABC code
-  de: ABC-Code
-useMidi:
-  en: Use MIDI (auto)
-  de: MIDI benutzen (auto)
-testsOrder:
-  en: Display order
-  de: Anzeigereihenfolge
-testsOrderGiven:
-  en: as specified
-  de: wie angegeben
-testsOrderRandom:
-  en: random
-  de: zufällig
-testMode:
-  en: Test mode
-  de: Test-Modus
-testModeImage:
-  en: image
-  de: Bild
-testModeAbcCode:
-  en: ABC code
-  de: ABC-Code
-addTest:
-  en: Add test
-  de: Test hinzufügen
-testNumber:
-  en: Test {number}
-  de: Test {number}
-testQuestion:
-  en: Question
-  de: Frage
-testAnswer:
-  en: Answer
-  de: Antwort
-audio:
-  en: Audio
-  de: Audio
+earTraining:
+  name:
+    en: Ear training
+    de: Gehörbildung
+  nextExercise:
+    en: Next exercise
+    de: Nächste Übung
+  abcCode:
+    en: ABC code
+    de: ABC-Code
+  useMidi:
+    en: Use MIDI (auto)
+    de: MIDI benutzen (auto)
+  testsOrder:
+    en: Display order
+    de: Anzeigereihenfolge
+  testsOrderGiven:
+    en: as specified
+    de: wie angegeben
+  testsOrderRandom:
+    en: random
+    de: zufällig
+  testMode:
+    en: Test mode
+    de: Test-Modus
+  testModeImage:
+    en: image
+    de: Bild
+  testModeAbcCode:
+    en: ABC code
+    de: ABC-Code
+  addTest:
+    en: Add test
+    de: Test hinzufügen
+  testNumber:
+    en: Test {number}
+    de: Test {number}
+  testQuestion:
+    en: Question
+    de: Frage
+  testAnswer:
+    en: Answer
+    de: Antwort
+  audio:
+    en: Audio
+    de: Audio

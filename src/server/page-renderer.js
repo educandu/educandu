@@ -35,7 +35,7 @@ class PageRenderer extends PageRendererBase {
     const user = this.clientDataMappingService.mapWebsiteUser(req.user);
     const storagePlan = req.storagePlan;
     const storage = req.storage;
-    const resources = this.resourceManager.getAllResourceBundles();
+    const resources = this.resourceManager.getResources();
     const theme = this.themeManager.getTheme();
 
     const {

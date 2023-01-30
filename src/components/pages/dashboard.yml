@@ -1,21 +1,22 @@
-activitiesTabTitle:
-  en: Activities
-  de: Aktivitäten
-favoritesTabTitle:
-  en: Favorites
-  de: Favoriten
-settingsTabTitle:
-  en: Settings
-  de: Einstellungen
-roomsTabTitle:
-  en: Rooms
-  de: Räume
-storageTabTitle:
-  en: Your storage plan
-  de: Dein Speicherplan
-storageTabInfo:
-  en: Here you can find details about your storage plan and current space status.
-  de: Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.
-noStoragePlan:
-  en: There is no storage plan associated with your account.
-  de: Mit deinem Konto ist kein Speicherplan verbunden.
+dashboard:
+  activitiesTabTitle:
+    en: Activities
+    de: Aktivitäten
+  favoritesTabTitle:
+    en: Favorites
+    de: Favoriten
+  settingsTabTitle:
+    en: Settings
+    de: Einstellungen
+  roomsTabTitle:
+    en: Rooms
+    de: Räume
+  storageTabTitle:
+    en: Your storage plan
+    de: Dein Speicherplan
+  storageTabInfo:
+    en: Here you can find details about your storage plan and current space status.
+    de: Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.
+  noStoragePlan:
+    en: There is no storage plan associated with your account.
+    de: Mit deinem Konto ist kein Speicherplan verbunden.

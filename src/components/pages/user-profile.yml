@@ -1,10 +1,11 @@
-accountClosed:
-  en: This user account was closed.
-  de: Dieses Benutzerkonto wurde geschlossen.
-documentsHeadline:
-  en: Recent contributions
-  de: Letzte Beiträge
-moreButton:
-  en: Show {count} more
-  de: |
-    {count, plural, =1 {# weiteren} other {# weitere}} anzeigen
+userProfile:
+  accountClosed:
+    en: This user account was closed.
+    de: Dieses Benutzerkonto wurde geschlossen.
+  documentsHeadline:
+    en: Recent contributions
+    de: Letzte Beiträge
+  moreButton:
+    en: Show {count} more
+    de: |
+      {count, plural, =1 {# weiteren} other {# weitere}} anzeigen

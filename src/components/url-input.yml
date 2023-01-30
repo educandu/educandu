@@ -1,21 +1,22 @@
-tooltip_youtube:
-  en: Youtube
-  de: Youtube
-tooltip_wikimedia:
-  en: Wikimedia
-  de: Wikimedia
-tooltip_document-media:
-  en: document media storage
-  de: Dokument-Medien Speicher
-tooltip_room-media:
-  en: room media storage
-  de: Raum-Medien Speicher
-tooltip_external:
-  en: external
-  de: extern
-tooltip_unsupported:
-  en: unsupported
-  de: nicht unterstützt
-unsecureUrl:
-  en: "URLs not starting with 'https' are not secure!"
-  de: "URLs, die nicht mit 'https' beginnen, sind unsicher!"
+urlInput:
+  tooltip_youtube:
+    en: Youtube
+    de: Youtube
+  tooltip_wikimedia:
+    en: Wikimedia
+    de: Wikimedia
+  tooltip_document-media:
+    en: document media storage
+    de: Dokument-Medien Speicher
+  tooltip_room-media:
+    en: room media storage
+    de: Raum-Medien Speicher
+  tooltip_external:
+    en: external
+    de: extern
+  tooltip_unsupported:
+    en: unsupported
+    de: nicht unterstützt
+  unsecureUrl:
+    en: "URLs not starting with 'https' are not secure!"
+    de: "URLs, die nicht mit 'https' beginnen, sind unsicher!"

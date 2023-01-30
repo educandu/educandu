@@ -1,3 +1,4 @@
-name:
-  en: Audio
-  de: Audio
+audio:
+  name:
+    en: Audio
+    de: Audio

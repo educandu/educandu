@@ -1,15 +1,16 @@
-home:
-  en: Home
-  de: Home
-dashboard:
-  en: Dashboard
-  de: Dashboard
-admin:
-  en: Administration
-  de: Verwaltung
-batches:
-  en: Batch details
-  de: Chargen-Details
-docs:
-  en: Documents
-  de: Dokumente
+pageNames:
+  home:
+    en: Home
+    de: Home
+  dashboard:
+    en: Dashboard
+    de: Dashboard
+  admin:
+    en: Administration
+    de: Verwaltung
+  batches:
+    en: Batch details
+    de: Chargen-Details
+  docs:
+    en: Documents
+    de: Dokumente

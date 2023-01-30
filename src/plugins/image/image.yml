@@ -1,42 +1,43 @@
-name:
-  en: Image
-  de: Bild
-noneOption:
-  en: none
-  de: Kein Effekt
-hoverOption:
-  en: hover
-  de: Hover
-revealOption:
-  en: reveal
-  de: Aufdecken
-clipOption:
-  en: clip
-  de: Zuschneiden
-clippedWidth:
-  en: Resulting width
-  de: Resultierende Breite
-clippedHeight:
-  en: Resulting height
-  de: Resultierende Höhe
-effectTypeLabel:
-  en: Effect
-  de: Effekt
-startPosition:
-  en: Start Position
-  de: Startposition
-orientationLabel:
-  en: Orientation
-  de: Richtung
-orientationOptionVertical:
-  en: Vertical
-  de: Vertikal
-orientationOptionHorizontal:
-  en: Horizontal
-  de: Horizontal
-clipEffectHint:
-  en: Please use the selection rectangle to specify the displayed area
-  de: Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen
-imageLoadingErrorMessage:
-  en: The image could not be loaded
-  de: Das Bild konnte nicht geladen werden
+image:
+  name:
+    en: Image
+    de: Bild
+  noneOption:
+    en: none
+    de: Kein Effekt
+  hoverOption:
+    en: hover
+    de: Hover
+  revealOption:
+    en: reveal
+    de: Aufdecken
+  clipOption:
+    en: clip
+    de: Zuschneiden
+  clippedWidth:
+    en: Resulting width
+    de: Resultierende Breite
+  clippedHeight:
+    en: Resulting height
+    de: Resultierende Höhe
+  effectTypeLabel:
+    en: Effect
+    de: Effekt
+  startPosition:
+    en: Start Position
+    de: Startposition
+  orientationLabel:
+    en: Orientation
+    de: Richtung
+  orientationOptionVertical:
+    en: Vertical
+    de: Vertikal
+  orientationOptionHorizontal:
+    en: Horizontal
+    de: Horizontal
+  clipEffectHint:
+    en: Please use the selection rectangle to specify the displayed area
+    de: Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen
+  imageLoadingErrorMessage:
+    en: The image could not be loaded
+    de: Das Bild konnte nicht geladen werden

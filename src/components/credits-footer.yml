@@ -1,12 +1,13 @@
-citation:
-  en: Article “{title}”
-  de: Artikel »{title}«
-license:
-  en: License
-  de: Lizenz
-contributionsBy:
-  en: Contributions by
-  de: Bearbeitungen durch
-revisionBy:
-  en: Revision created by
-  de: Revision erstellt von
+creditsFooter:
+  citation:
+    en: Article “{title}”
+    de: Artikel »{title}«
+  license:
+    en: License
+    de: Lizenz
+  contributionsBy:
+    en: Contributions by
+    de: Bearbeitungen durch
+  revisionBy:
+    en: Revision created by
+    de: Revision erstellt von

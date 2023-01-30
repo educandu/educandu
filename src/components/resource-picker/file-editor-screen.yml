@@ -1,6 +1,7 @@
-headline:
-  en: File editor
-  de: Datei-Editor
-applyChanges:
-  en: Apply changes
-  de: Änderungen übernehmen
+fileEditorScreen:
+  headline:
+    en: File editor
+    de: Datei-Editor
+  applyChanges:
+    en: Apply changes
+    de: Änderungen übernehmen

@@ -1,3 +1,4 @@
-name:
-  en: Markdown
-  de: Markdown
+markdown:
+  name:
+    en: Markdown
+    de: Markdown
