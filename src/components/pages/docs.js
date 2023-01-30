@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
+import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import { Button, Switch, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,6 @@ import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import FilterInput from '../filter-input.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -173,7 +173,7 @@ function Docs({ initialState, PageTemplate }) {
       <div className="DocsPage-actions">
         <ActionButtonGroup>
           <ActionButton
-            title={t('common:clone')}
+            title={t('common:duplicate')}
             icon={<DuplicateIcon />}
             intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handleCloneClick(row)}

@@ -42,7 +42,7 @@ function HistoryControlPanel({
 
     return (
       <div>
-        <div>{t('common:revision')}: <b>{index + 1}</b></div>
+        <div>{t('common:version')}: <b>{index + 1}</b></div>
         <div>{t('common:date')}: <b>{formatDate(revision.createdOn)}</b></div>
         <div>{t('common:language')}: <b>{languageName}</b></div>
         <div>{t('common:user')}: <b>{revision.createdBy.displayName}</b></div>
@@ -61,7 +61,7 @@ function HistoryControlPanel({
 
     return (
       <div className="HistoryControlPanel-leftSide">
-        <div className="HistoryControlPanel-sliderLabel">{t('common:revision')}:</div>
+        <div className="HistoryControlPanel-sliderLabel">{t('common:version')}:</div>
         <Slider
           className="HistoryControlPanel-slider"
           min={0}

@@ -66,7 +66,7 @@ function IframeEditor({ content, onContentChanged }) {
             onChange={handleHeightValueChanged}
             />
         </Form.Item>
-        <Form.Item label={t('frame')} {...FORM_ITEM_LAYOUT}>
+        <Form.Item label={t('border')} {...FORM_ITEM_LAYOUT}>
           <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
         </Form.Item>
       </Form>

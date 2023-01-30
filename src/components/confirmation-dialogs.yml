@@ -38,12 +38,12 @@ confirmationDialogs:
   pleaseSpecifyAReason:
     en: Please specify a reason
     de: Bitte gib einen Grund an
-  deleteAllRevisions:
-    en: Delete all existing revisions of this section
-    de: Alle existierenden Revisionen dieses Abschnitts löschen
-  restoreDocumentRevisionConfirmation:
-    en: Do you really want to restore the content of revision {revisionId}?
-    de: Möchtest du den Inhalt der Revision {revisionId} wirklich wiederherstellen?
+  deleteAllVersions:
+    en: Delete all existing versions of this section
+    de: Alle existierenden Versionen dieses Abschnitts löschen
+  restoreDocumentVersionConfirmation:
+    en: Do you really want to restore the content of version {id}?
+    de: Möchtest du den Inhalt der Version {id} wirklich wiederherstellen?
   confirmPassword:
     en: Password confirmation
     de: Kennwortbestätigung

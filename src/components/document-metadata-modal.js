@@ -354,7 +354,12 @@ function DocumentMetadataModal({
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />
         </FormItem>
-        <FormItem label={t('common:slug')} {...validationState.slug}>
+        <FormItem
+          {...validationState.slug}
+          label={
+            <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
+          }
+          >
           <Input value={slug} onChange={handleSlugChange} />
         </FormItem>
         <FormItem

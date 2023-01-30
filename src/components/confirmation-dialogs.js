@@ -137,7 +137,7 @@ export function confirmSectionHardDelete(
 
   const handleOk = () => {
     const reason = formRef.current.getFieldValue('reason');
-    const deleteAllRevisions = formRef.current.getFieldValue('deleteAllRevisions');
+    const deleteAllRevisions = formRef.current.getFieldValue('deleteAllVersions');
     onOk({ reason, deleteAllRevisions });
   };
 
@@ -165,7 +165,7 @@ export function confirmSectionHardDelete(
           <br />
           <FormItem name="deleteAllRevisions" initialValue={false} valuePropName="checked">
             <Checkbox>
-              {t('confirmationDialogs:deleteAllRevisions')}
+              {t('confirmationDialogs:deleteAllVersions')}
             </Checkbox>
           </FormItem>
         </Form>
@@ -216,9 +216,7 @@ export function confirmDocumentRevisionRestoration(
 
   createDialogProps = () => ({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:restoreDocumentRevisionConfirmation', {
-      revisionId: revision._id
-    }),
+    content: t('confirmationDialogs:restoreDocumentVersionConfirmation', { id: revision._id }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -334,7 +332,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   createDialogProps = () => ({
     title: t('confirmationDialogs:sessionExpiredTitle'),
     content: createContent(),
-    okText: t('common:login'),
+    okText: t('common:logIn'),
     cancelText: t('common:cancel'),
     onOk: handleOkClick,
     onCancel,

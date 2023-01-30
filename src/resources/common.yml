@@ -35,9 +35,6 @@ common:
   discard:
     en: Discard
     de: Verwerfen
-  duplicate:
-    en: Duplicate
-    de: Duplizieren
   copyToClipboard:
     en: Copy to clipboard
     de: In die Zwischenablage kopieren
@@ -50,9 +47,9 @@ common:
   hardDelete:
     en: Delete irreversibly
     de: Unwiderruflich löschen
-  clone:
-    en: Clone
-    de: Klonen
+  duplicate:
+    en: Duplicate
+    de: Duplizieren
   create:
     en: Create
     de: Erstellen
@@ -80,9 +77,6 @@ common:
   language:
     en: Language
     de: Sprache
-  invalidSlug:
-    en: The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
-    de: Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
   proposedSectionsAlert:
     en: |
       Apply or discard the proposed sections. Unapplied sections are
@@ -90,18 +84,15 @@ common:
     de: |
       Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene
       Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
-  revision:
-    en: Revision
-    de: Revision
+  version:
+    en: Version
+    de: Version
   document:
     en: Document
     de: Dokument
   room:
     en: Room
     de: Raum
-  viewRevisions:
-    en: View revisions
-    de: Revisionen ansehen
   viewDocument:
     en: View document
     de: Dokument ansehen
@@ -130,11 +121,11 @@ common:
   copyUrlToClipboardError:
     en: Error copying the URL to the clipboard due to missing access permissions.
     de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
-  login:
-    en: Login
+  logIn:
+    en: Log in
     de: Anmelden
-  logout:
-    en: Logout
+  logOut:
+    en: Log out
     de: Abmelden
   created:
     en: Created
@@ -188,8 +179,16 @@ common:
     en: Title
     de: Titel
   slug:
-    en: URL path
-    de: URL-Pfad
+    en: Slug
+    de: Slug
+  slugInfo:
+    en: |
+      The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.
+    de: |
+      Der Slug wird am ende des URLs hinzugefügt und darf einen order mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
+  invalidSlug:
+    en: The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
+    de: Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
   tags:
     en: Tags
     de: Tags
