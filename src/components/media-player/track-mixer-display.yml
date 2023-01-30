@@ -1,3 +1,4 @@
-trackNumberLabel:
-  en: Track {trackNumber}
-  de: Spur {trackNumber}
+trackMixerDisplay:
+  trackNumberLabel:
+    en: Track {trackNumber}
+    de: Spur {trackNumber}

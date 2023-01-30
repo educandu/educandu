@@ -1,15 +1,16 @@
-statusIconTooltipSaved:
-  en: There are no unsaved changes
-  de: Keine ungespeicherten Änderungen
-statusIconTooltipDirty:
-  en: There are unsaved changes
-  de: Änderungen nicht gespeichert
-statusIconTooltipInvalid:
-  en: Please correct all errors before saving
-  de: Bitte korrigiere alle Fehler vor dem Speichern
-editMetadata:
-  en: Edit metadata
-  de: Metadaten bearbeiten
-editMetadataDisabledTooltip:
-  en: Editing the metadata of this document was disabled by a maintainer
-  de: Die Metadaten-Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert
+editControlPanel:
+  statusIconTooltipSaved:
+    en: There are no unsaved changes
+    de: Keine ungespeicherten Änderungen
+  statusIconTooltipDirty:
+    en: There are unsaved changes
+    de: Änderungen nicht gespeichert
+  statusIconTooltipInvalid:
+    en: Please correct all errors before saving
+    de: Bitte korrigiere alle Fehler vor dem Speichern
+  editMetadata:
+    en: Edit metadata
+    de: Metadaten bearbeiten
+  editMetadataDisabledTooltip:
+    en: Editing the metadata of this document was disabled by a maintainer
+    de: Die Metadaten-Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert

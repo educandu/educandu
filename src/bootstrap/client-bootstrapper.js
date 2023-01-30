@@ -20,7 +20,8 @@ export async function hydrateApp({ bundleConfig }) {
   const clientConfig = new ClientConfig(window.__clientconfig__);
   container.registerInstance(ClientConfig, clientConfig);
 
-  const resourceManager = new ResourceManager(window.__resources__);
+  const resourceManager = new ResourceManager();
+  resourceManager.setResources(window.__resources__);
   container.registerInstance(ResourceManager, resourceManager);
 
   const themeManager = new ThemeManager();

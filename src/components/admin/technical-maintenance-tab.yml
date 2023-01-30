@@ -1,33 +1,34 @@
-tabInfo:
-  en: You can trigger different tasks from here, in order to execute technical maintenance over the database and the internal storage.
-  de: Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des internen Speichers starten.
-batchSectionHeader_document-regeneration:
-  en: Documents regeneration
-  de: Dokumente neu erstellen
-batchSectionDescription_document-regeneration:
-  en: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
-  de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
-batchSectionHeader_document-validation:
-  en: Documents validation
-  de: Dokumente validieren
-batchSectionDescription_document-validation:
-  en: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
-  de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.
-batchSectionHeader_cdn-resources-consolidation:
-  en: Consolidation of resources within the internal storage
-  de: Ressourcen auf dem internen Speicher konsolidieren
-batchSectionDescription_cdn-resources-consolidation:
-  en: Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
-  de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
-batchSectionHeader_cdn-upload-directory-creation:
-  en: Creation of upload directories within the internal storage
-  de: Upload-Verzichnisse auf dem internen Speicher erstellen
-batchSectionDescription_cdn-upload-directory-creation:
-  en: Ensure the internal storage contains a public upload directory for each existing document (including private documents in rooms). This task updates the internal storage by adding the missing directories.
-  de: Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im internen Speicher existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.
-lastExecution:
-  en: Last execution
-  de: Letzte Ausführung
-start:
-  en: Start task
-  de: Task starten
+technicalMaintenanceTab:
+  tabInfo:
+    en: You can trigger different tasks from here, in order to execute technical maintenance over the database and the internal storage.
+    de: Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des internen Speichers starten.
+  batchSectionHeader_document-regeneration:
+    en: Documents regeneration
+    de: Dokumente neu erstellen
+  batchSectionDescription_document-regeneration:
+    en: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
+    de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
+  batchSectionHeader_document-validation:
+    en: Documents validation
+    de: Dokumente validieren
+  batchSectionDescription_document-validation:
+    en: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
+    de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.
+  batchSectionHeader_cdn-resources-consolidation:
+    en: Consolidation of resources within the internal storage
+    de: Ressourcen auf dem internen Speicher konsolidieren
+  batchSectionDescription_cdn-resources-consolidation:
+    en: Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
+    de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
+  batchSectionHeader_cdn-upload-directory-creation:
+    en: Creation of upload directories within the internal storage
+    de: Upload-Verzichnisse auf dem internen Speicher erstellen
+  batchSectionDescription_cdn-upload-directory-creation:
+    en: Ensure the internal storage contains a public upload directory for each existing document (including private documents in rooms). This task updates the internal storage by adding the missing directories.
+    de: Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im internen Speicher existiert. Fehlende Verzeichnisse werden hierbei neu angelegt.
+  lastExecution:
+    en: Last execution
+    de: Letzte Ausführung
+  start:
+    en: Start task
+    de: Task starten

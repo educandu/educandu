@@ -1,3 +1,4 @@
-modalTitle:
-  en: Manage volume presets
-  de: Lautstärke-Voreinstellungen bearbeiten
+volumePresetsModal:
+  modalTitle:
+    en: Manage volume presets
+    de: Lautstärke-Voreinstellungen bearbeiten

@@ -6,7 +6,6 @@ import Graceful from 'node-graceful';
 import { promisify } from 'node:util';
 import { promises as fs } from 'node:fs';
 import {
-  buildTranslationsJson,
   cliArgs,
   createGithubRelease,
   createLabelInJiraIssues,
@@ -19,6 +18,7 @@ import {
   less,
   LoadBalancedNodeProcessGroup,
   MaildevContainer,
+  mergeYamlFilesToJson,
   MinioContainer,
   MongoContainer,
   NodeProcess,
@@ -136,7 +136,7 @@ export async function buildTestAppJs() {
 }
 
 export async function buildTranslations() {
-  await buildTranslationsJson({ pattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
+  await mergeYamlFilesToJson({ inputFilesPattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
 }
 
 export const buildTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);

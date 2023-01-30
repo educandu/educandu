@@ -1,3 +1,4 @@
-emailIsInUse:
-  en: The email address is already registered
-  de: Die E-Mail-Adresse ist bereits vergeben
+emailFormItem:
+  emailIsInUse:
+    en: The email address is already registered
+    de: Die E-Mail-Adresse ist bereits vergeben

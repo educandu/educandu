@@ -1,54 +1,55 @@
-batchType:
-  en: Batch type
-  de: Chargentyp
-batchTypeDocumentValidation:
-  en: Document validation
-  de: Dokumentvalidierung
-batchTypeDocumentRegeneration:
-  en: Document regeneration
-  de: Dokumentwiederherstellung
-batchTypeCdnResourcesConsolidation:
-  en: Consolidation of resources within the internal storage
-  de: Konsolidierung der Ressourcen auf dem internen Speicher
-batchTypeCdnUploadDirectoryCreation:
-  en: Creation of upload directories within the internal storage
-  de: Erstellung der Upload-Verzichnisse auf dem internen Speicher
-errors:
-  en: Errors
-  de: Fehler
-errorsCount:
-  en: Errors count
-  de: Fehleranzahl
-attemptsHeader:
-  en: Attempt details
-  de: Versuchsdetails
-batchErrors:
-  en: Batch errors
-  de: Chargenfehler
-tasks:
-  en: Tasks
-  de: Tasks
-taskType:
-  en: Task type
-  de: Tasktyp
-taskStatus:
-  en: Task status
-  de: Taskstatus
-progressMessage:
-  en: '{progress, number, percent} completed'
-  de: '{progress, number, percent} abgeschlossen'
-status_pending:
-  en: Pending
-  de: Ausstehend
-status_success:
-  en: Successfully completed
-  de: Erfolgreich abgeschlossen
-status_warning:
-  en: Completed with warnings
-  de: Abgeschlossen mit Warnungen
-status_error:
-  en: Completed with errors
-  de: Abgeschlossen mit Fehlern
-hideSuccessfullyCompletedTasks:
-  en: Hide successfully completed tasks
-  de: Erfolgreich abgeschlossene Tasks ausblenden
+batches:
+  batchType:
+    en: Batch type
+    de: Chargentyp
+  batchTypeDocumentValidation:
+    en: Document validation
+    de: Dokumentvalidierung
+  batchTypeDocumentRegeneration:
+    en: Document regeneration
+    de: Dokumentwiederherstellung
+  batchTypeCdnResourcesConsolidation:
+    en: Consolidation of resources within the internal storage
+    de: Konsolidierung der Ressourcen auf dem internen Speicher
+  batchTypeCdnUploadDirectoryCreation:
+    en: Creation of upload directories within the internal storage
+    de: Erstellung der Upload-Verzichnisse auf dem internen Speicher
+  errors:
+    en: Errors
+    de: Fehler
+  errorsCount:
+    en: Errors count
+    de: Fehleranzahl
+  attemptsHeader:
+    en: Attempt details
+    de: Versuchsdetails
+  batchErrors:
+    en: Batch errors
+    de: Chargenfehler
+  tasks:
+    en: Tasks
+    de: Tasks
+  taskType:
+    en: Task type
+    de: Tasktyp
+  taskStatus:
+    en: Task status
+    de: Taskstatus
+  progressMessage:
+    en: '{progress, number, percent} completed'
+    de: '{progress, number, percent} abgeschlossen'
+  status_pending:
+    en: Pending
+    de: Ausstehend
+  status_success:
+    en: Successfully completed
+    de: Erfolgreich abgeschlossen
+  status_warning:
+    en: Completed with warnings
+    de: Abgeschlossen mit Warnungen
+  status_error:
+    en: Completed with errors
+    de: Abgeschlossen mit Fehlern
+  hideSuccessfullyCompletedTasks:
+    en: Hide successfully completed tasks
+    de: Erfolgreich abgeschlossene Tasks ausblenden

@@ -1,24 +1,25 @@
-homepageInfoHeader:
-  en: Homepage info
-  de: Homepage-Info
-helpPageHeader:
-  en: Help page
-  de: Hilfe-Seite
-termsPageHeader:
-  en: Terms of usage page
-  de: Nutzungsbedingungen-Seite
-footerLinksHeader:
-  en: Footer links
-  de: Footer-Links
-consentHeader:
-  en: Consent text
-  de: Zustimmungstext
-templateDocumentHeader:
-  en: Template for new documents
-  de: Vorlage für neue Dokumente
-licenseHeader:
-  en: License
-  de: Lizenz
-pluginsHelpTextsHeader:
-  en: Help texts for plugins
-  de: Hilfetexte für Plugins
+settingsTab:
+  homepageInfoHeader:
+    en: Homepage info
+    de: Homepage-Info
+  helpPageHeader:
+    en: Help page
+    de: Hilfe-Seite
+  termsPageHeader:
+    en: Terms of usage page
+    de: Nutzungsbedingungen-Seite
+  footerLinksHeader:
+    en: Footer links
+    de: Footer-Links
+  consentHeader:
+    en: Consent text
+    de: Zustimmungstext
+  templateDocumentHeader:
+    en: Template for new documents
+    de: Vorlage für neue Dokumente
+  licenseHeader:
+    en: License
+    de: Lizenz
+  pluginsHelpTextsHeader:
+    en: Help texts for plugins
+    de: Hilfetexte für Plugins

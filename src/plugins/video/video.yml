@@ -1,6 +1,7 @@
-name:
-  en: Video
-  de: Video
-posterImageUrl:
-  en: Preview image URL
-  de: Vorschau-Bild-URL
+video:
+  name:
+    en: Video
+    de: Video
+  posterImageUrl:
+    en: Preview image URL
+    de: Vorschau-Bild-URL

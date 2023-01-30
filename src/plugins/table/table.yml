@@ -1,105 +1,106 @@
-name:
-  en: Table
-  de: Tabelle
-columnDistribution:
-  en: Column width
-  de: Spaltenbreite
-columnDistribution_automatic:
-  en: automatic
-  de: Automatisch
-columnDistribution_even:
-  en: even
-  de: Gleichmäßig
-cellAction_convertAllToHeaderCells:
-  en: Convert to header cells
-  de: In Kopfzellen konvertieren
-cellAction_convertAllToBodyCells:
-  en: Convert to body cells
-  de: In Datenzellen konvertieren
-cellAction_convertToHeaderRow:
-  en: Convert to header row
-  de: In Kopfzeile konvertieren
-cellAction_convertToBodyRow:
-  en: Convert to body row
-  de: In Datenzeile konvertieren
-cellAction_convertToHeaderColumn:
-  en: Convert to header column
-  de: In Kopfspalte konvertieren
-cellAction_convertToBodyColumn:
-  en: Convert to body cell
-  de: In Datenspalte konvertieren
-cellAction_convertToHeaderCell:
-  en: Convert to header cell
-  de: In Kopfzelle konvertieren
-cellAction_convertToBodyCell:
-  en: Convert to body cell
-  de: In Datenzelle konvertieren
-cellAction_insertRowBefore:
-  en: Insert row before
-  de: Zeile davor einfügen
-cellAction_insertRowAfter:
-  en: Insert row after
-  de: Zeile danach einfügen
-cellAction_deleteRow:
-  en: Delete row
-  de: Zeile löschen
-cellAction_insertColumnBefore:
-  en: Insert column before
-  de: Spalte davor einfügen
-cellAction_insertColumnAfter:
-  en: Insert column after
-  de: Spalte danach einfügen
-cellAction_deleteColumn:
-  en: Delete column
-  de: Spalte löschen
-cellAction_connectToRowBefore:
-  en: Connect with cell above
-  de: Mit Zelle darüber verbinden
-cellAction_connectToRowAfter:
-  en: Connect with cell below
-  de: Mit Zelle darunter verbinden
-cellAction_connectToColumnBefore:
-  en: Connect with cell on the left
-  de: Mit Zelle links verbinden
-cellAction_connectToColumnAfter:
-  en: Connect with cell on the right
-  de: Mit Zelle rechts verbinden
-cellAction_disconnectAllCells:
-  en: Disconnect cells
-  de: Zellenverbindungen aufheben
-cellAction_disconnectCell:
-  en: Disconnect cells
-  de: Zellenverbindung aufheben
-cellAction_setVerticalAlignmentToTop:
-  en: Align content on top
-  de: Inhalt oben ausrichten
-cellAction_setVerticalAlignmentToMiddle:
-  en: Center content vertically
-  de: Inhalt vertikal zentrieren
-cellAction_setVerticalAlignmentToBottom:
-  en: Align content on bottom
-  de: Inhalt unten ausrichten
-cellAction_setHorizontalAlignmentToLeft:
-  en: Align content on the left
-  de: Inhalt linksbündig ausrichten
-cellAction_setHorizontalAlignmentToCenter:
-  en: Center content horizontally
-  de: Inhalt horizontal zentrieren
-cellAction_setHorizontalAlignmentToRight:
-  en: Align content on the right
-  de: Inhalt rechtsbündig ausrichten
-menuGroup_insert:
-  en: Insert
-  de: Einfügen
-menuGroup_delete:
-  en: Delete
-  de: Löschen
-menuGroup_connect:
-  en: Connect
-  de: Verbinden
-menuGroup_verticalAlignment:
-  en: Vertical alignment
-  de: Vertikale Ausrichtung
-menuGroup_horizontalAlignment:
-  en: Horizontal alignment
-  de: Horizontale Ausrichtung
+table:
+  name:
+    en: Table
+    de: Tabelle
+  columnDistribution:
+    en: Column width
+    de: Spaltenbreite
+  columnDistribution_automatic:
+    en: automatic
+    de: Automatisch
+  columnDistribution_even:
+    en: even
+    de: Gleichmäßig
+  cellAction_convertAllToHeaderCells:
+    en: Convert to header cells
+    de: In Kopfzellen konvertieren
+  cellAction_convertAllToBodyCells:
+    en: Convert to body cells
+    de: In Datenzellen konvertieren
+  cellAction_convertToHeaderRow:
+    en: Convert to header row
+    de: In Kopfzeile konvertieren
+  cellAction_convertToBodyRow:
+    en: Convert to body row
+    de: In Datenzeile konvertieren
+  cellAction_convertToHeaderColumn:
+    en: Convert to header column
+    de: In Kopfspalte konvertieren
+  cellAction_convertToBodyColumn:
+    en: Convert to body cell
+    de: In Datenspalte konvertieren
+  cellAction_convertToHeaderCell:
+    en: Convert to header cell
+    de: In Kopfzelle konvertieren
+  cellAction_convertToBodyCell:
+    en: Convert to body cell
+    de: In Datenzelle konvertieren
+  cellAction_insertRowBefore:
+    en: Insert row before
+    de: Zeile davor einfügen
+  cellAction_insertRowAfter:
+    en: Insert row after
+    de: Zeile danach einfügen
+  cellAction_deleteRow:
+    en: Delete row
+    de: Zeile löschen
+  cellAction_insertColumnBefore:
+    en: Insert column before
+    de: Spalte davor einfügen
+  cellAction_insertColumnAfter:
+    en: Insert column after
+    de: Spalte danach einfügen
+  cellAction_deleteColumn:
+    en: Delete column
+    de: Spalte löschen
+  cellAction_connectToRowBefore:
+    en: Connect with cell above
+    de: Mit Zelle darüber verbinden
+  cellAction_connectToRowAfter:
+    en: Connect with cell below
+    de: Mit Zelle darunter verbinden
+  cellAction_connectToColumnBefore:
+    en: Connect with cell on the left
+    de: Mit Zelle links verbinden
+  cellAction_connectToColumnAfter:
+    en: Connect with cell on the right
+    de: Mit Zelle rechts verbinden
+  cellAction_disconnectAllCells:
+    en: Disconnect cells
+    de: Zellenverbindungen aufheben
+  cellAction_disconnectCell:
+    en: Disconnect cells
+    de: Zellenverbindung aufheben
+  cellAction_setVerticalAlignmentToTop:
+    en: Align content on top
+    de: Inhalt oben ausrichten
+  cellAction_setVerticalAlignmentToMiddle:
+    en: Center content vertically
+    de: Inhalt vertikal zentrieren
+  cellAction_setVerticalAlignmentToBottom:
+    en: Align content on bottom
+    de: Inhalt unten ausrichten
+  cellAction_setHorizontalAlignmentToLeft:
+    en: Align content on the left
+    de: Inhalt linksbündig ausrichten
+  cellAction_setHorizontalAlignmentToCenter:
+    en: Center content horizontally
+    de: Inhalt horizontal zentrieren
+  cellAction_setHorizontalAlignmentToRight:
+    en: Align content on the right
+    de: Inhalt rechtsbündig ausrichten
+  menuGroup_insert:
+    en: Insert
+    de: Einfügen
+  menuGroup_delete:
+    en: Delete
+    de: Löschen
+  menuGroup_connect:
+    en: Connect
+    de: Verbinden
+  menuGroup_verticalAlignment:
+    en: Vertical alignment
+    de: Vertikale Ausrichtung
+  menuGroup_horizontalAlignment:
+    en: Horizontal alignment
+    de: Horizontale Ausrichtung

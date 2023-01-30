@@ -1,33 +1,34 @@
-name:
-  en: Annotation
-  de: Anmerkung
-behavior:
-  en: Behavior
-  de: Verhalten
-behavior_static:
-  en: static
-  de: statisch
-behavior_collapsible:
-  en: collapsible
-  de: einklappbar
-behavior_expandable:
-  en: expandable
-  de: ausklappbar
-intent:
-  en: Intent
-  de: Intention
-intent_neutral:
-  en: neutral
-  de: neutral
-intent_confirm:
-  en: confirm
-  de: bestätigen
-intent_inform:
-  en: inform
-  de: informieren
-intent_warn:
-  en: warn
-  de: warnen
-intent_discourage:
-  en: discourage
-  de: abraten
+annotation:
+  name:
+    en: Annotation
+    de: Anmerkung
+  behavior:
+    en: Behavior
+    de: Verhalten
+  behavior_static:
+    en: static
+    de: statisch
+  behavior_collapsible:
+    en: collapsible
+    de: einklappbar
+  behavior_expandable:
+    en: expandable
+    de: ausklappbar
+  intent:
+    en: Intent
+    de: Intention
+  intent_neutral:
+    en: neutral
+    de: neutral
+  intent_confirm:
+    en: confirm
+    de: bestätigen
+  intent_inform:
+    en: inform
+    de: informieren
+  intent_warn:
+    en: warn
+    de: warnen
+  intent_discourage:
+    en: discourage
+    de: abraten

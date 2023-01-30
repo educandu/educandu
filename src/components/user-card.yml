@@ -1,3 +1,4 @@
-profileButton:
-  en: View profile
-  de: Profil ansehen
+userCard:
+  profileButton:
+    en: View profile
+    de: Profil ansehen

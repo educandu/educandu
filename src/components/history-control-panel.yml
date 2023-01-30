@@ -1,12 +1,13 @@
-restoredFrom:
-  en: Restored from
-  de: Wiederhergestellt aus
-permalink:
-  en: Permalink
-  de: Permalink
-restore:
-  en: Restore
-  de: Wiederherstellen
-tooltip:
-  en: Document versions
-  de: Dokumentversionen
+historyControlPanel:
+  restoredFrom:
+    en: Restored from
+    de: Wiederhergestellt aus
+  permalink:
+    en: Permalink
+    de: Permalink
+  restore:
+    en: Restore
+    de: Wiederherstellen
+  tooltip:
+    en: Document versions
+    de: Dokumentversionen

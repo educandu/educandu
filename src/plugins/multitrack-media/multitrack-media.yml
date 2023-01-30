@@ -1,3 +1,4 @@
-name:
-  en: Multitrack media
-  de: Mehrspur-Medien
+multitrackMedia:
+  name:
+    en: Multitrack media
+    de: Mehrspur-Medien

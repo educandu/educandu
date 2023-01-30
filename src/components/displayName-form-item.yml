@@ -1,6 +1,7 @@
-enterDisplayName:
-  en: Please enter a display name
-  de: Bitte gib einen Anzeigenamen an
-displayNameIsTooShort:
-  en: The display name must be at least {length} characters long
-  de: Der Anzeigename muss mindestens {length} Zeichen lang sein
+displayNameFormItem:
+  enterDisplayName:
+    en: Please enter a display name
+    de: Bitte gib einen Anzeigenamen an
+  displayNameIsTooShort:
+    en: The display name must be at least {length} characters long
+    de: Der Anzeigename muss mindestens {length} Zeichen lang sein

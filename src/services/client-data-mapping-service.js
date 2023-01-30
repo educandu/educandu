@@ -165,6 +165,7 @@ class ClientDataMappingService {
         name: room.name,
         documentsMode: room.documentsMode,
         owner: {
+          _id: owner._id,
           displayName: owner.displayName
         }
       }

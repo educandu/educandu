@@ -1,15 +1,16 @@
-addCommentButtonText:
-  en: Write comment
-  de: Kommentar schreiben
-postCommentButtonText:
-  en: Post comment
-  de: Kommentar abschicken
-topicHeaderPrefix:
-  en: Topic
-  de: Thema
-newTopicPlaceholder:
-  en: New topic
-  de: Neues Thema
-commentDeleted:
-  en: The content of this comment was deleted by maintainers.
-  de: Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht.
+commentsPanel:
+  addCommentButtonText:
+    en: Write comment
+    de: Kommentar schreiben
+  postCommentButtonText:
+    en: Post comment
+    de: Kommentar abschicken
+  topicHeaderPrefix:
+    en: Topic
+    de: Thema
+  newTopicPlaceholder:
+    en: New topic
+    de: Neues Thema
+  commentDeleted:
+    en: The content of this comment was deleted by maintainers.
+    de: Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht.

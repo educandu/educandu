@@ -1,36 +1,37 @@
-mimeTypeCategoryText:
-  en: Text
-  de: Text
-mimeTypeCategoryMarkup:
-  en: Markup
-  de: Markup
-mimeTypeCategoryImage:
-  en: Image
-  de: Bild
-mimeTypeCategoryVideo:
-  en: Video
-  de: Video
-mimeTypeCategoryAudio:
-  en: Audio
-  de: Audio
-mimeTypeCategoryArchive:
-  en: Archive
-  de: Archiv
-mimeTypeCategoryDocument:
-  en: Document
-  de: Dokument
-mimeTypeCategorySpreadsheet:
-  en: Spreadsheet
-  de: Tabellenkalkulation
-mimeTypeCategoryPresentation:
-  en: Presentation
-  de: Präsentation
-mimeTypeCategoryProgram:
-  en: Program
-  de: Programm
-mimeTypeCategoryFolder:
-  en: Directory
-  de: Verzeichnis
-mimeTypeCategoryUnknown:
-  en: Unknown
-  de: Unbekannt
+mimeTypeHelper:
+  mimeTypeCategoryText:
+    en: Text
+    de: Text
+  mimeTypeCategoryMarkup:
+    en: Markup
+    de: Markup
+  mimeTypeCategoryImage:
+    en: Image
+    de: Bild
+  mimeTypeCategoryVideo:
+    en: Video
+    de: Video
+  mimeTypeCategoryAudio:
+    en: Audio
+    de: Audio
+  mimeTypeCategoryArchive:
+    en: Archive
+    de: Archiv
+  mimeTypeCategoryDocument:
+    en: Document
+    de: Dokument
+  mimeTypeCategorySpreadsheet:
+    en: Spreadsheet
+    de: Tabellenkalkulation
+  mimeTypeCategoryPresentation:
+    en: Presentation
+    de: Präsentation
+  mimeTypeCategoryProgram:
+    en: Program
+    de: Programm
+  mimeTypeCategoryFolder:
+    en: Directory
+    de: Verzeichnis
+  mimeTypeCategoryUnknown:
+    en: Unknown
+    de: Unbekannt
