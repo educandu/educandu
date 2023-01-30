@@ -1312,16 +1312,8 @@
       "confirmTerms": "Please confirm your agreement with the terms and conditions",
       "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
       "register": "Register",
-      "step_enterData": "Enter data",
-      "step_enterCode": "Confirm",
-      "step_completed": "Done",
-      "verificationCode": "Verification code",
-      "enterVerificationCode": "Please enter your verification code",
-      "verificationCodeIsInvalid": "The verification code is invalid or expired",
-      "verificationMessage": "We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.\n\nThe code is valid **for {validityInMinutes}**.\n",
       "completedMessageTitle": "Welcome!",
-      "completedMessageSubTitle": "You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below.",
-      "gotoDashboard": "Show my personal dashboard"
+      "completedMessageSubTitle": "You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below."
     }
   },
   {
@@ -1331,16 +1323,8 @@
       "confirmTerms": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "step_enterData": "Daten eingeben",
-      "step_enterCode": "Bestätigen",
-      "step_completed": "Fertig",
-      "verificationCode": "Verifizierungs-Code",
-      "enterVerificationCode": "Bitte gib deinen Verifizierungscode ein",
-      "verificationCodeIsInvalid": "Der Verifizierungscode ist ungültig oder abgelaufen",
-      "verificationMessage": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n",
       "completedMessageTitle": "Willkommen!",
-      "completedMessageSubTitle": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren.",
-      "gotoDashboard": "Mein persönliches Dashboard anzeigen"
+      "completedMessageSubTitle": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
     }
   },
   {
@@ -1749,6 +1733,34 @@
     "language": "de",
     "resources": {
       "profileButton": "Profil ansehen"
+    }
+  },
+  {
+    "namespace": "userStepsForm",
+    "language": "en",
+    "resources": {
+      "step_enterData": "Enter data",
+      "step_enterCode": "Confirm",
+      "step_completed": "Done",
+      "verificationCode": "Verification code",
+      "enterVerificationCode": "Please enter your verification code",
+      "verificationCodeIsInvalid": "The verification code is invalid or expired",
+      "verificationMessage": "We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.\n\nThe code is valid **for {validityInMinutes}**.\n",
+      "gotoDashboard": "Show my personal dashboard"
+    }
+  },
+  {
+    "namespace": "userStepsForm",
+    "language": "de",
+    "resources": {
+      "step_enterData": "Daten eingeben",
+      "step_enterCode": "Bestätigen",
+      "step_completed": "Fertig",
+      "verificationCode": "Verifizierungs-Code",
+      "enterVerificationCode": "Bitte gib deinen Verifizierungscode ein",
+      "verificationCodeIsInvalid": "Der Verifizierungscode ist ungültig oder abgelaufen",
+      "verificationMessage": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n",
+      "gotoDashboard": "Mein persönliches Dashboard anzeigen"
     }
   },
   {
