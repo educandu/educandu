@@ -81,6 +81,7 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
               name="connect-external-account-page-login-form"
               onLoginSucceeded={handleLoginSucceeded}
               connectExternalAccount
+              showInPanel
               showPasswordReset
               showLoginButtons
               />
