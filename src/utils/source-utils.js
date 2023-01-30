@@ -98,7 +98,7 @@ export async function getSourceDuration({ url, cdnRootUrl }) {
   try {
     const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl });
 
-    if (urlUtils.isFullyQualifiedUrl(url)) {
+    if (!urlUtils.isFullyQualifiedUrl(url)) {
       return 0;
     }
 
