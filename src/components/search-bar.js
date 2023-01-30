@@ -16,7 +16,6 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
   };
 
   const handleSearch = value => {
-    // Guard agains search by ENTER key
     if (value) {
       onSearch(value);
     }
@@ -32,7 +31,7 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
         onSearch={handleSearch}
         onChange={handleSearchInputChange}
         enterButton={
-          <Button type="primary" disabled={!searchText}>
+          <Button type="primary">
             <SearchOutlined />
           </Button>
         }
