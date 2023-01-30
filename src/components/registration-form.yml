@@ -1,46 +1,10 @@
 registrationForm:
-  confirmTerms:
-    en: Please confirm your agreement with the terms and conditions
-    de: Bitte erkläre dich mit den Nutzungsbedingungen einverstanden
-  termsAndConditionsConfirmation:
-    en: I have read the <0>terms and conditions</0> and agree to them.
-    de: Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.
   register:
     en: Register
     de: Registrieren
-  step_enterData:
-    en: Enter data
-    de: Daten eingeben
-  step_enterCode:
-    en: Confirm
-    de: Bestätigen
-  step_completed:
-    en: Done
-    de: Fertig
-  verificationCode:
-    en: Verification code
-    de: Verifizierungs-Code
-  enterVerificationCode:
-    en: Please enter your verification code
-    de: Bitte gib deinen Verifizierungscode ein
-  verificationCodeIsInvalid:
-    en: The verification code is invalid or expired
-    de: Der Verifizierungscode ist ungültig oder abgelaufen
-  verificationMessage:
-    en: |
-      We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.
-  
-      The code is valid **for {validityInMinutes}**.
-    de: |
-      Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.
-  
-      Der Code ist **{validityInMinutes} lang** gültig.
   completedMessageTitle:
     en: Welcome!
     de: Willkommen!
   completedMessageSubTitle:
     en: You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below.
     de: Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren.
-  gotoDashboard:
-    en: Show my personal dashboard
-    de: Mein persönliches Dashboard anzeigen

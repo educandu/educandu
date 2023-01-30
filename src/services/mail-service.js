@@ -11,7 +11,7 @@ import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import {
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
 } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -62,8 +62,8 @@ class MailService {
     return this._sendMail(message);
   }
 
-  sendPasswordResetEmail({ email, displayName, completionLink }) {
-    logger.info(`Creating email with password reset request completion link ${completionLink}`);
+  sendPasswordResetEmail({ email, displayName, verificationCode }) {
+    logger.info(`Creating email with password reset request verification code ${verificationCode}`);
 
     const subject = this.translators
       .map(t => t('mailService:passwordResetEmail.subject', { appName: this.serverConfig.appName }))
@@ -73,8 +73,8 @@ class MailService {
       .map(t => t('mailService:passwordResetEmail.text', {
         appName: this.serverConfig.appName,
         displayName,
-        completionLink,
-        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
       }))
       .join(TEXT_LANGUAGE_SEPARATOR);
 
@@ -82,8 +82,8 @@ class MailService {
       .map(t => t('mailService:passwordResetEmail.markdown', {
         appName: escapeMarkdown(this.serverConfig.appName),
         displayName: escapeMarkdown(displayName),
-        completionLink,
-        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
       }))
       .join(MARKDOWN_LANGUAGE_SEPARATOR));
 

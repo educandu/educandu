@@ -36,12 +36,13 @@ export const postUserProfileBodySchema = joi.object({
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({
-  email: emailSchema.required()
+  email: emailSchema.required(),
+  password: passwordSchema.required()
 });
 
 export const postUserPasswordResetCompletionBodySchema = joi.object({
-  passwordResetRequestId: joi.string().required(),
-  password: passwordSchema.required()
+  passwordResetRequestId: idOrKeySchema.required(),
+  verificationCode: idOrKeySchema.required()
 });
 
 export const postUserRolesBodySchema = joi.object({

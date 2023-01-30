@@ -39,7 +39,8 @@ describe('user-controller', () => {
       createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub(),
       addFavorite: sandbox.stub(),
-      deleteFavorite: sandbox.stub()
+      deleteFavorite: sandbox.stub(),
+      recordUserLogIn: sandbox.stub()
     };
     storageService = {
       getAllStoragePlans: sandbox.stub()
@@ -244,6 +245,7 @@ describe('user-controller', () => {
           res.on('end', resolve);
 
           userService.verifyUser.withArgs(req.body.userId, req.body.verificationCode).resolves(dbUser);
+          userService.recordUserLogIn.withArgs(req.body.userId).resolves(dbUser);
           clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
           sut.handlePostUserRegistrationCompletion(req, res).catch(reject);
@@ -254,11 +256,11 @@ describe('user-controller', () => {
         });
 
         it('should call clientDataMappingService.mapWebsiteUser', () => {
-          assert.calledWith(clientDataMappingService.mapWebsiteUser, dbUser);
+          assert.calledWith(clientDataMappingService.mapWebsiteUser, mappedUser);
         });
 
         it('should login the new user', () => {
-          assert.calledWith(req.login, dbUser);
+          assert.calledWith(req.login, mappedUser);
         });
 
         it('should return the result object', () => {
@@ -281,6 +283,7 @@ describe('user-controller', () => {
 
           userService.verifyUser.resolves(dbUser);
           clientDataMappingService.mapWebsiteUser.returns(mappedUser);
+          userService.recordUserLogIn.withArgs(req.body.userId).resolves(dbUser);
 
           sut.handlePostUserRegistrationCompletion(req, res).catch(reject);
         }));
@@ -484,35 +487,37 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { email: 'john.doe@gmail.com' }
+          body: { email: 'john.doe@gmail.com', password: 'hushhush' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
         res.on('end', resolve);
 
         userService.getActiveUserByEmailAddress.resolves(user);
-        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
+        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId', verificationCode: 'je8ghFD7Gg88jkdhfjkh48' });
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
       }));
 
       it('should call userService.createPasswordResetRequest', () => {
-        assert.calledWith(userService.createPasswordResetRequest, user);
+        assert.calledWith(userService.createPasswordResetRequest, user, 'hushhush');
       });
 
       it('should call mailService.sendPasswordResetEmail', () => {
-        assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
+        assert.calledWith(mailService.sendPasswordResetEmail, {
+          email: user.email,
           displayName: user.displayName,
-          completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
+          verificationCode: 'je8ghFD7Gg88jkdhfjkh48'
+        });
       });
 
       it('should set the status code on the response to 201', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should return the result object', () => {
+      it('should return the passwordResetRequestId', () => {
         const response = res._getData();
-        expect(response).toEqual({});
+        expect(response).toEqual({ passwordResetRequestId: 'resetRequestId' });
       });
     });
 

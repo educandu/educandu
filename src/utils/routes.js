@@ -19,7 +19,6 @@ const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const userProfilePrefix = '/user-profile/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
-const completePasswordResetPrefix = '/complete-password-reset/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
@@ -52,10 +51,6 @@ function getAdminUrl({ tab } = {}) {
 
 function getBatchUrl(id) {
   return urlUtils.concatParts(batchesPath, id);
-}
-
-function getCompletePasswordResetUrl(passwordResetRequestId) {
-  return urlUtils.concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
 function getRoomMembershipConfirmationUrl(token) {
@@ -133,10 +128,6 @@ function isConnectExternalAccountPath(path) {
   return path === connectExternalAccountPath;
 }
 
-function isCompletePasswordResetPrefixPath(path) {
-  return path.startsWith(completePasswordResetPrefix);
-}
-
 export default {
   getUserProfileUrl,
   getDocsUrl,
@@ -144,7 +135,6 @@ export default {
   getDocumentRevisionUrl,
   getRoomUrl,
   getAdminUrl,
-  getCompletePasswordResetUrl,
   getRoomMembershipConfirmationUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
@@ -162,6 +152,5 @@ export default {
   getSamlAuthLoginCallbackPath,
   isApiPath,
   isResetPasswordPath,
-  isConnectExternalAccountPath,
-  isCompletePasswordResetPrefixPath
+  isConnectExternalAccountPath
 };

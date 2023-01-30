@@ -1,6 +1,7 @@
 import { ROLE } from '../constants.js';
 import { validate } from '../validation.js';
 import { describe, expect, it } from 'vitest';
+import uniqueId from '../../utils/unique-id.js';
 import { maxUserDisplayNameLength, minUserDisplayNameLength } from '../validation-constants.js';
 import {
   postUserRegistrationRequestBodySchema,
@@ -139,7 +140,7 @@ describe('postUserAccountBodySchema', () => {
 });
 
 describe('postUserPasswordResetRequestBodySchema', () => {
-  const validBody = { email };
+  const validBody = { email, password };
   const invalidTestCases = [...invalidEmailCases]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
 
@@ -151,7 +152,13 @@ describe('postUserPasswordResetRequestBodySchema', () => {
 
   describe('when email is missing', () => {
     it('should fail validation', () => {
-      expect(() => validate({}, postUserPasswordResetRequestBodySchema)).toThrow();
+      expect(() => validate({ password: validBody.password }, postUserPasswordResetRequestBodySchema)).toThrow();
+    });
+  });
+
+  describe('when password is missing', () => {
+    it('should fail validation', () => {
+      expect(() => validate({ email: validBody.email }, postUserPasswordResetRequestBodySchema)).toThrow();
     });
   });
 
@@ -163,12 +170,15 @@ describe('postUserPasswordResetRequestBodySchema', () => {
 });
 
 describe('postUserPasswordResetCompletionBodySchema', () => {
-  const validBody = { password, passwordResetRequestId: '123' };
+  const validBody = { passwordResetRequestId: uniqueId.create(), verificationCode: uniqueId.create() };
   const invalidTestCases = [
-    ...invalidPasswordCases,
     {
       description: 'passwordResetRequestId is empty',
-      body: { password, passwordResetRequestId: '' }
+      body: { passwordResetRequestId: '', verificationCode: validBody.verificationCode }
+    },
+    {
+      description: 'verificationCode is empty',
+      body: { passwordResetRequestId: validBody.passwordResetRequestId, verificationCode: '' }
     }
   ]
     .map(({ description, body }) => ({ description, body: { ...validBody, ...body } }));
@@ -179,7 +189,7 @@ describe('postUserPasswordResetCompletionBodySchema', () => {
     });
   });
 
-  describe('when password is missing', () => {
+  describe('when verificationCode is missing', () => {
     it('should fail validation', () => {
       const body = { passwordResetRequestId: '123' };
       expect(() => validate(body, postUserPasswordResetCompletionBodySchema)).toThrow();
@@ -188,7 +198,7 @@ describe('postUserPasswordResetCompletionBodySchema', () => {
 
   describe('when passwordResetRequestId is missing', () => {
     it('should fail validation', () => {
-      const body = { password };
+      const body = { verificationCode: '456' };
       expect(() => validate(body, postUserPasswordResetCompletionBodySchema)).toThrow();
     });
   });

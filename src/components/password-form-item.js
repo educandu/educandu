@@ -9,7 +9,7 @@ import { minUserPasswordLength } from '../domain/validation-constants.js';
 const FormItem = Form.Item;
 const { Password } = Input;
 
-function PasswordFormItem({ name, skipLengthValidation, onPressEnter, ...formItemProps }) {
+function PasswordFormItem({ name, label, skipLengthValidation, onPressEnter, ...formItemProps }) {
   const { t } = useTranslation('passwordFormItem');
 
   const passwordValidationRules = [
@@ -35,7 +35,7 @@ function PasswordFormItem({ name, skipLengthValidation, onPressEnter, ...formIte
   return (
     <FormItem
       name={name}
-      label={t('common:password')}
+      label={label || t('common:password')}
       rules={passwordValidationRules}
       {...formItemProps}
       >
@@ -46,11 +46,13 @@ function PasswordFormItem({ name, skipLengthValidation, onPressEnter, ...formIte
 
 PasswordFormItem.propTypes = {
   name: PropTypes.string.isRequired,
+  label: PropTypes.string,
   skipLengthValidation: PropTypes.bool,
   onPressEnter: PropTypes.func
 };
 
 PasswordFormItem.defaultProps = {
+  label: null,
   skipLengthValidation: false,
   onPressEnter: () => {}
 };

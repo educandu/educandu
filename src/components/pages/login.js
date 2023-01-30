@@ -23,6 +23,7 @@ function Login({ initialState, PageTemplate, SiteLogo }) {
             name="login-page-login-form"
             redirect={request.query.redirect}
             onLoginSucceeded={handleLoginSucceeded}
+            showInPanel
             showPasswordReset
             showLoginButtons
             samlIdentityProviders={initialState.samlIdentityProviders}

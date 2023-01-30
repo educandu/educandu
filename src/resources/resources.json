@@ -44,10 +44,6 @@
       "en": "There was an error updating your account.",
       "de": "Fehler beim Aktualisieren deines Kontos."
     },
-    "passwordResetEmailSent": {
-      "en": "The password reset link has been sent to {email}",
-      "de": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet"
-    },
     "closeAccountDetails": {
       "en": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
       "de": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden."
@@ -1200,21 +1196,21 @@
     }
   },
   "resetPassword": {
-    "requestReset": {
-      "en": "Request reset",
-      "de": "Reset anfordern"
+    "newPassword": {
+      "en": "New password",
+      "de": "Neues Kennwort"
     },
-    "resetInProgressConfirmation": {
-      "en": "We have received your request.",
-      "de": "Deine Anfrage ist bei uns eingegangen."
+    "requestPasswordReset": {
+      "en": "Change password",
+      "de": "Kennwort ändern"
     },
-    "resetInProgressNextSteps": {
-      "en": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
-      "de": "Falls die von dir angegebene E-Mail-Adresse bei uns registriert ist, wirst du in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n"
+    "completedMessageTitle": {
+      "en": "Password changed successfully!",
+      "de": "Kennwort erfolgreich geändert!"
     },
-    "redirectMessage": {
-      "en": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}.",
-      "de": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+    "completedMessageSubTitle": {
+      "en": "You are now logged in with your updated account. You can navigate to your personal dashboard by clicking the button below.",
+      "de": "Du bist nun mit deinem aktualisierten Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
     }
   },
   "roomMembershipConfirmation": {
@@ -1402,45 +1398,9 @@
     }
   },
   "registrationForm": {
-    "confirmTerms": {
-      "en": "Please confirm your agreement with the terms and conditions",
-      "de": "Bitte erkläre dich mit den Nutzungsbedingungen einverstanden"
-    },
-    "termsAndConditionsConfirmation": {
-      "en": "I have read the <0>terms and conditions</0> and agree to them.",
-      "de": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden."
-    },
     "register": {
       "en": "Register",
       "de": "Registrieren"
-    },
-    "step_enterData": {
-      "en": "Enter data",
-      "de": "Daten eingeben"
-    },
-    "step_enterCode": {
-      "en": "Confirm",
-      "de": "Bestätigen"
-    },
-    "step_completed": {
-      "en": "Done",
-      "de": "Fertig"
-    },
-    "verificationCode": {
-      "en": "Verification code",
-      "de": "Verifizierungs-Code"
-    },
-    "enterVerificationCode": {
-      "en": "Please enter your verification code",
-      "de": "Bitte gib deinen Verifizierungscode ein"
-    },
-    "verificationCodeIsInvalid": {
-      "en": "The verification code is invalid or expired",
-      "de": "Der Verifizierungscode ist ungültig oder abgelaufen"
-    },
-    "verificationMessage": {
-      "en": "We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.\n\nThe code is valid **for {validityInMinutes}**.\n",
-      "de": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n"
     },
     "completedMessageTitle": {
       "en": "Welcome!",
@@ -1449,10 +1409,6 @@
     "completedMessageSubTitle": {
       "en": "You are now logged in with your new account. You can navigate to your personal dashboard by clicking the button below.",
       "de": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
-    },
-    "gotoDashboard": {
-      "en": "Show my personal dashboard",
-      "de": "Mein persönliches Dashboard anzeigen"
     }
   },
   "fileEditorScreen": {
@@ -1807,6 +1763,40 @@
     "profileButton": {
       "en": "View profile",
       "de": "Profil ansehen"
+    }
+  },
+  "userStepsForm": {
+    "step_enterData": {
+      "en": "Enter data",
+      "de": "Daten eingeben"
+    },
+    "step_enterCode": {
+      "en": "Confirm",
+      "de": "Bestätigen"
+    },
+    "step_completed": {
+      "en": "Done",
+      "de": "Fertig"
+    },
+    "verificationCode": {
+      "en": "Verification code",
+      "de": "Verifizierungs-Code"
+    },
+    "enterVerificationCode": {
+      "en": "Please enter your verification code",
+      "de": "Bitte gib deinen Verifizierungscode ein"
+    },
+    "verificationCodeIsInvalid": {
+      "en": "The verification code is invalid or expired",
+      "de": "Der Verifizierungscode ist ungültig oder abgelaufen"
+    },
+    "verificationMessage": {
+      "en": "We have sent you an email with a verification code. Please copy this code into the textbox below and confirm your input.\n\nThe code is valid **for {validityInMinutes}**.\n",
+      "de": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n"
+    },
+    "gotoDashboard": {
+      "en": "Show my personal dashboard",
+      "de": "Mein persönliches Dashboard anzeigen"
     }
   },
   "abcNotation": {
@@ -3215,12 +3205,12 @@
       "de": "Dein Kennwort auf {appName}"
     },
     "passwordResetEmail.text": {
-      "en": "Hello {displayName}!\n\nYou have requested a password reset on {appName}.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "de": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf {appName} angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n"
+      "en": "Hello {displayName}!\n\nYou have requested a password change on {appName}.\nPlease complete the process using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "de": "Hallo {displayName}!\n\nDu hast die Änderung deines Kennworts auf {appName} angefordert.\nBitte schließe den Prozess mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n"
     },
     "passwordResetEmail.markdown": {
-      "en": "Hello {displayName}!\n\nYou have requested a password reset on {appName}. \\\nTo assign a new password, please follow this link: [Change password]({completionLink}).\n\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "de": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf {appName} angefordert. \\\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: [Kennwort ändern]({completionLink}).\n\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n"
+      "en": "Hello {displayName}!\n\nYou have requested a password change on {appName}. \\\nPlease complete the process using the following code:\n\n**`{verificationCode}`**\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "de": "Hallo {displayName}!\n\nDu hast die Änderung deines Kennworts auf {appName} angefordert.  \\\nBitte schließe den Prozess mit dem folgendem Code ab:\n\n**`{verificationCode}`**\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n"
     },
     "roomInvitationEmail.subject": {
       "en": "You have been invited to a room",

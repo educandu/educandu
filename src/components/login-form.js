@@ -26,6 +26,7 @@ export default function LoginForm({
   fixedEmail,
   samlIdentityProviders,
   connectExternalAccount,
+  showInPanel,
   showLoginButtons,
   showPasswordReset,
   onLoginStarted,
@@ -135,7 +136,7 @@ export default function LoginForm({
 
   return (
     <div className="LoginForm">
-      <div className={classNames('LoginForm-internalLogin', { 'u-panel': showExternalLogin })}>
+      <div className={classNames('LoginForm-internalLogin', { 'u-panel': showInPanel })}>
         <Form
           form={form}
           name={name}
@@ -202,6 +203,7 @@ LoginForm.propTypes = {
   fixedEmail: PropTypes.string,
   samlIdentityProviders: PropTypes.arrayOf(samlIdentityProviderClientShape),
   connectExternalAccount: PropTypes.bool,
+  showInPanel: PropTypes.bool,
   showLoginButtons: PropTypes.bool,
   showPasswordReset: PropTypes.bool,
   onLoginFailed: PropTypes.func,
@@ -217,6 +219,7 @@ LoginForm.defaultProps = {
   fixedEmail: null,
   samlIdentityProviders: [],
   connectExternalAccount: false,
+  showInPanel: false,
   showLoginButtons: false,
   showPasswordReset: false,
   onLoginFailed: () => {},

@@ -54,21 +54,21 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  requestPasswordReset({ email }) {
+  requestPasswordReset({ email, password }) {
     return this.httpClient
       .post(
         '/api/v1/users/request-password-reset',
-        { email },
+        { email, password },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  completePasswordReset({ passwordResetRequestId, password }) {
+  completePasswordReset({ passwordResetRequestId, verificationCode }) {
     return this.httpClient
       .post(
         '/api/v1/users/complete-password-reset',
-        { passwordResetRequestId, password },
+        { passwordResetRequestId, verificationCode },
         { responseType: 'json' }
       )
       .then(res => res.data);
