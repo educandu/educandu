@@ -12,8 +12,6 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-const FormItem = Form.Item;
-
 function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
   const [user, setUser] = useState(null);
   const { t } = useTranslation('completePasswordReset');
@@ -34,38 +32,20 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
     completePasswordReset(password);
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0
-      },
-      sm: {
-        span: 16,
-        offset: 8
-      }
-    }
-  };
-
   const completionForm = (
-    <div className="CompletePasswordResetPage-form">
-      <Form onFinish={handleFinish} scrollToFirstError>
-        <PasswordFormItem name="password" {...formItemLayout} />
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('savePassword')}</Button>
-        </FormItem>
+    <div className="CompletePasswordResetPage-form u-panel">
+      <Form onFinish={handleFinish} scrollToFirstError layout="vertical">
+        <PasswordFormItem name="password" />
       </Form>
+      <Button
+        block
+        size="large"
+        type="primary"
+        htmlType="submit"
+        className="CompletePasswordResetPage-button"
+        >
+        {t('savePassword')}
+      </Button>
     </div>
   );
 

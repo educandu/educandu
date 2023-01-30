@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useSetUser } from './user-context.js';
@@ -135,7 +134,7 @@ export default function LoginForm({
 
   return (
     <div className="LoginForm">
-      <div className={classNames('LoginForm-internalLogin', { 'u-panel': showExternalLogin })}>
+      <div className="LoginForm-internalLogin u-panel">
         <Form
           form={form}
           name={name}
