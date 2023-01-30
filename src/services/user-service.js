@@ -17,7 +17,7 @@ import {
   SAVE_USER_RESULT,
   USER_ACTIVITY_TYPE,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS,
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES,
   ERROR_CODES
 } from '../domain/constants.js';
 
@@ -443,11 +443,14 @@ class UserService {
     return doesPasswordMatch ? user : null;
   }
 
-  async createPasswordResetRequest(user) {
+  async createPasswordResetRequest(user, newPassword) {
+    const newPasswordHash = await this._hashPassword(newPassword);
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
+      passwordHash: newPasswordHash,
+      verificationCode: uniqueId.create(),
+      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES, 'minutes').toDate()
     };
 
     await this.transactionRunner.run(async session => {
@@ -460,24 +463,29 @@ class UserService {
     return request;
   }
 
-  async completePasswordResetRequest(passwordResetRequestId, password) {
+  async completePasswordResetRequest(passwordResetRequestId, verificationCode) {
     logger.info(`Completing password reset request ${passwordResetRequestId}`);
-    const request = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
-    if (!request) {
+    const resetRequest = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
+    if (!resetRequest) {
       logger.info(`No password reset request has been found for id ${passwordResetRequestId}. Aborting request`);
-      return false;
+      return null;
     }
 
-    const user = await this.userStore.getUserById(request.userId);
+    const user = await this.userStore.getUserById(resetRequest.userId);
     if (!user) {
-      logger.info(`No user has been found for id ${passwordResetRequestId}. Aborting request`);
-      return false;
+      logger.info(`No user has been found for id ${resetRequest.userId}. Aborting request`);
+      return null;
     }
 
-    user.passwordHash = await this._hashPassword(password);
+    if (resetRequest.verificationCode !== verificationCode) {
+      logger.info(`Incorrect verification code ${verificationCode} for password reset request ${passwordResetRequestId}. Aborting request`);
+      return null;
+    }
 
     logger.info(`Updating user ${user._id} with new password`);
+    user.passwordHash = resetRequest.passwordHash;
     await this.userStore.saveUser(user);
+
     logger.info(`Deleting password reset request ${passwordResetRequestId}`);
     await this.passwordResetRequestStore.deleteRequestById(passwordResetRequestId);
     return user;

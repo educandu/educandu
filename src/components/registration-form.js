@@ -31,26 +31,22 @@ function RegistrationForm() {
   };
 
   const handleEnterDataFinish = async ({ email, password, displayName }) => {
-    try {
-      const { result, user } = await userApiClient.requestRegistration({
-        email: email.trim(),
-        password,
-        displayName: displayName.trim()
-      });
+    const { result, user } = await userApiClient.requestRegistration({
+      email: email.trim(),
+      password,
+      displayName: displayName.trim()
+    });
 
-      switch (result) {
-        case SAVE_USER_RESULT.success:
-          setCreatedUser(user);
-          return true;
-        case SAVE_USER_RESULT.duplicateEmail:
-          setForbiddenEmails(prevState => [...prevState, email.toLowerCase()]);
-          setTimeout(() => enterDataForm.validateFields(['email'], { force: true }), 0);
-          return false;
-        default:
-          throw new Error(`Unknown result: ${result}`);
-      }
-    } catch (error) {
-      return false;
+    switch (result) {
+      case SAVE_USER_RESULT.success:
+        setCreatedUser(user);
+        return true;
+      case SAVE_USER_RESULT.duplicateEmail:
+        setForbiddenEmails(prevState => [...prevState, email.toLowerCase()]);
+        setTimeout(() => enterDataForm.validateFields(['email'], { force: true }), 0);
+        return false;
+      default:
+        throw new Error(`Unknown result: ${result}`);
     }
   };
 

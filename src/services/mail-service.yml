@@ -29,10 +29,10 @@ registrationVerificationEmail.html:
     You have registered with educandu as {displayName}.
     <br/>
     Please complete your registration using the following code:
-    <br>
-    <br>
+    <br/>
+    <br/>
     <b><pre>{verificationCode}</pre></b>
-    <br />
+    <br/>
     <br/>
     The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
     </p>
@@ -44,10 +44,10 @@ registrationVerificationEmail.html:
     Du hast dich als {displayName} auf educandu registriert.
     <br/>
     Bitte schließe deine Registrierung mit dem folgendem Code ab:
-    <br>
-    <br>
+    <br/>
+    <br/>
     <b><pre>{verificationCode}</pre></b>
-    <br />
+    <br/>
     <br/>
     Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
     </p>
@@ -58,20 +58,52 @@ passwordResetEmail.text:
   en: |
     Hello {displayName}!
 
-    You have requested a password reset on educandu.
-    To assign a new password, please follow this link: {completionLink}
-    The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.
+    You have requested a password change on educandu.
+    Please complete the process using the following code:
+
+    {verificationCode}
+
+    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
   de: |
     Hallo {displayName}!
 
-    Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.
-    Zur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}
-    Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.
+    Du hast die Änderung deines Kennworts auf educandu angefordert.
+    Bitte schließe den Prozess mit dem folgendem Code ab:
+
+    {verificationCode}
+
+    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
 passwordResetEmail.html:
   en: |
-    <p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href="{completionLink}">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>
+    <p>
+    Hello {displayName}!
+    <br/>
+    <br/>
+    You have requested a password change on educandu.
+    <br/>
+    Please complete the process using the following code:
+    <br/>
+    <br/>
+    <b><pre>{verificationCode}</pre></b>
+    <br/>
+    <br/>
+    The code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.
+    </p>
   de: |
-    <p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href="{completionLink}">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>
+    <p>
+    Hallo {displayName}!
+    <br/>
+    <br/>
+    Du hast die Änderung deines Kennworts auf educandu angefordert.
+    <br/>
+    Bitte schließe den Prozess mit dem folgendem Code ab:
+    <br/>
+    <br/>
+    <b><pre>{verificationCode}</pre></b>
+    <br/>
+    <br/>
+    Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
+    </p>
 roomInvitationEmail.subject:
   en: You have been invited to a room
   de: Du wurdest in einen Raum eingeladen.

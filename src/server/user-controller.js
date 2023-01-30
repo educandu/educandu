@@ -270,12 +270,13 @@ class UserController {
       });
     }
 
+    const updatedUser = await this.userService.recordUserLogIn(user._id);
     await new Promise((resolve, reject) => {
-      req.login(user, err => err ? reject(err) : resolve());
+      req.login(updatedUser, err => err ? reject(err) : resolve());
     });
 
     res.status(201).send({
-      user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null,
+      user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
       connectedExternalAccountId: user ? connectedExternalAccountId : null
     });
   }
@@ -348,28 +349,38 @@ class UserController {
   }
 
   async handlePostUserPasswordResetRequest(req, res) {
-    const { email } = req.body;
+    const { email, password } = req.body;
     const user = await this.userService.getActiveUserByEmailAddress(email);
 
+    let createdRequest;
     if (user) {
-      const resetRequest = await this.userService.createPasswordResetRequest(user);
-      const { origin } = requestUtils.getHostInfo(req);
-      const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
-      await this.mailService.sendPasswordResetEmail({ email: user.email, displayName: user.displayName, completionLink });
+      createdRequest = await this.userService.createPasswordResetRequest(user, password);
+      await this.mailService.sendPasswordResetEmail({
+        email: user.email,
+        displayName: user.displayName,
+        verificationCode: createdRequest.verificationCode
+      });
     }
 
-    res.status(201).send({});
+    res.status(201).send({ passwordResetRequestId: createdRequest?._id });
   }
 
   async handlePostUserPasswordResetCompletion(req, res) {
-    const { passwordResetRequestId, password } = req.body;
-    const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
+    const { passwordResetRequestId, verificationCode } = req.body;
+    const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, verificationCode);
+
     if (!user) {
       throw new NotFound();
     }
 
-    res.status(201).send({ user });
+    const updatedUser = await this.userService.recordUserLogIn(user._id);
+    await new Promise((resolve, reject) => {
+      req.login(updatedUser, err => err ? reject(err) : resolve());
+    });
 
+    res.status(201).send({
+      user: this.clientDataMappingService.mapWebsiteUser(updatedUser)
+    });
   }
 
   async handlePostUserRoles(req, res) {
@@ -534,7 +545,6 @@ class UserController {
         || routes.isApiPath(req.originalUrl)
         || routes.isResetPasswordPath(req.originalUrl)
         || routes.isConnectExternalAccountPath(req.originalUrl)
-        || routes.isCompletePasswordResetPrefixPath(req.originalUrl)
       ) {
         return next();
       }
@@ -556,9 +566,11 @@ class UserController {
           return res.redirect(routes.getConnectExternalAccountPath(redirect));
         }
 
+        const updatedUser = await this.userService.recordUserLogIn(user._id);
         await new Promise((resolve, reject) => {
-          req.login(user, err => err ? reject(err) : resolve());
+          req.login(updatedUser, err => err ? reject(err) : resolve());
         });
+
         delete req.session.externalAccount;
         return res.redirect(redirect ? redirect : routes.getHomeUrl());
       } catch (err) {
@@ -581,8 +593,6 @@ class UserController {
     router.get('/login', (req, res) => this.handleGetLoginPage(req, res));
 
     router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
-
-    router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
 
     router.get('/connect-external-account', (req, res) => this.handleGetConnectExternalAccountPage(req, res));
   }

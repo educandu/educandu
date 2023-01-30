@@ -974,28 +974,6 @@
     }
   },
   {
-    "namespace": "completePasswordReset",
-    "language": "en",
-    "resources": {
-      "savePassword": "Save password",
-      "passwordChangedSuccessfully": "Your password was changed successfully.",
-      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}.",
-      "passwordResetFailure": "The password reset code is invalid or expired.",
-      "homeLink": "Home"
-    }
-  },
-  {
-    "namespace": "completePasswordReset",
-    "language": "de",
-    "resources": {
-      "savePassword": "Kennwort speichern",
-      "passwordChangedSuccessfully": "Dein Kennwort wurde erfolgreich geändert.",
-      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.",
-      "passwordResetFailure": "Der Kennwortänderungs-Code ist ungültig oder abgelaufen.",
-      "homeLink": "Home"
-    }
-  },
-  {
     "namespace": "connectExternalAccount",
     "language": "en",
     "resources": {
@@ -1109,20 +1087,20 @@
     "namespace": "resetPassword",
     "language": "en",
     "resources": {
-      "requestReset": "Request reset",
-      "resetInProgressConfirmation": "We have received your request.",
-      "resetInProgressNextSteps": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
-      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+      "newPassword": "New password",
+      "requestPasswordReset": "Change password",
+      "completedMessageTitle": "Your password was changed successfully.",
+      "completedMessageSubTitle": "TBD"
     }
   },
   {
     "namespace": "resetPassword",
     "language": "de",
     "resources": {
-      "requestReset": "Reset anfordern",
-      "resetInProgressConfirmation": "Deine Anfrage ist bei uns eingegangen.",
-      "resetInProgressNextSteps": "Falls die von dir angegebene E-Mail-Adresse bei uns registriert ist, wirst du in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
-      "redirectMessage": "Du wirst in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+      "newPassword": "Neues Kennwort",
+      "requestPasswordReset": "Kennwort ändern",
+      "completedMessageTitle": "Dein Kennwort wurde erfolgreich geändert.",
+      "completedMessageSubTitle": "TBD"
     }
   },
   {
@@ -2727,10 +2705,10 @@
     "resources": {
       "registrationVerificationEmail.subject": "Welcome to educandu!",
       "registrationVerificationEmail.text": "Welcome!\n\nYou have registered with educandu as {displayName}.\nPlease complete your registration using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
-      "registrationVerificationEmail.html": "<p>\nWelcome!\n<br/>\n<br/>\nYou have registered with educandu as {displayName}.\n<br/>\nPlease complete your registration using the following code:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n</p>\n",
+      "registrationVerificationEmail.html": "<p>\nWelcome!\n<br/>\n<br/>\nYou have registered with educandu as {displayName}.\n<br/>\nPlease complete your registration using the following code:\n<br/>\n<br/>\n<b><pre>{verificationCode}</pre></b>\n<br/>\n<br/>\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n</p>\n",
       "passwordResetEmail.subject": "Your password for educandu",
-      "passwordResetEmail.text": "Hello {displayName}!\n\nYou have requested a password reset on educandu.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "passwordResetEmail.html": "<p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href=\"{completionLink}\">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
+      "passwordResetEmail.text": "Hello {displayName}!\n\nYou have requested a password change on educandu.\nPlease complete the process using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "passwordResetEmail.html": "<p>\nHello {displayName}!\n<br/>\n<br/>\nYou have requested a password change on educandu.\n<br/>\nPlease complete the process using the following code:\n<br/>\n<br/>\n<b><pre>{verificationCode}</pre></b>\n<br/>\n<br/>\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n</p>\n",
       "roomInvitationEmail.subject": "You have been invited to a room",
       "roomInvitationEmail.text": "Hello!\n\nUser {ownerName} has invited you to the room {roomName}.\nTo accept the invitation, please follow this link: {invitationLink}\nThe link remains valid for {days, plural, =1 {one day} other {# days}}.\n",
       "roomInvitationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href=\"{invitationLink}\">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>\n",
@@ -2751,10 +2729,10 @@
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
       "registrationVerificationEmail.text": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>\nWillkommen!\n<br/>\n<br/>\nDu hast dich als {displayName} auf educandu registriert.\n<br/>\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n</p>\n",
+      "registrationVerificationEmail.html": "<p>\nWillkommen!\n<br/>\n<br/>\nDu hast dich als {displayName} auf educandu registriert.\n<br/>\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n<br/>\n<br/>\n<b><pre>{verificationCode}</pre></b>\n<br/>\n<br/>\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n</p>\n",
       "passwordResetEmail.subject": "Dein Kennwort auf educandu",
-      "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "passwordResetEmail.html": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "passwordResetEmail.text": "Hallo {displayName}!\n\nDu hast die Änderung deines Kennworts auf educandu angefordert.\nBitte schließe den Prozess mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n",
+      "passwordResetEmail.html": "<p>\nHallo {displayName}!\n<br/>\n<br/>\nDu hast die Änderung deines Kennworts auf educandu angefordert.\n<br/>\nBitte schließe den Prozess mit dem folgendem Code ab:\n<br/>\n<br/>\n<b><pre>{verificationCode}</pre></b>\n<br/>\n<br/>\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n</p>\n",
       "roomInvitationEmail.subject": "Du wurdest in einen Raum eingeladen.",
       "roomInvitationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n",
       "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung anzunehmen, folge bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",

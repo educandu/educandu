@@ -10,7 +10,7 @@ import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
 import {
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
 } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -54,8 +54,8 @@ class MailService {
     return this._sendMail(message);
   }
 
-  sendPasswordResetEmail({ email, displayName, completionLink }) {
-    logger.info(`Creating email with password reset request completion link ${completionLink}`);
+  sendPasswordResetEmail({ email, displayName, verificationCode }) {
+    logger.info(`Creating email with password reset request verification code ${verificationCode}`);
 
     const subject = this.translators
       .map(t => t('mailService:passwordResetEmail.subject'))
@@ -64,16 +64,16 @@ class MailService {
     const text = this.translators
       .map(t => t('mailService:passwordResetEmail.text', {
         displayName,
-        completionLink,
-        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
       }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:passwordResetEmail.html', {
         displayName: htmlescape(displayName),
-        completionLink,
-        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+        verificationCode,
+        minutes: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES
       }))
       .join('\n');
 
