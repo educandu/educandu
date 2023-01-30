@@ -3199,28 +3199,28 @@
   },
   "mailService": {
     "registrationVerificationEmail.subject": {
-      "en": "Welcome to educandu!",
-      "de": "Willkommen auf educandu!"
+      "en": "Welcome to {appName}!",
+      "de": "Willkommen auf {appName}!"
     },
     "registrationVerificationEmail.text": {
-      "en": "Welcome!\n\nYou have registered with educandu as {displayName}.\nPlease complete your registration using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
-      "de": "Willkommen!\n\nDu hast dich als {displayName} auf educandu registriert.\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n"
+      "en": "Welcome!\n\nYou have registered with {appName} as {displayName}.\nPlease complete your registration using the following code:\n\n{verificationCode}\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "de": "Willkommen!\n\nDu hast dich als {displayName} auf {appName} registriert.\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n\n{verificationCode}\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n"
     },
-    "registrationVerificationEmail.html": {
-      "en": "<p>\nWelcome!\n<br/>\n<br/>\nYou have registered with educandu as {displayName}.\n<br/>\nPlease complete your registration using the following code:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n</p>\n",
-      "de": "<p>\nWillkommen!\n<br/>\n<br/>\nDu hast dich als {displayName} auf educandu registriert.\n<br/>\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n<br>\n<br>\n<b><pre>{verificationCode}</pre></b>\n<br />\n<br/>\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n</p>\n"
+    "registrationVerificationEmail.markdown": {
+      "en": "Welcome!\n\nYou have registered with {appName} as {displayName}. \\\nPlease complete your registration using the following code:\n\n**`{verificationCode}`**\n\nThe code remains valid for {minutes, plural, =1 {one minute} other {# minutes}}.\n",
+      "de": "Willkommen!\n\nDu hast dich als {displayName} auf {appName} registriert. \\\nBitte schließe deine Registrierung mit dem folgendem Code ab:\n\n**`{verificationCode}`**\n\nDer Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.\n"
     },
     "passwordResetEmail.subject": {
-      "en": "Your password for educandu",
-      "de": "Dein Kennwort auf educandu"
+      "en": "Your password for {appName}",
+      "de": "Dein Kennwort auf {appName}"
     },
     "passwordResetEmail.text": {
-      "en": "Hello {displayName}!\n\nYou have requested a password reset on educandu.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
-      "de": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n"
+      "en": "Hello {displayName}!\n\nYou have requested a password reset on {appName}.\nTo assign a new password, please follow this link: {completionLink}\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
+      "de": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf {appName} angefordert.\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n"
     },
-    "passwordResetEmail.html": {
-      "en": "<p>Hello {displayName}!<br/><br/>You have requested a password reset on educandu.<br/>To assign a new password, please follow this link: <a href=\"{completionLink}\">change password</a>.<br/>The link remains valid for {hours, plural, =1 {one hour} other {# hours}}.</p>\n",
-      "de": "<p>Hallo {displayName}!<br/><br/>Du hast das Zurücksetzen deines Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folge bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n"
+    "passwordResetEmail.markdown": {
+      "en": "Hello {displayName}!\n\nYou have requested a password reset on {appName}. \\\nTo assign a new password, please follow this link: [Change password]({completionLink}).\n\nThe link remains valid for {hours, plural, =1 {one hour} other {# hours}}.\n",
+      "de": "Hallo {displayName}!\n\nDu hast das Zurücksetzen deines Kennworts auf {appName} angefordert. \\\nZur Vergabe eines neuen Kennworts folge bitte diesem Link: [Kennwort ändern]({completionLink}).\n\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n"
     },
     "roomInvitationEmail.subject": {
       "en": "You have been invited to a room",
@@ -3230,9 +3230,9 @@
       "en": "Hello!\n\nUser {ownerName} has invited you to the room {roomName}.\nTo accept the invitation, please follow this link: {invitationLink}\nThe link remains valid for {days, plural, =1 {one day} other {# days}}.\n",
       "de": "Hallo!\n\nDer Benutzer {ownerName} hat dich in den Raum {roomName} eingeladen.\nUm die Einladung anzunehmen, folge bitte diesem Link: {invitationLink}\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n"
     },
-    "roomInvitationEmail.html": {
-      "en": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href=\"{invitationLink}\">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>\n",
-      "de": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat dich in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung anzunehmen, folge bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n"
+    "roomInvitationEmail.markdown": {
+      "en": "Hello!\n\nUser **{ownerName}** has invited you to the room **{roomName}**. \\\nTo accept the invitation, please follow this link: [Join room]({invitationLink}).\n\nThe link remains valid for {days, plural, =1 {one day} other {# days}}.\n",
+      "de": "Hallo!\n\nDer Benutzer **{ownerName}** hat dich in den Raum **{roomName}** eingeladen. \\\nUm die Einladung anzunehmen, folge bitte diesem Link: [Raum beitreten]({invitationLink}).\n\nDer Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.\n"
     },
     "roomDeletionNotificationEmail.subject": {
       "en": "A room you were a member of has been deleted",
@@ -3242,9 +3242,9 @@
       "en": "Hello!\n\nUser {ownerName} has deleted the room {roomName}.\n",
       "de": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n"
     },
-    "roomDeletionNotificationEmail.html": {
-      "en": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.",
-      "de": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht."
+    "roomDeletionNotificationEmail.markdown": {
+      "en": "Hello!\n\nUser **{ownerName}** has deleted the room **{roomName}**.\n",
+      "de": "Hallo!\n\nDer Benutzer **{ownerName}** hat den Raum **{roomName}** gelöscht.\n"
     },
     "roomMemberRemovalNotificationEmail.subject": {
       "en": "Your membership to a room has ended",
@@ -3254,9 +3254,9 @@
       "en": "Hello {displayName}!\n\nUser {ownerName} has ended your membership in room {roomName}.\n",
       "de": "Hallo {displayName}!\n\nDer Benutzer {ownerName} hat deine Mitgliedschaft im Raum {roomName} beendet.\n"
     },
-    "roomMemberRemovalNotificationEmail.html": {
-      "en": "<p>Hello {displayName}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.",
-      "de": "<p>Hallo {displayName}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Mitgliedschaft im Raum <b>{roomName}</b> beendet."
+    "roomMemberRemovalNotificationEmail.markdown": {
+      "en": "Hello {displayName}!\n\nUser **{ownerName}** has ended your membership in room **{roomName}**.\n",
+      "de": "Hallo {displayName}!\n\nDer Benutzer **{ownerName}** hat deine Mitgliedschaft im Raum **{roomName}** beendet.\n"
     },
     "roomInvitationDeletionNotificationEmail.subject": {
       "en": "Your membership invitation to a room has been revoked",
@@ -3266,9 +3266,9 @@
       "en": "Hello!\n\nUser {ownerName} has revoked your membership invitation to room {roomName}.\n",
       "de": "Hallo!\n\nDer Benutzer {ownerName} hat deine Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n"
     },
-    "roomInvitationDeletionNotificationEmail.html": {
-      "en": "<p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>.",
-      "de": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat deine Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."
+    "roomInvitationDeletionNotificationEmail.markdown": {
+      "en": "Hello\n\nUser **{ownerName}** has revoked your membership invitation to room **{roomName}**.\n",
+      "de": "Hallo\n\nDer Benutzer **{ownerName}** hat deine Einladung zur Mitgliedschaft in dem Raum **{roomName}** zurückgezogen.\n"
     }
   },
   "mimeTypeHelper": {
