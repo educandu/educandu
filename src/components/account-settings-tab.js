@@ -120,15 +120,6 @@ function AccountSettingsTab() {
     dialogs.confirmWithPassword(user.email, () => saveAccountAccessData({ email }));
   };
 
-  const handleResetPasswordClick = async () => {
-    try {
-      await userApiClient.requestPasswordReset({ email: user.email });
-      message.success(t('passwordResetEmailSent', { email: user.email }));
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    }
-  };
-
   const handleCloseAccountClick = () => {
     try {
       confirmCloseAccount(t, async () => {
@@ -211,7 +202,7 @@ function AccountSettingsTab() {
             emailsInUse={accountAccessFormState.forbiddenEmails}
             />
           <FormItem>
-            <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
+            <a href={routes.getResetPasswordUrl()}>{t('resetPassword')}</a>
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!accountAccessFormState.isDirty}>{t('common:save')}</Button>

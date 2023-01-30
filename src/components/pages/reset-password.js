@@ -1,5 +1,6 @@
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import EmailFormItem from '../email-form-item.js';
 import UserStepsForm from '../user-steps-form.js';
@@ -10,6 +11,7 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import { PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES } from '../../domain/constants.js';
 
 function ResetPassword({ PageTemplate, SiteLogo }) {
+  const user = useUser();
   const [enterDataForm] = Form.useForm();
   const { t } = useTranslation('resetPassword');
   const userApiClient = useService(UserApiClient);
@@ -44,7 +46,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
             enterDataForm={enterDataForm}
             enterDataFormContent={(
               <Fragment>
-                <EmailFormItem name="email" />
+                <EmailFormItem name="email" email={user?.email} />
                 <PasswordFormItem name="password" label={t('newPassword')} />
               </Fragment>
             )}
