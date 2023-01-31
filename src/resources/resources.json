@@ -3154,6 +3154,10 @@
       "en": "Create document",
       "de": "Dokument erstellen"
     },
+    "newDocument": {
+      "en": "New document",
+      "de": "Neues Dokument"
+    },
     "createRoom": {
       "en": "Create room",
       "de": "Raum erstellen"
