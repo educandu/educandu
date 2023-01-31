@@ -82,7 +82,6 @@ function HistoryControlPanel({
     <div className="HistoryControlPanel-rightSide">
       <Button
         className="HistoryControlPanel-button"
-        size="small"
         icon={<PaperClipOutlined />}
         onClick={onPermalinkRequest}
         ghost
@@ -93,7 +92,6 @@ function HistoryControlPanel({
         <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
           <Button
             className="HistoryControlPanel-button"
-            size="small"
             icon={<ReloadOutlined />}
             onClick={onRestoreRevision}
             disabled={isSelectedRevisionLatestRevision}

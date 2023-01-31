@@ -63,7 +63,6 @@ function EditControlPanel({
         <Tooltip title={canEditMetadata ? null : t('editMetadataDisabledTooltip')}>
           <Button
             ghost
-            size="small"
             icon={<EditIcon />}
             disabled={!canEditMetadata}
             className="EditControlPanel-editButton"
@@ -80,7 +79,6 @@ function EditControlPanel({
     <div className="EditControlPanel-rightSide">
       <Button
         ghost
-        size="small"
         loading={isSaving}
         icon={<SaveIcon />}
         disabled={!isDirtyState}
