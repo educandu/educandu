@@ -13,7 +13,7 @@ const documentMetadataProjection = {
   roomId: 1
 };
 
-const userProfileDocumentMetadataProjection = {
+const contributedDocumentMetadataProjection = {
   _id: 1,
   title: 1,
   description: 1,
@@ -75,7 +75,7 @@ class DocumentStore {
   getDocumentsByContributingUser(contributingUserId, { session } = {}) {
     return this.collection.find(
       { contributors: contributingUserId },
-      { projection: userProfileDocumentMetadataProjection, session }
+      { projection: contributedDocumentMetadataProjection, session }
     ).toArray();
   }
 
