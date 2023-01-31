@@ -414,15 +414,15 @@
   "documentsTab": {
     "info": {
       "en": "Here you can find the public documents you have created or contributed to.",
-      "de": "Hier findest du die öffentliche Dokumente, die du erstellt oder bearbeitet hast."
+      "de": "Hier findest du die öffentlichen Dokumente, die du erstellt oder bearbeitet hast."
     },
     "noDocuments": {
       "en": "You have not contributed to any public documents yet.",
-      "de": "Du hast noch keine öffentliche Dokumente bearbeitet."
+      "de": "Du hast noch keine öffentlichen Dokumente bearbeitet."
     },
     "ownDocumentOnly": {
-      "en": "My documents only",
-      "de": "Nur meine Dokumente"
+      "en": "Only documents created by me",
+      "de": "Nur Dokumente, die ich erstellt habe"
     },
     "documentsCount": {
       "en": "{count, plural, =1 {# document} other {# documents}}\n",
