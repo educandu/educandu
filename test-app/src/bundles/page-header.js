@@ -70,7 +70,7 @@ function PageHeader({ onUiLanguageClick }) {
     },
     {
       key: 'logout',
-      label: t('common:logout'),
+      label: t('common:logOut'),
       icon: <LogoutIcon />,
       onClick: () => { window.location = routes.getLogoutUrl(); },
       showWhen: !!user

@@ -2,6 +2,3 @@ diagramNet:
   name:
     en: Diagram
     de: Diagramm
-  editExternally:
-    en: Edit (opens external editor)
-    de: Bearbeiten (öffnet externen Editor)

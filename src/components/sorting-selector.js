@@ -41,10 +41,16 @@ function SortingSelector({ sorting, options, size, onChange }) {
         </Tooltip>
       </Dropdown>
 
-      <Tooltip placement="top" title={t('changeSortingDirection')}>
-        {sorting.direction === 'asc' && <ArrowUpOutlined className="SortingSelector-direction" onClick={handleUpArrowClick} /> }
-        {sorting.direction === 'desc' && <ArrowDownOutlined className="SortingSelector-direction" onClick={handleDownArrowClick} /> }
-      </Tooltip>
+      {sorting.direction === 'asc' && (
+        <Tooltip placement="top" title={t('changeSortingDirectionDescending')}>
+          <ArrowUpOutlined className="SortingSelector-direction" onClick={handleUpArrowClick} />
+        </Tooltip>
+      )}
+      {sorting.direction === 'desc' && (
+        <Tooltip placement="top" title={t('changeSortingDirectionAscending')}>
+          <ArrowDownOutlined className="SortingSelector-direction" onClick={handleDownArrowClick} />
+        </Tooltip>
+      )}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import ResourceManager from './resource-manager.js';
 const translationObjectOriginal = {
   loginLogout: {
     login: {
-      en: 'Login',
+      en: 'Log in',
       de: 'Anmelden'
     },
     logout: {
@@ -30,7 +30,7 @@ const expectedResourcesOriginal = [
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      login: 'Login',
+      login: 'Log in',
       logout: 'Logout'
     }
   },
@@ -49,7 +49,7 @@ const expectedResourcesOverriden = [
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      login: 'Login',
+      login: 'Log in',
       logout: 'Say goodbye'
     }
   },

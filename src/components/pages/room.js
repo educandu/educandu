@@ -229,7 +229,7 @@ export default function Room({ PageTemplate, initialState }) {
     const items = [
       {
         key: 'clone',
-        label: t('common:clone'),
+        label: t('common:duplicate'),
         icon: <DuplicateIcon className="u-dropdown-icon" />
       },
       {

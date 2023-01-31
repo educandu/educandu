@@ -2,9 +2,9 @@ documentMetadataModal:
   newDocument:
     en: New document
     de: Neues Dokument
-  cloneDocument:
-    en: Clone document
-    de: Dokument klonen
+  duplicateDocument:
+    en: Duplicate document
+    de: Dokument duplizieren
   editDocument:
     en: Edit document metadata
     de: Dokument-Metadaten bearbeiten
@@ -68,10 +68,10 @@ documentMetadataModal:
   sequenceInfo:
     en: |
       You can create multiple documents at once.
-      A sequential number is appended to the title or URL path for each document.
+      A sequential number is appended to the title or slug for each document.
     de: |
       Du kannst mehrere Dokumente gleichzeitig anlegen.
-      An den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.
+      An den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt.
   archivedInfo:
     en:
       Archived documents can not be edited and can not be discovered through search.
@@ -91,8 +91,8 @@ documentMetadataModal:
     en: You can restrict the parts of the document the open community can contribute to.
     de: Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.
   cloningStrategy:
-    en: Where should the cloned document be created?
-    de: Wo soll das geklonte Dokument erstellt werden?
+    en: Where should the duplicated document be created?
+    de: Wo soll das duplizierte Dokument erstellt werden?
   cloningStrategy_cloneWithinArea_fromRoom:
     en: in the same room
     de: im selben Raum

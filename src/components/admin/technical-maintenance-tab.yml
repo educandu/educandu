@@ -6,20 +6,20 @@ technicalMaintenanceTab:
     en: Documents regeneration
     de: Dokumente neu erstellen
   batchSectionDescription_document-regeneration:
-    en: Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.
-    de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
+    en: Re-create all documents based on their document versions. This tasks updates database data, possibly resulting in data corrections.
+    de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Versionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
   batchSectionHeader_document-validation:
     en: Documents validation
     de: Dokumente validieren
   batchSectionDescription_document-validation:
-    en: Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.
-    de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten.
+    en: Verify that all document versions and documents in the database contain valid data. This task does not change any database data.
+    de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Versionen in der Datenbank durch. Dieser Task ändert keine Daten.
   batchSectionHeader_cdn-resources-consolidation:
     en: Consolidation of resources within the internal storage
     de: Ressourcen auf dem internen Speicher konsolidieren
   batchSectionDescription_cdn-resources-consolidation:
-    en: Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.
-    de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
+    en: Update the list of internal storage resources linked in documents and document versions. This task updates database data, possibly resulting in data corrections.
+    de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Versionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
   batchSectionHeader_cdn-upload-directory-creation:
     en: Creation of upload directories within the internal storage
     de: Upload-Verzichnisse auf dem internen Speicher erstellen

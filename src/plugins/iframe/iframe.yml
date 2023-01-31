@@ -5,6 +5,6 @@ iframe:
   height:
     en: Height
     de: Höhe
-  frame:
-    en: Frame
+  border:
+    en: Border
     de: Rahmen

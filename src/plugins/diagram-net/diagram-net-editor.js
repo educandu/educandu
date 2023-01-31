@@ -127,7 +127,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
           </Form.Item>
         )}
         <Form.Item label={image ? '\u00A0' : t('name')} {...FORM_ITEM_LAYOUT} colon={!image}>
-          <Button type="primary" size="small" onClick={handleEditClick}>{t('editExternally')}</Button>
+          <Button type="primary" size="small" onClick={handleEditClick}>{t('common:edit')}</Button>
         </Form.Item>
         <Form.Item
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}

@@ -8,6 +8,6 @@ creditsFooter:
   contributionsBy:
     en: Contributions by
     de: Bearbeitungen durch
-  revisionBy:
-    en: Revision created by
-    de: Revision erstellt von
+  versionCreatedBy:
+    en: Version created by
+    de: Version erstellt von

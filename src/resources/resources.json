@@ -148,10 +148,6 @@
       "en": "Link title",
       "de": "Link-Titel"
     },
-    "urlPath": {
-      "en": "URL path",
-      "de": "URL-Pfad"
-    },
     "unknown": {
       "en": "Unknown",
       "de": "Unbekannt"
@@ -177,24 +173,24 @@
       "de": "Dokumente neu erstellen"
     },
     "batchSectionDescription_document-regeneration": {
-      "en": "Re-create all documents based on their document revisions. This tasks updates database data, possibly resulting in data corrections.",
-      "de": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Revisionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt."
+      "en": "Re-create all documents based on their document versions. This tasks updates database data, possibly resulting in data corrections.",
+      "de": "Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Versionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt."
     },
     "batchSectionHeader_document-validation": {
       "en": "Documents validation",
       "de": "Dokumente validieren"
     },
     "batchSectionDescription_document-validation": {
-      "en": "Verify that all document revisions and documents in the database contain valid data. This task does not change any database data.",
-      "de": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Revisionen in der Datenbank durch. Dieser Task ändert keine Daten."
+      "en": "Verify that all document versions and documents in the database contain valid data. This task does not change any database data.",
+      "de": "Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Versionen in der Datenbank durch. Dieser Task ändert keine Daten."
     },
     "batchSectionHeader_cdn-resources-consolidation": {
       "en": "Consolidation of resources within the internal storage",
       "de": "Ressourcen auf dem internen Speicher konsolidieren"
     },
     "batchSectionDescription_cdn-resources-consolidation": {
-      "en": "Update the list of internal storage resources linked in documents and documentRevisions. This task updates database data, possibly resulting in data corrections.",
-      "de": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Revisionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt."
+      "en": "Update the list of internal storage resources linked in documents and document versions. This task updates database data, possibly resulting in data corrections.",
+      "de": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Versionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt."
     },
     "batchSectionHeader_cdn-upload-directory-creation": {
       "en": "Creation of upload directories within the internal storage",
@@ -293,7 +289,7 @@
       "de": "Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal."
     },
     "userAccountLocked": {
-      "en": "You currently cannot login because your user account is locked.",
+      "en": "You currently cannot log in because your user account is locked.",
       "de": "Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist."
     },
     "contactAdminWithoutEmail": {
@@ -380,13 +376,13 @@
       "en": "Please specify a reason",
       "de": "Bitte gib einen Grund an"
     },
-    "deleteAllRevisions": {
-      "en": "Delete all existing revisions of this section",
-      "de": "Alle existierenden Revisionen dieses Abschnitts löschen"
+    "deleteAllVersions": {
+      "en": "Delete all existing versions of this section",
+      "de": "Alle existierenden Versionen dieses Abschnitts löschen"
     },
-    "restoreDocumentRevisionConfirmation": {
-      "en": "Do you really want to restore the content of revision {revisionId}?",
-      "de": "Möchtest du den Inhalt der Revision {revisionId} wirklich wiederherstellen?"
+    "restoreDocumentVersionConfirmation": {
+      "en": "Do you really want to restore the content of version {id}?",
+      "de": "Möchtest du den Inhalt der Version {id} wirklich wiederherstellen?"
     },
     "confirmPassword": {
       "en": "Password confirmation",
@@ -460,9 +456,9 @@
       "en": "Contributions by",
       "de": "Bearbeitungen durch"
     },
-    "revisionBy": {
-      "en": "Revision created by",
-      "de": "Revision erstellt von"
+    "versionCreatedBy": {
+      "en": "Version created by",
+      "de": "Version erstellt von"
     }
   },
   "deletedSection": {
@@ -514,9 +510,9 @@
       "en": "New document",
       "de": "Neues Dokument"
     },
-    "cloneDocument": {
-      "en": "Clone document",
-      "de": "Dokument klonen"
+    "duplicateDocument": {
+      "en": "Duplicate document",
+      "de": "Dokument duplizieren"
     },
     "editDocument": {
       "en": "Edit document metadata",
@@ -599,8 +595,8 @@
       "de": "Keine"
     },
     "sequenceInfo": {
-      "en": "You can create multiple documents at once.\nA sequential number is appended to the title or URL path for each document.\n",
-      "de": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. URL-Pfad wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "en": "You can create multiple documents at once.\nA sequential number is appended to the title or slug for each document.\n",
+      "de": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt.\n"
     },
     "archivedInfo": {
       "en": "Archived documents can not be edited and can not be discovered through search.",
@@ -619,8 +615,8 @@
       "de": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann."
     },
     "cloningStrategy": {
-      "en": "Where should the cloned document be created?",
-      "de": "Wo soll das geklonte Dokument erstellt werden?"
+      "en": "Where should the duplicated document be created?",
+      "de": "Wo soll das duplizierte Dokument erstellt werden?"
     },
     "cloningStrategy_cloneWithinArea_fromRoom": {
       "en": "in the same room",
@@ -785,23 +781,19 @@
       "de": "Bitte gib dein Kennwort an"
     },
     "loginFailed": {
-      "en": "Login failed. Please check your input.",
-      "de": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe."
+      "en": "The credentials you have entered are not correct.",
+      "de": "Die Zugangsdaten sind nicht korrekt."
     },
     "forgotPassword": {
       "en": "Forgot your password?",
       "de": "Kennwort vergessen?"
     },
-    "loginWithShibboleth": {
-      "en": "Login with Shibboleth",
+    "logInWithShibboleth": {
+      "en": "Log in with Shibboleth",
       "de": "Mit Shibboleth anmelden"
     }
   },
   "login": {
-    "login": {
-      "en": "Login",
-      "de": "Anmelden"
-    },
     "register": {
       "en": "Register",
       "de": "Registrieren"
@@ -1393,8 +1385,8 @@
   },
   "pluginSelectorDialog": {
     "title": {
-      "en": "Select plugin",
-      "de": "Plugin auswählen"
+      "en": "Add section",
+      "de": "Abschnitt hinzufügen"
     }
   },
   "registrationForm": {
@@ -1672,9 +1664,13 @@
       "en": "Change sorting",
       "de": "Sortierung ändern"
     },
-    "changeSortingDirection": {
-      "en": "Change sorting direction",
-      "de": "Sortierungsrichtung ändern"
+    "changeSortingDirectionAscending": {
+      "en": "Change to ascending order",
+      "de": "Zu aufsteigender Sortierung wechseln"
+    },
+    "changeSortingDirectionDescending": {
+      "en": "Change to descending order",
+      "de": "Zu absteigender Sortierung wechseln"
     }
   },
   "storagePlanModal": {
@@ -1989,18 +1985,14 @@
       "de": "Externe URL"
     },
     "adoptDocumentTitle": {
-      "en": "Adopt as title",
-      "de": "Als Titel übernehmen"
+      "en": "Use as title",
+      "de": "Als Titel benutzen"
     }
   },
   "diagramNet": {
     "name": {
       "en": "Diagram",
       "de": "Diagramm"
-    },
-    "editExternally": {
-      "en": "Edit (opens external editor)",
-      "de": "Bearbeiten (öffnet externen Editor)"
     }
   },
   "earTraining": {
@@ -2074,8 +2066,8 @@
       "en": "Height",
       "de": "Höhe"
     },
-    "frame": {
-      "en": "Frame",
+    "border": {
+      "en": "Border",
       "de": "Rahmen"
     }
   },
@@ -2588,10 +2580,6 @@
       "en": "Discard",
       "de": "Verwerfen"
     },
-    "duplicate": {
-      "en": "Duplicate",
-      "de": "Duplizieren"
-    },
     "copyToClipboard": {
       "en": "Copy to clipboard",
       "de": "In die Zwischenablage kopieren"
@@ -2608,9 +2596,9 @@
       "en": "Delete irreversibly",
       "de": "Unwiderruflich löschen"
     },
-    "clone": {
-      "en": "Clone",
-      "de": "Klonen"
+    "duplicate": {
+      "en": "Duplicate",
+      "de": "Duplizieren"
     },
     "create": {
       "en": "Create",
@@ -2648,17 +2636,13 @@
       "en": "Language",
       "de": "Sprache"
     },
-    "invalidSlug": {
-      "en": "The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
-      "de": "Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden."
-    },
     "proposedSectionsAlert": {
       "en": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "de": "Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n"
     },
-    "revision": {
-      "en": "Revision",
-      "de": "Revision"
+    "version": {
+      "en": "Version",
+      "de": "Version"
     },
     "document": {
       "en": "Document",
@@ -2667,10 +2651,6 @@
     "room": {
       "en": "Room",
       "de": "Raum"
-    },
-    "viewRevisions": {
-      "en": "View revisions",
-      "de": "Revisionen ansehen"
     },
     "viewDocument": {
       "en": "View document",
@@ -2704,12 +2684,12 @@
       "en": "Error copying the URL to the clipboard due to missing access permissions.",
       "de": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung."
     },
-    "login": {
-      "en": "Login",
+    "logIn": {
+      "en": "Log in",
       "de": "Anmelden"
     },
-    "logout": {
-      "en": "Logout",
+    "logOut": {
+      "en": "Log out",
       "de": "Abmelden"
     },
     "created": {
@@ -2781,8 +2761,16 @@
       "de": "Titel"
     },
     "slug": {
-      "en": "URL path",
-      "de": "URL-Pfad"
+      "en": "Slug",
+      "de": "Slug"
+    },
+    "slugInfo": {
+      "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.\n",
+      "de": "Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
+    },
+    "invalidSlug": {
+      "en": "The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
+      "de": "Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden."
     },
     "tags": {
       "en": "Tags",

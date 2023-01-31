@@ -53,7 +53,15 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name} {...formInputsLayouts}>
         <Input />
       </FormItem>
-      <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug} {...formInputsLayouts}>
+      <FormItem
+        {...formInputsLayouts}
+        name="slug"
+        initialValue={room.slug}
+        rules={slugValidationRules}
+        label={
+          <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
+        }
+        >
         <Input />
       </FormItem>
       <FormItem

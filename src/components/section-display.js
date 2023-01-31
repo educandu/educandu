@@ -212,7 +212,7 @@ function SectionDisplay({
     }
     return (
       <span className="SectionDisplay-sectionRevision">
-        {`${t('common:revision')}: ${section.revision}`}
+        {`${t('common:version')}: ${section.revision}`}
       </span>
     );
   };
