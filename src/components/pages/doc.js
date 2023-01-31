@@ -14,12 +14,13 @@ import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
-import { Breadcrumb, message, Tooltip } from 'antd';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import EditControlPanel from '../edit-control-panel.js';
+import { Breadcrumb, Button, message, Tooltip } from 'antd';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
+import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -73,6 +74,24 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   return alerts;
 }
 
+function getDocumentMetadataModalState({ t, doc, room, isCloning, isOpen = false }) {
+  return {
+    isOpen,
+    mode: isCloning ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.update,
+    documentToClone: isCloning ? doc : null,
+    allowMultiple: false,
+    initialDocumentRoomMetadata: room ? { ...room } : null,
+    initialDocumentMetadata: isCloning
+      ? {
+        ...doc,
+        title: `${doc.title} ${t('common:copyTitleSuffix')}`,
+        slug: doc.slug ? `${doc.slug}-${t('common:copySlugSuffix')}` : '',
+        tags: [...doc.tags]
+      }
+      : { ...doc }
+  };
+}
+
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
@@ -121,7 +140,7 @@ function Doc({ initialState, PageTemplate }) {
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
-  const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
@@ -197,17 +216,33 @@ function Doc({ initialState, PageTemplate }) {
   }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
-    setIsDocumentMetadataModalOpen(true);
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: false, isOpen: true }));
+  };
+
+  const handleDocumentCloneClick = () => {
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: true, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = updatedDocuments => {
-    setDoc(updatedDocuments[0]);
-    setIsDocumentMetadataModalOpen(false);
-    message.success(t('common:changesSavedSuccessfully'));
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+
+    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.update) {
+      setDoc(updatedDocuments[0]);
+      message.success(t('common:changesSavedSuccessfully'));
+    }
+
+    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
+      window.location = routes.getDocUrl({
+        id: updatedDocuments[0]._id,
+        slug: updatedDocuments[0].slug,
+        view: DOC_VIEW_QUERY_PARAM.edit,
+        templateDocumentId: doc._id
+      });
+    }
   };
 
   const handleDocumentMetadataModalClose = () => {
-    setIsDocumentMetadataModalOpen(false);
+    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
   const handleEditOpen = () => {
@@ -526,12 +561,21 @@ function Doc({ initialState, PageTemplate }) {
             </Breadcrumb>
           )}
           <div className="DocPage-badges">
+            <Tooltip title={t('duplicateDocument')}>
+              <Button
+                type="text"
+                shape="circle"
+                icon={<DuplicateIcon />}
+                className="DocPage-cloneButton"
+                onClick={() => handleDocumentCloneClick()}
+                />
+            </Tooltip>
             {!!doc.publicContext?.verified && (
               <Tooltip title={t('common:verifiedDocumentBadge')}>
                 <LikeOutlined className="u-verified-badge" />
               </Tooltip>
             )}
-            <FavoriteStar className="DocPage-verifiedBadge" type={FAVORITE_TYPE.document} id={doc._id} />
+            <FavoriteStar className="DocPage-badge" type={FAVORITE_TYPE.document} id={doc._id} />
           </div>
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
@@ -618,11 +662,7 @@ function Doc({ initialState, PageTemplate }) {
       </div>
 
       <DocumentMetadataModal
-        allowMultiple={false}
-        initialDocumentMetadata={doc}
-        initialDocumentRoomMetadata={room}
-        isOpen={isDocumentMetadataModalOpen}
-        mode={DOCUMENT_METADATA_MODAL_MODE.update}
+        {...documentMetadataModalState}
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
         />

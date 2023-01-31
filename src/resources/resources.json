@@ -1229,6 +1229,10 @@
     "commentsControlPanelTooltip": {
       "en": "Comments",
       "de": "Komentare"
+    },
+    "duplicateDocument": {
+      "en": "Duplicate document",
+      "de": "Dokument duplizieren"
     }
   },
   "redaction": {
