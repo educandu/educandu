@@ -146,6 +146,7 @@ export default function Room({ PageTemplate, initialState }) {
     } else {
       setDocuments([...documents, ...createdDocuments]);
       setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+      message.success(t('common:changesSavedSuccessfully'));
     }
   };
 
@@ -165,7 +166,7 @@ export default function Room({ PageTemplate, initialState }) {
 
       setRoom(response.room);
       setIsRoomUpdateButtonDisabled(true);
-      message.success(t('updateRoomSuccessMessage'));
+      message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
       handleApiError({ error, logger, t });
     }
