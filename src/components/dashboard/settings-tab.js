@@ -1,23 +1,23 @@
 import gravatar from 'gravatar';
-import routes from '../utils/routes.js';
-import Logger from '../common/logger.js';
-import { useLocale } from './locale-context.js';
-import MarkdownInput from './markdown-input.js';
-import { useDialogs } from './dialog-context.js';
-import EmailFormItem from './email-form-item.js';
+import routes from '../../utils/routes.js';
+import Logger from '../../common/logger.js';
+import { useLocale } from '../locale-context.js';
+import MarkdownInput from '../markdown-input.js';
+import { useDialogs } from '../dialog-context.js';
+import EmailFormItem from '../email-form-item.js';
 import { Trans, useTranslation } from 'react-i18next';
-import { handleApiError } from '../ui/error-helper.js';
-import { useSetUser, useUser } from './user-context.js';
-import DeleteIcon from './icons/general/delete-icon.js';
-import { SAVE_USER_RESULT } from '../domain/constants.js';
+import { handleApiError } from '../../ui/error-helper.js';
+import { useSetUser, useUser } from '../user-context.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, Input, Avatar, Button, message } from 'antd';
-import DisplayNameFormItem from './displayName-form-item.js';
-import UserApiClient from '../api-clients/user-api-client.js';
-import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { confirmCloseAccount } from './confirmation-dialogs.js';
-import IrreversibleActionsSection from './irreversible-actions-section.js';
-import { maxUserIntroductionLength, maxUserOrganizationLength } from '../domain/validation-constants.js';
+import DisplayNameFormItem from '../displayName-form-item.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { confirmCloseAccount } from '../confirmation-dialogs.js';
+import IrreversibleActionsSection from '../irreversible-actions-section.js';
+import { maxUserIntroductionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -25,14 +25,14 @@ const FormItem = Form.Item;
 
 const AVATAR_SIZE = 110;
 
-function AccountSettingsTab() {
+function SettingsTab() {
   const user = useUser();
   const setUser = useSetUser();
   const dialogs = useDialogs();
   const { uiLanguage } = useLocale();
   const accountAccessFormRef = useRef();
 
-  const { t } = useTranslation('accountSettingsTab');
+  const { t } = useTranslation('settingsTab');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const [isUserProfileFormDirty, setIsUserProfileFormDirty] = useState(false);
@@ -228,4 +228,4 @@ function AccountSettingsTab() {
   );
 }
 
-export default AccountSettingsTab;
+export default SettingsTab;

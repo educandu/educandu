@@ -118,9 +118,9 @@ function Doc({ initialState, PageTemplate }) {
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
-  const [fetchingComments, setFetchingComments] = useState(false);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -149,9 +149,8 @@ function Doc({ initialState, PageTemplate }) {
 
   const fetchComments = useCallback(async () => {
     try {
-      setFetchingComments(true);
       const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setFetchingComments(false);
+      setAreCommentsInitiallyLoaded(true);
       setComments(response.comments);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -272,8 +271,9 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleCommentsOpen = async () => {
-    await fetchComments();
+    setAreCommentsInitiallyLoaded(false);
     switchView(VIEW.comments);
+    await fetchComments();
   };
 
   const handleCommentsClose = () => {
@@ -283,7 +283,7 @@ function Doc({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleSectionContentChange = (index, newContent) => {
+  const handleSectionContentChange = useCallback((index, newContent) => {
     const modifiedSection = {
       ...currentSections[index],
       content: newContent
@@ -292,15 +292,15 @@ function Doc({ initialState, PageTemplate }) {
     const newSections = replaceItemAt(currentSections, modifiedSection, index);
     setCurrentSections(newSections);
     setIsDirty(true);
-  };
+  }, [currentSections]);
 
-  const handleSectionMove = (sourceIndex, destinationIndex) => {
+  const handleSectionMove = useCallback((sourceIndex, destinationIndex) => {
     const reorderedSections = moveItem(currentSections, sourceIndex, destinationIndex);
     setCurrentSections(reorderedSections);
     setIsDirty(true);
-  };
+  }, [currentSections]);
 
-  const handleSectionInsert = (pluginType, index) => {
+  const handleSectionInsert = useCallback((pluginType, index) => {
     const pluginInfo = pluginRegistry.getInfo(pluginType);
     const newSection = {
       key: uniqueId.create(),
@@ -311,9 +311,9 @@ function Doc({ initialState, PageTemplate }) {
     setCurrentSections(newSections);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, newSection.key));
     setIsDirty(true);
-  };
+  }, [currentSections, pluginRegistry, t]);
 
-  const handleSectionDuplicate = index => {
+  const handleSectionDuplicate = useCallback(index => {
     const originalSection = currentSections[index];
     const duplicatedSection = cloneDeep(originalSection);
     duplicatedSection.key = uniqueId.create();
@@ -322,9 +322,9 @@ function Doc({ initialState, PageTemplate }) {
     setCurrentSections(expandedSections);
     setIsDirty(true);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
-  };
+  }, [currentSections]);
 
-  const handleSectionCopyToClipboard = async index => {
+  const handleSectionCopyToClipboard = useCallback(async index => {
     const originalSection = currentSections[index];
     const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
     try {
@@ -333,9 +333,9 @@ function Doc({ initialState, PageTemplate }) {
     } catch (error) {
       handleError({ message: t('common:copySectionToClipboardError'), error, logger, t, duration: 30 });
     }
-  };
+  }, [currentSections, request, t]);
 
-  const handleSectionPasteFromClipboard = async index => {
+  const handleSectionPasteFromClipboard = useCallback(async index => {
     if (!supportsClipboardPaste()) {
       message.error(t('common:clipboardPasteNotSupported'), 10);
       return false;
@@ -354,9 +354,9 @@ function Doc({ initialState, PageTemplate }) {
       handleError({ message: t('common:pasteSectionFromClipboardError'), error, logger, t, duration: 30 });
       return false;
     }
-  };
+  }, [currentSections, pluginRegistry, request, room, t]);
 
-  const handleSectionDelete = index => {
+  const handleSectionDelete = useCallback(index => {
     confirmSectionDelete(
       t,
       () => {
@@ -367,29 +367,29 @@ function Doc({ initialState, PageTemplate }) {
         setIsDirty(true);
       }
     );
-  };
+  }, [currentSections, t]);
 
-  const handleSectionEditEnter = index => {
+  const handleSectionEditEnter = useCallback(index => {
     const section = currentSections[index];
     setEditedSectionKeys(keys => ensureIsIncluded(keys, section.key));
-  };
+  }, [currentSections]);
 
-  const handleSectionEditLeave = index => {
+  const handleSectionEditLeave = useCallback(index => {
     const section = currentSections[index];
     setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
-  };
+  }, [currentSections]);
 
-  const handlePendingSectionApply = index => {
+  const handlePendingSectionApply = useCallback(index => {
     const appliedSectionKey = currentSections[index].key;
     setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
     setIsDirty(true);
-  };
+  }, [currentSections]);
 
-  const handlePendingSectionDiscard = index => {
+  const handlePendingSectionDiscard = useCallback(index => {
     const discardedSection = currentSections[index];
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
     setIsDirty(true);
-  };
+  }, [currentSections]);
 
   const handleHistoryOpen = async () => {
     try {
@@ -453,7 +453,7 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
-  const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
+  const hardDeleteSection = useCallback(async ({ section, reason, deleteAllRevisions }) => {
     const documentId = doc._id;
     const sectionKey = section.key;
     const sectionRevision = section.revision;
@@ -471,9 +471,9 @@ function Doc({ initialState, PageTemplate }) {
 
     setHistoryRevisions(documentRevisions);
     setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
-  };
+  }, [doc, documentApiClient, t]);
 
-  const handleSectionHardDelete = index => {
+  const handleSectionHardDelete = useCallback(index => {
     confirmSectionHardDelete(
       t,
       async ({ reason, deleteAllRevisions }) => {
@@ -481,7 +481,7 @@ function Doc({ initialState, PageTemplate }) {
         await hardDeleteSection({ section, reason, deleteAllRevisions });
       }
     );
-  };
+  }, [hardDeleteSection, selectedHistoryRevision, t]);
 
   const handleCommentPostClick = async ({ topic, text }) => {
     try {
@@ -559,7 +559,7 @@ function Doc({ initialState, PageTemplate }) {
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
               <CommentsPanel
                 comments={comments}
-                loading={fetchingComments}
+                isLoading={!areCommentsInitiallyLoaded}
                 onCommentPostClick={handleCommentPostClick}
                 onCommentDeleteClick={handleCommentDeleteClick}
                 onTopicChangeClick={handleCommentsTopicChangeClick}

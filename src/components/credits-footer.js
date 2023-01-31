@@ -51,7 +51,7 @@ function CreditsFooter({ doc, revision }) {
   };
 
   const renderRevisionAuthor = () => (
-    <span><b>{t('revisionBy')}:</b> {renderUser(revision.createdBy)}</span>
+    <span><b>{t('versionCreatedBy')}:</b> {renderUser(revision.createdBy)}</span>
   );
 
   return (

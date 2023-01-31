@@ -2,8 +2,8 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { PlusOutlined } from '@ant-design/icons';
-import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
+import React, { Fragment, memo, useState } from 'react';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -199,4 +199,4 @@ SectionsDisplay.defaultProps = {
   pendingSectionKeys: []
 };
 
-export default SectionsDisplay;
+export default memo(SectionsDisplay);

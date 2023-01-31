@@ -120,7 +120,7 @@ export const userStorageShape = PropTypes.shape({
   }))
 });
 
-export const userFavoriteShape = PropTypes.shape({
+const favoriteItemShape = PropTypes.shape({
   type: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   setOn: PropTypes.string.isRequired
@@ -137,7 +137,7 @@ export const userShape = PropTypes.shape({
   accountLockedOn: PropTypes.string,
   lastLoggedInOn: PropTypes.string,
   storage: userStorageShape,
-  favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
+  favorites: PropTypes.arrayOf(favoriteItemShape).isRequired
 });
 
 export const publicUserShape = PropTypes.shape({
@@ -203,7 +203,7 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
-export const userProfileDocumentMetadataShape = PropTypes.shape({
+const contributedDocumentMetadataProps = {
   _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
@@ -211,6 +211,10 @@ export const userProfileDocumentMetadataShape = PropTypes.shape({
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired
+};
+
+export const contributedDocumentMetadataShape = PropTypes.shape({
+  ...contributedDocumentMetadataProps
 });
 
 export const documentPublicContextShape = PropTypes.shape({
@@ -431,4 +435,24 @@ export const commentShape = PropTypes.shape({
     _id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired
   })
+});
+
+export const favoriteUserShape = PropTypes.shape({
+  displayName: PropTypes.string.isRequired,
+  avatarUrl: PropTypes.string
+});
+
+export const favoriteRoomShape = PropTypes.shape({
+  ...roomMetadataProps,
+  _id: PropTypes.string,
+  updatedOn: PropTypes.string,
+  owner: PropTypes.shape({
+    email: PropTypes.string,
+    displayName: PropTypes.string.isRequired
+  }),
+  members: PropTypes.arrayOf(roomMemberShape)
+});
+
+export const favoriteDocumentShape = PropTypes.shape({
+  ...contributedDocumentMetadataProps
 });

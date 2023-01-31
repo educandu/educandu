@@ -45,7 +45,7 @@ function Login() {
 
   const createAnonymousUserHeader = () => (
     <div>
-      <a onClick={handleLoginClick}>{t('login')}</a>
+      <a onClick={handleLoginClick}>{t('common:logIn')}</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a onClick={handleRegisterClick}>{t('register')}</a>
     </div>

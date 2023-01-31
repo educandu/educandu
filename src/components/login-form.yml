@@ -3,11 +3,11 @@ loginForm:
     en: Please enter your password
     de: Bitte gib dein Kennwort an
   loginFailed:
-    en: Login failed. Please check your input.
-    de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.
+    en: The credentials you have entered are not correct.
+    de: Die Zugangsdaten sind nicht korrekt.
   forgotPassword:
     en: Forgot your password?
     de: Kennwort vergessen?
-  loginWithShibboleth:
-    en: Login with Shibboleth
+  logInWithShibboleth:
+    en: Log in with Shibboleth
     de: Mit Shibboleth anmelden

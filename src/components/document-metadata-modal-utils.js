@@ -131,7 +131,7 @@ export function determineDocumentRoomId({ mode, initialDocumentMetadata, documen
 export function getDialogTitle(mode, t) {
   switch (mode) {
     case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('cloneDocument');
+      return t('duplicateDocument');
     case DOCUMENT_METADATA_MODAL_MODE.create:
       return t('newDocument');
     case DOCUMENT_METADATA_MODAL_MODE.update:
@@ -144,7 +144,7 @@ export function getDialogTitle(mode, t) {
 export function getDialogOkButtonText(mode, t) {
   switch (mode) {
     case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('common:clone');
+      return t('common:duplicate');
     case DOCUMENT_METADATA_MODAL_MODE.create:
       return t('common:create');
     case DOCUMENT_METADATA_MODAL_MODE.update:

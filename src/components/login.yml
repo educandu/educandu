@@ -1,7 +1,4 @@
 login:
-  login:
-    en: Login
-    de: Anmelden
   register:
     en: Register
     de: Registrieren

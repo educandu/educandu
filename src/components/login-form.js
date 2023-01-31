@@ -168,7 +168,7 @@ export default function LoginForm({
         {!hasBlockingError && !!showLoginButtons && (
           <div className="LoginForm-loginButton">
             <Button type="primary" size="large" onClick={handleLoginButtonClick} block>
-              {t('common:login')}
+              {t('common:logIn')}
             </Button>
           </div>
         )}
@@ -180,7 +180,7 @@ export default function LoginForm({
         <div className="LoginForm-externalLogin">
           <Divider>{t('common:or')}</Divider>
           <Button size="large" onClick={handleLoginWithShibbolethButtonClick} block>
-            {t('loginWithShibboleth')}
+            {t('logInWithShibboleth')}
           </Button>
         </div>
       )}

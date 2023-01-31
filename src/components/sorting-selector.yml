@@ -2,6 +2,9 @@ sortingSelector:
   changeSortingValue:
     en: Change sorting
     de: Sortierung ändern
-  changeSortingDirection:
-    en: Change sorting direction
-    de: Sortierungsrichtung ändern
+  changeSortingDirectionAscending:
+    en: Change to ascending order
+    de: Zu aufsteigender Sortierung wechseln
+  changeSortingDirectionDescending:
+    en: Change to descending order
+    de: Zu absteigender Sortierung wechseln
