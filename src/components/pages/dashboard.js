@@ -18,6 +18,7 @@ import { useStoragePlan } from '../storage-plan-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 
 const TAB_KEYS = {
   activities: 'activities',
@@ -35,15 +36,18 @@ function Dashboard({ PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.activities;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
 
   const [rooms, setRooms] = useState([]);
+  const [documents, setDocuments] = useState([]);
   const [activities, setActivities] = useState([]);
   const [invitations, setInvitations] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(initialTab);
   const [fetchingRooms, setFetchingRooms] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(initialTab);
+  const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [fetchingActivities, setFetchingActivities] = useState(true);
 
   useEffect(() => {
@@ -53,6 +57,16 @@ function Dashboard({ PageTemplate }) {
         const response = await userApiClient.getActivities();
         setFetchingActivities(false);
         setActivities(response.activities);
+      })();
+    }
+
+    if (selectedTab === TAB_KEYS.documents) {
+      (async () => {
+        setFetchingDocuments(true);
+        const documentApiClientResponse = await documentApiClient.getDocumentsByContributingUser(user._id);
+        setFetchingDocuments(false);
+
+        setDocuments(documentApiClientResponse.documents);
       })();
     }
 
@@ -67,7 +81,7 @@ function Dashboard({ PageTemplate }) {
         setInvitations(userApiClientResponse.invitations);
       })();
     }
-  }, [selectedTab, userApiClient, roomApiClient]);
+  }, [user, selectedTab, userApiClient, documentApiClient, roomApiClient]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
@@ -98,7 +112,7 @@ function Dashboard({ PageTemplate }) {
       label: t('documentsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <DocumentsTab />
+          <DocumentsTab documents={documents} loading={fetchingDocuments} />
         </div>
       )
     },

@@ -413,8 +413,16 @@
   },
   "documentsTab": {
     "info": {
-      "en": "Here you can find the documents you have created or contributed to.",
-      "de": "Hier findest du die Dokumente, die du erstellt oder bearbeitet hast."
+      "en": "Here you can find the public documents you have created or contributed to.",
+      "de": "Hier findest du die öffentliche Dokumente, die du erstellt oder bearbeitet hast."
+    },
+    "noDocuments": {
+      "en": "You have not contributed to any public documents yet.",
+      "de": "Du hast noch keine öffentliche Dokumente bearbeitet."
+    },
+    "documentsCount": {
+      "en": "{count, plural, =1 {# document} other {# documents}}\n",
+      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}}\n"
     }
   },
   "favoritesTab": {

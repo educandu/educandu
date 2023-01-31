@@ -5,11 +5,33 @@
   margin-bottom: 20px;
 }
 
-.DocumentsTab-createDocumentButton {
+.DocumentsTab-button {
   display: block !important;
   margin-left: auto;
+  margin-bottom: @edu-page-content-padding;
 }
 
-.DocumentsTab-headline {
-  .m-section-headline;
+.DocumentsTab-documentsPanel {
+  display: grid;
+  gap: @edu-page-content-padding;
+  grid-auto-flow: row;
+}
+
+.DocumentsTab-filter {
+  max-width: 300px;
+}
+
+.DocumentsTab-counter {
+  display: flex;
+  justify-content: flex-end;
+  font-size: @edu-font-size-sm;
+  margin-bottom: @edu-content-padding;
+}
+
+.DocumentsTab-documents {
+  .m-card-wrapper-wide;
+}
+
+.DocumentsTab-pagination {
+  margin-left: auto;
 }
