@@ -5,6 +5,9 @@ documentsTab:
   noDocuments:
     en: You have not contributed to any public documents yet.
     de: Du hast noch keine öffentliche Dokumente bearbeitet.
+  ownDocumentOnly:
+    en: My documents only
+    de: Nur meine Dokumente
   documentsCount:
     en: |
       {count, plural, =1 {# document} other {# documents}}

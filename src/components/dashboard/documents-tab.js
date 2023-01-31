@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
+import { useUser } from '../user-context.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
-import { Button, Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, Pagination, Spin } from 'antd';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { contributedDocumentMetadataShape } from '../../ui/default-prop-types.js';
@@ -14,20 +15,22 @@ const PAGE_SIZE = 8;
 const DEFAULT_PAGE_NUMBER = 1;
 
 function DocumentsTab({ documents, loading }) {
+  const user = useUser();
   const { t } = useTranslation('documentsTab');
 
   const [filterText, setFilterText] = useState(null);
-  const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE_NUMBER);
   const [pageDocuments, setPageDocuments] = useState([]);
+  const [ownDocumentsOnly, setOwnDocumentsOnly] = useState(false);
   const [displayedDocuments, setDisplayedDocuments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE_NUMBER);
 
   useEffect(() => {
     setCurrentPage(DEFAULT_PAGE_NUMBER);
-  }, [documents, filterText]);
+  }, [documents, filterText, ownDocumentsOnly]);
 
   useEffect(() => {
     const lowerCasedFilter = (filterText || '').toLowerCase();
-    const filteredDocuments = filterText
+    let filteredDocuments = filterText
       ? documents.filter(doc => {
         return doc.title.toLowerCase().includes(lowerCasedFilter)
             || doc.description.toLowerCase().includes(lowerCasedFilter)
@@ -36,12 +39,16 @@ function DocumentsTab({ documents, loading }) {
       })
       : documents;
 
+    filteredDocuments = ownDocumentsOnly
+      ? filteredDocuments.filter(doc => doc.createdBy._id === user._id)
+      : filteredDocuments;
+
     const indexOfFirstPageDocument = (currentPage - 1) * PAGE_SIZE;
     const indexOfLastPageDocument = indexOfFirstPageDocument + PAGE_SIZE;
 
     setDisplayedDocuments(filteredDocuments);
     setPageDocuments(filteredDocuments.slice(indexOfFirstPageDocument, indexOfLastPageDocument));
-  }, [documents, filterText, currentPage]);
+  }, [user, documents, filterText, ownDocumentsOnly, currentPage]);
 
   const [isDocumentModalOpen, setIsDocumentCreationModalOpen] = useState(false);
 
@@ -68,6 +75,11 @@ function DocumentsTab({ documents, loading }) {
     setFilterText(value);
   };
 
+  const handleOwnDocumentsOnlyChange = event => {
+    const { checked } = event.target;
+    setOwnDocumentsOnly(checked);
+  };
+
   const handlePageChange = page => {
     setCurrentPage(page);
   };
@@ -86,11 +98,14 @@ function DocumentsTab({ documents, loading }) {
 
         {!loading && !!documents.length && (
           <div className="DocumentsTab-documentsPanel">
-            <FilterInput
-              value={filterText}
-              className="DocumentsTab-filter"
-              onChange={handleFilterChange}
-              />
+            <div className="DocumentsTab-filters">
+              <FilterInput
+                value={filterText}
+                className="DocumentsTab-textFilter"
+                onChange={handleFilterChange}
+                />
+              <Checkbox checked={ownDocumentsOnly} onChange={handleOwnDocumentsOnlyChange}>{t('ownDocumentOnly')}</Checkbox>
+            </div>
             <div>
               <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
               <div className="DocumentsTab-documents">

@@ -17,7 +17,14 @@
   grid-auto-flow: row;
 }
 
-.DocumentsTab-filter {
+.DocumentsTab-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .m-fake-flex-gap(@edu-content-padding);
+}
+
+.DocumentsTab-textFilter {
   max-width: 300px;
 }
 
