@@ -256,13 +256,17 @@
 }
 
 .m-section-headline {
-  font-size: @edu-font-size-lg;
-  margin: 10px 0;
+  margin: 30px 0 15px 0;
   color: @edu-text-color;
+  font-size: @edu-font-size-lg;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 }
 
 .m-section-content {
-  padding: 20px;
+  padding: @edu-content-padding;
 
   @media @edu-media-phone {
     padding-left: 0;

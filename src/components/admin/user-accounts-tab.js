@@ -599,7 +599,7 @@ function UserAccountsTab() {
   ];
 
   const renderTabChildren = (dataSource, columns) => (
-    <div className="Tabs-tabPane Tabs-tabPane--noIndentation">
+    <div className="Tabs-tabPane">
       <Table
         dataSource={dataSource}
         columns={columns}
