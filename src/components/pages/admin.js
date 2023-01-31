@@ -5,11 +5,11 @@ import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import SettingsTab from '../admin/settings-tab.js';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
 import UserAccountsTab from '../admin/user-accounts-tab.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
+import AdminSettingsTab from '../admin/admin-settings-tab.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 
@@ -54,7 +54,7 @@ function Admin({ PageTemplate }) {
       label: t('settingsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <SettingsTab onDirtyStateChange={setIsCurrentTabDirty} />
+          <AdminSettingsTab onDirtyStateChange={setIsCurrentTabDirty} />
         </div>
       )
     },

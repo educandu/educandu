@@ -121,7 +121,7 @@ function DocumentMetadataModal({
     setDescription(initialDocumentMetadata.description || '');
     setSlug(initialDocumentMetadata.slug || '');
     setTags(initialDocumentMetadata.tags || []);
-    setTagOptions(composeTagOptions(initialDocumentMetadata.tags));
+    setTagOptions(composeTagOptions(initialDocumentMetadata.tags || []));
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
     if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
       setPublicContext(getDefaultPublicContext());
@@ -171,7 +171,7 @@ function DocumentMetadataModal({
         return;
       }
       const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
-      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags, tagSuggestions);
+      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags || [], tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
       handleApiError({ error, t });

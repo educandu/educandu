@@ -1,13 +1,13 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import { Button, Spin } from 'antd';
-import RoomCard from './room-card.js';
+import RoomCard from '../room-card.js';
 import React, { useState } from 'react';
-import Restricted from './restricted.js';
-import { useUser } from './user-context.js';
+import Restricted from '../restricted.js';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import permissions from '../domain/permissions.js';
-import RoomCreationModal from './room-creation-modal.js';
+import permissions from '../../domain/permissions.js';
+import RoomCreationModal from '../room-creation-modal.js';
 
 function RoomsTab({ rooms, invitations, loading }) {
   const user = useUser();

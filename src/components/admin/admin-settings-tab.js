@@ -19,8 +19,8 @@ import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported
 
 const logger = new Logger(import.meta.url);
 
-function SettingsTab({ onDirtyStateChange }) {
-  const { t } = useTranslation('settingsTab');
+function AdminSettingsTab({ onDirtyStateChange }) {
+  const { t } = useTranslation('adminSettingsTab');
   const pluginRegistry = useService(PluginRegistry);
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
 
@@ -100,9 +100,9 @@ function SettingsTab({ onDirtyStateChange }) {
   };
 
   return (
-    <div className="SettingsTab">
+    <div className="AdminSettingsTab">
       <Spin size="large" spinning={isLoading} delay={500}>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageInfoHeader')} key="panel">
             <MarkdownInput
               preview
@@ -111,7 +111,7 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('consentHeader')} key="consent">
             <MarkdownSettingInSupportedLanguages
               settingValue={settings.consentText}
@@ -119,14 +119,14 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
-            <div className="SettingsTab-templateDocument" >
+            <div className="AdminSettingsTab-templateDocument" >
               <DocumentSelector documentId={settings.templateDocument?.documentId} onChange={handleTemplateDocumentChange} />
             </div>
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
             <SpecialPageSettings
               settings={settings.helpPage}
@@ -134,7 +134,7 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
             <SpecialPageSettings
               settings={settings.termsPage}
@@ -142,7 +142,7 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
             <FooterLinksSettings
               footerLinks={settings.footerLinks}
@@ -150,7 +150,7 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('pluginsHelpTextsHeader')} key="plugisHelpTexts">
             <Tabs
               type="line"
@@ -159,7 +159,7 @@ function SettingsTab({ onDirtyStateChange }) {
                 key: pluginInfo.type,
                 label: t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`),
                 children: (
-                  <div className="SettingsTab-collapseTabPane">
+                  <div className="AdminSettingsTab-collapseTabPane">
                     <MarkdownSettingInSupportedLanguages
                       settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
                       onChange={value => handlePluginHelpTextChange(pluginInfo.type, value)}
@@ -170,7 +170,7 @@ function SettingsTab({ onDirtyStateChange }) {
               />
           </Collapse.Panel>
         </Collapse>
-        <Collapse className="SettingsTab-collapse">
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('licenseHeader')} key="license">
             <LicenseSettings
               license={settings.license}
@@ -182,7 +182,7 @@ function SettingsTab({ onDirtyStateChange }) {
           type="primary"
           loading={isSaving}
           onClick={handleSaveButtonClick}
-          className="SettingsTab-saveButton"
+          className="AdminSettingsTab-saveButton"
           disabled={isLoading || !isDirty}
           >
           {t('common:save')}
@@ -192,8 +192,8 @@ function SettingsTab({ onDirtyStateChange }) {
   );
 }
 
-SettingsTab.propTypes = {
+AdminSettingsTab.propTypes = {
   onDirtyStateChange: PropTypes.func.isRequired
 };
 
-export default SettingsTab;
+export default AdminSettingsTab;
