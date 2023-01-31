@@ -4,7 +4,7 @@ loginForm:
     de: Bitte gib dein Kennwort an
   loginFailed:
     en: The credentials you have entered are not correct.
-    de: Die Zugangsdaten sind nicht richtig.
+    de: Die Zugangsdaten sind nicht korrekt.
   forgotPassword:
     en: Forgot your password?
     de: Kennwort vergessen?

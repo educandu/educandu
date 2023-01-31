@@ -185,7 +185,7 @@ common:
     en: |
       The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.
     de: |
-      Der Slug wird am ende des URLs hinzugefügt und darf einen order mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
+      Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
   invalidSlug:
     en: The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
     de: Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.

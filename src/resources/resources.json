@@ -289,7 +289,7 @@
   },
   "blockedLoginError": {
     "loginFailedTooOften": {
-      "en": "Too many failed log in attempts within a short time period. Please try again later.",
+      "en": "Too many failed login attempts within a short time period. Please try again later.",
       "de": "Zu viele fehlgeschlagene Anmeldungsversuche innerhalb kurzer Zeit. Bitte versuche es später noch einmal."
     },
     "userAccountLocked": {
@@ -786,7 +786,7 @@
     },
     "loginFailed": {
       "en": "The credentials you have entered are not correct.",
-      "de": "Die Zugangsdaten sind nicht richtig."
+      "de": "Die Zugangsdaten sind nicht korrekt."
     },
     "forgotPassword": {
       "en": "Forgot your password?",
@@ -1710,11 +1710,11 @@
     },
     "changeSortingDirectionAscending": {
       "en": "Change to ascending order",
-      "de": "In aufsteigende Reihenfolge sortieren"
+      "de": "Zu aufsteigender Sortierung wechseln"
     },
     "changeSortingDirectionDescending": {
       "en": "Change to descending order",
-      "de": "In absteigende Reihenfolge sortieren"
+      "de": "Zu absteigender Sortierung wechseln"
     }
   },
   "storagePlanModal": {
@@ -2776,7 +2776,7 @@
     },
     "slugInfo": {
       "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.\n",
-      "de": "Der Slug wird am ende des URLs hinzugefügt und darf einen order mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
+      "de": "Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
     },
     "invalidSlug": {
       "en": "The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
