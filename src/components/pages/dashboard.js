@@ -1,3 +1,4 @@
+import by from 'thenby';
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
@@ -8,17 +9,17 @@ import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
 import ProfileHeader from '../profile-header.js';
 import { useRequest } from '../request-context.js';
-import React, { useEffect, useState } from 'react';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
-import { ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useStoragePlan } from '../storage-plan-context.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 
 const TAB_KEYS = {
   activities: 'activities',
@@ -45,47 +46,89 @@ function Dashboard({ PageTemplate }) {
   const [documents, setDocuments] = useState([]);
   const [activities, setActivities] = useState([]);
   const [invitations, setInvitations] = useState([]);
+  const [favoriteUsers, setFavoriteUsers] = useState([]);
+  const [favoriteRooms, setFavoriteRooms] = useState([]);
   const [fetchingRooms, setFetchingRooms] = useState(true);
   const [selectedTab, setSelectedTab] = useState(initialTab);
+  const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+  const [fetchingFavorites, setFetchingFavorites] = useState(true);
   const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [fetchingActivities, setFetchingActivities] = useState(true);
 
+  const fetchActivities = useCallback(async () => {
+    try {
+      setFetchingActivities(true);
+      const response = await userApiClient.getActivities();
+      setActivities(response.activities);
+    } finally {
+      setFetchingActivities(false);
+    }
+  }, [userApiClient]);
+
+  const fetchFavorites = useCallback(async () => {
+    try {
+      setFetchingFavorites(true);
+      const response = await userApiClient.getFavorites();
+      const sortedFavorites = response.favorites.sort(by(f => f.setOn, 'desc'));
+      setFavoriteUsers(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.user));
+      setFavoriteRooms(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.room));
+      setFavoriteDocuments(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.document));
+    } finally {
+      setFetchingFavorites(false);
+    }
+  }, [userApiClient]);
+
+  const fetchDocuments = useCallback(async () => {
+    try {
+      setFetchingDocuments(true);
+      const documentApiClientResponse = await documentApiClient.getDocumentsByContributingUser(user._id);
+      setDocuments(documentApiClientResponse.documents);
+    } finally {
+      setFetchingDocuments(false);
+    }
+  }, [user, documentApiClient]);
+
+  const fetchRooms = useCallback(async () => {
+    try {
+      setFetchingRooms(true);
+      const roomApiClientResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
+      const userApiClientResponse = await userApiClient.getRoomsInvitations();
+      setRooms(roomApiClientResponse.rooms);
+      setInvitations(userApiClientResponse.invitations);
+    } finally {
+      setFetchingRooms(false);
+    }
+  }, [roomApiClient, userApiClient]);
+
   useEffect(() => {
-    if (selectedTab === TAB_KEYS.activities) {
-      (async () => {
-        setFetchingActivities(true);
-        const response = await userApiClient.getActivities();
-        setFetchingActivities(false);
-        setActivities(response.activities);
-      })();
-    }
-
-    if (selectedTab === TAB_KEYS.documents) {
-      (async () => {
-        setFetchingDocuments(true);
-        const documentApiClientResponse = await documentApiClient.getDocumentsByContributingUser(user._id);
-        setFetchingDocuments(false);
-
-        setDocuments(documentApiClientResponse.documents);
-      })();
-    }
-
-    if (selectedTab === TAB_KEYS.rooms) {
-      (async () => {
-        setFetchingRooms(true);
-        const roomApiClientResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
-        const userApiClientResponse = await userApiClient.getRoomsInvitations();
-        setFetchingRooms(false);
-
-        setRooms(roomApiClientResponse.rooms);
-        setInvitations(userApiClientResponse.invitations);
-      })();
-    }
-  }, [user, selectedTab, userApiClient, documentApiClient, roomApiClient]);
+    (async () => {
+      switch (selectedTab) {
+        case TAB_KEYS.activities:
+          await fetchActivities();
+          break;
+        case TAB_KEYS.favorites:
+          await fetchFavorites();
+          break;
+        case TAB_KEYS.documents:
+          await fetchDocuments();
+          break;
+        case TAB_KEYS.rooms:
+          await fetchRooms();
+          break;
+        default:
+          break;
+      }
+    })();
+  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
     history.replaceState(null, '', routes.getDashboardUrl({ tab }));
+  };
+
+  const handleRemoveFavorite = async (type, id) => {
+    await userApiClient.removeFavorite({ type, id });
+    await fetchFavorites();
   };
 
   const items = [
@@ -103,7 +146,13 @@ function Dashboard({ PageTemplate }) {
       label: t('favoritesTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <FavoritesTab />
+          <FavoritesTab
+            favoriteUsers={favoriteUsers}
+            favoriteRooms={favoriteRooms}
+            favoriteDocuments={favoriteDocuments}
+            loading={fetchingFavorites}
+            onRemoveFavorite={handleRemoveFavorite}
+            />
         </div>
       )
     },

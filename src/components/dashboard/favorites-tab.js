@@ -1,53 +1,16 @@
-import by from 'thenby';
+import React from 'react';
+import PropTypes from 'prop-types';
 import RoomCard from '../room-card.js';
 import UserCard from '../user-card.js';
-import Logger from '../../common/logger.js';
 import { Button, Spin, Tooltip } from 'antd';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
 import CloseIcon from '../icons/general/close-icon.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
-import React, { useCallback, useEffect, useState } from 'react';
-import UserApiClient from '../../api-clients/user-api-client.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(import.meta.url);
-
-function FavoritesTab() {
+function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading, onRemoveFavorite }) {
   const { t } = useTranslation('favoritesTab');
-  const userApiClient = useSessionAwareApiClient(UserApiClient);
-
-  const [favoriteUsers, setFavoriteUsers] = useState([]);
-  const [favoriteRooms, setFavoriteRooms] = useState([]);
-  const [favoriteDocuments, setFavoriteDocuments] = useState([]);
-  const [fetchingFavorites, setFetchingFavorites] = useState(true);
-
-  const updateFavorites = useCallback(async () => {
-    try {
-      setFetchingFavorites(true);
-      const data = await userApiClient.getFavorites();
-      const sortedFavorites = data.favorites.sort(by(f => f.setOn, 'desc'));
-      setFavoriteUsers(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.user));
-      setFavoriteRooms(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.room));
-      setFavoriteDocuments(sortedFavorites.filter(favorite => favorite.type === FAVORITE_TYPE.document));
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    } finally {
-      setFetchingFavorites(false);
-    }
-  }, [userApiClient, t]);
-
-  useEffect(() => {
-    (async () => {
-      await updateFavorites();
-    })();
-  }, [updateFavorites]);
-
-  const handleFavoriteRemoveClick = async (type, id) => {
-    await userApiClient.removeFavorite({ type, id });
-    await updateFavorites();
-  };
 
   const renderRemoveFavoriteButton = (type, id) => {
     return (
@@ -57,7 +20,7 @@ function FavoritesTab() {
             size="small"
             type="secondary"
             icon={<CloseIcon />}
-            onClick={() => handleFavoriteRemoveClick(type, id)}
+            onClick={() => onRemoveFavorite(type, id)}
             />
         </div>
       </Tooltip>
@@ -98,8 +61,8 @@ function FavoritesTab() {
   return (
     <div className="FavoritesTab">
       <div className="FavoritesTab-info">{t('info')}</div>
-      {!!fetchingFavorites && <Spin className="u-spin" /> }
-      {!fetchingFavorites && !favoriteUsers.length && !favoriteRooms.length && !favoriteDocuments.length && (
+      {!!loading && <Spin className="u-spin" /> }
+      {!loading && !favoriteUsers.length && !favoriteRooms.length && !favoriteDocuments.length && (
         <span>{t('noFavorites')}</span>
       )}
       <div className="FavoriteTab-headline">{t('favoriteUsers', { count: favoriteUsers.length })}</div>
@@ -117,5 +80,28 @@ function FavoritesTab() {
     </div>
   );
 }
+
+FavoritesTab.propTypes = {
+  favoriteUsers: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    data: favoriteUserShape.isRequired
+  })).isRequired,
+  favoriteRooms: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    data: favoriteRoomShape.isRequired
+  })).isRequired,
+  favoriteDocuments: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    data: favoriteDocumentShape.isRequired
+  })).isRequired,
+  loading: PropTypes.bool.isRequired,
+  onRemoveFavorite: PropTypes.func.isRequired
+};
 
 export default FavoritesTab;
