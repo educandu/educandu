@@ -15,8 +15,8 @@ import { Form, Input, Avatar, Button, message } from 'antd';
 import DisplayNameFormItem from './displayName-form-item.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import PermanentActionsCard from './permanent-actions-card.js';
 import { confirmCloseAccount } from './confirmation-dialogs.js';
+import IrreversibleActionsSection from './irreversible-actions-section.js';
 import { maxUserIntroductionLength, maxUserOrganizationLength } from '../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
@@ -210,8 +210,8 @@ function AccountSettingsTab() {
         </Form>
       </section>
 
-      <PermanentActionsCard
-        className="AccountSettingsTab-permanentActionsCard"
+      <IrreversibleActionsSection
+        className="AccountSettingsTab-irreversibleActionsSection"
         actions={[
           {
             name: t('closeAccount'),

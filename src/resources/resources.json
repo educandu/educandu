@@ -769,6 +769,12 @@
       "de": "Vertikal spiegeln"
     }
   },
+  "irreversibleActionsSection": {
+    "title": {
+      "en": "Irreversible actions",
+      "de": "Unwiderrufbare Aktionen"
+    }
+  },
   "itemsExpander": {
     "expand": {
       "en": "+ {count} more",
@@ -1383,12 +1389,6 @@
     "loadingDocument": {
       "en": "Loading document",
       "de": "Dokument wird geladen"
-    }
-  },
-  "permanentActionsCard": {
-    "title": {
-      "en": "Irreversible actions",
-      "de": "Unwiderrufbare Aktionen"
     }
   },
   "pluginSelectorDialog": {

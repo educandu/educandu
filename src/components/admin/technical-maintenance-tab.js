@@ -50,7 +50,7 @@ function TechnicalMaintenanceTab() {
             <div className="TechnicalMaintenanceTab-sectionHeader">{t(`batchSectionHeader_${batchType}`)}</div>
             <div className="TechnicalMaintenanceTab-sectionDescription">{t(`batchSectionDescription_${batchType}`)}</div>
             <div className="TechnicalMaintenanceTab-button">
-              <Button onClick={() => handleStartBatchClick(batchType)} danger>
+              <Button onClick={() => handleStartBatchClick(batchType)} type="primary" danger>
                 {t('start')}
               </Button>
               {!!latestBatches[batchType] && (

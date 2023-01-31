@@ -1,21 +1,20 @@
 import React from 'react';
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Card } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-function PermanentActionsCard({ actions, className }) {
-  const { t } = useTranslation('permanentActionsCard');
+function IrreversibleActionsSection({ actions, className }) {
+  const { t } = useTranslation('irreversibleActionsSection');
 
   return (
-    <Card className={`PermanentActionsCard ${className}`} title={t('title')}>
-      <div className="PermanentActionsCard-content">
+    <section>
+      <div className={`IrreversibleActionsSection-headline ${className}`}>{t('title')}</div>
+      <div className="IrreversibleActionsSection-content">
         {actions.map((action, index) => (
-          <div className="PermanentActionsCard-action" key={index}>
+          <div key={index} className="IrreversibleActionsSection-action">
+            <div className="IrreversibleActionsSection-actionTitle">{action.name}</div>
+            <div>{action.description}</div>
             <div>
-              <span className="PermanentActionsCard-actionTitle">{action.name}</span>
-              <span className="PermanentActionsCard-actionDescription">{action.description}</span>
-            </div>
-            <div className="PermanentActionsCard-actionButtonContainer">
               <Button
                 danger
                 type="primary"
@@ -28,11 +27,11 @@ function PermanentActionsCard({ actions, className }) {
           </div>
         ))}
       </div>
-    </Card>
+    </section>
   );
 }
 
-PermanentActionsCard.propTypes = {
+IrreversibleActionsSection.propTypes = {
   actions: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     description: PropTypes.string,
@@ -45,8 +44,8 @@ PermanentActionsCard.propTypes = {
   className: PropTypes.string
 };
 
-PermanentActionsCard.defaultProps = {
+IrreversibleActionsSection.defaultProps = {
   className: ''
 };
 
-export default PermanentActionsCard;
+export default IrreversibleActionsSection;
