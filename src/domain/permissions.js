@@ -14,6 +14,7 @@ const MIGRATE_DATA = 'migrate-data';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_BATCHES = 'manage-batches';
 const SEE_USER_EMAIL = 'see-user-email';
+const MANAGE_CONTENT = 'manage-content';
 const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
 const HARD_DELETE_SECTION = 'hard-delete-section';
@@ -51,7 +52,8 @@ const maintainerPermissions = [
     REVIEW_DOC,
     VERIFY_DOC,
     RESTRICT_OPEN_CONTRIBUTION,
-    MANAGE_DOCUMENT_COMMENTS
+    MANAGE_DOCUMENT_COMMENTS,
+    MANAGE_CONTENT
   ])
 ];
 
@@ -110,5 +112,6 @@ export default {
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_ROOMS,
   CREATE_DOCUMENT_COMMENTS,
-  MANAGE_DOCUMENT_COMMENTS
+  MANAGE_DOCUMENT_COMMENTS,
+  MANAGE_CONTENT
 };

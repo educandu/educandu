@@ -7,6 +7,7 @@ import Login from '../../../src/components/login.js';
 import { QuestionOutlined } from '@ant-design/icons';
 import { useUser } from '../../../src/components/user-context.js';
 import { useLocale } from '../../../src/components/locale-context.js';
+import EditIcon from '../../../src/components/icons/general/edit-icon.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
@@ -14,7 +15,6 @@ import LogoutIcon from '../../../src/components/icons/main-menu/logout-icon.js';
 import LanguageIcon from '../../../src/components/icons/main-menu/language-icon.js';
 import SettingsIcon from '../../../src/components/icons/main-menu/settings-icon.js';
 import permissions, { hasUserPermission } from '../../../src/domain/permissions.js';
-import DocumentsIcon from '../../../src/components/icons/main-menu/documents-icon.js';
 import DashboardIcon from '../../../src/components/icons/main-menu/dashboard-icon.js';
 
 function PageHeader({ onUiLanguageClick }) {
@@ -33,10 +33,10 @@ function PageHeader({ onUiLanguageClick }) {
       showWhen: !!user
     },
     {
-      key: 'docs',
-      label: t('pageNames:docs'),
-      icon: <DocumentsIcon />,
-      onClick: () => { window.location = routes.getDocsUrl(); },
+      key: 'redaction',
+      label: t('pageNames:redaction'),
+      icon: <EditIcon />,
+      onClick: () => { window.location = routes.getRedactionUrl(); },
       showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
     },
     {

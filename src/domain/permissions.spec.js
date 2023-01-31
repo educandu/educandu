@@ -82,7 +82,8 @@ describe('permissions', () => {
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
-          permissions.MANAGE_DOCUMENT_COMMENTS
+          permissions.MANAGE_DOCUMENT_COMMENTS,
+          permissions.MANAGE_CONTENT
         ]);
       });
     });
@@ -114,6 +115,7 @@ describe('permissions', () => {
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
           permissions.MANAGE_DOCUMENT_COMMENTS,
+          permissions.MANAGE_CONTENT,
           permissions.ADMIN,
           permissions.MANAGE_USERS,
           permissions.MANAGE_BATCHES,

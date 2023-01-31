@@ -2,7 +2,6 @@ import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 
 const homePath = '/';
-const docsPath = '/docs';
 const adminPath = '/admin';
 const loginPath = '/login';
 const logoutPath = '/logout';
@@ -10,6 +9,7 @@ const searchPath = '/search';
 const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
+const redactionPath = '/redaction';
 const resetPasswordPath = '/reset-password';
 const connectExternalAccountPath = '/connect-external-account';
 
@@ -24,8 +24,8 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function getDocsUrl() {
-  return docsPath;
+function getRedactionUrl() {
+  return redactionPath;
 }
 
 function getUserProfileUrl(id) {
@@ -130,7 +130,7 @@ function isConnectExternalAccountPath(path) {
 
 export default {
   getUserProfileUrl,
-  getDocsUrl,
+  getRedactionUrl,
   getDocUrl,
   getDocumentRevisionUrl,
   getRoomUrl,

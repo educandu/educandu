@@ -33,10 +33,10 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       showWhen: !!user
     },
     {
-      key: 'docs',
-      label: t('pageNames:docs'),
+      key: 'redaction',
+      label: t('pageNames:redaction'),
       icon: <DocumentsIcon />,
-      onClick: () => { window.location = routes.getDocsUrl(); },
+      onClick: () => { window.location = routes.getRedactionUrl(); },
       showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
     },
     {

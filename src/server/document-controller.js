@@ -3,12 +3,12 @@ import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
+import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import { canEditDocContent } from '../utils/doc-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_ERROR_MESSAGE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -40,15 +40,6 @@ class DocumentController {
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
-  }
-
-  async handleGetDocsPage(req, res) {
-    const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
-    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
-
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents: mappedDocuments });
   }
 
   async handleGetDocPage(req, res) {
@@ -324,12 +315,6 @@ class DocumentController {
   }
 
   registerPages(router) {
-    router.get(
-      '/docs',
-      needsPermission(permissions.VIEW_DOCS),
-      (req, res) => this.handleGetDocsPage(req, res)
-    );
-
     router.get(
       '/docs/:documentId*',
       validateParams(getDocumentParamsSchema),

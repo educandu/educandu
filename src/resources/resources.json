@@ -1231,7 +1231,7 @@
       "de": "Komentare"
     }
   },
-  "docs": {
+  "redaction": {
     "defaultDocumentTitle": {
       "en": "New document",
       "de": "Neues Dokument"
@@ -3176,10 +3176,6 @@
     }
   },
   "pageNames": {
-    "home": {
-      "en": "Home",
-      "de": "Home"
-    },
     "dashboard": {
       "en": "Dashboard",
       "de": "Dashboard"
@@ -3192,9 +3188,9 @@
       "en": "Batch details",
       "de": "Chargen-Details"
     },
-    "docs": {
-      "en": "Documents",
-      "de": "Dokumente"
+    "redaction": {
+      "en": "Redaction",
+      "de": "Redaktion"
     }
   },
   "mailService": {

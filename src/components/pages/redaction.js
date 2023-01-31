@@ -44,9 +44,9 @@ function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = fal
   };
 }
 
-function Docs({ initialState, PageTemplate }) {
+function Redaction({ initialState, PageTemplate }) {
   const user = useUser();
-  const { t } = useTranslation('docs');
+  const { t } = useTranslation('redaction');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const mapToRows = useCallback(docs => docs.map(doc => (
@@ -170,7 +170,7 @@ function Docs({ initialState, PageTemplate }) {
 
   const renderActions = (_actions, row) => {
     return (
-      <div className="DocsPage-actions">
+      <div className="RedactionPage-actions">
         <ActionButtonGroup>
           <ActionButton
             title={t('common:duplicate')}
@@ -197,7 +197,7 @@ function Docs({ initialState, PageTemplate }) {
 
   const renderBadges = (_, row) => {
     return (
-      <div className="DocsPage-badges">
+      <div className="RedactionPage-badges">
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
             <LikeOutlined className="u-verified-badge" />
@@ -272,12 +272,12 @@ function Docs({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate>
-      <div className="DocsPage">
-        <h1>{t('pageNames:docs')}</h1>
-        <div className="DocsPage-controls">
+      <div className="RedactionPage">
+        <h1>{t('pageNames:redaction')}</h1>
+        <div className="RedactionPage-controls">
           <FilterInput
             size="large"
-            className="DocsPage-filter"
+            className="RedactionPage-filter"
             value={filterText}
             onChange={handleSearchChange}
             placeholder={t('filterPlaceholder')}
@@ -287,7 +287,7 @@ function Docs({ initialState, PageTemplate }) {
         <DocumentsTable dataSource={[...displayedRows]} columns={columns} />
         <aside>
           <Restricted to={permissions.EDIT_DOC}>
-            <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
+            <Button className="RedactionPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
           </Restricted>
         </aside>
         <DocumentMetadataModal
@@ -300,11 +300,11 @@ function Docs({ initialState, PageTemplate }) {
   );
 }
 
-Docs.propTypes = {
+Redaction.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
   }).isRequired
 };
 
-export default Docs;
+export default Redaction;

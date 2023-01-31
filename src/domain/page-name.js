@@ -1,6 +1,5 @@
 export const PAGE_NAME = {
   doc: 'doc',
-  docs: 'docs',
   room: 'room',
   index: 'index',
   login: 'login',
@@ -10,6 +9,7 @@ export const PAGE_NAME = {
   batches: 'batches',
   revision: 'revision',
   register: 'register',
+  redaction: 'redaction',
   dashboard: 'dashboard',
   userProfile: 'user-profile',
   resetPassword: 'reset-password',

@@ -3,11 +3,9 @@ import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
-import cloneDeep from '../utils/clone-deep.js';
-import permissions from '../domain/permissions.js';
 import DocumentController from './document-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -30,8 +28,7 @@ describe('document-controller', () => {
     documentService = {
       createDocument: sandbox.stub(),
       getDocumentById: sandbox.stub(),
-      hardDeleteDocument: sandbox.stub(),
-      getAllPublicDocumentsMetadata: sandbox.stub()
+      hardDeleteDocument: sandbox.stub()
     };
 
     roomService = {
@@ -66,71 +63,6 @@ describe('document-controller', () => {
 
   afterEach(() => {
     sandbox.restore();
-  });
-
-  describe('handleGetDocsPage', () => {
-    let documents;
-    let mappedDocuments;
-
-    beforeEach(() => {
-      documents = [
-        { _id: 'D1' },
-        { _id: 'D2' },
-        { _id: 'D3' }
-      ];
-
-      mappedDocuments = cloneDeep(documents);
-
-      documentService.getAllPublicDocumentsMetadata.resolves(documents);
-      clientDataMappingService.mapDocsOrRevisions.resolves(mappedDocuments);
-      pageRenderer.sendPage.resolves();
-    });
-
-    describe(`when user has '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.user, ROLE.maintainer];
-
-        req = { user };
-        res = {};
-
-        return sut.handleGetDocsPage(req, res);
-      });
-
-      it('should call documentService.getAllPublicDocumentsMetadata', () => {
-        assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: true });
-      });
-
-      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
-      });
-
-      it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
-      });
-    });
-
-    describe(`when user does not have '${permissions.MANAGE_ARCHIVED_DOCS}' permission`, () => {
-      beforeEach(() => {
-        user.roles = [ROLE.user];
-
-        res = {};
-        req = { user };
-
-        return sut.handleGetDocsPage(req, res);
-      });
-
-      it('should call documentService.getAllPublicDocumentsMetadata', () => {
-        assert.calledWith(documentService.getAllPublicDocumentsMetadata, { includeArchived: false });
-      });
-
-      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
-      });
-
-      it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'docs', { documents: mappedDocuments });
-      });
-    });
   });
 
   describe('handleGetDocPage', () => {

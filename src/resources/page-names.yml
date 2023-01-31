@@ -1,7 +1,4 @@
 pageNames:
-  home:
-    en: Home
-    de: Home
   dashboard:
     en: Dashboard
     de: Dashboard
@@ -11,6 +8,6 @@ pageNames:
   batches:
     en: Batch details
     de: Chargen-Details
-  docs:
-    en: Documents
-    de: Dokumente
+  redaction:
+    en: Redaction
+    de: Redaktion
