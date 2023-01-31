@@ -8,7 +8,6 @@ import { QuestionOutlined } from '@ant-design/icons';
 import { useUser } from '../../../src/components/user-context.js';
 import { useLocale } from '../../../src/components/locale-context.js';
 import { useSettings } from '../../../src/components/settings-context.js';
-import HomeIcon from '../../../src/components/icons/main-menu/home-icon.js';
 import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
 import LogoutIcon from '../../../src/components/icons/main-menu/logout-icon.js';
@@ -26,13 +25,6 @@ function PageHeader({ onUiLanguageClick }) {
   const helpPage = settings?.helpPage?.[uiLanguage];
 
   const pageMenuItems = [
-    {
-      key: 'home',
-      label: t('pageNames:home'),
-      icon: <HomeIcon />,
-      onClick: () => { window.location = routes.getHomeUrl(); },
-      showWhen: true
-    },
     {
       key: 'dashboard',
       label: t('pageNames:dashboard'),
