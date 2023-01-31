@@ -1,10 +1,7 @@
 redaction:
-  defaultDocumentTitle:
-    en: New document
-    de: Neues Dokument
-  newDocument:
-    en: New document
-    de: Neues Dokument
+  documentsTabTitle:
+    en: Documents
+    de: Dokumente
   initialAuthor:
     en: Initial author
     de: Erstautor

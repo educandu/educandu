@@ -1,12 +1,12 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
-import { Button, Switch, Tooltip } from 'antd';
+import { Switch, Tabs, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
 import DocumentsTable from '../documents-table.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
@@ -14,18 +14,24 @@ import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import { CheckOutlined, LikeOutlined } from '@ant-design/icons';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { CheckOutlined, LikeOutlined, PlusOutlined } from '@ant-design/icons';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
+
+const TABS = {
+  documents: 'documents'
+};
+
+const determineTab = query => Object.values(TABS).find(val => val === query) || TABS.settings;
 
 function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = false }) {
   return {
@@ -46,10 +52,22 @@ function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = fal
 
 function Redaction({ initialState, PageTemplate }) {
   const user = useUser();
+  const request = useRequest();
   const { t } = useTranslation('redaction');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const mapToRows = useCallback(docs => docs.map(doc => (
+  const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
+
+  const changeTab = tab => {
+    setCurrentTab(tab);
+    history.replaceState(null, '', routes.getAdminUrl({ tab }));
+  };
+
+  const handleTabChange = newKey => {
+    changeTab(newKey);
+  };
+
+  const mapDocumentToRows = useCallback(docs => docs.map(doc => (
     {
       key: doc._id,
       _id: doc._id,
@@ -65,13 +83,13 @@ function Redaction({ initialState, PageTemplate }) {
       allowedOpenContribution: doc.publicContext.allowedOpenContribution
     })), []);
 
-  const [filterText, setFilterText] = useState('');
-  const [displayedRows, setDisplayedRows] = useState([]);
+  const [documentsFilterText, setDocumentsFilterText] = useState('');
   const [documents, setDocuments] = useState(initialState.documents);
-  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+  const [displayedDocumentRows, setDisplayedDocumentRows] = useState([]);
+  const [documentsSorting, setDocumentsSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
-  const sortingOptions = [
+  const documentsSortingOptions = [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
@@ -80,43 +98,39 @@ function Redaction({ initialState, PageTemplate }) {
   ];
 
   if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
-    sortingOptions.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
+    documentsSortingOptions.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
   }
 
-  const sorters = useMemo(() => ({
-    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
-    createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
-    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
-    language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction)),
-    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.displayName, { direction: sorting.direction, ignoreCase: true })),
-    archived: rowsToSort => rowsToSort.sort(by(row => row.archived, sorting.direction))
-  }), [sorting.direction]);
+  const documentsSorters = useMemo(() => ({
+    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: documentsSorting.direction, ignoreCase: true })),
+    createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, documentsSorting.direction)),
+    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, documentsSorting.direction)),
+    language: rowsToSort => rowsToSort.sort(by(row => row.language, documentsSorting.direction)),
+    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.displayName, { direction: documentsSorting.direction, ignoreCase: true })),
+    archived: rowsToSort => rowsToSort.sort(by(row => row.archived, documentsSorting.direction))
+  }), [documentsSorting.direction]);
 
   useEffect(() => {
-    const newRows = mapToRows(documents.slice());
-    const sorter = sorters[sorting.value];
+    const newDocumentRows = mapDocumentToRows(documents.slice());
+    const sorter = documentsSorters[documentsSorting.value];
 
-    const filteredRows = filterText
-      ? newRows.filter(row => row.title.toLowerCase().includes(filterText.toLowerCase())
-        || row.createdBy.displayName.toLowerCase().includes(filterText.toLowerCase()))
-      : newRows;
-    const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
+    const filteredDocumentRows = documentsFilterText
+      ? newDocumentRows.filter(row => row.title.toLowerCase().includes(documentsFilterText.toLowerCase())
+        || row.createdBy.displayName.toLowerCase().includes(documentsFilterText.toLowerCase()))
+      : newDocumentRows;
+    const sortedRows = sorter ? sorter(filteredDocumentRows) : filteredDocumentRows;
 
-    setDisplayedRows(sortedRows);
-  }, [documents, sorting, filterText, sorters, mapToRows]);
+    setDisplayedDocumentRows(sortedRows);
+  }, [documents, documentsSorting, documentsFilterText, documentsSorters, mapDocumentToRows]);
 
-  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
+  const handleDocumentsSortingChange = ({ value, direction }) => setDocumentsSorting({ value, direction });
 
-  const handleSearchChange = event => {
+  const handleDocumentsSearchChange = event => {
     const newFilterText = event.target.value;
-    setFilterText(newFilterText);
+    setDocumentsFilterText(newFilterText);
   };
 
-  const handleNewDocumentClick = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, isOpen: true }));
-  };
-
-  const handleCloneClick = row => {
+  const handleDocumentCloneClick = row => {
     const documentToClone = documents.find(d => d._id === row.documentId);
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, documentToClone, isOpen: true }));
   };
@@ -137,7 +151,7 @@ function Redaction({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleArchivedSwitchChange = async (archived, row) => {
+  const handleDocumentArchivedSwitchChange = async (archived, row) => {
     try {
       const { doc } = archived
         ? await documentApiClient.unarchiveDocument(row.documentId)
@@ -154,8 +168,9 @@ function Redaction({ initialState, PageTemplate }) {
     }
   };
 
-  const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
-  const renderTitle = (_title, row) => {
+  const renderDocumentLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
+
+  const renderDocumentTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
     if (!doc) {
       return null;
@@ -164,11 +179,11 @@ function Redaction({ initialState, PageTemplate }) {
     return <DocumentInfoCell doc={doc} />;
   };
 
-  const renderCreatedBy = (_user, row) => {
+  const renderDocumentCreatedBy = (_user, row) => {
     return <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
   };
 
-  const renderActions = (_actions, row) => {
+  const renderDocumentActions = (_actions, row) => {
     return (
       <div className="RedactionPage-actions">
         <ActionButtonGroup>
@@ -176,28 +191,28 @@ function Redaction({ initialState, PageTemplate }) {
             title={t('common:duplicate')}
             icon={<DuplicateIcon />}
             intent={ACTION_BUTTON_INTENT.default}
-            onClick={() => handleCloneClick(row)}
+            onClick={() => handleDocumentCloneClick(row)}
             />
         </ActionButtonGroup>
       </div>
     );
   };
 
-  const renderArchived = (archived, row) => {
+  const renderDocumentArchived = (archived, row) => {
     return (
       <Switch
         size="small"
         checked={row.archived}
         checkedChildren={<CheckOutlined />}
         unCheckedChildren={<CloseIcon />}
-        onChange={() => handleArchivedSwitchChange(archived, row)}
+        onChange={() => handleDocumentArchivedSwitchChange(archived, row)}
         />
     );
   };
 
-  const renderBadges = (_, row) => {
+  const renderDocumentBadges = (_, row) => {
     return (
-      <div className="RedactionPage-badges">
+      <div className="RedactionPage-documentBadges">
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
             <LikeOutlined className="u-verified-badge" />
@@ -221,18 +236,18 @@ function Redaction({ initialState, PageTemplate }) {
     );
   };
 
-  const columns = [
+  const documentsTableColumns = [
     {
       title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
-      render: renderTitle
+      render: renderDocumentTitle
     },
     {
       title: t('common:language'),
       dataIndex: 'language',
       key: 'language',
-      render: renderLanguage,
+      render: renderDocumentLanguage,
       responsive: ['sm'],
       width: '100px'
     },
@@ -240,7 +255,7 @@ function Redaction({ initialState, PageTemplate }) {
       title: t('initialAuthor'),
       dataIndex: 'user',
       key: 'user',
-      render: renderCreatedBy,
+      render: renderDocumentCreatedBy,
       responsive: ['md'],
       width: '200px'
     },
@@ -248,7 +263,7 @@ function Redaction({ initialState, PageTemplate }) {
       title: t('badges'),
       dataIndex: 'badges',
       key: 'badges',
-      render: renderBadges,
+      render: renderDocumentBadges,
       responsive: ['lg'],
       width: '50px'
     },
@@ -256,7 +271,7 @@ function Redaction({ initialState, PageTemplate }) {
       title: t('common:archived'),
       dataIndex: 'archived',
       key: 'archived',
-      render: renderArchived,
+      render: renderDocumentArchived,
       responsive: ['lg'],
       needsPermission: permissions.MANAGE_ARCHIVED_DOCS,
       width: '100px'
@@ -265,35 +280,58 @@ function Redaction({ initialState, PageTemplate }) {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderActions,
+      render: renderDocumentActions,
       width: '100px'
     }
   ].filter(column => !column.needsPermission || hasUserPermission(user, column.needsPermission));
+
+  const renderDocumentsTab = () => {
+    return (
+      <Fragment>
+        <div className="RedactionPage-documentsControls">
+          <FilterInput
+            size="large"
+            className="RedactionPage-documentsFilter"
+            value={documentsFilterText}
+            onChange={handleDocumentsSearchChange}
+            placeholder={t('filterPlaceholder')}
+            />
+          <SortingSelector size="large" sorting={documentsSorting} options={documentsSortingOptions} onChange={handleDocumentsSortingChange} />
+        </div>
+        <DocumentsTable dataSource={[...displayedDocumentRows]} columns={documentsTableColumns} />
+        <DocumentMetadataModal
+          {...documentMetadataModalState}
+          onSave={handleDocumentMetadataModalSave}
+          onClose={handleDocumentMetadataModalClose}
+          />
+      </Fragment>
+    );
+  };
+
+  const tabItems = [
+    {
+      key: TABS.documents,
+      label: t('documentsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          {renderDocumentsTab()}
+        </div>
+      )
+    }
+  ];
 
   return (
     <PageTemplate>
       <div className="RedactionPage">
         <h1>{t('pageNames:redaction')}</h1>
-        <div className="RedactionPage-controls">
-          <FilterInput
-            size="large"
-            className="RedactionPage-filter"
-            value={filterText}
-            onChange={handleSearchChange}
-            placeholder={t('filterPlaceholder')}
-            />
-          <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
-        </div>
-        <DocumentsTable dataSource={[...displayedRows]} columns={columns} />
-        <aside>
-          <Restricted to={permissions.EDIT_DOC}>
-            <Button className="RedactionPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
-          </Restricted>
-        </aside>
-        <DocumentMetadataModal
-          {...documentMetadataModalState}
-          onSave={handleDocumentMetadataModalSave}
-          onClose={handleDocumentMetadataModalClose}
+        <Tabs
+          type="line"
+          size="middle"
+          className="Tabs"
+          items={tabItems}
+          activeKey={currentTab}
+          destroyInactiveTabPane
+          onChange={handleTabChange}
           />
       </div>
     </PageTemplate>
