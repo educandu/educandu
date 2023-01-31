@@ -1,16 +1,22 @@
 commentsPanel:
-  addCommentButtonText:
-    en: Write comment
-    de: Kommentar schreiben
+  newCommentPlaceholder:
+    en: Enter your comment here
+    de: Gib hier deinen Kommentar ein
   postCommentButtonText:
     en: Post comment
     de: Kommentar abschicken
+  addNewTopicButtonText:
+    en: Add new topic
+    de: Neues Thema hinzufügen
   topicHeaderPrefix:
     en: Topic
     de: Thema
-  newTopicPlaceholder:
+  newTopicHeaderPrefix:
     en: New topic
     de: Neues Thema
+  newTopicPlaceholder:
+    en: E.g. orthography, citation, etc.
+    de: Z.B. Rechtschreibung, Quellennachweise, etc.
   commentDeleted:
     en: The content of this comment was deleted by maintainers.
     de: Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht.
