@@ -23,7 +23,7 @@
 }
 
 .Alert-icon {
-  font-size: 16px;
+  font-size: @edu-font-size-lg;
 
   &.Alert-icon--info {
     // has to be important, otherwise Antd overrides it
@@ -34,6 +34,6 @@
   &.Alert-icon--warning {
     // has to be important, otherwise Antd overrides it
     // through `.ant-alert-xyz .ant-alert-icon`
-    color: @alert-warning-text-color  !important;
+    color: @alert-warning-text-color !important;
   }
 }

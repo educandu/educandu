@@ -280,7 +280,7 @@ export default function Room({ PageTemplate, initialState }) {
           <a href={url}>{doc.title}</a>
         </div>
         <div className="RoomPage-documentMenu">
-          {!!doc.roomContext.draft && (<div className="RoomPage-documentRowDraftLabel">{t('common:draft')}</div>)}
+          {!!doc.roomContext.draft && (<div className="RoomPage-documentDraftLabel">{t('common:draft')}</div>)}
           {!!showMenu && renderDocumentMenu(doc, index, documentsSubset)}
         </div>
       </div>
