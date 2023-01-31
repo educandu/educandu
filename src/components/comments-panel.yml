@@ -15,8 +15,8 @@ commentsPanel:
     en: New topic
     de: Neues Thema
   newTopicPlaceholder:
-    en: e.g. orthography, citation, etc.
-    de: z.B. Rechtschreibung, Quellennachweise, etc.
+    en: E.g. orthography, citation, etc.
+    de: Z.B. Rechtschreibung, Quellennachweise, etc.
   commentDeleted:
     en: The content of this comment was deleted by maintainers.
     de: Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht.
