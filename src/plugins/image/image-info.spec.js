@@ -11,10 +11,10 @@ describe('image-info', () => {
   describe('redactContent', () => {
     it('redacts inaccessible resources', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
-        revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
+        sourceUrl: 'cdn://room-media/12345/some-image.jpeg',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)',
+        hoverEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/hover-effect-doc.pdf)' },
+        revealEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/reveal-effect-doc.pdf)' }
       }, '67890');
       expect(result).toStrictEqual({
         sourceUrl: '',
@@ -25,16 +25,16 @@ describe('image-info', () => {
     });
     it('leaves accessible resources intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
-        revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
+        sourceUrl: 'cdn://room-media/12345/some-image.jpeg',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)',
+        hoverEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/hover-effect-doc.pdf)' },
+        revealEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/reveal-effect-doc.pdf)' }
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.jpeg',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        hoverEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/hover-effect-doc.pdf)' },
-        revealEffect: { copyrightNotice: '[Click here](cdn://rooms/12345/media/reveal-effect-doc.pdf)' }
+        sourceUrl: 'cdn://room-media/12345/some-image.jpeg',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)',
+        hoverEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/hover-effect-doc.pdf)' },
+        revealEffect: { copyrightNotice: '[Click here](cdn://room-media/12345/reveal-effect-doc.pdf)' }
       });
     });
   });
@@ -43,14 +43,14 @@ describe('image-info', () => {
     it('returns resources from all the copyrightNotice props', () => {
       const result = sut.getCdnResources({
         sourceUrl: null,
-        copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)',
-        hoverEffect: { copyrightNotice: '[Hyperlink](cdn://media/my-hover-file.pdf)' },
-        revealEffect: { copyrightNotice: '[Hyperlink](cdn://media/my-reveal-file.pdf)' }
+        copyrightNotice: '[Hyperlink](cdn://document-media/my-file.pdf)',
+        hoverEffect: { copyrightNotice: '[Hyperlink](cdn://document-media/my-hover-file.pdf)' },
+        revealEffect: { copyrightNotice: '[Hyperlink](cdn://document-media/my-reveal-file.pdf)' }
       });
       expect(result).toStrictEqual([
-        'cdn://media/my-file.pdf',
-        'cdn://media/my-hover-file.pdf',
-        'cdn://media/my-reveal-file.pdf'
+        'cdn://document-media/my-file.pdf',
+        'cdn://document-media/my-hover-file.pdf',
+        'cdn://document-media/my-reveal-file.pdf'
       ]);
     });
 
@@ -74,14 +74,14 @@ describe('image-info', () => {
 
     it('returns a list with the urls for internal resources', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://media/some-image.png',
-        hoverEffect: { sourceUrl: 'cdn://media/some-hover-image.png' },
-        revealEffect: { sourceUrl: 'cdn://media/some-reveal-image.png' }
+        sourceUrl: 'cdn://document-media/some-image.png',
+        hoverEffect: { sourceUrl: 'cdn://document-media/some-hover-image.png' },
+        revealEffect: { sourceUrl: 'cdn://document-media/some-reveal-image.png' }
       });
       expect(result).toEqual([
-        'cdn://media/some-image.png',
-        'cdn://media/some-hover-image.png',
-        'cdn://media/some-reveal-image.png'
+        'cdn://document-media/some-image.png',
+        'cdn://document-media/some-hover-image.png',
+        'cdn://document-media/some-reveal-image.png'
       ]);
     });
   });

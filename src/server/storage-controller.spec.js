@@ -47,7 +47,7 @@ describe('storage-controller', () => {
   describe('handleGetCdnObjects', () => {
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { parentPath: 'other-path/media' } };
+        req = { user, query: { parentPath: 'other-path' } };
         res = {};
       });
 
@@ -58,7 +58,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { parentPath: 'rooms/some-room-id/media' } };
+        req = { user, query: { parentPath: 'room-media/some-room-id' } };
         res = {};
       });
 
@@ -72,7 +72,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, query: { parentPath: `rooms/${room._id}/media` } };
+        req = { user, query: { parentPath: `room-media/${room._id}/media` } };
         res = {};
       });
 
@@ -89,7 +89,7 @@ describe('storage-controller', () => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        parentPath = `rooms/${room._id}/media`;
+        parentPath = `room-media/${room._id}/media`;
         objects = [];
         req = { user, query: { parentPath } };
 
@@ -122,7 +122,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        parentPath = `rooms/${room._id}/media`;
+        parentPath = `room-media/${room._id}/media`;
         objects = [];
         req = { user, query: { parentPath } };
 
@@ -152,7 +152,7 @@ describe('storage-controller', () => {
       let objects;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        parentPath = 'media';
+        parentPath = 'document-media';
         objects = [];
         req = { user, query: { parentPath } };
 
@@ -192,7 +192,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { parentPath: 'other-path/media' } };
+        req = { user, files: [{}], body: { parentPath: 'other-path' } };
         res = {};
       });
 
@@ -203,7 +203,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { parentPath: 'rooms/some-room-id/media' } };
+        req = { user, files: [{}], body: { parentPath: 'room-media/some-room-id' } };
         res = {};
       });
 
@@ -217,7 +217,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
+        req = { user, files: [{}], body: { parentPath: `room-media/${room._id}/media` } };
         res = {};
       });
 
@@ -233,7 +233,7 @@ describe('storage-controller', () => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
+        req = { user, files: [{}], body: { parentPath: `room-media/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -244,7 +244,7 @@ describe('storage-controller', () => {
 
       it('should call storageService.uploadFiles', () => {
         assert.calledWith(storageService.uploadFiles, {
-          parentPath: `rooms/${room._id}/media`,
+          parentPath: `room-media/${room._id}/media`,
           files: req.files,
           storageClaimingUserId: user._id
         });
@@ -266,7 +266,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
+        req = { user, files: [{}], body: { parentPath: `room-media/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -277,7 +277,7 @@ describe('storage-controller', () => {
 
       it('should call storageService.uploadFiles (on behalf of the room owner)', () => {
         assert.calledWith(storageService.uploadFiles, {
-          parentPath: `rooms/${room._id}/media`,
+          parentPath: `room-media/${room._id}/media`,
           files: req.files,
           storageClaimingUserId: room.owner
         });
@@ -296,7 +296,7 @@ describe('storage-controller', () => {
   describe('handleDeleteCdnObject', () => {
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { path: 'other-path/media/object-to-delete' } };
+        req = { user, query: { path: 'other-path/object-to-delete' } };
         res = {};
       });
 
@@ -307,7 +307,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is room-media but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { path: 'rooms/some-room-id/media/object-to-delete' } };
+        req = { user, query: { path: 'room-media/some-room-id/object-to-delete' } };
         res = {};
       });
 
@@ -321,7 +321,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
+        req = { user, query: { path: `room-media/${room._id}/object-to-delete` } };
         res = {};
       });
 
@@ -337,7 +337,7 @@ describe('storage-controller', () => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
+        req = { user, query: { path: `room-media/${room._id}/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -349,7 +349,7 @@ describe('storage-controller', () => {
 
       it('should call storageService.deleteObject', () => {
         assert.calledWith(storageService.deleteObject, {
-          path: `rooms/${room._id}/media/object-to-delete`,
+          path: `room-media/${room._id}/object-to-delete`,
           storageClaimingUserId: user._id
         });
       });
@@ -370,7 +370,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
+        req = { user, query: { path: `room-media/${room._id}/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -382,7 +382,7 @@ describe('storage-controller', () => {
 
       it('should call storageService.deleteObject', () => {
         assert.calledWith(storageService.deleteObject, {
-          path: `rooms/${room._id}/media/object-to-delete`,
+          path: `room-media/${room._id}/object-to-delete`,
           storageClaimingUserId: room.owner
         });
       });
@@ -400,7 +400,7 @@ describe('storage-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        req = { user, query: { path: 'media/object-to-delete' } };
+        req = { user, query: { path: 'document-media/object-to-delete' } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -412,7 +412,7 @@ describe('storage-controller', () => {
 
       it('should call storageService.deleteObject', () => {
         assert.calledWith(storageService.deleteObject, {
-          path: 'media/object-to-delete',
+          path: 'document-media/object-to-delete',
           storageClaimingUserId: user._id
         });
       });

@@ -18,11 +18,11 @@ describe('media-analysis-info', () => {
     it('redacts the copyrightNotice', () => {
       content = {
         mainTrack: {
-          copyrightNotice: `[Click me](cdn://rooms/${currentRoomId}/media/my-file-1.pdf)`
+          copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`
         },
         secondaryTracks: [
           {
-            copyrightNotice: `[Click me too](cdn://rooms/${currentRoomId}/media/my-file-2.pdf)`
+            copyrightNotice: `[Click me too](cdn://room-media/${currentRoomId}/my-file-2.pdf)`
           }
         ]
       };
@@ -34,12 +34,12 @@ describe('media-analysis-info', () => {
     it('redacts the media source url', () => {
       content = {
         mainTrack: {
-          sourceUrl: `rooms/${currentRoomId}/media/my-video-1.mp4`,
+          sourceUrl: `room-media/${currentRoomId}/my-video-1.mp4`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: `rooms/${currentRoomId}/media/my-video-2.mp4`,
+            sourceUrl: `room-media/${currentRoomId}/my-video-2.mp4`,
             copyrightNotice: ''
           }
         ]
@@ -52,12 +52,12 @@ describe('media-analysis-info', () => {
     it('leaves accessible paths intact', () => {
       content = {
         mainTrack: {
-          sourceUrl: `rooms/${currentRoomId}/media/my-file-1.pdf`,
+          sourceUrl: `room-media/${currentRoomId}/my-file-1.pdf`,
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: `rooms/${currentRoomId}/media/my-file-2.pdf`,
+            sourceUrl: `room-media/${currentRoomId}/my-file-2.pdf`,
             copyrightNotice: ''
           }
         ]
@@ -72,19 +72,19 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: '',
-          copyrightNotice: 'This [hyperlink](cdn://media/my-file-1.pdf) and [another one](https://google.com)'
+          copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)'
         },
         secondaryTracks: [
           {
             sourceUrl: '',
-            copyrightNotice: 'This [hyperlink](cdn://media/my-file-2.pdf) and [another one](https://google.com)'
+            copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-2.pdf) and [another one](https://google.com)'
           }
         ]
       };
       result = sut.getCdnResources(content);
       expect(result).toStrictEqual([
-        'cdn://media/my-file-1.pdf',
-        'cdn://media/my-file-2.pdf'
+        'cdn://document-media/my-file-1.pdf',
+        'cdn://document-media/my-file-2.pdf'
       ]);
     });
 
@@ -142,40 +142,40 @@ describe('media-analysis-info', () => {
     it('returns a list with the url for an internal public resource', () => {
       content = {
         mainTrack: {
-          sourceUrl: 'cdn://media/12345/some-video-1.mp4',
+          sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: 'cdn://media/12345/some-video-2.mp4',
+            sourceUrl: 'cdn://document-media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
         ]
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
-        'cdn://media/12345/some-video-1.mp4',
-        'cdn://media/12345/some-video-2.mp4'
+        'cdn://document-media/12345/some-video-1.mp4',
+        'cdn://document-media/12345/some-video-2.mp4'
       ]);
     });
 
     it('returns a list with the url for an internal room-media resource', () => {
       content = {
         mainTrack: {
-          sourceUrl: 'cdn://rooms/12345/media/some-video-1.mp4',
+          sourceUrl: 'cdn://room-media/12345/some-video-1.mp4',
           copyrightNotice: ''
         },
         secondaryTracks: [
           {
-            sourceUrl: 'cdn://rooms/12345/media/some-video-2.mp4',
+            sourceUrl: 'cdn://room-media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
         ]
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
-        'cdn://rooms/12345/media/some-video-1.mp4',
-        'cdn://rooms/12345/media/some-video-2.mp4'
+        'cdn://room-media/12345/some-video-1.mp4',
+        'cdn://room-media/12345/some-video-2.mp4'
       ]);
     });
   });
