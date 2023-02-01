@@ -57,9 +57,9 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   };
 
   const renderRank = (text, record, index) => (
-    <span style={{ whiteSpace: 'nowrap' }}>
-      <Button style={{ margin: '0 3px' }} size="small" icon={<MoveUpIcon />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
-      <Button style={{ margin: '0 3px' }} size="small" icon={<MoveDownIcon />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
+    <span className="u-small-button-group">
+      <Button size="small" icon={<MoveUpIcon />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
+      <Button size="small" icon={<MoveDownIcon />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
     </span>
   );
 
