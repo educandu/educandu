@@ -19,26 +19,36 @@ import DashboardController from './dashboard-controller.js';
 import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
 
-const controllerTypes = [
-  AmbController,
-  RoomController,
-  I18nController,
-  UserController,
-  IndexController,
-  ErrorController,
-  AdminController,
-  BatchController,
-  SearchController,
+const setupControllers = [
   StaticController,
-  StorageController,
-  CommentController,
-  SettingsController,
+  I18nController,
+  UserAgentController,
+  SettingsController
+];
+
+const pageAndApiControllers = [
+  IndexController,
+  SearchController,
+  UserController,
   DocumentController,
+  StorageController,
+  BatchController,
+  RoomController,
+  DashboardController,
   RevisionController,
   PdfJsApiController,
-  DashboardController,
-  RedactionController,
-  UserAgentController
+  AdminController,
+  AmbController,
+  CommentController,
+  RedactionController
+];
+
+const finalMiddlewareControllers = [ErrorController];
+
+const controllerTypes = [
+  ...setupControllers,
+  ...pageAndApiControllers,
+  ...finalMiddlewareControllers
 ];
 
 class ControllerFactory {
