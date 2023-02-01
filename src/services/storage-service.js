@@ -300,7 +300,7 @@ export default class StorageService {
   async _uploadFiles(files, parentPath) {
     const cdnPathByOriginalName = files.reduce((map, file) => {
       const uniqueFileName = createUniqueStorageFileName(file.originalname);
-      map[file.originalname] = parentPath ? urlUtils.concatParts(parentPath, uniqueFileName) : uniqueFileName;
+      map[file.originalname] = urlUtils.concatParts(parentPath, uniqueFileName);
       return map;
     }, {});
 

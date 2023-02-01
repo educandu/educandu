@@ -5,7 +5,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import { CDN_URL_PREFIX } from '../domain/constants.js';
 import { createTagSearchQuery } from '../utils/tag-utils.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
-import { createUniqueStorageFileName, getMediaLibraryItemPath } from '../utils/storage-utils.js';
+import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
 
 class MediaLibraryService {
   static get inject() {
@@ -44,7 +44,7 @@ class MediaLibraryService {
     const mediaLibraryItemId = uniqueId.create();
 
     const storageFileName = createUniqueStorageFileName(data.originalFileName, () => mediaLibraryItemId);
-    const storagePath = urlUtils.concatParts(getMediaLibraryItemPath(), storageFileName);
+    const storagePath = urlUtils.concatParts(getMediaLibraryPath(), storageFileName);
     const storageUrl = `${CDN_URL_PREFIX}${storagePath}`;
     const newMediaLibraryItem = {
       _id: mediaLibraryItemId,

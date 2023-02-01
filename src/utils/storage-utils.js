@@ -81,7 +81,7 @@ export function getStorageLocationTypeForPath(path) {
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
-export function getMediaLibraryItemPath() {
+export function getMediaLibraryPath() {
   return 'media-library';
 }
 
