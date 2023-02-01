@@ -49,7 +49,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       label: t('pageNames:redaction'),
       icon: <EditIcon />,
       onClick: () => { window.location = routes.getRedactionUrl(); },
-      showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
+      showWhen: hasUserPermission(user, permissions.MANAGE_CONTENT)
     },
     {
       key: 'admin',
