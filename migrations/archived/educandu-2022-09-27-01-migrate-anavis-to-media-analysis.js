@@ -1,4 +1,4 @@
-import uniqueId from '../src/utils/unique-id.js';
+import uniqueId from '../../src/utils/unique-id.js';
 
 const getTotalPreviousPartsLength = (parts, currentPartIndex) => {
   return parts.slice(0, currentPartIndex).reduce((acc, part) => acc + part.length, 0);

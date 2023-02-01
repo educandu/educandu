@@ -1,6 +1,6 @@
-import { EFFECT_TYPE } from '../src/plugins/image/constants.js';
-import { MEDIA_ASPECT_RATIO } from '../src/domain/constants.js';
-import { TEST_MODE } from '../src/plugins/ear-training/constants.js';
+import { EFFECT_TYPE } from '../../src/plugins/image/constants.js';
+import { MEDIA_ASPECT_RATIO } from '../../src/domain/constants.js';
+import { TEST_MODE } from '../../src/plugins/ear-training/constants.js';
 
 export default class Educandu_2022_09_07_02_streamline_nulls_in_plugins {
   constructor(db) {
