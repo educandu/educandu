@@ -1813,8 +1813,8 @@
       "de": "Wir haben dir eine E-Mail mit einem Verifizierungs-Code gesendet. Bitte kopiere diesen Code in das Textfeld unten und bestätige deine Eingabe.\n\nDer Code ist **{validityInMinutes} lang** gültig.\n"
     },
     "gotoDashboard": {
-      "en": "Show my personal dashboard",
-      "de": "Mein persönliches Dashboard anzeigen"
+      "en": "Show my dashboard",
+      "de": "Mein Dashboard anzeigen"
     }
   },
   "abcNotation": {
