@@ -15,18 +15,14 @@ import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { ensureIsExcluded } from '../utils/array-utils.js';
+import { createTagSearchQuery } from '../utils/tag-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
-import {
-  DOCUMENT_ALLOWED_OPEN_CONTRIBUTION,
-  DOCUMENT_PARTIAL_SEARCH_THRESHOLD,
-  DOCUMENT_VERIFIED_RELEVANCE_POINTS,
-  STORAGE_DIRECTORY_MARKER_NAME
-} from '../domain/constants.js';
+import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -104,55 +100,21 @@ class DocumentService {
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {
-    const tokens = searchQuery.trim().split(/\s+/);
-
-    const allPositiveTokens = new Set();
-    const positiveExactTokens = new Set();
-    const positivePartialTokens = new Set();
-    const allNegativeTokens = new Set();
-
-    for (const token of tokens) {
-      const isNegative = token.length > 1 && token.startsWith('-');
-      const rawToken = token.substr(isNegative ? 1 : 0).toLowerCase();
-      if (isNegative) {
-        allNegativeTokens.add(rawToken);
-      } else {
-        allPositiveTokens.add(rawToken);
-        if (rawToken.length < DOCUMENT_PARTIAL_SEARCH_THRESHOLD) {
-          positiveExactTokens.add(rawToken);
-        } else {
-          positivePartialTokens.add(rawToken);
-        }
-      }
-    }
-
-    if (!allPositiveTokens.size) {
+    const tagQuery = createTagSearchQuery(searchQuery);
+    if (!tagQuery.isValid) {
       return [];
-    }
-
-    const positiveRegexpParts = [];
-    if (positiveExactTokens.size) {
-      positiveRegexpParts.push(`^(${[...positiveExactTokens].map(escapeStringRegexp).join('|')})$`);
-    }
-    if (positivePartialTokens.size) {
-      positiveRegexpParts.push(`.*(${[...positivePartialTokens].map(escapeStringRegexp).join('|')}).*`);
     }
 
     const queryConditions = [
       { roomId: null },
       { 'publicContext.archived': false },
-      { tags: { $regex: positiveRegexpParts.join('|'), $options: 'i' } }
+      tagQuery.query
     ];
-
-    if (allNegativeTokens.size) {
-      const negativeRegexp = `^(${[...allNegativeTokens].map(escapeStringRegexp).join('|')})$`;
-      queryConditions.push({ tags: { $not: { $regex: negativeRegexp, $options: 'i' } } });
-    }
 
     const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
 
     return documents.map(document => {
-      const tagMatchCount = document.tags.filter(tag => allPositiveTokens.has(tag.toLowerCase())).length;
+      const tagMatchCount = document.tags.filter(tag => tagQuery.positiveTokens.has(tag.toLowerCase())).length;
       const verifiedPoints = document.publicContext.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
       const relevance = tagMatchCount + verifiedPoints;
       return { ...document, relevance };

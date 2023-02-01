@@ -1,7 +1,6 @@
 import uniqueId from './unique-id.js';
 import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
-import { getResourceExtension } from './resource-utils.js';
 import {
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
@@ -82,6 +81,10 @@ export function getStorageLocationTypeForPath(path) {
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
+export function getMediaLibraryItemPath() {
+  return 'media-library';
+}
+
 export function getDocumentMediaDocumentPath(documentId) {
   return `media/${documentId}`;
 }
@@ -95,12 +98,8 @@ export function tryGetRoomIdFromStoragePath(path) {
   return match ? match[1] : null;
 }
 
-export function componseUniqueFileName(fileName, parentPath = null) {
-  const id = uniqueId.create();
-  const extension = getResourceExtension(fileName);
-  const baseName = fileName.substr(0, fileName.length - extension.length);
-  const slugifiedBaseName = slugify(baseName);
-  const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
-  const newFileName = `${uniqueBaseName}.${extension}`;
-  return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
+export function createUniqueStorageFileName(fileName, generateId = uniqueId.create) {
+  const { baseName, extension } = urlUtils.splitAtExtension(fileName);
+  const basenameWithId = [slugify(baseName), generateId()].filter(x => x).join('-');
+  return `${basenameWithId}${extension.toLowerCase()}`;
 }

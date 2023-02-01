@@ -173,7 +173,7 @@ export const FORM_ITEM_LAYOUT_VERTICAL = {
   wrapperCol: { span: 24 }
 };
 
-export const DOCUMENT_PARTIAL_SEARCH_THRESHOLD = 3;
+export const TAG_PARTIAL_SEARCH_THRESHOLD = 3;
 
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 

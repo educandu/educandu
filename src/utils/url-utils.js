@@ -38,6 +38,14 @@ function concatParts(...parts) {
     : '';
 }
 
+function splitAtExtension(pathOrUrl) {
+  const sanitizedUrl = (pathOrUrl || '').trim();
+  const matches = sanitizedUrl.match(/^(.*[^/])(\.[^./]+)$/i);
+  return matches
+    ? { baseName: matches[1], extension: matches[2], rawExtension: matches[2].replace(/^\./, '') }
+    : { baseName: sanitizedUrl, extension: '', rawExtension: '' };
+}
+
 function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${encodeURIComponent(redirect)}`;
 }
@@ -65,6 +73,7 @@ export default {
   composeQueryString,
   createFullyQualifiedUrl,
   concatParts,
+  splitAtExtension,
   createRedirectUrl,
   isFullyQualifiedUrl,
   ensureIsFullyQualifiedUrl,

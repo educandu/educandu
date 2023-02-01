@@ -3,6 +3,7 @@ import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
@@ -17,7 +18,7 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { componseUniqueFileName, getRoomMediaRoomPath, getDocumentMediaDocumentPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { createUniqueStorageFileName, getRoomMediaRoomPath, getDocumentMediaDocumentPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
@@ -298,7 +299,8 @@ export default class StorageService {
 
   async _uploadFiles(files, parentPath) {
     const cdnPathByOriginalName = files.reduce((map, file) => {
-      map[file.originalname] = componseUniqueFileName(file.originalname, parentPath);
+      const uniqueFileName = createUniqueStorageFileName(file.originalname);
+      map[file.originalname] = parentPath ? urlUtils.concatParts(parentPath, uniqueFileName) : uniqueFileName;
       return map;
     }, {});
 

@@ -1,27 +1,8 @@
-import uniqueId from './unique-id.js';
-import { createSandbox } from 'sinon';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import {
-  getStorageLocationTypeForPath,
-  getRoomMediaRoomPath,
-  tryGetRoomIdFromStoragePath,
-  componseUniqueFileName
-} from './storage-utils.js';
+import { getStorageLocationTypeForPath, getRoomMediaRoomPath, tryGetRoomIdFromStoragePath, createUniqueStorageFileName } from './storage-utils.js';
 
 describe('storage-utils', () => {
-  let result;
-
-  const sandbox = createSandbox();
-
-  beforeEach(() => {
-    sandbox.stub(uniqueId, 'create').returns('ch5zqo897tzo8f3');
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('getStorageLocationTypeForPath', () => {
     const testCases = [
       { path: 'root/media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
@@ -34,14 +15,9 @@ describe('storage-utils', () => {
     ];
 
     testCases.forEach(({ path, expectedResult }) => {
-      describe(`when called with '${path}'`, () => {
-        beforeEach(() => {
-          result = getStorageLocationTypeForPath(path);
-        });
-
-        it(`should return '${expectedResult}'`, () => {
-          expect(result).toBe(expectedResult);
-        });
+      it(`should return '${expectedResult}' for '${path}'`, () => {
+        const actualResult = getStorageLocationTypeForPath(path);
+        expect(actualResult).toBe(expectedResult);
       });
     });
   });
@@ -62,22 +38,24 @@ describe('storage-utils', () => {
     });
   });
 
-  describe('componseUniqueFileName', () => {
+  describe('createUniqueStorageFileName', () => {
+    const generateId = () => 'ch5zQo897tzo8f3';
     const testCases = [
-      { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'hello world 123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', prefix: 'media/my-directory/', expectedOutput: 'media/my-directory/hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: '### ###.mp3', prefix: 'media/my-directory/', expectedOutput: 'media/my-directory/ch5zqo897tzo8f3.mp3' }
+      { fileName: 'hello-world-123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello-world-123.MP3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello_world_123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello world 123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'héllö wøȑlð 123.mp3', expectedResult: 'helloe-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hällo Wörld 123.mp3', expectedResult: 'haello-woerld-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: '### ###.mp3', expectedResult: 'ch5zQo897tzo8f3.mp3' }
     ];
 
-    testCases.forEach(({ fileName, prefix, expectedOutput }) => {
-      it(`should transform fileName '${fileName} with prefix ${prefix === null ? 'null' : `'${prefix}'`} to '${expectedOutput}'`, () => {
-        const actualOutput = componseUniqueFileName(fileName, prefix);
-        expect(actualOutput).toBe(expectedOutput);
+    testCases.forEach(({ fileName, expectedResult }) => {
+      it(`should transform fileName '${fileName} to '${expectedResult}'`, () => {
+        const actualResult = createUniqueStorageFileName(fileName, generateId);
+        expect(actualResult).toBe(expectedResult);
       });
     });
   });
