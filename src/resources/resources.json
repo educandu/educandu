@@ -1229,16 +1229,16 @@
     "commentsControlPanelTooltip": {
       "en": "Comments",
       "de": "Komentare"
+    },
+    "duplicateDocument": {
+      "en": "Duplicate document",
+      "de": "Dokument duplizieren"
     }
   },
-  "docs": {
-    "defaultDocumentTitle": {
-      "en": "New document",
-      "de": "Neues Dokument"
-    },
-    "newDocument": {
-      "en": "New document",
-      "de": "Neues Dokument"
+  "redaction": {
+    "documentsTabTitle": {
+      "en": "Documents",
+      "de": "Dokumente"
     },
     "initialAuthor": {
       "en": "Initial author",
@@ -3158,6 +3158,10 @@
       "en": "Create document",
       "de": "Dokument erstellen"
     },
+    "newDocument": {
+      "en": "New document",
+      "de": "Neues Dokument"
+    },
     "createRoom": {
       "en": "Create room",
       "de": "Raum erstellen"
@@ -3176,10 +3180,6 @@
     }
   },
   "pageNames": {
-    "home": {
-      "en": "Home",
-      "de": "Home"
-    },
     "dashboard": {
       "en": "Dashboard",
       "de": "Dashboard"
@@ -3192,9 +3192,9 @@
       "en": "Batch details",
       "de": "Chargen-Details"
     },
-    "docs": {
-      "en": "Documents",
-      "de": "Dokumente"
+    "redaction": {
+      "en": "Redaction",
+      "de": "Redaktion"
     }
   },
   "mailService": {

@@ -16,27 +16,39 @@ import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
 import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
+import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
 
-const controllerTypes = [
+const setupControllers = [
   StaticController,
   I18nController,
   UserAgentController,
-  SettingsController,
+  SettingsController
+];
+
+const pageAndApiControllers = [
   IndexController,
   SearchController,
   UserController,
   DocumentController,
   StorageController,
   BatchController,
-  ErrorController,
   RoomController,
   DashboardController,
   RevisionController,
   PdfJsApiController,
   AdminController,
   AmbController,
-  CommentController
+  CommentController,
+  RedactionController
+];
+
+const finalMiddlewareControllers = [ErrorController];
+
+const controllerTypes = [
+  ...setupControllers,
+  ...pageAndApiControllers,
+  ...finalMiddlewareControllers
 ];
 
 class ControllerFactory {

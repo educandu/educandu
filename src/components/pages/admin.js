@@ -20,7 +20,7 @@ const TABS = {
   technicalMaintenance: 'technical-maintenance'
 };
 
-const determineTab = query => Object.values(TABS).find(val => val === query) || TABS.settings;
+const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
 
 function Admin({ PageTemplate }) {
   const request = useRequest();
