@@ -9,7 +9,6 @@ import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
 import { QuestionOutlined } from '@ant-design/icons';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import HomeIcon from './icons/main-menu/home-icon.js';
 import DefaultHeaderLogo from './default-header-logo.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
@@ -26,13 +25,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
   const helpPage = settings?.helpPage?.[uiLanguage];
 
   const pageMenuItems = [
-    {
-      key: 'home',
-      label: t('pageNames:home'),
-      icon: <HomeIcon />,
-      onClick: () => { window.location = routes.getHomeUrl(); },
-      showWhen: true
-    },
     {
       key: 'dashboard',
       label: t('pageNames:dashboard'),

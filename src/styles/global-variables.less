@@ -3,12 +3,13 @@
 @edu-code-family: monospace;
 
 // Font sizes
-@edu-font-size-base: 14px;
+@edu-font-size-base: 15.5px;
+@edu-font-size-xl: @edu-font-size-base + 4px;
 @edu-font-size-lg: @edu-font-size-base + 2px;
 @edu-font-size-sm: @edu-font-size-base - 2px;
 @edu-font-size-xs: @edu-font-size-base - 4px;
-@edu-heading-1-size: ceil(@edu-font-size-base * 1.85);
-@edu-heading-2-size: ceil(@edu-font-size-base * 1.55);
+@edu-heading-1-size: ceil(@edu-font-size-base * 1.60);
+@edu-heading-2-size: ceil(@edu-font-size-base * 1.50);
 @edu-heading-3-size: ceil(@edu-font-size-base * 1.40);
 @edu-heading-4-size: ceil(@edu-font-size-base * 1.30);
 @edu-heading-5-size: ceil(@edu-font-size-base * 1.20);
@@ -28,7 +29,7 @@
 @edu-control-spacing-wide: 10px;
 @edu-content-padding: 15px;
 @edu-min-page-width: 200px;
-@edu-content-width-wide: 1200px;
+@edu-content-width-wide: 1100px;
 @edu-content-width-narrow: 800px;
 @edu-control-height-base: 32px;
 @edu-control-height-lg: 40px;
@@ -86,8 +87,6 @@
 @edu-breakpoint-sm: 576px;
 @edu-breakpoint-md: 768px;
 @edu-breakpoint-lg: 992px;
-@edu-breakpoint-xl: 1200px;
-@edu-breakpoint-xxl: 1600px;
 
 @edu-media-phone-portrait: %(~"screen and (max-width: %s)", @edu-breakpoint-sm - 0.01px);
 @edu-media-phone-landscape: %(~"screen and (min-width: %s) and (max-width: %s)", @edu-breakpoint-sm, @edu-breakpoint-md - 0.01px);

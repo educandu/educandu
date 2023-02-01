@@ -72,7 +72,6 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
       {!!useAspectRatio && (
         <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup
-            size="small"
             defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
             value={aspectRatio}
             onChange={handleAspectRatioChanged}

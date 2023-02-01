@@ -27,7 +27,6 @@ function MatchingCardsEditor({ content, onContentChanged }) {
     const isTileDataMissing = tilePairs[index].some(tile => !tile.text && !tile.sourceUrl);
     return (
       <Button
-        size="small"
         key={index}
         danger={isTileDataMissing}
         className="MatchingCardsEditor-tileButton"

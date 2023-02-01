@@ -1,7 +1,7 @@
 .DocumentCard {
   position: relative;
   display: grid;
-  height: 210px;
+  height: 230px;
   gap: @edu-content-padding;
   padding: @edu-content-padding;
   grid-template-rows: auto 1fr auto;
@@ -24,11 +24,19 @@
   .m-line-clamp(2);
   font-size: @edu-font-size-sm;
   color: @edu-text-color-secondary;
+
+  @media @edu-media-phone-portrait {
+    display: none;
+  }
 }
 
 .DocumentCard-dateDetails {
   text-align: end;
   font-size: @edu-font-size-sm;
+
+  @media @edu-media-phone-portrait {
+    text-align: start;
+  }
 }
 
 .DocumentCard-button {

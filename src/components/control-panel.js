@@ -63,7 +63,7 @@ function ControlPanel({
         </div>
         <div className="ControlPanel-contentRight">
           { contentBeforeClose }
-          <Button className="ControlPanel-closeButton" size="small" icon={<CloseIcon />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
+          <Button className="ControlPanel-closeButton" icon={<CloseIcon />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
           { contentAfterClose }
         </div>
       </div>

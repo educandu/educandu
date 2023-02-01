@@ -26,9 +26,6 @@ room:
   roomMetadataHeadline:
     en: Room metadata
     de: Raum-Metadaten
-  updateRoomSuccessMessage:
-    en: The room metadata was updated successfully.
-    de: Die Raum-Metadaten wurden erfolgreich aktualisiert.
   deleteRoomTitle:
     en: Delete this room
     de: Diesen Raum löschen

@@ -203,7 +203,7 @@ function Doc({ initialState, PageTemplate }) {
   const handleDocumentMetadataModalSave = updatedDocuments => {
     setDoc(updatedDocuments[0]);
     setIsDocumentMetadataModalOpen(false);
-    message.success(t('documentMetadataUpdated'));
+    message.success(t('common:changesSavedSuccessfully'));
   };
 
   const handleDocumentMetadataModalClose = () => {
@@ -241,6 +241,7 @@ function Doc({ initialState, PageTemplate }) {
         return currentSection;
       });
 
+      await message.success(t('common:changesSavedSuccessfully'));
       setIsDirty(false);
       setDoc(updatedDoc);
       setCurrentSections(cloneDeep(mergedSections));

@@ -833,6 +833,12 @@
       "de": "Vertikal spiegeln"
     }
   },
+  "irreversibleActionsSection": {
+    "title": {
+      "en": "Irreversible actions",
+      "de": "Unwiderrufbare Aktionen"
+    }
+  },
   "itemsExpander": {
     "expand": {
       "en": "+ {count} more",
@@ -1196,10 +1202,6 @@
       "en": "The permalink could not be copied to the clipboard",
       "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
     },
-    "documentMetadataUpdated": {
-      "en": "Document updated successfully",
-      "de": "Das Dokument wurde erfolgreich aktualisiert"
-    },
     "commentsPanelTitle": {
       "en": "You are viewing the document page in \"comments\" mode",
       "de": "Du befindest dich im Kommentar-Modus"
@@ -1348,10 +1350,6 @@
       "en": "Room metadata",
       "de": "Raum-Metadaten"
     },
-    "updateRoomSuccessMessage": {
-      "en": "The room metadata was updated successfully.",
-      "de": "Die Raum-Metadaten wurden erfolgreich aktualisiert."
-    },
     "deleteRoomTitle": {
       "en": "Delete this room",
       "de": "Diesen Raum löschen"
@@ -1447,12 +1445,6 @@
     "loadingDocument": {
       "en": "Loading document",
       "de": "Dokument wird geladen"
-    }
-  },
-  "permanentActionsCard": {
-    "title": {
-      "en": "Irreversible actions",
-      "de": "Unwiderrufbare Aktionen"
     }
   },
   "pluginSelectorDialog": {

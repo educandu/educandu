@@ -14,6 +14,7 @@
 
   &.UserAccountsTab-tableSwitcher--wide {
     display: block !important;
+
     @media @edu-media-not-desktop {
       display: none !important;
     }
@@ -22,6 +23,7 @@
   &.UserAccountsTab-tableSwitcher--narrow {
     min-width: 200px;
     display: none !important;
+
     @media @edu-media-not-desktop {
       display: block !important;
     }
@@ -50,9 +52,8 @@
   list-style: none;
 }
 
-.UserAccountsTab-actions {}
-
-.UserAccountsTab-actionButton {
-  display: block;
-  padding: 0;
+.UserAccountsTab-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

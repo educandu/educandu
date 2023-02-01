@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: @edu-font-size-sm;
+  font-size: @edu-font-size-xs;
   color: @edu-text-color-secondary !important;
   background-color: @edu-background-color-base !important;
   border-radius: 50%;
@@ -112,8 +112,18 @@
 
 .u-input-count {
   position: absolute;
-  bottom: -15px;
+  bottom: -1.5em;
   right: 10px;
   font-size: @edu-font-size-xs;
   color: @edu-text-color-secondary;
+}
+
+.u-clickable {
+  cursor: pointer;
+}
+
+.u-small-button-group {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 3px;
 }

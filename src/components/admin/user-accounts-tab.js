@@ -5,6 +5,7 @@ import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
+import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import UserRoleTagEditor from './user-role-tag-editor.js';
@@ -340,7 +341,6 @@ function UserAccountsTab() {
 
     return (
       <Select
-        size="small"
         className="UserAccountsTab-storagePlanSelect"
         placeholder={t('selectPlan')}
         value={item.storage.planId}
@@ -386,9 +386,7 @@ function UserAccountsTab() {
 
     return (
       <div className="UserAccountsTab-actions">
-        <a className="UserAccountsTab-actionButton" onClick={() => handleRemoveExternalAccountClick(externalAccountId)}>
-          {t('common:delete')}
-        </a>
+        <DeleteButton onClick={() => handleRemoveExternalAccountClick(externalAccountId)} />
       </div>
     );
   };
@@ -601,7 +599,7 @@ function UserAccountsTab() {
   ];
 
   const renderTabChildren = (dataSource, columns) => (
-    <div className="Tabs-tabPane Tabs-tabPane--noIndentation">
+    <div className="Tabs-tabPane">
       <Table
         dataSource={dataSource}
         columns={columns}

@@ -1,7 +1,6 @@
 .RoomCard {
   .m-card;
   position: relative;
-  height: 250px;
   display: flex;
   flex-direction: column;
   padding: @edu-content-padding;
@@ -24,7 +23,6 @@
   .m-line-clamp(1);
   align-self: center;
   text-align: center;
-  font-size: 14px;
 
   &.RoomCard-name--doubleLine {
     .m-line-clamp(2);
@@ -36,7 +34,7 @@
   width: 100%;
   align-self: center;
   text-align: center;
-  font-size: 12px;
+  font-size: @edu-font-size-sm;
   padding-top: 3px;
   color: @edu-text-color-secondary;
 }
@@ -48,7 +46,7 @@
 .RoomCard-infoRow {
   display: flex;
   gap: 10px;
-  font-size: 12px;
+  font-size: @edu-font-size-sm;
   padding: 0 0px 5px 10px;
   color: lighten(@edu-text-color, 10%);
 
