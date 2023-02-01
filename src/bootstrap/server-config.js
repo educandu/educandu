@@ -1,5 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../utils/unique-id.js';
+import spdxLicenseList from 'spdx-license-list';
 import { FEATURE_TOGGLES } from '../domain/constants.js';
 import { defaultValidationOptions, validate } from '../domain/validation.js';
 
@@ -50,6 +51,7 @@ const configSchema = joi.object({
   }).allow(null),
   basicAuthUsers: joi.object().default({}),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
+  allowedLicenses: joi.array().items(joi.string().valid(...Object.keys(spdxLicenseList))).default(Object.keys(spdxLicenseList)),
   disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   exposeErrorDetails: joi.boolean().default(false),
   taskProcessing: joi.object({

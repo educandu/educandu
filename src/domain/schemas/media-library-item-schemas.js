@@ -3,7 +3,6 @@ import spdxLicenseList from 'spdx-license-list';
 import { RESOURCE_TYPE } from '../constants.js';
 import { idOrKeySchema } from './shared-schemas.js';
 
-// For now, allow all licenses, make configurable in: https://educandu.atlassian.net/browse/EDU-1018
 const licenseSchema = joi.string().valid(...Object.keys(spdxLicenseList));
 
 export const mediaLibraryItemDbSchema = joi.object({

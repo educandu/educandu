@@ -8,13 +8,14 @@ import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ThemeManager from '../resources/theme-manager.js';
+import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, PageResolver]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, LicenseManager, PageResolver]; }
 
-  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, pageResolver) {
+  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, licenseManager, pageResolver) {
     super();
     this.container = container;
     this.serverConfig = serverConfig;
@@ -22,6 +23,7 @@ class PageRenderer extends PageRendererBase {
     this.clientDataMappingService = clientDataMappingService;
     this.resourceManager = resourceManager;
     this.themeManager = themeManager;
+    this.licenseManager = licenseManager;
     this.pageResolver = pageResolver;
   }
 
@@ -37,6 +39,7 @@ class PageRenderer extends PageRendererBase {
     const storage = req.storage;
     const resources = this.resourceManager.getResources();
     const theme = this.themeManager.getTheme();
+    const licenses = this.licenseManager.getLicenses();
 
     const {
       PageComponent,
@@ -73,7 +76,8 @@ class PageRenderer extends PageRendererBase {
       `window.__resources__=${htmlescape(resources)};`,
       `window.__initalState__=${htmlescape(initialState)};`,
       `window.__clientconfig__=${htmlescape(clientConfig)};`,
-      `window.__theme__=${htmlescape(theme)};`
+      `window.__theme__=${htmlescape(theme)};`,
+      `window.__licenses__=${htmlescape(licenses)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];

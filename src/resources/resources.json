@@ -849,6 +849,16 @@
       "de": "weniger anzeigen"
     }
   },
+  "licenseSelect": {
+    "singleModePlaceholder": {
+      "en": "Please select a license",
+      "de": "Bitte wähle eine Lizenz aus"
+    },
+    "multiModePlaceholder": {
+      "en": "Please select one or more licenses",
+      "de": "Bitte wähle eine oder meherere Lizenzen aus"
+    }
+  },
   "loginForm": {
     "enterPassword": {
       "en": "Please enter your password",
