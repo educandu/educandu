@@ -31,7 +31,7 @@ const TABS = {
   documents: 'documents'
 };
 
-const determineTab = query => Object.values(TABS).find(val => val === query) || TABS.settings;
+const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
 
 function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = false }) {
   return {
