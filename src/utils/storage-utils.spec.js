@@ -5,13 +5,13 @@ import { getStorageLocationTypeForPath, getRoomMediaRoomPath, tryGetRoomIdFromSt
 describe('storage-utils', () => {
   describe('getStorageLocationTypeForPath', () => {
     const testCases = [
-      { path: 'root/media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'root/document-media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: 'mediatech/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: 'media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.documentMedia },
-      { path: '/root/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: '/media/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: '/root/rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: 'rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.roomMedia }
+      { path: 'document-media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.documentMedia },
+      { path: '/root/room-media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: '/room-media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: '/root/room-media/roomId', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'room-media/roomId', expectedResult: STORAGE_LOCATION_TYPE.roomMedia }
     ];
 
     testCases.forEach(({ path, expectedResult }) => {
@@ -24,32 +24,31 @@ describe('storage-utils', () => {
 
   describe('getRoomMediaRoomPath', () => {
     it('should return the path', () => {
-      expect(getRoomMediaRoomPath('myRoom')).toBe('rooms/myRoom/media');
+      expect(getRoomMediaRoomPath('myRoom')).toBe('room-media/myRoom');
     });
   });
 
   describe('tryGetRoomIdFromStoragePath', () => {
     it('should return the room id when the path is valid', () => {
-      expect(tryGetRoomIdFromStoragePath('rooms/myRoom/media/')).toBe('myRoom');
+      expect(tryGetRoomIdFromStoragePath('room-media/myRoom')).toBe('myRoom');
     });
 
     it('should return null when the path is invalid', () => {
-      expect(tryGetRoomIdFromStoragePath('root/rooms/myRoom/media/')).toBe(null);
+      expect(tryGetRoomIdFromStoragePath('root/room-media/myRoom')).toBe(null);
     });
   });
 
   describe('createUniqueStorageFileName', () => {
     const generateId = () => 'ch5zQo897tzo8f3';
     const testCases = [
-      { fileName: 'hello-world-123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'hello-world-123.MP3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'hello_world_123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'hello world 123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'héllö wøȑlð 123.mp3', expectedResult: 'helloe-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'Hällo Wörld 123.mp3', expectedResult: 'haello-woerld-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
-      { fileName: '### ###.mp3', expectedResult: 'ch5zQo897tzo8f3.mp3' }
+      { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'hello world 123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', prefix: 'document-media/my-directory/', expectedOutput: 'document-media/my-directory/hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: '### ###.mp3', prefix: 'document-media/my-directory/', expectedOutput: 'document-media/my-directory/ch5zqo897tzo8f3.mp3' }
     ];
 
     testCases.forEach(({ fileName, expectedResult }) => {

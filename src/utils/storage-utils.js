@@ -13,6 +13,18 @@ import {
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
+export function getMediaLibraryPath() {
+  return 'media-library/';
+}
+
+export function getDocumentMediaDocumentPath(documentId) {
+  return `document-media/${documentId}`;
+}
+
+export function getRoomMediaRoomPath(roomId) {
+  return `room-media/${roomId}`;
+}
+
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
     return { width: img.naturalWidth, height: img.naturalHeight };
@@ -79,18 +91,6 @@ export function getStorageLocationTypeForPath(path) {
     return STORAGE_LOCATION_TYPE.roomMedia;
   }
   return STORAGE_LOCATION_TYPE.unknown;
-}
-
-export function getMediaLibraryPath() {
-  return 'media-library';
-}
-
-export function getDocumentMediaDocumentPath(documentId) {
-  return `media/${documentId}`;
-}
-
-export function getRoomMediaRoomPath(roomId) {
-  return `rooms/${roomId}/media`;
 }
 
 export function tryGetRoomIdFromStoragePath(path) {
