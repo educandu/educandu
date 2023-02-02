@@ -26,11 +26,10 @@ export default class Educandu_2023_02_01_02_change_cdn_urls {
   }
 
   updateDoc(doc) {
-    doc.cdnResources = doc.cdnResources.forEach(this.redactUrl);
-
-    for (const section of doc.sections) {
+    doc.cdnResources = doc.cdnResources.map(this.redactUrl);
+    doc.sections = doc.sections.map(section => {
       if (!section.content) {
-        return;
+        return section;
       }
 
       switch (section.type) {
@@ -162,7 +161,10 @@ export default class Educandu_2023_02_01_02_change_cdn_urls {
         default:
           break;
       }
-    }
+
+      return section;
+    });
+    return doc;
   }
 
   shouldUpdateDoc(doc) {
