@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { createTagsPipelineQuery } from '../utils/tag-utils.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
@@ -109,7 +110,10 @@ class DocumentStore {
   }
 
   getDocumentTagsMatchingText(text) {
-    return this.collection.aggregate(this._getTagsQuery(text)).toArray();
+    const { isValid, query } = createTagsPipelineQuery(text);
+    return isValid
+      ? this.collection.aggregate(query).toArray()
+      : Promise.resolve([]);
   }
 
   getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
@@ -137,29 +141,6 @@ class DocumentStore {
 
   deleteDocumentsByRoomId(roomId, { session }) {
     return this.collection.deleteMany({ roomId }, { session });
-  }
-
-  _getTagsQuery(searchString) {
-    return [
-      { $unwind: '$tags' },
-      { $match: { tags: { $regex: `.*${searchString}.*`, $options: 'i' } } },
-      { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
-      { $project: {
-        _id: 0,
-        uniqueTags: {
-          $reduce: {
-            input: '$uniqueTags',
-            initialValue: [],
-            in: {
-              $let: {
-                vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
-                in: { $setUnion: '$$elem' }
-              }
-            }
-          }
-        }
-      } }
-    ];
   }
 }
 

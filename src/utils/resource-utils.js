@@ -1,3 +1,4 @@
+import urlUtils from './url-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 import FilePdfIcon from '../components/icons/files/file-pdf-icon.js';
 import FileTextIcon from '../components/icons/files/file-text-icon.js';
@@ -14,31 +15,26 @@ import FileUnknownFilledIcon from '../components/icons/files/file-unknown-filled
 
 const extensionsGroups = [
   { type: RESOURCE_TYPE.pdf, extensions: ['pdf'] },
-  { type: RESOURCE_TYPE.text, extensions: ['txt', 'doc', 'rtf', 'odt'] },
+  { type: RESOURCE_TYPE.text, extensions: ['txt'] },
   { type: RESOURCE_TYPE.audio, extensions: ['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav', 'flac'] },
   { type: RESOURCE_TYPE.image, extensions: ['jpg', 'jpeg', 'gif', 'png', 'tiff', 'raw', 'webp', 'svg'] },
   { type: RESOURCE_TYPE.video, extensions: ['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg', 'mov', 'avi', 'mkv'] }
 ];
 
-export const getResourceExtension = resource => {
-  const sanitizedUrl = (resource || '').trim();
-  const extensionMatches = sanitizedUrl.match(/\.([0-9a-z]+)$/i);
-  return extensionMatches?.[1]?.toLowerCase() || '';
-};
-
-export const getResourceFullName = resource => {
-  const sanitizedUrl = (resource || '').trim();
+export const getResourceFullName = url => {
+  const sanitizedUrl = (url || '').trim();
   return sanitizedUrl.split('/').pop();
 };
 
 export const getResourceType = url => {
-  const extension = getResourceExtension(url);
+  const { rawExtension } = urlUtils.splitAtExtension(url);
 
-  if (!extension) {
+  if (!rawExtension) {
     return RESOURCE_TYPE.none;
   }
 
-  const extensionsGroup = extensionsGroups.find(group => group.extensions.includes(extension));
+  const lowercasedExtension = rawExtension.toLowerCase();
+  const extensionsGroup = extensionsGroups.find(group => group.extensions.includes(lowercasedExtension));
 
   return extensionsGroup?.type || RESOURCE_TYPE.unknown;
 };

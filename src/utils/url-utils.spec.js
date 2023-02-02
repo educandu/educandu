@@ -145,6 +145,69 @@ describe('url-utils', () => {
     });
   });
 
+  describe('splitAtExtension', () => {
+    const testCases = [
+      {
+        pathOrUrl: null,
+        expectedResult: { baseName: '', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: '',
+        expectedResult: { baseName: '', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'a',
+        expectedResult: { baseName: 'a', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'a.mp3',
+        expectedResult: { baseName: 'a', extension: '.mp3', rawExtension: 'mp3' }
+      },
+      {
+        pathOrUrl: 'A.MP3',
+        expectedResult: { baseName: 'A', extension: '.MP3', rawExtension: 'MP3' }
+      },
+      {
+        pathOrUrl: '.gitignore',
+        expectedResult: { baseName: '.gitignore', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'https://some.place/path/.gitignore',
+        expectedResult: { baseName: 'https://some.place/path/.gitignore', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'https://some.place/path/a.mp3',
+        expectedResult: { baseName: 'https://some.place/path/a', extension: '.mp3', rawExtension: 'mp3' }
+      },
+      {
+        pathOrUrl: 'filename-without-extension',
+        expectedResult: { baseName: 'filename-without-extension', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'https://some.place/path/filename-without-extension',
+        expectedResult: { baseName: 'https://some.place/path/filename-without-extension', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'https://some.place/path.with.dots/filename-without-extension',
+        expectedResult: { baseName: 'https://some.place/path.with.dots/filename-without-extension', extension: '', rawExtension: '' }
+      },
+      {
+        pathOrUrl: 'filename-with-extension.mp3',
+        expectedResult: { baseName: 'filename-with-extension', extension: '.mp3', rawExtension: 'mp3' }
+      },
+      {
+        pathOrUrl: 'https://some.place/path/filename-with-extension.mp3',
+        expectedResult: { baseName: 'https://some.place/path/filename-with-extension', extension: '.mp3', rawExtension: 'mp3' }
+      }
+    ];
+
+    testCases.forEach(({ pathOrUrl, expectedResult }) => {
+      it(`should return the correct result for pathOrUrl '${pathOrUrl}'`, () => {
+        expect(sut.splitAtExtension(pathOrUrl)).toStrictEqual(expectedResult);
+      });
+    });
+  });
+
   describe('isFullyQualifiedUrl', () => {
     const testCases = [
       {
