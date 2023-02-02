@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
+import LicenseSelect from '../license-select.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
@@ -47,6 +48,18 @@ function Tests({ PageTemplate }) {
   const handleCopyToClipboard = async clipboardText => {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
+  };
+
+  // LicenseSelect
+  const [selectedLicenses, setSelectedLicenses] = useState([]);
+  const [isLicenseMultiModeEnabled, setIsLicenseMultiModeEnabled] = useState(false);
+  const handleSelectedLicensesChange = (_keyOrKeys, licenseOrLicenses) => {
+    setSelectedLicenses(Array.isArray(licenseOrLicenses) ? licenseOrLicenses : [licenseOrLicenses]);
+  };
+  const handleIsLicenseMultiModeEnabledChange = event => {
+    const isSwitchingToMultiMode = event.target.checked;
+    setIsLicenseMultiModeEnabled(isSwitchingToMultiMode);
+    setSelectedLicenses(oldLicenses => !isSwitchingToMultiMode && oldLicenses.length ? oldLicenses.slice(0, 1) : oldLicenses);
   };
 
   // WikimediaApiClient
@@ -183,6 +196,32 @@ function Tests({ PageTemplate }) {
           onChange={handleTabChange}
           destroyInactiveTabPane
           items={[
+            {
+              key: 'LicenseSelect',
+              label: 'LicenseSelect',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '25px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
+                    <Checkbox checked={isLicenseMultiModeEnabled} onChange={handleIsLicenseMultiModeEnabledChange}>
+                      Multiple selection mode
+                    </Checkbox>
+                    <LicenseSelect
+                      style={{ width: isLicenseMultiModeEnabled ? '500px' : '250px' }}
+                      multi={isLicenseMultiModeEnabled}
+                      value={isLicenseMultiModeEnabled ? selectedLicenses.map(l => l.key) : selectedLicenses[0]?.key || null}
+                      onChange={handleSelectedLicensesChange}
+                      />
+                  </div>
+                  {selectedLicenses.map(license => (
+                    <div key={license.key} style={{ marginBottom: '25px' }}>
+                      <div>Key: <b>{license.key}</b></div>
+                      <div>Name: <b>{license.name}</b></div>
+                      <div>URL: <b><a href={license.url} target="_blank" rel="noreferrer">{license.url}</a></b></div>
+                    </div>
+                  ))}
+                </div>
+              )
+            },
             {
               key: 'WikimediaApiClient',
               label: 'WikimediaApiClient',

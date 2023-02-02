@@ -48,6 +48,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
+ | allowedLicenses | A list of SPDX license names that should be usable inside the app (defaults to the whole currently "known" list) | `string[]` | no |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
@@ -105,6 +106,7 @@ educandu({
     gatekeeper: 'gatekeeperPassword'
   },
   plugins: ['markdown', 'image', 'table', 'audio', 'video'],
+  allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'MIT'],
   exposeErrorDetails: true,
   taskProcessing: {
     isEnabled: true,

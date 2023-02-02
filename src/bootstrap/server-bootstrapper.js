@@ -7,10 +7,12 @@ import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
+import spdxLicenseList from 'spdx-license-list';
 import PageResolver from '../domain/page-resolver.js';
 import ThemeManager from '../resources/theme-manager.js';
 import lessVariablesToJson from 'less-variables-to-json';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import ControllerFactory from '../server/controller-factory.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
@@ -63,6 +65,11 @@ export async function createContainer(configValues = {}) {
   const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
   themeManager.setThemeFromLessVariables({ ...globalVariables, ...themeOverrideVariables });
   container.registerInstance(ThemeManager, themeManager);
+
+  logger.info('Registering license manager');
+  const licenseManager = new LicenseManager();
+  licenseManager.setLicensesFromSpdxLicenseList(spdxLicenseList, serverConfig.allowedLicenses);
+  container.registerInstance(LicenseManager, licenseManager);
 
   logger.info('Registering page resolver');
   const pageResolver = new PageResolver(serverConfig.bundleConfig);
