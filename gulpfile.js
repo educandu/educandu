@@ -26,9 +26,10 @@ import {
   TunnelProxyContainer
 } from '@educandu/dev-tools';
 
-let bundler = null;
 let currentApp = null;
+let isInWatchMode = false;
 let currentCdnProxy = null;
+let currentAppBuildContext = null;
 
 const testAppEnv = {
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
@@ -76,7 +77,7 @@ const maildevContainer = new MaildevContainer({
 });
 
 Graceful.on('exit', async () => {
-  bundler?.rebuild?.dispose();
+  await currentAppBuildContext?.dispose();
   await currentApp?.waitForExit();
   await currentCdnProxy?.waitForExit();
 });
@@ -86,7 +87,7 @@ export async function clean() {
 }
 
 export async function lint() {
-  await eslint.lint('**/*.js', { failOnError: !currentApp });
+  await eslint.lint('**/*.js', { failOnError: !isInWatchMode });
 }
 
 export async function fix() {
@@ -120,15 +121,15 @@ export async function buildTestAppCss() {
 }
 
 export async function buildTestAppJs() {
-  if (bundler?.rebuild) {
-    await bundler.rebuild();
+  if (currentAppBuildContext) {
+    await currentAppBuildContext.rebuild();
   } else {
     // eslint-disable-next-line require-atomic-updates
-    bundler = await esbuild.bundle({
+    currentAppBuildContext = await esbuild.bundle({
       entryPoints: ['./test-app/src/bundles/main.js'],
       outdir: './test-app/dist',
       minify: !!cliArgs.optimize,
-      incremental: !!currentApp,
+      incremental: isInWatchMode,
       inject: ['./test-app/src/polyfills.js'],
       metaFilePath: './test-app/dist/meta.json'
     });
@@ -325,13 +326,18 @@ export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startSe
 
 export const verify = gulp.series(lint, test, build);
 
-export function setupWatchers(done) {
+export function setupWatchMode(done) {
+  isInWatchMode = true;
+  done();
+}
+
+export function startWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/src/**/*.{js,json}'], gulp.series(buildTestAppJs, restartServer));
   gulp.watch(['src/**/*.less', 'test-app/src/**/*.less'], gulp.series(copyToDist, buildTestAppCss));
   gulp.watch(['src/**/*.yml'], buildTranslations);
   done();
 }
 
-export const startWatch = gulp.series(serve, setupWatchers);
+export const watch = gulp.series(setupWatchMode, serve, startWatchers);
 
-export default startWatch;
+export default watch;
