@@ -89,12 +89,12 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'image',
             content: {
-              sourceUrl: 'cdn://media/image-1.png',
+              sourceUrl: 'cdn://document-media/image-1.png',
               copyrightNotice: '',
               width: 100,
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
-                sourceUrl: 'cdn://media/image-2.png',
+                sourceUrl: 'cdn://document-media/image-2.png',
                 copyrightNotice: ''
               },
               revealEffect: {
@@ -117,7 +117,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceUrl: 'cdn://media/video-1.mp4',
+              sourceUrl: 'cdn://document-media/video-1.mp4',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               copyrightNotice: '',
               posterImage: {
@@ -179,7 +179,7 @@ describe('document-service', () => {
     });
 
     it('saves all referenced cdn resources with the revision', () => {
-      expect(createdRevision.cdnResources).toEqual(['cdn://media/image-1.png', 'cdn://media/image-2.png', 'cdn://media/video-1.mp4']);
+      expect(createdRevision.cdnResources).toEqual(['cdn://document-media/image-1.png', 'cdn://document-media/image-2.png', 'cdn://document-media/video-1.mp4']);
     });
 
     it('creates a document', () => {
@@ -215,7 +215,7 @@ describe('document-service', () => {
     });
 
     it('saves all referenced cdn resources with the document', () => {
-      expect(createdDocument.cdnResources).toEqual(['cdn://media/image-1.png', 'cdn://media/image-2.png', 'cdn://media/video-1.mp4']);
+      expect(createdDocument.cdnResources).toEqual(['cdn://document-media/image-1.png', 'cdn://document-media/image-2.png', 'cdn://document-media/video-1.mp4']);
     });
 
     it('releases the lock on the document', () => {
@@ -248,12 +248,12 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'image',
             content: {
-              sourceUrl: 'cdn://media/image-1.png',
+              sourceUrl: 'cdn://document-media/image-1.png',
               copyrightNotice: '',
               width: 100,
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
-                sourceUrl: 'cdn://media/image-2.png',
+                sourceUrl: 'cdn://document-media/image-2.png',
                 copyrightNotice: ''
               },
               revealEffect: {
@@ -276,7 +276,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceUrl: 'cdn://media/video-1.mp4',
+              sourceUrl: 'cdn://document-media/video-1.mp4',
               copyrightNotice: '',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               posterImage: {
@@ -314,7 +314,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceUrl: 'cdn://media/video-2.mp4',
+              sourceUrl: 'cdn://document-media/video-2.mp4',
               copyrightNotice: '',
               aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
               posterImage: {
@@ -375,7 +375,7 @@ describe('document-service', () => {
     });
 
     it('saves all referenced cdn resources with the revision', () => {
-      expect(persistedSecondRevision.cdnResources).toEqual(['cdn://media/image-1.png', 'cdn://media/image-2.png', 'cdn://media/video-1.mp4', 'cdn://media/video-2.mp4']);
+      expect(persistedSecondRevision.cdnResources).toEqual(['cdn://document-media/image-1.png', 'cdn://document-media/image-2.png', 'cdn://document-media/video-1.mp4', 'cdn://document-media/video-2.mp4']);
     });
 
     it('saves the second revision data onto the document', () => {
@@ -408,7 +408,7 @@ describe('document-service', () => {
     });
 
     it('saves all referenced cdn resources with the document', () => {
-      expect(updatedDocument.cdnResources).toEqual(['cdn://media/image-1.png', 'cdn://media/image-2.png', 'cdn://media/video-1.mp4', 'cdn://media/video-2.mp4']);
+      expect(updatedDocument.cdnResources).toEqual(['cdn://document-media/image-1.png', 'cdn://document-media/image-2.png', 'cdn://document-media/video-1.mp4', 'cdn://document-media/video-2.mp4']);
     });
   });
 
@@ -803,7 +803,7 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'audio',
           content: {
-            sourceUrl: 'cdn://media/audio-1.mp3',
+            sourceUrl: 'cdn://document-media/audio-1.mp3',
             copyrightNotice: 'Unmodified text',
             playbackRange: [0, 1]
           }
@@ -814,7 +814,7 @@ describe('document-service', () => {
           revision: uniqueId.create(),
           type: 'audio',
           content: {
-            sourceUrl: 'cdn://media/audio-2.mp3',
+            sourceUrl: 'cdn://document-media/audio-2.mp3',
             copyrightNotice: 'Initial text',
             playbackRange: [0, 1]
           }
@@ -1009,8 +1009,8 @@ describe('document-service', () => {
         });
 
         it('removes the cdn resources of the hard-deleted section', () => {
-          expect(documentRevisionsBeforeDeletion[4].cdnResources).toMatchObject(['cdn://media/audio-1.mp3', 'cdn://media/audio-2.mp3']);
-          expect(documentRevisionsAfterDeletion[4].cdnResources).toMatchObject(['cdn://media/audio-1.mp3']);
+          expect(documentRevisionsBeforeDeletion[4].cdnResources).toMatchObject(['cdn://document-media/audio-1.mp3', 'cdn://document-media/audio-2.mp3']);
+          expect(documentRevisionsAfterDeletion[4].cdnResources).toMatchObject(['cdn://document-media/audio-1.mp3']);
         });
       });
 
@@ -1260,7 +1260,7 @@ describe('document-service', () => {
         ...sectionRevision1,
         content: {
           ...sectionRevision1.content,
-          text: '![](cdn://media/some-resource.jpg)'
+          text: '![](cdn://document-media/some-resource.jpg)'
         }
       };
 
@@ -1290,12 +1290,12 @@ describe('document-service', () => {
 
     it('should have changed document revisions that were not correct', () => {
       expect(documentRevisionsAfterConsolidation[1]).not.toStrictEqual(documentRevisionsBeforeConsolidation[1]);
-      expect(documentRevisionsAfterConsolidation[1].cdnResources).toStrictEqual(['cdn://media/some-resource.jpg']);
+      expect(documentRevisionsAfterConsolidation[1].cdnResources).toStrictEqual(['cdn://document-media/some-resource.jpg']);
     });
 
     it('should have regenerated the document', () => {
       expect(documentAfterConsolidation).not.toStrictEqual(documentBeforeConsolidation);
-      expect(documentAfterConsolidation.cdnResources).toStrictEqual(['cdn://media/some-resource.jpg']);
+      expect(documentAfterConsolidation.cdnResources).toStrictEqual(['cdn://document-media/some-resource.jpg']);
     });
   });
 

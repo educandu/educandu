@@ -94,9 +94,9 @@ describe('storage-service', () => {
       roomStore.getRoomsByOwnerOrCollaboratorUser.resolves([]);
 
       cdn.listObjects.resolves([
-        { prefix: null, name: 'media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-        { prefix: null, name: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
-        { prefix: null, name: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
       ]);
       rooms = [];
       documents = [{ _id: '34q87zc95t9c287eh', title: 'Document title' }];
@@ -104,39 +104,39 @@ describe('storage-service', () => {
       roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
       documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
 
-      result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh' });
+      result = await sut.getObjects({ parentPath: 'document-media/34q87zc95t9c287eh' });
     });
 
     it('should call the CDN', () => {
-      assert.calledWith(cdn.listObjects, { prefix: 'media/34q87zc95t9c287eh/', recursive: false });
+      assert.calledWith(cdn.listObjects, { prefix: 'document-media/34q87zc95t9c287eh/', recursive: false });
     });
 
     it('should construct all paths and URLs correctly', () => {
       expect(result).toStrictEqual([
         {
           displayName: 'file-1.pdf',
-          parentPath: 'media/34q87zc95t9c287eh',
-          path: 'media/34q87zc95t9c287eh/file-1.pdf',
-          url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-1.pdf',
-          portableUrl: 'cdn://media/34q87zc95t9c287eh/file-1.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-1.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-1.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-1.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           size: 1000
         },
         {
           displayName: 'file-2 with spaces.pdf',
-          parentPath: 'media/34q87zc95t9c287eh',
-          path: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf',
-          url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
-          portableUrl: 'cdn://media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           size: 2000
         },
         {
           displayName: 'file-3 with weird &$#=.pdf',
-          parentPath: 'media/34q87zc95t9c287eh',
-          path: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
-          url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
-          portableUrl: 'cdn://media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           size: 3000
         }
@@ -158,7 +158,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is unknown', () => {
       beforeEach(async () => {
-        parentPath = 'other-path/media';
+        parentPath = 'other-path';
         files = [{}];
 
         try {
@@ -188,18 +188,18 @@ describe('storage-service', () => {
       let filesAfterUpload;
 
       beforeEach(async () => {
-        parentPath = `media/${docId}`;
+        parentPath = `document-media/${docId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
         ];
 
         filesAfterUpload = [
-          { name: `media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `document-media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `document-media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
-        cdn.listObjects.withArgs({ prefix: `media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
+        cdn.listObjects.withArgs({ prefix: `document-media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
         cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
@@ -214,8 +214,8 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         assert.calledTwice(cdn.uploadObject);
-        assert.calledWith(cdn.uploadObject, `media/${docId}/file1-${id}.jpeg`, files[0].path);
-        assert.calledWith(cdn.uploadObject, `media/${docId}/file2-${id}.jpeg`, files[1].path);
+        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file1-${id}.jpeg`, files[0].path);
+        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file2-${id}.jpeg`, files[1].path);
       });
 
       it('should release the lock', () => {
@@ -231,19 +231,19 @@ describe('storage-service', () => {
           uploadedFiles: {
             'file1.jpeg': {
               displayName: `file1-${id}.jpeg`,
-              parentPath: `media/${docId}`,
-              path: `media/${docId}/file1-${id}.jpeg`,
-              url: `https://cdn.domain.com/media/${docId}/file1-${id}.jpeg`,
-              portableUrl: `cdn://media/${docId}/file1-${id}.jpeg`,
+              parentPath: `document-media/${docId}`,
+              path: `document-media/${docId}/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/document-media/${docId}/file1-${id}.jpeg`,
+              portableUrl: `cdn://document-media/${docId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             },
             'file2.jpeg': {
               displayName: `file2-${id}.jpeg`,
-              parentPath: `media/${docId}`,
-              path: `media/${docId}/file2-${id}.jpeg`,
-              url: `https://cdn.domain.com/media/${docId}/file2-${id}.jpeg`,
-              portableUrl: `cdn://media/${docId}/file2-${id}.jpeg`,
+              parentPath: `document-media/${docId}`,
+              path: `document-media/${docId}/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/document-media/${docId}/file2-${id}.jpeg`,
+              portableUrl: `cdn://document-media/${docId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             }
@@ -255,7 +255,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is room-media but the user has no storage plan allocated', () => {
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
@@ -288,7 +288,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is room-media but the user has not enough storage space left', () => {
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 5 * 1000 * 1000 },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 5 * 1000 * 1000 }
@@ -326,32 +326,32 @@ describe('storage-service', () => {
       let filesInOtherRoom;
 
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
         filesInRoomBeforeUpload = [
-          { name: `rooms/${roomId}/media/old-file-1-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `rooms/${roomId}/media/old-file-2-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `room-media/${roomId}/old-file-1-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `room-media/${roomId}/old-file-2-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
         filesInRoomAfterUpload = [
           ...filesInRoomBeforeUpload,
-          { name: `rooms/${roomId}/media/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `rooms/${roomId}/media/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `room-media/${roomId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `room-media/${roomId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
-        filesInOtherRoom = [{ name: `rooms/${otherRoomId}/media/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
+        filesInOtherRoom = [{ name: `room-media/${otherRoomId}/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
 
         const usedBytes = [...filesInRoomBeforeUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0);
         myUser.storage = { planId: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves([roomId, otherRoomId]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesInRoomAfterUpload);
-        cdn.listObjects.withArgs({ prefix: `rooms/${otherRoomId}/media/`, recursive: true }).resolves(filesInOtherRoom);
+        cdn.listObjects.withArgs({ prefix: `room-media/${roomId}/`, recursive: true }).resolves(filesInRoomAfterUpload);
+        cdn.listObjects.withArgs({ prefix: `room-media/${otherRoomId}/`, recursive: true }).resolves(filesInOtherRoom);
         cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
@@ -366,13 +366,13 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         assert.calledTwice(cdn.uploadObject);
-        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path);
-        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path);
+        assert.calledWith(cdn.uploadObject, match(/room-media\/(.+)\/file1-(.+)\.jpeg/), files[0].path);
+        assert.calledWith(cdn.uploadObject, match(/room-media\/(.+)\/file2-(.+)\.jpeg/), files[1].path);
       });
 
       it('should call cdn.listObjects for each room', () => {
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${otherRoomId}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${roomId}/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${otherRoomId}/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -397,19 +397,19 @@ describe('storage-service', () => {
           uploadedFiles: {
             'file1.jpeg': {
               displayName: `file1-${id}.jpeg`,
-              parentPath: `rooms/${roomId}/media`,
-              path: `rooms/${roomId}/media/file1-${id}.jpeg`,
-              url: `https://cdn.domain.com/rooms/${roomId}/media/file1-${id}.jpeg`,
-              portableUrl: `cdn://rooms/${roomId}/media/file1-${id}.jpeg`,
+              parentPath: `room-media/${roomId}`,
+              path: `room-media/${roomId}/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/room-media/${roomId}/file1-${id}.jpeg`,
+              portableUrl: `cdn://room-media/${roomId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             },
             'file2.jpeg': {
               displayName: `file2-${id}.jpeg`,
-              parentPath: `rooms/${roomId}/media`,
-              path: `rooms/${roomId}/media/file2-${id}.jpeg`,
-              url: `https://cdn.domain.com/rooms/${roomId}/media/file2-${id}.jpeg`,
-              portableUrl: `cdn://rooms/${roomId}/media/file2-${id}.jpeg`,
+              parentPath: `room-media/${roomId}`,
+              path: `room-media/${roomId}/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/room-media/${roomId}/file2-${id}.jpeg`,
+              portableUrl: `cdn://room-media/${roomId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             }
@@ -432,7 +432,7 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is unknown', () => {
-      path = 'other-path/media/file.jpeg';
+      path = 'other-path/file.jpeg';
 
       beforeEach(async () => {
         try {
@@ -447,7 +447,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe('Invalid storage path \'other-path/media/\'');
+        expect(result).toBe('Invalid storage path \'other-path/\'');
       });
 
       it('should release the lock', () => {
@@ -457,7 +457,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is document-media', () => {
       beforeEach(async () => {
-        path = 'media/file.jpeg';
+        path = 'document-media/file.jpeg';
 
         myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
@@ -498,12 +498,12 @@ describe('storage-service', () => {
       let allOwnedPrivateRoomIds;
 
       beforeEach(async () => {
-        path = `rooms/${roomId}/media/file.jpeg`;
+        path = `room-media/${roomId}/file.jpeg`;
 
         files = [
           { size: 1 * 1000 * 1000 },
           { size: 1 * 1000 * 1000 },
-          { name: `rooms/${roomId}/media/file.jpeg`, size: 1 * 1000 * 1000 }
+          { name: `room-media/${roomId}/file.jpeg`, size: 1 * 1000 * 1000 }
         ];
 
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
@@ -513,8 +513,8 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([files[0]]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([files[1]]);
+        cdn.listObjects.withArgs({ prefix: `room-media/${allOwnedPrivateRoomIds[0]}/`, recursive: true }).resolves([files[0]]);
+        cdn.listObjects.withArgs({ prefix: `room-media/${allOwnedPrivateRoomIds[1]}/`, recursive: true }).resolves([files[1]]);
 
         cdn.deleteObjects.resolves();
 
@@ -530,8 +530,8 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.listObjects for each room', () => {
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${allOwnedPrivateRoomIds[0]}/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${allOwnedPrivateRoomIds[1]}/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -568,17 +568,17 @@ describe('storage-service', () => {
       remainingPrivateRoom = { _id: uniqueId.create() };
 
       const filesFromRoomBeingDeleted = [
-        { name: `rooms/${roomId}/media/file1`, size: 1 * 1000 * 1000 },
-        { name: `rooms/${roomId}/media/file2`, size: 2 * 1000 * 1000 }
+        { name: `room-media/${roomId}/file1`, size: 1 * 1000 * 1000 },
+        { name: `room-media/${roomId}/file2`, size: 2 * 1000 * 1000 }
       ];
 
-      filesFromRemainingPrivateRoom = [{ name: `rooms/${remainingPrivateRoom._id}/media/filex`, size: 3 * 1000 * 1000 }];
+      filesFromRemainingPrivateRoom = [{ name: `room-media/${remainingPrivateRoom._id}/filex`, size: 3 * 1000 * 1000 }];
 
       cdn.listObjects.resolves([]);
-      cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
+      cdn.listObjects.withArgs({ prefix: `room-media/${roomId}/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
       cdn.deleteObjects.resolves();
       roomStore.getRoomIdsByOwnerId.resolves([remainingPrivateRoom._id]);
-      cdn.listObjects.withArgs({ prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
+      cdn.listObjects.withArgs({ prefix: `room-media/${remainingPrivateRoom._id}/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
 
       await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
     });
@@ -612,11 +612,11 @@ describe('storage-service', () => {
     });
 
     it('should call cdn.listObjects for the room being deleted', () => {
-      assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+      assert.calledWith(cdn.listObjects, { prefix: `room-media/${roomId}/`, recursive: true });
     });
 
     it('should call cdn.deleteObjects', () => {
-      assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
+      assert.calledWith(cdn.deleteObjects, [`room-media/${roomId}/file1`, `room-media/${roomId}/file2`]);
     });
 
     it('should call roomStore.getRoomIdsByOwnerId', () => {
@@ -624,7 +624,7 @@ describe('storage-service', () => {
     });
 
     it('should call cdn.listObjects for the remaining room', () => {
-      assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
+      assert.calledWith(cdn.listObjects, { prefix: `room-media/${remainingPrivateRoom._id}/`, recursive: true });
     });
 
     it('should update the user\'s usedBytes', async () => {
@@ -661,7 +661,7 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -679,7 +679,7 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: true
             }
           ]);
@@ -702,7 +702,7 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -723,14 +723,14 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             },
             {
               type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: myUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
-              path: 'rooms/room/media',
+              path: 'room-media/room',
               isDeletionEnabled: true
             }
           ]);
@@ -763,7 +763,7 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -799,14 +799,14 @@ describe('storage-service', () => {
           expect(result).toEqual([
             {
               type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'media/documentId',
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             },
             {
               type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: ownerUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
-              path: 'rooms/room/media',
+              path: 'room-media/room',
               isDeletionEnabled: true
             }
           ]);
