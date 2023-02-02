@@ -11,15 +11,26 @@ class RequestLimitRecordStore {
     return `${requestKey}|${ipAddress}`;
   }
 
-  async createOrUpdateRequestLimitRecord({ ipAddress, requestKey, setExpiresOnOnInsert }, { session } = {}) {
+  async createOrUpdateRequestLimitRecord({ ipAddress, requestKey, setExpiresOnOnInsert, maxRequests = 1 }, { session } = {}) {
     const filter = {
       _id: this._createId({ requestKey, ipAddress })
     };
 
-    const update = {
-      $inc: { count: 1 },
-      $setOnInsert: { expiresOn: setExpiresOnOnInsert }
-    };
+    const aggregationPipeline = [
+      {
+        $set: {
+          count: {
+            $min: [
+              { $max: [1, { $add: ['$count', 1] }] },
+              maxRequests
+            ]
+          },
+          expiresOn: {
+            $min: ['$expiresOn', setExpiresOnOnInsert]
+          }
+        }
+      }
+    ];
 
     const options = {
       session,
@@ -27,7 +38,7 @@ class RequestLimitRecordStore {
       returnDocument: 'after'
     };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    const { value } = await this.collection.findOneAndUpdate(filter, aggregationPipeline, options);
     return value;
   }
 }
