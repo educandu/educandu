@@ -41,14 +41,15 @@ describe('storage-utils', () => {
   describe('createUniqueStorageFileName', () => {
     const generateId = () => 'ch5zQo897tzo8f3';
     const testCases = [
-      { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'hello world 123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: 'Hello World 123 !"§.mp3', prefix: 'document-media/my-directory/', expectedOutput: 'document-media/my-directory/hello-world-123-ch5zqo897tzo8f3.mp3' },
-      { fileName: '### ###.mp3', prefix: 'document-media/my-directory/', expectedOutput: 'document-media/my-directory/ch5zqo897tzo8f3.mp3' }
+      { fileName: 'hello-world-123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello-world-123.MP3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello_world_123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'hello world 123.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'héllö wøȑlð 123.mp3', expectedResult: 'helloe-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hällo Wörld 123.mp3', expectedResult: 'haello-woerld-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', expectedResult: 'hello-world-123-ch5zQo897tzo8f3.mp3' },
+      { fileName: '### ###.mp3', expectedResult: 'ch5zQo897tzo8f3.mp3' }
     ];
 
     testCases.forEach(({ fileName, expectedResult }) => {
