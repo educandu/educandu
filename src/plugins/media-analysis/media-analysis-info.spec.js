@@ -18,7 +18,11 @@ describe('media-analysis-info', () => {
     it('redacts the copyrightNotice', () => {
       content = {
         mainTrack: {
-          copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`
+          sourceUrl: '',
+          copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`,
+          posterImage: {
+            sourceUrl: ''
+          }
         },
         secondaryTracks: [
           {
@@ -35,7 +39,31 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: `room-media/${currentRoomId}/my-video-1.mp4`,
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: ''
+          }
+        },
+        secondaryTracks: [
+          {
+            sourceUrl: `room-media/${currentRoomId}/my-video-2.mp4`,
+            copyrightNotice: ''
+          }
+        ]
+      };
+      result = sut.redactContent(content, otherRoomId);
+      expect(result.mainTrack.sourceUrl).toBe('');
+      expect(result.secondaryTracks[0].sourceUrl).toBe('');
+    });
+
+    it('redacts the poster image source url', () => {
+      content = {
+        mainTrack: {
+          sourceUrl: '',
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: `room-media/${currentRoomId}/my-image.jpg`
+          }
         },
         secondaryTracks: [
           {
@@ -53,7 +81,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: `room-media/${currentRoomId}/my-file-1.pdf`,
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: `room-media/${currentRoomId}/my-image.jpg`
+          }
         },
         secondaryTracks: [
           {
@@ -72,7 +103,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: '',
-          copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)'
+          copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)',
+          posterImage: {
+            sourceUrl: ''
+          }
         },
         secondaryTracks: [
           {
@@ -92,7 +126,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: 'https://youtube.com/something',
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: 'https://youtube.com/something'
+          }
         },
         secondaryTracks: [
           {
@@ -109,7 +146,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: 'https://someplace.com/video.mp4',
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: 'https://someplace.com/image.jpg'
+          }
         },
         secondaryTracks: [
           {
@@ -126,7 +166,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: null,
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: null
+          }
         },
         secondaryTracks: [
           {
@@ -143,7 +186,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: 'cdn://document-media/12345/some-image.jpg'
+          }
         },
         secondaryTracks: [
           {
@@ -155,6 +201,7 @@ describe('media-analysis-info', () => {
       result = sut.getCdnResources(content);
       expect(result).toEqual([
         'cdn://document-media/12345/some-video-1.mp4',
+        'cdn://document-media/12345/some-image.jpg',
         'cdn://document-media/12345/some-video-2.mp4'
       ]);
     });
@@ -163,7 +210,10 @@ describe('media-analysis-info', () => {
       content = {
         mainTrack: {
           sourceUrl: 'cdn://room-media/12345/some-video-1.mp4',
-          copyrightNotice: ''
+          copyrightNotice: '',
+          posterImage: {
+            sourceUrl: 'cdn://room-media/12345/some-image.jpg'
+          }
         },
         secondaryTracks: [
           {
@@ -175,6 +225,7 @@ describe('media-analysis-info', () => {
       result = sut.getCdnResources(content);
       expect(result).toEqual([
         'cdn://room-media/12345/some-video-1.mp4',
+        'cdn://room-media/12345/some-image.jpg',
         'cdn://room-media/12345/some-video-2.mp4'
       ]);
     });

@@ -27,7 +27,10 @@ export function createDefaultMainTrack() {
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
     showVideo: false,
-    playbackRange: [0, 1]
+    playbackRange: [0, 1],
+    posterImage: {
+      sourceUrl: ''
+    }
   };
 }
 
@@ -111,7 +114,10 @@ export function validateContent(content) {
       copyrightNotice: joi.string().allow('').required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
       showVideo: joi.boolean().required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+      posterImage: joi.object({
+        sourceUrl: joi.string().allow('').required()
+      }).required()
     }).required(),
     secondaryTracks: joi.array().items(joi.object({
       name: joi.string().allow('').required(),
