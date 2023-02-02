@@ -14,7 +14,7 @@ import {
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 export function getMediaLibraryPath() {
-  return 'media-library/';
+  return 'media-library';
 }
 
 export function getDocumentMediaDocumentPath(documentId) {
