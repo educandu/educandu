@@ -28,6 +28,7 @@ function MultitrackMediaDisplay({ content }) {
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
         <MultitrackMediaPlayer
+          posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           showTrackMixer
           sources={sources}
           volumePresets={volumePresets}
