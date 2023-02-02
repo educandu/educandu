@@ -69,7 +69,7 @@ function VideoEditor({ content, onContentChanged }) {
             <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
           </div>
         </FormItem>
-        <FormItem label={t('posterImageUrl')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
           <UrlInput
             value={posterImage.sourceUrl}
             onChange={handlePosterImageSourceUrlChange}

@@ -2557,10 +2557,6 @@
     "name": {
       "en": "Video",
       "de": "Video"
-    },
-    "posterImageUrl": {
-      "en": "Preview image URL",
-      "de": "Vorschau-Bild-URL"
     }
   },
   "common": {
@@ -3187,6 +3183,10 @@
     "filter": {
       "en": "Filter",
       "de": "Filter"
+    },
+    "posterImageUrl": {
+      "en": "Preview image URL",
+      "de": "Vorschau-Bild-URL"
     }
   },
   "pageNames": {
