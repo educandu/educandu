@@ -5,28 +5,22 @@ import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
-import { useTranslation } from 'react-i18next';
+import LicenseSelect from '../license-select.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
 import { useService } from '../container-context.js';
 import MusicXmlDocument from '../music-xml-document.js';
-import MediaPlayer from '../media-player/media-player.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import DimensionsProvider from '../dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ResourcePicker from '../resource-picker/resource-picker.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
-import MediaRangeSelector from '../media-player/media-range-selector.js';
-import MultitrackMediaPlayer from '../media-player/multitrack-media-player.js';
 import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-canvas.js';
-import MultitrackMediaEditor from '../../plugins/multitrack-media/multitrack-media-editor.js';
+import WikimediaApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-api-client.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
-import MultitrackMediaDisplay from '../../plugins/multitrack-media/multitrack-media-display.js';
-import WikimediaCommonsApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-commons-api-client.js';
-import { HORIZONTAL_ALIGNMENT, MEDIA_SCREEN_MODE, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import { createDefaultContent, createDefaultMainTrack, createDefaultSecondaryTrack, createDefaultVolumePreset } from '../../plugins/multitrack-media/multitrack-media-utils.js';
+import { HORIZONTAL_ALIGNMENT, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
   DEFAULT_WAVEFORM_BASELINE_COLOR,
@@ -37,27 +31,8 @@ import {
 
 const { Search, TextArea } = Input;
 
-const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
-const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
-const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=H3hBitGg_NI';
-const EXTERNAL_VIDEO_URL = 'https://cdn.openmusic.academy/media/fQugKEp8XCKJTVKVhiRdeJ/2022-04-05-5-te-sinfonie-v1-bLf7WqJAaf4y8AsPRnWG8R.mp4';
-
-const MULTITRACK_CORELLI_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-hq8W2YhjhmGKkr44kNrPUE.mp3';
-const MULTITRACK_CORELLI_URL_0_EXTENDED = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-generalbass-extended-wGQi1xK4jA1eDuKEV14t8c.mp3';
-const MULTITRACK_CORELLI_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-dcFUAwCCA5TGjNoTUjrpPQ.mp3';
-const MULTITRACK_CORELLI_URL_1_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-1-short-6QL7EZNXZ2AQB1odeY9tiH.mp3';
-const MULTITRACK_CORELLI_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-d918ZmitwuCjKCAYaJvWtS.mp3';
-const MULTITRACK_CORELLI_URL_2_SHORT = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violine-2-short-vTWJD95XQx9G4FNKMHit6H.mp3';
-const MULTITRACK_CORELLI_URL_3 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/corelli-violoncello-ek8KcohkALHpF8QP2uH1No.mp3';
-
-const MULTITRACK_GROOVE_URL_0 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-9hqADKZtPHV7F7GVfye3DF.mp3';
-const MULTITRACK_GROOVE_URL_1 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-growls-c9Z4K6PSm7k7onNHh4eFLv.mp3';
-const MULTITRACK_GROOVE_URL_2 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-bass-sub-xseNKq1gTc3sMrvYhp4Ryk.mp3';
-const MULTITRACK_GROOVE_URL_3 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-chords-p1z7vpBgGLQ75okxsd9ZiQ.mp3';
-const MULTITRACK_GROOVE_URL_4 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-drums-bTRHpx9cta63Q3MQP52VG5.mp3';
-const MULTITRACK_GROOVE_URL_5 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-fx-2AEEYbQBiRXmRvNWCGhkzZ.mp3';
-const MULTITRACK_GROOVE_URL_6 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-bell-rxF9rWsV5cwxzDwiM6CH5W.mp3';
-const MULTITRACK_GROOVE_URL_7 = 'https://cdn.staging.openmusic.academy/media/toEHvnaG67zkNJEp9Ev9tu/groove-lexikon-dubstep-lead-synth-ghymhFnZ8fc3VVW65PHmB5.mp3';
+const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/document-media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
+const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/document-media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
 
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
@@ -75,14 +50,26 @@ function Tests({ PageTemplate }) {
     message.success('Copied to clipboard');
   };
 
-  // WikimediaCommonsApiClient
-  const [wcacQuery, setWcacQuery] = useState('');
-  const [wcacResult, setWcacResult] = useState('');
-  const wcacApiClient = useService(WikimediaCommonsApiClient);
-  const [wcacFileTypes, setWcacFileTypes] = useState(Object.values(FILE_TYPE));
-  const handleWcacSearchClick = async () => {
-    const data = await wcacApiClient.queryMediaFiles({ searchText: wcacQuery, fileTypes: wcacFileTypes });
-    setWcacResult(JSON.stringify(data, null, 2));
+  // LicenseSelect
+  const [selectedLicenses, setSelectedLicenses] = useState([]);
+  const [isLicenseMultiModeEnabled, setIsLicenseMultiModeEnabled] = useState(false);
+  const handleSelectedLicensesChange = (_keyOrKeys, licenseOrLicenses) => {
+    setSelectedLicenses(Array.isArray(licenseOrLicenses) ? licenseOrLicenses : [licenseOrLicenses]);
+  };
+  const handleIsLicenseMultiModeEnabledChange = event => {
+    const isSwitchingToMultiMode = event.target.checked;
+    setIsLicenseMultiModeEnabled(isSwitchingToMultiMode);
+    setSelectedLicenses(oldLicenses => !isSwitchingToMultiMode && oldLicenses.length ? oldLicenses.slice(0, 1) : oldLicenses);
+  };
+
+  // WikimediaApiClient
+  const [wikimediaQuery, setWikimediaQuery] = useState('');
+  const [wikimediaResult, setWikimediaResult] = useState('');
+  const wikimediaApiClient = useService(WikimediaApiClient);
+  const [wikimediaFileTypes, setWikimediaFileTypes] = useState(Object.values(FILE_TYPE));
+  const handleWikimediaSearchClick = async () => {
+    const data = await wikimediaApiClient.queryMediaFiles({ searchText: wikimediaQuery, fileTypes: wikimediaFileTypes });
+    setWikimediaResult(JSON.stringify(data, null, 2));
     // For future reference: `data.continue.gsroffset` (if set) gives us the next offset to load even more results:
     const canLoadMore = Number.isFinite(data.continue?.gsroffset);
     console.log('canLoadMore', canLoadMore);
@@ -99,8 +86,8 @@ function Tests({ PageTemplate }) {
   // MusicXmlDocument
   const mxdSources = [
     { title: '<empty>', url: '' },
-    { title: 'Bach - Praeludium in C-Dur', url: 'https://cdn.staging.openmusic.academy/media/j4VnRosMXE1mdX24fA4aPJ/johann-sebastian-bach-praeludium-in-c-dur-bwv-846-1-648QZxTSjXRPVB99ULym1Y.xml' },
-    { title: 'Beethoven - An die ferne Geliebte', url: 'https://cdn.staging.openmusic.academy/media/j4VnRosMXE1mdX24fA4aPJ/beethoven-an-die-ferne-geliebte-4hzPUSv3Xk51CcVjM8eJPc.xml' }
+    { title: 'Bach - Praeludium in C-Dur', url: 'https://cdn.staging.openmusic.academy/document-media/j4VnRosMXE1mdX24fA4aPJ/johann-sebastian-bach-praeludium-in-c-dur-bwv-846-1-648QZxTSjXRPVB99ULym1Y.xml' },
+    { title: 'Beethoven - An die ferne Geliebte', url: 'https://cdn.staging.openmusic.academy/document-media/j4VnRosMXE1mdX24fA4aPJ/beethoven-an-die-ferne-geliebte-4hzPUSv3Xk51CcVjM8eJPc.xml' }
   ];
   const [mxdUrl, setMxdUrl] = useState('');
   const [mxdZoom, setMxdZoom] = useState(1);
@@ -174,100 +161,6 @@ function Tests({ PageTemplate }) {
     setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startPosition: newValue } : p).sort(by(p => p.startTimecode)));
   };
 
-  // MediaRangeSelector
-  const [mrsSource, setMrsSource] = useState('');
-  const [mrsRange, setMrsRange] = useState([0, 1]);
-
-  // MediaPlayer
-  const mpSources = [
-    { title: 'Youtube video', url: YOUTUBE_VIDEO_URL },
-    { title: 'external video', url: EXTERNAL_VIDEO_URL }
-  ];
-  const mpPlayerRef = useRef();
-  const mpEventLogRef = useRef();
-  const [mpRange, setMpRange] = useState([0, 1]);
-  const [mpEventLog, setMpEventLog] = useState('');
-  const [mpSourceUrl, setMpSourceUrl] = useState(mpSources[0].url);
-  const [mpScreenMode, setMpScreenMode] = useState(MEDIA_SCREEN_MODE.video);
-  const handleMpEvent = (eventName, ...args) => {
-    setMpEventLog(currentLog => args.length
-      ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
-      : `${currentLog}${eventName}\n`);
-    setTimeout(() => {
-      const eventLogElement = mpEventLogRef.current;
-      eventLogElement.scrollTop = eventLogElement.scrollHeight;
-    }, 0);
-  };
-  const handleRandomPlaybackRangeClick = () => {
-    let newRange = [0, 0];
-    while (newRange[1] - newRange[0] < 0.1) {
-      newRange = [Math.random(), Math.random()].sort();
-    }
-    setMpRange(newRange);
-  };
-
-  // MultitrackMediaPlayer
-  const mmpSourceOptions = [
-    {
-      title: 'Corelli (manipulated)',
-      sources: {
-        mainTrack: { name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, volume: 1, playbackRange: [0.14, 0.82] },
-        secondaryTracks: [
-          { name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT, volume: 1 },
-          { name: 'Vl 2 (29 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT, volume: 1 },
-          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
-        ]
-      }
-    },
-    {
-      title: 'Corelli',
-      sources: {
-        mainTrack: { name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1, playbackRange: [0, 1] },
-        secondaryTracks: [
-          { name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1, volume: 1 },
-          { name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2, volume: 1 },
-          { name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3, volume: 1 }
-        ]
-      }
-    },
-    {
-      title: 'Groove',
-      sources: {
-        mainTrack: { name: 'Dubstep', sourceUrl: MULTITRACK_GROOVE_URL_0, volume: 1, playbackRange: [0, 1] },
-        secondaryTracks: [
-          { name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1, volume: 1 },
-          { name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2, volume: 1 },
-          { name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3, volume: 1 },
-          { name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4, volume: 1 },
-          { name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5, volume: 1 },
-          { name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6, volume: 1 },
-          { name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7, volume: 1 }
-        ]
-      }
-    },
-    {
-      title: 'Youtube',
-      sources: {
-        mainTrack: { name: 'Youtube', sourceUrl: YOUTUBE_VIDEO_URL, volume: 1, playbackRange: [0, 1] },
-        secondaryTracks: [{ name: 'External', sourceUrl: MULTITRACK_CORELLI_URL_0, volume: 1 }]
-      }
-    }
-  ];
-  const mmpPlayerRef = useRef();
-  const mmpEventLogRef = useRef();
-  const [mmpEventLog, setMmpEventLog] = useState('');
-  const [mmpScreenMode, setMmpScreenMode] = useState(MEDIA_SCREEN_MODE.none);
-  const [mmpSourceOption, setMmpSourceOption] = useState(mmpSourceOptions[0]);
-  const handleMmpEvent = (eventName, ...args) => {
-    setMmpEventLog(currentLog => args.length
-      ? `${currentLog}${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
-      : `${currentLog}${eventName}\n`);
-    setTimeout(() => {
-      const eventLogElement = mmpEventLogRef.current;
-      eventLogElement.scrollTop = eventLogElement.scrollHeight;
-    }, 0);
-  };
-
   // ResourcePicker
   const [rsResourceUrl, setRsResourceUrl] = useState('');
 
@@ -279,76 +172,18 @@ function Tests({ PageTemplate }) {
   const [nstaValue5, setNstaValue5] = useState('Hello World');
   const [nstaValue6, setNstaValue6] = useState('Hello World');
 
-  // MultitrackMediaPlugin
-  const { t: mmpTranslation } = useTranslation('multitrackMedia');
-  const mmpPresets = [
-    {
-      title: 'Corelli (manipulated)',
-      content: {
-        ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Gb (ext)', sourceUrl: MULTITRACK_CORELLI_URL_0_EXTENDED, playbackRange: [0.14, 0.82] },
-        secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Vl 1 (28 sec)', sourceUrl: MULTITRACK_CORELLI_URL_1_SHORT },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Vl 2 (29 sec)', sourceUrl: MULTITRACK_CORELLI_URL_2_SHORT },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3 }
-        ],
-        volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
-      }
-    },
-    {
-      title: 'Corelli',
-      content: {
-        ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Generalbass', sourceUrl: MULTITRACK_CORELLI_URL_0 },
-        secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Violine 1', sourceUrl: MULTITRACK_CORELLI_URL_1 },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Violine 2', sourceUrl: MULTITRACK_CORELLI_URL_2 },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Violoncello', sourceUrl: MULTITRACK_CORELLI_URL_3 }
-        ],
-        volumePresets: [createDefaultVolumePreset(mmpTranslation, 3)]
-      }
-    },
-    {
-      title: 'Groove',
-      content: {
-        ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Dubstep', sourceUrl: MULTITRACK_GROOVE_URL_0 },
-        secondaryTracks: [
-          { ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'Bass growls', sourceUrl: MULTITRACK_GROOVE_URL_1 },
-          { ...createDefaultSecondaryTrack(1, mmpTranslation), name: 'Bass sub', sourceUrl: MULTITRACK_GROOVE_URL_2 },
-          { ...createDefaultSecondaryTrack(2, mmpTranslation), name: 'Chords', sourceUrl: MULTITRACK_GROOVE_URL_3 },
-          { ...createDefaultSecondaryTrack(3, mmpTranslation), name: 'Drums', sourceUrl: MULTITRACK_GROOVE_URL_4 },
-          { ...createDefaultSecondaryTrack(4, mmpTranslation), name: 'FX', sourceUrl: MULTITRACK_GROOVE_URL_5 },
-          { ...createDefaultSecondaryTrack(5, mmpTranslation), name: 'Lead bell', sourceUrl: MULTITRACK_GROOVE_URL_6 },
-          { ...createDefaultSecondaryTrack(6, mmpTranslation), name: 'Lead synth', sourceUrl: MULTITRACK_GROOVE_URL_7 }
-        ],
-        volumePresets: [createDefaultVolumePreset(mmpTranslation, 7)]
-      }
-    },
-    {
-      title: 'Youtube',
-      content: {
-        ...createDefaultContent(mmpTranslation),
-        mainTrack: { ...createDefaultMainTrack(mmpTranslation), name: 'Youtube', sourceUrl: YOUTUBE_VIDEO_URL, showVideo: true },
-        secondaryTracks: [{ ...createDefaultSecondaryTrack(0, mmpTranslation), name: 'External', sourceUrl: MULTITRACK_CORELLI_URL_0 }],
-        volumePresets: [createDefaultVolumePreset(mmpTranslation, 1)]
-      }
-    }
-  ];
-  const [mmpContent, setMmpContent] = useState(mmpPresets[0].content);
-
   // UrlInput
   const [urlInputValue, setUrlInputValue] = useState('');
   const handleUrlInputCopyYoutubeClick = () => handleCopyToClipboard('https://www.youtube.com/watch?v=221F55VPp2M');
-  const handleUrlInputCopyWikimediaCommonsClick = () => handleCopyToClipboard('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
+  const handleUrlInputCopyWikimediaClick = () => handleCopyToClipboard('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputCopyExternalClick = () => handleCopyToClipboard('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputCopyPrivateCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputCopyPublicCdnClick = () => handleCopyToClipboard('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputCopyRoomMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/document-media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputCopyDocumentMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/document-media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputSetYoutubeClick = () => setUrlInputValue('https://www.youtube.com/watch?v=221F55VPp2M');
-  const handleUrlInputSetWikimediaCommonsClick = () => setUrlInputValue('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
+  const handleUrlInputSetWikimediaClick = () => setUrlInputValue('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputSetPrivateCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputSetPublicCdnClick = () => setUrlInputValue('http://localhost:10000/media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputSetRoomMediaCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/document-media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputSetDocumentMediaCdnClick = () => setUrlInputValue('http://localhost:10000/document-media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputChange = url => {
     setUrlInputValue(url);
   };
@@ -362,19 +197,45 @@ function Tests({ PageTemplate }) {
           destroyInactiveTabPane
           items={[
             {
-              key: 'WikimediaCommonsApiClient',
-              label: 'WikimediaCommonsApiClient',
+              key: 'LicenseSelect',
+              label: 'LicenseSelect',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '25px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
+                    <Checkbox checked={isLicenseMultiModeEnabled} onChange={handleIsLicenseMultiModeEnabledChange}>
+                      Multiple selection mode
+                    </Checkbox>
+                    <LicenseSelect
+                      style={{ width: isLicenseMultiModeEnabled ? '500px' : '250px' }}
+                      multi={isLicenseMultiModeEnabled}
+                      value={isLicenseMultiModeEnabled ? selectedLicenses.map(l => l.key) : selectedLicenses[0]?.key || null}
+                      onChange={handleSelectedLicensesChange}
+                      />
+                  </div>
+                  {selectedLicenses.map(license => (
+                    <div key={license.key} style={{ marginBottom: '25px' }}>
+                      <div>Key: <b>{license.key}</b></div>
+                      <div>Name: <b>{license.name}</b></div>
+                      <div>URL: <b><a href={license.url} target="_blank" rel="noreferrer">{license.url}</a></b></div>
+                    </div>
+                  ))}
+                </div>
+              )
+            },
+            {
+              key: 'WikimediaApiClient',
+              label: 'WikimediaApiClient',
               children: (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
                     File types:
-                    <Checkbox.Group options={Object.values(FILE_TYPE)} value={wcacFileTypes} onChange={setWcacFileTypes} />
+                    <Checkbox.Group options={Object.values(FILE_TYPE)} value={wikimediaFileTypes} onChange={setWikimediaFileTypes} />
                     Search text:
-                    <Input value={wcacQuery} onChange={event => setWcacQuery(event.target.value)} />
-                    <Button type="primary" onClick={handleWcacSearchClick}>Search</Button>
+                    <Input value={wikimediaQuery} onChange={event => setWikimediaQuery(event.target.value)} />
+                    <Button type="primary" onClick={handleWikimediaSearchClick}>Search</Button>
                   </div>
                   <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
-                    {wcacResult}
+                    {wikimediaResult}
                   </pre>
                 </div>
               )
@@ -386,17 +247,17 @@ function Tests({ PageTemplate }) {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                     <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
-                    <Button onClick={handleUrlInputCopyWikimediaCommonsClick}>Copy Wikimedia Commons URL</Button>
+                    <Button onClick={handleUrlInputCopyWikimediaClick}>Copy Wikimedia URL</Button>
                     <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
-                    <Button onClick={handleUrlInputCopyPrivateCdnClick}>Copy private CDN URL</Button>
-                    <Button onClick={handleUrlInputCopyPublicCdnClick}>Copy public CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyRoomMediaCdnClick}>Copy room-media CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyDocumentMediaCdnClick}>Copy document-media CDN URL</Button>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                     <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
-                    <Button onClick={handleUrlInputSetWikimediaCommonsClick}>Set Wikimedia Commons URL</Button>
+                    <Button onClick={handleUrlInputSetWikimediaClick}>Set Wikimedia URL</Button>
                     <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
-                    <Button onClick={handleUrlInputSetPrivateCdnClick}>Set private CDN URL</Button>
-                    <Button onClick={handleUrlInputSetPublicCdnClick}>Set public CDN URL</Button>
+                    <Button onClick={handleUrlInputSetRoomMediaCdnClick}>Set room-media CDN URL</Button>
+                    <Button onClick={handleUrlInputSetDocumentMediaCdnClick}>Set document-media CDN URL</Button>
                   </div>
                   <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
                 </div>
@@ -529,143 +390,12 @@ function Tests({ PageTemplate }) {
               )
             },
             {
-              key: 'MediaRangeSelector',
-              label: 'MediaRangeSelector',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    Source:
-                    <Input value={mrsSource} readOnly />
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <Button onClick={() => setMrsSource('')}>Reset</Button>
-                    <Button onClick={() => setMrsSource(YOUTUBE_VIDEO_URL)}>Set to YouTube</Button>
-                    <Button onClick={() => setMrsSource(EXTERNAL_VIDEO_URL)}>Set to External</Button>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    Range: {JSON.stringify(mrsRange)}
-                  </div>
-                  <MediaRangeSelector
-                    sourceUrl={mrsSource}
-                    range={mrsRange}
-                    onRangeChange={setMrsRange}
-                    />
-                </div>
-              )
-            },
-            {
-              key: 'MediaPlayer',
-              label: 'MediaPlayer',
-              children: (
-                <div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                    <div>
-                      <MediaPlayer
-                        source={mpSourceUrl}
-                        playbackRange={mpRange}
-                        screenMode={mpScreenMode}
-                        mediaPlayerRef={mpPlayerRef}
-                        onPartEndReached={(...args) => handleMpEvent('onPartEndReached', ...args)}
-                        onEndReached={(...args) => handleMpEvent('onEndReached', ...args)}
-                        onPlayStateChange={(...args) => handleMpEvent('onPlayStateChange', ...args)}
-                        onPlayingPartIndexChange={(...args) => handleMpEvent('onPlayingPartIndexChange', ...args)}
-                        onReady={(...args) => handleMpEvent('onReady', ...args)}
-                        onSeek={(...args) => handleMpEvent('onSeek', ...args)}
-                        />
-                    </div>
-                    <div>
-                      <h6>Source</h6>
-                      <div>
-                        {mpSources.map((source, index) => (
-                          <Button key={index.toString()} onClick={() => setMpSourceUrl(source.url)}>Set to {source.title}</Button>
-                        ))}
-                      </div>
-                      <div>{mpSourceUrl}</div>
-                      <h6 style={{ marginTop: '15px' }}>Media Range</h6>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto) 1fr', gap: '25px', alignItems: 'center' }}>
-                        <Button onClick={handleRandomPlaybackRangeClick}>Set to random value</Button>
-                        <MediaRangeSelector
-                          range={mpRange}
-                          sourceUrl={mpSourceUrl}
-                          onRangeChange={setMpRange}
-                          />
-                        <div>{mpRange[0].toFixed(2)} &ndash; {mpRange[1].toFixed(2)}</div>
-                      </div>
-                      <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
-                      <Radio.Group value={mpScreenMode} onChange={event => setMpScreenMode(event.target.value)}>
-                        {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
-                      </Radio.Group>
-                      <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
-                      <div>
-                        <Button onClick={() => mpPlayerRef.current.play()}>play</Button>
-                        <Button onClick={() => mpPlayerRef.current.pause()}>pause</Button>
-                        <Button onClick={() => mpPlayerRef.current.stop()}>stop</Button>
-                        <Button onClick={() => mpPlayerRef.current.reset()}>reset</Button>
-                      </div>
-                      <h6 style={{ marginTop: '15px' }}>Event Log</h6>
-                      <div ref={mpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
-                        <pre>{mpEventLog}</pre>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            },
-            {
-              key: 'MultitrackMediaPlayer',
-              label: 'MultitrackMediaPlayer',
-              children: (
-                <div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                    <div>
-                      <MultitrackMediaPlayer
-                        sources={mmpSourceOption.sources}
-                        screenMode={mmpScreenMode}
-                        mediaPlayerRef={mmpPlayerRef}
-                        onPartEndReached={(...args) => handleMmpEvent('onPartEndReached', ...args)}
-                        onEndReached={(...args) => handleMmpEvent('onEndReached', ...args)}
-                        onPlayStateChange={(...args) => handleMmpEvent('onPlayStateChange', ...args)}
-                        onPlayingPartIndexChange={(...args) => handleMmpEvent('onPlayingPartIndexChange', ...args)}
-                        onReady={(...args) => handleMmpEvent('onReady', ...args)}
-                        onSeek={(...args) => handleMmpEvent('onSeek', ...args)}
-                        showTrackMixer
-                        />
-                    </div>
-                    <div>
-                      <h6>Source</h6>
-                      <div>
-                        {mmpSourceOptions.map((source, index) => (
-                          <Button key={index.toString()} onClick={() => setMmpSourceOption(source)}>Set to {source.title}</Button>
-                        ))}
-                      </div>
-                      <div>{mmpSourceOption.title} - {mmpSourceOption.sources.secondaryTracks.length + 1} tracks</div>
-                      <h6 style={{ marginTop: '15px' }}>Screen mode</h6>
-                      <Radio.Group value={mmpScreenMode} onChange={event => setMmpScreenMode(event.target.value)}>
-                        {Object.values(MEDIA_SCREEN_MODE).map(sm => <Radio.Button key={sm} value={sm}>{sm}</Radio.Button>)}
-                      </Radio.Group>
-                      <h6 style={{ marginTop: '15px' }}>Programmatic control</h6>
-                      <div>
-                        <Button onClick={() => mmpPlayerRef.current.play()}>play</Button>
-                        <Button onClick={() => mmpPlayerRef.current.pause()}>pause</Button>
-                        <Button onClick={() => mmpPlayerRef.current.stop()}>stop</Button>
-                        <Button onClick={() => mmpPlayerRef.current.reset()}>reset</Button>
-                      </div>
-                      <h6 style={{ marginTop: '15px' }}>Event Log</h6>
-                      <div ref={mmpEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px' }}>
-                        <pre>{mmpEventLog}</pre>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            },
-            {
               key: 'ResourceSelector',
               label: 'ResourceSelector',
               children: (
                 <div>
                   <ResourceSelector
-                    allowedSourceTypes={[SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons]}
+                    allowedSourceTypes={[SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia]}
                     onSelect={ev => console.log('select', ev)}
                     onCancel={ev => console.log('cancel', ev)}
                     />
@@ -732,24 +462,6 @@ function Tests({ PageTemplate }) {
                       </Form.Item>
                     </div>
                   </Form>
-                </div>
-              )
-            },
-            {
-              key: 'MultitrackMediaPlugin',
-              label: 'MultitrackMediaPlugin',
-              children: (
-                <div>
-                  <h4>Source</h4>
-                  <div>
-                    {mmpPresets.map((preset, index) => (
-                      <Button key={index.toString()} onClick={() => setMmpContent(preset.content)}>Set to {preset.title}</Button>
-                    ))}
-                  </div>
-                  <h4 style={{ marginTop: '15px' }}>Display</h4>
-                  <MultitrackMediaDisplay content={mmpContent} />
-                  <h4 style={{ marginTop: '15px' }}>Editor</h4>
-                  <MultitrackMediaEditor content={mmpContent} onContentChanged={content => setMmpContent(content)} />
                 </div>
               )
             }

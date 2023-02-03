@@ -20,7 +20,7 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
   const { sourceUrl, zoom, width, caption } = content;
 
   const triggerContentChanged = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleSourceUrlChange = value => {
@@ -39,11 +39,11 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
-  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.internalPublic];
+  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia];
 
   return (
     <div className="MusicXmlViewerEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>

@@ -10,8 +10,8 @@ import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { CDN_OBJECT_TYPE, ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('storage-service', () => {
@@ -85,351 +85,62 @@ describe('storage-service', () => {
 
   describe('getObjects', () => {
     let rooms;
+    let result;
     let documents;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.domain.com');
       documentStore.getDocumentsMetadataByConditions.resolves([]);
       roomStore.getRoomsByOwnerOrCollaboratorUser.resolves([]);
+
+      cdn.listObjects.resolves([
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
+      ]);
+      rooms = [];
+      documents = [{ _id: '34q87zc95t9c287eh', title: 'Document title' }];
+
+      roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
+      documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
+
+      result = await sut.getObjects({ parentPath: 'document-media/34q87zc95t9c287eh' });
     });
 
-    describe('when neither the current directory nor the parent directory is the root', () => {
-      let result;
-      beforeEach(async () => {
-        cdn.listObjects.resolves([
-          { prefix: null, name: 'media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: null, name: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: null, name: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
-        ]);
-        rooms = [];
-        documents = [{ _id: '34q87zc95t9c287eh', title: 'Document title' }];
-
-        roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
-        documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
-
-        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', user: myUser });
-      });
-
-      it('should call the CDN', () => {
-        assert.calledWith(cdn.listObjects, { prefix: 'media/34q87zc95t9c287eh/', recursive: false });
-      });
-
-      it('should construct all paths and URLs correctly', () => {
-        expect(result).toStrictEqual({
-          parentDirectory: {
-            displayName: 'media',
-            parentPath: '',
-            path: 'media',
-            url: 'https://cdn.domain.com/media',
-            portableUrl: 'cdn://media',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null
-          },
-          currentDirectory: {
-            displayName: '34q87zc95t9c287eh',
-            parentPath: 'media',
-            path: 'media/34q87zc95t9c287eh',
-            url: 'https://cdn.domain.com/media/34q87zc95t9c287eh',
-            portableUrl: 'cdn://media/34q87zc95t9c287eh',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null,
-            documentMetadata: {
-              title: 'Document title',
-              isAccessibleToUser: true
-            }
-          },
-          objects: [
-            {
-              displayName: 'file-1.pdf',
-              parentPath: 'media/34q87zc95t9c287eh',
-              path: 'media/34q87zc95t9c287eh/file-1.pdf',
-              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-1.pdf',
-              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-1.pdf',
-              createdOn: '2022-06-09T12:00:00.000Z',
-              type: CDN_OBJECT_TYPE.file,
-              size: 1000,
-              documentMetadata: null
-            },
-            {
-              displayName: 'file-2 with spaces.pdf',
-              parentPath: 'media/34q87zc95t9c287eh',
-              path: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf',
-              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
-              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
-              createdOn: '2022-06-09T12:00:00.000Z',
-              type: CDN_OBJECT_TYPE.file,
-              size: 2000,
-              documentMetadata: null
-            },
-            {
-              displayName: 'file-3 with weird &$#=.pdf',
-              parentPath: 'media/34q87zc95t9c287eh',
-              path: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
-              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
-              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
-              createdOn: '2022-06-09T12:00:00.000Z',
-              type: CDN_OBJECT_TYPE.file,
-              size: 3000,
-              documentMetadata: null
-            }
-          ]
-        });
-      });
+    it('should call the CDN', () => {
+      assert.calledWith(cdn.listObjects, { prefix: 'document-media/34q87zc95t9c287eh/', recursive: false });
     });
 
-    describe('when the parent directory is the root', () => {
-      let result;
-      beforeEach(async () => {
-        cdn.listObjects.resolves([
-          { prefix: 'media/34q87zc95t9c287eh/', name: null, size: null, lastModified: null },
-          { prefix: 'media/43vzvjz05tzdfz7rf/', name: null, size: null, lastModified: null },
-          { prefix: null, name: 'media/some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
-        ]);
-
-        rooms = [{ _id: 'Room ID', owner: myUser._id }];
-        documents = [
-          { _id: '34q87zc95t9c287eh', title: 'Document1 title', roomId: 'Room ID' },
-          { _id: '43vzvjz05tzdfz7rf', title: 'Document2 title', roomId: 'Other room ID' }
-        ];
-
-        documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
-        roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
-
-        result = await sut.getObjects({ parentPath: 'media', user: myUser });
-      });
-
-      it('should call the CDN', () => {
-        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
-      });
-
-      it('should construct all paths and URLs correctly', () => {
-        expect(result).toStrictEqual({
-          parentDirectory: {
-            displayName: '',
-            parentPath: null,
-            path: '',
-            url: 'https://cdn.domain.com',
-            portableUrl: 'cdn://',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null
-          },
-          currentDirectory: {
-            displayName: 'media',
-            parentPath: '',
-            path: 'media',
-            url: 'https://cdn.domain.com/media',
-            portableUrl: 'cdn://media',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null,
-            documentMetadata: null
-          },
-          objects: [
-            {
-              displayName: '34q87zc95t9c287eh',
-              parentPath: 'media',
-              path: 'media/34q87zc95t9c287eh',
-              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh',
-              portableUrl: 'cdn://media/34q87zc95t9c287eh',
-              createdOn: null,
-              type: CDN_OBJECT_TYPE.directory,
-              size: null,
-              documentMetadata: {
-                title: 'Document1 title',
-                isAccessibleToUser: true
-              }
-            },
-            {
-              displayName: '43vzvjz05tzdfz7rf',
-              parentPath: 'media',
-              path: 'media/43vzvjz05tzdfz7rf',
-              url: 'https://cdn.domain.com/media/43vzvjz05tzdfz7rf',
-              portableUrl: 'cdn://media/43vzvjz05tzdfz7rf',
-              createdOn: null,
-              type: CDN_OBJECT_TYPE.directory,
-              size: null,
-              documentMetadata: {
-                title: '',
-                isAccessibleToUser: false
-              }
-            },
-            {
-              displayName: 'some-file.pdf',
-              parentPath: 'media',
-              path: 'media/some-file.pdf',
-              url: 'https://cdn.domain.com/media/some-file.pdf',
-              portableUrl: 'cdn://media/some-file.pdf',
-              createdOn: '2022-06-09T12:00:00.000Z',
-              type: CDN_OBJECT_TYPE.file,
-              size: 1000,
-              documentMetadata: null
-            }
-          ]
-        });
-      });
-    });
-
-    describe('when the current directory is the root', () => {
-      let result;
-      beforeEach(async () => {
-        cdn.listObjects.resolves([
-          { prefix: 'media/', name: null, size: null, lastModified: null },
-          { prefix: null, name: 'some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
-        ]);
-
-        result = await sut.getObjects({ parentPath: '', user: myUser });
-      });
-
-      it('should call the CDN', () => {
-        assert.calledWith(cdn.listObjects, { prefix: '', recursive: false });
-      });
-
-      it('should construct all paths and URLs correctly', () => {
-        expect(result).toStrictEqual({
-          parentDirectory: null,
-          currentDirectory: {
-            displayName: '',
-            parentPath: null,
-            path: '',
-            url: 'https://cdn.domain.com',
-            portableUrl: 'cdn://',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null,
-            documentMetadata: null
-          },
-          objects: [
-            {
-              displayName: 'media',
-              parentPath: '',
-              path: 'media',
-              url: 'https://cdn.domain.com/media',
-              portableUrl: 'cdn://media',
-              createdOn: null,
-              type: CDN_OBJECT_TYPE.directory,
-              size: null,
-              documentMetadata: null
-            },
-            {
-              displayName: 'some-file.pdf',
-              parentPath: '',
-              path: 'some-file.pdf',
-              url: 'https://cdn.domain.com/some-file.pdf',
-              portableUrl: 'cdn://some-file.pdf',
-              createdOn: '2022-06-09T12:00:00.000Z',
-              type: CDN_OBJECT_TYPE.file,
-              size: 1000,
-              documentMetadata: null
-            }
-          ]
-        });
-      });
-    });
-
-    describe('when a search term is provided', () => {
-      let result;
-      beforeEach(async () => {
-        cdn.listObjects.withArgs({ prefix: 'media/', recursive: false }).resolves([
-          { prefix: 'media/22UGLkp4qDw4CF6siL7SeU/', size: 0, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: 'media/34q87zc95t9c287ehHJSRI/', size: 0, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: 'media/4Z9xUe4LS8t7xysHNquoyE/', size: 0, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: 'media/5oGzxk5GU2eW5VePfPk4cr/', size: 0, lastModified: '2022-06-09T12:00:00.000Z' }
-        ]);
-        cdn.listObjects.withArgs({ prefix: 'media/', recursive: true }).resolves([
-          { prefix: null, name: 'media/4Z9xUe4LS8t7xysHNquoyE/music-file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { prefix: null, name: 'media/4Z9xUe4LS8t7xysHNquoyE/music-file-2.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
-        ]);
-        documentStore.getDocumentsMetadataByConditions.resolves([
-          { _id: '22UGLkp4qDw4CF6siL7SeU', title: 'Music accessible', roomId: 'RAYUo2abjwu9hyt4XW97UC' },
-          { _id: '34q87zc95t9c287ehHJSRI', title: 'Music inaccessible', roomId: 'RN3TsCRZHPhUKswD1jqu9' },
-          { _id: '4Z9xUe4LS8t7xysHNquoyE', title: 'Singing' },
-          { _id: '5oGzxk5GU2eW5VePfPk4cr', title: 'Other accessible topic', roomId: 'RAYUo2abjwu9hyt4XW97UC' }
-        ]);
-        roomStore.getRoomsByOwnerOrCollaboratorUser.resolves([
-          {
-            _id: 'RAYUo2abjwu9hyt4XW97UC'
-          }
-        ]);
-
-        result = await sut.getObjects({ parentPath: 'media', user: myUser, searchTerm: 'music' });
-      });
-
-      it('should call the CDN once for the current level objects', () => {
-        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: false });
-      });
-
-      it('should call the CDN once for the inner levels objects', () => {
-        assert.calledWith(cdn.listObjects, { prefix: 'media/', recursive: true });
-      });
-
-      it('should construct parentDirectory correctly', () => {
-        expect(result.parentDirectory).toStrictEqual({
-          displayName: '',
-          parentPath: null,
-          path: '',
-          url: 'https://cdn.domain.com',
-          portableUrl: 'cdn://',
-          createdOn: null,
-          size: null,
-          type: CDN_OBJECT_TYPE.directory
-        });
-      });
-
-      it('should construct currentDirectory correctly', () => {
-        expect(result.currentDirectory).toStrictEqual({
-          displayName: 'media',
-          parentPath: '',
-          path: 'media',
-          url: 'https://cdn.domain.com/media',
-          portableUrl: 'cdn://media',
-          createdOn: null,
-          type: CDN_OBJECT_TYPE.directory,
-          size: null,
-          documentMetadata: null
-        });
-      });
-
-      it('should construct all (matching and accessbile) objects correctly', () => {
-        expect(result.objects).toStrictEqual([
-          {
-            displayName: '22UGLkp4qDw4CF6siL7SeU',
-            parentPath: 'media',
-            path: 'media/22UGLkp4qDw4CF6siL7SeU',
-            url: 'https://cdn.domain.com/media/22UGLkp4qDw4CF6siL7SeU',
-            portableUrl: 'cdn://media/22UGLkp4qDw4CF6siL7SeU',
-            createdOn: null,
-            type: CDN_OBJECT_TYPE.directory,
-            size: null,
-            documentMetadata: {
-              isAccessibleToUser: true,
-              title: 'Music accessible'
-            }
-          },
-          {
-            displayName: 'music-file-1.pdf',
-            parentPath: 'media/4Z9xUe4LS8t7xysHNquoyE',
-            path: 'media/4Z9xUe4LS8t7xysHNquoyE/music-file-1.pdf',
-            url: 'https://cdn.domain.com/media/4Z9xUe4LS8t7xysHNquoyE/music-file-1.pdf',
-            portableUrl: 'cdn://media/4Z9xUe4LS8t7xysHNquoyE/music-file-1.pdf',
-            createdOn: '2022-06-09T12:00:00.000Z',
-            type: CDN_OBJECT_TYPE.file,
-            size: 1000
-          },
-          {
-            displayName: 'music-file-2.pdf',
-            parentPath: 'media/4Z9xUe4LS8t7xysHNquoyE',
-            path: 'media/4Z9xUe4LS8t7xysHNquoyE/music-file-2.pdf',
-            url: 'https://cdn.domain.com/media/4Z9xUe4LS8t7xysHNquoyE/music-file-2.pdf',
-            portableUrl: 'cdn://media/4Z9xUe4LS8t7xysHNquoyE/music-file-2.pdf',
-            createdOn: '2022-06-09T12:00:00.000Z',
-            size: 1000,
-            type: CDN_OBJECT_TYPE.file
-          }
-        ]);
-      });
+    it('should construct all paths and URLs correctly', () => {
+      expect(result).toStrictEqual([
+        {
+          displayName: 'file-1.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-1.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-1.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-1.pdf',
+          createdOn: '2022-06-09T12:00:00.000Z',
+          size: 1000
+        },
+        {
+          displayName: 'file-2 with spaces.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+          createdOn: '2022-06-09T12:00:00.000Z',
+          size: 2000
+        },
+        {
+          displayName: 'file-3 with weird &$#=.pdf',
+          parentPath: 'document-media/34q87zc95t9c287eh',
+          path: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
+          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          createdOn: '2022-06-09T12:00:00.000Z',
+          size: 3000
+        }
+      ]);
     });
   });
 
@@ -447,7 +158,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is unknown', () => {
       beforeEach(async () => {
-        parentPath = 'other-path/media';
+        parentPath = 'other-path';
         files = [{}];
 
         try {
@@ -470,25 +181,25 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is public', () => {
+    describe('when the storage type is document-media', () => {
       const id = 'xyz';
       const docId = uniqueId.create();
 
       let filesAfterUpload;
 
       beforeEach(async () => {
-        parentPath = `media/${docId}`;
+        parentPath = `document-media/${docId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
         ];
 
         filesAfterUpload = [
-          { name: `media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `document-media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `document-media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
-        cdn.listObjects.withArgs({ prefix: `media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
+        cdn.listObjects.withArgs({ prefix: `document-media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
         cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
@@ -503,8 +214,8 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         assert.calledTwice(cdn.uploadObject);
-        assert.calledWith(cdn.uploadObject, `media/${docId}/file1-${id}.jpeg`, files[0].path);
-        assert.calledWith(cdn.uploadObject, `media/${docId}/file2-${id}.jpeg`, files[1].path);
+        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file1-${id}.jpeg`, files[0].path);
+        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file2-${id}.jpeg`, files[1].path);
       });
 
       it('should release the lock', () => {
@@ -520,22 +231,20 @@ describe('storage-service', () => {
           uploadedFiles: {
             'file1.jpeg': {
               displayName: `file1-${id}.jpeg`,
-              parentPath: `media/${docId}`,
-              path: `media/${docId}/file1-${id}.jpeg`,
-              url: `https://cdn.domain.com/media/${docId}/file1-${id}.jpeg`,
-              portableUrl: `cdn://media/${docId}/file1-${id}.jpeg`,
+              parentPath: `document-media/${docId}`,
+              path: `document-media/${docId}/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/document-media/${docId}/file1-${id}.jpeg`,
+              portableUrl: `cdn://document-media/${docId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
-              type: 'file',
               size: 3000000
             },
             'file2.jpeg': {
               displayName: `file2-${id}.jpeg`,
-              parentPath: `media/${docId}`,
-              path: `media/${docId}/file2-${id}.jpeg`,
-              url: `https://cdn.domain.com/media/${docId}/file2-${id}.jpeg`,
-              portableUrl: `cdn://media/${docId}/file2-${id}.jpeg`,
+              parentPath: `document-media/${docId}`,
+              path: `document-media/${docId}/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/document-media/${docId}/file2-${id}.jpeg`,
+              portableUrl: `cdn://document-media/${docId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
-              type: 'file',
               size: 3000000
             }
           },
@@ -544,9 +253,9 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private but the user has no storage plan allocated', () => {
+    describe('when the storage type is room-media but the user has no storage plan allocated', () => {
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
@@ -569,7 +278,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe('Cannot upload to private storage without a storage plan');
+        expect(result).toBe('Cannot upload to room-media storage without a storage plan');
       });
 
       it('should release the lock', () => {
@@ -577,9 +286,9 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private but the user has not enough storage space left', () => {
+    describe('when the storage type is room-media but the user has not enough storage space left', () => {
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 5 * 1000 * 1000 },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 5 * 1000 * 1000 }
@@ -608,7 +317,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private and the user has enough storage space left', () => {
+    describe('when the storage type is room-media and the user has enough storage space left', () => {
       const id = 'xyz';
       const otherRoomId = uniqueId.create();
 
@@ -617,32 +326,32 @@ describe('storage-service', () => {
       let filesInOtherRoom;
 
       beforeEach(async () => {
-        parentPath = `rooms/${roomId}/media`;
+        parentPath = `room-media/${roomId}`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
         filesInRoomBeforeUpload = [
-          { name: `rooms/${roomId}/media/old-file-1-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `rooms/${roomId}/media/old-file-2-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `room-media/${roomId}/old-file-1-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `room-media/${roomId}/old-file-2-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
         filesInRoomAfterUpload = [
           ...filesInRoomBeforeUpload,
-          { name: `rooms/${roomId}/media/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `rooms/${roomId}/media/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+          { name: `room-media/${roomId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { name: `room-media/${roomId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
         ];
 
-        filesInOtherRoom = [{ name: `rooms/${otherRoomId}/media/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
+        filesInOtherRoom = [{ name: `room-media/${otherRoomId}/old-file-3-${id}.png`, size: 1 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }];
 
         const usedBytes = [...filesInRoomBeforeUpload, ...filesInOtherRoom].reduce((totalSize, file) => totalSize + file.size, 0);
         myUser.storage = { planId: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves([roomId, otherRoomId]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesInRoomAfterUpload);
-        cdn.listObjects.withArgs({ prefix: `rooms/${otherRoomId}/media/`, recursive: true }).resolves(filesInOtherRoom);
+        cdn.listObjects.withArgs({ prefix: `room-media/${roomId}/`, recursive: true }).resolves(filesInRoomAfterUpload);
+        cdn.listObjects.withArgs({ prefix: `room-media/${otherRoomId}/`, recursive: true }).resolves(filesInOtherRoom);
         cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
@@ -657,13 +366,13 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         assert.calledTwice(cdn.uploadObject);
-        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path);
-        assert.calledWith(cdn.uploadObject, match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path);
+        assert.calledWith(cdn.uploadObject, match(/room-media\/(.+)\/file1-(.+)\.jpeg/), files[0].path);
+        assert.calledWith(cdn.uploadObject, match(/room-media\/(.+)\/file2-(.+)\.jpeg/), files[1].path);
       });
 
       it('should call cdn.listObjects for each room', () => {
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${otherRoomId}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${roomId}/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${otherRoomId}/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -688,22 +397,20 @@ describe('storage-service', () => {
           uploadedFiles: {
             'file1.jpeg': {
               displayName: `file1-${id}.jpeg`,
-              parentPath: `rooms/${roomId}/media`,
-              path: `rooms/${roomId}/media/file1-${id}.jpeg`,
-              url: `https://cdn.domain.com/rooms/${roomId}/media/file1-${id}.jpeg`,
-              portableUrl: `cdn://rooms/${roomId}/media/file1-${id}.jpeg`,
+              parentPath: `room-media/${roomId}`,
+              path: `room-media/${roomId}/file1-${id}.jpeg`,
+              url: `https://cdn.domain.com/room-media/${roomId}/file1-${id}.jpeg`,
+              portableUrl: `cdn://room-media/${roomId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
-              type: 'file',
               size: 3000000
             },
             'file2.jpeg': {
               displayName: `file2-${id}.jpeg`,
-              parentPath: `rooms/${roomId}/media`,
-              path: `rooms/${roomId}/media/file2-${id}.jpeg`,
-              url: `https://cdn.domain.com/rooms/${roomId}/media/file2-${id}.jpeg`,
-              portableUrl: `cdn://rooms/${roomId}/media/file2-${id}.jpeg`,
+              parentPath: `room-media/${roomId}`,
+              path: `room-media/${roomId}/file2-${id}.jpeg`,
+              url: `https://cdn.domain.com/room-media/${roomId}/file2-${id}.jpeg`,
+              portableUrl: `cdn://room-media/${roomId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
-              type: 'file',
               size: 3000000
             }
           },
@@ -725,7 +432,7 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is unknown', () => {
-      path = 'other-path/media/file.jpeg';
+      path = 'other-path/file.jpeg';
 
       beforeEach(async () => {
         try {
@@ -740,7 +447,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe('Invalid storage path \'other-path/media/\'');
+        expect(result).toBe('Invalid storage path \'other-path/\'');
       });
 
       it('should release the lock', () => {
@@ -748,9 +455,9 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is public', () => {
+    describe('when the storage type is document-media', () => {
       beforeEach(async () => {
-        path = 'media/file.jpeg';
+        path = 'document-media/file.jpeg';
 
         myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
@@ -787,16 +494,16 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is private', () => {
+    describe('when the storage type is room-media', () => {
       let allOwnedPrivateRoomIds;
 
       beforeEach(async () => {
-        path = `rooms/${roomId}/media/file.jpeg`;
+        path = `room-media/${roomId}/file.jpeg`;
 
         files = [
           { size: 1 * 1000 * 1000 },
           { size: 1 * 1000 * 1000 },
-          { name: `rooms/${roomId}/media/file.jpeg`, size: 1 * 1000 * 1000 }
+          { name: `room-media/${roomId}/file.jpeg`, size: 1 * 1000 * 1000 }
         ];
 
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
@@ -806,8 +513,8 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerId.resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([files[0]]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([files[1]]);
+        cdn.listObjects.withArgs({ prefix: `room-media/${allOwnedPrivateRoomIds[0]}/`, recursive: true }).resolves([files[0]]);
+        cdn.listObjects.withArgs({ prefix: `room-media/${allOwnedPrivateRoomIds[1]}/`, recursive: true }).resolves([files[1]]);
 
         cdn.deleteObjects.resolves();
 
@@ -823,8 +530,8 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.listObjects for each room', () => {
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
-        assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${allOwnedPrivateRoomIds[0]}/`, recursive: true });
+        assert.calledWith(cdn.listObjects, { prefix: `room-media/${allOwnedPrivateRoomIds[1]}/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -861,17 +568,17 @@ describe('storage-service', () => {
       remainingPrivateRoom = { _id: uniqueId.create() };
 
       const filesFromRoomBeingDeleted = [
-        { name: `rooms/${roomId}/media/file1`, size: 1 * 1000 * 1000 },
-        { name: `rooms/${roomId}/media/file2`, size: 2 * 1000 * 1000 }
+        { name: `room-media/${roomId}/file1`, size: 1 * 1000 * 1000 },
+        { name: `room-media/${roomId}/file2`, size: 2 * 1000 * 1000 }
       ];
 
-      filesFromRemainingPrivateRoom = [{ name: `rooms/${remainingPrivateRoom._id}/media/filex`, size: 3 * 1000 * 1000 }];
+      filesFromRemainingPrivateRoom = [{ name: `room-media/${remainingPrivateRoom._id}/filex`, size: 3 * 1000 * 1000 }];
 
       cdn.listObjects.resolves([]);
-      cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
+      cdn.listObjects.withArgs({ prefix: `room-media/${roomId}/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
       cdn.deleteObjects.resolves();
       roomStore.getRoomIdsByOwnerId.resolves([remainingPrivateRoom._id]);
-      cdn.listObjects.withArgs({ prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
+      cdn.listObjects.withArgs({ prefix: `room-media/${remainingPrivateRoom._id}/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
 
       await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
     });
@@ -905,19 +612,19 @@ describe('storage-service', () => {
     });
 
     it('should call cdn.listObjects for the room being deleted', () => {
-      assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+      assert.calledWith(cdn.listObjects, { prefix: `room-media/${roomId}/`, recursive: true });
     });
 
     it('should call cdn.deleteObjects', () => {
-      assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
+      assert.calledWith(cdn.deleteObjects, [`room-media/${roomId}/file1`, `room-media/${roomId}/file2`]);
     });
 
     it('should call roomStore.getRoomIdsByOwnerId', () => {
       assert.calledWith(roomStore.getRoomIdsByOwnerId, { ownerId: myUser._id });
     });
 
-    it('should call cdn.listObjects for the remaining private room', () => {
-      assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
+    it('should call cdn.listObjects for the remaining room', () => {
+      assert.calledWith(cdn.listObjects, { prefix: `room-media/${remainingPrivateRoom._id}/`, recursive: true });
     });
 
     it('should update the user\'s usedBytes', async () => {
@@ -950,12 +657,11 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location with deletion disabled', () => {
+        it('should return the document media storage location with deletion disabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -969,12 +675,11 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location with deletion enabled', () => {
+        it('should return the document media storage location with deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: true
             }
           ]);
@@ -993,12 +698,11 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location', () => {
+        it('should return the document media storage location', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -1015,20 +719,18 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             },
             {
-              type: STORAGE_LOCATION_TYPE.private,
+              type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: myUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
-              rootPath: 'rooms/room/media',
-              homePath: 'rooms/room/media',
+              path: 'room-media/room',
               isDeletionEnabled: true
             }
           ]);
@@ -1057,12 +759,11 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the public storage location', () => {
+        it('should return the document media storage location', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             }
           ]);
@@ -1094,20 +795,18 @@ describe('storage-service', () => {
           result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
           expect(result).toEqual([
             {
-              type: STORAGE_LOCATION_TYPE.public,
-              rootPath: 'media',
-              homePath: 'media/documentId',
+              type: STORAGE_LOCATION_TYPE.documentMedia,
+              path: 'document-media/documentId',
               isDeletionEnabled: false
             },
             {
-              type: STORAGE_LOCATION_TYPE.private,
+              type: STORAGE_LOCATION_TYPE.roomMedia,
               usedBytes: ownerUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
-              rootPath: 'rooms/room/media',
-              homePath: 'rooms/room/media',
+              path: 'room-media/room',
               isDeletionEnabled: true
             }
           ]);

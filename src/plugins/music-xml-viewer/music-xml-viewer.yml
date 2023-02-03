@@ -1,6 +1,7 @@
-name:
-  en: MusicXML viewer
-  de: MusicXML-Anzeige
-zoom:
-  en: Zoom
-  de: Zoom
+musicXmlViewer:
+  name:
+    en: MusicXML viewer
+    de: MusicXML-Anzeige
+  zoom:
+    en: Zoom
+    de: Zoom

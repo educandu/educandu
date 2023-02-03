@@ -1,12 +1,10 @@
-rank:
-  en: Rank
-  de: Rang
-linkTitle:
-  en: Link title
-  de: Link-Titel
-urlPath:
-  en: URL path
-  de: URL-Pfad
-unknown:
-  en: Unknown
-  de: Unbekannt
+specialPageSettings:
+  rank:
+    en: Rank
+    de: Rang
+  linkTitle:
+    en: Link title
+    de: Link-Titel
+  unknown:
+    en: Unknown
+    de: Unbekannt

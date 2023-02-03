@@ -10,7 +10,7 @@ describe('audio-waveform-info', () => {
   describe('redactContent', () => {
     it('redacts inaccessible resources', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.png',
+        sourceUrl: 'cdn://room-media/12345/some-image.png',
         width: 100
       }, '67890');
       expect(result).toStrictEqual({
@@ -20,11 +20,11 @@ describe('audio-waveform-info', () => {
     });
     it('leaves accessible resources intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.png',
+        sourceUrl: 'cdn://room-media/12345/some-image.png',
         width: 100
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.png',
+        sourceUrl: 'cdn://room-media/12345/some-image.png',
         width: 100
       });
     });
@@ -47,17 +47,17 @@ describe('audio-waveform-info', () => {
     });
     it('returns a list with the url for an internal public resource', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://media/12345/some-image.png',
+        sourceUrl: 'cdn://document-media/12345/some-image.png',
         width: 100
       });
-      expect(result).toEqual(['cdn://media/12345/some-image.png']);
+      expect(result).toEqual(['cdn://document-media/12345/some-image.png']);
     });
-    it('returns a list with the url for an internal private resource', () => {
+    it('returns a list with the url for an internal room-media resource', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://rooms/12345/media/some-image.png',
+        sourceUrl: 'cdn://room-media/12345/some-image.png',
         width: 100
       });
-      expect(result).toEqual(['cdn://rooms/12345/media/some-image.png']);
+      expect(result).toEqual(['cdn://room-media/12345/some-image.png']);
     });
   });
 });

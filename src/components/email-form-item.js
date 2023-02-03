@@ -7,7 +7,7 @@ const FormItem = Form.Item;
 
 const normalizeEmail = value => value?.toLowerCase();
 
-function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
+function EmailFormItem({ name, email, emailsInUse, ...formItemProps }) {
   const { t } = useTranslation('emailFormItem');
 
   const handleOnChange = event => {
@@ -22,7 +22,7 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
   const validationRules = [
     {
       required: true,
-      message: t('enterEmail'),
+      message: t('common:enterEmail'),
       whitespace: true
     },
     {
@@ -41,22 +41,25 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
   return (
     <FormItem
       name={name}
+      initialValue={email}
       label={t('common:emailAddress')}
       rules={validationRules}
       normalize={normalizeEmail}
       {...formItemProps}
       >
-      <Input onChange={handleOnChange} />
+      <Input onChange={handleOnChange} readOnly={!!email} />
     </FormItem>
   );
 }
 
 EmailFormItem.propTypes = {
+  email: PropTypes.string,
   emailsInUse: PropTypes.array,
   name: PropTypes.string.isRequired
 };
 
 EmailFormItem.defaultProps = {
+  email: '',
   emailsInUse: []
 };
 

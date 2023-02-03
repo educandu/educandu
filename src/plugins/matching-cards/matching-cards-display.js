@@ -2,10 +2,12 @@ import classNames from 'classnames';
 import { SIZE } from './constants.js';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useIsMounted } from '../../ui/hooks.js';
 import { ReloadOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import FlipCard from '../../components/flip-card.js';
-import MatchingCardsTile from './matching-cards-tile.js';
-import React, { useEffect, useRef, useState } from 'react';
+import MatchingCardsTile from './matching-cards-tile-display.js';
+import CheckIcon from '../../components/icons/general/check-icon.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
 
@@ -13,17 +15,10 @@ function MatchingCardsDisplay({ content }) {
   const { size, tilePairs, width } = content;
   const { t } = useTranslation('matchingCards');
 
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
   const [tiles, setTiles] = useState([]);
   const [matchedTilePairKeys, setMatchedTilePairKeys] = useState([]);
   const [currentlyFlippedTiles, setCurrentlyFlippedTiles] = useState([]);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   useEffect(() => {
     setMatchedTilePairKeys([]);
@@ -96,14 +91,17 @@ function MatchingCardsDisplay({ content }) {
         flipped={isFlipped || wasMatched}
         locked={isSingleFlipped}
         disabled={wasMatched}
-        frontContent={(
+        disabledContent={
+          <div className="MatchingCardsDisplay-matchedTileOverlay"><CheckIcon /></div>
+        }
+        frontContent={
           <MatchingCardsTile
             text={tile.text}
             sourceUrl={tile.sourceUrl}
-            playMedia={isFlipped}
-            showMatched={wasMatched}
+            playbackRange={tile.playbackRange}
+            playMedia={isFlipped ? !wasMatched : null}
             />
-        )}
+        }
         onClick={() => handleTileClick(tile)}
         />
     ));

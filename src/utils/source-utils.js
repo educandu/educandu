@@ -1,10 +1,12 @@
+
+import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../ui/validation.js';
+import { determineMediaDuration } from './media-utils.js';
 import {
   SOURCE_TYPE,
   CDN_URL_PREFIX,
-  INTERNAL_PUBLIC_STORAGE_PATH_PATTERN,
-  INTERNAL_PRIVATE_STORAGE_PATH_PATTERN
+  ROOM_MEDIA_STORAGE_PATH_PATTERN,
+  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
 export function isCdnUrl({ url = '', cdnRootUrl = '' }) {
@@ -16,8 +18,12 @@ export function isPortableCdnUrl(url) {
 }
 
 export function isCdnPath(url = '') {
-  return INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(url)
-    || INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(url);
+  return DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(url)
+    || ROOM_MEDIA_STORAGE_PATH_PATTERN.test(url);
+}
+
+export function isYoutubeSourceType(url) {
+  return url.startsWith('https://www.youtube.com/') || url.startsWith('https://youtu.be/');
 }
 
 export function getCdnPath({ url = '', cdnRootUrl = '' } = { url: '', cdnRootUrl: '' }) {
@@ -54,23 +60,23 @@ export function getSourceType({ url, cdnRootUrl }) {
   if (isCdnUrl({ url, cdnRootUrl }) || isCdnPath(url)) {
     const cdnPath = getCdnPath({ url, cdnRootUrl });
 
-    if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPublic;
+    if (DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(cdnPath)) {
+      return SOURCE_TYPE.documentMedia;
     }
-    if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(cdnPath)) {
-      return SOURCE_TYPE.internalPrivate;
+    if (ROOM_MEDIA_STORAGE_PATH_PATTERN.test(cdnPath)) {
+      return SOURCE_TYPE.roomMedia;
     }
   }
 
-  if (url.startsWith('https://www.youtube.com/') || url.startsWith('https://youtu.be/')) {
+  if (isYoutubeSourceType(url)) {
     return SOURCE_TYPE.youtube;
   }
 
   if (url.startsWith('https://upload.wikimedia.org/')) {
-    return SOURCE_TYPE.wikimediaCommons;
+    return SOURCE_TYPE.wikimedia;
   }
 
-  if (getUrlValidationStatus(url) === URL_VALIDATION_STATUS.valid) {
+  if (urlUtils.isFullyQualifiedUrl(url)) {
     return SOURCE_TYPE.external;
   }
 
@@ -79,11 +85,26 @@ export function getSourceType({ url, cdnRootUrl }) {
 
 export function isInternalSourceType({ url, cdnRootUrl }) {
   const sourceType = getSourceType({ url, cdnRootUrl });
-  return sourceType === SOURCE_TYPE.internalPrivate || sourceType === SOURCE_TYPE.internalPublic;
+  return sourceType === SOURCE_TYPE.roomMedia || sourceType === SOURCE_TYPE.documentMedia;
 }
 
 export function couldAccessUrlFromRoom(url, targetRoomId) {
   const urlOrCdnPath = getCdnPath({ url });
-  const sourceRoomId = urlOrCdnPath.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN)?.[1];
+  const sourceRoomId = urlOrCdnPath.match(ROOM_MEDIA_STORAGE_PATH_PATTERN)?.[1];
   return !sourceRoomId || sourceRoomId === targetRoomId;
+}
+
+export async function getSourceDuration({ url, cdnRootUrl }) {
+  try {
+    const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl });
+
+    if (!urlUtils.isFullyQualifiedUrl(url)) {
+      return 0;
+    }
+
+    const duration = await determineMediaDuration(accessibleUrl);
+    return duration;
+  } catch (error) {
+    return 0;
+  }
 }

@@ -100,13 +100,13 @@ export function useDateFormat() {
     const numberFormat = new Intl.NumberFormat(uiLocale);
 
     const formatDate = date => date ? moment(date).locale(uiLocale).format(localePattern) : '';
-    const formatTimeTo = date => date ? moment().locale(uiLocale).to(date) : '';
     const formatNumber = value => numberFormat(value);
+    const formatDuration = (...args) => args.length ? moment.duration(...args).locale(uiLocale).humanize() : '';
 
     return {
       formatDate,
-      formatTimeTo,
       formatNumber,
+      formatDuration,
       dateTimeFormat
     };
   }, [uiLocale]);

@@ -4,20 +4,20 @@ import Markdown from '../../components/markdown.js';
 import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, replaceItemAt } from '../../utils/array-utils.js';
-import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { aspectRatio, showVideo, width, playbackRange, copyrightNotice, chapters } = content;
+  const { aspectRatio, showVideo, width, playbackRange, posterImage, copyrightNotice, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -45,15 +45,9 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const handlePartEndReached = partIndex => {
-    mediaPlayerRef.current.pause();
     setInteractingChapterIndex(partIndex);
+    mediaPlayerRef.current.pause();
     setVisitedChapters(ensureIsIncluded(visitedChapters, partIndex));
-  };
-
-  const handlePlayStateChange = newPlayState => {
-    if (newPlayState === MEDIA_PLAY_STATE.playing) {
-      setInteractingChapterIndex(-1);
-    }
   };
 
   const handleSeek = () => {
@@ -68,9 +62,9 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const handleGotoChapterClick = chapterIndex => {
-    mediaPlayerRef.current.seekToPart(chapterIndex);
-    mediaPlayerRef.current.play();
     setInteractingChapterIndex(-1);
+    mediaPlayerRef.current.play();
+    mediaPlayerRef.current.seekToPart(chapterIndex);
   };
 
   const handleNextChapterClick = () => {
@@ -145,19 +139,19 @@ function InteractiveMediaDisplay({ content }) {
     <div className="InteractiveMediaDisplay">
       <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
+          aspectRatio={aspectRatio}
+          canDownload={canDownload}
+          customScreenOverlay={renderInteractionOverlay()}
           mediaPlayerRef={mediaPlayerRef}
           parts={parts}
-          source={sourceUrl}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-          screenOverlay={renderInteractionOverlay()}
-          aspectRatio={aspectRatio}
           playbackRange={playbackRange}
+          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+          sourceUrl={sourceUrl}
           onPartEndReached={handlePartEndReached}
           onPlayingPartIndexChange={setCurrentChapterIndex}
-          onPlayStateChange={handlePlayStateChange}
           onReady={handleMediaReady}
           onSeek={handleSeek}
-          canDownload={canDownload}
           />
         {!!sourceUrl && (
           <div className="InteractiveMediaDisplay-progressBar">

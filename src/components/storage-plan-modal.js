@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 import ByteInput from './byte-input.js';
+import React, { useEffect } from 'react';
 import { Form, Input, Modal } from 'antd';
+import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
-import { baseStoragePlanShape } from '../ui/default-prop-types.js';
+import { storagePlanShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
-function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, onCancel }) {
+function StoragePlanModal({ isOpen, isLoading, storagePlan, storagePlanNamesInUse, onOk, onCancel }) {
   const [form] = Form.useForm();
+  const isMounted = useIsMounted();
   const { t } = useTranslation('storagePlanModal');
-  const [loading, setLoading] = useState(false);
 
   const nameValidationRules = [
     {
@@ -46,32 +47,23 @@ function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, on
     form.submit();
   };
 
-  const handleOnFinish = async ({ _id, name, maxBytes }) => {
-    try {
-      setLoading(true);
-      await onOk({ _id, name, maxBytes });
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
-
   const initialValues = {
     _id: storagePlan?._id || '',
     name: storagePlan?.name || t('newStoragePlan'),
     maxBytes: storagePlan?.maxBytes ?? 100 * 1000 * 1000
   };
 
-  return (
+  return !!isMounted.current && (
     <Modal
       title={storagePlan?._id ? t('editStoragePlan') : t('newStoragePlan')}
       open={isOpen}
       onOk={handleOk}
       onCancel={onCancel}
       maskClosable={false}
-      okButtonProps={{ loading }}
+      okButtonProps={{ loading: isLoading }}
+      forceRender
       >
-      <Form form={form} onFinish={handleOnFinish} name="storage-plan-form" layout="vertical" initialValues={initialValues} className="u-modal-body">
+      <Form form={form} onFinish={onOk} name="storage-plan-form" layout="vertical" initialValues={initialValues} className="u-modal-body">
         <FormItem name="_id" hidden>
           <Input />
         </FormItem>
@@ -88,9 +80,10 @@ function StoragePlanModal({ isOpen, storagePlan, storagePlanNamesInUse, onOk, on
 
 StoragePlanModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired,
-  storagePlan: baseStoragePlanShape,
+  storagePlan: storagePlanShape,
   storagePlanNamesInUse: PropTypes.arrayOf(PropTypes.string)
 };
 

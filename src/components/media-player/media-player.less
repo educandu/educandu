@@ -1,0 +1,60 @@
+@import (less) 'plyr/dist/plyr.css';
+
+.MediaPlayer {
+  position: relative;
+
+  &.MediaPlayer--noScreen {
+    padding: 15px;
+    border-radius: @edu-border-radius-base;
+    background-color: @edu-background-color-light;
+  }
+
+  &.MediaPlayer--hidden {
+    padding: 0;
+    height: 0;
+  }
+}
+
+.MediaPlayer-player {
+  position: relative;
+
+  --plyr-video-background: @edu-white;
+  cursor: pointer;
+  margin: 0 auto;
+
+  &.MediaPlayer-player--noScreen {
+    height: 0;
+
+    iframe {
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &.MediaPlayer-player--sixteenToNine {
+    aspect-ratio: 16/9;
+  }
+
+  &.MediaPlayer-player--fourToThree {
+    aspect-ratio: 4/3;
+  }
+}
+
+.MediaPlayer-playerCustomScreenOverlay {
+  .m-mask;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MediaPlayer-playerAudioScreenOverlay {
+  .m-mask;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  background-color: @edu-white;
+  color: @edu-text-color-secondary;
+}

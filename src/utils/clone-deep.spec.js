@@ -5,6 +5,7 @@ describe('clone-deep', () => {
 
   const original = {
     nullProp: null,
+    // eslint-disable-next-line no-undefined
     undefinedProp: undefined,
     stringProp: 'a',
     numberProp: 1,

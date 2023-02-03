@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 function Info({ children, iconAfterContent, tooltip }) {
@@ -9,7 +10,15 @@ function Info({ children, iconAfterContent, tooltip }) {
       {!!iconAfterContent && children}
       {!!tooltip && (
         <Tooltip title={tooltip}>
-          <InfoCircleOutlined className="Info-icon Info-icon--help" />
+          <InfoCircleOutlined
+            className={
+              classNames(
+                'Info-icon',
+                'Info-icon--help',
+                { 'Info-icon--afterContent': iconAfterContent }
+              )
+            }
+            />
         </Tooltip>
       )}
       {!tooltip && <InfoCircleOutlined className="Info-icon" />}

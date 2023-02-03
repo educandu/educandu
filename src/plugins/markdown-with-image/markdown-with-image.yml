@@ -1,24 +1,28 @@
-name:
-  en: Markdown with image
-  de: Markdown mit Bild
-textOffsetLabel:
-  en: Text offset
-  de: Text-Versatz
-textOffsetInfo:
-  en: 1em corresponds to the current paragraph font size
-  de: "1\u00A0em entspricht der verwendeten Absatz-Schriftgröße"
-imageUrl:
-  en: Image URL
-  de: Bild-URL
-imageWidth:
-  en: Image width
-  de: Bildbreite
-imagePosition:
-  en: Image position
-  de: Bildstelle
-left:
-  en: left
-  de: Links
-right:
-  en: right
-  de: Rechts
+markdownWithImage:
+  name:
+    en: Markdown with image
+    de: Markdown mit Bild
+  textOffsetLabel:
+    en: Text offset
+    de: Text-Versatz
+  textOffsetInfo:
+    en: 1em corresponds to the current paragraph font size
+    de: "1\u00A0em entspricht der verwendeten Absatz-Schriftgröße"
+  imageUrl:
+    en: Image URL
+    de: Bild-URL
+  imageWidth:
+    en: Image width
+    de: Bildbreite
+  imageWidthInfo:
+    en: Represents the width taken by the image, from the total allocated space
+    de: Repräsentiert die Breite, die das Bild einnimmt, gemessen an der Gesamtbreite des Abschnitts
+  imagePosition:
+    en: Image position
+    de: Bildstelle
+  left:
+    en: left
+    de: Links
+  right:
+    en: right
+    de: Rechts

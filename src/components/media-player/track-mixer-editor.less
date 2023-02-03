@@ -1,0 +1,86 @@
+@track-mixer-editor-row-height: 35px;
+@track-mixer-editor-bar-height: 18px;
+@track-mixer-editor-bar-overflow-width: 10px;
+
+.TrackMixerEditor {}
+
+.TrackMixerEditor-tracks {
+  display: grid;
+  align-items: end;
+  grid-template-columns: auto 1fr;
+}
+
+.TrackMixerEditor-volumesColumn {}
+
+.TrackMixerEditor-volumePresets {
+  display: flex;
+  flex-direction: column;
+}
+
+.TrackMixerEditor-volumePresetsSetup {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr auto;
+  margin: 5px 0 20px 0px;
+}
+
+.TrackMixerEditor-volumePresetSelector {
+  width: 100%;
+}
+
+.TrackMixerEditor-trackNameAndVolume {
+  .m-control-group;
+  height: @track-mixer-editor-row-height;
+  margin-right: 15px;
+}
+
+.TrackMixerEditor-trackName {
+  .m-overflow-ellipsis;
+  text-align: end;
+  width: 100px;
+}
+
+.TrackMixerEditor-barsColumn {
+  border-left: 1px dashed @edu-border-color-dark;
+  border-right: 1px dashed @edu-border-color-dark;
+}
+
+.TrackMixerEditor-barRow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: @track-mixer-editor-row-height;
+}
+
+.TrackMixerEditor-bar {
+  position: absolute;
+  left: 0;
+  height: @track-mixer-editor-bar-height;
+  background-color: @edu-secondary-color-dark;
+  color: @edu-white;
+  font-size: (0.6 * @track-mixer-editor-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow-x: hidden;
+  padding: 0 4px;
+
+  &.TrackMixerEditor-bar--secondaryTrack {
+    background-color: @edu-primary-color-light;
+  }
+}
+
+.TrackMixerEditor-barPlaceholderText {
+  font-size: @edu-font-size-xs;
+  padding-left: 5px;
+  color: @edu-text-color-secondary;
+}
+
+.TrackMixerEditor-barOverflow {
+  position: absolute;
+  right: -@track-mixer-editor-bar-overflow-width;
+  width: @track-mixer-editor-bar-overflow-width;
+  height: @track-mixer-editor-bar-height;
+  background: linear-gradient(to left, @edu-white, transparent);
+}

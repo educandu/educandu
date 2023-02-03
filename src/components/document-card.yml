@@ -1,6 +1,13 @@
-coauthors:
-  en: Co-authors
-  de: Mitautoren
-toDocument:
-  en: To document
-  de: Zum Dokument
+documentCard:
+  coauthors:
+    en: Co-authors
+    de: Mitautoren
+  documentButton:
+    en: View document
+    de: Dokument ansehen
+  creationDetail:
+    en: Created on {date} by
+    de: Erstellt am {date} von
+  updateDetail:
+    en: Last updated on {date} by
+    de: Zuletzt geändert am {date} von

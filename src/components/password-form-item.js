@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import inputValidators from '../utils/input-validators.js';
-import { minPasswordLength } from '../domain/validation-constants.js';
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { minUserPasswordLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
+const { Password } = Input;
 
-function PasswordFormItem({ name, ...formItemProps }) {
+function PasswordFormItem({ name, label, skipLengthValidation, onPressEnter, ...formItemProps }) {
   const { t } = useTranslation('passwordFormItem');
 
   const passwordValidationRules = [
@@ -15,30 +17,44 @@ function PasswordFormItem({ name, ...formItemProps }) {
       required: true,
       message: t('enterPassword'),
       whitespace: true
-    },
-    {
-      validator: (_rule, value) => {
-        return value && !inputValidators.isValidPassword(value)
-          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minPasswordLength })))
-          : Promise.resolve();
-      }
     }
   ];
+
+  if (!skipLengthValidation) {
+    passwordValidationRules.push({
+      validator: (_rule, value) => {
+        return value && !inputValidators.isValidPassword(value)
+          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minUserPasswordLength })))
+          : Promise.resolve();
+      }
+    });
+  }
+
+  const renderIcon = isVisible => isVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />;
 
   return (
     <FormItem
       name={name}
-      label={t('common:password')}
+      label={label || t('common:password')}
       rules={passwordValidationRules}
       {...formItemProps}
       >
-      <Input type="password" />
+      <Password iconRender={renderIcon} onPressEnter={onPressEnter} />
     </FormItem>
   );
 }
 
 PasswordFormItem.propTypes = {
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  skipLengthValidation: PropTypes.bool,
+  onPressEnter: PropTypes.func
+};
+
+PasswordFormItem.defaultProps = {
+  label: null,
+  skipLengthValidation: false,
+  onPressEnter: () => {}
 };
 
 export default PasswordFormItem;

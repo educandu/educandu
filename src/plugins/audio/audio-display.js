@@ -18,8 +18,9 @@ function AudioDisplay({ content }) {
       <div className="AudioDisplay-content">
         {!!url && (
           <MediaPlayer
-            source={url}
+            sourceUrl={url}
             canDownload={canDownload}
+            playbackRange={content.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}
             />
         )}

@@ -36,7 +36,7 @@ function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChan
   }, [blockInputContainerRef, onChange]);
 
   const renderCount = () => !!maxLength
-    && <div className="MarkdownInput-count">{value.length} / {maxLength}</div>;
+    && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
   const handleResourcePickerClick = () => {
     if (disabled) {

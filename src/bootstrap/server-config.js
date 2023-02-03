@@ -1,5 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../utils/unique-id.js';
+import spdxLicenseList from 'spdx-license-list';
 import { FEATURE_TOGGLES } from '../domain/constants.js';
 import { defaultValidationOptions, validate } from '../domain/validation.js';
 
@@ -39,9 +40,10 @@ const configSchema = joi.object({
   consentCookieNamePrefix: joi.string().required(),
   uploadLiabilityCookieName: joi.string().required(),
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
+  xRoomsAuthSecret: joi.string().allow(null).default(null),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
-  adminEmailAddress: joi.string().default(null),
+  adminEmailAddress: joi.string().allow(null).default(null),
   initialUser: joi.object({
     email: joi.string().required(),
     password: joi.string().required(),
@@ -49,6 +51,7 @@ const configSchema = joi.object({
   }).allow(null),
   basicAuthUsers: joi.object().default({}),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
+  allowedLicenses: joi.array().items(joi.string().valid(...Object.keys(spdxLicenseList))).default(Object.keys(spdxLicenseList)),
   disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   exposeErrorDetails: joi.boolean().default(false),
   taskProcessing: joi.object({
@@ -66,7 +69,23 @@ const configSchema = joi.object({
     about: joi.array().items(joi.object({
       id: joi.string().required()
     }))
-  }).default({})
+  }).default({}),
+  samlAuth: joi.object({
+    decryption: joi.object({
+      pvk: joi.string().required(),
+      cert: joi.string().required()
+    }).required(),
+    identityProviders: joi.array().items(joi.object({
+      key: joi.string().required(),
+      displayName: joi.string().required(),
+      logoUrl: joi.string().allow(null).default(null),
+      expiryTimeoutInDays: joi.number().integer().min(1).default(6 * 30),
+      metadata: joi.object({
+        url: joi.string().required(),
+        entityId: joi.string().required()
+      }).required()
+    })).default(null)
+  }).allow(null).default(null)
 });
 
 class ServerConfig {

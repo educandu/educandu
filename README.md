@@ -40,17 +40,20 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
- | xFrameOptions | Value for the `X-Frame-Options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
+ | xFrameOptions | Value for the `x-frame-options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
+ | xRoomsAuthSecret | Value for the `x-rooms-auth-secret` header expected from `rooms-auth-lambda` authorization requests upon accessing rooms CDN resources | `string` | no, when not provided the effect of the request is an automatic session cookie invalidation/regeneration |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
  | adminEmailAddress | The email address to show to users as the admin email address | `string` | no |
  | initialUser | The first user account, with admin role | `{ email, password, displayName }` or `null` | no |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
+ | allowedLicenses | A list of SPDX license names that should be usable inside the app (defaults to the whole currently "known" list) | `string[]` | no |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
- | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }] }, about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}]` | no, however if provided, `apiKey` is mandatory |
+ | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }], about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}] }` | no, however if provided, `apiKey` is mandatory |
+ | samlAuth | Configuration for SAML authentication | `{ decryption: { pvk: <string>, cert: <string> }, identityProviders: [{ key: <string>, displayName: <string>, entryPoint: <string>,  cert: <string>, logoUrl: <string>, expiryTimeoutInDays: <number> }] }` | no, however if provided, `decryption.pvk`, `decryption.cert`, `identityProviders.key`, `identityProviders.displayName`, `identityProviders.entryPoint` and `identityProviders.cert` are mandatory, while `identityProviders.logoUrl` defaults to null and `identityProviders.expiryTimeoutInDays` defaults to 180 days |
 
 ## How to use
 
@@ -103,6 +106,7 @@ educandu({
     gatekeeper: 'gatekeeperPassword'
   },
   plugins: ['markdown', 'image', 'table', 'audio', 'video'],
+  allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'MIT'],
   exposeErrorDetails: true,
   taskProcessing: {
     isEnabled: true,
@@ -123,6 +127,22 @@ educandu({
         id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
       }
     ]
+  },
+  samlAuth: {
+    decryption: {
+      pvk: '<private_key>',
+      cert: '<certificate>',
+    },
+    identityProviders: [
+      {
+        key: 'panda',
+        displayName: 'The Panda University',
+        entryPoint: 'https://en.wikipedia.org/wiki/Giant_panda',
+        cert: 'nonsense',
+        logoUrl: '/images/panda-logo.svg',
+        expiryTimeoutInDays: 4 * 30
+      }
+    ]
   }
 });
 ~~~
@@ -137,44 +157,42 @@ to the global-variables.less in educandu and consult the list there.
 
 ## How to run and develop locally
 
-~~~
-$ yarn
-$ gulp                 # run the test application
-$ gulp --instances 3   # run 3 instances behind a load balancer
-$ gulp --tunnel        # run using the tunnel proxy; TUNNEL_TOKEN secret is needed in the env variables beforehand
-~~~
+The gulpfile has a number of useful tasks for local development which can be run with `gulp {taskName}`, most commonly used:
 
-This will build and start up the TestApp (in watch mode), which is set up to use educandu.
+* `(default)`: build and start up the test app (in watch mode), which is set up to use educandu, CLI args:
+  * `--instances 3` (number of app instances to run, optional, default `1`)
+  * `--tunnel` (flag to run using the tunnel proxy, optional, default: no tunneling)
+* `test`: runs all tests (with coverage)
+* `testWatch`: runs tests in watch mode
+* `lint`: runs eslint
+* `fix`: runs eslint in fixing mode
+* `up`: starts all the containers (if not already running)
+* `down`: stops all the containers and deletes them
+* `maildev(Up|Down)`, `mongo(Up|Down)`, `minio(Up|Down)`: starts/stops individual containers
+* `createSamlCertificate`: creates a self-signed certificate that can be used for SAML de/encryption, CLI args:
+  * `--domain my-domain.com` (common name value, mandatory)
+  * `--days 365` (expiration time, optional, default: `100 * 365`)
+  * `--dir ./output` (output directory, optional, default: `./certificates`)
 
-By default the application requires that the following ports are available to be taken:
-  * 3000: the application itself (or the load balancer)
-  * 400x: the individual application instances, in case of load balancing
-  * 8000: maildev UI, can be used for debugging emails that would be sent to the users (head to http://localhost:8000 when the application is running)
-  * 8025: maildev smpt server port
-  * 9000: minio docker image (local CDN used for testing)
-  * 21017: mongodb docker image port
+By default the test application requires that the following ports are available to be taken:
 
-The ports can be changed in the gulp file and must be changed in the gulpfile.js and need to be reflected in the test-app/index.js.
+* 3000: the test application or the load balancerin case of load balancing (`instances > 1`)
+* 400x: the individual test application instances, in case of load balancing (`instances > 1`)
+* 8000: maildev UI, can be used for debugging emails that would be sent to the users (<http://localhost:8000>)
+* 8025: maildev SMTP server
+* 9000: minio server and UI (<http://localhost:9000>)
+* 21017: mongodb server
 
-The gulpfile has a number of useful tasks which can be run with "gulp taskName", here are some more widely used:
- * test: runs all tests (with coverage)
- * testWatch: runs tests in watch mode
- * testChanged: runs tests that were affected by the current modifications
- * lint: runs lint
- * up: starts all the containers (if not already running)
- * down: stops all the containers and deletes them
+The ports can be changed in `gulpfile.js` and need to be reflected in `test-app/index.js`.
 
+When tunneling is enabled, the following environment variables are required to be set:
 
-## How add additional controllers
-  In order to extend the educandu functionality you can add your custom controllers. These should be classes that expose one or more of the following methods:
-   * registerApi: regiters API endpoints
-   * registerPages: registers additional pages
-   * registerMiddleware: regiters some middleware
-   * registerErrorHandler: regiters error handlers
+* `TUNNEL_TOKEN` token used to verify the tunnel connection
+* `TUNNEL_WEBSITE_DOMAIN` domain of the website served over the tunnel
+* `TUNNEL_WEBSITE_CDN_DOMAIN` domain of the cdn belonging to the website served over the tunnel
+* `TUNNEL_WEBSITE_SAML_AUTH_DECRYPTION` certificate pems for SAML en-/decryption in JSON format (`{ "pvk": <private_key>, "cert": <cert> }`)
 
 
-An example implementation is given in the test app for registering a redirect from an "/articles" page to the standard "doc/:docKey/*" page of educandu. You can find the additional controller
-in the article-controller.js file.
 
 ## License
 

@@ -1,7 +1,10 @@
 @matching-cards-board-padding: 10px;
 @matching-cards-board-tiles-gap: 10px;
 
-.MatchingCardsDisplay {}
+.MatchingCardsDisplay {
+  display: flex;
+  flex-direction: column;
+}
 
 .MatchingCardsDisplay-grid {
   display: grid;
@@ -26,6 +29,15 @@
 .MatchingCardsDisplay-resetButton {
   display: block;
   margin: 15px auto 0 auto;
+}
+
+.MatchingCardsDisplay-matchedTileOverlay {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: @edu-success-color;
 }
 
 .MatchingCardsEditor {}
@@ -64,13 +76,13 @@
   height: 100%;
 }
 
-.MatchingCardsTile {}
+.MatchingCardsTileDisplay {}
 
-.MatchingCardsTile-image {
+.MatchingCardsTileDisplay-image {
   max-width: 100%;
 }
 
-.MatchingCardsTile-audio {
+.MatchingCardsTileDisplay-audio {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,22 +95,17 @@
   }
 }
 
-.MatchingCardsTile-markdown {
+.MatchingCardsTileDisplay-markdown {
   padding: 8px;
   display: flex;
   justify-content: center;
+  text-align: center;
+
+  @media @edu-media-phone {
+    font-size: @edu-font-size-sm;
+  }
 }
 
-.MatchingCardsTile-match {
-  .m-mask;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: @edu-success-color;
-  z-index: @edu-z-index-overlay-layer;
-}
-
-.MatchingCardsTile-noInnerClickMask {
+.MatchingCardsTileDisplay-noInnerClickMask {
   .m-mask;
 }

@@ -14,6 +14,11 @@ class SettingsController {
     this.settingService = settingService;
   }
 
+  async handleGetSettings(_req, res) {
+    const settings = await this.settingService.getAllSettings();
+    return res.send({ settings });
+  }
+
   async handlePostSettings(req, res) {
     const { settings } = req.body;
     await this.settingService.saveSettings(settings);
@@ -22,12 +27,21 @@ class SettingsController {
 
   registerMiddleware(router) {
     router.use(async (req, _res, next) => {
-      req.settings = await this.settingService.getAllSettings();
-      next();
+      try {
+        req.settings = await this.settingService.getAllSettings();
+        next();
+      } catch (error) {
+        next(error);
+      }
     });
   }
 
   registerApi(app) {
+    app.get(
+      '/api/v1/settings',
+      [needsPermission(permissions.MANAGE_SETTINGS)],
+      (req, res) => this.handleGetSettings(req, res)
+    );
     app.post(
       '/api/v1/settings',
       [needsPermission(permissions.MANAGE_SETTINGS), jsonParser, validateBody(saveSettingsBodySchema)],

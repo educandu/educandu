@@ -8,7 +8,7 @@ import UserController from './user-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, BadRequest } = httpErrors;
 
 describe('user-controller', () => {
 
@@ -17,17 +17,20 @@ describe('user-controller', () => {
   let passwordResetRequestService;
   let requestLimitRecordService;
   let clientDataMappingService;
-  let documentService;
+  let externalAccountService;
   let storageService;
   let pageRenderer;
+  let serverConfig;
   let userService;
   let mailService;
   let roomService;
   let sut;
 
   beforeEach(() => {
+    serverConfig = {};
     userService = {
       createUser: sandbox.stub(),
+      verifyUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
       getUserById: sandbox.stub(),
@@ -36,13 +39,11 @@ describe('user-controller', () => {
       createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub(),
       addFavorite: sandbox.stub(),
-      deleteFavorite: sandbox.stub()
+      deleteFavorite: sandbox.stub(),
+      recordUserLogIn: sandbox.stub()
     };
     storageService = {
       getAllStoragePlans: sandbox.stub()
-    };
-    documentService = {
-      getMetadataOfLatestPublicDocumentsCreatedByUser: sandbox.stub()
     };
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
@@ -52,6 +53,11 @@ describe('user-controller', () => {
       incrementCount: sandbox.stub(),
       resetCount: sandbox.stub()
     };
+    externalAccountService = {
+      getAllExternalAccounts: sandbox.stub(),
+      deleteExternalAccount: sandbox.stub(),
+      updateExternalAccountUserId: sandbox.stub()
+    };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
@@ -60,22 +66,20 @@ describe('user-controller', () => {
       mapRooms: sandbox.stub(),
       mapWebsiteUser: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
-      mapWebsitePublicUser: sandbox.stub()
+      mapWebsitePublicUser: sandbox.stub(),
+      mapExternalAccountsForAdminArea: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    const serverConfig = {};
-    const database = {};
 
     sut = new UserController(
       serverConfig,
-      database,
       userService,
       storageService,
-      documentService,
       passwordResetRequestService,
       requestLimitRecordService,
+      externalAccountService,
       mailService,
       clientDataMappingService,
       roomService,
@@ -87,7 +91,7 @@ describe('user-controller', () => {
     sandbox.restore();
   });
 
-  describe('handleGetUserPage', () => {
+  describe('handleGetUserProfilePage', () => {
     let req;
     let res;
 
@@ -101,13 +105,11 @@ describe('user-controller', () => {
       });
 
       it('should throw NotFound', async () => {
-        await expect(() => sut.handleGetUserPage(req, res)).rejects.toThrow(NotFound);
+        await expect(() => sut.handleGetUserProfilePage(req, res)).rejects.toThrow(NotFound);
       });
     });
 
     describe('when the viewed user exists', () => {
-      let documents;
-      let mappedDocuments;
       let mappedViewedUser;
 
       beforeEach(() => {
@@ -120,9 +122,6 @@ describe('user-controller', () => {
         };
         const viewingUser = { _id: uniqueId.create() };
 
-        documents = [{ _id: uniqueId.create() }];
-        mappedDocuments = cloneDeep(documents);
-
         req = {
           user: viewingUser,
           params: { userId: viewedUser._id }
@@ -132,25 +131,22 @@ describe('user-controller', () => {
         mappedViewedUser = cloneDeep(viewedUser);
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
-        documentService.getMetadataOfLatestPublicDocumentsCreatedByUser.withArgs(viewedUser._id).resolves(documents);
 
-        clientDataMappingService.mapDocsOrRevisions.withArgs(documents).returns(mappedDocuments);
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
         pageRenderer.sendPage.resolves();
 
-        return sut.handleGetUserPage(req, res);
+        return sut.handleGetUserProfilePage(req, res);
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'user', {
-          user: mappedViewedUser,
-          documents: mappedDocuments
+        assert.calledWith(pageRenderer.sendPage, req, res, 'user-profile', {
+          user: mappedViewedUser
         });
       });
     });
   });
 
-  describe('handlePostUser', () => {
+  describe('handlePostUserRegistrationRequest', () => {
     let req;
     let res;
     const mappedUser = {};
@@ -166,10 +162,10 @@ describe('user-controller', () => {
 
         res.on('end', resolve);
 
-        userService.createUser.resolves({ result: SAVE_USER_RESULT.success, user: { verificationCode: 'verificationCode' } });
+        userService.createUser.resolves({ result: SAVE_USER_RESULT.success, user: { verificationCode: 'je8ghFD7Gg88jkdhfjkh48' } });
         clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
-        sut.handlePostUser(req, res).catch(reject);
+        sut.handlePostUserRegistrationRequest(req, res).catch(reject);
       }));
 
       it('should set the status code on the response to 201', () => {
@@ -180,7 +176,7 @@ describe('user-controller', () => {
         assert.calledWith(mailService.sendRegistrationVerificationEmail, {
           email: 'test@test.com',
           displayName: 'Test 1234',
-          verificationLink: 'https://localhost/complete-registration/verificationCode'
+          verificationCode: 'je8ghFD7Gg88jkdhfjkh48'
         });
       });
 
@@ -204,7 +200,7 @@ describe('user-controller', () => {
 
         userService.createUser.resolves({ result: SAVE_USER_RESULT.duplicateEmail, user: null });
 
-        sut.handlePostUser(req, res).catch(reject);
+        sut.handlePostUserRegistrationRequest(req, res).catch(reject);
       }));
 
       it('should set the status code on the response to 201', () => {
@@ -223,6 +219,121 @@ describe('user-controller', () => {
         const response = res._getData();
         expect(response.result).toBe(SAVE_USER_RESULT.duplicateEmail);
         expect(response.user).toBe(null);
+      });
+    });
+
+  });
+
+  describe('handlePostUserRegistrationCompletion', () => {
+    let req;
+    let res;
+    const dbUser = { _id: 'cnztc5ztm41mx03z' };
+    const mappedUser = { _id: 'cnztc5ztm41mx03z' };
+
+    describe('when a pending user with the specified verification code exists', () => {
+      describe('and there is no external account in the session', () => {
+        beforeEach(() => new Promise((resolve, reject) => {
+          req = httpMocks.createRequest({
+            protocol: 'https',
+            headers: { host: 'localhost' },
+            session: { externalAccount: null },
+            body: { userId: 'cnztc5ztm41mx03z', verificationCode: '3xzrxzt43z0xtm1' },
+            login: sandbox.stub().callsArg(1)
+          });
+          res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+          res.on('end', resolve);
+
+          userService.verifyUser.withArgs(req.body.userId, req.body.verificationCode).resolves(dbUser);
+          userService.recordUserLogIn.withArgs(req.body.userId).resolves(dbUser);
+          clientDataMappingService.mapWebsiteUser.returns(mappedUser);
+
+          sut.handlePostUserRegistrationCompletion(req, res).catch(reject);
+        }));
+
+        it('should set the status code on the response to 201', () => {
+          expect(res.statusCode).toBe(201);
+        });
+
+        it('should call clientDataMappingService.mapWebsiteUser', () => {
+          assert.calledWith(clientDataMappingService.mapWebsiteUser, mappedUser);
+        });
+
+        it('should login the new user', () => {
+          assert.calledWith(req.login, mappedUser);
+        });
+
+        it('should return the result object', () => {
+          const response = res._getData();
+          expect(response).toEqual({ user: mappedUser, connectedExternalAccountId: null });
+        });
+      });
+      describe('and there is an external account in the session', () => {
+        beforeEach(() => new Promise((resolve, reject) => {
+          req = httpMocks.createRequest({
+            protocol: 'https',
+            headers: { host: 'localhost' },
+            session: { externalAccount: { _id: '8nTNn043zm7y02743zcn' } },
+            body: { userId: 'cnztc5ztm41mx03z', verificationCode: '3xzrxzt43z0xtm1' },
+            login: sandbox.stub().callsArg(1)
+          });
+          res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+          res.on('end', resolve);
+
+          userService.verifyUser.resolves(dbUser);
+          clientDataMappingService.mapWebsiteUser.returns(mappedUser);
+          userService.recordUserLogIn.withArgs(req.body.userId).resolves(dbUser);
+
+          sut.handlePostUserRegistrationCompletion(req, res).catch(reject);
+        }));
+
+        it('should set the status code on the response to 201', () => {
+          expect(res.statusCode).toBe(201);
+        });
+
+        it('should call clientDataMappingService.mapWebsiteUser', () => {
+          assert.calledWith(clientDataMappingService.mapWebsiteUser, dbUser);
+        });
+
+        it('should connect the external account with the newly created user', () => {
+          assert.calledWith(externalAccountService.updateExternalAccountUserId, {
+            externalAccountId: '8nTNn043zm7y02743zcn',
+            userId: 'cnztc5ztm41mx03z'
+          });
+        });
+
+        it('should remove the external account from the session', () => {
+          expect(req.session.externalAccount).toBeNull();
+        });
+
+        it('should login the new user', () => {
+          assert.calledWith(req.login, dbUser);
+        });
+
+        it('should return the result object', () => {
+          const response = res._getData();
+          expect(response).toEqual({ user: mappedUser, connectedExternalAccountId: '8nTNn043zm7y02743zcn' });
+        });
+      });
+    });
+
+    describe('when no pending user with the specified verification code exists', () => {
+      beforeEach(() => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          session: { externalAccount: null },
+          body: { userId: 'cnztc5ztm41mx03z', verificationCode: '3xzrxzt43z0xtm1' },
+          login: sandbox.stub().callsArg(1)
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+        userService.verifyUser.resolves(null);
+      });
+
+      it('should throw a NotFound error', () => {
+        expect(() => sut.handlePostUserRegistrationCompletion(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -376,35 +487,37 @@ describe('user-controller', () => {
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { email: 'john.doe@gmail.com' }
+          body: { email: 'john.doe@gmail.com', password: 'hushhush' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
         res.on('end', resolve);
 
         userService.getActiveUserByEmailAddress.resolves(user);
-        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
+        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId', verificationCode: 'je8ghFD7Gg88jkdhfjkh48' });
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
       }));
 
       it('should call userService.createPasswordResetRequest', () => {
-        assert.calledWith(userService.createPasswordResetRequest, user);
+        assert.calledWith(userService.createPasswordResetRequest, user, 'hushhush');
       });
 
       it('should call mailService.sendPasswordResetEmail', () => {
-        assert.calledWith(mailService.sendPasswordResetEmail, { email: user.email,
+        assert.calledWith(mailService.sendPasswordResetEmail, {
+          email: user.email,
           displayName: user.displayName,
-          completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
+          verificationCode: 'je8ghFD7Gg88jkdhfjkh48'
+        });
       });
 
       it('should set the status code on the response to 201', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should return the result object', () => {
+      it('should return the passwordResetRequestId', () => {
         const response = res._getData();
-        expect(response).toEqual({});
+        expect(response).toEqual({ passwordResetRequestId: 'resetRequestId' });
       });
     });
 
@@ -610,6 +723,104 @@ describe('user-controller', () => {
     it('should return the result object', () => {
       const response = res._getData();
       expect(response).toBe(mappedUser);
+    });
+  });
+
+  describe('handleDeleteAbortExternalAccountConnection', () => {
+    let req;
+    let res;
+
+    describe('when there is an externalAccount in the session', () => {
+      beforeEach(() => new Promise((resolve, reject) => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          session: { externalAccount: {} }
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+        res.on('end', resolve);
+        sut.handleDeleteAbortExternalAccountConnection(req, res).catch(reject);
+      }));
+      it('should delete the externalAccount from the session', () => {
+        expect(req.session).not.toHaveProperty('externalAccount');
+      });
+      it('should set the status code on the response to 204', () => {
+        expect(res.statusCode).toBe(204);
+      });
+    });
+
+    describe('when there is no externalAccount in the session', () => {
+      beforeEach(() => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          session: {}
+        });
+      });
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handleDeleteAbortExternalAccountConnection(req, res)).toThrow(BadRequest);
+      });
+    });
+  });
+
+  describe('handleGetExternalUserAccounts', () => {
+    let req;
+    let res;
+    const externalAccounts = [{ _id: 'original-account' }];
+    const mappedExternalAccounts = [{ _id: 'mapped-account' }];
+
+    beforeEach(() => new Promise((resolve, reject) => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+      res.on('end', resolve);
+      externalAccountService.getAllExternalAccounts.resolves(externalAccounts);
+      clientDataMappingService.mapExternalAccountsForAdminArea.returns(mappedExternalAccounts);
+      sut.handleGetExternalUserAccounts(req, res).catch(reject);
+    }));
+
+    it('should call externalAccountService.getAllExternalAccounts', () => {
+      assert.calledOnce(externalAccountService.getAllExternalAccounts);
+    });
+
+    it('should call clientDataMappingService.mapExternalAccountsForAdminArea', () => {
+      assert.calledWith(clientDataMappingService.mapExternalAccountsForAdminArea, externalAccounts);
+    });
+
+    it('should set the status code on the response to 200', () => {
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return the external accounts', () => {
+      expect(res._getData()).toEqual({ externalAccounts: mappedExternalAccounts });
+    });
+  });
+
+  describe('handleDeleteExternalUserAccount', () => {
+    let req;
+    let res;
+    const externalAccountId = '23xjnzx7xtnxn8x1';
+
+    beforeEach(() => new Promise((resolve, reject) => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        params: { externalAccountId }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+      res.on('end', resolve);
+      externalAccountService.deleteExternalAccount.withArgs({ externalAccountId }).resolves();
+      sut.handleDeleteExternalUserAccount(req, res).catch(reject);
+    }));
+
+    it('should call externalAccountService.deleteExternalAccount with the external account ID', () => {
+      assert.calledWith(externalAccountService.deleteExternalAccount, { externalAccountId });
+    });
+
+    it('should set the status code on the response to 204', () => {
+      expect(res.statusCode).toBe(204);
     });
   });
 });

@@ -4,6 +4,7 @@ module.exports = {
     {
       files: ['migrations/**/*.js'],
       rules: {
+        'camelcase': ['off'],
         'no-console': ['off']
       }
     }

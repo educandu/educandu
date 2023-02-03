@@ -1,18 +1,19 @@
-documentsMode:
-  en: Mode
-  de: Modus
-button:
-  en: Enter room
-  de: Raum betreten
-joined:
-  en: Joined
-  de: Eingetreten
-invited:
-  en: Invited
-  de: Eingeladen
-members:
-  en: Members
-  de: Mitglieder
-acceptInvitation:
-  en: The invitation received by email is valid until **{date}**.
-  de: Die per E-Mail geschickte Einladung ist bis **{date}** gültig.
+roomCard:
+  documentsMode:
+    en: Mode
+    de: Modus
+  joinButton:
+    en: Accept invitation
+    de: Einladung annehmen
+  joined:
+    en: Joined
+    de: Eingetreten
+  invited:
+    en: Invited
+    de: Eingeladen
+  members:
+    en: Members
+    de: Mitglieder
+  acceptInvitation:
+    en: The invitation is valid until **{date}**.
+    de: Die Einladung ist bis **{date}** gültig.

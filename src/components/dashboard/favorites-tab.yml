@@ -1,0 +1,16 @@
+favoritesTab:
+  info:
+    en: Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.
+    de: Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.
+  noFavorites:
+    en: You have not marked any favorites so far.
+    de: Du hast noch keine Favoriten markiert.
+  favoriteUsers:
+    en: Your favorite users ({count})
+    de: Deine Lieblingsnutzer ({count})
+  favoriteRooms:
+    en: Your favorite rooms ({count})
+    de: Deine Lieblingsräume ({count})
+  favoriteDocuments:
+    en: Your favorite documents ({count})
+    de: Deine Lieblingsdokumente ({count})

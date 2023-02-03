@@ -1,6 +1,0 @@
-playbackRange:
-  en: Playback range
-  de: Abspielbereich
-playbackRangeInfo:
-  en: "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
-  de: "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"

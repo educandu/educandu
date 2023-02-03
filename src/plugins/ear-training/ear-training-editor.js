@@ -3,22 +3,21 @@ import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
+import { Form, Button, Radio, Divider } from 'antd';
 import EarTrainingInfo from './ear-training-info.js';
 import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import AbcNotation from '../../components/abc-notation.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import { Form, Button, Radio, Divider, Checkbox } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
+import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import { swapItemsAt, removeItemAt, ensureIsExcluded } from '../../utils/array-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
+import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
 import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -28,23 +27,13 @@ const RadioButton = Radio.Button;
 const DEFAULT_ABC_CODE = 'X:1';
 function EarTrainingEditor({ content, onContentChanged }) {
   const { t } = useTranslation('earTraining');
-  const clientConfig = useService(ClientConfig);
   const earTrainingInfo = useService(EarTrainingInfo);
 
   const { tests } = content;
 
-  const isInvalidUrl = url => !isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    && getUrlValidationStatus(url) === URL_VALIDATION_STATUS.error;
-
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const hasInvalidSourceUrl = (newContent.tests || [])
-      .some(test => isInvalidUrl(test.questionImage.sourceUrl)
-        || isInvalidUrl(test.answerImage.sourceUrl)
-        || isInvalidUrl(test.sound.sourceUrl));
-
-    onContentChanged(newContent, hasInvalidSourceUrl);
+    onContentChanged(newContent);
   };
 
   const handleTitleChanged = event => {
@@ -97,21 +86,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
 
-    if (value === TEST_MODE.image) {
-      newTests[index].questionImage = earTrainingInfo.getDefaultImage();
-      newTests[index].answerImage = earTrainingInfo.getDefaultImage();
-      newTests[index].questionAbcCode = '';
-      newTests[index].answerAbcCode = '';
-      newTests[index].sound = earTrainingInfo.getDefaultSound();
-    } else {
-      newTests[index].questionImage = earTrainingInfo.getDefaultImage();
-      newTests[index].answerImage = earTrainingInfo.getDefaultImage();
-      newTests[index].questionAbcCode = DEFAULT_ABC_CODE;
-      newTests[index].answerAbcCode = DEFAULT_ABC_CODE;
-      newTests[index].sound = { ...earTrainingInfo.getDefaultSound(), useMidi: true };
-    }
-
     newTests[index].mode = value;
+    newTests[index].sound = earTrainingInfo.getDefaultSound();
+    newTests[index].questionImage = earTrainingInfo.getDefaultImage();
+    newTests[index].answerImage = earTrainingInfo.getDefaultImage();
+    newTests[index].questionAbcCode = value === TEST_MODE.abcCode ? DEFAULT_ABC_CODE : '';
+    newTests[index].answerAbcCode = value === TEST_MODE.abcCode ? DEFAULT_ABC_CODE : '';
+
     changeContent({ tests: newTests });
   };
 
@@ -141,20 +122,15 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundUseMidiChange = (event, index) => {
-    const { checked } = event.target;
-    const newTests = cloneDeep(tests);
-
-    newTests[index].sound.useMidi = checked;
-    newTests[index].sound.sourceUrl = '';
-    newTests[index].sound.copyrightNotice = '';
-
-    changeContent({ tests: newTests });
-  };
-
   const handleSoundSourceUrlChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sound.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundPlaybackRangeChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.playbackRange = value;
     changeContent({ tests: newTests });
   };
 
@@ -173,13 +149,9 @@ function EarTrainingEditor({ content, onContentChanged }) {
     );
   };
 
-  const getValidationPropsSourceUrl = sourceUrl => isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(sourceUrl, t, { allowEmpty: true });
-
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
@@ -216,7 +188,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
             {test.mode === TEST_MODE.image && (
               <Fragment>
                 <Divider plain>{t('testQuestion')}</Divider>
-                <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT} {...getValidationPropsSourceUrl(test.questionImage.sourceUrl)}>
+                <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
                   <UrlInput
                     value={test.questionImage.sourceUrl}
                     onChange={value => handleQuestionImageSourceUrlChange(value, index)}
@@ -226,7 +198,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, handleQuestionImageCopyrightNoticeChange)}
 
                 <Divider plain>{t('testAnswer')}</Divider>
-                <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT} {...getValidationPropsSourceUrl(test.answerImage.sourceUrl)}>
+                <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
                   <UrlInput
                     value={test.answerImage.sourceUrl}
                     onChange={value => handleAnswerImageSourceUrlChange(value, index)}
@@ -258,20 +230,17 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
             <Divider plain>{t('audio')}</Divider>
 
-            {test.mode === TEST_MODE.abcCode && (
-              <Form.Item label={t('useMidi')} {...FORM_ITEM_LAYOUT}>
-                <Checkbox checked={test.sound.useMidi} onChange={event => handleSoundUseMidiChange(event, index)} />
-              </Form.Item>
-            )}
+            <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
+              <UrlInput value={test.sound.sourceUrl} onChange={value => handleSoundSourceUrlChange(value, index)} />
+            </FormItem>
+            <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
+              <div className="u-input-and-button">
+                <MediaRangeReadonlyInput sourceUrl={test.sound.sourceUrl} playbackRange={test.sound.playbackRange} />
+                <MediaRangeSelector sourceUrl={test.sound.sourceUrl} range={test.sound.playbackRange} onRangeChange={value => handleSoundPlaybackRangeChange(value, index)} />
+              </div>
+            </FormItem>
 
-            {!test.sound.useMidi && (
-              <Fragment>
-                <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
-                  <UrlInput value={test.sound.sourceUrl} onChange={value => handleSoundSourceUrlChange(value, index)} />
-                </FormItem>
-                {renderCopyrightNoticeInput(index, test.sound.copyrightNotice, handleSoundCopyrightNoticeChange)}
-              </Fragment>
-            )}
+            {renderCopyrightNoticeInput(index, test.sound.copyrightNotice, handleSoundCopyrightNoticeChange)}
           </ItemPanel>
         ))}
       </Form>

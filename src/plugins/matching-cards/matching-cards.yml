@@ -1,18 +1,19 @@
-name:
-  en: Matching Cards
-  de: Matching Cards
-tilePairs:
-  en: Card pairs
-  de: Kartenpaare
-tileA:
-  en: Card A
-  de: Karte A
-tileB:
-  en: Card B
-  de: Karte B
-url:
-  en: Media URL
-  de: Medien-URL
-preview:
-  en: Card pair preview
-  de: Kartenpaarvorschau
+matchingCards:
+  name:
+    en: Matching Cards
+    de: Matching Cards
+  tilePairs:
+    en: Card pairs
+    de: Kartenpaare
+  tileA:
+    en: Card A
+    de: Karte A
+  tileB:
+    en: Card B
+    de: Karte B
+  url:
+    en: Media URL
+    de: Medien-URL
+  preview:
+    en: Card pair preview
+    de: Kartenpaarvorschau

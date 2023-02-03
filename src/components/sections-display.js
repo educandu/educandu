@@ -1,8 +1,9 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Divider } from 'antd';
+import classNames from 'classnames';
 import { PlusOutlined } from '@ant-design/icons';
-import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
+import React, { Fragment, memo, useState } from 'react';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -89,7 +90,7 @@ function SectionsDisplay({
         onSectionEditLeave={() => onSectionEditLeave(index)}
         onSectionMoveUp={() => handleSectionMove(index, index - 1)}
         onSectionMoveDown={() => handleSectionMove(index, index + 1)}
-        onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
+        onSectionContentChange={newContent => onSectionContentChange(index, newContent)}
         onSectionHardDelete={() => onSectionHardDelete(index)}
         />
     );
@@ -97,17 +98,15 @@ function SectionsDisplay({
 
   const renderSectionDivider = insertIndex => {
     return (
-      <Divider className={`${isDragging ? 'u-hidden' : ''}`}>
+      <div className={classNames('SectionsDisplay-divider', { 'is-hidden': isDragging })}>
         <Button
           shape="circle"
-          size="small"
           type="primary"
+          icon={<PlusOutlined />}
+          className="SectionsDisplay-dividerButton"
           onClick={() => handleNewSectionClick(insertIndex)}
-          icon={<PlusOutlined style={{ fontSize: '12px' }} />}
-          style={{ transition: 'none', height: '18px', minWidth: 'unset', width: '18px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           />
-
-      </Divider>
+      </div>
     );
   };
 
@@ -200,4 +199,4 @@ SectionsDisplay.defaultProps = {
   pendingSectionKeys: []
 };
 
-export default SectionsDisplay;
+export default memo(SectionsDisplay);

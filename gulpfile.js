@@ -1,8 +1,11 @@
 import gulp from 'gulp';
+import mkdirp from 'mkdirp';
 import { deleteAsync } from 'del';
+import selfsigned from 'selfsigned';
 import Graceful from 'node-graceful';
+import { promisify } from 'node:util';
+import { promises as fs } from 'node:fs';
 import {
-  buildTranslationsJson,
   cliArgs,
   createGithubRelease,
   createLabelInJiraIssues,
@@ -15,6 +18,7 @@ import {
   less,
   LoadBalancedNodeProcessGroup,
   MaildevContainer,
+  mergeYamlFilesToJson,
   MinioContainer,
   MongoContainer,
   NodeProcess,
@@ -22,9 +26,10 @@ import {
   TunnelProxyContainer
 } from '@educandu/dev-tools';
 
-let bundler = null;
 let currentApp = null;
+let isInWatchMode = false;
 let currentCdnProxy = null;
+let currentAppBuildContext = null;
 
 const testAppEnv = {
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
@@ -41,12 +46,15 @@ const testAppEnv = {
   TEST_APP_CONSENT_COOKIE_NAME_PREFIX: 'CONSENT_TEST_APP',
   TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME: 'UPLOAD_LIABILITY_TEST_APP',
   TEST_APP_X_FRAME_OPTIONS: 'SAMEORIGIN',
+  TEST_APP_X_ROOMS_AUTH_SECRET: '5do47sdh37',
   TEST_APP_ADMIN_EMAIL_ADDRESS: 'educandu-test-admin@test.com',
   TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
   TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   TEST_APP_INITIAL_USER: JSON.stringify({ email: 'test@test.com', password: 'test', displayName: 'Testibus' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
-  TEST_APP_AMB_API_KEY: '4985nvcz56v1'
+  TEST_APP_AMB_API_KEY: '4985nvcz56v1',
+  TEST_APP_ENABLE_SAML_AUTH: false.toString(),
+  TEST_APP_SAML_AUTH_DECRYPTION: String(null)
 };
 
 const mongoContainer = new MongoContainer({
@@ -69,7 +77,7 @@ const maildevContainer = new MaildevContainer({
 });
 
 Graceful.on('exit', async () => {
-  bundler?.rebuild?.dispose();
+  await currentAppBuildContext?.dispose();
   await currentApp?.waitForExit();
   await currentCdnProxy?.waitForExit();
 });
@@ -79,7 +87,7 @@ export async function clean() {
 }
 
 export async function lint() {
-  await eslint.lint('**/*.js', { failOnError: !currentApp });
+  await eslint.lint('**/*.js', { failOnError: !isInWatchMode });
 }
 
 export async function fix() {
@@ -113,14 +121,15 @@ export async function buildTestAppCss() {
 }
 
 export async function buildTestAppJs() {
-  if (bundler?.rebuild) {
-    await bundler.rebuild();
+  if (currentAppBuildContext) {
+    await currentAppBuildContext.rebuild();
   } else {
-    bundler = await esbuild.bundle({
+    // eslint-disable-next-line require-atomic-updates
+    currentAppBuildContext = await esbuild.bundle({
       entryPoints: ['./test-app/src/bundles/main.js'],
       outdir: './test-app/dist',
       minify: !!cliArgs.optimize,
-      incremental: !!currentApp,
+      incremental: isInWatchMode,
       inject: ['./test-app/src/polyfills.js'],
       metaFilePath: './test-app/dist/meta.json'
     });
@@ -128,7 +137,7 @@ export async function buildTestAppJs() {
 }
 
 export async function buildTranslations() {
-  await buildTranslationsJson({ pattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
+  await mergeYamlFilesToJson({ inputFilesPattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
 }
 
 export const buildTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);
@@ -157,12 +166,35 @@ export async function minioDown() {
   await minioContainer.ensureIsRemoved();
 }
 
+export async function createSamlCertificate() {
+  const { domain, days, dir } = cliArgs;
+  const outputDirectory = dir || './certificates';
+  const attributes = [{ name: 'commonName', value: domain }];
+  const options = { days: days || (100 * 365) };
+  const pems = await promisify(selfsigned.generate)(attributes, options);
+
+  // eslint-disable-next-line no-console
+  console.log(pems);
+
+  const decryptionJson = JSON.stringify({ pvk: pems.private, cert: pems.cert });
+
+  await mkdirp(outputDirectory);
+
+  await Promise.all([
+    fs.writeFile(`${outputDirectory}/${domain}.crt`, pems.cert, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}.pub`, pems.public, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}.key`, pems.private, 'utf8'),
+    fs.writeFile(`${outputDirectory}/${domain}-saml-auth-decryption.json`, decryptionJson, 'utf8')
+  ]);
+}
+
 export async function startServer() {
   const { instances, tunnel } = cliArgs;
 
   const tunnelToken = tunnel ? getEnvAsString('TUNNEL_TOKEN') : null;
   const tunnelWebsiteDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_DOMAIN') : null;
   const tunnelWebsiteCdnDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_CDN_DOMAIN') : null;
+  const tunnelWebsiteSamlAuthDecryption = tunnel ? getEnvAsString('TUNNEL_WEBSITE_SAML_AUTH_DECRYPTION') : null;
 
   if (tunnel) {
     // eslint-disable-next-line no-console
@@ -199,6 +231,8 @@ export async function startServer() {
   const finalTestAppEnv = {
     NODE_ENV: 'development',
     ...testAppEnv,
+    TEST_APP_ENABLE_SAML_AUTH: (!!tunnel).toString(),
+    TEST_APP_SAML_AUTH_DECRYPTION: tunnel ? tunnelWebsiteSamlAuthDecryption : String(null),
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
     TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN
   };
@@ -210,7 +244,8 @@ export async function startServer() {
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
-      SESSION_COOKIE_NAME: testAppEnv.TEST_APP_SESSION_COOKIE_NAME
+      SESSION_COOKIE_NAME: finalTestAppEnv.TEST_APP_SESSION_COOKIE_NAME,
+      X_ROOMS_AUTH_SECRET: finalTestAppEnv.TEST_APP_X_ROOMS_AUTH_SECRET
     }
   });
 
@@ -291,13 +326,18 @@ export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startSe
 
 export const verify = gulp.series(lint, test, build);
 
-export function setupWatchers(done) {
+export function setupWatchMode(done) {
+  isInWatchMode = true;
+  done();
+}
+
+export function startWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/src/**/*.{js,json}'], gulp.series(buildTestAppJs, restartServer));
   gulp.watch(['src/**/*.less', 'test-app/src/**/*.less'], gulp.series(copyToDist, buildTestAppCss));
   gulp.watch(['src/**/*.yml'], buildTranslations);
   done();
 }
 
-export const startWatch = gulp.series(serve, setupWatchers);
+export const watch = gulp.series(setupWatchMode, serve, startWatchers);
 
-export default startWatch;
+export default watch;

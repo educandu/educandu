@@ -19,7 +19,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
   const { tests, testsOrder, teaser, title } = content;
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleTeaserValueChanged = event => {
@@ -49,7 +49,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   const handleAddButtonClick = () => {
     const newTests = tests.slice();
-    newTests.push({ question: `[${t('common:question')}]`, answer: `[${t('common:answer')}]` });
+    newTests.push({ question: '', answer: '' });
     changeContent({ tests: newTests });
   };
 
@@ -69,7 +69,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   return (
     <div className="QuickTesterEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
         </FormItem>

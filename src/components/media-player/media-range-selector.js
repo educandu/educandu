@@ -3,15 +3,20 @@ import { Modal, Button, Spin } from 'antd';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import { useService } from '../container-context.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
+import { getAccessibleUrl, getSourceDuration } from '../../utils/source-utils.js';
+import { analyzeMediaUrl, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
 
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaRangeSelector');
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRange, setCurrentRange] = useState(range);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMediaInfo, setCurrentMediaInfo] = useState(null);
   const [isRetrievingMediaInfo, setIsRetrievingMediaInfo] = useState(false);
 
@@ -24,9 +29,12 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     setIsModalOpen(true);
     try {
       setIsRetrievingMediaInfo(true);
-      const info = analyzeMediaUrl(sourceUrl);
-      const duration = await determineMediaDuration(sourceUrl);
-      setCurrentMediaInfo({ ...info, duration });
+      const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+      const { resourceType, sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
+      const duration = await getSourceDuration({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+      setCurrentMediaInfo({ resourceType, sanitizedUrl, duration });
     } catch (error) {
       setCurrentMediaInfo(null);
     } finally {
@@ -105,7 +113,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     <div className="MediaRangeSelector">
       <Button type="primary" onClick={handleSelectButtonClick}>{t('common:select')}</Button>
       <Modal
-        width="80%"
+        width="70%"
         open={isModalOpen}
         title={t('modalTitle')}
         onOk={handleApply}
@@ -131,17 +139,19 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
           )}
           {!isRetrievingMediaInfo && !!currentMediaInfo && (
             <MediaPlayer
-              source={currentMediaInfo.sanitizedUrl}
+              sourceUrl={currentMediaInfo.sanitizedUrl}
               onProgress={handleProgress}
               parts={getCurrentRangeParts()}
               screenMode={getScreenMode()}
-              extraCustomContent={(
+              customUnderScreenContent={(
                 <div className="MediaRangeSelector-rangeSelectorArea">
                   <div className="MediaRangeSelector-rangeDisplay">
                     {renderRangeText()}
                   </div>
                   <div className="MediaRangeSelector-rangeSelector">
-                    {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                    <span className="MediaRangeSelector-rangeSelectorLabel">
+                      {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                    </span>
                     <div className="MediaRangeSelector-rangeSelectorButtons">
                       <Button
                         onClick={handleSetAsStartClick}

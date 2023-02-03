@@ -11,19 +11,18 @@ import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import MediaPlayer from '../../components/media-player/media-player.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -36,7 +35,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaSlideshow');
   const mediaSlideshowInfo = useService(MediaSlideshowInfo);
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
-  const [playingChapterIndex, setPlayingChapterIndex] = useState(-1);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
 
@@ -54,10 +53,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalid = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackContentChange = changedContent => {
@@ -137,7 +133,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   };
 
   const handlePlayingPartIndexChange = partIndex => {
-    setPlayingChapterIndex(partIndex);
+    setPlayingChapterIndex(Math.max(partIndex, 0));
   };
 
   const renderPlayingChapterImage = () => {
@@ -166,10 +162,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     );
   };
 
-  const getValidationProps = url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(url, t, { allowEmpty: true });
-
   const timelineParts = chapters.map((chapter, index) => ({
     ...chapter,
     title: `${t('common:chapter')} ${index + 1}`
@@ -179,11 +171,12 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   return (
     <div className="MediaSlideshowEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <MainTrackEditor
           content={content}
           useShowVideo={false}
           useAspectRatio={false}
+          usePosterImage={false}
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem
@@ -197,12 +190,12 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
         <MediaPlayer
           parts={chapters}
-          screenMode={MEDIA_SCREEN_MODE.overlay}
           screenWidth={50}
           playbackRange={playbackRange}
-          screenOverlay={renderPlayingChapterImage()}
+          screenMode={MEDIA_SCREEN_MODE.audio}
+          customScreenOverlay={renderPlayingChapterImage()}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          source={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
         <Timeline
@@ -238,7 +231,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                 <FormItem
                   label={t('common:url')}
                   {...FORM_ITEM_LAYOUT}
-                  {...getValidationProps(chapters[selectedChapterIndex].image.sourceUrl)}
                   >
                   <UrlInput
                     value={chapters[selectedChapterIndex].image.sourceUrl}

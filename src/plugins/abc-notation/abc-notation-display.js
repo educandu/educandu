@@ -7,7 +7,7 @@ function AbcNotationDisplay({ content }) {
   return (
     <div className="AbcNotation">
       <div className={`AbcNotation-wrapper u-width-${content.width}`}>
-        <AbcNotation abcCode={content.abcCode} displayMidi={content.displayMidi} />
+        <AbcNotation abcCode={content.abcCode} />
         <CopyrightNotice value={content.copyrightNotice} />
       </div>
     </div>

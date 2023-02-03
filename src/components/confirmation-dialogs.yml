@@ -1,81 +1,82 @@
-attention:
-  en: Attention!
-  de: Achtung!
-areYouSure:
-  en: Are you sure?
-  de: Bist du sicher?
-discardUnsavedChanges:
-  en: All unsaved changes will be lost.
-  de: Alle nicht gespeicherten Änderungen werden verworfen.
-deleteSectionConfirmation:
-  en: Do you really want to delete the section?
-  de: Möchtest du den Abschnitt wirklich löschen?
-deleteDocumentConfirmation:
-  en: Do you really want to delete document "{title}"?
-  de: Möchtest du das Dokument "{title}" wirklich löschen?
-deleteAllPrivateRoomsConfirmation:
-  en: Do you really want to delete all private rooms owned by user "{ownerName}"?
-  de: Möchtest du wirklich alle privaten Räume von Benutzer "{ownerName}" löschen?
-deleteRoomConfirmation:
-  en: Do you really want to delete room "{roomName}"?
-  de: Möchtest du den Raum "{roomName}" wirklich löschen?
-deleteRoomMemberConfirmation:
-  en: Do you really want to remove member "{memberDisplayName}" from the room?
-  de: Möchtest du das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
-deleteRoomInvitationConfirmation:
-  en: Do you really want to revoke the room invitation sent to "{invitationEmail}"?
-  de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
-leaveRoomConfirmation:
-  en: Do you really want to cancel your membership in room "{roomName}"?
-  de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?
-deleteCdnDocumentConfirmation:
-  en: Do you really want to delete the file "{fileName}" from the internal storage?
-  de: Möchtest du die Datei "{fileName}" wirklich vom internen Speicher löschen?
-thisActionIsIrreversible:
-  en: This action is irreversible!
-  de: Diese Aktion ist unwiderrufbar!
-pleaseSpecifyAReason:
-  en: Please specify a reason
-  de: Bitte gib einen Grund an
-deleteAllRevisions:
-  en: Delete all existing revisions of this section
-  de: Alle existierenden Revisionen dieses Abschnitts löschen
-restoreDocumentRevisionConfirmation:
-  en: Do you really want to restore the content of revision {revisionId}?
-  de: Möchtest du den Inhalt der Revision {revisionId} wirklich wiederherstellen?
-confirmPassword:
-  en: Password confirmation
-  de: Kennwortbestätigung
-confirmWithPasswordTitle:
-  en: Confirmation required
-  de: Bestätigung erforderlich
-confirmWithPasswordDescription:
-  en: Please enter your password in order to continue this process.
-  de: Bitte gib dein Kennwort an, um diesen Vorgang fortzusetzen.
-sessionExpiredTitle:
-  en: Your session has expired
-  de: Deine Sitzung ist abgelaufen
-sessionExpiredDescription:
-  en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
-  de: Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte melde dich erneut an, um diesen Vorgang fortzusetzen.
-deleteItemConfirmation:
-  en: Do you really want to delete "{name}"?
-  de: Möchtest du "{name}" wirklich löschen?
-deleteStoragePlanConfirmation:
-  en: Do you really want to delete storage plan "{storagePlanName}"?
-  de: Möchtest du den Speicherplan "{storagePlanName}" wirklich löschen?
-confirmPublicUploadLiability:
-  en: You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.
-  de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.
-closeAccountConfirmation:
-  en: Do you really want to close your account?
-  de: Möchtest du wirklich dein Konto schließen?
-exitFileEditor:
-  en: Do you really want to exit the editor? Your current changes will be lost.
-  de: Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.
-deleteCommentConfirmation:
-  en: Do you really want to delete this comment from "{author}" posted on "{timestamp}"?
-  de: Möchtest du den Kommentar von "{author}", geschrieben am "{timestamp}", wirklich löschen?
-genericDeleteConfirmation:
-  en: Do you really want to delete "{title}"?
-  de: Möchtest du "{title}" wirklich löschen?
+confirmationDialogs:
+  attention:
+    en: Attention!
+    de: Achtung!
+  areYouSure:
+    en: Are you sure?
+    de: Bist du sicher?
+  discardUnsavedChanges:
+    en: All unsaved changes will be lost.
+    de: Alle nicht gespeicherten Änderungen werden verworfen.
+  deleteSectionConfirmation:
+    en: Do you really want to delete the section?
+    de: Möchtest du den Abschnitt wirklich löschen?
+  deleteDocumentConfirmation:
+    en: Do you really want to delete document "{title}"?
+    de: Möchtest du das Dokument "{title}" wirklich löschen?
+  deleteAllOwnedRoomsConfirmation:
+    en: Do you really want to delete all rooms owned by user "{ownerName}"?
+    de: Möchtest du wirklich alle Räume von Benutzer "{ownerName}" löschen?
+  deleteRoomConfirmation:
+    en: Do you really want to delete room "{roomName}"?
+    de: Möchtest du den Raum "{roomName}" wirklich löschen?
+  deleteRoomMemberConfirmation:
+    en: Do you really want to remove member "{memberDisplayName}" from the room?
+    de: Möchtest du das Mitglied "{memberDisplayName}" wirklich vom Raum entfernen?
+  deleteRoomInvitationConfirmation:
+    en: Do you really want to revoke the room invitation sent to "{invitationEmail}"?
+    de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
+  leaveRoomConfirmation:
+    en: Do you really want to cancel your membership in room "{roomName}"?
+    de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?
+  deleteCdnDocumentConfirmation:
+    en: Do you really want to delete the file "{fileName}" from the internal storage?
+    de: Möchtest du die Datei "{fileName}" wirklich vom internen Speicher löschen?
+  thisActionIsIrreversible:
+    en: This action is irreversible!
+    de: Diese Aktion ist unwiderrufbar!
+  pleaseSpecifyAReason:
+    en: Please specify a reason
+    de: Bitte gib einen Grund an
+  deleteAllVersions:
+    en: Delete all existing versions of this section
+    de: Alle existierenden Versionen dieses Abschnitts löschen
+  restoreDocumentVersionConfirmation:
+    en: Do you really want to restore the content of version {id}?
+    de: Möchtest du den Inhalt der Version {id} wirklich wiederherstellen?
+  confirmPassword:
+    en: Password confirmation
+    de: Kennwortbestätigung
+  confirmWithPasswordTitle:
+    en: Confirmation required
+    de: Bestätigung erforderlich
+  confirmWithPasswordDescription:
+    en: Please enter your password in order to continue this process.
+    de: Bitte gib dein Kennwort an, um diesen Vorgang fortzusetzen.
+  sessionExpiredTitle:
+    en: Your session has expired
+    de: Deine Sitzung ist abgelaufen
+  sessionExpiredDescription:
+    en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
+    de: Deine Sitzung ist abgelaufen, da du für einige Zeit inaktiv warst. Bitte melde dich erneut an, um diesen Vorgang fortzusetzen.
+  deleteItemConfirmation:
+    en: Do you really want to delete "{name}"?
+    de: Möchtest du "{name}" wirklich löschen?
+  deleteStoragePlanConfirmation:
+    en: Do you really want to delete storage plan "{storagePlanName}"?
+    de: Möchtest du den Speicherplan "{storagePlanName}" wirklich löschen?
+  confirmPublicUploadLiability:
+    en: You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.
+    de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.
+  closeAccountConfirmation:
+    en: Do you really want to close your account?
+    de: Möchtest du wirklich dein Konto schließen?
+  exitFileEditor:
+    en: Do you really want to exit the editor? Your current changes will be lost.
+    de: Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren.
+  deleteCommentConfirmation:
+    en: Do you really want to delete this comment from "{author}" posted on "{timestamp}"?
+    de: Möchtest du den Kommentar von "{author}", geschrieben am "{timestamp}", wirklich löschen?
+  genericDeleteConfirmation:
+    en: Do you really want to delete "{title}"?
+    de: Möchtest du "{title}" wirklich löschen?

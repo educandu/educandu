@@ -57,7 +57,7 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   };
 
   const renderRank = (text, record, index) => (
-    <span style={{ whiteSpace: 'nowrap' }}>
+    <span className="u-small-button-group">
       <Button size="small" icon={<MoveUpIcon />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
       <Button size="small" icon={<MoveDownIcon />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
     </span>
@@ -84,7 +84,7 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   );
 
   const columns = [
-    { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
+    { title: t('rank'), key: 'rank', width: '75px', render: renderRank },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
     { title: t('common:documentTitle'), key: 'documentId', dataIndex: 'documentId', ellipsis: true, render: renderDocumentId },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }

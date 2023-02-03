@@ -6,6 +6,7 @@ import ClientConfig from './client-config.js';
 import ReactDOMClient from 'react-dom/client';
 import PageResolver from '../domain/page-resolver.js';
 import ThemeManager from '../resources/theme-manager.js';
+import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
@@ -20,12 +21,17 @@ export async function hydrateApp({ bundleConfig }) {
   const clientConfig = new ClientConfig(window.__clientconfig__);
   container.registerInstance(ClientConfig, clientConfig);
 
-  const resourceManager = new ResourceManager(window.__resources__);
+  const resourceManager = new ResourceManager();
+  resourceManager.setResources(window.__resources__);
   container.registerInstance(ResourceManager, resourceManager);
 
   const themeManager = new ThemeManager();
   themeManager.setTheme(window.__theme__);
   container.registerInstance(ThemeManager, themeManager);
+
+  const licenseManager = new LicenseManager();
+  licenseManager.setLicenses(window.__licenses__);
+  container.registerInstance(LicenseManager, licenseManager);
 
   const pageResolver = new PageResolver(bundleConfig);
   container.registerInstance(PageResolver, pageResolver);

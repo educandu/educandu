@@ -1,5 +1,13 @@
 .FlipCard {
   perspective: 600px;
+  position: relative;
+}
+
+.FlipCard-disabledOverlay {
+  .m-mask;
+  border-radius: @edu-border-radius-base;
+  background-color: darken(@edu-background-color-base, 5%);
+  opacity: 0.85;
 }
 
 .FlipCard-content {
@@ -64,12 +72,10 @@
 }
 
 .FlipCard-faceContent {
-  width: 100%;
   margin: auto;
 }
 
-.FlipCard-disabledOverlay {
+.FlipCard-hiddenOverlay {
   .m-mask;
-  background-color: darken(@edu-background-color-base, 5%);
-  opacity: 0.85;
+  background-color: inherit;
 }

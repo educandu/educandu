@@ -1,22 +1,25 @@
 import joi from 'joi';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 
-export function createDefaultSecondaryTrack(index, t) {
+export function createDefaultSecondaryTrack() {
   return {
-    name: `[${t('common:secondaryTrack', { number: index + 2 })}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: ''
   };
 }
 
-export function createDefaultMainTrack(t) {
+export function createDefaultMainTrack() {
   return {
-    name: `[${t('common:mainTrack')}]`,
+    name: '',
     sourceUrl: '',
     copyrightNotice: '',
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
     showVideo: false,
-    playbackRange: [0, 1]
+    playbackRange: [0, 1],
+    posterImage: {
+      sourceUrl: ''
+    }
   };
 }
 
@@ -24,7 +27,7 @@ export function createDefaultVolumePreset(t, secondaryTracksCount) {
   return {
     name: t('common:defaultVolumePreset'),
     mainTrack: 1,
-    secondaryTracks: new Array(secondaryTracksCount).fill(1)
+    secondaryTracks: Array.from({ length: secondaryTracksCount }, () => 1)
   };
 }
 
@@ -32,9 +35,9 @@ export function createDefaultContent(t) {
   const secondaryTracks = [];
   return {
     width: 100,
-    mainTrack: createDefaultMainTrack(t),
+    mainTrack: createDefaultMainTrack(),
     secondaryTracks,
-    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
+    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.length)]
   };
 }
 
@@ -47,7 +50,10 @@ export function validateContent(content) {
       copyrightNotice: joi.string().allow('').required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
       showVideo: joi.boolean().required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+      posterImage: joi.object({
+        sourceUrl: joi.string().allow('').required()
+      }).required()
     }).required(),
     secondaryTracks: joi.array().items(joi.object({
       name: joi.string().allow('').required(),
@@ -58,7 +64,7 @@ export function validateContent(content) {
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),
       secondaryTracks: joi.array().items(joi.number().min(0).max(1)).required()
-    })).required()
+    })).min(1).required()
   });
 
   joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

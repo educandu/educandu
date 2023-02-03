@@ -86,7 +86,7 @@ describe('client-data-mapping-service', () => {
       const accountClosedOn = new Date();
 
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewingUser = { roles: [ROLE.user] };
         viewedUser.accountClosedOn = accountClosedOn;
 
         urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
@@ -107,7 +107,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.EDIT_DOC] };
+        viewingUser = { roles: [ROLE.user] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 
@@ -125,7 +125,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { permissions: [permissions.SEE_USER_EMAIL] };
+        viewingUser = { roles: [ROLE.user, ROLE.maintainer] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 
@@ -364,7 +364,7 @@ describe('client-data-mapping-service', () => {
       expect(result).toEqual({
         ...room,
         createdOn: room.createdOn.toISOString(),
-        updatedOn: room.createdOn.toISOString(),
+        updatedOn: room.updatedOn.toISOString(),
         owner: {
           displayName: owner.displayName,
           email: owner.email,
@@ -374,12 +374,14 @@ describe('client-data-mapping-service', () => {
           {
             userId: room.members[0].userId,
             displayName: member1.displayName,
-            joinedOn: room.members[0].joinedOn.toISOString()
+            joinedOn: room.members[0].joinedOn.toISOString(),
+            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
           },
           {
             userId: room.members[1].userId,
             displayName: member2.displayName,
-            joinedOn: room.members[1].joinedOn.toISOString()
+            joinedOn: room.members[1].joinedOn.toISOString(),
+            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
           }
         ]
       });
@@ -406,7 +408,7 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapRoomInvitationWithBasicRoomData', () => {
+  describe('mapUserOwnRoomInvitations', () => {
     let result;
     let room;
     let invitation;
@@ -415,18 +417,21 @@ describe('client-data-mapping-service', () => {
       room = await createTestRoom(container, { owner: user1._id });
       invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expiresOn: new Date() };
 
-      result = await sut.mapRoomInvitationWithBasicRoomData(invitation);
+      result = await sut.mapUserOwnRoomInvitations(invitation);
     });
 
     it('shoult map room data into the basic invitation data', () => {
       expect(result).toEqual({
         _id: invitation._id,
+        token: invitation.token,
         sentOn: invitation.sentOn.toISOString(),
         expiresOn: invitation.expiresOn.toISOString(),
         room: {
+          _id: room._id,
           name: room.name,
           documentsMode: room.documentsMode,
           owner: {
+            _id: user1._id,
             displayName: user1.displayName
           }
         }

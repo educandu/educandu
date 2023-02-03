@@ -1,9 +1,7 @@
 login:
-  en: Login
-  de: Anmelden
-register:
-  en: Register
-  de: Registrieren
-loginState:
-  en: Hello <0>{displayName}</0>!
-  de: Hallo <0>{displayName}</0>!
+  register:
+    en: Register
+    de: Registrieren
+  loginState:
+    en: Hello <0>{displayName}</0>!
+    de: Hallo <0>{displayName}</0>!

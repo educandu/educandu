@@ -1,15 +1,16 @@
-filesView_list:
-  en: List
-  de: Liste
-filesView_grid:
-  en: Grid
-  de: Grid
-publicStorageWarning:
-  en: This directory is publicly accessible
-  de: Dieses Verzeichnis ist öffentlich zugänglich
-backToDirectoryView:
-  en: Back to directory view
-  de: Zurück zur Verzeichnisansicht
-uploadFiles:
-  en: Upload files
-  de: Dateien hochladen
+storageLocation:
+  filesView_list:
+    en: List view
+    de: Listenansicht
+  filesView_grid:
+    en: Grid view
+    de: Kachelansicht
+  privateStorageMessage:
+    en: Private directory
+    de: Privates Verzeichnis
+  publicStorageMessage:
+    en: Public directory
+    de: Öffentliches Verzeichnis
+  uploadFiles:
+    en: Upload files
+    de: Dateien hochladen

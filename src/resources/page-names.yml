@@ -1,18 +1,13 @@
-home:
-  en: Home
-  de: Home
-users:
-  en: Users
-  de: Benutzer
-dashboard:
-  en: Dashboard
-  de: Dashboard
-admin:
-  en: Administration
-  de: Verwaltung
-batches:
-  en: Batch details
-  de: Chargen-Details
-docs:
-  en: Documents
-  de: Dokumente
+pageNames:
+  dashboard:
+    en: Dashboard
+    de: Dashboard
+  admin:
+    en: Administration
+    de: Verwaltung
+  batches:
+    en: Batch details
+    de: Chargen-Details
+  redaction:
+    en: Redaction
+    de: Redaktion

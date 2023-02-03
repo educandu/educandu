@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
 import cloneDeep from '../../utils/clone-deep.js';
+import ResourcePreview from './resource-preview.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { storageLocationShape } from '../../ui/default-prop-types.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
-import { cdnObjectShape, storageLocationShape } from '../../ui/default-prop-types.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../utils/storage-utils.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -35,7 +35,6 @@ const STAGE = {
 
 function FilesUploadScreen({
   uploadQueue,
-  directory,
   storageLocation,
   onBackClick,
   onCancelClick,
@@ -71,7 +70,7 @@ function FilesUploadScreen({
       }));
     }
 
-    if (locationToUpload.type === STORAGE_LOCATION_TYPE.private) {
+    if (locationToUpload.type === STORAGE_LOCATION_TYPE.roomMedia) {
       const availableBytes = Math.max(0, (locationToUpload.maxBytes || 0) - (locationToUpload.usedBytes || 0));
       if (file.size > availableBytes) {
         throw new Error(t('insufficientPrivateStorge'));
@@ -79,8 +78,8 @@ function FilesUploadScreen({
     }
   }, [t, uiLocale]);
 
-  const uploadFiles = useCallback(async (itemsToUpload, locationToUpload, targetDirectory) => {
-    let currentLocation = locationToUpload;
+  const uploadFiles = useCallback(async (itemsToUpload, uploadLocation) => {
+    let currentLocation = uploadLocation;
 
     const result = {
       uploadedFiles: {},
@@ -97,8 +96,8 @@ function FilesUploadScreen({
 
       let updatedItem;
       try {
-        ensureCanUpload(file, locationToUpload);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], targetDirectory.path);
+        ensureCanUpload(file, uploadLocation);
+        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], uploadLocation.path);
         result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
         updatedItem = {
           ...currentItem,
@@ -125,7 +124,7 @@ function FilesUploadScreen({
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    await uploadFiles(uploadItems, storageLocation, directory);
+    await uploadFiles(uploadItems, storageLocation);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -221,14 +220,13 @@ function FilesUploadScreen({
         </div>
         {!!item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
-        <div className="FilesUploadScreen-fileStatusPreview">
-          <ResourcePreview
-            url={item.uploadedFile.url}
-            size={item.uploadedFile.size}
-            createdOn={item.uploadedFile.createdOn}
-            layout={RESOURCE_PREVIEW_LAYOUT.compact}
-            />
-        </div>
+          <div className="FilesUploadScreen-fileStatusPreview">
+            <ResourcePreview
+              url={item.uploadedFile.url}
+              size={item.uploadedFile.size}
+              createdOn={item.uploadedFile.createdOn}
+              />
+          </div>
         )}
       </div>
     );
@@ -239,7 +237,7 @@ function FilesUploadScreen({
       <h3>{t('headline')}</h3>
       <div className="u-resource-picker-screen-content">
         <div className="FilesUploadScreen">
-          {storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
+          {storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
             <div className="FilesUploadScreen-usedStorage" >
               <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
             </div>
@@ -281,7 +279,6 @@ function FilesUploadScreen({
 }
 
 FilesUploadScreen.propTypes = {
-  directory: cdnObjectShape.isRequired,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
   onEditFileClick: PropTypes.func,

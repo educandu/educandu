@@ -1,6 +1,5 @@
 import by from 'thenby';
 import { Tag } from 'antd';
-import Table from '../table.js';
 import PropTypes from 'prop-types';
 import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
@@ -8,6 +7,7 @@ import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
+import DocumentsTable from '../documents-table.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
@@ -151,14 +151,13 @@ function Search({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="SearchPage">
-        <div className="SearchPage-headline">
-          {!!showSearchingHeadline && <h1>{t('headlineSearching')}</h1>}
-          {!showSearchingHeadline && <h1>{t('headlineDocumentsFound', { count: displayedRows.length })}</h1>}
-        </div>
+        <h1 className="SearchPage-headline">{t('common:search')}</h1>
+
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
+
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
           <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
@@ -169,7 +168,13 @@ function Search({ PageTemplate }) {
             </a>
           )}
         </div>
-        <Table dataSource={[...displayedRows]} columns={columns} loading={isSearching} pagination />
+
+        <div className="SearchPage-resultsCount">
+          {!!showSearchingHeadline && t('searching')}
+          {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
+        </div>
+
+        <DocumentsTable key={searchText} dataSource={[...displayedRows]} columns={columns} loading={isSearching} />
       </div>
     </PageTemplate>
   );

@@ -1,3 +1,4 @@
+import by from 'thenby';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import httpErrors from 'http-errors';
@@ -12,18 +13,22 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 import {
   ROLE,
+  FAVORITE_TYPE,
   SAVE_USER_RESULT,
-  PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS,
-  FAVORITE_TYPE
+  USER_ACTIVITY_TYPE,
+  PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES,
+  ERROR_CODES
 } from '../domain/constants.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Unauthorized } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const PASSWORD_SALT_ROUNDS = 1024;
 
 const logger = new Logger(import.meta.url);
+
+const completionFunction = Symbol('completion');
 
 class UserService {
   static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore, TransactionRunner]; }
@@ -203,7 +208,7 @@ class UserService {
     const userIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.user).map(u => u.id);
 
     const [documents, rooms, users] = await Promise.all([
-      documentIds.length ? await this.documentStore.getDocumentsMetadataByIds(documentIds) : [],
+      documentIds.length ? await this.documentStore.getDocumentsExtendedMetadataByIds(documentIds) : [],
       roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
       userIds.length ? await this.userStore.getUsersByIds(userIds) : []
     ]);
@@ -234,6 +239,126 @@ class UserService {
     return updatedUser;
   }
 
+  async getActivities({ userId, limit = 30 }) {
+    const user = await this.userStore.getUserById(userId);
+
+    const createdRooms = await this.roomStore.getLatestRoomsCreatedByUser(userId, { limit });
+    const joinedRooms = await this.roomStore.getLatestRoomsJoinedByUser(userId, { limit });
+    const updatedRooms = await this.roomStore.getLatestRoomsUpdatedByUser(userId, { limit });
+    const createdDocuments = await this.documentStore.getLatestDocumentsMetadataCreatedByUser(userId, { limit });
+    const updatedDocuments = await this.documentStore.getLatestDocumentsMetadataUpdatedByUser(userId, { limit });
+
+    const createdDocumentActivities = createdDocuments.map(document => ({
+      type: USER_ACTIVITY_TYPE.documentCreated,
+      timestamp: document.createdOn,
+      data: { _id: document._id, title: document.title },
+      isDeprecated: false
+    }));
+
+    const updatedDocumentActivities = updatedDocuments.map(document => ({
+      type: USER_ACTIVITY_TYPE.documentUpdated,
+      timestamp: document.updatedOn,
+      data: { _id: document._id, title: document.title },
+      isDeprecated: false
+    }));
+
+    const createdRoomActivities = createdRooms.map(room => ({
+      type: USER_ACTIVITY_TYPE.roomCreated,
+      timestamp: room.createdOn,
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
+    }));
+
+    const updatedRoomActivities = updatedRooms.map(room => ({
+      type: USER_ACTIVITY_TYPE.roomUpdated,
+      timestamp: room.updatedOn,
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
+    }));
+
+    const joinedRoomActivities = joinedRooms.map(room => ({
+      type: USER_ACTIVITY_TYPE.roomJoined,
+      timestamp: room.members.find(member => member.userId === userId).joinedOn,
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
+    }));
+
+    const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
+    const favoriteActivitiesMetadata = latestFavorites.map(favorite => {
+      switch (favorite.type) {
+        case FAVORITE_TYPE.document:
+          return {
+            type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
+            timestamp: favorite.setOn,
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
+              const document = await this.documentStore.getDocumentMetadataById(favorite.id);
+              return {
+                data: { _id: favorite.id, title: document?.title ?? null },
+                isDeprecated: !document
+              };
+            }
+          };
+        case FAVORITE_TYPE.room:
+          return {
+            type: USER_ACTIVITY_TYPE.roomMarkedFavorite,
+            timestamp: favorite.setOn,
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
+              const room = await this.roomStore.getRoomById(favorite.id);
+              return {
+                data: { _id: favorite.id, name: room?.name ?? null },
+                isDeprecated: !room
+              };
+            }
+          };
+        case FAVORITE_TYPE.user:
+          return {
+            type: USER_ACTIVITY_TYPE.userMarkedFavorite,
+            timestamp: favorite.setOn,
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
+              const favoriteUser = await this.userStore.getUserById(favorite.id);
+              return {
+                data: { _id: favorite.id, displayName: favoriteUser?.displayName ?? null },
+                isDeprecated: !favoriteUser
+              };
+            }
+          };
+        default:
+          return null;
+      }
+    });
+
+    let incompleteActivities = [
+      ...createdDocumentActivities,
+      ...updatedDocumentActivities,
+      ...createdRoomActivities,
+      ...updatedRoomActivities,
+      ...joinedRoomActivities,
+      ...favoriteActivitiesMetadata
+    ]
+      .filter(item => item)
+      .sort(by(item => item.timestamp, 'desc'));
+
+    if (limit) {
+      incompleteActivities = incompleteActivities.slice(0, limit);
+    }
+
+    return Promise.all(incompleteActivities.map(async activity => {
+      if (activity[completionFunction]) {
+        const completionValues = await activity[completionFunction]();
+        delete activity[completionFunction];
+        Object.assign(activity, completionValues);
+      }
+
+      return activity;
+    }));
+  }
+
   async createUser({ email, password, displayName, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
@@ -248,7 +373,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       displayName,
       roles,
-      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES, 'minutes').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
 
@@ -261,13 +386,13 @@ class UserService {
     return this.userStore.updateUserLastLoggedInOn({ userId, lastLoggedInOn: new Date() });
   }
 
-  async verifyUser(verificationCode) {
+  async verifyUser(userId, verificationCode) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
       user = await this.userStore.findUserByVerificationCode(verificationCode);
-      if (user) {
-        logger.info(`Found user with id ${user._id}`);
+      if (user && user._id === userId) {
+        logger.info(`Verifying user with id ${user._id}`);
         user.expiresOn = null;
         user.verificationCode = null;
         await this.userStore.saveUser(user);
@@ -281,7 +406,22 @@ class UserService {
     return user;
   }
 
-  async findConfirmedActiveUserByEmailAndPassword({ email, password }) {
+  async findConfirmedActiveUserById({ userId, throwIfLocked = false }) {
+    const user = await this.userStore.findActiveUserById(userId);
+    if (!user || user.expiresOn) {
+      return null;
+    }
+
+    if (user.accountLockedOn && throwIfLocked) {
+      const err = new Unauthorized('User account is locked');
+      err.code = ERROR_CODES.userAccountLocked;
+      throw err;
+    }
+
+    return user;
+  }
+
+  async findConfirmedActiveUserByEmailAndPassword({ email, password, throwIfLocked = false }) {
     if (!email || !password) {
       return null;
     }
@@ -289,20 +429,28 @@ class UserService {
     const lowerCasedEmail = email.toLowerCase();
 
     const user = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
-
-    if (!user || user.expires) {
+    if (!user || user.expiresOn) {
       return null;
+    }
+
+    if (user.accountLockedOn && throwIfLocked) {
+      const err = new Unauthorized('User account is locked');
+      err.code = ERROR_CODES.userAccountLocked;
+      throw err;
     }
 
     const doesPasswordMatch = await bcrypt.compare(password, user.passwordHash);
     return doesPasswordMatch ? user : null;
   }
 
-  async createPasswordResetRequest(user) {
+  async createPasswordResetRequest(user, newPassword) {
+    const newPasswordHash = await this._hashPassword(newPassword);
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
+      passwordHash: newPasswordHash,
+      verificationCode: uniqueId.create(),
+      expiresOn: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES, 'minutes').toDate()
     };
 
     await this.transactionRunner.run(async session => {
@@ -315,24 +463,29 @@ class UserService {
     return request;
   }
 
-  async completePasswordResetRequest(passwordResetRequestId, password) {
+  async completePasswordResetRequest(passwordResetRequestId, verificationCode) {
     logger.info(`Completing password reset request ${passwordResetRequestId}`);
-    const request = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
-    if (!request) {
+    const resetRequest = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
+    if (!resetRequest) {
       logger.info(`No password reset request has been found for id ${passwordResetRequestId}. Aborting request`);
-      return false;
+      return null;
     }
 
-    const user = await this.userStore.getUserById(request.userId);
+    const user = await this.userStore.getUserById(resetRequest.userId);
     if (!user) {
-      logger.info(`No user has been found for id ${passwordResetRequestId}. Aborting request`);
-      return false;
+      logger.info(`No user has been found for id ${resetRequest.userId}. Aborting request`);
+      return null;
     }
 
-    user.passwordHash = await this._hashPassword(password);
+    if (resetRequest.verificationCode !== verificationCode) {
+      logger.info(`Incorrect verification code ${verificationCode} for password reset request ${passwordResetRequestId}. Aborting request`);
+      return null;
+    }
 
     logger.info(`Updating user ${user._id} with new password`);
+    user.passwordHash = resetRequest.passwordHash;
     await this.userStore.saveUser(user);
+
     logger.info(`Deleting password reset request ${passwordResetRequestId}`);
     await this.passwordResetRequestStore.deleteRequestById(passwordResetRequestId);
     return user;

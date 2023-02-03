@@ -14,10 +14,10 @@ describe('markdown-with-image-info', () => {
       const targetRoomId = '67890';
 
       const result = sut.redactContent({
-        text: `[Click here](cdn://rooms/${roomId}/media/file-1.pdf)`,
+        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf)`,
         image: {
-          sourceUrl: `cdn://rooms/${roomId}/media/image-1.jpeg`,
-          copyrightNotice: `[Click here](cdn://rooms/${roomId}/media/file-2.pdf)`
+          sourceUrl: `cdn://room-media/${roomId}/image-1.jpeg`,
+          copyrightNotice: `[Click here](cdn://room-media/${roomId}/file-2.pdf)`
         }
       }, targetRoomId);
       expect(result).toStrictEqual({
@@ -33,17 +33,17 @@ describe('markdown-with-image-info', () => {
       const roomId = '12345';
 
       const result = sut.redactContent({
-        text: `[Click here](cdn://rooms/${roomId}/media/file-1.pdf [and here](cdn://media/67890/file-2.pdf)`,
+        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://document-media/67890/file-2.pdf)`,
         image: {
-          sourceUrl: `cdn://rooms/${roomId}/media/image-1.jpeg`,
-          copyrightNotice: `[Click here](cdn://rooms/${roomId}/media/file-3.pdf)`
+          sourceUrl: `cdn://room-media/${roomId}/image-1.jpeg`,
+          copyrightNotice: `[Click here](cdn://room-media/${roomId}/file-3.pdf)`
         }
       }, roomId);
       expect(result).toStrictEqual({
-        text: `[Click here](cdn://rooms/${roomId}/media/file-1.pdf [and here](cdn://media/67890/file-2.pdf)`,
+        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://document-media/67890/file-2.pdf)`,
         image: {
-          sourceUrl: `cdn://rooms/${roomId}/media/image-1.jpeg`,
-          copyrightNotice: `[Click here](cdn://rooms/${roomId}/media/file-3.pdf)`
+          sourceUrl: `cdn://room-media/${roomId}/image-1.jpeg`,
+          copyrightNotice: `[Click here](cdn://room-media/${roomId}/file-3.pdf)`
         }
       });
     });
@@ -52,17 +52,17 @@ describe('markdown-with-image-info', () => {
   describe('getCdnResources', () => {
     it('returns internal resources from text and copyrightNotice props', () => {
       const result = sut.getCdnResources({
-        text: '[Click here](cdn://rooms/12345/media/file-1.pdf) [and here](cdn://media/67890/file-2.pdf)',
+        text: '[Click here](cdn://room-media/12345/file-1.pdf) [and here](cdn://document-media/67890/file-2.pdf)',
         image: {
-          sourceUrl: 'cdn://media/67890/image-1.jpeg',
-          copyrightNotice: '[Click here](cdn://rooms/12345/media/file-3.pdf)'
+          sourceUrl: 'cdn://document-media/67890/image-1.jpeg',
+          copyrightNotice: '[Click here](cdn://room-media/12345/file-3.pdf)'
         }
       });
       expect(result).toStrictEqual([
-        'cdn://rooms/12345/media/file-1.pdf',
-        'cdn://media/67890/file-2.pdf',
-        'cdn://rooms/12345/media/file-3.pdf',
-        'cdn://media/67890/image-1.jpeg'
+        'cdn://room-media/12345/file-1.pdf',
+        'cdn://document-media/67890/file-2.pdf',
+        'cdn://room-media/12345/file-3.pdf',
+        'cdn://document-media/67890/image-1.jpeg'
       ]);
     });
 

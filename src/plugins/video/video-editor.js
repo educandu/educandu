@@ -3,15 +3,14 @@ import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { useService } from '../../components/container-context.js';
+import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
+import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS, validateUrl } from '../../ui/validation.js';
+import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -19,29 +18,26 @@ const RadioButton = Radio.Button;
 
 function VideoEditor({ content, onContentChanged }) {
   const { t } = useTranslation('video');
-  const clientConfig = useService(ClientConfig);
 
-  const { sourceUrl, copyrightNotice, width, aspectRatio, posterImage } = content;
+  const { sourceUrl, playbackRange, copyrightNotice, width, aspectRatio, posterImage } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isNewPosterImageSourceTypeInternal = isInternalSourceType({ url: newContent.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalid
-      = (!isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error)
-      || (isNewPosterImageSourceTypeInternal && getUrlValidationStatus(newContent.posterImage.sourceUrl) === URL_VALIDATION_STATUS.error);
-
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = url => {
-    const newSourceType = getSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl });
+  const handleSourceUrlChange = value => {
+    changeContent({
+      sourceUrl: value,
+      playbackRange: [0, 1],
+      copyrightNotice: isYoutubeSourceType(value)
+        ? t('common:youtubeCopyrightNotice', { link: value })
+        : ''
+    });
+  };
 
-    const newCopyrightNotice = newSourceType === SOURCE_TYPE.youtube
-      ? t('common:youtubeCopyrightNotice', { link: url })
-      : '';
-
-    changeContent({ sourceUrl: url, copyrightNotice: newCopyrightNotice });
+  const handlePlaybackRangeChange = newRange => {
+    changeContent({ playbackRange: newRange });
   };
 
   const handlePosterImageSourceUrlChange = url => {
@@ -61,21 +57,19 @@ function VideoEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
-  const validationPropsSourceUrl = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(sourceUrl, t, { allowEmpty: true });
-
-  const validationPropsPosterImageSourceUrl = isInternalSourceType({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    ? {}
-    : validateUrl(posterImage.sourceUrl, t, { allowEmpty: true });
-
   return (
     <div>
-      <Form layout="horizontal">
-        <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT} {...validationPropsSourceUrl}>
+      <Form layout="horizontal" labelAlign="left">
+        <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
         </FormItem>
-        <FormItem label={t('posterImageUrl')} {...FORM_ITEM_LAYOUT} {...validationPropsPosterImageSourceUrl}>
+        <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
+          <div className="u-input-and-button">
+            <MediaRangeReadonlyInput sourceUrl={sourceUrl} playbackRange={playbackRange} />
+            <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
+          </div>
+        </FormItem>
+        <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
           <UrlInput
             value={posterImage.sourceUrl}
             onChange={handlePosterImageSourceUrlChange}

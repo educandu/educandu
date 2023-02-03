@@ -37,12 +37,11 @@ describe('permissions', () => {
 
     describe('when user has role \'user\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.user] };
+        const user = { roles: [ROLE.user] };
         result = getAllUserPermissions(user);
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          'custom',
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
@@ -59,45 +58,12 @@ describe('permissions', () => {
 
     describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.maintainer] };
+        const user = { roles: [ROLE.maintainer] };
         result = getAllUserPermissions(user);
       });
 
       it('should return all maintainer permissions', () => {
         expect(result).toEqual([
-          'custom',
-          permissions.EDIT_DOC,
-          permissions.VIEW_DOCS,
-          permissions.EDIT_FILE,
-          permissions.VIEW_FILES,
-          permissions.DELETE_OWN_FILES,
-          permissions.CREATE_FILE,
-          permissions.OWN_ROOMS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENTS,
-          permissions.HARD_DELETE_SECTION,
-          permissions.DELETE_ANY_STORAGE_FILE,
-          permissions.SEE_USER_EMAIL,
-          permissions.RESTORE_DOC_REVISIONS,
-          permissions.MANAGE_ARCHIVED_DOCS,
-          permissions.REVIEW_DOC,
-          permissions.VERIFY_DOC,
-          permissions.RESTRICT_OPEN_CONTRIBUTION,
-          permissions.MANAGE_DOCUMENT_COMMENTS
-        ]);
-      });
-    });
-
-    describe('when user has role \'admin\'', () => {
-      beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.admin] };
-        result = getAllUserPermissions(user);
-      });
-
-      it('should return all user permissions', () => {
-        expect(result).toEqual([
-          'custom',
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
@@ -117,9 +83,42 @@ describe('permissions', () => {
           permissions.VERIFY_DOC,
           permissions.RESTRICT_OPEN_CONTRIBUTION,
           permissions.MANAGE_DOCUMENT_COMMENTS,
+          permissions.MANAGE_CONTENT
+        ]);
+      });
+    });
+
+    describe('when user has role \'admin\'', () => {
+      beforeEach(() => {
+        const user = { roles: [ROLE.admin] };
+        result = getAllUserPermissions(user);
+      });
+
+      it('should return all user permissions', () => {
+        expect(result).toEqual([
+          permissions.EDIT_DOC,
+          permissions.VIEW_DOCS,
+          permissions.EDIT_FILE,
+          permissions.VIEW_FILES,
+          permissions.DELETE_OWN_FILES,
+          permissions.CREATE_FILE,
+          permissions.OWN_ROOMS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_ROOMS,
+          permissions.CREATE_DOCUMENT_COMMENTS,
+          permissions.HARD_DELETE_SECTION,
+          permissions.DELETE_ANY_STORAGE_FILE,
+          permissions.SEE_USER_EMAIL,
+          permissions.RESTORE_DOC_REVISIONS,
+          permissions.MANAGE_ARCHIVED_DOCS,
+          permissions.REVIEW_DOC,
+          permissions.VERIFY_DOC,
+          permissions.RESTRICT_OPEN_CONTRIBUTION,
+          permissions.MANAGE_DOCUMENT_COMMENTS,
+          permissions.MANAGE_CONTENT,
           permissions.ADMIN,
-          permissions.EDIT_USERS,
-          permissions.VIEW_BATCHES,
+          permissions.MANAGE_USERS,
+          permissions.MANAGE_BATCHES,
           permissions.MIGRATE_DATA,
           permissions.MANAGE_SETTINGS,
           permissions.MANAGE_STORAGE_PLANS,

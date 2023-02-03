@@ -1,0 +1,31 @@
+roomsTab:
+  info:
+    en: Here you find all the rooms you have created and the rooms that you are a member of.
+    de: Hier findest du alle Räume, die du erstellt hast und in denen du Mitglied bist.
+  joined:
+    en: Joined
+    de: Eingetreten
+  role:
+    en: Role
+    de: Rolle
+  member:
+    en: Member
+    de: Mitglied
+  sortedByOwner:
+    en: Sorted by owner
+    de: Nach Eigentümer sortiert
+  sortedByRole:
+    en: Sorted by role
+    de: Nach Rolle sortiert
+  ownedRoomsHeadline:
+    en: Rooms that you created
+    de: Räume, die du erstellt hast
+  memberRoomsHeadline:
+    en: Rooms that you are a member of
+    de: Räume, in denen du Mitglied bist
+  noOwnedRooms:
+    en: You have not created any rooms yet.
+    de: Du hast noch keine Räume erstellt.
+  noMemberRooms:
+    en: You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.
+    de: Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden.

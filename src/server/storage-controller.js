@@ -11,7 +11,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { tryGetRoomIdFromStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,
@@ -45,17 +45,13 @@ class StorageController {
 
   async handleGetCdnObjects(req, res) {
     const { user } = req;
-    const { parentPath, searchTerm } = req.query;
+    const { parentPath } = req.query;
 
     await this._checkPathAccess(parentPath, user);
 
-    const { parentDirectory, currentDirectory, objects } = await this.storageService.getObjects({
-      parentPath,
-      searchTerm: searchTerm || null,
-      user
-    });
+    const objects = await this.storageService.getObjects({ parentPath });
 
-    return res.send({ parentDirectory, currentDirectory, objects });
+    return res.send({ objects });
   }
 
   async handleDeleteCdnObject(req, res) {
@@ -89,9 +85,9 @@ class StorageController {
     }
 
     let storageClaimingUserId;
-    if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(path);
-      const room = await this.roomService.getRoomById(roomId);
+    if (storageLocationType === STORAGE_LOCATION_TYPE.roomMedia) {
+      const roomId = tryGetRoomIdFromStoragePath(path);
+      const room = roomId ? await this.roomService.getRoomById(roomId) : null;
 
       if (!room) {
         throw new BadRequest(`Unknown room id '${roomId}'`);
@@ -141,13 +137,26 @@ class StorageController {
 
   registerMiddleware(router) {
     router.use(async (req, _res, next) => {
-      const { user } = req;
-      const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
-      const locations = await this.storageService.getStorageLocations({ user, documentId });
+      try {
+        const { user } = req;
+        const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
+        const locations = await this.storageService.getStorageLocations({ user, documentId });
 
-      req.storage = { locations };
+        // eslint-disable-next-line require-atomic-updates
+        req.storage = { locations };
 
-      return next();
+        let storagePlan;
+        if (user?.storage.planId) {
+          storagePlan = await this.storageService.getStoragePlanById(user.storage.planId);
+        }
+
+        // eslint-disable-next-line require-atomic-updates
+        req.storagePlan = storagePlan || null;
+
+        return next();
+      } catch (err) {
+        return next(err);
+      }
     });
   }
 

@@ -1,6 +1,6 @@
 import inputValidators from '../utils/input-validators.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
-import { maxDocumentDescriptionLength, maxTagLength, minTagLength } from '../domain/validation-constants.js';
+import { maxDocumentDescriptionLength, maxDocumentTagLength, minDocumentTagLength } from '../domain/validation-constants.js';
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
@@ -89,7 +89,7 @@ export function getValidationState({ cloningStrategy, cloningTargetRoomId, title
     },
     tags: {
       validateStatus: areValidTags ? 'success' : 'error',
-      help: areValidTags ? null : t('invalidTags', { minChars: minTagLength, maxChars: maxTagLength })
+      help: areValidTags ? null : t('invalidTags', { minChars: minDocumentTagLength, maxChars: maxDocumentTagLength })
     }
   };
 }
@@ -131,7 +131,7 @@ export function determineDocumentRoomId({ mode, initialDocumentMetadata, documen
 export function getDialogTitle(mode, t) {
   switch (mode) {
     case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('cloneDocument');
+      return t('duplicateDocument');
     case DOCUMENT_METADATA_MODAL_MODE.create:
       return t('newDocument');
     case DOCUMENT_METADATA_MODAL_MODE.update:
@@ -144,7 +144,7 @@ export function getDialogTitle(mode, t) {
 export function getDialogOkButtonText(mode, t) {
   switch (mode) {
     case DOCUMENT_METADATA_MODAL_MODE.clone:
-      return t('common:clone');
+      return t('common:duplicate');
     case DOCUMENT_METADATA_MODAL_MODE.create:
       return t('common:create');
     case DOCUMENT_METADATA_MODAL_MODE.update:

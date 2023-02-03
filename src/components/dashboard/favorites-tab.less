@@ -1,0 +1,41 @@
+.FavoritesTab {}
+
+.FavoritesTab-sortingSelector {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.FavoritesTab-actions {
+  text-align: center;
+}
+
+.FavoritesTab-info {
+  .m-info-card;
+}
+
+.FavoriteTab-headline {
+  .m-section-headline;
+}
+
+.FavoritesTab-cards {
+  .m-section-content;
+
+  &.FavoritesTab-cards--small {
+    .m-card-wrapper;
+  }
+
+  &.FavoritesTab-cards--wide {
+    .m-card-wrapper-wide;
+  }
+}
+
+.FavoritesTab-cardWrapper {
+  position: relative;
+}
+
+.FavoritesTab-cardRemoveButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}

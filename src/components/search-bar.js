@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Input, Modal } from 'antd';
+import { Button, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useRef } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
@@ -16,13 +16,7 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
   };
 
   const handleSearch = value => {
-    if (!value) {
-      Modal.error({
-        title: t('common:error'),
-        content: t('searchTermRequired'),
-        onOk: () => inputRef.current.focus()
-      });
-    } else {
+    if (value) {
       onSearch(value);
     }
   };
@@ -36,7 +30,11 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
         value={searchText}
         onSearch={handleSearch}
         onChange={handleSearchInputChange}
-        enterButton={<SearchOutlined />}
+        enterButton={
+          <Button type="primary">
+            <SearchOutlined />
+          </Button>
+        }
         autoFocus={autoFocus}
         />
     </div>

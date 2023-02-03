@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo } from 'react';
 
 export function memoAndTransformProps(Component, transformProps) {
   const MemoizedComponent = memo(Component);
@@ -7,17 +7,8 @@ export function memoAndTransformProps(Component, transformProps) {
   };
 }
 
-export function remountWhen(Component, eventName) {
+export function remountOnPropChanges(Component, createMountKeyFromProps) {
   return function RemountWrapper(props) {
-    const [key, setKey] = useState(0);
-    const handleRemountTrigger = useCallback(() => {
-      setKey(oldKey => oldKey + 1);
-    }, [setKey]);
-    const innerProps = {
-      ...props,
-      [eventName]: handleRemountTrigger,
-      key
-    };
-    return <Component {...innerProps} />;
+    return <Component key={createMountKeyFromProps(props)} {...props} />;
   };
 }

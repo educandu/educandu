@@ -3,12 +3,12 @@ import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
+import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import { canEditDocContent } from '../utils/doc-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_ERROR_MESSAGE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -23,6 +23,7 @@ import {
   getDocumentQuerySchema,
   patchDocSectionsBodySchema,
   createDocumentDataBodySchema,
+  getDocumentsByContributingUserParams,
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
@@ -39,15 +40,6 @@ class DocumentController {
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
-  }
-
-  async handleGetDocsPage(req, res) {
-    const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
-    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
-
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents: mappedDocuments });
   }
 
   async handleGetDocPage(req, res) {
@@ -119,6 +111,37 @@ class DocumentController {
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections, room: mappedRoom });
+  }
+
+  async handleGetDoc(req, res) {
+    const { user } = req;
+    const { documentId } = req.params;
+
+    const doc = await this.documentService.getDocumentById(documentId);
+    if (!doc) {
+      throw new NotFound();
+    }
+
+    const mappedDoc = await this.clientDataMappingService.mapDocOrRevision(doc, user);
+    return res.send({ doc: mappedDoc });
+  }
+
+  async handleGetSearchableDocsTitles(req, res) {
+    const { query } = req.query;
+
+    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments({ query });
+    const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
+
+    return res.send({ documents: mappedDocumentsTitles });
+  }
+
+  async handleGetDocumentsByContributingUser(req, res) {
+    const { userId } = req.params;
+
+    const contributedDocuments = await this.documentService.getDocumentsByContributingUser(userId);
+    const mappedContributedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(contributedDocuments);
+
+    return res.send({ documents: mappedContributedDocuments });
   }
 
   async handlePostDocument(req, res) {
@@ -215,35 +238,18 @@ class DocumentController {
     const { user } = req;
     const { documentId } = req.query;
 
+    const document = await this.documentService.getDocumentById(documentId);
     const revisions = await this.documentService.getAllDocumentRevisionsByDocumentId(documentId);
-    if (!revisions.length) {
+    if (!document || !revisions.length) {
       throw new NotFound();
+    }
+
+    if (document.roomId && !user) {
+      throw new Forbidden();
     }
 
     const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
     return res.send({ documentRevisions });
-  }
-
-  async handleGetDoc(req, res) {
-    const { user } = req;
-    const { documentId } = req.params;
-
-    const doc = await this.documentService.getDocumentById(documentId);
-    if (!doc) {
-      throw new NotFound();
-    }
-
-    const mappedDoc = await this.clientDataMappingService.mapDocOrRevision(doc, user);
-    return res.send({ doc: mappedDoc });
-  }
-
-  async handleGetSearchableDocsTitles(req, res) {
-    const { query } = req.query;
-
-    const documentsMetadata = await this.documentService.findDocumentsMetadataInSearchableDocuments({ query });
-    const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
-
-    return res.send({ documents: mappedDocumentsTitles });
   }
 
   async handleDeleteDocSection(req, res) {
@@ -310,12 +316,6 @@ class DocumentController {
 
   registerPages(router) {
     router.get(
-      '/docs',
-      needsPermission(permissions.VIEW_DOCS),
-      (req, res) => this.handleGetDocsPage(req, res)
-    );
-
-    router.get(
       '/docs/:documentId*',
       validateParams(getDocumentParamsSchema),
       validateQuery(getDocumentQuerySchema),
@@ -328,6 +328,35 @@ class DocumentController {
   }
 
   registerApi(router) {
+    router.get(
+      '/api/v1/docs',
+      [validateQuery(documentIdParamsOrQuerySchema)],
+      (req, res) => this.handleGetDocs(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/titles',
+      [needsPermission(permissions.VIEW_DOCS), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
+      (req, res) => this.handleGetSearchableDocsTitles(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/:documentId',
+      [needsPermission(permissions.VIEW_DOCS), validateParams(documentIdParamsOrQuerySchema)],
+      (req, res) => this.handleGetDoc(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/users/:userId',
+      [validateParams(getDocumentsByContributingUserParams)],
+      (req, res) => this.handleGetDocumentsByContributingUser(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/tags/*',
+      (req, res) => this.handleGetDocTags(req, res)
+    );
+
     router.post(
       '/api/v1/docs',
       jsonParserLargePayload,
@@ -375,24 +404,6 @@ class DocumentController {
       (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 
-    router.get(
-      '/api/v1/docs',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(documentIdParamsOrQuerySchema)],
-      (req, res) => this.handleGetDocs(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/titles',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
-      (req, res) => this.handleGetSearchableDocsTitles(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/:documentId',
-      [needsPermission(permissions.VIEW_DOCS), validateParams(documentIdParamsOrQuerySchema)],
-      (req, res) => this.handleGetDoc(req, res)
-    );
-
     router.delete(
       '/api/v1/docs/sections',
       [needsPermission(permissions.HARD_DELETE_SECTION), jsonParser, validateBody(hardDeleteSectionBodySchema)],
@@ -403,11 +414,6 @@ class DocumentController {
       '/api/v1/docs',
       [needsPermission(permissions.VIEW_DOCS), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
       (req, res) => this.handleDeleteDoc(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/tags/*',
-      (req, res) => this.handleGetDocTags(req, res)
     );
   }
 }

@@ -1,6 +1,9 @@
 import gravatar from 'gravatar';
 import { AVATAR_SIZE } from '../domain/constants.js';
 
+// Copied from: https://urlregex.com/
+const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/;
+
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
 }
@@ -35,12 +38,24 @@ function concatParts(...parts) {
     : '';
 }
 
+function splitAtExtension(pathOrUrl) {
+  const sanitizedUrl = (pathOrUrl || '').trim();
+  const matches = sanitizedUrl.match(/^(.*[^/])(\.[^./]+)$/i);
+  return matches
+    ? { baseName: matches[1], extension: matches[2], rawExtension: matches[2].replace(/^\./, '') }
+    : { baseName: sanitizedUrl, extension: '', rawExtension: '' };
+}
+
 function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${encodeURIComponent(redirect)}`;
 }
 
 function isFullyQualifiedUrl(pathOrUrl) {
   return (/^\w+?:\//).test(pathOrUrl);
+}
+
+function isValidUrl(url) {
+  return URL_REGEX.test(url);
 }
 
 function ensureIsFullyQualifiedUrl(pathOrUrl, fallbackBase) {
@@ -58,8 +73,10 @@ export default {
   composeQueryString,
   createFullyQualifiedUrl,
   concatParts,
+  splitAtExtension,
   createRedirectUrl,
   isFullyQualifiedUrl,
   ensureIsFullyQualifiedUrl,
-  getGravatarUrl
+  getGravatarUrl,
+  isValidUrl
 };

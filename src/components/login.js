@@ -38,14 +38,14 @@ function Login() {
 
     return (
       <Tooltip title={popoverTitle} placement="bottomRight">
-        <Avatar className="Avatar" src={gravatarUrl} alt={user.displayName} shape="circle" size="large" onClick={handleAvatarClick} />
+        <Avatar className="u-avatar u-clickable" src={gravatarUrl} alt={user.displayName} shape="circle" size="large" onClick={handleAvatarClick} />
       </Tooltip>
     );
   };
 
   const createAnonymousUserHeader = () => (
     <div>
-      <a onClick={handleLoginClick}>{t('login')}</a>
+      <a onClick={handleLoginClick}>{t('common:logIn')}</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a onClick={handleRegisterClick}>{t('register')}</a>
     </div>

@@ -1,0 +1,52 @@
+.UserProfilePage {}
+
+.UserProfilePage-header {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.UserProfilePage-headerProfile {
+  flex: 1 1 auto;
+}
+
+.UserProfilePage-headerStart {
+  flex: 0 0 0%;
+}
+
+.UserProfilePage-introduction {
+  margin: 0 auto 60px auto;
+  max-width: 700px;
+  padding: 20px 30px;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-light;
+  border-right: 1px solid @edu-border-color-light;
+}
+
+.UserProfilePage-accountClosed {
+  font-size: @edu-font-size-xl;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+}
+
+.UserProfilePage-sectionHeadline {
+  .m-section-headline;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.UserProfilePage-sectionCards {
+  .m-section-content;
+  .m-card-wrapper-wide;
+}
+
+.UserProfilePage-sectionMoreButton {
+  .m-section-content;
+  padding-top: 0;
+
+  @media @edu-media-phone {
+    padding-left: 20px;
+  }
+}

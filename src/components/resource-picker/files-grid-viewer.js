@@ -6,42 +6,36 @@ import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import { isTouchDevice } from '../../ui/browser-helper.js';
+import { RESOURCE_TYPE } from '../../domain/constants.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import { cdnObjectShape } from '../../ui/default-prop-types.js';
 import { confirmCdnFileDelete } from '../confirmation-dialogs.js';
-import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
 import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
-import FolderFilledNavigateIcon from '../icons/files/folder-filled-navigate-icon.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
-const mapDisplayFiles = (files, t) => {
+const mapDisplayFiles = files => {
   return files
     .map(file => ({
       ...cloneDeep(file),
-      name: composeHumanReadableDisplayName({ cdnObject: file, t })
+      name: file.displayName
     }))
     .sort(by(file => file.name, { ignorecase: true }));
 };
 
 function FilesGridViewer({
   files,
-  parentDirectory,
   selectedFileUrl,
   canDelete,
-  canNavigateToParent,
   onFileClick,
   onFileDoubleClick,
   onDeleteFileClick,
-  onPreviewFileClick,
-  onNavigateToParent
+  onPreviewFileClick
 }) {
   const { t } = useTranslation('filesGridViewer');
-  const [displayFiles, setDisplayFiles] = useState(mapDisplayFiles(files, t));
+  const [displayFiles, setDisplayFiles] = useState(mapDisplayFiles(files));
 
   useEffect(() => {
-    setDisplayFiles(mapDisplayFiles(files, t));
+    setDisplayFiles(mapDisplayFiles(files));
   }, [files, t]);
 
   const handlePreviewClick = (event, file) => {
@@ -54,22 +48,12 @@ function FilesGridViewer({
     confirmCdnFileDelete(t, file.name, () => onDeleteFileClick(file));
   };
 
-  const handleParentLinkClick = () => {
-    if (isTouchDevice()) {
-      onNavigateToParent();
-    }
-  };
-
-  const handleParentLinkDoubleClick = () => {
-    onNavigateToParent();
-  };
-
   const renderFile = file => {
     let fileDisplay;
     if (getResourceType(file.url) === RESOURCE_TYPE.image) {
       fileDisplay = <img className="FilesGridViewer-fileDisplayImage" src={file.url} />;
     } else {
-      const Icon = getResourceIcon({ url: file.url, isDirectory: file.type === CDN_OBJECT_TYPE.directory, filled: true });
+      const Icon = getResourceIcon({ url: file.url, filled: true });
       fileDisplay = <Icon />;
     }
     const classes = classNames('FilesGridViewer-fileContainer', { 'is-selected': file.portableUrl === selectedFileUrl });
@@ -111,18 +95,6 @@ function FilesGridViewer({
 
   return (
     <div className="FilesGridViewer">
-      {!!canNavigateToParent && (
-        <Tooltip title={t('navigateToParent')} placement="topLeft">
-          <div className="FilesGridViewer-fileContainer">
-            <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={handleParentLinkClick} onDoubleClick={handleParentLinkDoubleClick} >
-              <div className="FilesGridViewer-fileDisplay">
-                <FolderFilledNavigateIcon />
-              </div>
-              <div>{parentDirectory?.displayName || '..'}</div>
-            </a>
-          </div>
-        </Tooltip>
-      )}
       {displayFiles.map(file => renderFile(file))}
     </div>
   );
@@ -130,26 +102,20 @@ function FilesGridViewer({
 
 FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
-  canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onNavigateToParent: PropTypes.func,
   onPreviewFileClick: PropTypes.func,
-  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
 FilesGridViewer.defaultProps = {
   canDelete: false,
-  canNavigateToParent: false,
   onDeleteFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onNavigateToParent: () => {},
   onPreviewFileClick: () => {},
-  parentDirectory: null,
   selectedFileUrl: null
 };
 

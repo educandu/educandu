@@ -1,9 +1,7 @@
-name:
-  en: ABC notation
-  de: ABC-Notation
-abcCode:
-  en: ABC code
-  de: ABC-Code
-midiSound:
-  en: MIDI sound
-  de: MIDI-Sound
+abcNotation:
+  name:
+    en: ABC notation
+    de: ABC-Notation
+  abcCode:
+    en: ABC code
+    de: ABC-Code

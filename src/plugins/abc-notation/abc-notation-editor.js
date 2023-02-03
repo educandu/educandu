@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Switch } from 'antd';
+import { Form } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import AbcNotation from '../../components/abc-notation.js';
@@ -12,19 +12,15 @@ import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL } from '../../domain/consta
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
-  const { abcCode, width, displayMidi, copyrightNotice } = content;
+  const { abcCode, width, copyrightNotice } = content;
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleCurrentAbcCodeChanged = event => {
     const newValue = event.target.value;
     changeContent({ abcCode: newValue });
-  };
-
-  const handleDisplayMidiChanged = checked => {
-    changeContent({ displayMidi: !!checked });
   };
 
   const handleWidthChanged = newValue => {
@@ -38,15 +34,12 @@ function AbcNotationEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
           <InputAndPreview
             input={<NeverScrollingTextArea minRows={6} value={abcCode} onChange={handleCurrentAbcCodeChanged} />}
             preview={<AbcNotation abcCode={abcCode} />}
             />
-        </Form.Item>
-        <Form.Item label={t('midiSound')} {...FORM_ITEM_LAYOUT}>
-          <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
         </Form.Item>
         <Form.Item
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}

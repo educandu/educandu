@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { escapeHtml, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
+import { escapeHtml, escapeMarkdown, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
 
 describe('string-utils', () => {
 
@@ -7,6 +7,31 @@ describe('string-utils', () => {
     it('escapes all necessary characters', () => {
       const result = escapeHtml('if i > 0 && i < 10 then print "Hello World!"');
       expect(result).toBe('if i &gt; 0 &amp;&amp; i &lt; 10 then print &quot;Hello World!&quot;');
+    });
+  });
+
+  describe('escapeMarkdown', () => {
+    const markdown = [
+      '#1!',
+      '1 < 2',
+      '* and text',
+      '> not a quote',
+      '< not a tag >',
+      '[]',
+      '____'
+    ].join('\n\n');
+    const expectedResult = [
+      '\\#1!',
+      '1 &lt; 2',
+      '\\* and text',
+      '&gt; not a quote',
+      '&lt; not a tag &gt;',
+      '\\[\\]',
+      '\\_\\_\\_\\_'
+    ].join('\n\n');
+    it('escapes all necessary characters', () => {
+      const result = escapeMarkdown(markdown);
+      expect(result).toBe(expectedResult);
     });
   });
 

@@ -10,19 +10,18 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MediaPlayer from '../../components/media-player/media-player.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import MediaPlayer from '../../components/media-player/media-player.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { getUrlValidationStatus, URL_VALIDATION_STATUS } from '../../ui/validation.js';
-import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, TAIL_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 
@@ -35,7 +34,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const { sourceUrl, playbackRange, chapters, width, showVideo } = content;
+  const { sourceUrl, playbackRange, chapters, width, showVideo, aspectRatio, posterImage } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -49,11 +48,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-
-    const isNewSourceTypeInternal = isInternalSourceType({ url: newContent.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const isInvalidSourceUrl = !isNewSourceTypeInternal && getUrlValidationStatus(newContent.sourceUrl) === URL_VALIDATION_STATUS.error;
-
-    onContentChanged(newContent, isInvalidSourceUrl);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackContentChange = changedContent => {
@@ -181,7 +176,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   return (
     <div className="InteractiveMediaEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <MainTrackEditor
           content={content}
           onContentChanged={handleMainTrackContentChange}
@@ -196,11 +191,13 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
 
         <MediaPlayer
+          aspectRatio={aspectRatio}
           parts={chapters}
           playbackRange={playbackRange}
-          source={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
+          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenWidth={50}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           />
 
         <Timeline
@@ -240,7 +237,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 value={chapters?.[selectedChapterIndex].text || ''}
                 />
             </FormItem>
-            <FormItem {...TAIL_FORM_ITEM_LAYOUT}>
+            <FormItem {...FORM_ITEM_LAYOUT_WITHOUT_LABEL}>
               <div>{t('addAnswerInfo')}</div>
             </FormItem>
             <FormItem label={t('answers')} {...FORM_ITEM_LAYOUT}>

@@ -1,14 +1,12 @@
 import express from 'express';
 import passport from 'passport';
 import httpErrors from 'http-errors';
-import session from 'express-session';
-import MongoStore from 'connect-mongo';
 import routes from '../utils/routes.js';
 import passportLocal from 'passport-local';
 import urlUtils from '../utils/url-utils.js';
-import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import passportSaml from '@node-saml/passport-saml';
 import requestUtils from '../utils/request-utils.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
@@ -16,29 +14,19 @@ import RoomService from '../services/room-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
-import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
-import DocumentService from '../services/document-service.js';
-import { ambMetadataUser } from '../domain/built-in-users.js';
+import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
-import { generateSessionId, isSessionValid } from '../utils/session-utils.js';
+import ExternalAccountService from '../services/external-account-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
+import { ANTI_BRUTE_FORCE_MAX_REQUESTS, ANTI_BRUTE_FORCE_EXPIRES_IN_MS, SAVE_USER_RESULT, ERROR_CODES } from '../domain/constants.js';
 import {
-  COOKIE_SAME_SITE_POLICY,
-  ERROR_CODES,
-  FAILED_LOGIN_ATTEMPTS_LIMIT,
-  FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS,
-  PASSWORD_RESET_REQUEST_LIMIT,
-  PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
-  SAVE_USER_RESULT
-} from '../domain/constants.js';
-import {
-  postUserBodySchema,
+  postUserRegistrationRequestBodySchema,
+  postUserRegistrationCompletionBodySchema,
   postUserAccountBodySchema,
   postUserProfileBodySchema,
   postUserPasswordResetRequestBodySchema,
@@ -48,61 +36,128 @@ import {
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
   favoriteBodySchema,
-  loginBodySchema
+  loginBodySchema,
+  externalAccountIdParamsSchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound, Forbidden, TooManyRequests, BadRequest } = httpErrors;
-
 const jsonParser = express.json();
-const LocalStrategy = passportLocal.Strategy;
+const { MultiSamlStrategy } = passportSaml;
+const { Strategy: LocalStrategy } = passportLocal;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
+
+const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
+const SYMBOL_REDIRECT_AFTER_SAML_LOGIN = Symbol('SYMBOL_REDIRECT_AFTER_SAML_LOGIN');
 
 class UserController {
   static get inject() {
     return [
       ServerConfig,
-      Database,
       UserService,
       StorageService,
-      DocumentService,
       PasswordResetRequestService,
       RequestLimitRecordService,
+      ExternalAccountService,
       MailService,
       ClientDataMappingService,
       RoomService,
-      PageRenderer
+      PageRenderer,
+      SamlConfigService
     ];
   }
 
   constructor(
     serverConfig,
-    database,
     userService,
     storageService,
-    documentService,
     passwordResetRequestService,
     requestLimitRecordService,
+    externalAccountService,
     mailService,
     clientDataMappingService,
     roomService,
-    pageRenderer
+    pageRenderer,
+    samlConfigService
   ) {
-    this.database = database;
     this.userService = userService;
     this.mailService = mailService;
     this.roomService = roomService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
-    this.documentService = documentService;
+    this.samlConfigService = samlConfigService;
+    this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
     this.passwordResetRequestService = passwordResetRequestService;
 
-    this.passwordResetRateLimitOptions = {
-      maxRequests: PASSWORD_RESET_REQUEST_LIMIT,
-      expiresInMs: PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS,
+    this.antiBruteForceRequestLimitOptions = {
+      maxRequests: ANTI_BRUTE_FORCE_MAX_REQUESTS,
+      expiresInMs: ANTI_BRUTE_FORCE_EXPIRES_IN_MS,
       service: this.requestLimitRecordService
     };
+
+    this.localStrategy = new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password'
+    }, (email, password, cb) => {
+      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password, throwIfLocked: true })
+        .then(user => cb(null, user || false))
+        .catch(err => cb(err));
+    });
+
+    this.samlStrategy = new MultiSamlStrategy({
+      getSamlOptions: (req, done) => {
+        const { redirect } = req.query;
+        const provider = this.getProviderForRequest(req);
+        const { origin } = requestUtils.getHostInfo(req);
+        done(null, {
+          providerName: this.serverConfig.appName,
+          issuer: `${origin}/saml-auth/id/${provider.key}`,
+          entryPoint: provider.resolvedMetadata.entryPoint,
+          cert: provider.resolvedMetadata.certificates,
+          callbackUrl: urlUtils.concatParts(origin, routes.getSamlAuthLoginCallbackPath(provider.key)),
+          decryptionPvk: this.serverConfig.samlAuth.decryption.pvk,
+          wantAssertionsSigned: false,
+          forceAuthn: true,
+          identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+          additionalParams: {
+            RelayState: redirect || ''
+          }
+        });
+      }
+    }, (profile, done) => done(null, { ...profile }));
+
+    passport.use('local', this.localStrategy);
+    passport.use('saml', this.samlStrategy);
+
+    passport.serializeUser((user, cb) => {
+      cb(null, { _id: user._id });
+    });
+
+    passport.deserializeUser(async (input, cb) => {
+      try {
+        const user = await this.userService.getUserById(input._id);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    });
+  }
+
+  setIdpKeyFromRequestParam(paramName, req, _res, next) {
+    const idpKey = req.params[paramName] || '';
+    const provider = this.samlConfigService.getIdentityProviderByKey(idpKey);
+    if (!provider) {
+      return next(new NotFound('Invalid identity provider key'));
+    }
+
+    req[SYMBOL_IDP_KEY] = idpKey;
+    return next();
+  }
+
+  getProviderForRequest(req) {
+    const idpKey = req[SYMBOL_IDP_KEY];
+    return this.samlConfigService.getIdentityProviderByKey(idpKey);
   }
 
   handleGetRegisterPage(req, res) {
@@ -113,29 +168,23 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
   }
 
-  async handleCompleteRegistrationPage(req, res) {
-    if (req.isAuthenticated()) {
-      return res.redirect(routes.getDefaultLoginRedirectUrl());
-    }
-
-    const user = await this.userService.verifyUser(req.params.verificationCode);
-    const initialState = { user };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
-  }
-
   handleGetLoginPage(req, res) {
     if (req.isAuthenticated()) {
       return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
+    const samlIdentityProviders = this.samlConfigService.getIdentityProviders()
+      .map(provider => this.clientDataMappingService.mapSamlIdentityProvider(provider));
+
+    const initialState = { samlIdentityProviders };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, initialState);
   }
 
   async handleGetLogoutPage(req, res) {
     if (req.isAuthenticated()) {
-      const logout = () => new Promise((resolve, reject) =>
-        req.logout(err => err ? reject(err) : resolve())
-      );
+      const logout = () => new Promise((resolve, reject) => {
+        req.logout(err => err ? reject(err) : resolve());
+      });
 
       await logout();
       res.clearCookie(this.serverConfig.sessionCookieName);
@@ -155,7 +204,11 @@ class UserController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
-  async handleGetUserPage(req, res) {
+  handleGetConnectExternalAccountPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.connectExternalAccount, {});
+  }
+
+  async handleGetUserProfilePage(req, res) {
     const { userId } = req.params;
     const viewingUser = req.user;
 
@@ -164,21 +217,9 @@ class UserController {
       throw new NotFound();
     }
 
-    const createdDocuments = await this.documentService.getMetadataOfLatestPublicDocumentsCreatedByUser(viewedUser._id);
-
-    const mappedCreatedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(createdDocuments);
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.user, {
-      user: mappedViewedUser,
-      documents: mappedCreatedDocuments
-    });
-  }
-
-  async handleGetUsersPage(req, res) {
-    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
-    const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser });
   }
 
   async handleGetUsers(req, res) {
@@ -187,18 +228,57 @@ class UserController {
     res.send({ users: mappedUsers });
   }
 
-  async handlePostUser(req, res) {
+  async handleGetExternalUserAccounts(_req, res) {
+    const externalAccounts = await this.externalAccountService.getAllExternalAccounts();
+    const mappedExternalAccounts = this.clientDataMappingService.mapExternalAccountsForAdminArea(externalAccounts);
+    res.send({ externalAccounts: mappedExternalAccounts });
+  }
+
+  async handleDeleteExternalUserAccount(req, res) {
+    const { externalAccountId } = req.params;
+    await this.externalAccountService.deleteExternalAccount({ externalAccountId });
+    res.status(204).end();
+  }
+
+  async handlePostUserRegistrationRequest(req, res) {
     const { email, password, displayName } = req.body;
 
     const { result, user } = await this.userService.createUser({ email, password, displayName });
 
     if (result === SAVE_USER_RESULT.success) {
-      const { origin } = requestUtils.getHostInfo(req);
-      const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
-      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationLink });
+      await this.mailService.sendRegistrationVerificationEmail({ email, displayName, verificationCode: user.verificationCode });
     }
 
     res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
+  }
+
+  async handlePostUserRegistrationCompletion(req, res) {
+    const { userId, verificationCode } = req.body;
+
+    const user = await this.userService.verifyUser(userId, verificationCode);
+    if (!user) {
+      throw new NotFound();
+    }
+
+    const connectedExternalAccountId = req.session.externalAccount?._id || null;
+    req.session.externalAccount = null;
+
+    if (connectedExternalAccountId) {
+      await this.externalAccountService.updateExternalAccountUserId({
+        externalAccountId: connectedExternalAccountId,
+        userId: user._id
+      });
+    }
+
+    const updatedUser = await this.userService.recordUserLogIn(user._id);
+    await new Promise((resolve, reject) => {
+      req.login(updatedUser, err => err ? reject(err) : resolve());
+    });
+
+    res.status(201).send({
+      user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
+      connectedExternalAccountId: user ? connectedExternalAccountId : null
+    });
   }
 
   async handlePostUserAccount(req, res) {
@@ -223,57 +303,84 @@ class UserController {
   }
 
   async handlePostUserLogin(req, res, next) {
-    const failedAttemptsCount = await this.requestLimitRecordService.getCount({ req });
-    if (failedAttemptsCount >= FAILED_LOGIN_ATTEMPTS_LIMIT) {
-      throw new TooManyRequests();
-    }
-
-    passport.authenticate('local', async (err, user) => {
-      if (err) {
-        return next(err);
-      }
+    try {
+      const user = await new Promise((resolve, reject) => {
+        passport.authenticate('local', (err, usr) => {
+          return err ? reject(err) : resolve(usr);
+        })(req, res, next);
+      });
 
       if (!user) {
-        await this.requestLimitRecordService.incrementCount({ req, expiresInMs: FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS });
         return res.status(201).send({ user: null });
       }
 
-      await this.requestLimitRecordService.resetCount({ req });
       const updatedUser = await this.userService.recordUserLogIn(user._id);
 
-      return req.login(updatedUser, loginError => {
-        if (loginError) {
-          return next(loginError);
-        }
+      const connectedExternalAccountId = req.session.externalAccount?._id || null;
+      req.session.externalAccount = null;
 
-        return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
+      if (req.body.connectExternalAccount) {
+        await this.externalAccountService.updateExternalAccountUserId({
+          externalAccountId: connectedExternalAccountId,
+          userId: updatedUser._id
+        });
+      }
+
+      await new Promise((resolve, reject) => {
+        req.login(updatedUser, err => err ? reject(err) : resolve());
       });
-    })(req, res, next);
+
+      return res.status(201).send({
+        user: this.clientDataMappingService.mapWebsiteUser(updatedUser),
+        connectedExternalAccountId
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  handleDeleteAbortExternalAccountConnection(req, res) {
+    if (!req.session.externalAccount) {
+      throw new BadRequest();
+    }
+
+    delete req.session.externalAccount;
+    return res.status(204).end();
   }
 
   async handlePostUserPasswordResetRequest(req, res) {
-    const { email } = req.body;
+    const { email, password } = req.body;
     const user = await this.userService.getActiveUserByEmailAddress(email);
 
+    let createdRequest;
     if (user) {
-      const resetRequest = await this.userService.createPasswordResetRequest(user);
-      const { origin } = requestUtils.getHostInfo(req);
-      const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
-      await this.mailService.sendPasswordResetEmail({ email: user.email, displayName: user.displayName, completionLink });
+      createdRequest = await this.userService.createPasswordResetRequest(user, password);
+      await this.mailService.sendPasswordResetEmail({
+        email: user.email,
+        displayName: user.displayName,
+        verificationCode: createdRequest.verificationCode
+      });
     }
 
-    res.status(201).send({});
+    res.status(201).send({ passwordResetRequestId: createdRequest?._id });
   }
 
   async handlePostUserPasswordResetCompletion(req, res) {
-    const { passwordResetRequestId, password } = req.body;
-    const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
+    const { passwordResetRequestId, verificationCode } = req.body;
+    const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, verificationCode);
+
     if (!user) {
       throw new NotFound();
     }
 
-    res.status(201).send({ user });
+    const updatedUser = await this.userService.recordUserLogIn(user._id);
+    await new Promise((resolve, reject) => {
+      req.login(updatedUser, err => err ? reject(err) : resolve());
+    });
 
+    res.status(201).send({
+      user: this.clientDataMappingService.mapWebsiteUser(updatedUser)
+    });
   }
 
   async handlePostUserRoles(req, res) {
@@ -340,6 +447,22 @@ class UserController {
     return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
   }
 
+  async handleGetActivities(req, res) {
+    const { user } = req;
+    const activities = await this.userService.getActivities({ userId: user._id, limit: 25 });
+
+    const mappedActivities = await this.clientDataMappingService.mapUserActivities(activities);
+    return res.send({ activities: mappedActivities });
+  }
+
+  async handleGetRoomsInvitations(req, res) {
+    const { user } = req;
+    const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
+
+    return res.send({ invitations: mappedInvitations });
+  }
+
   async handleCloseUserAccount(req, res) {
     const { user } = req;
     const { userId } = req.params;
@@ -359,137 +482,158 @@ class UserController {
   }
 
   registerMiddleware(router) {
-    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { ambConfig } = this.serverConfig;
+    router.use(passport.initialize());
 
-      if (ambConfig?.apiKey && apikey === ambConfig.apiKey) {
-        return cb(null, ambMetadataUser);
+    router.use(passport.session());
+
+    router.get(
+      '/saml-auth/metadata/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        this.samlStrategy.generateServiceProviderMetadata(req, this.serverConfig.samlAuth.decryption.cert, null, (err, metadata) => {
+          return err ? next(err) : res.set('content-type', 'text/xml').send(metadata);
+        });
       }
+    );
 
-      return cb(null, false);
-    }));
+    router.get(
+      '/saml-auth/login/:idpKey',
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', err => err ? next(err) : res.end())(req, res, next);
+      }
+    );
 
-    passport.use('local', new LocalStrategy({
-      usernameField: 'email',
-      passwordField: 'password'
-    }, (email, password, cb) => {
-      this.userService.findConfirmedActiveUserByEmailAndPassword({ email, password })
-        .then(user => {
-          if (user?.accountLockedOn) {
-            const err = new Error('User account is locked');
-            err.code = ERROR_CODES.userAccountLocked;
-            throw err;
+    router.post(
+      '/saml-auth/login-callback/:idpKey',
+      express.urlencoded({ extended: false }),
+      (req, res, next) => this.setIdpKeyFromRequestParam('idpKey', req, res, next),
+      (req, res, next) => {
+        passport.authenticate('saml', async (err, profile) => {
+          if (err) {
+            return next(err);
           }
 
-          return cb(null, user || false);
-        })
-        .catch(err => cb(err));
-    }));
+          if (!profile) {
+            return next(new Error('No profile was sent by identity provider'));
+          }
 
-    passport.serializeUser((user, cb) => {
-      cb(null, { _id: user._id });
-    });
+          const providerKey = this.getProviderForRequest(req).key;
+          const externalUserId = profile.nameID;
+          const { RelayState } = req.body;
 
-    passport.deserializeUser(async (input, cb) => {
-      try {
-        const user = await this.userService.getUserById(input._id);
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
+          try {
+            // eslint-disable-next-line require-atomic-updates
+            req[SYMBOL_REDIRECT_AFTER_SAML_LOGIN] = RelayState || null;
+            // eslint-disable-next-line require-atomic-updates
+            req.session.externalAccount = await this.externalAccountService
+              .createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId });
+          } catch (error) {
+            return next(error);
+          }
+
+          return next();
+        })(req, res, next);
       }
-    });
-
-    router.use(session({
-      name: this.serverConfig.sessionCookieName,
-      cookie: {
-        httpOnly: true,
-        sameSite: COOKIE_SAME_SITE_POLICY,
-        domain: this.serverConfig.sessionCookieDomain,
-        secure: this.serverConfig.sessionCookieSecure
-      },
-      secret: this.serverConfig.sessionSecret,
-      resave: false,
-      saveUninitialized: false, // Don't create session until something stored
-      store: MongoStore.create({
-        client: this.database._mongoClient,
-        collectionName: sessionsStoreSpec.name,
-        ttl: this.serverConfig.sessionDurationInMinutes * 60,
-        autoRemove: 'disabled', // We use our own index
-        stringify: false // Do not serialize session data
-      }),
-      genid: generateSessionId
-    }));
-
-    router.use((req, res, next) => {
-      return isSessionValid(req)
-        ? next()
-        : req.session.regenerate(next);
-    });
-
-    if (!this.serverConfig.sessionCookieDomain) {
-      router.use((req, res, next) => {
-        if (req.session?.cookie) {
-          const { domain } = requestUtils.getHostInfo(req);
-          req.session.cookie.domain = domain;
-        }
-
-        next();
-      });
-    }
-
-    router.use(passport.initialize());
-    router.use(passport.session());
-    router.use(passport.authenticate('apikey', { session: false }));
+    );
 
     router.use(async (req, res, next) => {
-      try {
-        let storagePlan;
-        if (req.user?.storage.planId) {
-          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.planId);
-        }
-        req.storagePlan = storagePlan || null;
+      const { externalAccount } = req.session;
+
+      if (
+        !externalAccount
+        || routes.isApiPath(req.originalUrl)
+        || routes.isResetPasswordPath(req.originalUrl)
+        || routes.isConnectExternalAccountPath(req.originalUrl)
+      ) {
         return next();
+      }
+
+      const redirect = req[SYMBOL_REDIRECT_AFTER_SAML_LOGIN] || null;
+
+      if (!externalAccount.userId) {
+        return res.redirect(routes.getConnectExternalAccountPath(redirect));
+      }
+
+      try {
+        const user = await this.userService.findConfirmedActiveUserById({ userId: externalAccount.userId, throwIfLocked: true });
+        if (!user) {
+          // eslint-disable-next-line require-atomic-updates
+          req.session.externalAccount = await this.externalAccountService.updateExternalAccountUserId({
+            externalAccountId: externalAccount._id,
+            userId: null
+          });
+          return res.redirect(routes.getConnectExternalAccountPath(redirect));
+        }
+
+        const updatedUser = await this.userService.recordUserLogIn(user._id);
+        await new Promise((resolve, reject) => {
+          req.login(updatedUser, err => err ? reject(err) : resolve());
+        });
+
+        delete req.session.externalAccount;
+        return res.redirect(redirect ? redirect : routes.getHomeUrl());
       } catch (err) {
+        if (err.code === ERROR_CODES.userAccountLocked) {
+          delete req.session.externalAccount;
+        }
+
         return next(err);
       }
     });
   }
 
   registerPages(router) {
-    router.get('/users/:userId', (req, res) => this.handleGetUserPage(req, res));
+    router.get('/user-profile/:userId', (req, res) => this.handleGetUserProfilePage(req, res));
 
     router.get('/register', (req, res) => this.handleGetRegisterPage(req, res));
 
     router.get('/reset-password', (req, res) => this.handleGetResetPasswordPage(req, res));
 
-    router.get('/complete-registration/:verificationCode', (req, res) => this.handleCompleteRegistrationPage(req, res));
-
     router.get('/login', (req, res) => this.handleGetLoginPage(req, res));
 
     router.get('/logout', (req, res) => this.handleGetLogoutPage(req, res));
 
-    router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.handleGetCompletePasswordResetPage(req, res));
-
-    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsersPage(req, res));
+    router.get('/connect-external-account', (req, res) => this.handleGetConnectExternalAccountPage(req, res));
   }
 
   registerApi(router) {
     router.get(
       '/api/v1/users',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       (req, res) => this.handleGetUsers(req, res)
     );
 
+    router.get(
+      '/api/v1/users/external-accounts',
+      needsPermission(permissions.MANAGE_USERS),
+      (req, res) => this.handleGetExternalUserAccounts(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/external-accounts/:externalAccountId',
+      needsPermission(permissions.MANAGE_USERS),
+      validateParams(externalAccountIdParamsSchema),
+      (req, res) => this.handleDeleteExternalUserAccount(req, res)
+    );
+
     router.post(
-      '/api/v1/users',
+      '/api/v1/users/request-registration',
       jsonParser,
-      validateBody(postUserBodySchema),
-      (req, res) => this.handlePostUser(req, res)
+      validateBody(postUserRegistrationRequestBodySchema),
+      (req, res) => this.handlePostUserRegistrationRequest(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/complete-registration',
+      jsonParser,
+      validateBody(postUserRegistrationCompletionBodySchema),
+      (req, res) => this.handlePostUserRegistrationCompletion(req, res)
     );
 
     router.post(
       '/api/v1/users/request-password-reset',
-      rateLimit(this.passwordResetRateLimitOptions),
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(postUserPasswordResetRequestBodySchema),
       (req, res) => this.handlePostUserPasswordResetRequest(req, res)
@@ -497,7 +641,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/complete-password-reset',
-      rateLimit(this.passwordResetRateLimitOptions),
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(postUserPasswordResetCompletionBodySchema),
       (req, res) => this.handlePostUserPasswordResetCompletion(req, res)
@@ -521,14 +665,20 @@ class UserController {
 
     router.post(
       '/api/v1/users/login',
+      rateLimit(this.antiBruteForceRequestLimitOptions),
       jsonParser,
       validateBody(loginBodySchema),
       (req, res, next) => this.handlePostUserLogin(req, res, next)
     );
 
+    router.delete(
+      '/api/v1/users/abort-external-account-connection',
+      (req, res, next) => this.handleDeleteAbortExternalAccountConnection(req, res, next)
+    );
+
     router.post(
       '/api/v1/users/:userId/roles',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserRolesBodySchema),
@@ -537,7 +687,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/accountLockedOn',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserAccountLockedOnBodySchema),
@@ -546,7 +696,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/storagePlan',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
       validateBody(postUserStoragePlanBodySchema),
@@ -555,14 +705,14 @@ class UserController {
 
     router.post(
       '/api/v1/users/:userId/storageReminders',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       validateParams(userIdParamsSchema),
       (req, res) => this.handlePostUserStorageReminder(req, res)
     );
 
     router.delete(
       '/api/v1/users/:userId/storageReminders',
-      needsPermission(permissions.EDIT_USERS),
+      needsPermission(permissions.MANAGE_USERS),
       validateParams(userIdParamsSchema),
       (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
     );
@@ -587,6 +737,18 @@ class UserController {
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/activities',
+      needsAuthentication(),
+      (req, res) => this.handleGetActivities(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/rooms-invitations',
+      needsAuthentication(),
+      (req, res) => this.handleGetRoomsInvitations(req, res)
     );
 
     router.delete(

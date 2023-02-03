@@ -1,9 +1,10 @@
-name:
-  en: Iframe
-  de: Iframe
-height:
-  en: Height
-  de: Höhe
-frame:
-  en: Frame
-  de: Rahmen
+iframe:
+  name:
+    en: Iframe
+    de: Iframe
+  height:
+    en: Height
+    de: Höhe
+  border:
+    en: Border
+    de: Rahmen

@@ -42,7 +42,8 @@ describe('batch-service', () => {
     sandbox.restore();
   });
 
-  describe('createDocumentRegenerationBatch', () => {
+  describe('createBatch', () => {
+    const batchType = BATCH_TYPE.documentRegeneration;
     let testDocument;
 
     beforeEach(async () => {
@@ -56,20 +57,20 @@ describe('batch-service', () => {
       });
     });
 
-    describe('when a running batch already exists', () => {
+    describe('when a running batch with the same type already exists', () => {
       beforeEach(async () => {
-        await sut.createDocumentRegenerationBatch(user);
+        await sut.createBatch({ batchType, user });
       });
 
       it('should return null', async () => {
-        await expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
+        await expect(() => sut.createBatch({ batchType, user })).rejects.toThrow(BadRequest);
       });
     });
 
     describe('when a new batch is created', () => {
       let batch = null;
       beforeEach(async () => {
-        batch = await sut.createDocumentRegenerationBatch(user);
+        batch = await sut.createBatch({ batchType, user });
       });
 
       it('should create the new batch', () => {
@@ -154,6 +155,7 @@ describe('batch-service', () => {
   describe('getBatchesWithProgress', () => {
     let result;
     let documents;
+    const batchType = BATCH_TYPE.documentRegeneration;
 
     beforeEach(async () => {
       documents = [
@@ -175,9 +177,9 @@ describe('batch-service', () => {
         })
       ];
 
-      await sut.createDocumentRegenerationBatch(user);
+      await sut.createBatch({ batchType, user });
       await db.tasks.updateOne({ taskParams: { documentId: documents[0]._id } }, { $set: { processed: true } });
-      result = await sut.getBatchesWithProgress(BATCH_TYPE.documentRegeneration);
+      result = await sut.getBatchesWithProgress(batchType);
     });
 
     it('should return the batch', () => {
@@ -188,7 +190,7 @@ describe('batch-service', () => {
           createdBy: user._id,
           createdOn: expect.any(Date),
           completedOn: null,
-          batchType: BATCH_TYPE.documentRegeneration,
+          batchType,
           batchParams: {},
           errors: [],
           progress: 0.5
@@ -205,6 +207,7 @@ describe('batch-service', () => {
     let result;
     let documents;
     let createdBatchId;
+    const batchType = BATCH_TYPE.documentRegeneration;
 
     beforeEach(async () => {
       documents = [
@@ -226,7 +229,7 @@ describe('batch-service', () => {
         })
       ];
 
-      await sut.createDocumentRegenerationBatch(user);
+      await sut.createBatch({ batchType, user });
       await db.tasks.updateOne({ 'taskParams.documentId': documents[0]._id }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();
       createdBatchId = dbEntries[0]._id;
@@ -239,7 +242,7 @@ describe('batch-service', () => {
         createdBy: user._id,
         createdOn: expect.any(Date),
         completedOn: null,
-        batchType: BATCH_TYPE.documentRegeneration,
+        batchType,
         batchParams: {},
         errors: [],
         progress: 0.5,

@@ -36,7 +36,6 @@ class AbcNotationInfo {
     return {
       abcCode: '',
       width: 100,
-      displayMidi: true,
       copyrightNotice: ''
     };
   }
@@ -45,7 +44,6 @@ class AbcNotationInfo {
     const schema = joi.object({
       abcCode: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
-      displayMidi: joi.boolean().required(),
       copyrightNotice: joi.string().allow('').required()
     });
 

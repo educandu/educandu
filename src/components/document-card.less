@@ -1,72 +1,46 @@
-@document-card-horizontal-padding: 10px;
-@document-card-vertical-line-left-padding: 30px;
-@document-card-notebook-left-padding: @document-card-vertical-line-left-padding - @document-card-horizontal-padding + 15px;
-
 .DocumentCard {
   position: relative;
-  width: 250px;
-  height: 210px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  height: 230px;
+  gap: @edu-content-padding;
+  padding: @edu-content-padding;
+  grid-template-rows: auto 1fr auto;
   background-color: @edu-white;
   border-radius: @edu-border-radius-base;
   border: 1px solid @edu-border-color-light;
-  background-color: lighten(@edu-background-color-light, 1%);
-  padding: 15px @document-card-horizontal-padding 15px @document-card-horizontal-padding;
-
-  &::before {
-    position: absolute;
-    content: '';
-    top: 0;
-    width: 2px;
-    height: 100%;
-    opacity: 0.5;
-    background-color: lighten(@edu-primary-color-light, 10%);
-    left: @document-card-vertical-line-left-padding;
-  }
 }
 
-.DocumentCard-notebook {
-  height: 100%;
+.DocumentCard-title {
+  .m-overflow-ellipsis;
+}
+
+.DocumentCard-content {
   display: flex;
   flex-direction: column;
-}
-
-.DocumentCard-notebookText {
-  .m-line-clamp(3);
-  font-size: 14px;
-  padding-top: 4px;
-  line-height: 25px;
-  padding-left: @document-card-notebook-left-padding;
-}
-
-.DocumentCard-infoRow {
-  display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  margin: auto 0 4px 0;
-  padding-left: @document-card-notebook-left-padding + 10px;
-  color: lighten(@edu-text-color, 10%);
+}
 
-  &:last-of-type {
-    margin: 0 0 15px 0;
+.DocumentCard-description {
+  .m-line-clamp(2);
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+
+  @media @edu-media-phone-portrait {
+    display: none;
   }
 }
 
-.DocumentCard-notebookLink {
-  display: flex;
-  font-size: 13px;
-  align-items: center;
-  margin: 0 0 10px auto;
-  color: lighten(@edu-text-color, 10%);
+.DocumentCard-dateDetails {
+  text-align: end;
+  font-size: @edu-font-size-sm;
 
-  &.DocumentCard-notebookLink--deletedDocument {
-    margin: auto 0 10px auto;
+  @media @edu-media-phone-portrait {
+    text-align: start;
   }
 }
 
-.DocumentCard-notebookLinkArrow {
-  font-size: 12px;
-  line-height: 12px;
-  margin-left: 5px;
+.DocumentCard-button {
+  padding: 0 @edu-content-padding;
+  margin-left: auto;
+  width: 260px;
 }

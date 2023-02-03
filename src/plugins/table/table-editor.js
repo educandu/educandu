@@ -14,7 +14,7 @@ function TableEditor({ content, onContentChanged }) {
   const { columnDistribution, width } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleColumnDistributionChange = event => {
@@ -27,7 +27,7 @@ function TableEditor({ content, onContentChanged }) {
 
   return (
     <div className="TableEditor">
-      <Form>
+      <Form labelAlign="left">
         <Form.Item label={t('columnDistribution')} {...FORM_ITEM_LAYOUT}>
           <Radio.Group value={columnDistribution} onChange={handleColumnDistributionChange}>
             <Radio.Button value={COLUMN_DISTRIBUTION.automatic}>{t('columnDistribution_automatic')}</Radio.Button>
@@ -41,10 +41,8 @@ function TableEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>
-      <div className="Panel">
-        <div className="Panel-content">
-          <TableDesigner content={content} onContentChange={updateContent} />
-        </div>
+      <div className="u-panel">
+        <TableDesigner content={content} onContentChange={updateContent} />
       </div>
     </div>
   );

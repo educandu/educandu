@@ -2,37 +2,34 @@ import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 
 const homePath = '/';
-const docsPath = '/docs';
 const adminPath = '/admin';
-const usersPath = '/users';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
 const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
+const redactionPath = '/redaction';
 const resetPasswordPath = '/reset-password';
+const connectExternalAccountPath = '/connect-external-account';
 
+const apiPrefix = '/api/';
 const docsPrefix = '/docs/';
-const usersPrefix = '/users/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
-const completeRegistrationPrefix = '/complete-registration/';
-const completePasswordResetPrefix = '/complete-password-reset/';
+const userProfilePrefix = '/user-profile/';
+const samlAuthLoginPrefix = '/saml-auth/login/';
+const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function getDocsUrl() {
-  return docsPath;
+function getRedactionUrl() {
+  return redactionPath;
 }
 
-function getUsersUrl() {
-  return usersPath;
-}
-
-function getUserUrl(id) {
-  return urlUtils.concatParts(usersPrefix, encodeURIComponent(id));
+function getUserProfileUrl(id) {
+  return urlUtils.concatParts(userProfilePrefix, encodeURIComponent(id));
 }
 
 function getDocUrl({ id, slug, view, templateDocumentId }) {
@@ -54,14 +51,6 @@ function getAdminUrl({ tab } = {}) {
 
 function getBatchUrl(id) {
   return urlUtils.concatParts(batchesPath, id);
-}
-
-function getCompleteRegistrationUrl(verificationCode) {
-  return urlUtils.concatParts(completeRegistrationPrefix, verificationCode);
-}
-
-function getCompletePasswordResetUrl(passwordResetRequestId) {
-  return urlUtils.concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
 function getRoomMembershipConfirmationUrl(token) {
@@ -101,6 +90,10 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
+function getConnectExternalAccountPath(redirect = null) {
+  return redirect ? urlUtils.createRedirectUrl(connectExternalAccountPath, redirect) : connectExternalAccountPath;
+}
+
 function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
@@ -114,16 +107,34 @@ function getDocIdIfDocUrl(url) {
   return documentId || null;
 }
 
+function getSamlAuthLoginPath(providerKey, redirect = null) {
+  const fullPath = urlUtils.concatParts(samlAuthLoginPrefix, encodeURIComponent(providerKey));
+  return redirect ? urlUtils.createRedirectUrl(fullPath, redirect) : fullPath;
+}
+
+function getSamlAuthLoginCallbackPath(providerKey) {
+  return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
+}
+
+function isApiPath(path) {
+  return path.startsWith(apiPrefix);
+}
+
+function isResetPasswordPath(path) {
+  return path === resetPasswordPath;
+}
+
+function isConnectExternalAccountPath(path) {
+  return path === connectExternalAccountPath;
+}
+
 export default {
-  getUserUrl,
-  getDocsUrl,
-  getUsersUrl,
+  getUserProfileUrl,
+  getRedactionUrl,
   getDocUrl,
   getDocumentRevisionUrl,
   getRoomUrl,
   getAdminUrl,
-  getCompleteRegistrationUrl,
-  getCompletePasswordResetUrl,
   getRoomMembershipConfirmationUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
@@ -133,7 +144,13 @@ export default {
   getDashboardUrl,
   getRegisterUrl,
   getResetPasswordUrl,
+  getConnectExternalAccountPath,
   getSearchUrl,
   getBatchUrl,
-  getDocIdIfDocUrl
+  getDocIdIfDocUrl,
+  getSamlAuthLoginPath,
+  getSamlAuthLoginCallbackPath,
+  isApiPath,
+  isResetPasswordPath,
+  isConnectExternalAccountPath
 };

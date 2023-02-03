@@ -1,0 +1,56 @@
+@activities-item-label-width: 160px;
+@activities-item-content-inset-inline-start: @activities-item-label-width + 20px;
+
+.ActivitiesTab-info {
+  .m-info-card;
+}
+
+.ActivitiesTab-timeline {
+  .ant-timeline-item-last {
+    .ant-timeline-item-tail {
+      display: none;
+    }
+  }
+
+  .ant-timeline-item-label {
+    width: @activities-item-label-width !important;
+  }
+
+  .ant-timeline-item-tail,
+  .ant-timeline-item-head {
+    inset-inline-start: @activities-item-content-inset-inline-start !important;
+  }
+
+  .ant-timeline-item-content {
+    inset-inline-start: @activities-item-content-inset-inline-start !important;
+    width: 80% !important;
+  }
+
+  @media @edu-media-phone {
+    .ant-timeline-item-label {
+      display: none;
+    }
+
+    .ant-timeline-item-tail,
+    .ant-timeline-item-head,
+    .ant-timeline-item-content {
+      inset-inline-start: 0px !important;
+    }
+  }
+}
+
+.ActivitiesTab-activity {
+  .m-overflow-ellipsis;
+}
+
+.ActivitiesTab-activityLabel {
+  font-style: italic;
+}
+
+.ActivitiesTab-activityDescription {
+  margin-right: 5px;
+}
+
+.ActivitiesTab-activityLink {
+  .m-link;
+}

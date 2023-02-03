@@ -39,7 +39,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
   const [waveformBackgroundColor, setWaveformBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
 
-  const homePath = storage.locations?.find(location => location.type === STORAGE_LOCATION_TYPE.public)?.homePath || null;
+  const storagePath = storage.locations?.find(location => location.type === STORAGE_LOCATION_TYPE.documentMedia)?.path || null;
 
   useEffect(() => {
     if (!generatedPeaks) {
@@ -86,7 +86,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     try {
       const blob = await fetch(imageUrl).then(res => res.blob());
       const file = new File([blob], filename);
-      const result = await storageApiClient.uploadFiles([file], homePath);
+      const result = await storageApiClient.uploadFiles([file], storagePath);
       cdnUrl = result.uploadedFiles[filename].portableUrl;
     } catch (error) {
       handleApiError({ error, logger, t });

@@ -7,18 +7,19 @@ import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
+import spdxLicenseList from 'spdx-license-list';
 import PageResolver from '../domain/page-resolver.js';
 import ThemeManager from '../resources/theme-manager.js';
 import lessVariablesToJson from 'less-variables-to-json';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
+import ControllerFactory from '../server/controller-factory.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
-const resources = await fs.readFile(path.resolve(thisDir, '../resources/resources.json'), 'utf8').then(JSON.parse);
-const globalVariables = await fs.readFile(path.resolve(thisDir, '../styles/global-variables.less'), 'utf8').then(lessVariablesToJson);
 
 export async function createContainer(configValues = {}) {
   logger.info('Creating container');
@@ -51,25 +52,33 @@ export async function createContainer(configValues = {}) {
   logger.info('Registering CDN');
   container.registerInstance(Cdn, cdn);
 
-  logger.info('Loading resources');
-  const additionalResources = await Promise.all(serverConfig.resources.map(modulePath => fs.readFile(modulePath, 'utf8').then(JSON.parse)));
-  const resourceManager = new ResourceManager(resources, ...additionalResources);
-
   logger.info('Registering resource manager');
+  const builtInResources = await fs.readFile(path.resolve(thisDir, '../resources/resources.json'), 'utf8').then(JSON.parse);
+  const additionalResources = await Promise.all(serverConfig.resources.map(filePath => fs.readFile(filePath, 'utf8').then(JSON.parse)));
+  const resourceManager = new ResourceManager();
+  resourceManager.setResourcesFromTranslations([builtInResources, ...additionalResources]);
   container.registerInstance(ResourceManager, resourceManager);
-
-  logger.info('Loading theme files');
-  const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
 
   logger.info('Registering theme manager');
   const themeManager = new ThemeManager();
+  const globalVariables = await fs.readFile(path.resolve(thisDir, '../styles/global-variables.less'), 'utf8').then(lessVariablesToJson);
+  const themeOverrideVariables = serverConfig.themeFile ? await fs.readFile(serverConfig.themeFile, 'utf8').then(lessVariablesToJson) : null;
   themeManager.setThemeFromLessVariables({ ...globalVariables, ...themeOverrideVariables });
   container.registerInstance(ThemeManager, themeManager);
+
+  logger.info('Registering license manager');
+  const licenseManager = new LicenseManager();
+  licenseManager.setLicensesFromSpdxLicenseList(spdxLicenseList, serverConfig.allowedLicenses);
+  container.registerInstance(LicenseManager, licenseManager);
 
   logger.info('Registering page resolver');
   const pageResolver = new PageResolver(serverConfig.bundleConfig);
   await pageResolver.prefillCache();
   container.registerInstance(PageResolver, pageResolver);
+
+  logger.info('Registering additional controllers');
+  const controllerFactory = container.get(ControllerFactory);
+  controllerFactory.registerAdditionalControllers(serverConfig.additionalControllers);
 
   logger.info('Loading plugin editors');
   const pluginRegistry = container.get(PluginRegistry);

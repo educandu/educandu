@@ -1,51 +1,52 @@
-name:
-  en: Audio waveform
-  de: Audio-Wellenform
-chooseImageDividerText:
-  en: Choose a ready-made image
-  de: Wähle ein vorgefertigtes Bild aus
-generateImageDividerText:
-  en: or generate an image from an audio file
-  de: oder erstelle ein Bild aus einer Audio-Datei
-generalSettingsDividerText:
-  en: General settings
-  de: Generelle Einstellungen
-generateWaveformFromAudioFile:
-  en: Generate waveform from audio file
-  de: Wellenform aus Audio-Datei erstellen
-displayMode_static:
-  en: static
-  de: statisch
-displayMode_interactive:
-  en: interactive
-  de: interaktiv
-penColor:
-  en: Waveform color
-  de: Wellenformfarbe
-baselineColor:
-  en: Baseline color
-  de: Grundlinienfarbe
-backgroundColor:
-  en: Background color
-  de: Hintergrundfarbe
-opacityWhenResolved:
-  en: Opacity (resolved)
-  de: Deckkraft (aufgelöst)
-showResolution:
-  en: Show resolution
-  de: Auflösung anzeigen
-hideResolution:
-  en: Hide resolution
-  de: Auflösung ausblenden
-dialogTitle:
-  en: Generate waveform image
-  de: Wellenform-Bild erstellen
-dialogDropzoneInfo:
-  en: Drag an audio file into this box
-  de: Ziehe eine Audio-Datei in diese Box
-dialogLocalFilePickerButtonText:
-  en: Select an audio file from my machine
-  de: Audio-Datei vom lokalen Computer auswählen
-dialogCdnFilePickerButtonText:
-  en: Select an audio file from the internal storage
-  de: Audio-Datei vom internen Speicher auswählen
+audioWaveform:
+  name:
+    en: Audio waveform
+    de: Audio-Wellenform
+  chooseImageDividerText:
+    en: Choose a ready-made image
+    de: Wähle ein vorgefertigtes Bild aus
+  generateImageDividerText:
+    en: or generate an image from an audio file
+    de: oder erstelle ein Bild aus einer Audio-Datei
+  generalSettingsDividerText:
+    en: General settings
+    de: Generelle Einstellungen
+  generateWaveformFromAudioFile:
+    en: Generate waveform from audio file
+    de: Wellenform aus Audio-Datei erstellen
+  displayMode_static:
+    en: static
+    de: statisch
+  displayMode_interactive:
+    en: interactive
+    de: interaktiv
+  penColor:
+    en: Waveform color
+    de: Wellenformfarbe
+  baselineColor:
+    en: Baseline color
+    de: Grundlinienfarbe
+  backgroundColor:
+    en: Background color
+    de: Hintergrundfarbe
+  opacityWhenResolved:
+    en: Opacity (resolved)
+    de: Deckkraft (aufgelöst)
+  showResolution:
+    en: Show resolution
+    de: Auflösung anzeigen
+  hideResolution:
+    en: Hide resolution
+    de: Auflösung ausblenden
+  dialogTitle:
+    en: Generate waveform image
+    de: Wellenform-Bild erstellen
+  dialogDropzoneInfo:
+    en: Drag an audio file into this box
+    de: Ziehe eine Audio-Datei in diese Box
+  dialogLocalFilePickerButtonText:
+    en: Select an audio file from my machine
+    de: Audio-Datei vom lokalen Computer auswählen
+  dialogCdnFilePickerButtonText:
+    en: Select an audio file from the internal storage
+    de: Audio-Datei vom internen Speicher auswählen

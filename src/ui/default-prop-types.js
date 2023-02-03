@@ -3,7 +3,6 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import {
   DOCUMENT_ALLOWED_OPEN_CONTRIBUTION,
   BATCH_TYPE,
-  CDN_OBJECT_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
@@ -15,8 +14,7 @@ export const storageLocationShape = PropTypes.shape({
   type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
   usedBytes: PropTypes.number,
   maxBytes: PropTypes.number,
-  rootPath: PropTypes.string.isRequired,
-  homePath: PropTypes.string,
+  path: PropTypes.string.isRequired,
   isDeletionEnabled: PropTypes.bool.isRequired
 });
 
@@ -27,12 +25,7 @@ export const cdnObjectShape = PropTypes.shape({
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
   createdOn: PropTypes.string,
-  type: PropTypes.oneOf(Object.values(CDN_OBJECT_TYPE)).isRequired,
-  size: PropTypes.number,
-  documentMetadata: PropTypes.shape({
-    title: PropTypes.string,
-    isAccessibleToUser: PropTypes.bool.isRequired
-  })
+  size: PropTypes.number
 });
 
 export const wikimediaFileShape = PropTypes.shape({
@@ -47,6 +40,12 @@ export const wikimediaFileShape = PropTypes.shape({
 });
 
 export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
+
+export const samlIdentityProviderClientShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  logoUrl: PropTypes.string
+});
 
 export const sectionDisplayProps = {
   content: PropTypes.any
@@ -106,23 +105,10 @@ export const settingsProps = {
   settings: settingsShape.isRequired
 };
 
-export const baseStoragePlanProps = {
+export const storagePlanShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   maxBytes: PropTypes.number.isRequired
-};
-
-export const storagePlanWithAssignedUserCountProps = {
-  ...baseStoragePlanProps,
-  assignedUserCount: PropTypes.number.isRequired
-};
-
-export const baseStoragePlanShape = PropTypes.shape({
-  ...baseStoragePlanProps
-});
-
-export const storagePlanWithAssignedUserCountShape = PropTypes.shape({
-  ...storagePlanWithAssignedUserCountProps
 });
 
 export const userStorageShape = PropTypes.shape({
@@ -134,7 +120,7 @@ export const userStorageShape = PropTypes.shape({
   }))
 });
 
-export const userFavoriteShape = PropTypes.shape({
+const favoriteItemShape = PropTypes.shape({
   type: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   setOn: PropTypes.string.isRequired
@@ -151,7 +137,7 @@ export const userShape = PropTypes.shape({
   accountLockedOn: PropTypes.string,
   lastLoggedInOn: PropTypes.string,
   storage: userStorageShape,
-  favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
+  favorites: PropTypes.arrayOf(favoriteItemShape).isRequired
 });
 
 export const publicUserShape = PropTypes.shape({
@@ -215,6 +201,20 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired
+});
+
+const contributedDocumentMetadataProps = {
+  _id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: otherUserShape.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired
+};
+
+export const contributedDocumentMetadataShape = PropTypes.shape({
+  ...contributedDocumentMetadataProps
 });
 
 export const documentPublicContextShape = PropTypes.shape({
@@ -334,8 +334,6 @@ export const commonBatchProps = {
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
 };
 
-export const batchShape = PropTypes.shape(commonBatchProps);
-
 export const documentValidationBatchDetailsShape = PropTypes.shape({
   ...commonBatchProps,
   batchType: PropTypes.oneOf([BATCH_TYPE.documentValidation]).isRequired,
@@ -373,7 +371,8 @@ export const roomOwnerShape = PropTypes.shape({
 export const roomMemberShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   joinedOn: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired,
+  email: PropTypes.string
 });
 
 export const roomMetadataProps = {
@@ -437,4 +436,24 @@ export const commentShape = PropTypes.shape({
     _id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired
   })
+});
+
+export const favoriteUserShape = PropTypes.shape({
+  displayName: PropTypes.string.isRequired,
+  avatarUrl: PropTypes.string
+});
+
+export const favoriteRoomShape = PropTypes.shape({
+  ...roomMetadataProps,
+  _id: PropTypes.string,
+  updatedOn: PropTypes.string,
+  owner: PropTypes.shape({
+    email: PropTypes.string,
+    displayName: PropTypes.string.isRequired
+  }),
+  members: PropTypes.arrayOf(roomMemberShape)
+});
+
+export const favoriteDocumentShape = PropTypes.shape({
+  ...contributedDocumentMetadataProps
 });

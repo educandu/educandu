@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
-import { Button, Collapse } from 'antd';
-import React, { useState } from 'react';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
+import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import React, { useState, useEffect } from 'react';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { commentShape } from '../ui/default-prop-types.js';
@@ -15,46 +15,60 @@ import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { confirmCommentDelete } from './confirmation-dialogs.js';
 import { groupCommentsByTopic } from '../utils/comment-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { maxCommentTextLength, maxCommentTopicLength } from '../domain/validation-constants.js';
+import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../domain/validation-constants.js';
 
 const { Panel } = Collapse;
 
-const MODE = {
-  read: 'read',
-  write: 'write'
-};
+const NEW_TOPIC_PANEL_KEY = '__NEW_TOPIC__';
 
-function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
+function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('commentsPanel');
-  const commentGroups = groupCommentsByTopic(comments);
 
-  const [mode, setMode] = useState(MODE.read);
   const [newTopic, setNewTopic] = useState('');
   const [editedTopic, setEditedTopic] = useState('');
-  const [currentTopic, setCurrentTopic] = useState('');
+  const [commentGroups, setCommentGroups] = useState({});
+  const [expandedTopic, setExpandedTopic] = useState(null);
   const [currentComment, setCurrentComment] = useState('');
+  const [isSavingComment, setIsSavingComment] = useState(false);
+  const [isRenamingTopic, setIsRenamingTopic] = useState(false);
   const [editedTopicNewText, setEditedTopicNewText] = useState('');
 
-  const handleCollapseChange = panelIndex => {
-    setMode(MODE.read);
-    setCurrentComment('');
-    setCurrentTopic(Object.keys(commentGroups)[panelIndex] || '');
-  };
+  useEffect(() => {
+    if (isLoading) {
+      setCommentGroups({});
+      setExpandedTopic(null);
+      return;
+    }
 
-  const handleAddCommentClick = () => {
-    setMode(MODE.write);
-  };
-
-  const handlePostCommentClick = () => {
-    onCommentPostClick({
-      topic: currentTopic || newTopic.trim(),
-      text: currentComment.trim()
+    const newCommentGroups = groupCommentsByTopic(comments);
+    const newCommentGroupKeys = Object.keys(newCommentGroups);
+    setCommentGroups(newCommentGroups);
+    setExpandedTopic(previousExpandedTopic => {
+      return previousExpandedTopic === NEW_TOPIC_PANEL_KEY || newCommentGroupKeys.includes(previousExpandedTopic)
+        ? previousExpandedTopic
+        : newCommentGroupKeys[0] || NEW_TOPIC_PANEL_KEY;
     });
+  }, [comments, isLoading]);
+
+  const handleCollapseChange = panelTopic => {
+    setCurrentComment('');
+    setExpandedTopic(panelTopic);
+  };
+
+  const handlePostCommentClick = async () => {
+    const newComment = {
+      topic: expandedTopic === NEW_TOPIC_PANEL_KEY ? newTopic.trim() : expandedTopic,
+      text: currentComment.trim()
+    };
+
+    setIsSavingComment(true);
+    await onCommentPostClick(newComment);
+    setIsSavingComment(false);
     setNewTopic('');
     setCurrentComment('');
-    setMode(MODE.read);
+    setExpandedTopic(newComment.topic);
   };
 
   const handleCurrentCommentChange = event => {
@@ -69,6 +83,13 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
   const handleNewTopicChange = event => {
     const { value } = event.target;
     setNewTopic(value);
+  };
+
+  const handleNewTopicButtonClick = () => {
+    setNewTopic('');
+    setCurrentComment('');
+    setEditedTopic(NEW_TOPIC_PANEL_KEY);
+    setExpandedTopic(NEW_TOPIC_PANEL_KEY);
   };
 
   const handleEditTopicClick = (event, topic) => {
@@ -88,13 +109,18 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
     setEditedTopicNewText('');
   };
 
-  const handleSaveEditedTopicClick = event => {
+  const handleSaveEditedTopicClick = async event => {
     event.stopPropagation();
     const newTopicText = editedTopicNewText.trim();
+    const isEditingExistingTopic = editedTopic !== newTopicText;
 
-    if (editedTopic !== newTopicText) {
-      onTopicChangeClick({ oldTopic: editedTopic, newTopic: newTopicText });
+    if (isEditingExistingTopic) {
+      setIsRenamingTopic(true);
+      await onTopicChangeClick({ oldTopic: editedTopic, newTopic: newTopicText });
+      setIsRenamingTopic(false);
+      setExpandedTopic(newTopicText);
     }
+
     setEditedTopic('');
     setEditedTopicNewText('');
   };
@@ -102,15 +128,17 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
   const handleDeleteCommentClick = comment => {
     const author = comment.createdBy.displayName;
     const timestamp = formatDate(comment.createdOn);
-    confirmCommentDelete(t, author, timestamp, () => onCommentDeleteClick(comment._id));
+    confirmCommentDelete(t, author, timestamp, async () => {
+      await onCommentDeleteClick(comment._id);
+    });
   };
 
   const renderComment = comment => {
-    const userUrl = routes.getUserUrl(comment.createdBy._id);
+    const userUrl = routes.getUserProfileUrl(comment.createdBy._id);
     return (
       <div className="CommentsPanel-comment" key={comment._id}>
         <div className="CommentsPanel-metadata">
-          <a className="CommentsPanel-author" href={userUrl}>{comment.createdBy.displayName}</a>
+          <a href={userUrl}>{comment.createdBy.displayName}</a>
           <div className="CommentsPanel-date">{formatDate(comment.createdOn)}</div>
         </div>
         {!comment.deletedOn && (
@@ -133,19 +161,25 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
   };
 
   const renderTopicHeader = topic => {
-    if (topic === editedTopic) {
-      return (
-        <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
-          <MarkdownInput
-            inline
-            value={editedTopicNewText}
-            onChange={handleEditedTopicChange}
-            maxLength={maxCommentTopicLength}
-            />
-        </div>
-      );
-    }
-    return <Markdown inline>{topic}</Markdown>;
+    return (
+      <div className="CommentsPanel-topicHeader">
+        <div className="CommentsPanel-topicInputPrefix">{t('topicHeaderPrefix')}:</div>
+        {topic === editedTopic && (
+          <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
+            <MarkdownInput
+              inline
+              value={editedTopicNewText}
+              readOnly={isRenamingTopic}
+              onChange={handleEditedTopicChange}
+              maxLength={maxDocumentCommentTopicLength}
+              />
+          </div>
+        )}
+        {topic !== editedTopic && (
+          <Markdown inline>{topic}</Markdown>
+        )}
+      </div>
+    );
   };
 
   const renderEditTopicButton = topic => {
@@ -157,13 +191,14 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
       return (
         <div className="CommentsPanel-editTopicButtonsGroup">
           <Button
-            type="default"
             icon={<CloseOutlined />}
+            disabled={isRenamingTopic}
             onClick={handleCancelEditedTopicClick}
             />
           <Button
             type="primary"
             icon={<SaveOutlined />}
+            loading={isRenamingTopic}
             onClick={handleSaveEditedTopicClick}
             disabled={editedTopicNewText.trim().length === 0}
             />
@@ -171,54 +206,58 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
       );
     }
 
+    if (topic === expandedTopic) {
+      return (
+        <Button
+          icon={<EditIcon />}
+          disabled={isRenamingTopic}
+          onClick={event => handleEditTopicClick(event, topic)}
+          />
+      );
+    }
+
+    return null;
+  };
+
+  const renderNewCommentSection = topic => {
+    const needsNewTopic = topic === NEW_TOPIC_PANEL_KEY && newTopic.trim().length === 0;
+    const isPostingDisabled = currentComment.trim().length === 0 || needsNewTopic;
+    const showAsLoading = !isPostingDisabled && isSavingComment;
     return (
-      <Button
-        type="link"
-        icon={<EditIcon />}
-        onClick={event => handleEditTopicClick(event, topic)}
-        />
+      <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
+        <div className="CommentsPanel-comment">
+          <MarkdownInput
+            preview
+            value={currentComment}
+            readOnly={showAsLoading}
+            placeholder={t('newCommentPlaceholder')}
+            maxLength={maxDocumentCommentTextLength}
+            onChange={handleCurrentCommentChange}
+            />
+          <Button
+            type="primary"
+            className="CommentsPanel-postCommentButton"
+            onClick={handlePostCommentClick}
+            loading={showAsLoading}
+            disabled={isPostingDisabled}
+            >
+            {t('postCommentButtonText')}
+          </Button>
+        </div>
+      </Restricted>
     );
   };
 
-  const renderTopicPanel = (topic, index) => {
+  const renderTopicPanel = topic => {
     return (
       <Panel
-        key={index}
+        key={topic}
         className="CommentsPanel-topicPanel"
         header={renderTopicHeader(topic)}
         extra={renderEditTopicButton(topic)}
         >
         {commentGroups[topic].map(renderComment)}
-
-        <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
-          {mode === MODE.read && (
-          <Button
-            type="primary"
-            className="CommentsPanel-addButton"
-            onClick={handleAddCommentClick}
-            >
-            {t('addCommentButtonText')}
-          </Button>
-          )}
-          {mode === MODE.write && (
-          <div className="CommentsPanel-comment">
-            <MarkdownInput
-              preview
-              value={currentComment}
-              maxLength={maxCommentTextLength}
-              onChange={handleCurrentCommentChange}
-              />
-            <Button
-              type="primary"
-              className="CommentsPanel-addButton"
-              onClick={handlePostCommentClick}
-              disabled={currentComment.trim().length === 0}
-              >
-              {t('postCommentButtonText')}
-            </Button>
-          </div>
-          )}
-        </Restricted>
+        {renderNewCommentSection(topic)}
       </Panel>
     );
   };
@@ -227,52 +266,68 @@ function CommentsPanel({ comments, onCommentPostClick, onTopicChangeClick, onCom
     if (!hasUserPermission(user, permissions.CREATE_DOCUMENT_COMMENTS)) {
       return null;
     }
+    const isPostingDisabled = currentComment.trim().length === 0 || newTopic.trim().length === 0;
+    const showAsLoading = !isPostingDisabled && isSavingComment;
     return (
       <Panel
-        key="newTopic"
+        key={NEW_TOPIC_PANEL_KEY}
         className="CommentsPanel-topicPanel"
         header={
-          <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
-            <MarkdownInput
-              inline
-              value={newTopic}
-              onChange={handleNewTopicChange}
-              maxLength={maxCommentTopicLength}
-              placeholder={t('newTopicPlaceholder')}
-              />
+          <div className="CommentsPanel-topicHeader">
+            <div className="CommentsPanel-topicInputPrefix">{t('newTopicHeaderPrefix')}:</div>
+            <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
+              <MarkdownInput
+                inline
+                autoFocus
+                value={newTopic}
+                readOnly={showAsLoading}
+                onChange={handleNewTopicChange}
+                maxLength={maxDocumentCommentTopicLength}
+                placeholder={t('newTopicPlaceholder')}
+                />
+            </div>
           </div>
         }
         >
-        <MarkdownInput
-          preview
-          value={currentComment}
-          maxLength={maxCommentTextLength}
-          onChange={handleCurrentCommentChange}
-          />
-        <Button
-          type="primary"
-          className="CommentsPanel-addButton"
-          onClick={handlePostCommentClick}
-          disabled={currentComment.trim().length === 0 || newTopic.trim().length === 0}
-          >
-          {t('postCommentButtonText')}
-        </Button>
+        {renderNewCommentSection(NEW_TOPIC_PANEL_KEY)}
       </Panel>
     );
   };
 
   const topics = Object.keys(commentGroups);
+  const shouldShowNewTopicPanel = expandedTopic === NEW_TOPIC_PANEL_KEY;
+  const userCanWriteComments = hasUserPermission(user, permissions.CREATE_DOCUMENT_COMMENTS);
+
+  if (isLoading) {
+    return (
+      <div className="CommentsPanel">
+        <Spin className="u-spin" />
+      </div>
+    );
+  }
 
   return (
-    <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" defaultActiveKey="newTopic">
-      {topics.map(renderTopicPanel)}
-      {renderNewTopicPanel()}
-    </Collapse>
+    <div className="CommentsPanel">
+      <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" activeKey={expandedTopic}>
+        {topics.map(renderTopicPanel)}
+        {!!userCanWriteComments && !!shouldShowNewTopicPanel && renderNewTopicPanel()}
+      </Collapse>
+      {!!userCanWriteComments && !shouldShowNewTopicPanel && (
+        <Button
+          type="primary"
+          className="CommentsPanel-newTopicButton"
+          onClick={handleNewTopicButtonClick}
+          >
+          {t('addNewTopicButtonText')}
+        </Button>
+      )}
+    </div>
   );
 }
 
 CommentsPanel.propTypes = {
   comments: PropTypes.arrayOf(commentShape).isRequired,
+  isLoading: PropTypes.bool.isRequired,
   onCommentDeleteClick: PropTypes.func.isRequired,
   onCommentPostClick: PropTypes.func.isRequired,
   onTopicChangeClick: PropTypes.func.isRequired

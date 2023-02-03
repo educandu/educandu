@@ -1,6 +1,4 @@
-searchPlaceholder:
-  en: Search terms
-  de: Suchbegriffe
-searchTermRequired:
-  en: Please specify at least one search term
-  de: Bitte gib mindestens einen Suchbegriff an
+searchBar:
+  searchPlaceholder:
+    en: Search terms
+    de: Suchbegriffe

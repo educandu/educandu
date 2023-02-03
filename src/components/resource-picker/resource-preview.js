@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
-import MiniPager from '../mini-pager.js';
 import { message, Tooltip } from 'antd';
+import MiniPager from '../mini-pager.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import LiteralUrlLink from '../literal-url-link.js';
 import { useService } from '../container-context.js';
-import { handleError } from '../../ui/error-helper.js';
 import { useDateFormat } from '../locale-context.js';
+import { handleError } from '../../ui/error-helper.js';
 import mimeTypeHelper from '../../ui/mime-type-helper.js';
 import MediaPlayer from '../media-player/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -24,7 +24,6 @@ const logger = new Logger(import.meta.url);
 
 export const RESOURCE_PREVIEW_LAYOUT = {
   default: 'default',
-  compact: 'compact',
   thumbnailOnly: 'thumbnail-only'
 };
 
@@ -83,11 +82,11 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer source={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
+    <MediaPlayer sourceUrl={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
   );
 
   const renderVideo = () => (
-    <MediaPlayer source={url} canDownload />
+    <MediaPlayer sourceUrl={url} canDownload />
   );
 
   const renderImage = () => (
@@ -228,26 +227,19 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
     <div
       className={classNames({
         'FilePreview': true,
-        'FilePreview--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
         'FilePreview--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
       })}
       >
       <div
         className={classNames({
           'FilePreview-previewArea': true,
-          'FilePreview-previewArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact,
           'FilePreview-previewArea--thumbnailOnly': layout === RESOURCE_PREVIEW_LAYOUT.thumbnailOnly
         })}
         >
         {renderPreview()}
       </div>
       {layout !== RESOURCE_PREVIEW_LAYOUT.thumbnailOnly && (
-        <div
-          className={classNames({
-            'FilePreview-detailsArea': true,
-            'FilePreview-detailsArea--compact': layout === RESOURCE_PREVIEW_LAYOUT.compact
-          })}
-          >
+        <div className="FilePreview-detailsArea">
           {renderDetails()}
         </div>
       )}

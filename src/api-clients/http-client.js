@@ -3,31 +3,31 @@ import axios from 'axios';
 class HttpClient {
   get(...args) {
     return axios.get(...args).catch(error => {
-      throw error.response.data;
+      throw error.response?.data || error;
     });
   }
 
   put(...args) {
     return axios.put(...args).catch(error => {
-      throw error.response.data;
+      throw error.response?.data || error;
     });
   }
 
   post(...args) {
     return axios.post(...args).catch(error => {
-      throw error.response.data;
+      throw error.response?.data || error;
     });
   }
 
   patch(...args) {
     return axios.patch(...args).catch(error => {
-      throw error.response.data;
+      throw error.response?.data || error;
     });
   }
 
   delete(...args) {
     return axios.delete(...args).catch(error => {
-      throw error.response.data;
+      throw error.response?.data || error;
     });
   }
 

@@ -1,19 +1,29 @@
 import uniqueId from './unique-id.js';
 import urlUtils from './url-utils.js';
 import slugify from '@sindresorhus/slugify';
-import { getResourceExtension } from './resource-utils.js';
 import {
-  CDN_OBJECT_TYPE,
   STORAGE_LOCATION_TYPE,
   IMAGE_OPTIMIZATION_QUALITY,
+  ROOM_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
+  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
-  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES,
-  INTERNAL_PUBLIC_STORAGE_PATH_PATTERN,
-  INTERNAL_PRIVATE_STORAGE_PATH_PATTERN
+  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
 } from '../domain/constants.js';
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
+
+export function getMediaLibraryPath() {
+  return 'media-library';
+}
+
+export function getDocumentMediaDocumentPath(documentId) {
+  return `document-media/${documentId}`;
+}
+
+export function getRoomMediaRoomPath(roomId) {
+  return `room-media/${roomId}`;
+}
 
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
@@ -74,87 +84,22 @@ export function processFilesBeforeUpload({ files, optimizeImages }) {
 }
 
 export function getStorageLocationTypeForPath(path) {
-  if (INTERNAL_PUBLIC_STORAGE_PATH_PATTERN.test(path)) {
-    return STORAGE_LOCATION_TYPE.public;
+  if (DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
+    return STORAGE_LOCATION_TYPE.documentMedia;
   }
-  if (INTERNAL_PRIVATE_STORAGE_PATH_PATTERN.test(path)) {
-    return STORAGE_LOCATION_TYPE.private;
+  if (ROOM_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
+    return STORAGE_LOCATION_TYPE.roomMedia;
   }
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
-export function canUploadToPath(path) {
-  if (!path) {
-    return false;
-  }
-
-  const publicPathMatch = path.match(INTERNAL_PUBLIC_STORAGE_PATH_PATTERN);
-  const privatePathMatch = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
-
-  const documentId = publicPathMatch?.[1];
-  const roomId = privatePathMatch?.[1];
-
-  return !!(documentId || roomId);
-}
-
-export function getStorageLocationPathForUrl(url) {
-  try {
-    const urlObj = new URL(url);
-
-    if (urlObj.protocol !== 'cdn:') {
-      return null;
-    }
-    return urlUtils.removeLeadingSlashes(urlObj.pathname);
-  } catch {
-    return null;
-  }
-}
-
-export function getParentPathForStorageLocationPath(pathname) {
-  return (pathname || '').split('/').slice(0, -1).join('/');
-}
-
-export function getPublicRootPath() {
-  return 'media';
-}
-
-export function getPrivateRoomsRootPath() {
-  return 'rooms';
-}
-
-export function getPublicHomePath(documentId) {
-  return `media/${documentId}`;
-}
-
-export function getPathForPrivateRoom(roomId) {
-  return `rooms/${roomId}/media`;
-}
-
-export function getRoomIdFromPrivateStoragePath(path) {
-  const match = path.match(INTERNAL_PRIVATE_STORAGE_PATH_PATTERN);
+export function tryGetRoomIdFromStoragePath(path) {
+  const match = path.match(ROOM_MEDIA_STORAGE_PATH_PATTERN);
   return match ? match[1] : null;
 }
 
-export function componseUniqueFileName(fileName, parentPath = null) {
-  const id = uniqueId.create();
-  const extension = getResourceExtension(fileName);
-  const baseName = fileName.substr(0, fileName.length - extension.length);
-  const slugifiedBaseName = slugify(baseName);
-  const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
-  const newFileName = `${uniqueBaseName}.${extension}`;
-  return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
-}
-
-export function composeHumanReadableDisplayName({ cdnObject, t }) {
-  if (cdnObject.type === CDN_OBJECT_TYPE.file || cdnObject.displayName === getPublicRootPath()) {
-    return cdnObject.displayName;
-  }
-
-  if (!cdnObject.documentMetadata) {
-    return `${t('common:unknownDocument')} [${cdnObject.displayName}]`;
-  }
-
-  return cdnObject.documentMetadata.isAccessibleToUser
-    ? `${cdnObject.documentMetadata.title} [${cdnObject.displayName}]`
-    : `${t('common:privateDocument')} [${cdnObject.displayName}]`;
+export function createUniqueStorageFileName(fileName, generateId = uniqueId.create) {
+  const { baseName, extension } = urlUtils.splitAtExtension(fileName);
+  const basenameWithId = [slugify(baseName), generateId()].filter(x => x).join('-');
+  return `${basenameWithId}${extension.toLowerCase()}`;
 }

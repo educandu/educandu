@@ -13,7 +13,7 @@ describe('video-info', () => {
       const input = {
         sourceUrl: '',
         posterImage: {},
-        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://room-media/12345/my-file.pdf)'
       };
       const result = sut.redactContent(input, '67890');
       expect(result.copyrightNotice).toBe('[Click me]()');
@@ -21,17 +21,7 @@ describe('video-info', () => {
 
     it('redacts the video source url', () => {
       const input = {
-        sourceUrl: 'cdn://rooms/12345/media/my-video.mp4',
-        posterImage: {},
-        copyrightNotice: ''
-      };
-      const result = sut.redactContent(input, '67890');
-      expect(result.sourceUrl).toBe('');
-    });
-
-    it('redacts the video source url', () => {
-      const input = {
-        sourceUrl: 'cdn://rooms/12345/media/my-video.mp4',
+        sourceUrl: 'cdn://room-media/12345/my-video.mp4',
         posterImage: {},
         copyrightNotice: ''
       };
@@ -43,7 +33,7 @@ describe('video-info', () => {
       const input = {
         sourceUrl: 'https://somewhere-over-the-rainbow.com/my-video.mp4',
         posterImage: {
-          sourceUrl: 'cdn://rooms/12345/media/my-image.jpg'
+          sourceUrl: 'cdn://room-media/12345/my-image.jpg'
         },
         copyrightNotice: ''
       };
@@ -53,11 +43,11 @@ describe('video-info', () => {
 
     it('leaves accessible paths intact', () => {
       const input = {
-        sourceUrl: 'cdn://rooms/12345/media/my-video.mp4',
+        sourceUrl: 'cdn://room-media/12345/my-video.mp4',
         posterImage: {
-          sourceUrl: 'cdn://rooms/12345/media/my-image.jpg'
+          sourceUrl: 'cdn://room-media/12345/my-image.jpg'
         },
-        copyrightNotice: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
+        copyrightNotice: '[Click me](cdn://room-media/12345/my-file.pdf)'
       };
       const result = sut.redactContent(input, '12345');
       expect(result).toStrictEqual(input);
@@ -69,9 +59,9 @@ describe('video-info', () => {
       const result = sut.getCdnResources({
         sourceUrl: '',
         posterImage: {},
-        copyrightNotice: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
+        copyrightNotice: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)'
       });
-      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
     });
 
     it('returns empty list for a YouTube resource', () => {
@@ -103,24 +93,24 @@ describe('video-info', () => {
 
     it('returns a list with the url for an internal resource', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://media/some-video.mp4',
+        sourceUrl: 'cdn://document-media/some-video.mp4',
         posterImage: {},
         copyrightNotice: ''
       });
-      expect(result).toEqual(['cdn://media/some-video.mp4']);
+      expect(result).toEqual(['cdn://document-media/some-video.mp4']);
     });
 
     it('returns a list with the url for an internal resource with an internal poster image resource', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://media/some-video.mp4',
+        sourceUrl: 'cdn://document-media/some-video.mp4',
         posterImage: {
-          sourceUrl: 'cdn://media/some-image.jpeg'
+          sourceUrl: 'cdn://document-media/some-image.jpeg'
         },
         copyrightNotice: ''
       });
       expect(result).toEqual([
-        'cdn://media/some-video.mp4',
-        'cdn://media/some-image.jpeg'
+        'cdn://document-media/some-video.mp4',
+        'cdn://document-media/some-image.jpeg'
       ]);
     });
   });

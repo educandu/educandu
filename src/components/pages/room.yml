@@ -1,57 +1,58 @@
-exclusiveDocumentsSubtitle:
-  en: Exclusive documents
-  de: exklusive Dokumente
-collaborativeDocumentsSubtitle:
-  en: Collaborative documents
-  de: kollaborative Dokumente
-expires:
-  en: Invitation expires on
-  de: Einladung läuft ab am
-roomMembersHeader:
-  en: Room members ({count})
-  de: Raummitglieder ({count})
-invitationsHeader:
-  en: Outstanding invitations ({count})
-  de: Ausstehende Einladungen ({count})
-documentsTabTitle:
-  en: Documents
-  de: Dokumente
-membersTabTitle:
-  en: Room members
-  de: Raummitglieder
-settingsTabTitle:
-  en: Settings
-  de: Einstellungen
-documentsPlaceholder:
-  en: The room does not contain any documents
-  de: Der Raum enthält keine Dokumente
-thisWeek:
-  en: This week
-  de: Diese Woche
-deleteRoomButton:
-  en: Delete room
-  de: Raum löschen
-updateRoomCardTitle:
-  en: Update room metadata
-  de: Raum-Metadaten aktualisieren
-updateRoomSuccessMessage:
-  en: The room metadata was updated successfully.
-  de: Die Raum-Metadaten wurden erfolgreich aktualisiert.
-roomDangerZoneCardTitle:
-  en: Danger zone
-  de: Gefahrenzone
-deleteRoomTitle:
-  en: Delete this room
-  de: Diesen Raum löschen
-deleteRoomDescription:
-  en: All room data and resources will be deleted.
-  de: Alle Raum-Daten und -Ressourcen werden gelöscht.
-removeMember:
-  en: Remove member
-  de: Mitglied entfernen
-revokeInvitation:
-  en: Revoke invitation
-  de: Einladung widerrufen
-cancelRoomMembership:
-  en: Cancel room membership
-  de: Raum-Mitgliedschaft beenden
+room:
+  exclusiveDocumentsSubtitle:
+    en: Exclusive documents
+    de: exklusive Dokumente
+  collaborativeDocumentsSubtitle:
+    en: Collaborative documents
+    de: kollaborative Dokumente
+  documentsTabTitle:
+    en: Documents ({count})
+    de: Dokumente ({count})
+  membersTabTitle:
+    en: Members ({count})
+    de: Mitglieder ({count})
+  settingsTabTitle:
+    en: Settings
+    de: Einstellungen
+  documentsPlaceholder:
+    en: The room does not contain any documents
+    de: Der Raum enthält keine Dokumente
+  thisWeek:
+    en: This week
+    de: Diese Woche
+  deleteRoomButton:
+    en: Delete room
+    de: Raum löschen
+  roomMetadataHeadline:
+    en: Room metadata
+    de: Raum-Metadaten
+  deleteRoomTitle:
+    en: Delete this room
+    de: Diesen Raum löschen
+  deleteRoomDescription:
+    en: All room data and resources will be deleted.
+    de: Alle Raum-Daten und -Ressourcen werden gelöscht.
+  removeMember:
+    en: Remove member
+    de: Mitglied entfernen
+  revokeInvitation:
+    en: Revoke invitation
+    de: Einladung widerrufen
+  cancelRoomMembership:
+    en: Cancel room membership
+    de: Raum-Mitgliedschaft beenden
+  invitedOn:
+    en: Invited on
+    de: Eingeladen am
+  expiresOn:
+    en: Expires on
+    de: Läuft ab am
+  memberSince:
+    en: Member since
+    de: Mitglied seit
+  inviteMembersButton:
+    en: Invite members
+    de: Mitglieder einladen
+  pendingInvitation:
+    en: Pending invitation
+    de: Ausstehende Einladung

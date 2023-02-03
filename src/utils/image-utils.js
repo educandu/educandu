@@ -1,16 +1,16 @@
-export const preloadImage = url => {
+export const preloadImage = (url, minAcceptedWidth = 0) => {
   if (!url) {
     return Promise.resolve(false);
   }
 
-  const element = window.document.createElement('img');
+  const element = new Image();
   element.style.display = 'none';
   element.src = url;
 
   const promise = new Promise(resolve => {
     element.onload = () => {
       element.remove();
-      resolve(true);
+      resolve(element.naturalWidth >= minAcceptedWidth);
     };
     element.onerror = () => {
       element.remove();

@@ -1,14 +1,14 @@
-import { slugValidationPattern, passwordValidationPattern, minPasswordLength, tagValidationPattern, emailValidationPattern } from '../domain/validation-constants.js';
+import { slugValidationPattern, passwordValidationPattern, minUserPasswordLength, documentTagValidationPattern, emailValidationPattern } from '../domain/validation-constants.js';
 
 function isValidPassword(password) {
   const sanitizedPassword = (password || '').trim();
-  return sanitizedPassword.length >= minPasswordLength && passwordValidationPattern.test(sanitizedPassword);
+  return sanitizedPassword.length >= minUserPasswordLength && passwordValidationPattern.test(sanitizedPassword);
 }
 
 function isValidTag({ tag, allTags = [] }) {
   const trimmedTag = (tag || '').trim();
 
-  if (!tagValidationPattern.test(trimmedTag)) {
+  if (!documentTagValidationPattern.test(trimmedTag)) {
     return false;
   }
 

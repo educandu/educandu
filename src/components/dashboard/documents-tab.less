@@ -1,0 +1,44 @@
+.DocumentsTab {}
+
+.DocumentsTab-info {
+  .m-info-card;
+  margin-bottom: 20px;
+}
+
+.DocumentsTab-button {
+  display: block !important;
+  margin-left: auto;
+  margin-bottom: @edu-page-content-padding;
+}
+
+.DocumentsTab-documentsPanel {
+  display: grid;
+  gap: @edu-page-content-padding;
+  grid-auto-flow: row;
+}
+
+.DocumentsTab-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .m-fake-flex-gap(@edu-content-padding);
+}
+
+.DocumentsTab-textFilter {
+  max-width: 300px;
+}
+
+.DocumentsTab-counter {
+  display: flex;
+  justify-content: flex-end;
+  font-size: @edu-font-size-sm;
+  margin-bottom: @edu-content-padding;
+}
+
+.DocumentsTab-documents {
+  .m-card-wrapper-wide;
+}
+
+.DocumentsTab-pagination {
+  margin-left: auto;
+}

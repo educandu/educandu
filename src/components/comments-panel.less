@@ -12,7 +12,19 @@
   }
 }
 
+.CommentsPanel-topicHeader {
+  display: flex;
+  align-items: center;
+}
+
+.CommentsPanel-topicInputPrefix {
+  margin-right: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 .CommentsPanel-topicInput {
+  width: 100%;
   padding: 5px 0;
 
   &.CommentsPanel-topicInput--edit {
@@ -33,11 +45,7 @@
 .CommentsPanel-metadata {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-}
-
-.CommentsPanel-author {
-  font-weight: bold;
+  font-size: @edu-font-size-sm;
 }
 
 .CommentsPanel-date {
@@ -61,10 +69,14 @@
   right: -20px;
 }
 
-.CommentsPanel-addButton {
+.CommentsPanel-postCommentButton {
   display: flex !important;
   margin-top: 20px;
   margin-left: auto;
+}
+
+.CommentsPanel-newTopicButton {
+  margin-top: 20px;
 }
 
 .CommentsPanel-editTopicButtonsGroup {

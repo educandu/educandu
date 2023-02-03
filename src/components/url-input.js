@@ -9,14 +9,17 @@ import { SOURCE_TYPE } from '../domain/constants.js';
 import PublicIcon from './icons/general/public-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
+import { analyzeMediaUrl } from '../utils/media-utils.js';
+import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
-import { getSourceType, getPortableUrl } from '../utils/source-utils.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
-import WikimediaCommonsIcon from './icons/wikimedia-commons/wikimedia-commons-icon.js';
+import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
 
-function UrlInput({ value, allowedSourceTypes, onChange }) {
+function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
+
+  const unsecureUrl = value && value.startsWith('http://');
 
   const sourceType = useMemo(() => {
     const newSourceType = getSourceType({ url: value, cdnRootUrl: clientConfig.cdnRootUrl });
@@ -29,54 +32,82 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
         return null;
       case SOURCE_TYPE.youtube:
         return <YoutubeOutlined />;
-      case SOURCE_TYPE.wikimediaCommons:
-        return <WikimediaCommonsIcon />;
-      case SOURCE_TYPE.internalPublic:
+      case SOURCE_TYPE.wikimedia:
+        return <WikimediaIcon />;
+      case SOURCE_TYPE.documentMedia:
         return <PublicIcon />;
-      case SOURCE_TYPE.internalPrivate:
+      case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:
-        return <GlobalOutlined />;
+        return unsecureUrl ? <WarningOutlined /> : <GlobalOutlined />;
       default:
         return <WarningOutlined />;
     }
-  }, [sourceType]);
+  }, [sourceType, unsecureUrl]);
 
   const handleInputValueChange = newValue => {
-    onChange(getPortableUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl }));
+    const accessibleUrl = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    const { sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
+
+    const portableUrl = getPortableUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    onChange(portableUrl);
   };
 
   const renderInputPrefix = () => {
     const tooltipTitle = `${t('common:source')}: ${t(`tooltip_${sourceType}`)}`;
+    const classes = classNames(
+      'UrlInput-prefix',
+      { 'UrlInput-prefix--error': sourceType === SOURCE_TYPE.unsupported },
+      { 'UrlInput-prefix--warning': unsecureUrl }
+    );
+
     return (
       <Tooltip title={tooltipTitle}>
-        <div className={classNames('UrlInput-prefix', { 'UrlInput-prefix--error': sourceType === SOURCE_TYPE.unsupported })}>
+        <div className={classes}>
           {inputPrefixIcon}
         </div>
       </Tooltip>
     );
   };
 
+  const classes = classNames(
+    'UrlInput',
+    'u-input-and-button',
+    { 'UrlInput--warning': unsecureUrl }
+  );
+
   return (
-    <div className="UrlInput u-input-and-button">
+    <div className={classes}>
       <DebouncedInput
         value={value}
+        disabled={disabled}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
         />
-      <ResourcePicker url={value} onUrlChange={handleInputValueChange} />
+      <ResourcePicker
+        url={value}
+        disabled={disabled}
+        onUrlChange={handleInputValueChange}
+        />
+      {!!unsecureUrl && (
+        <div className="UrlInput-warning">{t('unsecureUrl')}</div>
+      )}
     </div>
   );
 }
 
 UrlInput.propTypes = {
   allowedSourceTypes: PropTypes.arrayOf(PropTypes.string),
+  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string
 };
 
 UrlInput.defaultProps = {
   allowedSourceTypes: Object.values(SOURCE_TYPE),
+  disabled: false,
   value: ''
 };
 

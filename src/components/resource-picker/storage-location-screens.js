@@ -14,9 +14,8 @@ import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import { useSetStorageLocation, useStorage } from '../storage-context.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
-import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../../utils/storage-utils.js';
 
 const SCREEN = {
   default: 'default',
@@ -32,18 +31,15 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
-  const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
+  const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
-  const [parentDirectory, setParentDirectory] = useState(null);
-  const [currentDirectory, setCurrentDirectory] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
-  const [contentFetchingProps, setContentFetchingProps] = useState({ searchTerm: '', currentDirectoryPath: null });
 
   const storageLocation = locations.find(loc => loc.type === storageLocationType);
 
@@ -51,45 +47,31 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
-  const fetchStorageContent = useCallback(async (searchTerm, parentPath) => {
-    if (!storageLocation || !parentPath || !isMounted.current) {
+  const displayedFiles = useMemo(() => {
+    return files.filter(file => file.displayName.toLowerCase().includes(filterText.toLowerCase()));
+  }, [filterText, files]);
+
+  const fetchStorageContent = useCallback(async () => {
+    if (!storageLocation) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects({
-        searchTerm: searchTerm || null,
-        parentPath: searchTerm ? storageLocation.rootPath : parentPath
-      });
+      const result = await storageApiClient.getCdnObjects({ parentPath: storageLocation.path });
 
-      if (!isMounted.current) {
-        return;
-      }
-
-      setParentDirectory(result.parentDirectory);
-      setCurrentDirectory(result.currentDirectory);
       setFiles(result.objects);
 
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-      if (err.status === 404 && !searchTerm) {
-        setContentFetchingProps({ searchTerm: '', currentDirectoryPath: storageLocation.homePath });
-      } else {
-        message.error(err.message);
-      }
+      message.error(err.message);
     }
-  }, [storageLocation, storageApiClient, isMounted]);
+  }, [storageLocation, storageApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
     setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
-  };
-
-  const handleDirectoryClick = newFile => {
-    setIsLoading(true);
-    setContentFetchingProps({ searchTerm: '', currentDirectoryPath: newFile.path });
   };
 
   const handleFileDoubleClick = newFile => {
@@ -124,17 +106,18 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
 
   const handleFilesUploadScreenBackClick = async () => {
     popScreen();
+    setFilterText('');
     setUploadQueue([]);
     setCurrentEditedFileIndex(-1);
-    await fetchStorageContent(contentFetchingProps.searchTerm, contentFetchingProps.currentDirectoryPath);
+    await fetchStorageContent();
   };
 
   const handleFilesDropped = fs => {
     setUploadQueue(fs.map(f => ({ file: f, isPristine: true })));
   };
 
-  const handleSearchTermChange = newSearchTerm => {
-    setContentFetchingProps(prevState => ({ ...prevState, searchTerm: newSearchTerm }));
+  const handleFilterTextChange = value => {
+    setFilterText(value);
   };
 
   const handleEditFileClick = fileIndex => {
@@ -149,7 +132,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
 
   useEffect(() => {
     const checkPreconditions = () => {
-      return storageLocation.type === STORAGE_LOCATION_TYPE.public
+      return storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia
         ? new Promise(resolve => {
           if (!getCookie(uploadLiabilityCookieName)) {
             confirmPublicUploadLiability(t, () => {
@@ -185,49 +168,28 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
       return;
     }
 
-    const previouslyHighlightedFileStillExists = files.some(file => file.portableUrl === highlightedFile.portableUrl);
+    const previouslyHighlightedFileStillExists = displayedFiles.some(file => file.portableUrl === highlightedFile.portableUrl);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
-  }, [screen, contentFetchingProps.searchTerm, highlightedFile, files]);
+  }, [screen, highlightedFile, displayedFiles]);
 
   useEffect(() => {
-    if (!files.length || !showInitialFileHighlighting) {
+    if (!displayedFiles.length || !showInitialFileHighlighting) {
       return;
     }
 
     const initialResourceName = getResourceFullName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = files.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = displayedFiles.find(file => file.displayName === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
-  }, [initialUrl, showInitialFileHighlighting, files]);
+  }, [initialUrl, showInitialFileHighlighting, displayedFiles]);
 
   useEffect(() => {
-    const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
-    const initialResourceParentDirectoryPath = getParentPathForStorageLocationPath(initialResourcePath);
-    const canUseInitialResourceParentDirectoryPath = storageLocation?.rootPath && initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath);
-    const newPath = canUseInitialResourceParentDirectoryPath ? initialResourceParentDirectoryPath : storageLocation?.homePath || '';
-    setContentFetchingProps(prevState => ({ ...prevState, currentDirectoryPath: newPath }));
-  }, [initialUrl, storageLocation?.homePath, storageLocation?.rootPath]);
-
-  useEffect(() => {
-    setFiles([]);
-    fetchStorageContent(contentFetchingProps.searchTerm, contentFetchingProps.currentDirectoryPath);
-  }, [fetchStorageContent, contentFetchingProps]);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  const handleNavigateToParent = () => {
-    const newCurrentDirectoryPath = getParentPathForStorageLocationPath(currentDirectory.path);
-    setContentFetchingProps({ searchTerm: '', currentDirectoryPath: newCurrentDirectoryPath });
-  };
+    fetchStorageContent();
+  }, [fetchStorageContent]);
 
   if (!storageLocation) {
     return null;
@@ -237,11 +199,9 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
     <Fragment>
       {screen === SCREEN.default && (
         <StorageLocation
-          files={files}
+          files={displayedFiles}
           isLoading={isLoading}
-          searchTerm={contentFetchingProps.searchTerm}
-          currentDirectory={currentDirectory}
-          parentDirectory={parentDirectory}
+          filterText={filterText}
           highlightedFile={highlightedFile}
           storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
@@ -250,11 +210,9 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
           onCancelClick={onCancel}
           onDeleteFileClick={handleDeleteFileClick}
           onPreviewFileClick={handlePreviewFileClick}
-          onSearchTermChange={handleSearchTermChange}
+          onFilterTextChange={handleFilterTextChange}
           onFilesViewerDisplayChange={handleFilesViewerDisplayChange}
-          onNavigateToParent={handleNavigateToParent}
           onFilesDropped={handleFilesDropped}
-          onDirectoryClick={handleDirectoryClick}
           onFileDoubleClick={handleFileDoubleClick}
           />
       )}
@@ -271,7 +229,6 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
       {screen === SCREEN.filesUpload && (
         <FilesUploadScreen
           uploadQueue={uploadQueue}
-          directory={currentDirectory}
           storageLocation={storageLocation}
           onCancelClick={onCancel}
           onEditFileClick={handleEditFileClick}
@@ -296,7 +253,7 @@ StorageLocationScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
-  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]).isRequired
+  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
 };
 
 StorageLocationScreens.defaultProps = {

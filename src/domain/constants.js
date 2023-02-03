@@ -23,10 +23,13 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
   document: 'document'
 };
 
-export const FEATURE_TOGGLES = {};
+export const FEATURE_TOGGLES = {
+  shibbolethLoginForm: 'shibbolethLoginForm'
+};
 
 export const ROOM_USER_ROLE = {
   owner: 'owner',
+  ownerOrMember: 'ownerOrMember',
   ownerOrCollaborator: 'ownerOrCollaborator'
 };
 
@@ -85,14 +88,6 @@ export const RESOURCE_TYPE = {
   pdf: 'pdf'
 };
 
-export const MEDIA_PLAY_STATE = {
-  initializing: 'initializing',
-  buffering: 'buffering',
-  stopped: 'stopped',
-  playing: 'playing',
-  pausing: 'pausing'
-};
-
 export const MEDIA_ASPECT_RATIO = {
   sixteenToNine: '16:9',
   fourToThree: '4:3'
@@ -101,30 +96,23 @@ export const MEDIA_ASPECT_RATIO = {
 export const MEDIA_SCREEN_MODE = {
   none: 'none',
   audio: 'audio',
-  video: 'video',
-  preview: 'preview',
-  overlay: 'overlay'
+  video: 'video'
 };
 
 export const SOURCE_TYPE = {
   none: 'none',
   youtube: 'youtube',
   external: 'external',
-  internalPublic: 'internal-public',
-  internalPrivate: 'internal-private',
-  wikimediaCommons: 'wikimedia-commons',
+  documentMedia: 'document-media',
+  roomMedia: 'room-media',
+  wikimedia: 'wikimedia',
   unsupported: 'unsupported'
 };
 
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
-  public: 'public',
-  private: 'private'
-};
-
-export const CDN_OBJECT_TYPE = {
-  directory: 'directory',
-  file: 'file'
+  roomMedia: 'room-media',
+  documentMedia: 'document-media'
 };
 
 export const VERTICAL_ALIGNMENT = {
@@ -151,14 +139,32 @@ export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
 };
 
 export const FORM_ITEM_LAYOUT = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 14 }
+  labelCol: {
+    sm: { span: 6, offset: 0 },
+    md: { span: 5, offset: 1 },
+    lg: { span: 4, offset: 2 }
+  },
+  wrapperCol: {
+    sm: { span: 17 },
+    md: { span: 16 },
+    lg: { span: 15 }
+  }
 };
 
-export const TAIL_FORM_ITEM_LAYOUT = {
+export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
   wrapperCol: {
-    xs: { span: 18, offset: 0 },
-    sm: { span: 14, offset: 4 }
+    sm: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.sm.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.sm.span + FORM_ITEM_LAYOUT.labelCol.sm.offset
+    },
+    md: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.md.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.md.span + FORM_ITEM_LAYOUT.labelCol.md.offset
+    },
+    lg: {
+      span: FORM_ITEM_LAYOUT.wrapperCol.lg.span,
+      offset: FORM_ITEM_LAYOUT.labelCol.lg.span + FORM_ITEM_LAYOUT.labelCol.lg.offset
+    }
   }
 };
 
@@ -167,11 +173,7 @@ export const FORM_ITEM_LAYOUT_VERTICAL = {
   wrapperCol: { span: 24 }
 };
 
-export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
-  wrapperCol: { span: 14, offset: 4 }
-};
-
-export const DOCUMENT_PARTIAL_SEARCH_THRESHOLD = 3;
+export const TAG_PARTIAL_SEARCH_THRESHOLD = 3;
 
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 
@@ -193,22 +195,19 @@ export const IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES = 1.5 * 
 export const STORAGE_DIRECTORY_MARKER_NAME = '__DIRMARKER__';
 export const LIMIT_PER_STORAGE_UPLOAD_IN_BYTES = 250 * 1000 * 1000;
 
-export const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
-export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
+export const PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES = 5;
+export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES = 5;
 export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
-export const FAILED_LOGIN_ATTEMPTS_LIMIT = 5;
-export const FAILED_LOGIN_ATTEMPTS_TIME_WINDOW_IN_MS = 15 * 60 * 1000;
-
-export const PASSWORD_RESET_REQUEST_LIMIT = 10;
-export const PASSWORD_RESET_REQUEST_TIME_WINDOW_IN_MS = 60 * 60 * 1000;
+export const ANTI_BRUTE_FORCE_MAX_REQUESTS = 60;
+export const ANTI_BRUTE_FORCE_EXPIRES_IN_MS = 60 * 60 * 1000;
 
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
 
-export const INTERNAL_PUBLIC_STORAGE_PATH_PATTERN = /^media(\/.*)?$/;
-export const INTERNAL_PRIVATE_STORAGE_PATH_PATTERN = /^rooms\/([^/]+)\/media(\/.*)?$/;
+export const DOCUMENT_MEDIA_STORAGE_PATH_PATTERN = /^document-media(\/.*)?$/;
+export const ROOM_MEDIA_STORAGE_PATH_PATTERN = /^room-media\/([^/]+)(\/.*)?$/;
 
 export const DEFAULT_COLOR_SWATCHES = [
   ['#fffafa', '#ffd700', '#9ef083', '#7fff00', '#228b22', '#4582b4', '#ff0000', '#ca1515', '#800000', '#575757'],

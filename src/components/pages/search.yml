@@ -1,17 +1,15 @@
-headlineSearching:
-  en: Searching ...
-  de: Suchen ...
-headlineDocumentsFound:
-  en: |
-    {count, plural, =1 {# document} other {# documents}} found
-  de: |
-    {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
-filterPlaceholder:
-  en: Filter by tags
-  de: Nach Tags filtern
-deselectTags:
-  en: Remove all tags
-  de: Alle Tags löschen
-sorting:
-  en: Sorting
-  de: Sortierung
+search:
+  searching:
+    en: Searching ...
+    de: Suchen ...
+  documentsFound:
+    en: |
+      {count, plural, =1 {# document} other {# documents}} found
+    de: |
+      {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
+  deselectTags:
+    en: Remove all
+    de: Alle löschen
+  sorting:
+    en: Sorting
+    de: Sortierung

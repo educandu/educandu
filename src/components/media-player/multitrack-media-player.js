@@ -1,302 +1,245 @@
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { useService } from '../container-context.js';
-import { remountWhen } from '../../ui/react-helper.js';
-import { useDedupedCallback } from '../../ui/hooks.js';
-import HttpClient from '../../api-clients/http-client.js';
-import React, { useEffect, useRef, useState } from 'react';
-import ClientConfig from '../../bootstrap/client-config.js';
+import TrackMixerDisplay from './track-mixer-display.js';
 import MediaPlayerControls from './media-player-controls.js';
-import MediaPlayerTrackGroup from './media-player-track-group.js';
-import MediaPlayerTrackMixer from './media-player-track-mixer.js';
-import { isInternalSourceType } from '../../utils/source-utils.js';
-import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import {
-  MEDIA_ASPECT_RATIO,
-  MEDIA_PLAY_STATE,
-  MEDIA_SCREEN_MODE,
-  MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS
-} from '../../domain/constants.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
-const SOURCE_TYPE = {
-  none: 'none',
-  lazy: 'lazy',
-  eager: 'eager'
-};
-
-const LAZY_LOAD_COMPLETED_ACTION = {
-  none: 'none',
-  play: 'play',
-  download: 'download'
-};
-
-const getSourceType = sources => {
-  if (!sources) {
-    return SOURCE_TYPE.none;
+const sourcesCanBeConsideredEqual = (source1, source2) => {
+  if (!source1 || !source2 || source1 === source2) {
+    return source1 === source2;
   }
 
-  if (typeof sources === 'function') {
-    return SOURCE_TYPE.lazy;
-  }
-
-  return SOURCE_TYPE.eager;
-};
-
-const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
-  const info = { currentPartIndex: -1, isPartEndReached: false };
-
-  let partIndex = 0;
-  let shouldContinueSearching = !!durationInMilliseconds;
-  while (partIndex < parts.length && shouldContinueSearching) {
-    const isLastPart = partIndex === parts.length - 1;
-    const startTimecode = parts[partIndex].startPosition * durationInMilliseconds;
-    const endTimecode = (parts[partIndex + 1]?.startPosition || 1) * durationInMilliseconds;
-    const millisecondsBeforeOrAfterEnd = Math.abs(endTimecode - playedMilliseconds);
-
-    // The part end event for the last part will be triggered by `handleEndReached`, so we exclude it here:
-    if (!isLastPart && millisecondsBeforeOrAfterEnd <= MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS) {
-      info.currentPartIndex = partIndex;
-      info.isPartEndReached = true;
-      shouldContinueSearching = false;
-    } else if (startTimecode < playedMilliseconds) {
-      info.currentPartIndex = partIndex;
-    } else {
-      shouldContinueSearching = false;
-    }
-
-    partIndex += 1;
-  }
-
-  return info;
+  return source1.mainTrack.sourceUrl === source2.mainTrack.sourceUrl
+    && source1.mainTrack.aspectRatio === source2.mainTrack.aspectRatio
+    && source1.mainTrack.playbackRange[0] === source2.mainTrack.playbackRange[0]
+    && source1.mainTrack.playbackRange[1] === source2.mainTrack.playbackRange[1]
+    && source1.mainTrack.showVideo === source2.mainTrack.showVideo
+    && source1.secondaryTracks.length === source2.secondaryTracks.length
+    && source1.secondaryTracks.every((track, index) => track.sourceUrl === source2.secondaryTracks[index].sourceUrl);
 };
 
 function MultitrackMediaPlayer({
-  sources,
-  aspectRatio,
-  screenMode,
-  screenWidth,
-  screenOverlay,
-  showTrackMixer,
-  canDownload,
-  downloadFileName,
-  posterImageUrl,
-  extraCustomContent,
-  volumePresetOptions,
-  selectedVolumePreset,
-  onSelectedVolumePresetChange,
-  onPartEndReached,
-  onEndReached,
-  onInvalidStateReached,
-  onProgress,
-  onPlayStateChange,
-  onPlayingPartIndexChange,
-  onReady,
-  onSeek,
+  customUnderScreenContent,
+  multitrackMediaPlayerRef,
   parts,
-  mediaPlayerRef
+  posterImageUrl,
+  screenWidth,
+  selectedVolumePresetIndex,
+  showTrackMixer,
+  sources,
+  volumePresets,
+  onEnded,
+  onPause,
+  onPlay
 }) {
-  const sourceType = getSourceType(sources);
-
-  const trackRef = useRef();
-  const [volume, setVolume] = useState(1);
-  const httpClient = useService(HttpClient);
-  const clientConfig = useService(ClientConfig);
+  const [mixVolume, setMixVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [trackStates, setTrackStates] = useState([]);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const { t } = useTranslation('multitrackMediaPlayer');
+  const [lastSources, setLastSources] = useState(null);
+  const [trackVolumes, setTrackVolumes] = useState([]);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
-  const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
-  const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
-  const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
-  const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
-  const [loadedSources, setLoadedSources] = useState(sourceType === SOURCE_TYPE.eager ? sources : null);
-  const [lazyLoadCompletedAction, setLazyLoadCompletedAction] = useState(LAZY_LOAD_COMPLETED_ACTION.none);
+  const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
-  const triggerReadyIfNeeded = useDedupedCallback(onReady);
-  const triggerPlayStateChangeIfNeeded = useDedupedCallback(onPlayStateChange);
+  const isReady = useMemo(() => trackStates.every(ts => ts.isReady), [trackStates]);
+  const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
 
-  useEffect(() => {
-    switch (sourceType) {
-      case SOURCE_TYPE.eager:
-        setLoadedSources(sources);
-        break;
-      case SOURCE_TYPE.lazy:
-        setLoadedSources(null);
-        setDurationInMilliseconds(0);
-        setLastReachedPartEndIndex(-1);
-        setPlayState(MEDIA_PLAY_STATE.initializing);
-        setLazyLoadCompletedAction(LAZY_LOAD_COMPLETED_ACTION.none);
-        // The loaded sources will be set (or re-set) after lazy loading is triggered on the current sources
-        break;
-      case SOURCE_TYPE.none:
-        setLoadedSources(null);
-        break;
-      default:
-        throw new Error(`Invalid source type '${sourceType}'`);
+  const trackRefs = useRef({});
+  const { t } = useTranslation('multitrackMediaPlayer');
+
+  const getTrackRef = key => {
+    let trackRef = trackRefs.current[key];
+    if (!trackRef) {
+      trackRef = { current: null };
+      trackRefs.current[key] = trackRef;
     }
-  }, [sources, sourceType]);
+    return trackRef;
+  };
 
   useEffect(() => {
+    if (sourcesCanBeConsideredEqual(sources, lastSources)) {
+      return;
+    }
+
+    const newStates = [
+      {
+        key: uniqueId.create(),
+        name: sources.mainTrack.name,
+        isMainTrack: true,
+        isReady: false,
+        durationInMilliseconds: 0,
+        sourceUrl: sources.mainTrack.sourceUrl,
+        aspectRatio: sources.mainTrack.aspectRatio,
+        playbackRange: sources.mainTrack.playbackRange,
+        screenMode: sources.mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none
+      },
+      ...sources.secondaryTracks.map(secondaryTrack => ({
+        key: uniqueId.create(),
+        name: secondaryTrack.name,
+        isMainTrack: false,
+        isReady: false,
+        durationInMilliseconds: 0,
+        sourceUrl: secondaryTrack.sourceUrl,
+        aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+        playbackRange: [0, 1],
+        screenMode: MEDIA_SCREEN_MODE.none
+      }))
+    ];
+
+    setPlaybackRate(1);
+    setLastSources(sources);
+    setTrackStates(newStates);
+  }, [sources, lastSources]);
+
+  useEffect(() => {
+    const currentKeys = trackStates.map(trackState => trackState.key);
+    trackRefs.current = Object.fromEntries(Object.entries(trackRefs.current).filter(([key]) => currentKeys.contains(key)));
+  }, [trackStates]);
+
+  useEffect(() => {
+    setTrackVolumes([volumePresets[appliedSelectedVolumePresetIndex].mainTrack, ...volumePresets[appliedSelectedVolumePresetIndex].secondaryTracks]);
+  }, [volumePresets, appliedSelectedVolumePresetIndex]);
+
+  const triggerPlayMainTrack = () => {
+    const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
+    getTrackRef(mainTrack.key).current.play();
+  };
+
+  const triggerSeekToPartAll = partIndex => {
+    const mainDuration = trackStates.find(ts => ts.isMainTrack).durationInMilliseconds;
+    const partStartTimecode = (parts[partIndex]?.startPosition || 0) * mainDuration;
+    trackStates.forEach(trackState => {
+      getTrackRef(trackState.key).current.seekToTimecode(partStartTimecode);
+    });
+  };
+
+  const triggerPlayAll = () => {
+    trackStates.forEach(trackState => {
+      if (trackState.isMainTrack || playedMilliseconds < trackState.durationInMilliseconds) {
+        getTrackRef(trackState.key).current.play();
+      }
+    });
+  };
+
+  const triggerPauseAll = () => {
+    Object.values(trackRefs.current).forEach(trackRef => trackRef.current.pause());
+  };
+
+  const triggerStopAllSecondaryTracks = () => {
+    trackStates.forEach(trackState => {
+      if (!trackState.isMainTrack) {
+        getTrackRef(trackState.key).current.stop();
+      }
+    });
+  };
+
+  const handleReady = key => {
+    setTrackStates(previousTrackStates => {
+      const newTrackStates = cloneDeep(previousTrackStates);
+      const trackState = newTrackStates.find(ts => ts.key === key);
+      trackState.isReady = true;
+      return newTrackStates;
+    });
+  };
+
+  const handleDuration = (newDurationInMilliseconds, key) => {
+    setTrackStates(previousTrackStates => {
+      const newTrackStates = cloneDeep(previousTrackStates);
+      const trackState = newTrackStates.find(ts => ts.key === key);
+      trackState.durationInMilliseconds = newDurationInMilliseconds;
+      return newTrackStates;
+    });
+  };
+
+  const handleMainTrackProgress = newProgressInMilliseconds => {
+    setPlayedMilliseconds(newProgressInMilliseconds);
+
     if (isSeeking) {
-      return;
-    }
-
-    const { currentPartIndex, isPartEndReached } = getCurrentPositionInfo(parts, durationInMilliseconds, playedMilliseconds);
-
-    if (currentPartIndex !== lastPlayedPartIndex) {
-      onPlayingPartIndexChange(currentPartIndex);
-      setLastPlayedPartIndex(currentPartIndex);
-    }
-
-    if (isPartEndReached && currentPartIndex !== lastReachedPartEndIndex) {
-      onPartEndReached(currentPartIndex);
-      setLastReachedPartEndIndex(currentPartIndex);
-    }
-  }, [isSeeking, parts, durationInMilliseconds, playedMilliseconds, lastPlayedPartIndex, lastReachedPartEndIndex, onPlayingPartIndexChange, onPartEndReached]);
-
-  const handleSeek = milliseconds => {
-    setLastReachedPartEndIndex(-1);
-    trackRef.current.seekToTimecode(milliseconds);
-    onSeek(milliseconds);
-  };
-
-  const lazyLoadSources = async completedAction => {
-    setLazyLoadCompletedAction(completedAction);
-    const newSources = await sources();
-    setLoadedSources(newSources);
-  };
-
-  const handlePlayClick = async () => {
-    setLastReachedPartEndIndex(-1);
-    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.play);
-      return;
-    }
-
-    trackRef.current.play();
-  };
-
-  const handlePauseClick = () => {
-    trackRef.current.pause();
-  };
-
-  const handleEndReached = () => {
-    if (!isSeeking) {
-      setLastReachedPartEndIndex(-1);
-      onPartEndReached(parts.length - 1);
-      onEndReached();
+      trackStates.forEach(trackState => {
+        if (!trackState.isMainTrack) {
+          getTrackRef(trackState.key).current.seekToTimecode(newProgressInMilliseconds);
+        }
+      });
     }
   };
 
-  const handleSeekStart = () => {
+  const handleMainTrackPlay = () => {
+    onPlay();
+    triggerPlayAll();
+    setIsPlaying(true);
+  };
+
+  const handleMainTrackPause = () => {
+    onPause();
+    triggerPauseAll();
+    setIsPlaying(false);
+  };
+
+  const handleMainTrackEnded = () => {
+    onEnded();
+    setIsPlaying(false);
+    // Stop only secondary tracks, as to not reset progress to 0.
+    // Main track is internally (at player level) paused within range, not stopped.
+    triggerStopAllSecondaryTracks();
+  };
+
+  const handleMainTrackSeekStart = () => {
     setIsSeeking(true);
   };
 
-  const handleSeekEnd = () => {
+  const handleMainTrackSeekEnd = () => {
     setIsSeeking(false);
   };
 
-  const handlePlaybackRateChange = newRate => {
-    setPlaybackRate(newRate);
+  const renderControls = () => {
+    return (
+      <div>
+        <MediaPlayerControls
+          volume={mixVolume}
+          isPlaying={isPlaying}
+          screenMode={trackStates[0]?.screenMode}
+          playedMilliseconds={playedMilliseconds}
+          durationInMilliseconds={trackStates[0]?.durationInMilliseconds || 0}
+          onVolumeChange={setMixVolume}
+          onPlayClick={triggerPlayAll}
+          onPauseClick={triggerPauseAll}
+          onPlaybackRateChange={setPlaybackRate}
+          />
+        {!!showTrackMixer && trackStates.length > 1 && (
+        <div className="MultitrackMediaPlayer-trackMixerDisplay">
+          <TrackMixerDisplay
+            tracks={trackStates}
+            volumes={trackVolumes}
+            volumePresets={volumePresets}
+            selectedVolumePresetIndex={appliedSelectedVolumePresetIndex}
+            onVolumesChange={setTrackVolumes}
+            onSelectedVolumePresetIndexChange={setInternalSelectedVolumePresetIndex}
+            />
+        </div>
+        )}
+        {!isReady && (
+          <div className="MultitrackMediaPlayer-loadingOverlay">
+            <Spin />
+          </div>
+        )}
+      </div>
+    );
   };
 
-  const handlePlayStateChange = newPlayState => {
-    setPlayState(newPlayState);
-    triggerPlayStateChangeIfNeeded(newPlayState);
+  multitrackMediaPlayerRef.current = {
+    play: triggerPlayMainTrack,
+    seekToPart: triggerSeekToPartAll
   };
 
-  const handleDownloadClick = async () => {
-    if (!loadedSources && sourceType === SOURCE_TYPE.lazy) {
-      await lazyLoadSources(LAZY_LOAD_COMPLETED_ACTION.download);
-    } else {
-      const withCredentials = isInternalSourceType({ url: loadedSources.mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-      httpClient.download(loadedSources.mainTrack.sourceUrl, downloadFileName, withCredentials);
-    }
-  };
+  const allSourcesAreSet = trackStates.every(trackState => !!trackState.sourceUrl);
 
-  const handleDuration = duration => {
-    setDurationInMilliseconds(duration);
-    triggerReadyIfNeeded();
-    switch (lazyLoadCompletedAction) {
-      case LAZY_LOAD_COMPLETED_ACTION.play:
-        handlePlayClick();
-        break;
-      case LAZY_LOAD_COMPLETED_ACTION.download:
-        handleDownloadClick();
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleMainTrackVolumeChange = newValue => {
-    setLoadedSources(oldValue => {
-      const newLoadedSources = cloneDeep(oldValue);
-      newLoadedSources.mainTrack.volume = newValue;
-      return newLoadedSources;
-    });
-  };
-
-  const handleSecondaryTrackVolumeChange = (newValue, secondaryTrackIndex) => {
-    setLoadedSources(oldValue => {
-      const newLoadedSources = cloneDeep(oldValue);
-      newLoadedSources.secondaryTracks[secondaryTrackIndex].volume = newValue;
-      return newLoadedSources;
-    });
-  };
-
-  const handleProgress = progressInMilliseconds => {
-    setPlayedMilliseconds(progressInMilliseconds);
-    onProgress(progressInMilliseconds);
-  };
-
-  mediaPlayerRef.current = {
-    play: trackRef.current?.play,
-    pause: trackRef.current?.pause,
-    stop: trackRef.current?.stop,
-    seekToPosition: position => {
-      setLastReachedPartEndIndex(-1);
-      const { trackPosition } = trackRef.current?.seekToPosition(position) || { trackPosition: 0 };
-      onSeek(trackPosition);
-    },
-    seekToTimecode: timecode => {
-      setLastReachedPartEndIndex(-1);
-      const { trackPosition } = trackRef.current?.seekToTimecode(timecode) || { trackPosition: 0 };
-      onSeek(trackPosition);
-    },
-    seekToPart: partIndex => {
-      setLastReachedPartEndIndex(partIndex - 1);
-      const { trackPosition } = trackRef.current?.seekToPosition(parts[partIndex]?.startPosition || 0) || { trackPosition: 0 };
-      onSeek(trackPosition);
-    },
-    reset: () => {
-      setLastReachedPartEndIndex(-1);
-      trackRef.current?.stop();
-      trackRef.current?.seekToPosition(0);
-      onSeek(0);
-    }
-  };
-
-  if (sourceType === SOURCE_TYPE.none) {
-    return <div className="MultitrackMediaPlayer" />;
-  }
-
-  let sourcesAvailable;
-  switch (sourceType) {
-    case SOURCE_TYPE.lazy:
-      sourcesAvailable = true;
-      break;
-    case SOURCE_TYPE.eager:
-      sourcesAvailable = loadedSources?.mainTrack.sourceUrl && loadedSources?.secondaryTracks.every(track => track.sourceUrl);
-      break;
-    case SOURCE_TYPE.none:
-    default:
-      sourcesAvailable = false;
-  }
-
-  if (!sourcesAvailable) {
+  if (!allSourcesAreSet) {
     return (
       <div className="MultitrackMediaPlayer">
         <div className="MultitrackMediaPlayer-errorMessage">{t('missingSourcesMessage')}</div>
@@ -305,138 +248,86 @@ function MultitrackMediaPlayer({
   }
 
   return (
-    <div className={classNames('MultitrackMediaPlayer', { 'MultitrackMediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
-      {!!loadedSources && (
-        <MediaPlayerTrackGroup
-          sources={loadedSources}
-          trackRef={trackRef}
-          volume={volume}
-          aspectRatio={aspectRatio}
-          screenMode={screenMode}
-          screenWidth={screenWidth}
-          screenOverlay={screenOverlay}
+    <div>
+      {trackStates.map((trackState, trackIndex) => (
+        <MediaPlayer
+          key={trackState.key}
+          aspectRatio={trackState.aspectRatio}
+          customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
+          parts={parts}
+          playbackRange={trackState.playbackRange}
           playbackRate={playbackRate}
-          onDuration={handleDuration}
-          onEndReached={handleEndReached}
-          onInvalidStateReached={onInvalidStateReached}
-          onProgress={handleProgress}
-          onPlayStateChange={handlePlayStateChange}
           posterImageUrl={posterImageUrl}
-          loadImmediately={!!loadedSources.secondaryTracks.length || sourceType === SOURCE_TYPE.lazy}
+          preload
+          mediaPlayerRef={getTrackRef(trackState.key)}
+          renderControls={trackState.isMainTrack ? renderControls : () => null}
+          renderProgressBar={trackState.isMainTrack ? null : () => null}
+          screenMode={trackState.screenMode}
+          screenWidth={screenWidth}
+          sourceUrl={trackState.sourceUrl}
+          volume={mixVolume * trackVolumes[trackIndex]}
+          onDuration={value => handleDuration(value, trackState.key)}
+          onEnded={() => trackState.isMainTrack ? handleMainTrackEnded() : null}
+          onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
+          onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
+          onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
+          onReady={() => handleReady(trackState.key)}
+          onSeekEnd={() => trackState.isMainTrack ? handleMainTrackSeekEnd() : null}
+          onSeekStart={() => trackState.isMainTrack ? handleMainTrackSeekStart() : null}
           />
-      )}
-      {!!extraCustomContent && (<div>{extraCustomContent}</div>)}
-      <MediaPlayerProgressBar
-        parts={parts}
-        onSeek={handleSeek}
-        onSeekStart={handleSeekStart}
-        onSeekEnd={handleSeekEnd}
-        playedMilliseconds={playedMilliseconds}
-        durationInMilliseconds={durationInMilliseconds}
-        />
-      <MediaPlayerControls
-        playState={playState}
-        screenMode={screenMode}
-        durationInMilliseconds={durationInMilliseconds}
-        playedMilliseconds={playedMilliseconds}
-        volume={volume}
-        onPlayClick={handlePlayClick}
-        onPauseClick={handlePauseClick}
-        onPlaybackRateChange={handlePlaybackRateChange}
-        onVolumeChange={setVolume}
-        onDownloadClick={canDownload ? handleDownloadClick : null}
-        />
-      {!!loadedSources && !!showTrackMixer && (
-        <div className="MultitrackMediaPlayer-trackMixer">
-          <MediaPlayerTrackMixer
-            mainTrack={loadedSources.mainTrack}
-            secondaryTracks={loadedSources.secondaryTracks}
-            volumePresetOptions={volumePresetOptions}
-            selectedVolumePreset={selectedVolumePreset}
-            onSelectedVolumePresetChange={onSelectedVolumePresetChange}
-            onMainTrackVolumeChange={handleMainTrackVolumeChange}
-            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
-            />
-        </div>
-      )}
+      ))}
     </div>
   );
 }
 
 MultitrackMediaPlayer.propTypes = {
-  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  canDownload: PropTypes.bool,
-  downloadFileName: PropTypes.string,
-  extraCustomContent: PropTypes.node,
-  mediaPlayerRef: PropTypes.shape({
+  customUnderScreenContent: PropTypes.node,
+  multitrackMediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
-  onEndReached: PropTypes.func,
-  onInvalidStateReached: PropTypes.func,
-  onPartEndReached: PropTypes.func,
-  onPlayStateChange: PropTypes.func,
-  onPlayingPartIndexChange: PropTypes.func,
-  onProgress: PropTypes.func,
-  onReady: PropTypes.func,
-  onSeek: PropTypes.func,
-  onSelectedVolumePresetChange: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
   })),
   posterImageUrl: PropTypes.string,
-  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  screenOverlay: PropTypes.node,
-  screenWidth: PropTypes.number,
-  selectedVolumePreset: PropTypes.number,
+  screenWidth: PropTypes.oneOf([...Array(101).keys()]),
+  selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
-  sources: PropTypes.oneOfType([
-    PropTypes.shape({
-      mainTrack: PropTypes.shape({
-        name: PropTypes.string,
-        sourceUrl: PropTypes.string,
-        volume: PropTypes.number.isRequired,
-        playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
-      }),
-      secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string,
-        sourceUrl: PropTypes.string,
-        volume: PropTypes.number.isRequired
-      }))
+  sources: PropTypes.shape({
+    mainTrack: PropTypes.shape({
+      name: PropTypes.string,
+      sourceUrl: PropTypes.string,
+      aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+      playbackRange: PropTypes.arrayOf(PropTypes.number),
+      showVideo: PropTypes.bool
     }),
-    PropTypes.func
-  ]),
-  volumePresetOptions: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string,
-    value: PropTypes.number
-  }))
+    secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      sourceUrl: PropTypes.string
+    }))
+  }).isRequired,
+  volumePresets: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    mainTrack: PropTypes.number,
+    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
+  })).isRequired,
+  onEnded: PropTypes.func,
+  onPause: PropTypes.func,
+  onPlay: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
-  aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  canDownload: false,
-  downloadFileName: null,
-  extraCustomContent: null,
-  mediaPlayerRef: {
+  customUnderScreenContent: null,
+  multitrackMediaPlayerRef: {
     current: null
   },
-  onEndReached: () => {},
-  onInvalidStateReached: () => {},
-  onPartEndReached: () => {},
-  onPlayStateChange: () => {},
-  onPlayingPartIndexChange: () => {},
-  onProgress: () => {},
-  onReady: () => {},
-  onSeek: () => {},
-  onSelectedVolumePresetChange: () => {},
-  parts: [{ startPosition: 0 }],
+  parts: [],
   posterImageUrl: null,
-  screenMode: MEDIA_SCREEN_MODE.video,
-  screenOverlay: null,
   screenWidth: 100,
-  selectedVolumePreset: -1,
+  selectedVolumePresetIndex: null,
   showTrackMixer: false,
-  sources: null,
-  volumePresetOptions: []
+  onEnded: () => {},
+  onPause: () => {},
+  onPlay: () => {}
 };
 
-export default remountWhen(MultitrackMediaPlayer, 'onInvalidStateReached');
+export default MultitrackMediaPlayer;

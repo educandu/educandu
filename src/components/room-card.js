@@ -2,11 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
+import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
-import { Button, Divider, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from './locale-context.js';
+import RoomApiClient from '../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
@@ -14,6 +17,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const isDeletedRoom = !room;
   const userAsMember = room?.members?.find(member => member.userId === user?._id);
@@ -23,21 +27,18 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
     return (
       <span className="RoomCard-owner">
         {`${t('common:owner')}: `}
-        <a href={routes.getUserUrl(room.owner?._id)}>{room.owner?.displayName}</a>
+        <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
       </span>
     );
   };
 
-  const handleButtonClick = event => {
-    if (isDeletedRoom) {
-      event.preventDefault();
-      Modal.error({
-        title: t('common:error'),
-        content: t('common:targetDeletedMessage')
-      });
-    } else {
-      window.location = routes.getRoomUrl(room._id, room.slug);
-    }
+  const handleEnterButtonClick = () => {
+    window.location = routes.getRoomUrl(room._id, room.slug);
+  };
+
+  const handleJoinButtonClick = async () => {
+    await roomApiClient.confirmInvitation({ token: invitation.token });
+    window.location = routes.getRoomUrl(invitation.room._id);
   };
 
   const roomName = isDeletedRoom ? `[${t('common:deletedRoom')}]` : room.name;
@@ -90,8 +91,18 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}><RoomJoinedIcon />{t('button')}</Button>
-      {!!invitation && <div className="RoomCard-disablingOverlay" />}
+      {!invitation && (
+        <Button className="RoomCard-button" type="primary" disabled={!!isDeletedRoom} onClick={handleEnterButtonClick}>
+          <RoomJoinedIcon />
+          {t('common:enterRoom')}
+        </Button>
+      )}
+      {!!invitation && (
+        <Button className="RoomCard-button" onClick={handleJoinButtonClick}>
+          <MailOutlined />
+          {t('joinButton')}
+        </Button>
+      )}
     </div>
   );
 }

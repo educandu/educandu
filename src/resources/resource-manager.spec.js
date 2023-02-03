@@ -1,12 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import ResourceManager from './resource-manager.js';
 
-const bundle1 = [
+const translationObjectOriginal = {
+  loginLogout: {
+    login: {
+      en: 'Log in',
+      de: 'Anmelden'
+    },
+    logout: {
+      en: 'Logout',
+      de: 'Abmelden'
+    }
+  }
+};
+
+const translationObjectOverrides = {
+  loginLogout: {
+    login: {
+      de: 'Reinspaziert'
+    },
+    logout: {
+      en: 'Say goodbye'
+    }
+  }
+};
+
+const expectedResourcesOriginal = [
   {
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      login: 'Login',
+      login: 'Log in',
       logout: 'Logout'
     }
   },
@@ -20,32 +44,13 @@ const bundle1 = [
   }
 ];
 
-const bundle2 = [
+const expectedResourcesOverriden = [
   {
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      logout: 'Say goodbye',
-      extraKey: 'Not used'
-    }
-  },
-  {
-    namespace: 'loginLogout',
-    language: 'de',
-    resources: {
-      login: 'Reinspaziert'
-    }
-  }
-];
-
-const bundle1and2merged = [
-  {
-    namespace: 'loginLogout',
-    language: 'en',
-    resources: {
-      login: 'Login',
-      logout: 'Say goodbye',
-      extraKey: 'Not used'
+      login: 'Log in',
+      logout: 'Say goodbye'
     }
   },
   {
@@ -60,27 +65,29 @@ const bundle1and2merged = [
 
 describe('resource-manager', () => {
 
-  describe('when initialized without any bundles', () => {
+  describe('when initialized without any translations', () => {
     it('should have no resources', () => {
       const sut = new ResourceManager();
-      const result = sut.getAllResourceBundles();
+      const result = sut.getResources();
       expect(result).toHaveLength(0);
     });
   });
 
-  describe('when initialized with a bundle', () => {
-    it('should have the resources of that bundle', () => {
-      const sut = new ResourceManager(bundle1);
-      const result = sut.getAllResourceBundles();
-      expect(result).toEqual(bundle1);
+  describe('when initialized with a translation object', () => {
+    it('should have the resources of that translation object', () => {
+      const sut = new ResourceManager();
+      sut.setResourcesFromTranslations([translationObjectOriginal]);
+      const result = sut.getResources();
+      expect(result).toEqual(expectedResourcesOriginal);
     });
   });
 
-  describe('when initialized with multiple bundles', () => {
-    it('should have the merged resources of those bundles', () => {
-      const sut = new ResourceManager(bundle1, bundle2);
-      const result = sut.getAllResourceBundles();
-      expect(result).toEqual(bundle1and2merged);
+  describe('when initialized with multiple translation objects', () => {
+    it('should have the merged resources of those translation objects', () => {
+      const sut = new ResourceManager();
+      sut.setResourcesFromTranslations([translationObjectOriginal, translationObjectOverrides]);
+      const result = sut.getResources();
+      expect(result).toEqual(expectedResourcesOverriden);
     });
   });
 

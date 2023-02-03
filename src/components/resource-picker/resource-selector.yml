@@ -1,9 +1,10 @@
-sourceType_internal-public:
-  en: Public storage
-  de: Öffentlicher Speicher
-sourceType_internal-private:
-  en: Private storage
-  de: Privater Speicher
-sourceType_wikimedia-commons:
-  en: Wikimedia Commons
-  de: Wikimedia Commons
+resourceSelector:
+  sourceType_document-media:
+    en: Document media
+    de: Dokument-Medien
+  sourceType_room-media:
+    en: Room media
+    de: Raum-Medien
+  sourceType_wikimedia:
+    en: Wikimedia
+    de: Wikimedia

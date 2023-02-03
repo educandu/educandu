@@ -1,45 +1,46 @@
-name:
-  en: Catalog
-  de: Katalog
-noTitle:
-  en: No title
-  de: Kein Titel
-displayMode_linkList:
-  en: link list
-  de: Link-Liste
-displayMode_imageTiles:
-  en: image tiles
-  de: Bildkacheln
-tilesPerRow:
-  en: Tiles per row
-  de: Kacheln pro Zeile
-hoverEffect:
-  en: Hover effect
-  de: Hover-Effekt
-hoverEffect_none:
-  en: No effect
-  de: Kein Effekt
-hoverEffect_colorizeZoom:
-  en: Color and zoom
-  de: Färben und Zoomen
-itemNumber:
-  en: Item {number}
-  de: Eintrag {number}
-addItem:
-  en: Add item
-  de: Eintrag hinzufügen
-linkSource:
-  en: Link source
-  de: Link-Quelle
-documentLink:
-  en: document link
-  de: Dokument-Link
-externalLink:
-  en: external link
-  de: Externer Link
-externalUrl:
-  en: external URL
-  de: Externe URL
-adoptDocumentTitle:
-  en: Adopt as title
-  de: Als Titel übernehmen
+catalog:
+  name:
+    en: Catalog
+    de: Katalog
+  noTitle:
+    en: No title
+    de: Kein Titel
+  displayMode_linkList:
+    en: link list
+    de: Link-Liste
+  displayMode_imageTiles:
+    en: image tiles
+    de: Bildkacheln
+  tilesPerRow:
+    en: Tiles per row
+    de: Kacheln pro Zeile
+  hoverEffect:
+    en: Hover effect
+    de: Hover-Effekt
+  hoverEffect_none:
+    en: No effect
+    de: Kein Effekt
+  hoverEffect_colorizeZoom:
+    en: Color and zoom
+    de: Färben und Zoomen
+  itemNumber:
+    en: Item {number}
+    de: Eintrag {number}
+  addItem:
+    en: Add item
+    de: Eintrag hinzufügen
+  linkSource:
+    en: Link source
+    de: Link-Quelle
+  documentLink:
+    en: document link
+    de: Dokument-Link
+  externalLink:
+    en: external link
+    de: Externer Link
+  externalUrl:
+    en: External URL
+    de: Externe URL
+  adoptDocumentTitle:
+    en: Use as title
+    de: Als Titel benutzen

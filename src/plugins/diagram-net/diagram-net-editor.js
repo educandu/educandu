@@ -55,7 +55,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
   const [isEditorReady, setIsEditorReady] = useState(false);
 
   const changeContent = useCallback(newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    onContentChanged({ ...content, ...newContentValues });
   }, [content, onContentChanged]);
 
   const handleDiagramChanged = useCallback((xml, data) => {
@@ -120,14 +120,14 @@ function DiagramNetEditor({ content, onContentChanged }) {
 
   return (
     <div className="DiagramNetEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         {!!image && (
           <Form.Item label={t('name')} {...FORM_ITEM_LAYOUT}>
             <img className="DiagramNetEditor-preview" src={image} />
           </Form.Item>
         )}
         <Form.Item label={image ? '\u00A0' : t('name')} {...FORM_ITEM_LAYOUT} colon={!image}>
-          <Button type="primary" size="small" onClick={handleEditClick}>{t('editExternally')}</Button>
+          <Button type="primary" onClick={handleEditClick}>{t('common:edit')}</Button>
         </Form.Item>
         <Form.Item
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}

@@ -11,21 +11,21 @@ import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import TrackMixer from '../../components/media-player/track-mixer.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
-import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
+import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
@@ -39,7 +39,6 @@ const logger = new Logger(import.meta.url);
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
-  const playerRef = useRef(null);
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
@@ -61,25 +60,16 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const sources = {
+  const sources = useMemo(() => ({
     mainTrack: {
-      name: mainTrack.name,
-      sourceUrl: getAccessibleUrl({
-        url: mainTrack.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-      playbackRange: mainTrack.playbackRange
+      ...mainTrack,
+      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     },
-    secondaryTracks: secondaryTracks.map((track, index) => ({
-      name: track.name,
-      sourceUrl: getAccessibleUrl({
-        url: track.sourceUrl,
-        cdnRootUrl: clientConfig.cdnRootUrl
-      }),
-      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index]
+    secondaryTracks: secondaryTracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
-  };
+  }), [mainTrack, secondaryTracks, clientConfig]);
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -88,8 +78,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalid = false;
-    onContentChanged(newContent, isInvalid);
+    onContentChanged(newContent);
   };
 
   const handleMainTrackNameChanged = event => {
@@ -113,7 +102,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleMoveTrackUp = index => {
     const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index - 1);
-    const newVolumePresets = volumePresets.slice();
+    const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index - 1);
     });
@@ -122,7 +111,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleMoveTrackDown = index => {
     const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index + 1);
-    const newVolumePresets = volumePresets.slice();
+    const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index + 1);
     });
@@ -131,7 +120,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleDeleteTrack = index => {
     const newSecondaryTracks = removeItemAt(secondaryTracks, index);
-    const newVolumePresets = volumePresets.slice();
+    const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.secondaryTracks = removeItemAt(preset.secondaryTracks, index);
     });
@@ -139,10 +128,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const handleAddTrackButtonClick = () => {
-    const newSecondaryTracks = secondaryTracks.slice();
-    newSecondaryTracks.push(createDefaultSecondaryTrack(newSecondaryTracks.length, t));
-    const newVolumePresets = volumePresets.slice();
-    newVolumePresets.forEach(preset => preset.secondaryTracks.push(1));
+    const newSecondaryTracks = cloneDeep(secondaryTracks);
+    newSecondaryTracks.push(createDefaultSecondaryTrack());
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.secondaryTracks.push(1);
+    });
     changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
   };
 
@@ -152,18 +143,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleVolumePresetsChange = updatedVolumePresets => {
     changeContent({ volumePresets: updatedVolumePresets });
-  };
-
-  const handleMainTrackVolumeChange = volume => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].mainTrack = volume;
-    changeContent({ volumePresets: newVolumePresets });
-  };
-
-  const handleSecondaryTrackVolumeChange = (volume, secondaryTrackIndex) => {
-    const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets[selectedVolumePresetIndex].secondaryTracks[secondaryTrackIndex] = volume;
-    changeContent({ volumePresets: newVolumePresets });
   };
 
   const handleFileDrop = async fs => {
@@ -212,7 +191,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const handleChapterAdd = startPosition => {
-    const chapter = { ...createDefaultChapter(t), startPosition };
+    const chapter = { ...createDefaultChapter(), startPosition };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
     changeContent({ chapters: newChapters });
   };
@@ -271,7 +250,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   return (
     <div className="MediaAnalysisEditor">
-      <Form layout="horizontal">
+      <Form layout="horizontal" labelAlign="left">
         <ItemPanel header={t('common:mainTrack')}>
           <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
             <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
@@ -306,23 +285,22 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
             <MultitrackMediaPlayer
-              parts={chapters}
-              sources={sources}
-              aspectRatio={mainTrack.aspectRatio}
-              screenMode={mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
-              mediaPlayerRef={playerRef}
+              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
+              selectedVolumePresetIndex={selectedVolumePresetIndex}
+              showTrackMixer={false}
+              sources={sources}
+              volumePresets={volumePresets}
+              parts={chapters}
               />
           </div>
-          <TrackMixer
-            volumePresets={volumePresets}
+          <TrackMixerEditor
             mainTrack={sources.mainTrack}
             secondaryTracks={sources.secondaryTracks}
-            selectedVolumePreset={selectedVolumePresetIndex}
+            volumePresets={volumePresets}
             onVolumePresetsChange={handleVolumePresetsChange}
-            onMainTrackVolumeChange={handleMainTrackVolumeChange}
-            onSecondaryTrackVolumeChange={handleSecondaryTrackVolumeChange}
-            onSelectedVolumePresetChange={handleSelectedVolumePresetChange}
+            selectedVolumePresetIndex={selectedVolumePresetIndex}
+            onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
         <div {...csvImportDropzone.getRootProps({ className: segmentsDropzoneClasses })}>

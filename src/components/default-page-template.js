@@ -2,7 +2,7 @@ import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import ConsentDrawer from './consent-drawer.js';
+import ConsentDialog from './consent-dialog.js';
 import UiLanguageDialog from './ui-language-dialog.js';
 import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
@@ -61,7 +61,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       </main>
       <DefaultPageFooter />
       <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
-      <ConsentDrawer />
+      <ConsentDialog />
     </div>
   );
 }

@@ -16,41 +16,78 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  register({ email, password, displayName }) {
+  getExternalAccounts() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/external-accounts',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteExternalAccount({ externalAccountId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/users/external-accounts/${encodeURIComponent(externalAccountId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  requestRegistration({ email, password, displayName }) {
     return this.httpClient
       .post(
-        '/api/v1/users',
+        '/api/v1/users/request-registration',
         { email, password, displayName },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  requestPasswordReset({ email }) {
+  completeRegistration({ userId, verificationCode }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/complete-registration',
+        { userId, verificationCode },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  requestPasswordReset({ email, password }) {
     return this.httpClient
       .post(
         '/api/v1/users/request-password-reset',
-        { email },
+        { email, password },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  completePasswordReset({ passwordResetRequestId, password }) {
+  completePasswordReset({ passwordResetRequestId, verificationCode }) {
     return this.httpClient
       .post(
         '/api/v1/users/complete-password-reset',
-        { passwordResetRequestId, password },
+        { passwordResetRequestId, verificationCode },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  login({ email, password }) {
+  login({ email, password, connectExternalAccount = false }) {
     return this.httpClient
       .post(
         '/api/v1/users/login',
-        { email, password },
+        { email, password, connectExternalAccount },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  abortExternalAccountConnection() {
+    return this.httpClient
+      .delete(
+        '/api/v1/users/abort-external-account-connection',
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -149,6 +186,24 @@ class UserApiClient {
       .delete(
         '/api/v1/users/favorites',
         { data: { type, id } },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getActivities() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/activities',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getRoomsInvitations() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/rooms-invitations',
         { responseType: 'json' }
       )
       .then(res => res.data);

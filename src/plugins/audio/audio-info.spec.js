@@ -10,10 +10,10 @@ describe('audio-info', () => {
   });
 
   describe('redactContent', () => {
-    it('redacts private resources from different rooms', () => {
+    it('redacts room-media resources from different rooms', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
+        sourceUrl: 'cdn://room-media/12345/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)'
       }, '67890');
       expect(result).toStrictEqual({
         sourceUrl: '',
@@ -21,33 +21,33 @@ describe('audio-info', () => {
       });
     });
 
-    it('leaves private resources from the same room intact', () => {
+    it('leaves room-media resources from the same room intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
+        sourceUrl: 'cdn://room-media/12345/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)'
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
+        sourceUrl: 'cdn://room-media/12345/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://room-media/12345/some-doc.pdf)'
       });
     });
 
-    it('leaves public resources intact', () => {
+    it('leaves non room-media resources intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://media/12345/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://media/12345/some-doc.pdf)'
+        sourceUrl: 'cdn://document-media/12345/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://document-media/12345/some-doc.pdf)'
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'cdn://media/12345/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://media/12345/some-doc.pdf)'
+        sourceUrl: 'cdn://document-media/12345/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://document-media/12345/some-doc.pdf)'
       });
     });
   });
 
   describe('getCdnResources', () => {
     it('returns resources from the copyrightNotice', () => {
-      const result = sut.getCdnResources({ sourceUrl: null, copyrightNotice: '[Hyperlink](cdn://media/my-file.pdf)' });
-      expect(result).toStrictEqual(['cdn://media/my-file.pdf']);
+      const result = sut.getCdnResources({ sourceUrl: null, copyrightNotice: '[Hyperlink](cdn://document-media/my-file.pdf)' });
+      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
     });
 
     it('returns empty list for an external resource', () => {
@@ -61,13 +61,13 @@ describe('audio-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://media/12345/some-sound.mp3', copyrightNotice: '' });
-      expect(result).toEqual(['cdn://media/12345/some-sound.mp3']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://document-media/12345/some-sound.mp3', copyrightNotice: '' });
+      expect(result).toEqual(['cdn://document-media/12345/some-sound.mp3']);
     });
 
-    it('returns a list with the url for an internal private resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://rooms/12345/media/some-sound.mp3', copyrightNotice: '' });
-      expect(result).toEqual(['cdn://rooms/12345/media/some-sound.mp3']);
+    it('returns a list with the url for an internal room-media resource', () => {
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://room-media/12345/some-sound.mp3', copyrightNotice: '' });
+      expect(result).toEqual(['cdn://room-media/12345/some-sound.mp3']);
     });
   });
 });

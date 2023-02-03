@@ -4,12 +4,9 @@ import DefaultPageTemplateComponent from '../components/default-page-template.js
 
 const pageImporters = {
   [PAGE_NAME.doc]: async () => (await import('../components/pages/doc.js')).default,
-  [PAGE_NAME.docs]: async () => (await import('../components/pages/docs.js')).default,
   [PAGE_NAME.room]: async () => (await import('../components/pages/room.js')).default,
-  [PAGE_NAME.user]: async () => (await import('../components/pages/user.js')).default,
   [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,
   [PAGE_NAME.login]: async () => (await import('../components/pages/login.js')).default,
-  [PAGE_NAME.users]: async () => (await import('../components/pages/users.js')).default,
   [PAGE_NAME.admin]: async () => (await import('../components/pages/admin.js')).default,
   [PAGE_NAME.tests]: async () => (await import('../components/pages/tests.js')).default,
   [PAGE_NAME.search]: async () => (await import('../components/pages/search.js')).default,
@@ -17,10 +14,11 @@ const pageImporters = {
   [PAGE_NAME.register]: async () => (await import('../components/pages/register.js')).default,
   [PAGE_NAME.revision]: async () => (await import('../components/pages/revision.js')).default,
   [PAGE_NAME.dashboard]: async () => (await import('../components/pages/dashboard.js')).default,
+  [PAGE_NAME.redaction]: async () => (await import('../components/pages/redaction.js')).default,
+  [PAGE_NAME.userProfile]: async () => (await import('../components/pages/user-profile.js')).default,
   [PAGE_NAME.resetPassword]: async () => (await import('../components/pages/reset-password.js')).default,
   [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
-  [PAGE_NAME.completeRegistration]: async () => (await import('../components/pages/complete-registration.js')).default,
-  [PAGE_NAME.completePasswordReset]: async () => (await import('../components/pages/complete-password-reset.js')).default,
+  [PAGE_NAME.connectExternalAccount]: async () => (await import('../components/pages/connect-external-account.js')).default,
   [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default
 };
 

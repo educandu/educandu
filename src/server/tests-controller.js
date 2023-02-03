@@ -2,6 +2,7 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
@@ -20,9 +21,8 @@ class TestsController {
 
     const locations = [
       {
-        type: STORAGE_LOCATION_TYPE.public,
-        rootPath: 'media',
-        homePath: 'media',
+        type: STORAGE_LOCATION_TYPE.documentMedia,
+        path: 'media',
         usedBytes: 0,
         maxBytes: 0,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
@@ -40,9 +40,8 @@ class TestsController {
       const roomOwnerStoragePlan = roomOwner.storage.plan ? await this.storageService.getStoragePlanById(roomOwner.storage.plan) : null;
 
       locations.push({
-        type: STORAGE_LOCATION_TYPE.private,
-        rootPath: `rooms/${room._id}/media`,
-        homePath: `rooms/${room._id}/media`,
+        type: STORAGE_LOCATION_TYPE.roomMedia,
+        path: getRoomMediaRoomPath(room._id),
         usedBytes: roomOwner.storage.usedBytes,
         maxBytes: roomOwnerStoragePlan?.maxBytes,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator

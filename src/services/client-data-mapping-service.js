@@ -88,6 +88,14 @@ class ClientDataMappingService {
     return users.map(this.mapUserForAdminArea);
   }
 
+  mapExternalAccountForAdminArea(externalAccount) {
+    return externalAccount;
+  }
+
+  mapExternalAccountsForAdminArea(externalAccounts) {
+    return externalAccounts.map(this.mapExternalAccountForAdminArea);
+  }
+
   createProposedSections(docOrRevision, targetRoomId) {
     return docOrRevision.sections.reduce((proposedSections, section) => {
       if (!this._isDeletedSection(section)) {
@@ -143,27 +151,30 @@ class ClientDataMappingService {
     return mappedBatches[0];
   }
 
-  async mapRoomInvitationWithBasicRoomData(invitation) {
+  async mapUserOwnRoomInvitations(invitation) {
     const room = await this.roomStore.getRoomById(invitation.roomId);
     const owner = await this.userStore.getUserById(room.owner);
 
     return {
       _id: invitation._id,
+      token: invitation.token,
       sentOn: invitation.sentOn.toISOString(),
       expiresOn: invitation.expiresOn.toISOString(),
       room: {
+        _id: room._id,
         name: room.name,
         documentsMode: room.documentsMode,
         owner: {
+          _id: owner._id,
           displayName: owner.displayName
         }
       }
     };
   }
 
-  async mapRoom(room, user) {
+  async mapRoom(room, viewingUser) {
     const mappedRoom = cloneDeep(room);
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getAllUserPermissions(viewingUser);
 
     const owner = await this.userStore.getUserById(room.owner);
     mappedRoom.owner = this._mapOtherUser({ user: owner, grantedPermissions });
@@ -171,11 +182,14 @@ class ClientDataMappingService {
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
     mappedRoom.members = room.members.map(member => {
-      const memberDetails = memberUsers.find(memberUser => member.userId === memberUser._id);
+      const memberUser = memberUsers.find(m => member.userId === m._id);
+      const mappedMemberUser = this.mapWebsitePublicUser({ viewedUser: memberUser, viewingUser });
       return {
         userId: member.userId,
         joinedOn: member.joinedOn && member.joinedOn.toISOString(),
-        displayName: memberDetails.displayName
+        displayName: mappedMemberUser.displayName,
+        email: mappedMemberUser.email,
+        avatarUrl: mappedMemberUser.avatarUrl
       };
     });
 
@@ -192,6 +206,14 @@ class ClientDataMappingService {
 
   mapRoomInvitations(invitations) {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
+  }
+
+  mapSamlIdentityProvider(provider) {
+    return {
+      key: provider.key,
+      displayName: provider.displayName,
+      logoUrl: provider.logoUrl || null
+    };
   }
 
   mapUserActivities(activities) {

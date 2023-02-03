@@ -1,0 +1,41 @@
+.TrackMixerDisplay {}
+
+.TrackMixerDisplay-tracks {
+  display: flex;
+  flex-wrap: wrap;
+  .m-fake-flex-gap(10px);
+}
+
+.TrackMixerDisplay-track {
+  width: 60px;
+  user-select: none;
+}
+
+.TrackMixerDisplay-trackVolume {}
+
+.TrackMixerDisplay-trackName {
+  display: block;
+  font-size: 75%;
+  text-align: center;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.TrackMixerDisplay-trackSolo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.TrackMixerDisplay-volumePreset {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.TrackMixerDisplay-volumePresetSelector {
+  text-decoration: underline;
+  max-width: 200px;
+}

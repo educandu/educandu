@@ -1,0 +1,55 @@
+userAccountsTab:
+  lastLogin:
+    en: Last login
+    de: Letzte Anmeldung
+  expiryDate:
+    en: Expiry date
+    de: Ablaufdatum
+  accountLocked:
+    en: Locked
+    de: Gesperrt
+  roles:
+    en: Roles
+    de: Rollen
+  providerKey:
+    en: Provider key
+    de: Provider-Schlüssel
+  externalUserId:
+    en: External ID
+    de: Externe ID
+  connectedUser:
+    en: Connected user
+    de: Verknüpfter Benutzer
+  activeAccounts:
+    en: Active accounts
+    de: Aktive Konten
+  externalAccounts:
+    en: External accounts
+    de: Externe Konten
+  accountsWithStorage:
+    en: Accounts with storage
+    de: Konten mit Speicher
+  closedAccounts:
+    en: Closed accounts
+    de: Geschlossene Konten
+  selectPlan:
+    en: Select plan
+    de: Plan auswählen
+  addReminder:
+    en: Add reminder
+    de: Erinnerung hinzufügen
+  removeAllReminders:
+    en: Remove reminders
+    de: Erinnerungen entfernen
+  deleteAllOwnedRooms:
+    en: Delete rooms
+    de: Räume löschen
+  storageSpace:
+    en: Storage space
+    de: Speicherplatz
+  reminders:
+    en: Reminders
+    de: Erinnerungen
+  accountClosedOn:
+    en: Account closing date
+    de: Kontoschlussdatum

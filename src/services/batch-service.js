@@ -10,6 +10,15 @@ import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '
 
 const { BadRequest, NotFound } = httpErrors;
 
+const mapBatchTypeToTaskType = batchType => {
+  return {
+    [BATCH_TYPE.documentRegeneration]: TASK_TYPE.documentRegeneration,
+    [BATCH_TYPE.documentValidation]: TASK_TYPE.documentValidation,
+    [BATCH_TYPE.cdnResourcesConsolidation]: TASK_TYPE.cdnResourcesConsolidation,
+    [BATCH_TYPE.cdnUploadDirectoryCreation]: TASK_TYPE.cdnUploadDirectoryCreation
+  }[batchType] || null;
+};
+
 class BatchService {
   static get inject() {
     return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
@@ -24,90 +33,21 @@ class BatchService {
     this.roomStore = roomStore;
   }
 
-  async createDocumentRegenerationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentRegeneration);
-
-    if (existingActiveBatch) {
-      throw new BadRequest('Another document regeneration batch is already in progress');
+  async createBatch({ batchType, user }) {
+    const taskType = mapBatchTypeToTaskType(batchType);
+    if (!taskType) {
+      throw new BadRequest(`Invalid batch type: '${batchType}'`);
     }
 
-    const batch = this._createBatchObject(user._id, BATCH_TYPE.documentRegeneration);
-
-    const allDocumentIds = await this.documentStore.getAllDocumentIds();
-
-    const tasks = allDocumentIds.map(documentId => this._createTaskObject(batch._id, TASK_TYPE.documentRegeneration, { documentId }));
-
-    await this.transactionRunner.run(async session => {
-      await this.batchStore.createBatch(batch, { session });
-      await this.taskStore.addTasks(tasks, { session });
-    });
-
-    return batch;
-  }
-
-  async createDocumentValidationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentValidation);
-
+    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(batchType);
     if (existingActiveBatch) {
-      throw new BadRequest('Another document validation batch is already in progress');
+      throw new BadRequest(`Another batch with type '${batchType}' is already in progress`);
     }
 
-    const batch = this._createBatchObject(user._id, BATCH_TYPE.documentValidation);
+    const taskParams = await this._createTaskParams(taskType);
 
-    const allDocumentIds = await this.documentStore.getAllDocumentIds();
-
-    const tasks = allDocumentIds.map(documentId => this._createTaskObject(batch._id, TASK_TYPE.documentValidation, { documentId }));
-
-    await this.transactionRunner.run(async session => {
-      await this.batchStore.createBatch(batch, { session });
-      await this.taskStore.addTasks(tasks, { session });
-    });
-
-    return batch;
-  }
-
-  async createCdnResourcesConsolidationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.cdnResourcesConsolidation);
-
-    if (existingActiveBatch) {
-      throw new BadRequest('Another CDN resources consolidation batch is already in progress');
-    }
-
-    const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnResourcesConsolidation);
-
-    const allDocumentIds = await this.documentStore.getAllDocumentIds();
-    const tasksParams = allDocumentIds.map(documentId => ({ documentId }));
-
-    const tasks = tasksParams.map(param => this._createTaskObject(batch._id, TASK_TYPE.cdnResourcesConsolidation, param));
-
-    await this.transactionRunner.run(async session => {
-      await this.batchStore.createBatch(batch, { session });
-      await this.taskStore.addTasks(tasks, { session });
-    });
-
-    return batch;
-  }
-
-  async createCdnUploadDirectoryCreationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.cdnUploadDirectoryCreation);
-
-    if (existingActiveBatch) {
-      throw new BadRequest('Another CDN upload directory creation batch is already in progress');
-    }
-
-    const batch = this._createBatchObject(user._id, BATCH_TYPE.cdnUploadDirectoryCreation);
-
-    const [allDocumentIds, allRoomIds] = await Promise.all([
-      this.documentStore.getAllDocumentIds(),
-      this.roomStore.getAllRoomIds()
-    ]);
-
-    const tasksParams = [
-      ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
-      ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
-    ];
-
-    const tasks = tasksParams.map(param => this._createTaskObject(batch._id, TASK_TYPE.cdnUploadDirectoryCreation, param));
+    const batch = this._createBatchObject(user._id, batchType);
+    const tasks = taskParams.map(params => this._createTaskObject(batch._id, taskType, params));
 
     await this.transactionRunner.run(async session => {
       await this.batchStore.createBatch(batch, { session });
@@ -138,6 +78,27 @@ class BatchService {
       attempts: [],
       taskParams
     };
+  }
+
+  _createTaskParams(taskType) {
+    switch (taskType) {
+      case TASK_TYPE.documentRegeneration:
+      case TASK_TYPE.documentValidation:
+      case TASK_TYPE.cdnResourcesConsolidation:
+        return this.documentStore.getAllDocumentIds().then(allDocumentIds => {
+          return allDocumentIds.map(documentId => ({ documentId }));
+        });
+      case TASK_TYPE.cdnUploadDirectoryCreation:
+        return Promise.all([
+          this.documentStore.getAllDocumentIds(),
+          this.roomStore.getAllRoomIds()
+        ]).then(([allDocumentIds, allRoomIds]) => [
+          ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
+          ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
+        ]);
+      default:
+        throw new BadRequest(`Invalid task type: '${taskType}'`);
+    }
   }
 
   async _getProgressForBatch(batch) {

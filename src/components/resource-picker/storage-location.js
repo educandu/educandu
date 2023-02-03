@@ -1,31 +1,26 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import FilesViewer from './files-viewer.js';
+import React, { useRef } from 'react';
 import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
-import DebouncedInput from '../debounced-input.js';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Trans, useTranslation } from 'react-i18next';
+import FilterInput from '../filter-input.js';
+import { useTranslation } from 'react-i18next';
+import FilesGridViewer from './files-grid-viewer.js';
+import FilesListViewer from './files-list-viewer.js';
 import UploadIcon from '../icons/general/upload-icon.js';
-import { isTouchDevice } from '../../ui/browser-helper.js';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Modal, Select, Input } from 'antd';
+import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
+import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
-import { canUploadToPath, composeHumanReadableDisplayName } from '../../utils/storage-utils.js';
-import { CDN_OBJECT_TYPE, FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
-
-const { Search } = Input;
-
-const MIN_SEARCH_TERM_LENGTH = 3;
 
 function StorageLocation({
   files,
   isLoading,
-  searchTerm,
-  currentDirectory,
-  parentDirectory,
+  filterText,
   highlightedFile,
   storageLocation,
   filesViewerDisplay,
@@ -35,41 +30,15 @@ function StorageLocation({
   onCancelClick,
   onDeleteFileClick,
   onPreviewFileClick,
-  onSearchTermChange,
+  onFilterTextChange,
   onFilesViewerDisplayChange,
-  onNavigateToParent,
-  onFilesDropped,
-  onDirectoryClick
+  onFilesDropped
 }) {
   const { t } = useTranslation('storageLocation');
 
   const dropzoneRef = useRef();
-  const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchTerm);
 
-  useEffect(() => {
-    setTypedInSearchTerm(searchTerm);
-  }, [searchTerm]);
-
-  const isInSearchMode = !!searchTerm;
-  const canAcceptFiles = !isInSearchMode && canUploadToPath(currentDirectory?.path) && !isLoading;
-
-  const handleFileClick = file => {
-    if (file.type === CDN_OBJECT_TYPE.file) {
-      onFileClick(file);
-    }
-    if (file.type === CDN_OBJECT_TYPE.directory && isTouchDevice()) {
-      onDirectoryClick(file);
-    }
-  };
-
-  const handleFileDoubleClick = file => {
-    if (file.type === CDN_OBJECT_TYPE.file) {
-      onFileDoubleClick(file);
-    }
-    if (file.type === CDN_OBJECT_TYPE.directory) {
-      onDirectoryClick(file);
-    }
-  };
+  const canAcceptFiles = !isLoading;
 
   const handleSelectHighlightedFileClick = () => {
     onSelectHighlightedFileClick(highlightedFile.portableUrl);
@@ -79,88 +48,65 @@ function StorageLocation({
     dropzoneRef.current.open();
   };
 
-  const handleSearchTermChange = value => {
-    setTypedInSearchTerm(value);
+  const handleFilterTextChange = event => {
+    const { value } = event.target;
+    onFilterTextChange(value);
   };
 
-  const handleSearchClick = async value => {
-    setTypedInSearchTerm(value);
-
-    if (value.length < MIN_SEARCH_TERM_LENGTH) {
-      Modal.error({
-        title: t('common:error'),
-        content: t('common:searchTextTooShort', { minCharCount: MIN_SEARCH_TERM_LENGTH })
-      });
-
-      return;
-    }
-
-    await onSearchTermChange(value);
-  };
-
-  const handleBackToDirectoryScreenClick = async () => {
-    await onSearchTermChange('');
-  };
-
-  const renderSearchInfo = () => {
-    const searchMessage = isLoading
-      ? t('common:searchOngoing')
-      : (
-        <Trans
-          t={t}
-          i18nKey="common:searchResultInfo"
-          values={{ resultCount: files.length, searchTerm }}
-          components={[<i key="0" />]}
-          />
-      );
-
-    return <Alert type="info" message={searchMessage} showIcon />;
+  const handleFilesViewerDisplayChange = event => {
+    const { value } = event.target;
+    onFilesViewerDisplayChange(value);
   };
 
   const renderStorageInfo = () => {
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.private && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
-      return <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />;
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
+      const alertContent = (
+        <div className="StorageLocation-alertPrivateStorage">
+          <span>{t('privateStorageMessage')}.</span>
+          <div className="StorageLocation-alertPrivateStorageUsage">
+            <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+          </div>
+        </div>
+      );
+      return <Alert message={alertContent} type="warning" />;
     }
 
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.public) {
-      return <Alert message={t('publicStorageWarning')} type="warning" showIcon />;
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia) {
+      return <Alert message={t('publicStorageMessage')} type="warning" />;
     }
 
     return null;
   };
 
-  const showCurrentDirectoryName = !isInSearchMode && !!currentDirectory;
-
   const getFilesViewerClasses = isDragActive => classNames({
     'StorageLocation-filesViewer': true,
-    'u-can-drop': isDragActive && canAcceptFiles,
-    'u-cannot-drop': isDragActive && !canAcceptFiles
+    'u-can-drop': isDragActive && !isLoading,
+    'u-cannot-drop': isDragActive && !!isLoading
   });
 
-  const filesViewerContentClasses = classNames({
-    'StorageLocation-filesViewerContent': true,
-    'StorageLocation-filesViewerContent--topPadding': showCurrentDirectoryName
-  });
+  const FilesViewer = filesViewerDisplay === FILES_VIEWER_DISPLAY.grid
+    ? FilesGridViewer
+    : FilesListViewer;
 
   return (
     <div className="StorageLocation">
       <div className="StorageLocation-buttonsLine">
         <div className="StorageLocation-buttonsLineItem">
-          <DebouncedInput
-            elementType={Search}
-            placeholder={t('common:search')}
-            value={typedInSearchTerm}
-            onSearch={handleSearchClick}
-            onChange={handleSearchTermChange}
-            />
+          <FilterInput value={filterText} onChange={handleFilterTextChange} />
         </div>
         <div className="StorageLocation-buttonsLineItem StorageLocation-buttonsLineItem--select">
-          <Select
-            value={filesViewerDisplay}
-            onChange={onFilesViewerDisplayChange}
-            className="StorageLocation-select"
-            options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
-            />
+          <RadioGroup value={filesViewerDisplay} onChange={handleFilesViewerDisplayChange}>
+            <Tooltip title={t('filesView_list')}>
+              <RadioButton value={FILES_VIEWER_DISPLAY.list}>
+                <UnorderedListOutlined />
+              </RadioButton>
+            </Tooltip>
+            <Tooltip title={t('filesView_grid')}>
+              <RadioButton value={FILES_VIEWER_DISPLAY.grid}>
+                <TableOutlined />
+              </RadioButton>
+            </Tooltip>
+          </RadioGroup>
         </div>
       </div>
       <ReactDropzone
@@ -172,43 +118,39 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            {!!showCurrentDirectoryName && (
-              <div className="StorageLocation-currentDirectory">
-                {`${t('common:directory')}: ${composeHumanReadableDisplayName({ cdnObject: currentDirectory, t })}`}
-              </div>
-            )}
-            <div className={filesViewerContentClasses}>
+            <div className="StorageLocation-filesViewerContent">
               <FilesViewer
-                isLoading={isLoading}
                 files={files}
-                parentDirectory={parentDirectory}
-                display={filesViewerDisplay}
-                onFileClick={handleFileClick}
-                onFileDoubleClick={handleFileDoubleClick}
-                selectedFileUrl={highlightedFile?.portableUrl}
+                selectedFileUrl={highlightedFile?.portableUrl || null}
+                canDelete={storageLocation.isDeletionEnabled}
+                onFileClick={onFileClick}
+                onFileDoubleClick={onFileDoubleClick}
                 onDeleteFileClick={onDeleteFileClick}
                 onPreviewFileClick={onPreviewFileClick}
-                onNavigateToParent={onNavigateToParent}
-                canNavigateToParent={!isInSearchMode && currentDirectory?.path?.length > storageLocation.rootPath.length}
-                canDelete={storageLocation.isDeletionEnabled}
                 />
             </div>
+            {!!isLoading && (
+              <div className={classNames('StorageLocation-filesViewerOverlay')}>
+                <Spin size="large" />
+              </div>
+            )}
           </div>
         )}
       </ReactDropzone>
       <div className="StorageLocation-locationInfo">
-        {isInSearchMode ? renderSearchInfo() : renderStorageInfo()}
+        {renderStorageInfo()}
       </div>
       <div className="u-resource-picker-screen-footer">
-        {!isInSearchMode && (
-          <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>{t('uploadFiles')}</Button>
-        )}
-        {!!isInSearchMode && (
-          <Button onClick={handleBackToDirectoryScreenClick} icon={<ArrowLeftOutlined />} disabled={isLoading}>{t('backToDirectoryView')}</Button>
-        )}
+        <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>
+          {t('uploadFiles')}
+        </Button>
         <div className="u-resource-picker-screen-footer-buttons">
-          <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>{t('common:select')}</Button>
+          <Button onClick={onCancelClick}>
+            {t('common:cancel')}
+          </Button>
+          <Button type="primary" onClick={handleSelectHighlightedFileClick} disabled={!highlightedFile || isLoading}>
+            {t('common:select')}
+          </Button>
         </div>
       </div>
     </div>
@@ -216,32 +158,26 @@ function StorageLocation({
 }
 
 StorageLocation.propTypes = {
-  currentDirectory: cdnObjectShape,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
   isLoading: PropTypes.bool.isRequired,
+  filterText: PropTypes.string,
+  storageLocation: storageLocationShape.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onDeleteFileClick: PropTypes.func.isRequired,
-  onDirectoryClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onFilesDropped: PropTypes.func.isRequired,
   onFilesViewerDisplayChange: PropTypes.func.isRequired,
-  onNavigateToParent: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
-  onSearchTermChange: PropTypes.func.isRequired,
-  onSelectHighlightedFileClick: PropTypes.func.isRequired,
-  parentDirectory: cdnObjectShape,
-  searchTerm: PropTypes.string,
-  storageLocation: storageLocationShape.isRequired
+  onFilterTextChange: PropTypes.func.isRequired,
+  onSelectHighlightedFileClick: PropTypes.func.isRequired
 };
 
 StorageLocation.defaultProps = {
-  currentDirectory: null,
   highlightedFile: null,
-  parentDirectory: null,
-  searchTerm: null
+  filterText: null
 };
 
 export default StorageLocation;

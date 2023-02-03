@@ -1,4 +1,3 @@
-import routes from '../utils/routes.js';
 import { Container } from '../common/di.js';
 import AmbController from './amb-controller.js';
 import RoomController from './room-controller.js';
@@ -17,27 +16,39 @@ import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
 import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
+import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
 
-const controllerTypes = [
+const setupControllers = [
   StaticController,
   I18nController,
   UserAgentController,
-  SettingsController,
+  SettingsController
+];
+
+const pageAndApiControllers = [
   IndexController,
   SearchController,
   UserController,
   DocumentController,
   StorageController,
   BatchController,
-  ErrorController,
   RoomController,
   DashboardController,
   RevisionController,
   PdfJsApiController,
   AdminController,
   AmbController,
-  CommentController
+  CommentController,
+  RedactionController
+];
+
+const finalMiddlewareControllers = [ErrorController];
+
+const controllerTypes = [
+  ...setupControllers,
+  ...pageAndApiControllers,
+  ...finalMiddlewareControllers
 ];
 
 class ControllerFactory {
@@ -49,11 +60,6 @@ class ControllerFactory {
 
   registerAdditionalControllers(additionalControllers) {
     controllerTypes.push(...additionalControllers);
-  }
-
-  registerPermanentRedirects(router) {
-    router.get('/lessons/:id', (req, res) => res.redirect(301, routes.getDocUrl({ id: req.params.id })));
-    router.get('/revs/articles/:id', (req, res) => res.redirect(301, routes.getDocumentRevisionUrl(req.params.id)));
   }
 
   getAllControllers() {

@@ -2,6 +2,7 @@
   .m-page-content;
   flex: none;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   position: relative;
@@ -9,9 +10,7 @@
 }
 
 .DefaultPageFooter-linkWrapper {
-  &:not(:last-child)::after {
-    content: "\00A0\00A0|\00A0\00A0";
-  }
+  margin: 0 @edu-control-spacing-base;
 }
 
 .DefaultPageFooter-link {

@@ -17,22 +17,24 @@ export default class ExternalAccountService {
     this.serverConfig = serverConfig;
   }
 
-  // Can be deleted after https://educandu.atlassian.net/browse/EDU-992
   getAllProviders() {
-    return [];
+    return this.serverConfig.samlAuth?.identityProviders || [];
   }
 
-  // Can be uncommented after https://educandu.atlassian.net/browse/EDU-992
-  // getAllProviders() {
-  //   return this.serverConfig.externalAccountProviders;
-  // }
-
   getProvider(providerKey) {
-    const provider = this.getAllProviders().find(provider => provider.key === providerKey);
+    const provider = this.getAllProviders().find(prov => prov.key === providerKey);
     if (!provider) {
       throw new NotFound();
     }
     return provider;
+  }
+
+  getAllExternalAccounts() {
+    return this.externalAccountStore.getAllExternalAccounts();
+  }
+
+  deleteExternalAccount({ externalAccountId }) {
+    return this.externalAccountStore.deleteExternalAccount(externalAccountId);
   }
 
   createOrUpdateExternalAccountOnLogin({ providerKey, externalUserId }) {
@@ -43,7 +45,8 @@ export default class ExternalAccountService {
     const provider = this.getProvider(providerKey);
 
     const lastLoggedInOn = new Date();
-    const expiresOn = new Date(lastLoggedInOn + provider.expiryTimeoutInMs);
+    const expiryTimeoutInMs = provider.expiryTimeoutInDays * 24 * 60 * 60 * 1000;
+    const expiresOn = new Date(lastLoggedInOn.getTime() + expiryTimeoutInMs);
 
     logger.info(`Creating or updating external account for provider ${providerKey} and external user ${externalUserId}`);
     return this.externalAccountStore.createOrUpdateExternalAccountByProviderKeyAndExternalUserId({

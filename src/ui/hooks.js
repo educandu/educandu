@@ -72,6 +72,19 @@ export function useDebouncedCallback(callback, timeLimit = 250) {
   return debouncedCallback;
 }
 
+export function useIsMounted() {
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  return isMounted;
+}
+
 export function useOnComponentMounted(callback) {
   const [isCallbackCalled, setIsCallbackCalled] = useState(false);
   useEffect(() => {

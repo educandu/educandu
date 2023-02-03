@@ -3,6 +3,12 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { ensureIsUnique, getSymmetricalDifference } from '../../utils/array-utils.js';
 import { getRandomizedTilesFromPairs, resizeTilePairs } from './matching-cards-utils.js';
 
+const createTile = ({ text, sourceUrl, playbackRange } = {}) => ({
+  text: text || '',
+  sourceUrl: sourceUrl || '',
+  playbackRange: playbackRange || [0, 1]
+});
+
 describe('matching-cards-utils', () => {
   let result;
 
@@ -12,20 +18,20 @@ describe('matching-cards-utils', () => {
     describe('when resizing to a bigger count', () => {
       beforeEach(() => {
         tilePairs = [
-          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
-          [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
-          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
-          [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
+          [createTile({ text: '1a' }), createTile({ text: '1b' })],
+          [createTile({ text: '2a' }), createTile({ text: '2b' })],
+          [createTile({ text: '3a' }), createTile({ text: '3b' })],
+          [createTile({ text: '4a' }), createTile({ text: '4b' })]
         ];
         result = resizeTilePairs(tilePairs, SIZE.fourByFour);
       });
 
       it('copies over the existing content', () => {
         expect(result).toStrictEqual([
-          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }], [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
-          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }], [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }],
-          [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }], [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }],
-          [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }], [{ text: '', sourceUrl: '' }, { text: '', sourceUrl: '' }]
+          [createTile({ text: '1a' }), createTile({ text: '1b' })], [createTile({ text: '2a' }), createTile({ text: '2b' })],
+          [createTile({ text: '3a' }), createTile({ text: '3b' })], [createTile({ text: '4a' }), createTile({ text: '4b' })],
+          [createTile(), createTile()], [createTile(), createTile()],
+          [createTile(), createTile()], [createTile(), createTile()]
         ]);
       });
     });
@@ -33,20 +39,20 @@ describe('matching-cards-utils', () => {
     describe('when resizing to a smaller count', () => {
       beforeEach(() => {
         tilePairs = [
-          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }], [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
-          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }], [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }],
-          [{ text: '5a', sourceUrl: 'url' }, { text: '5b', sourceUrl: 'url' }], [{ text: '6a', sourceUrl: 'url' }, { text: '6b', sourceUrl: 'url' }],
-          [{ text: '7a', sourceUrl: 'url' }, { text: '7b', sourceUrl: 'url' }], [{ text: '8a', sourceUrl: 'url' }, { text: '8b', sourceUrl: 'url' }]
+          [createTile({ text: '1a' }), createTile({ text: '1b' })], [createTile({ text: '2a' }), createTile({ text: '2b' })],
+          [createTile({ text: '3a' }), createTile({ text: '3b' })], [createTile({ text: '4a' }), createTile({ text: '4b' })],
+          [createTile({ text: '5a' }), createTile({ text: '5b' })], [createTile({ text: '6a' }), createTile({ text: '6b' })],
+          [createTile({ text: '7a' }), createTile({ text: '7b' })], [createTile({ text: '8a' }), createTile({ text: '8b' })]
         ];
         result = resizeTilePairs(tilePairs, SIZE.threeByThree);
       });
 
       it('copies over the existing content', () => {
         expect(result).toStrictEqual([
-          [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
-          [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
-          [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
-          [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
+          [createTile({ text: '1a' }), createTile({ text: '1b' })],
+          [createTile({ text: '2a' }), createTile({ text: '2b' })],
+          [createTile({ text: '3a' }), createTile({ text: '3b' })],
+          [createTile({ text: '4a' }), createTile({ text: '4b' })]
         ]);
       });
     });
@@ -57,10 +63,10 @@ describe('matching-cards-utils', () => {
 
     beforeEach(() => {
       tilePairs = [
-        [{ text: '1a', sourceUrl: 'url' }, { text: '1b', sourceUrl: 'url' }],
-        [{ text: '2a', sourceUrl: 'url' }, { text: '2b', sourceUrl: 'url' }],
-        [{ text: '3a', sourceUrl: 'url' }, { text: '3b', sourceUrl: 'url' }],
-        [{ text: '4a', sourceUrl: 'url' }, { text: '4b', sourceUrl: 'url' }]
+        [createTile({ text: '1a' }), createTile({ text: '1b' })],
+        [createTile({ text: '2a' }), createTile({ text: '2b' })],
+        [createTile({ text: '3a' }), createTile({ text: '3b' })],
+        [createTile({ text: '4a' }), createTile({ text: '4b' })]
       ];
       result = getRandomizedTilesFromPairs(tilePairs, SIZE.threeByThree);
     });

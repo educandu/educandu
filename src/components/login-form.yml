@@ -1,9 +1,13 @@
-enterEmail:
-  en: Please enter your email address
-  de: Bitte gib deine E-Mail-Adresse an
-enterPassword:
-  en: Please enter your password
-  de: Bitte gib dein Kennwort an
-loginFailed:
-  en: Login failed. Please check your input.
-  de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfe deine Eingabe.
+loginForm:
+  enterPassword:
+    en: Please enter your password
+    de: Bitte gib dein Kennwort an
+  loginFailed:
+    en: The credentials you have entered are not correct.
+    de: Die Zugangsdaten sind nicht korrekt.
+  forgotPassword:
+    en: Forgot your password?
+    de: Kennwort vergessen?
+  logInWithShibboleth:
+    en: Log in with Shibboleth
+    de: Mit Shibboleth anmelden

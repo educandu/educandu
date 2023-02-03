@@ -33,10 +33,10 @@ class AnnotationInfo {
     return (await import('./annotation-editor.js')).default;
   }
 
-  getDefaultContent(t) {
+  getDefaultContent() {
     return {
-      title: `[${t('common:title')}]`,
-      text: `[${t('common:text')}]`,
+      title: '',
+      text: '',
       behavior: BEHAVIOR.expandable,
       intent: INTENT.neutral,
       width: 100

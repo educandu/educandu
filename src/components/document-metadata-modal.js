@@ -14,8 +14,8 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse } from 'antd';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
@@ -33,6 +33,8 @@ import {
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
@@ -70,20 +72,20 @@ function DocumentMetadataModal({
   const [availableRooms, setAvailableRooms] = useState([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [slug, setSlug] = useState('');
   const [tags, setTags] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
+  const [title, setTitle] = useState('');
   const [language, setLanguage] = useState(null);
-  const [publicContext, setPublicContext] = useState(null);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [description, setDescription] = useState('');
   const [roomContext, setRoomContext] = useState(null);
+  const [publicContext, setPublicContext] = useState(null);
 
-  const [generateSequence, setGenerateSequence] = useState(false);
   const [sequenceCount, setSequenceCount] = useState(0);
+  const [generateSequence, setGenerateSequence] = useState(false);
+  const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
   const [useTemplateDocument, setUseTemplateDocument] = useState(false);
   const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.none);
-  const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
 
   const documentRoomId = useMemo(() => determineDocumentRoomId({
     mode,
@@ -119,7 +121,7 @@ function DocumentMetadataModal({
     setDescription(initialDocumentMetadata.description || '');
     setSlug(initialDocumentMetadata.slug || '');
     setTags(initialDocumentMetadata.tags || []);
-    setTagOptions(composeTagOptions(initialDocumentMetadata.tags));
+    setTagOptions(composeTagOptions(initialDocumentMetadata.tags || []));
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
     if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
       setPublicContext(getDefaultPublicContext());
@@ -145,7 +147,10 @@ function DocumentMetadataModal({
 
     setAvailableRooms([]);
     setIsLoadingRooms(true);
-    setAvailableRooms(await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrCollaborator }));
+
+    const { rooms } = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrCollaborator });
+    setAvailableRooms(rooms);
+
     setIsLoadingRooms(false);
   }, [mode, roomApiClient]);
 
@@ -166,7 +171,7 @@ function DocumentMetadataModal({
         return;
       }
       const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
-      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags, tagSuggestions);
+      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags || [], tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
       handleApiError({ error, t });
@@ -222,8 +227,8 @@ function DocumentMetadataModal({
   };
 
   const handleUseTemplateDocumentChange = event => {
-    const { checked } = event.target;
-    setUseTemplateDocument(checked);
+    const { value } = event.target;
+    setUseTemplateDocument(value);
   };
 
   const handleArchivedChange = event => {
@@ -349,10 +354,20 @@ function DocumentMetadataModal({
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />
         </FormItem>
-        <FormItem label={t('common:slug')} {...validationState.slug}>
+        <FormItem
+          {...validationState.slug}
+          label={
+            <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
+          }
+          >
           <Input value={slug} onChange={handleSlugChange} />
         </FormItem>
-        <FormItem label={t('common:tags')} {...validationState.tags}>
+        <FormItem
+          {...validationState.tags}
+          label={
+            <Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>
+          }
+          >
           <Select
             mode="tags"
             value={tags}
@@ -380,10 +395,15 @@ function DocumentMetadataModal({
           </FormItem>
         )}
         {!!canUseTemplateDocument && (
-          <FormItem>
-            <Checkbox checked={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
-              <span className="u-label">{t('useTemplateDocument')}</span>
-            </Checkbox>
+          <FormItem
+            label={
+              <Info tooltip={t('contentInfo')} iconAfterContent>{t('content')}</Info>
+            }
+            >
+            <RadioGroup value={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
+              <RadioButton value={false}>{t('contentEmpty')}</RadioButton>
+              <RadioButton value={Boolean('true')}>{t('contentFromTemplate')}</RadioButton>
+            </RadioGroup>
           </FormItem>
         )}
         {!!isDocInPublicContext && (

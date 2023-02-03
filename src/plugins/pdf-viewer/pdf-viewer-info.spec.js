@@ -10,7 +10,7 @@ describe('pdf-viewer-info', () => {
   describe('redactContent', () => {
     it('redacts the PDF source url', () => {
       const input = {
-        sourceUrl: 'cdn://rooms/12345/media/my-document.pdf'
+        sourceUrl: 'cdn://room-media/12345/my-document.pdf'
       };
       const result = sut.redactContent(input, '67890');
       expect(result.sourceUrl).toBe('');
@@ -18,7 +18,7 @@ describe('pdf-viewer-info', () => {
 
     it('leaves accessible paths intact', () => {
       const input = {
-        sourceUrl: 'cdn://rooms/12345/media/my-document.pdf'
+        sourceUrl: 'cdn://room-media/12345/my-document.pdf'
       };
       const result = sut.redactContent(input, '12345');
       expect(result).toStrictEqual(input);
@@ -32,13 +32,13 @@ describe('pdf-viewer-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://media/12345/some-doc.pdf' });
-      expect(result).toEqual(['cdn://media/12345/some-doc.pdf']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://document-media/12345/some-doc.pdf' });
+      expect(result).toEqual(['cdn://document-media/12345/some-doc.pdf']);
     });
 
-    it('returns a list with the url for an internal private resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://rooms/12345/media/some-doc.pdf' });
-      expect(result).toEqual(['cdn://rooms/12345/media/some-doc.pdf']);
+    it('returns a list with the url for an internal room-media resource', () => {
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://room-media/12345/some-doc.pdf' });
+      expect(result).toEqual(['cdn://room-media/12345/some-doc.pdf']);
     });
   });
 });

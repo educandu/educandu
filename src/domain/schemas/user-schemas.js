@@ -1,16 +1,28 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { FAVORITE_TYPE, ROLE } from '../constants.js';
-import { minPasswordLength, minDisplayNameLength, passwordValidationPattern, maxDisplayNameLength } from '../validation-constants.js';
+import {
+  minUserPasswordLength,
+  minUserDisplayNameLength,
+  passwordValidationPattern,
+  maxUserDisplayNameLength,
+  maxUserIntroductionLength,
+  maxUserOrganizationLength
+} from '../validation-constants.js';
 
 const emailSchema = joi.string().case('lower');
-const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
-const displayNameSchema = joi.string().min(minDisplayNameLength).max(maxDisplayNameLength);
+const passwordSchema = joi.string().min(minUserPasswordLength).pattern(passwordValidationPattern);
+const displayNameSchema = joi.string().min(minUserDisplayNameLength).max(maxUserDisplayNameLength);
 
-export const postUserBodySchema = joi.object({
+export const postUserRegistrationRequestBodySchema = joi.object({
   email: emailSchema.required(),
   password: passwordSchema.required(),
   displayName: displayNameSchema.required()
+});
+
+export const postUserRegistrationCompletionBodySchema = joi.object({
+  userId: idOrKeySchema.required(),
+  verificationCode: idOrKeySchema.required()
 });
 
 export const postUserAccountBodySchema = joi.object({
@@ -24,12 +36,13 @@ export const postUserProfileBodySchema = joi.object({
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({
-  email: emailSchema.required()
+  email: emailSchema.required(),
+  password: passwordSchema.required()
 });
 
 export const postUserPasswordResetCompletionBodySchema = joi.object({
-  passwordResetRequestId: joi.string().required(),
-  password: passwordSchema.required()
+  passwordResetRequestId: idOrKeySchema.required(),
+  verificationCode: idOrKeySchema.required()
 });
 
 export const postUserRolesBodySchema = joi.object({
@@ -48,6 +61,10 @@ export const userIdParamsSchema = joi.object({
   userId: idOrKeySchema.required()
 });
 
+export const externalAccountIdParamsSchema = joi.object({
+  externalAccountId: idOrKeySchema.required()
+});
+
 export const favoriteBodySchema = joi.object({
   type: joi.string().valid(...Object.values(FAVORITE_TYPE)).required(),
   id: idOrKeySchema.required()
@@ -55,7 +72,8 @@ export const favoriteBodySchema = joi.object({
 
 export const loginBodySchema = joi.object({
   email: joi.string().required(),
-  password: joi.string().required()
+  password: joi.string().required(),
+  connectExternalAccount: joi.boolean().required()
 });
 
 const storageReminderDBSchema = joi.object({
@@ -88,6 +106,6 @@ export const userDBSchema = joi.object({
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),
   displayName: joi.string().required(),
-  introduction: joi.string().allow('').required(),
-  organization: joi.string().allow('').required()
+  introduction: joi.string().allow('').max(maxUserIntroductionLength).required(),
+  organization: joi.string().allow('').max(maxUserOrganizationLength).required()
 });

@@ -1,0 +1,7 @@
+consentDialog:
+  title:
+    en: This website uses cookies
+    de: Diese Website verwendet Cookies
+  acceptButton:
+    en: Accept
+    de: Akzeptieren

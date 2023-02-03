@@ -1,6 +1,7 @@
-label:
-  en: Used storage
-  de: Genutzter Speicherplatz
-storageSpaceExceeded:
-  en: Exceedance
-  de: Überschreitung
+usedStorage:
+  label:
+    en: Used storage
+    de: Genutzter Speicherplatz
+  storageSpaceExceeded:
+    en: Exceedance
+    de: Überschreitung

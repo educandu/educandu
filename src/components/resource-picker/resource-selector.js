@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import WikimediaScreens from './wikimedia-screens.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
 import StorageLocationScreens from './storage-location-screens.js';
-import WikimediaCommonsScreens from './wikimedia-commons-screens.js';
 import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
@@ -20,10 +20,10 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
   useEffect(() => {
     const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
       switch (sourceType) {
-        case SOURCE_TYPE.internalPublic:
-          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.public);
-        case SOURCE_TYPE.internalPrivate:
-          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.private);
+        case SOURCE_TYPE.documentMedia:
+          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.documentMedia);
+        case SOURCE_TYPE.roomMedia:
+          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.roomMedia);
         default:
           return true;
       }
@@ -33,7 +33,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
     setSelectedSourceType(oldSelectedSourceType => {
       const sourceTypeMatchedByInitialUrl = getSourceType({ url: initialUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-      const preferredInitialSourceType = SOURCE_TYPE.internalPrivate;
+      const preferredInitialSourceType = SOURCE_TYPE.roomMedia;
       const firstVisibleSourceType = newVisibleSourceTypes[0];
 
       const newSourceTypePriorityList = [
@@ -53,27 +53,27 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
   const renderSourceType = sourceType => {
     switch (sourceType) {
-      case SOURCE_TYPE.internalPublic:
+      case SOURCE_TYPE.documentMedia:
         return (
           <StorageLocationScreens
-            storageLocationType={STORAGE_LOCATION_TYPE.public}
+            storageLocationType={STORAGE_LOCATION_TYPE.documentMedia}
             initialUrl={initialUrl}
             onSelect={onSelect}
             onCancel={onCancel}
             />
         );
-      case SOURCE_TYPE.internalPrivate:
+      case SOURCE_TYPE.roomMedia:
         return (
           <StorageLocationScreens
-            storageLocationType={STORAGE_LOCATION_TYPE.private}
+            storageLocationType={STORAGE_LOCATION_TYPE.roomMedia}
             initialUrl={initialUrl}
             onSelect={onSelect}
             onCancel={onCancel}
             />
         );
-      case SOURCE_TYPE.wikimediaCommons:
+      case SOURCE_TYPE.wikimedia:
         return (
-          <WikimediaCommonsScreens
+          <WikimediaScreens
             initialUrl={initialUrl}
             onSelect={onSelect}
             onCancel={onCancel}
@@ -102,7 +102,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 }
 
 ResourceSelector.propTypes = {
-  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.internalPublic, SOURCE_TYPE.internalPrivate, SOURCE_TYPE.wikimediaCommons])),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia])),
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func

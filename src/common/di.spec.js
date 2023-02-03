@@ -31,10 +31,12 @@ class D {
 }
 
 class E {
+  // eslint-disable-next-line no-use-before-define
   static get inject() { return [F]; }
 }
 
 class F {
+  // eslint-disable-next-line no-use-before-define
   static get inject() { return [G]; }
 }
 

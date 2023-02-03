@@ -1,482 +1,494 @@
-"yes":
-  en: "Yes"
-  de: Ja
-"no":
-  en: "No"
-  de: Nein
-ok:
-  en: OK
-  de: OK
-save:
-  en: Save
-  de: Speichern
-cancel:
-  en: Cancel
-  de: Abbrechen
-close:
-  en: Close
-  de: Schließen
-select:
-  en: Select
-  de: Auswählen
-back:
-  en: Back
-  de: Zurück
-preview:
-  en: Preview
-  de: Vorschau
-edit:
-  en: Edit
-  de: Bearbeiten
-apply:
-  en: Apply
-  de: Übernehmen
-discard:
-  en: Discard
-  de: Verwerfen
-duplicate:
-  en: Duplicate
-  de: Duplizieren
-copyToClipboard:
-  en: Copy to clipboard
-  de: In die Zwischenablage kopieren
-pasteFromClipboard:
-  en: Paste from clipboard
-  de: Aus der Zwischenablage einfügen
-delete:
-  en: Delete
-  de: Löschen
-hardDelete:
-  en: Delete irreversibly
-  de: Unwiderruflich löschen
-clone:
-  en: Clone
-  de: Klonen
-create:
-  en: Create
-  de: Erstellen
-moveUp:
-  en: Move up
-  de: Nach oben verschieben
-moveDown:
-  en: Move down
-  de: Nach unten verschieben
-openHelp:
-  en: Open help
-  de: Hilfe öffnen
-confirm:
-  en: Confirm
-  de: Bestätigen
-error:
-  en: Error
-  de: Fehler
-date:
-  en: Date
-  de: Datum
-status:
-  en: Status
-  de: Status
-language:
-  en: Language
-  de: Sprache
-invalidSlug:
-  en: The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
-  de: Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
-archivedAlert:
-  en: This document is archived and cannot be edited
-  de: Dieses Dokument ist archiviert und kann nicht editiert werden
-proposedSectionsAlert:
-  en: |
-    Apply or discard the proposed sections. Unapplied sections are
-    only visible until you leave the current view.
-  de: |
-    Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene
-    Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
-revision:
-  en: Revision
-  de: Revision
-document:
-  en: Document
-  de: Dokument
-room:
-  en: Room
-  de: Raum
-viewRevisions:
-  en: View revisions
-  de: Revisionen ansehen
-viewDocument:
-  en: View document
-  de: Dokument ansehen
-copySectionToClipboardError:
-  en: Error copying the section to the clipboard due to missing access permissions.
-  de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
-pasteSectionFromClipboardError:
-  en: |
-      Error pasting the section from the clipboard. Either the clipboard contains content that cannot
-      be pasted as a new section or the browser denies access to the clipboard.
-  de: |
-      Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht
-      als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.
-sectionCopiedToClipboard:
-  en: The section was copied to the clipboard
-  de: Der Abschnitt wurde in die Zwischenablage kopiert
-clipboardPasteNotSupported:
-  en: Pasting from the clipboard is not supported by this browser.
-  de: Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.
-copyUrlToClipboard:
-  en: Copy URL to the clipboard
-  de: URL in die Zwischenablage kopieren
-urlCopiedToClipboard:
-  en: The URL was copied to the clipboard
-  de: Die URL wurde in die Zwischenablage kopiert
-copyUrlToClipboardError:
-  en: Error copying the URL to the clipboard due to missing access permissions.
-  de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
-accept:
-  en: Accept
-  de: Akzeptieren
-login:
-  en: Login
-  de: Anmelden
-logout:
-  en: Logout
-  de: Abmelden
-created:
-  en: Created
-  de: Erstellt
-createdOn:
-  en: Creation date
-  de: Erstellungsdatum
-completedOn:
-  en: Completion date
-  de: Abgeschlossen am
-updated:
-  en: Updated
-  de: Aktualisiert
-updatedOn:
-  en: Update date
-  de: Änderungsdatum
-startedOn:
-  en: Started on
-  de: Gestartet am
-relevance:
-  en: Relevance
-  de: Relevanz
-owner:
-  en: Owner
-  de: Eigentümer
-email:
-  en: Email
-  de: E-Mail
-emailAddress:
-  en: Email address
-  de: E-Mail-Adresse
-name:
-  en: Name
-  de: Name
-type:
-  en: Type
-  de: Typ
-documentsMode:
-  en: Documents handling mode
-  de: Dokumente-Bearbeitungsmodus
-documentsMode_exclusive:
-  en: exclusive
-  de: exklusiv
-documentsMode_collaborative:
-  en: collaborative
-  de: kollaborativ
-documentTitle:
-  en: Document title
-  de: Dokument-Titel
-title:
-  en: Title
-  de: Titel
-slug:
-  en: URL path
-  de: URL-Pfad
-tags:
-  en: Tags
-  de: Tags
-archived:
-  en: Archived
-  de: Archiviert
-id:
-  en: ID
-  de: ID
-user:
-  en: User
-  de: Benutzer
-displayName:
-  en: Display name
-  de: Anzeigename
-password:
-  en: Password
-  de: Kennwort
-text:
-  en: Text
-  de: Text
-update:
-  en: Update
-  de: Aktualisieren
-description:
-  en: Description
-  de: Beschreibung
-url:
-  en: URL
-  de: URL
-daily:
-  en: daily
-  de: täglich
-weekly:
-  en: weekly
-  de: wöchentlich
-monthly:
-  en: monthly
-  de: monatlich
-yearly:
-  en: yearly
-  de: jährlich
-click:
-  en: Click
-  de: Klick
-ctrl:
-  en: Ctrl
-  de: Strg
-cmd:
-  en: Cmd
-  de: Cmd
-shift:
-  en: Shift
-  de: Umschalt
-alt:
-  en: Alt
-  de: Alt
-opt:
-  en: Opt
-  de: Opt
-unknown:
-  en: Unknown
-  de: Unbekannt
-unknownDocument:
-  en: Unknown document
-  de: Unbekanntes Dokument
-privateDocument:
-  en: Private document
-  de: Privates Dokument
-storage:
-  en: Storage
-  de: Speicher
-actions:
-  en: Actions
-  de: Aktionen
-sortedByRelevance:
-  en: Sorted by relevance
-  de: Nach Relevanz sortiert
-sortedByName:
-  en: Sorted by name
-  de: Nach Name sortiert
-sortedByCapacity:
-  en: Sorted by capacity
-  de: Nach Kapazität sortiert
-sortedByTitle:
-  en: Sorted by title
-  de: Nach Titel sortiert
-sortedByLanguage:
-  en: Sorted by language
-  de: Nach Sprache sortiert
-sortedByCreatedOn:
-  en: Sorted by creation date
-  de: Nach Erstellungsdatum sortiert
-sortedByUpdatedOn:
-  en: Sorted by update date
-  de: Nach Änderungsdatum sortiert
-sortedByType:
-  en: Sorted by type
-  de: Nach Typ sortiert
-sortedByUser:
-  en: Sorted by user
-  de: Nach Benutzer sortiert
-sortedByArchived:
-  en: Sorted by archived status
-  de: Nach Archivierungsstatus sortiert
-search:
-  en: Search
-  de: Suche
-capacity:
-  en: Capacity
-  de: Kapazität
-copyTitleSuffix:
-  en: (copy)
-  de: (Kopie)
-copySlugSuffix:
-  en: copy
-  de: kopie
-roomsBreadcrumbPart:
-  en: rooms
-  de: Räume
-youtube:
-  en: Youtube
-  de: Youtube
-aspectRatio:
-  en: Aspect ratio
-  de: Seitenverhältnis
-width:
-  en: Width
-  de: Breite
-widthInfo:
-  en: Is applied to all screen sizes except for mobile phones
-  de: Trifft auf alle Bildschirmgrößen zu, außer auf Mobilgeräte
-copyrightNotice:
-  en: Copyright notice
-  de: Urheberschutzvermerk
-videoDisplay:
-  en: Video display
-  de: Videoanzeige
-source:
-  en: Source
-  de: Quelle
-imageSource:
-  en: Image source
-  de: Bild-Quelle
-size:
-  en: Size
-  de: Größe
-naturalSize:
-  en: Natural size
-  de: Natürliche Größe
-resource_image:
-  en: image
-  de: Bild
-resource_video:
-  en: video
-  de: Video
-resource_audio:
-  en: audio
-  de: Audio
-resource_text:
-  en: text
-  de: Text
-resource_pdf:
-  en: document
-  de: Dokument
-resource_none:
-  en: Unknown
-  de: Unbekannt
-resource_unknown:
-  en: Unknown
-  de: Unbekannt
-directory:
-  en: Directory
-  de: Verzeichnis
-pageCount:
-  en: Page count
-  de: Seitenanzahl
-question:
-  en: Question
-  de: Frage
-answer:
-  en: Answer
-  de: Antwort
-deletedDocument:
-  en: Deleted document
-  de: Gelöschtes Dokument
-targetDeletedMessage:
-  en: The target of this link has been deleted
-  de: Das Ziel dieses Links wurde gelöscht
-deletedRoom:
-  en: Deleted room
-  de: Gelöschter Raum
-reset:
-  en: Reset
-  de: Zurücksetzen
-randomizedTests:
-  en: The tests are arranged in random order
-  de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
-youtubeCopyrightNotice:
-  en: |
-    Source: [Youtube]({link})
-  de: |
-    Quelle: [Youtube]({link})
-emailIsInvalid:
-  en: The value you provided is not a valid email address
-  de: Deine Eingabe ist keine gültige E-Mail-Adresse
-verifiedDocumentBadge:
-  en: This document was verified by a maintainer
-  de: Dieses Dokument wurde von einem Maintainer überprüft
-allowedOpenContributionBadge_none:
-  en: Open contribution to this document is not allowed
-  de: Dieses Dokument kann nicht öffentlich bearbeitet werden
-allowedOpenContributionBadge_metadataAndContent:
-  en: Open contribution to this document's metadata and content is allowed
-  de: Dieses Dokument kann vollständig öffentlich bearbeitet werden
-allowedOpenContributionBadge_content:
-  en: Open contribution to this document's metadata is not allowed
-  de: Die Metadaten dieses Dokuments können nicht öffentlich bearbeitet werden
-duration:
-  en: Duration
-  de: Zeitdauer
-determiningDuration:
-  en: Determining media duration ...
-  de: Mediendauer wird ermittelt ...
-startTimecode:
-  en: Start time
-  de: Startzeit
-chapter:
-  en: Chapter
-  de: Kapitel
-editChapter:
-  en: Edit chapter
-  de: Kapitel bearbeiten
-mainTrack:
-  en: Main track
-  de: Hauptspur
-secondaryTrack:
-  en: Track {number}
-  de: Spur {number}
-addTrack:
-  en: Add track
-  de: Spur hinzufügen
-trackMixer:
-  en: Track mixer
-  de: Spur-Mixer
-caption:
-  en: Caption
-  de: Legende
-defaultVolumePreset:
-  en: Default
-  de: Standard
-volumePreset:
-  en: Volumes preset
-  de: Lautstärke-Voreinstellung
-displayMode:
-  en: Display mode
-  de: Anzeigemodus
-searchTextTooShort:
-  en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
-  de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein
-searchOngoing:
-  en: Searching ...
-  de: Suche ...
-searchResultInfo:
-  en: |
-    {
-    resultCount, select,
-    0 {Searching for the term <0>{searchTerm}</0> yielded no results}
-    other {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}
-    }
-  de: |
-    {
-    resultCount, select,
-    0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}
-    other {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}
-    }
-more:
-  en: more ...
-  de: mehr ...
-less:
-  en: less ...
-  de: weniger ...
-draft:
-  en: Draft
-  de: Entwurf
+common:
+  "yes":
+    en: "Yes"
+    de: Ja
+  "no":
+    en: "No"
+    de: Nein
+  ok:
+    en: OK
+    de: OK
+  save:
+    en: Save
+    de: Speichern
+  cancel:
+    en: Cancel
+    de: Abbrechen
+  close:
+    en: Close
+    de: Schließen
+  select:
+    en: Select
+    de: Auswählen
+  back:
+    en: Back
+    de: Zurück
+  preview:
+    en: Preview
+    de: Vorschau
+  edit:
+    en: Edit
+    de: Bearbeiten
+  apply:
+    en: Apply
+    de: Übernehmen
+  discard:
+    en: Discard
+    de: Verwerfen
+  copyToClipboard:
+    en: Copy to clipboard
+    de: In die Zwischenablage kopieren
+  pasteFromClipboard:
+    en: Paste from clipboard
+    de: Aus der Zwischenablage einfügen
+  delete:
+    en: Delete
+    de: Löschen
+  hardDelete:
+    en: Delete irreversibly
+    de: Unwiderruflich löschen
+  duplicate:
+    en: Duplicate
+    de: Duplizieren
+  create:
+    en: Create
+    de: Erstellen
+  moveUp:
+    en: Move up
+    de: Nach oben verschieben
+  moveDown:
+    en: Move down
+    de: Nach unten verschieben
+  openHelp:
+    en: Open help
+    de: Hilfe öffnen
+  confirm:
+    en: Confirm
+    de: Bestätigen
+  error:
+    en: Error
+    de: Fehler
+  date:
+    en: Date
+    de: Datum
+  status:
+    en: Status
+    de: Status
+  language:
+    en: Language
+    de: Sprache
+  proposedSectionsAlert:
+    en: |
+      Apply or discard the proposed sections. Unapplied sections are
+      only visible until you leave the current view.
+    de: |
+      Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene
+      Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
+  version:
+    en: Version
+    de: Version
+  document:
+    en: Document
+    de: Dokument
+  room:
+    en: Room
+    de: Raum
+  viewDocument:
+    en: View document
+    de: Dokument ansehen
+  copySectionToClipboardError:
+    en: Error copying the section to the clipboard due to missing access permissions.
+    de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
+  pasteSectionFromClipboardError:
+    en: |
+        Error pasting the section from the clipboard. Either the clipboard contains content that cannot
+        be pasted as a new section or the browser denies access to the clipboard.
+    de: |
+        Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht
+        als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.
+  sectionCopiedToClipboard:
+    en: The section was copied to the clipboard
+    de: Der Abschnitt wurde in die Zwischenablage kopiert
+  clipboardPasteNotSupported:
+    en: Pasting from the clipboard is not supported by this browser.
+    de: Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.
+  copyUrlToClipboard:
+    en: Copy URL to the clipboard
+    de: URL in die Zwischenablage kopieren
+  urlCopiedToClipboard:
+    en: The URL was copied to the clipboard
+    de: Die URL wurde in die Zwischenablage kopiert
+  copyUrlToClipboardError:
+    en: Error copying the URL to the clipboard due to missing access permissions.
+    de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
+  logIn:
+    en: Log in
+    de: Anmelden
+  logOut:
+    en: Log out
+    de: Abmelden
+  created:
+    en: Created
+    de: Erstellt
+  createdOn:
+    en: Creation date
+    de: Erstellungsdatum
+  completedOn:
+    en: Completion date
+    de: Abgeschlossen am
+  updated:
+    en: Updated
+    de: Aktualisiert
+  updatedOn:
+    en: Update date
+    de: Änderungsdatum
+  startedOn:
+    en: Started on
+    de: Gestartet am
+  relevance:
+    en: Relevance
+    de: Relevanz
+  owner:
+    en: Owner
+    de: Eigentümer
+  email:
+    en: Email
+    de: E-Mail
+  emailAddress:
+    en: Email address
+    de: E-Mail-Adresse
+  name:
+    en: Name
+    de: Name
+  type:
+    en: Type
+    de: Typ
+  documentsMode:
+    en: Documents handling mode
+    de: Dokumente-Bearbeitungsmodus
+  documentsMode_exclusive:
+    en: exclusive
+    de: exklusiv
+  documentsMode_collaborative:
+    en: collaborative
+    de: kollaborativ
+  documentTitle:
+    en: Document title
+    de: Dokument-Titel
+  title:
+    en: Title
+    de: Titel
+  slug:
+    en: Slug
+    de: Slug
+  slugInfo:
+    en: |
+      The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.
+    de: |
+      Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
+  invalidSlug:
+    en: The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
+    de: Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
+  tags:
+    en: Tags
+    de: Tags
+  archived:
+    en: Archived
+    de: Archiviert
+  id:
+    en: ID
+    de: ID
+  user:
+    en: User
+    de: Benutzer
+  displayName:
+    en: Display name
+    de: Anzeigename
+  password:
+    en: Password
+    de: Kennwort
+  text:
+    en: Text
+    de: Text
+  update:
+    en: Update
+    de: Aktualisieren
+  description:
+    en: Description
+    de: Beschreibung
+  url:
+    en: URL
+    de: URL
+  daily:
+    en: daily
+    de: täglich
+  weekly:
+    en: weekly
+    de: wöchentlich
+  monthly:
+    en: monthly
+    de: monatlich
+  yearly:
+    en: yearly
+    de: jährlich
+  click:
+    en: Click
+    de: Klick
+  ctrl:
+    en: Ctrl
+    de: Strg
+  cmd:
+    en: Cmd
+    de: Cmd
+  shift:
+    en: Shift
+    de: Umschalt
+  alt:
+    en: Alt
+    de: Alt
+  opt:
+    en: Opt
+    de: Opt
+  unknown:
+    en: Unknown
+    de: Unbekannt
+  storage:
+    en: Storage
+    de: Speicher
+  actions:
+    en: Actions
+    de: Aktionen
+  sortedByRelevance:
+    en: Sorted by relevance
+    de: Nach Relevanz sortiert
+  sortedByName:
+    en: Sorted by name
+    de: Nach Name sortiert
+  sortedByCapacity:
+    en: Sorted by capacity
+    de: Nach Kapazität sortiert
+  sortedByTitle:
+    en: Sorted by title
+    de: Nach Titel sortiert
+  sortedByLanguage:
+    en: Sorted by language
+    de: Nach Sprache sortiert
+  sortedByCreatedOn:
+    en: Sorted by creation date
+    de: Nach Erstellungsdatum sortiert
+  sortedByUpdatedOn:
+    en: Sorted by update date
+    de: Nach Änderungsdatum sortiert
+  sortedByType:
+    en: Sorted by type
+    de: Nach Typ sortiert
+  sortedByUser:
+    en: Sorted by user
+    de: Nach Benutzer sortiert
+  sortedByArchived:
+    en: Sorted by archived status
+    de: Nach Archivierungsstatus sortiert
+  search:
+    en: Search
+    de: Suche
+  capacity:
+    en: Capacity
+    de: Kapazität
+  copyTitleSuffix:
+    en: (copy)
+    de: (Kopie)
+  copySlugSuffix:
+    en: copy
+    de: kopie
+  roomsBreadcrumbPart:
+    en: rooms
+    de: Räume
+  youtube:
+    en: Youtube
+    de: Youtube
+  aspectRatio:
+    en: Aspect ratio
+    de: Seitenverhältnis
+  width:
+    en: Width
+    de: Breite
+  widthInfo:
+    en: Is applied to all screen sizes except for mobile phones
+    de: Trifft auf alle Bildschirmgrößen zu, außer auf Mobilgeräte
+  copyrightNotice:
+    en: Copyright
+    de: Urheberrecht
+  videoDisplay:
+    en: Video display
+    de: Videoanzeige
+  source:
+    en: Source
+    de: Quelle
+  imageSource:
+    en: Image source
+    de: Bild-Quelle
+  size:
+    en: Size
+    de: Größe
+  naturalSize:
+    en: Natural size
+    de: Natürliche Größe
+  resource_image:
+    en: image
+    de: Bild
+  resource_video:
+    en: video
+    de: Video
+  resource_audio:
+    en: audio
+    de: Audio
+  resource_text:
+    en: text
+    de: Text
+  resource_pdf:
+    en: document
+    de: Dokument
+  resource_none:
+    en: Unknown
+    de: Unbekannt
+  resource_unknown:
+    en: Unknown
+    de: Unbekannt
+  pageCount:
+    en: Page count
+    de: Seitenanzahl
+  question:
+    en: Question
+    de: Frage
+  answer:
+    en: Answer
+    de: Antwort
+  deletedDocument:
+    en: Deleted document
+    de: Gelöschtes Dokument
+  targetDeletedMessage:
+    en: The target of this link has been deleted
+    de: Das Ziel dieses Links wurde gelöscht
+  deletedRoom:
+    en: Deleted room
+    de: Gelöschter Raum
+  reset:
+    en: Reset
+    de: Zurücksetzen
+  randomizedTests:
+    en: The tests are arranged in random order
+    de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
+  youtubeCopyrightNotice:
+    en: |
+      Source: [Youtube]({link})
+    de: |
+      Quelle: [Youtube]({link})
+  verifiedDocumentBadge:
+    en: This document was verified by a maintainer
+    de: Dieses Dokument wurde von einem Maintainer überprüft
+  duration:
+    en: Duration
+    de: Zeitdauer
+  determiningDuration:
+    en: Determining media duration ...
+    de: Mediendauer wird ermittelt ...
+  startTimecode:
+    en: Start time
+    de: Startzeit
+  chapter:
+    en: Chapter
+    de: Kapitel
+  editChapter:
+    en: Edit chapter
+    de: Kapitel bearbeiten
+  mainTrack:
+    en: Main track
+    de: Hauptspur
+  secondaryTrack:
+    en: Track {number}
+    de: Spur {number}
+  addTrack:
+    en: Add track
+    de: Spur hinzufügen
+  trackMixer:
+    en: Track mixer
+    de: Spur-Mixer
+  caption:
+    en: Caption
+    de: Legende
+  defaultVolumePreset:
+    en: Default
+    de: Standard
+  volumePreset:
+    en: Volumes preset
+    de: Lautstärke-Voreinstellung
+  displayMode:
+    en: Display mode
+    de: Anzeigemodus
+  searchTextTooShort:
+    en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
+    de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein
+  searchOngoing:
+    en: Searching ...
+    de: Suche ...
+  searchResultInfo:
+    en: |
+      {
+      resultCount, select,
+      0 {Searching for the term <0>{searchTerm}</0> yielded no results}
+      other {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}
+      }
+    de: |
+      {
+      resultCount, select,
+      0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}
+      other {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}
+      }
+  more:
+    en: more ...
+    de: mehr ...
+  less:
+    en: less ...
+    de: weniger ...
+  draft:
+    en: Draft
+    de: Entwurf
+  playbackRange:
+    en: Playback range
+    de: Abspielbereich
+  or:
+    en: or
+    de: oder
+  enterEmail:
+    en: Please enter an email address
+    de: Bitte gib eine E-Mail-Adresse an
+  emailIsInvalid:
+    en: The value you provided is not a valid email address
+    de: Deine Eingabe ist keine gültige E-Mail-Adresse
+  removeFavorite:
+    en: Remove from favorites
+    de: Von den Favoriten entfernen
+  addFavorite:
+    en: Add to favorites
+    de: Zu den Favoriten hinzufügen
+  createDocument:
+    en: Create document
+    de: Dokument erstellen
+  newDocument:
+    en: New document
+    de: Neues Dokument
+  createRoom:
+    en: Create room
+    de: Raum erstellen
+  enterRoom:
+    en: Enter room
+    de: Raum betreten
+  changesSavedSuccessfully:
+    en: Your changes have been saved
+    de: Deine Änderungen wurden gespeichert
+  filter:
+    en: Filter
+    de: Filter
+  posterImageUrl:
+    en: Preview image URL
+    de: Vorschau-Bild-URL

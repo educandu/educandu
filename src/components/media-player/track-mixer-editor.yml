@@ -1,0 +1,7 @@
+trackMixerEditor:
+  noTrack:
+    en: no track
+    de: keine Spur
+  manageVolumePresets:
+    en: Manage volume presets
+    de: Lautstärke-Voreinstellungen bearbeiten

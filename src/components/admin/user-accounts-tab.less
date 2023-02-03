@@ -1,0 +1,59 @@
+.UserAccountsTab {}
+
+.UserAccountsTab-header {
+  display: grid;
+  justify-items: end;
+  grid-template-rows: auto;
+  grid-template-columns: auto 1fr;
+  gap: @edu-control-spacing-wide;
+}
+
+.UserAccountsTab-tableSwitcher {
+  grid-row: 1;
+  grid-column: 1;
+
+  &.UserAccountsTab-tableSwitcher--wide {
+    display: block !important;
+
+    @media @edu-media-not-desktop {
+      display: none !important;
+    }
+  }
+
+  &.UserAccountsTab-tableSwitcher--narrow {
+    min-width: 200px;
+    display: none !important;
+
+    @media @edu-media-not-desktop {
+      display: block !important;
+    }
+  }
+}
+
+.UserAccountsTab-filter {
+  grid-row: 1;
+  grid-column: 2;
+  max-width: 320px;
+}
+
+.UserAccountsTab-storagePlanSelect {
+  width: 100%;
+}
+
+.UserAccountsTab-storagePlanOption {}
+
+.UserAccountsTab-storagePlanOptionSize {
+  font-size: 75%;
+}
+
+.UserAccountsTab-reminders {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.UserAccountsTab-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
