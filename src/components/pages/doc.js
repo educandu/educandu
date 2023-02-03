@@ -276,11 +276,11 @@ function Doc({ initialState, PageTemplate }) {
         return currentSection;
       });
 
-      await message.success(t('common:changesSavedSuccessfully'));
       setIsDirty(false);
       setDoc(updatedDoc);
       setCurrentSections(cloneDeep(mergedSections));
       setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
+      message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
       handleApiError({ error, logger, t });
     }
