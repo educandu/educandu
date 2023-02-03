@@ -4,6 +4,7 @@ import AudioInfo from './audio/audio-info.js';
 import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
+import PianoInfo from './piano/piano-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
 import { isBrowser } from '../ui/browser-helper.js';
@@ -32,6 +33,7 @@ const allPossibleInfoTypes = [
   VideoInfo,
   ImageInfo,
   TableInfo,
+  PianoInfo,
   IframeInfo,
   CatalogInfo,
   MarkdownInfo,

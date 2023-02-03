@@ -18,7 +18,7 @@ import PlayIcon from '../../components/icons/media-player/play-icon.js';
 import PauseIcon from '../../components/icons/media-player/pause-icon.js';
 import { useMidiData, usePianoId, useToneJsSampler, useMidiDevice, useExercise, useMidiPlayer } from './custom-hooks.js';
 
-export default function MidiPianoDisplay({ content }) {
+export default function PianoDisplay({ content }) {
 
   const keys = useRef(null);
   const activeNotes = useRef([]);
@@ -27,7 +27,7 @@ export default function MidiPianoDisplay({ content }) {
   const noteDurationRef = useRef(2000);
   const isMidiInputEnabled = useRef(false);
   const isNoteInputEnabled = useRef(false);
-  const { t } = useTranslation('midiPiano');
+  const { t } = useTranslation('piano');
   const isExercisePlayingRef = useRef(false);
   const playExerciseMode = useRef('successive');
   const clientConfig = useService(ClientConfig);
@@ -333,9 +333,9 @@ export default function MidiPianoDisplay({ content }) {
       return;
     }
     isMidiInputEnabled.current = false;
-    const switchElem = document.querySelector(`.${pianoId}.MidiPiano-Switch`);
-    if (switchElem && switchElem.classList.contains('MidiPiano-SwitchChecked')) {
-      switchElem.classList.remove('MidiPiano-SwitchChecked');
+    const switchElem = document.querySelector(`.${pianoId}.Piano-Switch`);
+    if (switchElem && switchElem.classList.contains('Piano-SwitchChecked')) {
+      switchElem.classList.remove('Piano-SwitchChecked');
     }
     resetAllKeyStyles();
   };
@@ -400,7 +400,7 @@ export default function MidiPianoDisplay({ content }) {
   };
 
   const renderMidiPlayerControls = () => (
-    <div className="MidiPiano-midiPlayerControls" >
+    <div className="Piano-midiPlayerControls" >
       <Button onClick={startMidiPlayer} icon={<PlayIcon />} />
       <Button onClick={pauseMidiPlayer} icon={<PauseIcon />} />
       <Button onClick={stopMidiPlayer} icon={<StopIcon />} />
@@ -415,11 +415,11 @@ export default function MidiPianoDisplay({ content }) {
   );
 
   const renderMidiTrackTitle = () => (
-    <div className="MidiPiano-midiTrackTitle">{midiTrackTitle}</div>
+    <div className="Piano-midiTrackTitle">{midiTrackTitle}</div>
   );
 
   const renderPlayExerciseModeRadioGroup = () => (
-    <div className="MidiPiano-PlayExerciseModeRG">
+    <div className="Piano-PlayExerciseModeRG">
       <RadioGroup defaultValue="successive">
         <RadioButton value="successive" onChange={() => { playExerciseMode.current = 'successive'; }}>{t('successive')}</RadioButton>
         <RadioButton value="simultaneous" onChange={() => { playExerciseMode.current = 'simultaneous'; }}>{t('simultaneous')}</RadioButton>
@@ -429,7 +429,7 @@ export default function MidiPianoDisplay({ content }) {
 
   const renderNoteSequenceControls = () => {
     return (
-      <Form.Item label={t('playFromNote')} className="MidiPiano-EarTrainingControlsItem">
+      <Form.Item label={t('playFromNote')} className="Piano-EarTrainingControlsItem">
         <InputNumber
           value={playExerciseStartIndex + 1}
           min={1}
@@ -443,14 +443,14 @@ export default function MidiPianoDisplay({ content }) {
   const tipformatter = value => `${(value / 1000).toFixed(1)}s`;
 
   const renderEarTrainingControls = () => (
-    <div className="MidiPiano-EarTrainingControls">
+    <div className="Piano-EarTrainingControls">
       <h4>{`${t('earTraining')}: ${t(exerciseType)} ${u.usesWhiteKeysOnly(currentTest()) ? `(${t('whiteKeysOnly')})` : ''}`}</h4>
-      <div className="MidiPiano-EarTrainingControlsItem">
+      <div className="Piano-EarTrainingControlsItem">
         <Button onClick={playExercise} icon={<PlayIcon />} />
         <Button onClick={() => { isExercisePlayingRef.current = false; }} icon={<StopIcon />} />
       </div>
       <Form>
-        <Form.Item label={t('noteDuration')} className="MidiPiano-EarTrainingControlsItem">
+        <Form.Item label={t('noteDuration')} className="Piano-EarTrainingControlsItem">
           <Slider tipFormatter={tipformatter} defaultValue={2000} min={200} max={4000} step={100} onChange={value => { noteDurationRef.current = value; }} />
         </Form.Item>
         {exerciseType === C.EXERCISE_TYPES.noteSequence && renderNoteSequenceControls()}
@@ -458,7 +458,7 @@ export default function MidiPianoDisplay({ content }) {
       </Form>
       <div>
         <Button
-          className="MidiPiano-BtnShowHideSolution"
+          className="Piano-BtnShowHideSolution"
           onClick={() => {
             setCanShowSolution(prev => !prev);
             canShowSolutionRef.current = !canShowSolutionRef.current;
@@ -466,7 +466,7 @@ export default function MidiPianoDisplay({ content }) {
           >
           {canShowSolution ? t('hideSolution') : t('showSolution')}
         </Button>
-        <Button className="MidiPiano-BtnNewExercise" onClick={resetEarTrainingControls}>{t('newExercise')}</Button>
+        <Button className="Piano-BtnNewExercise" onClick={resetEarTrainingControls}>{t('newExercise')}</Button>
       </div>
     </div>
   );
@@ -507,22 +507,22 @@ export default function MidiPianoDisplay({ content }) {
           </div>
         </div>
       )}
-      <div className="MidiPiano-AbcDisplayContainer">
+      <div className="Piano-AbcDisplayContainer">
         {exerciseType === 'noteSequence' && (
           <div className="AbcNotation" style={{ display: 'flex' }}>
-            <div className="AbcNotation-wrapper u-width-65 MidiPiano-AnswerAbcDisplay">
-              <div className="MidiPiano-NoteInputSwitch">
+            <div className="AbcNotation-wrapper u-width-65 Piano-AnswerAbcDisplay">
+              <div className="Piano-NoteInputSwitch">
                 <CustomSwitch handleSwitchClick={isChecked => { isNoteInputEnabled.current = isChecked; }} />
                 <div>{t('noteInput')}</div>
               </div>
-              <div className="MidiPiano-AnswerAbcNotation">
+              <div className="Piano-AnswerAbcNotation">
                 <AbcNotation abcCode={`L:1/4 \n K:C ${clef || 'treble'} \n ${indication + answerAbc}`} />
               </div>
-              <Button onClick={deleteNote} icon={<BackspaceIcon />} className="MidiPiano-BtnDeleteNote" />
+              <Button onClick={deleteNote} icon={<BackspaceIcon />} className="Piano-BtnDeleteNote" />
             </div>
-            <div className="AbcNotation-wrapper u-width-65 MidiPiano-SolutionAbcDisplay">
+            <div className="AbcNotation-wrapper u-width-65 Piano-SolutionAbcDisplay">
               <div>{canShowSolution ? t('solution') : t('firstNote')}</div>
-              <div className="MidiPiano-SolutionAbcNotation">
+              <div className="Piano-SolutionAbcNotation">
                 <AbcNotation abcCode={`L:1/4 \n K:C ${clef || 'treble'} \n ${canShowSolution ? solution : indication}`} />
               </div>
             </div>
@@ -530,17 +530,17 @@ export default function MidiPianoDisplay({ content }) {
         )}
       </div>
       {[C.EXERCISE_TYPES.interval, C.EXERCISE_TYPES.chord].includes(exerciseType) && (
-        <div className="MidiPiano-threeFlexColumnsContainer">
-          <div className="MidiPiano-OneOfThreeFlexColumns">
-            <div className="MidiPiano-switchContainer">
+        <div className="Piano-threeFlexColumnsContainer">
+          <div className="Piano-OneOfThreeFlexColumns">
+            <div className="Piano-switchContainer">
               <CustomSwitch handleSwitchClick={isChecked => { isNoteInputEnabled.current = isChecked; }} />
               <div>{t('noteInput')}</div>
             </div>
           </div>
-          <div className="MidiPiano-ChordSolutionDisplay">
+          <div className="Piano-ChordSolutionDisplay">
             {!!canShowSolution && exerciseType === C.EXERCISE_TYPES.chord && <div>{`${t(chord.type)}, ${t(chord.inversion)}`}</div>}
           </div>
-          <div className="MidiPiano-OneOfThreeFlexColumns">
+          <div className="Piano-OneOfThreeFlexColumns">
             <div />
           </div>
         </div>
@@ -563,16 +563,16 @@ export default function MidiPianoDisplay({ content }) {
         isExercisePlayingRef={isExercisePlayingRef}
         answerMidiValueSequence={answerMidiValueSequence}
         />
-      <div className="MidiPiano-MidiControlsContainer">
-        <div className="MidiPiano-MidiControlsWrapper">
+      <div className="Piano-MidiControlsContainer">
+        <div className="Piano-MidiControlsWrapper">
           {!!sourceUrl && <h4>MIDI</h4>}
           {!!sourceUrl && renderMidiPlayerControls()}
           {!!sourceUrl && !!midiTrackTitle && renderMidiTrackTitle()}
         </div>
-        <div className="MidiPiano-EarTrainingControlsContainer">
+        <div className="Piano-EarTrainingControlsContainer">
           {content.tests.length !== 0 && renderEarTrainingControls()}
         </div>
-        <div className="MidiPiano-inputSwitch">
+        <div className="Piano-inputSwitch">
           {!!isMidiDeviceConnected && renderInputSwitch()}
         </div>
       </div>
@@ -580,6 +580,6 @@ export default function MidiPianoDisplay({ content }) {
   );
 }
 
-MidiPianoDisplay.propTypes = {
+PianoDisplay.propTypes = {
   ...sectionDisplayProps
 };

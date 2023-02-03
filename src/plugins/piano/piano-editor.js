@@ -1,9 +1,9 @@
 /* eslint-disable max-lines */
+import PianoInfo from './piano-info.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useRef } from 'react';
-import validation from '../../ui/validation.js';
+// import validation from '../../ui/validation.js';
 import { pianoLayout } from './custom-piano.js';
-import MidiPianoInfo from './midi-piano-info.js';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
@@ -16,19 +16,19 @@ import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import { Form, Input, Radio, Button, Slider, Checkbox, Divider } from 'antd';
 import { CDN_URL_PREFIX, MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 import ResourcePicker from '../../components/resource-picker/resource-picker.js';
-import { analyseABC, filterAbcString, ensureOneInversionIsChecked, ensureOneChordIsChecked } from './utils.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { EXERCISE_TYPES, INTERVAL_NAMES, TRIADS, SEVENTH_CHORDS, INVERSIONS } from './constants.js';
+import { analyseABC, filterAbcString, ensureOneInversionIsChecked, ensureOneChordIsChecked } from './utils.js';
 
-export default function MidiPianoEditor({ content, onContentChanged }) {
+export default function PianoEditor({ content, onContentChanged }) {
 
   const FormItem = Form.Item;
   const RadioGroup = Radio.Group;
   const RadioButton = Radio.Button;
   const keyRangeSelection = useRef([]);
   const abcHasBeenInput = useRef(false);
-  const { t } = useTranslation('midiPiano');
-  const midiPianoInfo = useService(MidiPianoInfo);
+  const { t } = useTranslation('piano');
+  const pianoInfo = useService(PianoInfo);
   const selectorPianoColors = { whiteKey: 'white', blackKey: 'black' };
   const [canRenderSelectorPiano, setCanRenderSelectorPiano] = useState(false);
   const { tests, sourceUrl, sourceType, midiTrackTitle } = content;
@@ -48,10 +48,10 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidSourceUrl
-      = newContent.sourceType === MIDI_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
-    onContentChanged(newContent, isInvalidSourceUrl);
+    // const isInvalidSourceUrl
+    //   = newContent.sourceType === MIDI_SOURCE_TYPE.external
+    //   && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent);
   };
 
   const handleDeleteTest = index => {
@@ -92,7 +92,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleAddTestButtonClick = () => {
     const newTests = cloneDeep(tests);
-    newTests.push(midiPianoInfo.getDefaultTest());
+    newTests.push(pianoInfo.getDefaultTest());
     changeContent({ tests: newTests });
   };
 
@@ -239,7 +239,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   };
 
   const updateKeyRangeSelection = event => {
-    event.target.classList.toggle('MidiPiano-keySelected');
+    event.target.classList.toggle('Piano-keySelected');
     const value = parseInt(event.target.dataset.index, 10);
     if (!keyRangeSelection.current.includes(value)) {
       keyRangeSelection.current.push(value);
@@ -326,7 +326,7 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
 
   const handleAddCustomNoteSequenceButtonClick = index => {
     const newTests = cloneDeep(tests);
-    newTests[index].customNoteSequences.push(midiPianoInfo.getDefaultCustomNoteSequence());
+    newTests[index].customNoteSequences.push(pianoInfo.getDefaultCustomNoteSequence());
     changeContent({ tests: newTests });
   };
 
@@ -382,12 +382,12 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   );
 
   const renderSelectorPiano = () => (
-    <div className="MidiPiano-selectorPianoContainer">
-      <div className="MidiPiano-selectorPianoWrapper">
+    <div className="Piano-selectorPianoContainer">
+      <div className="Piano-selectorPianoWrapper">
         <div>
           {t('keyRangeSelectionText')}
         </div>
-        <div className="MidiPiano-selectorPiano">
+        <div className="Piano-selectorPiano">
           {pianoLayout.map((elem, index) => {
             if (elem[0] === 0 && index < pianoLayout.length - 1) {
               return (
@@ -715,6 +715,6 @@ export default function MidiPianoEditor({ content, onContentChanged }) {
   );
 }
 
-MidiPianoEditor.propTypes = {
+PianoEditor.propTypes = {
   ...sectionEditorProps
 };

@@ -1,27 +1,27 @@
-.MidiPiano {}
+.Piano {}
 
-.MidiPiano-MidiControlsContainer {
+.Piano-MidiControlsContainer {
   display: flex;
   width: 100%;
 }
 
-.MidiPiano-MidiControlsWrapper {
+.Piano-MidiControlsWrapper {
   width: 100%;
   padding: 1rem 0;
 }
 
-.MidiPiano-midiTrackTitle {
+.Piano-midiTrackTitle {
   display: flex;
   justify-content: left;
 }
 
-.MidiPiano-midiPlayerControls {
+.Piano-midiPlayerControls {
   display: flex;
   justify-content: left;
   padding: 0 0 0.5rem 0;
 }
 
-.MidiPiano-inputSwitch {
+.Piano-inputSwitch {
   width: 100%;
   padding: 1rem 0;
   display: flex;
@@ -30,7 +30,7 @@
   position: relative;
 }
 
-.MidiPiano-pianoContainer {
+.Piano-pianoContainer {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -40,7 +40,7 @@
   // cursor: pointer;
 }
 
-.MidiPiano-selectorPianoContainer {
+.Piano-selectorPianoContainer {
   position: relative;
   width: 100%;
   margin: 0 auto;
@@ -52,7 +52,7 @@
   z-index: 2;
 }
 
-.MidiPiano-selectorPianoWrapper {
+.Piano-selectorPianoWrapper {
   position: absolute;
   padding: 1rem;
   display: flex;
@@ -64,24 +64,24 @@
   border-radius: 9px;
 }
 
-.MidiPiano-selectorPiano {
+.Piano-selectorPiano {
   display: flex;
   justify-content: center;
   width: 95vw;
 
-  .MidiPiano-keyWhite {
+  .Piano-keyWhite {
     cursor: pointer;
   }
 }
 
-.MidiPiano-key {
+.Piano-key {
   box-sizing: border-box;
   border-radius: 0 0 0.2rem 0.2rem;
   user-select: none;
   cursor: pointer;
 }
 
-.MidiPiano-keyWhite {
+.Piano-keyWhite {
   position: relative;
   width: 100%;
   max-width: 42px;
@@ -91,11 +91,11 @@
   box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.3);
 }
 
-.MidiPiano-key.MidiPiano-keySelected {
+.Piano-key.Piano-keySelected {
   background-color: rgb(127, 202, 230) !important;
 }
 
-.MidiPiano-keyBlack {
+.Piano-keyBlack {
   position: absolute;
   top: -1px;
   width: 52%;
@@ -107,7 +107,7 @@
   z-index: 1;
 }
 
-.MidiPiano-Switch {
+.Piano-Switch {
   position: relative;
   background-color: rgb(230,230,230);
   height: 22px;
@@ -117,19 +117,19 @@
   transition: all 0.2s ease-in-out;
 }
 
-.MidiPiano-switchContainer {
+.Piano-switchContainer {
   margin-bottom: 1rem;
   display: flex;
   gap: 0.5rem;
   width: 100%;
 }
 
-.MidiPiano-SwitchChecked {
+.Piano-SwitchChecked {
   background-color: rgb(109,139,177);
   transition: all 0.2s ease-in-out;
 }
 
-.MidiPiano-SwitchHandle {
+.Piano-SwitchHandle {
   position: absolute;
   background-color: white;
   border-radius: 50%;
@@ -141,18 +141,18 @@
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.MidiPiano-Switch.MidiPiano-SwitchChecked .MidiPiano-SwitchHandle {
+.Piano-Switch.Piano-SwitchChecked .Piano-SwitchHandle {
   left: calc(100% - 18px - 2px);
   transition: all 0.2s ease-in-out;
 }
 
-.MidiPiano-PlayExerciseModeRG {
+.Piano-PlayExerciseModeRG {
   margin-top: -0.5rem;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
 }
 
-.MidiPiano-EarTrainingControlsContainer {
+.Piano-EarTrainingControlsContainer {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -160,57 +160,57 @@
 }
 
 
-.MidiPiano-earTrainingControls {
+.Piano-earTrainingControls {
   display: flex;
   justify-content: center;
   padding: 1rem 0;
 }
 
-.MidiPiano-EarTrainingControls {
+.Piano-EarTrainingControls {
   display: flex;
   flex-direction: column;
   text-align: center;
   align-items: center;
 }
 
-.MidiPiano-EarTrainingControlsItem {
+.Piano-EarTrainingControlsItem {
   margin-bottom: 0.8rem;
 }
 
-.MidiPiano-BtnShowHideSolution {
+.Piano-BtnShowHideSolution {
   width: fit-content;
 }
 
-.MidiPiano-BtnNewExercise {
+.Piano-BtnNewExercise {
   width: fit-content;
 }
 
-.MidiPiano-AbcDisplayContainer {
+.Piano-AbcDisplayContainer {
   padding-bottom: 1rem;
 }
 
-.MidiPiano-AbcDisplay {
+.Piano-AbcDisplay {
   display: flex;
 }
 
-.MidiPiano-AnswerAbcDisplay {
+.Piano-AnswerAbcDisplay {
   margin-left: 0 !important;
   text-align: left !important;
 }
 
-.MidiPiano-NoteInputSwitch {
+.Piano-NoteInputSwitch {
   display: flex;
   gap: 0.5rem;
 }
 
-.MidiPiano-AnswerAbcNotation {
+.Piano-AnswerAbcNotation {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 7rem;
 }
 
-.MidiPiano-BtnDeleteNote {
+.Piano-BtnDeleteNote {
   min-width: 3rem;
   display: flex;
   justify-content: right;
@@ -218,31 +218,31 @@
   padding: 0.5rem;
 }
 
-.MidiPiano-SolutionAbcDisplay {
+.Piano-SolutionAbcDisplay {
   position: absolute;
   left: 50%;
   // max-width: 50% !important;
   text-align: left !important;
 }
 
-.MidiPiano-SolutionAbcNotation {
+.Piano-SolutionAbcNotation {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 7rem;
 }
 
-.MidiPiano-threeFlexColumnsContainer {
+.Piano-threeFlexColumnsContainer {
   display: flex;
   width: 100%;
 }
 
-.MidiPiano-OneOfThreeFlexColumns {
+.Piano-OneOfThreeFlexColumns {
   display: flex;
   width: 100%;
 }
 
-.MidiPiano-ChordSolutionDisplay {
+.Piano-ChordSolutionDisplay {
   width: 100%;
   display: flex;
   justify-content: center;

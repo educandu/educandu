@@ -231,16 +231,3 @@ export const CHORD_VECTOR_MAP = new Map([
   ['[2,5,8]', { type: 'halfDiminished', inversion: 'thirdInversion' }],
   ['[3,6,9]', { type: 'diminishedSeventh', inversion: 'anyInversion' }]
 ]);
-
-export const C = {
-  EVENT_TYPES,
-  MIDI_COMMANDS,
-  CHORD_VECTORS,
-  EXERCISE_TYPES,
-  ABC_NOTE_NAMES,
-  INTERVAL_NAMES,
-  MIDI_NOTE_NAMES,
-  INTERVAL_VECTORS,
-  CHORD_VECTOR_MAP,
-  WHITE_KEYS_MIDI_VALUES
-};

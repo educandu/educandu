@@ -29,7 +29,8 @@ const plugins = [
   'media-slideshow',
   'interactive-media',
   'multitrack-media',
-  'media-analysis'
+  'media-analysis',
+  'piano'
 ];
 
 const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)

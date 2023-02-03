@@ -1,31 +1,31 @@
 import React from 'react';
-import MidiPianoIcon from './midi-piano-icon.js';
+import PianoIcon from './piano-icon.js';
+import PianoDisplay from './piano-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import MidiPianoDisplay from './midi-piano-display.js';
 import { MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 
-class MidiPianoInfo {
+class PianoInfo {
 
-  static get typeName() { return 'midi-piano'; }
+  static get typeName() { return 'piano'; }
 
   constructor() {
-    this.type = 'midi-piano';
+    this.type = 'piano';
   }
 
   getName(t) {
-    return t('midiPiano:name');
+    return t('piano:name');
   }
 
   getIcon() {
-    return <MidiPianoIcon />;
+    return <PianoIcon />;
   }
 
   getDisplayComponent() {
-    return MidiPianoDisplay;
+    return PianoDisplay;
   }
 
   async resolveEditorComponent() {
-    return (await import('./midi-piano-editor.js')).default;
+    return (await import('./piano-editor.js')).default;
   }
 
   getDefaultCustomNoteSequence() {
@@ -147,4 +147,4 @@ class MidiPianoInfo {
   }
 }
 
-export default MidiPianoInfo;
+export default PianoInfo;

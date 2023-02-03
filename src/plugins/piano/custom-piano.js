@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
-import midiPlayerNs from 'midi-player-js';
 import React, { useEffect, useRef } from 'react';
 import { KeyWhite, KeyWhiteWithBlack } from './keys.js';
 import { create as createId } from '../../utils/unique-id.js';
-import { EXERCISE_TYPES } from './constants.js';
+import { EXERCISE_TYPES, MIDI_NOTE_NAMES } from './constants.js';
 
 // 0 represents white and black key, 1 respresents white key. Second element is midiValue for white key.
 export const pianoLayout = [
@@ -37,11 +36,10 @@ export default function CustomPiano(props) {
   const indicationMidiValue = midiValueSequence ? midiValueSequence[0] : null;
   const piano = useRef(null);
   const exerciseType = test.exerciseType;
-  const { NOTES } = midiPlayerNs.Constants;
   const keyRangeLayout = pianoLayout.slice(keyRange.first, keyRange.last + 1);
 
   const getNoteNameFromMidiValue = midiValue => {
-    return NOTES[midiValue];
+    return MIDI_NOTE_NAMES[midiValue];
   };
 
   const isBlackKey = key => {

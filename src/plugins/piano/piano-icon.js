@@ -3,7 +3,7 @@ import iconNs from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function MidiPianoIconComponent() {
+export function PianoIconComponent() {
   return (
     <svg width="1.2em" height="1.2em" style={{ enableBackground: 'new 0 0 1000 1000'}} viewBox="0 0 1000 1000" >
       <path d="M949.33 756.29H50.67c-19.5 0-35.31-15.81-35.31-35.31V279.02c0-19.5 15.81-35.31 35.31-35.31h898.66c19.5 0 35.31 15.81 35.31 35.31v441.97c0 19.49-15.81 35.3-35.31 35.3z" style={{ fill: '#f2f2f2', stroke: '#666', strokeWidth: 23.728, strokeLinecap: 'round', strokeLinejoin: 'round', strokeMiterlimit: 10 }} />
@@ -13,10 +13,10 @@ export function MidiPianoIconComponent() {
   );
 }
 
-function MidiPianoIcon() {
+function PianoIcon() {
   return (
-    <Icon component={MidiPianoIconComponent} />
+    <Icon component={PianoIconComponent} />
   );
 }
 
-export default MidiPianoIcon;
+export default PianoIcon;
