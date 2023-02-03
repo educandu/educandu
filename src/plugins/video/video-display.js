@@ -18,11 +18,12 @@ function VideoDisplay({ content }) {
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
         {!!url && (
           <MediaPlayer
-            sourceUrl={url}
-            playbackRange={content.playbackRange}
-            posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
             canDownload={canDownload}
+            playbackRange={content.playbackRange}
+            posterImageUrl={posterImageUrl}
+            sourceUrl={url}
+            volume={content.initialVolume}
             />
         )}
         <CopyrightNotice value={content.copyrightNotice} />

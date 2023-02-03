@@ -8,6 +8,7 @@ import MarkdownInput from '../../components/markdown-input.js';
 import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -19,7 +20,7 @@ const RadioButton = Radio.Button;
 function VideoEditor({ content, onContentChanged }) {
   const { t } = useTranslation('video');
 
-  const { sourceUrl, playbackRange, copyrightNotice, width, aspectRatio, posterImage } = content;
+  const { sourceUrl, playbackRange, aspectRatio, posterImage, copyrightNotice, width, initialVolume } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -57,6 +58,10 @@ function VideoEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
+  };
+
   return (
     <div>
       <Form layout="horizontal" labelAlign="left">
@@ -70,7 +75,7 @@ function VideoEditor({ content, onContentChanged }) {
           </div>
         </FormItem>
         <Form.Item label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChange}>
+          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
@@ -92,6 +97,14 @@ function VideoEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
+        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+          <MediaVolumeSlider
+            value={initialVolume}
+            useValueLabel
+            useButton={false}
+            onChange={handleInitialVolumeChange}
+            />
+        </FormItem>
       </Form>
     </div>
   );

@@ -44,6 +44,7 @@ export default class Educandu_2023_02_03_01_add_initialVolume_to_media_plugins {
   }
 
   async collectionUp(collectionName) {
+    await this.pluginUp(collectionName, 'video');
     await this.pluginUp(collectionName, 'interactive-media');
     await this.pluginUp(collectionName, 'media-slideshow');
     await this.pluginUp(collectionName, 'multitrack-media');
@@ -51,6 +52,7 @@ export default class Educandu_2023_02_03_01_add_initialVolume_to_media_plugins {
   }
 
   async collectionDown(collectionName) {
+    await this.pluginDown(collectionName, 'video');
     await this.pluginDown(collectionName, 'interactive-media');
     await this.pluginDown(collectionName, 'media-slideshow');
     await this.pluginDown(collectionName, 'multitrack-media');
