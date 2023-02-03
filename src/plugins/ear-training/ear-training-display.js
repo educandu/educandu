@@ -77,10 +77,11 @@ function EarTrainingDisplay({ content }) {
       <div className="EarTrainingDisplay-soundPlayer">
         {!!url && (
           <MediaPlayer
-            sourceUrl={url}
             canDownload={canDownload}
-            screenMode={MEDIA_SCREEN_MODE.none}
             playbackRange={currentTest.sound.playbackRange}
+            screenMode={MEDIA_SCREEN_MODE.none}
+            sourceUrl={url}
+            volume={currentTest.sound.initialVolume}
             />
         )}
         <CopyrightNotice value={currentTest.sound.copyrightNotice} />
