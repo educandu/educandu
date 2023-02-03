@@ -15,7 +15,7 @@ import ResourcePicker from './resource-picker/resource-picker.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
 
-function UrlInput({ value, allowedSourceTypes, onChange }) {
+function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
 
@@ -82,10 +82,15 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
     <div className={classes}>
       <DebouncedInput
         value={value}
+        disabled={disabled}
         addonBefore={renderInputPrefix()}
         onChange={handleInputValueChange}
         />
-      <ResourcePicker url={value} onUrlChange={handleInputValueChange} />
+      <ResourcePicker
+        url={value}
+        disabled={disabled}
+        onUrlChange={handleInputValueChange}
+        />
       {!!unsecureUrl && (
         <div className="UrlInput-warning">{t('unsecureUrl')}</div>
       )}
@@ -95,12 +100,14 @@ function UrlInput({ value, allowedSourceTypes, onChange }) {
 
 UrlInput.propTypes = {
   allowedSourceTypes: PropTypes.arrayOf(PropTypes.string),
+  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string
 };
 
 UrlInput.defaultProps = {
   allowedSourceTypes: Object.values(SOURCE_TYPE),
+  disabled: false,
   value: ''
 };
 

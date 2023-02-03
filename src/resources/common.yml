@@ -489,3 +489,6 @@ common:
   filter:
     en: Filter
     de: Filter
+  posterImageUrl:
+    en: Preview image URL
+    de: Vorschau-Bild-URL

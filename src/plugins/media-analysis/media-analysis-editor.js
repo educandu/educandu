@@ -285,6 +285,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
             <MultitrackMediaPlayer
+              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
               showTrackMixer={false}

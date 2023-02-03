@@ -134,6 +134,7 @@ function MediaAnalysisDisplay({ content }) {
             <MultitrackMediaPlayer
               customUnderScreenContent={renderChapters()}
               multitrackMediaPlayerRef={multitrackMediaPlayerRef}
+              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               parts={chapters}
               showTrackMixer
               sources={sources}

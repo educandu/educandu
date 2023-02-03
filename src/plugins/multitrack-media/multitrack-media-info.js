@@ -56,6 +56,10 @@ class MultitrackMediaInfo {
       redactedContent.mainTrack.sourceUrl = '';
     }
 
+    if (!couldAccessUrlFromRoom(redactedContent.mainTrack.posterImage.sourceUrl, targetRoomId)) {
+      redactedContent.mainTrack.posterImage.sourceUrl = '';
+    }
+
     redactedContent.secondaryTracks.forEach(secondaryTrack => {
       secondaryTrack.copyrightNotice = this.gfm.redactCdnResources(
         secondaryTrack.copyrightNotice,
@@ -78,6 +82,11 @@ class MultitrackMediaInfo {
     if (isInternalSourceType({ url: content.mainTrack.sourceUrl })) {
       cdnResources.push(content.mainTrack.sourceUrl);
     }
+
+    if (isInternalSourceType({ url: content.mainTrack.posterImage.sourceUrl })) {
+      cdnResources.push(content.mainTrack.posterImage.sourceUrl);
+    }
+
     content.secondaryTracks.forEach(secondaryTrack => {
       cdnResources.push(...this.gfm.extractCdnResources(secondaryTrack.copyrightNotice));
 

@@ -29,16 +29,6 @@ describe('video-info', () => {
       expect(result.sourceUrl).toBe('');
     });
 
-    it('redacts the video source url', () => {
-      const input = {
-        sourceUrl: 'cdn://room-media/12345/my-video.mp4',
-        posterImage: {},
-        copyrightNotice: ''
-      };
-      const result = sut.redactContent(input, '67890');
-      expect(result.sourceUrl).toBe('');
-    });
-
     it('redacts the poster image url', () => {
       const input = {
         sourceUrl: 'https://somewhere-over-the-rainbow.com/my-video.mp4',
