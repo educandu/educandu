@@ -3187,6 +3187,18 @@
     "filter": {
       "en": "Filter",
       "de": "Filter"
+    },
+    "playerSettings": {
+      "en": "Player settings",
+      "de": "Player-Einstellungen"
+    },
+    "initialVolume": {
+      "en": "Initial volume",
+      "de": "Anfangslautstärke"
+    },
+    "multitrackInitialVolumeInfo": {
+      "en": "This is the initial volume of the player, applied over all tracks. [but better]",
+      "de": "This is the initial volume of the player, applied over all tracks. [but better and in German]"
     }
   },
   "pageNames": {

@@ -15,6 +15,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
@@ -141,6 +142,20 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
+        <ItemPanel header={t('common:playerSettings')}>
+          <FormItem
+            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+          </FormItem>
+          <FormItem
+            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <MediaVolumeSlider value={1} onChange={() => {}} />
+          </FormItem>
+        </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
             <MultitrackMediaPlayer
@@ -160,13 +175,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
-
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
       </Form>
     </div>
   );
