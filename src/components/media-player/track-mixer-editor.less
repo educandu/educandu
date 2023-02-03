@@ -8,9 +8,13 @@
   display: grid;
   align-items: end;
   grid-template-columns: auto 1fr;
+  border-right: 1px dashed @edu-border-color-dark;
 }
 
-.TrackMixerEditor-volumesColumn {}
+.TrackMixerEditor-volumesColumn {
+  padding-right: @edu-content-padding;
+  border-right: 1px dashed @edu-border-color-dark;
+}
 
 .TrackMixerEditor-volumePresets {
   display: flex;
@@ -21,11 +25,12 @@
   display: grid;
   gap: 5px;
   grid-template-columns: 1fr auto;
-  margin: 5px 0 20px 0px;
+  margin: 5px 0 30px 0px;
 }
 
 .TrackMixerEditor-volumePresetSelector {
   width: 100%;
+  margin-bottom: @edu-content-padding;
 }
 
 .TrackMixerEditor-trackNameAndVolume {
@@ -40,10 +45,19 @@
   width: 100px;
 }
 
-.TrackMixerEditor-barsColumn {
-  border-left: 1px dashed @edu-border-color-dark;
-  border-right: 1px dashed @edu-border-color-dark;
+.TrackMixerEditor-barsColumnLabel {
+  display: flex;
+  justify-content: flex-end;
+  font-style: italic;
+  padding-right: 5px;
+  font-size: @edu-font-size-sm;
+
+  @media @edu-media-phone-portrait {
+    display: none;
+  }
 }
+
+.TrackMixerEditor-barsColumn {}
 
 .TrackMixerEditor-barRow {
   position: relative;

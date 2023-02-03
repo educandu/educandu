@@ -158,6 +158,9 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
+            <div className="MultitrackMediaEditor-trackMixerPreviewPlayer">
+              {t('common:preview')}
+            </div>
             <MultitrackMediaPlayer
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}

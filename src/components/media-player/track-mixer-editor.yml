@@ -5,3 +5,6 @@ trackMixerEditor:
   manageVolumePresets:
     en: Manage volume presets
     de: Lautstärke-Voreinstellungen bearbeiten
+  trackDurations:
+    en: Track durations
+    de: Spur-Zeitdauern

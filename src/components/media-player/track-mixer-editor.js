@@ -112,6 +112,7 @@ function TrackMixerEditor({
           ))}
         </div>
         <div className="TrackMixerEditor-barsColumn">
+          <div className="TrackMixerEditor-barsColumnLabel">{t('trackDurations')}</div>
           <DimensionsProvider>
             {({ containerWidth }) => tracks.map(trackInfo => (
               <div className="TrackMixerEditor-barRow" key={trackInfo.secondaryTrackIndex}>
