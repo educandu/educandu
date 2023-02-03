@@ -28,6 +28,7 @@ function MultitrackMediaPlayer({
   initialVolume,
   multitrackMediaPlayerRef,
   parts,
+  posterImageUrl,
   screenWidth,
   selectedVolumePresetIndex,
   showTrackMixer,
@@ -261,6 +262,7 @@ function MultitrackMediaPlayer({
           parts={parts}
           playbackRange={trackState.playbackRange}
           playbackRate={playbackRate}
+          posterImageUrl={posterImageUrl}
           preload
           mediaPlayerRef={getTrackRef(trackState.key)}
           renderControls={trackState.isMainTrack ? renderControls : () => null}
@@ -292,6 +294,7 @@ MultitrackMediaPlayer.propTypes = {
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired
   })),
+  posterImageUrl: PropTypes.string,
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
@@ -325,6 +328,7 @@ MultitrackMediaPlayer.defaultProps = {
     current: null
   },
   parts: [],
+  posterImageUrl: null,
   screenWidth: 100,
   selectedVolumePresetIndex: null,
   showTrackMixer: false,

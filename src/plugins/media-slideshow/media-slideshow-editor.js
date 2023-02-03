@@ -181,6 +181,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           content={content}
           useShowVideo={false}
           useAspectRatio={false}
+          usePosterImage={false}
           onContentChanged={handleMainTrackContentChange}
           />
         <FormItem

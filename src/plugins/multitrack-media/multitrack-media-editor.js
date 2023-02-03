@@ -172,6 +172,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             </div>
             <MultitrackMediaPlayer
               initialVolume={initialVolume}
+              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
               showTrackMixer={false}

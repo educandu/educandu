@@ -35,8 +35,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-
-  const { sourceUrl, playbackRange, showVideo, width, initialVolume, chapters } = content;
+  const { sourceUrl, playbackRange, aspectRatio, showVideo, posterImage, width, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -205,8 +204,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <div className="InteractiveMediaEditor-playerPreview">
           <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
           <MediaPlayer
+            aspectRatio={aspectRatio}
             parts={chapters}
             playbackRange={playbackRange}
+            posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
             screenWidth={50}
             screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
             sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}

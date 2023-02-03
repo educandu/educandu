@@ -74,29 +74,29 @@ function VideoEditor({ content, onContentChanged }) {
             <MediaRangeSelector sourceUrl={sourceUrl} range={playbackRange} onRangeChange={handlePlaybackRangeChange} />
           </div>
         </FormItem>
-        <Form.Item label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>
-        </Form.Item>
-        <FormItem label={t('posterImageUrl')} {...FORM_ITEM_LAYOUT}>
+        </FormItem>
+        <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
           <UrlInput
             value={posterImage.sourceUrl}
             onChange={handlePosterImageSourceUrlChange}
             allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
             />
         </FormItem>
-        <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
-        </Form.Item>
-        <Form.Item
+        </FormItem>
+        <FormItem
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
+        </FormItem>
         <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
           <MediaVolumeSlider
             value={initialVolume}

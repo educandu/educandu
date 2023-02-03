@@ -495,3 +495,6 @@ common:
   multitrackInitialVolumeInfo:
     en: This is the initial volume of the player, applied over all tracks. [but better]
     de: This is the initial volume of the player, applied over all tracks. [but better and in German]
+  posterImageUrl:
+    en: Preview image URL
+    de: Vorschau-Bild-URL

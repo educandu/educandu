@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ResourcePickerDialog from './resource-picker-dialog.js';
 
-function ResourcePicker({ url, onUrlChange }) {
+function ResourcePicker({ url, disabled, onUrlChange }) {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,6 +25,7 @@ function ResourcePicker({ url, onUrlChange }) {
     <div>
       <Button
         type="primary"
+        disabled={disabled}
         onClick={handleSelectButtonClick}
         >
         {t('common:select')}
@@ -40,13 +41,15 @@ function ResourcePicker({ url, onUrlChange }) {
 }
 
 ResourcePicker.propTypes = {
-  onUrlChange: PropTypes.func,
-  url: PropTypes.string
+  url: PropTypes.string,
+  disabled: PropTypes.bool,
+  onUrlChange: PropTypes.func
 };
 
 ResourcePicker.defaultProps = {
-  onUrlChange: () => {},
-  url: ''
+  url: '',
+  disabled: false,
+  onUrlChange: () => {}
 };
 
 export default ResourcePicker;

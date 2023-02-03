@@ -54,7 +54,10 @@ class InteractiveMediaInfo {
       showVideo: false,
       width: 100,
       initialVolume: 1,
-      chapters: [this.getDefaultChapter()]
+      chapters: [this.getDefaultChapter()],
+      posterImage: {
+        sourceUrl: ''
+      }
     };
   }
 
@@ -74,7 +77,10 @@ class InteractiveMediaInfo {
         text: joi.string().allow('').required(),
         answers: joi.array().items(joi.string().allow('')).required(),
         correctAnswerIndex: joi.number().min(-1).required()
-      })).required()
+      })).required(),
+      posterImage: joi.object({
+        sourceUrl: joi.string().allow('').required()
+      }).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });
@@ -96,6 +102,10 @@ class InteractiveMediaInfo {
       redactedContent.sourceUrl = '';
     }
 
+    if (!couldAccessUrlFromRoom(redactedContent.posterImage.sourceUrl, targetRoomId)) {
+      redactedContent.posterImage.sourceUrl = '';
+    }
+
     return redactedContent;
   }
 
@@ -106,6 +116,10 @@ class InteractiveMediaInfo {
 
     if (isInternalSourceType({ url: content.sourceUrl })) {
       cdnResources.push(content.sourceUrl);
+    }
+
+    if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
+      cdnResources.push(content.posterImage.sourceUrl);
     }
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);

@@ -6,19 +6,24 @@ import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import MediaRangeSelector from './media-range-selector.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
-import { getResourceType } from '../../utils/resource-utils.js';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
-import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE } from '../../domain/constants.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio }) {
+const shouldDisableVideo = sourceUrl => {
+  const { resourceType } = analyzeMediaUrl(sourceUrl);
+  return ![RESOURCE_TYPE.video, RESOURCE_TYPE.none, RESOURCE_TYPE.unknown].includes(resourceType);
+};
+
+function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRatio, usePosterImage }) {
   const { t } = useTranslation('mainTrackEditor');
 
-  const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo } = content;
+  const { sourceUrl, playbackRange, copyrightNotice, aspectRatio, showVideo, posterImage } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -35,8 +40,11 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     };
 
     if (useShowVideo) {
-      const { resourceType } = analyzeMediaUrl(value);
-      newContent.showVideo = resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown;
+      newContent.showVideo = !shouldDisableVideo(newContent.sourceUrl);
+    }
+
+    if (usePosterImage && shouldDisableVideo(newContent.sourceUrl)) {
+      newContent.posterImage = { sourceUrl: '' };
     }
 
     changeContent(newContent);
@@ -51,7 +59,17 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
   };
 
   const handleShowVideoChanged = newShowVideo => {
-    changeContent({ showVideo: newShowVideo });
+    const newContent = { showVideo: newShowVideo };
+
+    if (usePosterImage && !newShowVideo) {
+      newContent.posterImage = { sourceUrl: '' };
+    }
+
+    changeContent(newContent);
+  };
+
+  const handlePosterImageSourceUrlChange = url => {
+    changeContent({ posterImage: { sourceUrl: url } });
   };
 
   const handleCopyrightNoticeChanged = event => {
@@ -75,7 +93,7 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
             defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
             value={aspectRatio}
             onChange={handleAspectRatioChanged}
-            disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+            disabled={shouldDisableVideo(sourceUrl)}
             >
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
@@ -89,7 +107,17 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
-            disabled={![RESOURCE_TYPE.video, RESOURCE_TYPE.none].includes(getResourceType(sourceUrl))}
+            disabled={shouldDisableVideo(sourceUrl)}
+            />
+        </FormItem>
+      )}
+      {!!usePosterImage && (
+        <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
+          <UrlInput
+            value={posterImage.sourceUrl}
+            onChange={handlePosterImageSourceUrlChange}
+            allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
+            disabled={shouldDisableVideo(sourceUrl) || (useShowVideo && !showVideo)}
             />
         </FormItem>
       )}
@@ -106,16 +134,21 @@ MainTrackEditor.propTypes = {
     showVideo: PropTypes.bool,
     aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
     playbackRange: PropTypes.arrayOf(PropTypes.number),
-    copyrightNotice: PropTypes.string
+    copyrightNotice: PropTypes.string,
+    posterImage: PropTypes.shape({
+      sourceUrl: PropTypes.string
+    })
   }).isRequired,
   onContentChanged: PropTypes.func.isRequired,
+  useShowVideo: PropTypes.bool,
   useAspectRatio: PropTypes.bool,
-  useShowVideo: PropTypes.bool
+  usePosterImage: PropTypes.bool
 };
 
 MainTrackEditor.defaultProps = {
+  useShowVideo: true,
   useAspectRatio: true,
-  useShowVideo: true
+  usePosterImage: true
 };
 
 export default MainTrackEditor;

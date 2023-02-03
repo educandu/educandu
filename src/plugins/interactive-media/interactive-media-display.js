@@ -17,7 +17,7 @@ import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlin
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { playbackRange, aspectRatio, showVideo, width, initialVolume, copyrightNotice, chapters } = content;
+  const { playbackRange, aspectRatio, showVideo, posterImage, copyrightNotice, width, initialVolume, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -140,18 +140,19 @@ function InteractiveMediaDisplay({ content }) {
       <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
           aspectRatio={aspectRatio}
+          canDownload={canDownload}
           customScreenOverlay={renderInteractionOverlay()}
           initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
           parts={parts}
           playbackRange={playbackRange}
+          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
           sourceUrl={sourceUrl}
           onPartEndReached={handlePartEndReached}
           onPlayingPartIndexChange={setCurrentChapterIndex}
           onReady={handleMediaReady}
           onSeek={handleSeek}
-          canDownload={canDownload}
           />
         {!!sourceUrl && (
           <div className="InteractiveMediaDisplay-progressBar">
