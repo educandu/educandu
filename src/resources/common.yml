@@ -316,8 +316,8 @@ common:
     en: Is applied to all screen sizes except for mobile phones
     de: Trifft auf alle Bildschirmgrößen zu, außer auf Mobilgeräte
   copyrightNotice:
-    en: Copyright notice
-    de: Urheberschutzvermerk
+    en: Copyright
+    de: Urheberrecht
   videoDisplay:
     en: Video display
     de: Videoanzeige
