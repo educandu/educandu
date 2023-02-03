@@ -2,9 +2,9 @@ trackMixerEditor:
   noTrack:
     en: no track
     de: keine Spur
-  manageVolumePresets:
-    en: Manage volume presets
-    de: Lautstärke-Voreinstellungen bearbeiten
+  volumePresetInfo:
+    en: Sets of track volume combinations
+    de: Sets of track volume combinations, ja? :)
   trackDurations:
     en: Track durations
     de: Spur-Zeitdauern

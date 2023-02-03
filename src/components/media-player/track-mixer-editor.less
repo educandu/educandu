@@ -21,6 +21,11 @@
   flex-direction: column;
 }
 
+.TrackMixerEditor-volumePresetsLabel {
+  padding-left: 20px;
+  display: flex;
+}
+
 .TrackMixerEditor-volumePresetsSetup {
   display: grid;
   gap: 5px;
@@ -36,13 +41,16 @@
 .TrackMixerEditor-trackNameAndVolume {
   .m-control-group;
   height: @track-mixer-editor-row-height;
-  margin-right: 15px;
 }
 
 .TrackMixerEditor-trackName {
   .m-overflow-ellipsis;
   text-align: end;
   width: 100px;
+}
+
+.TrackMixerEditor-trackVolume {
+  font-size: @edu-font-size-sm;
 }
 
 .TrackMixerEditor-barsColumnLabel {

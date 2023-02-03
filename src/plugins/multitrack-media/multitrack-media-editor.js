@@ -26,7 +26,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const { t } = useTranslation('multitrackMedia');
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const { width, mainTrack, secondaryTracks, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, initialVolume, volumePresets } = content;
 
   const sources = useMemo(() => ({
     mainTrack: {
@@ -61,6 +61,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleMoveTrackUp = index => {
@@ -153,7 +157,12 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
             {...FORM_ITEM_LAYOUT}
             >
-            <MediaVolumeSlider value={1} onChange={() => {}} />
+            <MediaVolumeSlider
+              value={initialVolume}
+              useValueLabel
+              useButton={false}
+              onChange={handleInitialVolumeChange}
+              />
           </FormItem>
         </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
@@ -162,6 +171,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
+              initialVolume={initialVolume}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
               showTrackMixer={false}

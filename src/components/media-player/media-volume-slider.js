@@ -10,7 +10,7 @@ export const MEDIA_VOLUME_SLIDER_ORIENTATION = {
   vertical: 'vertical'
 };
 
-function MediaVolumeSlider({ value, onChange, orientation }) {
+function MediaVolumeSlider({ value, orientation, useButton, useValueLabel, onChange }) {
   const percentageFormatter = usePercentageFormat();
   const [lastValueBeforeMuting, setLastValueBeforeMuting] = useState(value);
 
@@ -30,11 +30,13 @@ function MediaVolumeSlider({ value, onChange, orientation }) {
 
   return (
     <div className={`MediaVolumeSlider MediaVolumeSlider--${orientation}`}>
-      <Button
-        type="link"
-        icon={value === 0 ? <MuteIcon /> : <VolumeIcon />}
-        onClick={handleVolumeButtonClick}
-        />
+      {!!useButton && (
+        <Button
+          type="link"
+          icon={value === 0 ? <MuteIcon /> : <VolumeIcon />}
+          onClick={handleVolumeButtonClick}
+          />
+      )}
       <Slider
         className={`MediaVolumeSlider-slider MediaVolumeSlider-slider--${orientation}`}
         min={0}
@@ -42,21 +44,28 @@ function MediaVolumeSlider({ value, onChange, orientation }) {
         step={0.01}
         value={value}
         onChange={handleSliderChange}
-        tooltip={{ formatter: percentageFormatter }}
+        tooltip={useValueLabel ? { open: false } : { formatter: percentageFormatter }}
         vertical={orientation === MEDIA_VOLUME_SLIDER_ORIENTATION.vertical}
         />
+      {!!useValueLabel && (
+        <div className="MediaVolumeSlider-sliderValueLabel">{percentageFormatter(value)}</div>
+      )}
     </div>
   );
 }
 
 MediaVolumeSlider.propTypes = {
-  onChange: PropTypes.func.isRequired,
+  value: PropTypes.number.isRequired,
   orientation: PropTypes.oneOf(Object.values(MEDIA_VOLUME_SLIDER_ORIENTATION)),
-  value: PropTypes.number.isRequired
+  useButton: PropTypes.bool,
+  useValueLabel: PropTypes.bool,
+  onChange: PropTypes.func.isRequired
 };
 
 MediaVolumeSlider.defaultProps = {
-  orientation: MEDIA_VOLUME_SLIDER_ORIENTATION.horizontal
+  orientation: MEDIA_VOLUME_SLIDER_ORIENTATION.horizontal,
+  useButton: true,
+  useValueLabel: false
 };
 
 export default MediaVolumeSlider;

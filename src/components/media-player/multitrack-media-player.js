@@ -25,6 +25,7 @@ const sourcesCanBeConsideredEqual = (source1, source2) => {
 
 function MultitrackMediaPlayer({
   customUnderScreenContent,
+  initialVolume,
   multitrackMediaPlayerRef,
   parts,
   screenWidth,
@@ -36,13 +37,13 @@ function MultitrackMediaPlayer({
   onPause,
   onPlay
 }) {
-  const [mixVolume, setMixVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackStates, setTrackStates] = useState([]);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
+  const [mixVolume, setMixVolume] = useState(initialVolume);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
@@ -60,6 +61,10 @@ function MultitrackMediaPlayer({
     }
     return trackRef;
   };
+
+  useEffect(() => {
+    setMixVolume(initialVolume);
+  }, [initialVolume]);
 
   useEffect(() => {
     if (sourcesCanBeConsideredEqual(sources, lastSources)) {
@@ -280,6 +285,7 @@ function MultitrackMediaPlayer({
 
 MultitrackMediaPlayer.propTypes = {
   customUnderScreenContent: PropTypes.node,
+  initialVolume: PropTypes.number,
   multitrackMediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -314,6 +320,7 @@ MultitrackMediaPlayer.propTypes = {
 
 MultitrackMediaPlayer.defaultProps = {
   customUnderScreenContent: null,
+  initialVolume: 1,
   multitrackMediaPlayerRef: {
     current: null
   },

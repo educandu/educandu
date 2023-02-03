@@ -9,7 +9,7 @@ import MultitrackMediaPlayer from '../../components/media-player/multitrack-medi
 function MultitrackMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const { width, mainTrack, secondaryTracks, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, initialVolume, volumePresets } = content;
 
   const sources = useMemo(() => ({
     mainTrack: {
@@ -30,6 +30,7 @@ function MultitrackMediaDisplay({ content }) {
         <MultitrackMediaPlayer
           showTrackMixer
           sources={sources}
+          initialVolume={initialVolume}
           volumePresets={volumePresets}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />
