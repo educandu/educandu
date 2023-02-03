@@ -47,6 +47,7 @@ function MediaPlayer({
   customScreenOverlay,
   customUnderScreenContent,
   downloadFileName,
+  initialVolume,
   mediaPlayerRef,
   parts,
   playbackRange,
@@ -76,9 +77,9 @@ function MediaPlayer({
   const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [internalVolume, setInternalVolume] = useState(1);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalPlaybackRate, setInternaPlaybackRate] = useState(1);
+  const [internalVolume, setInternalVolume] = useState(initialVolume);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
 
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
@@ -280,6 +281,7 @@ MediaPlayer.propTypes = {
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
   downloadFileName: PropTypes.string,
+  initialVolume: PropTypes.number,
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -315,6 +317,7 @@ MediaPlayer.defaultProps = {
   customScreenOverlay: null,
   customUnderScreenContent: null,
   downloadFileName: null,
+  initialVolume: 1,
   mediaPlayerRef: {
     current: null
   },

@@ -141,7 +141,7 @@ function InteractiveMediaDisplay({ content }) {
         <MediaPlayer
           aspectRatio={aspectRatio}
           customScreenOverlay={renderInteractionOverlay()}
-          volume={initialVolume}
+          initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
           parts={parts}
           playbackRange={playbackRange}

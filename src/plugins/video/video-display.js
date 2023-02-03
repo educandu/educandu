@@ -20,10 +20,10 @@ function VideoDisplay({ content }) {
           <MediaPlayer
             aspectRatio={content.aspectRatio}
             canDownload={canDownload}
+            initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}
             posterImageUrl={posterImageUrl}
             sourceUrl={url}
-            volume={content.initialVolume}
             />
         )}
         <CopyrightNotice value={content.copyrightNotice} />

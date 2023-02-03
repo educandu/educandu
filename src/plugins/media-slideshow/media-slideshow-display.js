@@ -74,12 +74,12 @@ function MediaSlideshowDisplay({ content }) {
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
           canDownload={canDownload}
           customScreenOverlay={renderPlayingChapter()}
+          initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
           parts={chapters}
           playbackRange={playbackRange}
           screenMode={MEDIA_SCREEN_MODE.audio}
           sourceUrl={sourceUrl}
-          volume={initialVolume}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />
         <CopyrightNotice value={copyrightNotice} />

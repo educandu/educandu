@@ -78,10 +78,10 @@ function EarTrainingDisplay({ content }) {
         {!!url && (
           <MediaPlayer
             canDownload={canDownload}
+            initialVolume={currentTest.sound.initialVolume}
             playbackRange={currentTest.sound.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}
             sourceUrl={url}
-            volume={currentTest.sound.initialVolume}
             />
         )}
         <CopyrightNotice value={currentTest.sound.copyrightNotice} />
