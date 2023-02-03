@@ -371,7 +371,8 @@ export const roomOwnerShape = PropTypes.shape({
 export const roomMemberShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   joinedOn: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired,
+  email: PropTypes.string
 });
 
 export const roomMetadataProps = {

@@ -267,7 +267,8 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
-    if (room.owner === userId) {
+    const isRoomOwner = room.owner === userId;
+    if (isRoomOwner) {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
@@ -277,7 +278,7 @@ export default class RoomController {
       documentsMetadata = documentsMetadata.filter(doc => !doc.roomContext.draft);
     }
 
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room, isRoomOwner ? req.user : null);
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
