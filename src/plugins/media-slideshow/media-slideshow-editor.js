@@ -1,6 +1,6 @@
 import by from 'thenby';
+import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
-import { Divider, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
