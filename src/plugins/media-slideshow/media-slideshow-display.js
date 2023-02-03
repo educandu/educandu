@@ -12,7 +12,7 @@ import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 function MediaSlideshowDisplay({ content }) {
-  const { width, playbackRange, copyrightNotice, chapters } = content;
+  const { playbackRange, copyrightNotice, width, initialVolume, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -71,14 +71,15 @@ function MediaSlideshowDisplay({ content }) {
     <div className="MediaSlideshowDisplay">
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
         <MediaPlayer
-          parts={chapters}
-          sourceUrl={sourceUrl}
-          canDownload={canDownload}
-          playbackRange={playbackRange}
-          mediaPlayerRef={mediaPlayerRef}
-          screenMode={MEDIA_SCREEN_MODE.audio}
           aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
+          canDownload={canDownload}
           customScreenOverlay={renderPlayingChapter()}
+          mediaPlayerRef={mediaPlayerRef}
+          parts={chapters}
+          playbackRange={playbackRange}
+          screenMode={MEDIA_SCREEN_MODE.audio}
+          sourceUrl={sourceUrl}
+          volume={initialVolume}
           onPlayingPartIndexChange={handlePlayingPartIndexChange}
           />
         <CopyrightNotice value={copyrightNotice} />
