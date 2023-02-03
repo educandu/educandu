@@ -493,8 +493,8 @@ common:
     en: Initial volume
     de: Anfangslautstärke
   multitrackInitialVolumeInfo:
-    en: This is the initial volume of the player, applied over all tracks. [but better]
-    de: This is the initial volume of the player, applied over all tracks. [but better and in German]
+    en: This is the initial volume of the player, applied over all tracks. Available only when there is more than one track. [but better]
+    de: This is the initial volume of the player, applied over all tracks. Available only when there is more than one track. [but better and in German]
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
