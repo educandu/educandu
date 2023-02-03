@@ -308,7 +308,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
-            <div className="MediaAnalysisEditor-trackMixerPreviewPlayer">
+            <div className="MediaAnalysisEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer

@@ -167,7 +167,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
-            <div className="MultitrackMediaEditor-trackMixerPreviewPlayer">
+            <div className="MultitrackMediaEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
