@@ -4,9 +4,10 @@ import { Avatar, Button } from 'antd';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import { useTranslation } from 'react-i18next';
+import { MailOutlined } from '@ant-design/icons';
 import { AVATAR_SIZE } from '../domain/constants.js';
 
-function UserCard({ userId, displayName, avatarUrl, detail }) {
+function UserCard({ userId, displayName, email, avatarUrl, detail }) {
   const { t } = useTranslation('userCard');
 
   const handleButtonClick = () => {
@@ -15,8 +16,16 @@ function UserCard({ userId, displayName, avatarUrl, detail }) {
 
   return (
     <div className="UserCard">
-      <div className="UserCard-displayName">{displayName}</div>
-      <div className="UserCard-avatarWrapper">
+      <div>
+        <div className="UserCard-displayName">{displayName}</div>
+        {!!email && (
+          <div className="UserCard-email">
+            <MailOutlined />
+            <a className="UserCard-emailLink" href={`mailto:${encodeURI(email)}`}>{email}</a>
+          </div>
+        )}
+      </div>
+      <div className="UserCard-content">
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}
@@ -34,13 +43,15 @@ function UserCard({ userId, displayName, avatarUrl, detail }) {
 
 UserCard.propTypes = {
   userId: PropTypes.string,
+  email: PropTypes.string,
+  displayName: PropTypes.node.isRequired,
   avatarUrl: PropTypes.string,
-  displayName: PropTypes.string.isRequired,
   detail: PropTypes.node
 };
 
 UserCard.defaultProps = {
   userId: null,
+  email: null,
   avatarUrl: '',
   detail: null
 };

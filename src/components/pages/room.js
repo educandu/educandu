@@ -294,9 +294,10 @@ export default function Room({ PageTemplate, initialState }) {
         <UserCard
           userId={member.userId}
           displayName={member.displayName}
+          email={member.email}
           avatarUrl={member.avatarUrl}
           detail={
-            <div className="RoomPage-memberDetail">
+            <div className="RoomPage-memberDetails">
               {`${t('memberSince')}: ${formatDate(member.joinedOn)}`}
             </div>
           }
@@ -313,12 +314,13 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="RoomPage-member" key={invitation._id}>
         <UserCard
           userId={invitation.userId}
-          displayName={invitation.email}
+          displayName={<i>{t('pendingInvitation')}</i>}
+          email={invitation.email}
           avatarUrl={invitation.avatarUrl}
           detail={
-            <div className="RoomPage-memberDetail">
-              <span>{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
-              <span>{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
+            <div className="RoomPage-memberDetails">
+              <span className="RoomPage-memberDetail">{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
+              <span className="RoomPage-memberDetail">{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
             </div>
           }
           />

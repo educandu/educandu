@@ -53,3 +53,6 @@ room:
   inviteMembersButton:
     en: Invite members
     de: Mitglieder einladen
+  pendingInvitation:
+    en: Pending invitation
+    de: Ausstehende Einladung
