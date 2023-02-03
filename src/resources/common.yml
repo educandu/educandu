@@ -398,9 +398,6 @@ common:
   chapter:
     en: Chapter
     de: Kapitel
-  editChapter:
-    en: Edit chapter
-    de: Kapitel bearbeiten
   mainTrack:
     en: Main track
     de: Hauptspur

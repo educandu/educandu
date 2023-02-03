@@ -3,11 +3,11 @@ import classNames from 'classnames';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
+import { Button, Form, Input, Tooltip } from 'antd';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, Divider, Form, Input, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
@@ -21,6 +21,7 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -34,7 +35,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const { sourceUrl, playbackRange, chapters, width, showVideo } = content;
+
+  const { sourceUrl, playbackRange, showVideo, width, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -64,6 +66,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleChapterAdd = startPosition => {
@@ -187,16 +193,26 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
+        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+          <MediaVolumeSlider
+            value={initialVolume}
+            useValueLabel
+            useButton={false}
+            onChange={handleInitialVolumeChange}
+            />
+        </FormItem>
 
-        <Divider className="InteractiveMediaEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
-
-        <MediaPlayer
-          parts={chapters}
-          screenWidth={50}
-          playbackRange={playbackRange}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          />
+        <div className="InteractiveMediaEditor-playerPreview">
+          <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
+          <MediaPlayer
+            parts={chapters}
+            playbackRange={playbackRange}
+            screenWidth={50}
+            screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+            volume={initialVolume}
+            />
+        </div>
 
         <Timeline
           durationInMilliseconds={playbackDuration}

@@ -9,11 +9,14 @@
   position: relative;
 }
 
-.InteractiveMediaEditor-separator {
-  margin: 0 -@edu-content-padding;
-  padding-top: 20px;
-  border: 1px dotted @edu-border-color-dark;
-  border-style: none none dotted;
+.InteractiveMediaEditor-playerPreview {
+  .m-plugin-media-preview;
+  margin-top: 20px;
+  border-top: 1px solid @edu-border-color-base;
+}
+
+.InteractiveMediaEditor-playerPreviewLabel {
+  .m-plugin-media-preview-label;
 }
 
 .InteractiveMediaEditor-chapterEditorTitle {
@@ -21,12 +24,6 @@
   justify-content: center;
   color: @edu-text-color;
   padding: @edu-content-padding 0;
-}
-
-.InteractiveMediaEditor-chapterEditorDivider {
-  margin: 0 -@edu-content-padding;
-  padding-top: 20px;
-  color: @edu-text-color;
 }
 
 .InteractiveMediaEditor-readonlyValue {
