@@ -3,7 +3,7 @@ trackMixerEditor:
     en: no track
     de: keine Spur
   volumePresetInfo:
-    en: Sets of track volume combinations
+    en: Sets of track volume combinations. Adjust the track volumes to set up the current preset.
     de: Sets of track volume combinations, ja? :)
   trackDurations:
     en: Track durations

@@ -26,6 +26,7 @@ import MainTrackEditor from '../../components/media-player/main-track-editor.js'
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
@@ -44,7 +45,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaAnalysis');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
-  const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     getAccessibleUrl({
@@ -98,6 +99,10 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleMoveTrackUp = index => {
@@ -282,9 +287,32 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
+        <ItemPanel header={t('common:playerSettings')}>
+          <FormItem
+            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+          </FormItem>
+          <FormItem
+            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <MediaVolumeSlider
+              value={initialVolume}
+              useValueLabel
+              useButton={false}
+              onChange={handleInitialVolumeChange}
+              />
+          </FormItem>
+        </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
+            <div className="MediaAnalysisEditor-trackMixerPreviewPlayer">
+              {t('common:preview')}
+            </div>
             <MultitrackMediaPlayer
+              initialVolume={initialVolume}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
               showTrackMixer={false}
@@ -369,12 +397,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             <Info tooltip={t('segmentsDropzoneInfo')} />
           </div>
         </div>
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
       </Form>
     </div>
   );
