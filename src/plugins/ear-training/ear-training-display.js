@@ -97,31 +97,6 @@ function EarTrainingDisplay({ content }) {
         <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
-        {testCards.length > 1 && (
-          <div className="EarTrainingDisplay-controlPanel">
-            <div>
-              <CardSelector
-                cards={testCards}
-                onCardSelected={handleTestCardSelected}
-                selectedCardIndex={currentTestIndex}
-                visitedCardIndices={viewedTestIndices}
-                treatSelectedCardAsVisited
-                />
-              {content.testsOrder === TESTS_ORDER.random && (
-                <Tooltip title={t('common:randomizedTests')}>
-                  <SwapOutlined className="EarTrainingDisplay-randomTestsIcon" />
-                </Tooltip>
-              )}
-            </div>
-            <IterationPanel
-              itemCount={testCards.length}
-              selectedItemIndex={currentTestIndex}
-              onNextClick={handleNextTestClick}
-              onPreviousClick={handlePreviousTestClick}
-              onResetClick={handleResetTestsClick}
-              />
-          </div>
-        )}
         {!!tests.length && (
           <div className="EarTrainingDisplay-test">
             {currentTest.mode === TEST_MODE.image && (
@@ -155,12 +130,37 @@ function EarTrainingDisplay({ content }) {
               <AbcNotation abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
             )}
             {renderSoundPlayer()}
+            <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
+              <RadioButton className="EarTrainingDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
+              <RadioButton className="EarTrainingDisplay-radioButton" value>{t('common:answer')}</RadioButton>
+            </RadioGroup>
           </div>
         )}
-        <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
-          <RadioButton className="EarTrainingDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
-          <RadioButton className="EarTrainingDisplay-radioButton" value>{t('common:answer')}</RadioButton>
-        </RadioGroup>
+        {testCards.length > 1 && (
+          <div className="EarTrainingDisplay-controlPanel">
+            <div>
+              <CardSelector
+                cards={testCards}
+                onCardSelected={handleTestCardSelected}
+                selectedCardIndex={currentTestIndex}
+                visitedCardIndices={viewedTestIndices}
+                treatSelectedCardAsVisited
+                />
+              {content.testsOrder === TESTS_ORDER.random && (
+              <Tooltip title={t('common:randomizedTests')}>
+                <SwapOutlined className="EarTrainingDisplay-randomTestsIcon" />
+              </Tooltip>
+              )}
+            </div>
+            <IterationPanel
+              itemCount={testCards.length}
+              selectedItemIndex={currentTestIndex}
+              onNextClick={handleNextTestClick}
+              onPreviousClick={handlePreviousTestClick}
+              onResetClick={handleResetTestsClick}
+              />
+          </div>
+        )}
       </div>
     </div>
   );
