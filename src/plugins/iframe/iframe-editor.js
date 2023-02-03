@@ -49,11 +49,8 @@ function IframeEditor({ content, onContentChanged }) {
           >
           <Input value={url} onChange={handleExternalUrlValueChanged} />
         </FormItem>
-        <Form.Item
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
+        <Form.Item label={t('border')} {...FORM_ITEM_LAYOUT}>
+          <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
         </Form.Item>
         <Form.Item label={t('height')} {...FORM_ITEM_LAYOUT}>
           <StepSlider
@@ -66,8 +63,11 @@ function IframeEditor({ content, onContentChanged }) {
             onChange={handleHeightValueChanged}
             />
         </Form.Item>
-        <Form.Item label={t('border')} {...FORM_ITEM_LAYOUT}>
-          <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
+        <Form.Item
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
       </Form>
     </div>

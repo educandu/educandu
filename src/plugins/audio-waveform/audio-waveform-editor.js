@@ -92,12 +92,6 @@ function AudioWaveformEditor({ content, onContentChanged }) {
           </Button>
         </FormItem>
         <Divider plain>{t('generalSettingsDividerText')}</Divider>
-        <Form.Item
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
         <FormItem label={t('common:displayMode')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
             <RadioButton value={DISPLAY_MODE.static}>{t('displayMode_static')}</RadioButton>
@@ -128,6 +122,12 @@ function AudioWaveformEditor({ content, onContentChanged }) {
             </FormItem>
           </div>
         )}
+        <Form.Item
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
+        </Form.Item>
       </Form>
       <AudioWaveformGeneratorDialog
         isOpen={isWaveformGeneratorDialogOpen}
