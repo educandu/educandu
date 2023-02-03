@@ -987,6 +987,12 @@
       "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
     }
   },
+  "timeline": {
+    "markersBarPlaceholder": {
+      "en": "Hover to see marker",
+      "de": "Bitte hover to see marker"
+    }
+  },
   "trackMixerDisplay": {
     "trackNumberLabel": {
       "en": "Track {trackNumber}",
