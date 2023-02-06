@@ -952,13 +952,13 @@
       "en": "Select playback range",
       "de": "Abspielbereich auswählen"
     },
-    "playbackRange": {
-      "en": "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
-      "de": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
-    },
     "selectRangeLabel": {
       "en": "Set current playback position",
       "de": "Setze die aktuelle Wiedergabeposition"
+    },
+    "setAs": {
+      "en": "set as",
+      "de": "Setze als"
     },
     "setAsStart": {
       "en": "as start time",
@@ -967,6 +967,10 @@
     "setAsEnd": {
       "en": "as end time",
       "de": "als Endezeit"
+    },
+    "endTimecode": {
+      "en": "End time",
+      "de": "Endezeit"
     },
     "loadingMessage": {
       "en": "Determining media information ...",

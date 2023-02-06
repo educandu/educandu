@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Spin } from 'antd';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { getAccessibleUrl, getSourceDuration } from '../../utils/source-utils.js';
 import { analyzeMediaUrl, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
@@ -82,19 +82,12 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     ];
   }
 
-  const renderRangeText = () => {
-    return t('playbackRange', {
-      from: currentRange[0] !== 0 ? formatMillisecondsAsDuration(currentRange[0] * currentMediaInfo.duration) : 'start',
-      to: currentRange[1] !== 1 ? formatMillisecondsAsDuration(currentRange[1] * currentMediaInfo.duration) : 'end'
-    });
-  };
-
   const renderFooter = () => (
     <div className="MediaRangeSelector-footer">
       <Button onClick={handleSetMaxRange}>
         {t('clearRange')}
       </Button>
-      <div>
+      <div className="MediaRangeSelector-footerGroup">
         <Button onClick={handleCancel}>
           {t('common:cancel')}
         </Button>
@@ -138,38 +131,52 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
             </div>
           )}
           {!isRetrievingMediaInfo && !!currentMediaInfo && (
-            <MediaPlayer
-              sourceUrl={currentMediaInfo.sanitizedUrl}
-              onProgress={handleProgress}
-              parts={getCurrentRangeParts()}
-              screenMode={getScreenMode()}
-              customUnderScreenContent={(
-                <div className="MediaRangeSelector-rangeSelectorArea">
-                  <div className="MediaRangeSelector-rangeDisplay">
-                    {renderRangeText()}
-                  </div>
-                  <div className="MediaRangeSelector-rangeSelector">
-                    <span className="MediaRangeSelector-rangeSelectorLabel">
-                      {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
-                    </span>
-                    <div className="MediaRangeSelector-rangeSelectorButtons">
-                      <Button
-                        onClick={handleSetAsStartClick}
-                        disabled={currentRange[1] <= currentPosition}
-                        >
-                        {t('setAsStart')}
-                      </Button>
-                      <Button
-                        onClick={handleSetAsEndClick}
-                        disabled={currentPosition <= currentRange[0]}
-                        >
-                        {t('setAsEnd')}
-                      </Button>
-                    </div>
+            <Fragment>
+              <div className="MediaRangeSelector-player">
+                <MediaPlayer
+                  parts={getCurrentRangeParts()}
+                  screenMode={getScreenMode()}
+                  screenWidth={70}
+                  sourceUrl={currentMediaInfo.sanitizedUrl}
+                  onProgress={handleProgress}
+                  />
+              </div>
+              <div className="MediaRangeSelector-rangeSelectorArea">
+                <div className="MediaRangeSelector-rangeSelector">
+                  <span>
+                    {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
+                  </span>
+                  <div className="MediaRangeSelector-rangeSelectorButtons">
+                    <Button
+                      onClick={handleSetAsStartClick}
+                      disabled={currentRange[1] <= currentPosition}
+                      >
+                      {t('setAsStart')}
+                    </Button>
+                    <Button
+                      onClick={handleSetAsEndClick}
+                      disabled={currentPosition <= currentRange[0]}
+                      >
+                      {t('setAsEnd')}
+                    </Button>
                   </div>
                 </div>
-              )}
-              />
+                <section className="MediaRangeSelector-rangeFineTunning">
+                  <div className="MediaRangeSelector-selectedTimecodesColumn">
+                    <span>{t('common:startTimecode')}:</span>
+                    <span>{t('endTimecode')}:</span>
+                  </div>
+                  <div className="MediaRangeSelector-selectedTimecodesColumn">
+                    <div>
+                      {formatMillisecondsAsDuration(currentRange[0] * currentMediaInfo.duration)}
+                    </div>
+                    <div>
+                      {formatMillisecondsAsDuration(currentRange[1] * currentMediaInfo.duration)}
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </Fragment>
           )}
         </div>
       </Modal>

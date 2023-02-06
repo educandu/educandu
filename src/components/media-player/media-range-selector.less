@@ -1,5 +1,10 @@
 .MediaRangeSelector {}
 
+.MediaRangeSelector-player {
+  padding: 15px 20px 10px 20px;
+  background-color: @edu-background-color-light;
+}
+
 .MediaRangeSelector-noMediaArea {
   min-height: 250px;
   display: flex;
@@ -8,32 +13,49 @@
 }
 
 .MediaRangeSelector-rangeSelectorArea {
-  padding: 15px 0 5px 0;
-}
-
-.MediaRangeSelector-rangeDisplay {
-  text-align: center;
-  padding-bottom: 25px;
+  padding: @edu-content-padding * 2 0 @edu-content-padding 0;
 }
 
 .MediaRangeSelector-rangeSelector {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
+  display: grid;
+  gap: 15px;
+  align-items: baseline;
+  place-content: center;
+  grid-auto-flow: column;
 
-.MediaRangeSelector-rangeSelectorLabel {
-  margin-right: 15px;
+  @media @edu-media-phone-portrait {
+    grid-auto-flow: row;
+  }
 }
 
 .MediaRangeSelector-rangeSelectorButtons {
+  display: flex;
+  flex-wrap: wrap;
+  .m-fake-flex-gap(10px);
+}
+
+.MediaRangeSelector-rangeFineTunning {
+  margin-top: 20px;
   display: grid;
-  gap: 10px;
   grid-auto-flow: column;
+  gap: @edu-content-padding;
+  place-content: center;
+}
+
+.MediaRangeSelector-selectedTimecodesColumn {
+  display: grid;
+  grid-auto-flow: row;
+  gap: @edu-content-padding;
 }
 
 .MediaRangeSelector-footer {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+}
+
+.MediaRangeSelector-footerGroup {
+  display: flex;
+  .m-fake-flex-gap(10px);
+  padding-top: 10px;
 }
