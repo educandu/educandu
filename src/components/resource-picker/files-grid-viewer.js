@@ -2,24 +2,17 @@ import by from 'thenby';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../../utils/clone-deep.js';
-import React, { useEffect, useState } from 'react';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../domain/constants.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
-import { cdnObjectShape } from '../../ui/default-prop-types.js';
-import { confirmCdnFileDelete } from '../confirmation-dialogs.js';
+import { minimalFileShape } from '../../ui/default-prop-types.js';
 import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
-const mapDisplayFiles = files => {
-  return files
-    .map(file => ({
-      ...cloneDeep(file),
-      name: file.displayName
-    }))
-    .sort(by(file => file.name, { ignorecase: true }));
+const createdSortedFileList = files => {
+  return [...files].sort(by(file => file.displayName, { ignorecase: true }));
 };
 
 function FilesGridViewer({
@@ -31,12 +24,8 @@ function FilesGridViewer({
   onDeleteFileClick,
   onPreviewFileClick
 }) {
-  const { t } = useTranslation('filesGridViewer');
-  const [displayFiles, setDisplayFiles] = useState(mapDisplayFiles(files));
-
-  useEffect(() => {
-    setDisplayFiles(mapDisplayFiles(files));
-  }, [files, t]);
+  const { t } = useTranslation();
+  const displayFiles = useMemo(() => createdSortedFileList(files), [files]);
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
@@ -45,7 +34,7 @@ function FilesGridViewer({
 
   const handleDeleteClick = (event, file) => {
     event.stopPropagation();
-    confirmCdnFileDelete(t, file.name, () => onDeleteFileClick(file));
+    onDeleteFileClick(file);
   };
 
   const renderFile = file => {
@@ -61,12 +50,12 @@ function FilesGridViewer({
 
     return (
       <div className={classes} key={file.portableUrl}>
-        <Tooltip title={file.name} placement="bottom">
+        <Tooltip title={file.displayName} placement="bottom">
           <a className="FilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
             <div className="FilesGridViewer-fileDisplay">
               {fileDisplay}
             </div>
-            <span className="FilesGridViewer-fileName">{file.name}</span>
+            <span className="FilesGridViewer-fileName">{file.displayName}</span>
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
@@ -102,21 +91,21 @@ function FilesGridViewer({
 
 FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
-  files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  onDeleteFileClick: PropTypes.func,
+  selectedFileUrl: PropTypes.string,
+  files: PropTypes.arrayOf(minimalFileShape).isRequired,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onPreviewFileClick: PropTypes.func,
-  selectedFileUrl: PropTypes.string
+  onDeleteFileClick: PropTypes.func,
+  onPreviewFileClick: PropTypes.func
 };
 
 FilesGridViewer.defaultProps = {
   canDelete: false,
-  onDeleteFileClick: () => {},
+  selectedFileUrl: null,
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onPreviewFileClick: () => {},
-  selectedFileUrl: null
+  onDeleteFileClick: () => {},
+  onPreviewFileClick: () => {}
 };
 
 export default FilesGridViewer;

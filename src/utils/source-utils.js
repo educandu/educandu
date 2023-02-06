@@ -6,7 +6,8 @@ import {
   SOURCE_TYPE,
   CDN_URL_PREFIX,
   ROOM_MEDIA_STORAGE_PATH_PATTERN,
-  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN
+  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
+  MEDIA_LIBRRY_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
 export function isCdnUrl({ url = '', cdnRootUrl = '' }) {
@@ -17,9 +18,10 @@ export function isPortableCdnUrl(url) {
   return url.startsWith(CDN_URL_PREFIX);
 }
 
-export function isCdnPath(url = '') {
-  return DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(url)
-    || ROOM_MEDIA_STORAGE_PATH_PATTERN.test(url);
+export function isCdnPath(path = '') {
+  return MEDIA_LIBRRY_STORAGE_PATH_PATTERN.test(path)
+    || DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(path)
+    || ROOM_MEDIA_STORAGE_PATH_PATTERN.test(path);
 }
 
 export function isYoutubeSourceType(url) {
@@ -60,6 +62,9 @@ export function getSourceType({ url, cdnRootUrl }) {
   if (isCdnUrl({ url, cdnRootUrl }) || isCdnPath(url)) {
     const cdnPath = getCdnPath({ url, cdnRootUrl });
 
+    if (MEDIA_LIBRRY_STORAGE_PATH_PATTERN.test(cdnPath)) {
+      return SOURCE_TYPE.mediaLibrary;
+    }
     if (DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(cdnPath)) {
       return SOURCE_TYPE.documentMedia;
     }
@@ -85,7 +90,7 @@ export function getSourceType({ url, cdnRootUrl }) {
 
 export function isInternalSourceType({ url, cdnRootUrl }) {
   const sourceType = getSourceType({ url, cdnRootUrl });
-  return sourceType === SOURCE_TYPE.roomMedia || sourceType === SOURCE_TYPE.documentMedia;
+  return sourceType === SOURCE_TYPE.mediaLibrary || sourceType === SOURCE_TYPE.roomMedia || sourceType === SOURCE_TYPE.documentMedia;
 }
 
 export function couldAccessUrlFromRoom(url, targetRoomId) {

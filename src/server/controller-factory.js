@@ -18,6 +18,7 @@ import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
 import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
+import MediaLibraryController from './media-library-controller.js';
 
 const setupControllers = [
   StaticController,
@@ -31,6 +32,7 @@ const pageAndApiControllers = [
   SearchController,
   UserController,
   DocumentController,
+  MediaLibraryController,
   StorageController,
   BatchController,
   RoomController,

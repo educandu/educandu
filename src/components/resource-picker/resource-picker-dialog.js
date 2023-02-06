@@ -4,13 +4,7 @@ import PropTypes from 'prop-types';
 import ResourceSelector from './resource-selector.js';
 import { SOURCE_TYPE } from '../../domain/constants.js';
 
-const allowedSourceTypes = [
-  SOURCE_TYPE.roomMedia,
-  SOURCE_TYPE.documentMedia,
-  SOURCE_TYPE.wikimedia
-];
-
-function ResourcePickerDialog({ isOpen, url, onSelect, onClose }) {
+function ResourcePickerDialog({ allowedSourceTypes, isOpen, url, onSelect, onClose }) {
   const handleCancel = event => {
     if (!event.key) {
       onClose();
@@ -41,6 +35,7 @@ function ResourcePickerDialog({ isOpen, url, onSelect, onClose }) {
 }
 
 ResourcePickerDialog.propTypes = {
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
   onSelect: PropTypes.func,
@@ -48,6 +43,7 @@ ResourcePickerDialog.propTypes = {
 };
 
 ResourcePickerDialog.defaultProps = {
+  allowedSourceTypes: Object.values(SOURCE_TYPE),
   onClose: () => { },
   onSelect: () => { },
   url: ''

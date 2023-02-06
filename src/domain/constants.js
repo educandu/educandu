@@ -84,7 +84,6 @@ export const RESOURCE_TYPE = {
   audio: 'audio',
   video: 'video',
   image: 'image',
-  text: 'text',
   pdf: 'pdf'
 };
 
@@ -103,6 +102,7 @@ export const SOURCE_TYPE = {
   none: 'none',
   youtube: 'youtube',
   external: 'external',
+  mediaLibrary: 'media-library',
   documentMedia: 'document-media',
   roomMedia: 'room-media',
   wikimedia: 'wikimedia',
@@ -206,6 +206,7 @@ export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
 
+export const MEDIA_LIBRRY_STORAGE_PATH_PATTERN = /^media-library(\/.*)?$/;
 export const DOCUMENT_MEDIA_STORAGE_PATH_PATTERN = /^document-media(\/.*)?$/;
 export const ROOM_MEDIA_STORAGE_PATH_PATTERN = /^room-media\/([^/]+)(\/.*)?$/;
 
@@ -233,3 +234,5 @@ export const HTTP_STATUS = {
   tooManyRequests: 429,
   internalServerError: 500
 };
+
+export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';

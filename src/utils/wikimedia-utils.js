@@ -1,28 +1,36 @@
-import { FILE_TYPE } from '../../api-clients/wikimedia-api-client.js';
+export const WIKIMEDIA_COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
 
-export const SEARCH_FILE_TYPE = {
+export const WIKIMEDIA_API_FILE_TYPE = {
+  bitmap: 'bitmap',
+  drawing: 'drawing',
+  video: 'video',
+  audio: 'audio',
+  pdf: 'pdf'
+};
+
+export const WIKIMEDIA_SEARCH_FILE_TYPE = {
   image: 'image',
   audio: 'audio',
   video: 'video',
   pdf: 'pdf'
 };
 
-export function mapSearchFileTypesToWikimediaFileTypes(searchFileTypes) {
+export function mapSearchFileTypesToApiFileTypes(searchFileTypes) {
   return [
     ...searchFileTypes.reduce((set, searchFileType) => {
       switch (searchFileType) {
-        case SEARCH_FILE_TYPE.image:
-          set.add(FILE_TYPE.bitmap);
-          set.add(FILE_TYPE.drawing);
+        case WIKIMEDIA_SEARCH_FILE_TYPE.image:
+          set.add(WIKIMEDIA_API_FILE_TYPE.bitmap);
+          set.add(WIKIMEDIA_API_FILE_TYPE.drawing);
           break;
-        case SEARCH_FILE_TYPE.video:
-          set.add(FILE_TYPE.video);
+        case WIKIMEDIA_SEARCH_FILE_TYPE.video:
+          set.add(WIKIMEDIA_API_FILE_TYPE.video);
           break;
-        case SEARCH_FILE_TYPE.audio:
-          set.add(FILE_TYPE.audio);
+        case WIKIMEDIA_SEARCH_FILE_TYPE.audio:
+          set.add(WIKIMEDIA_API_FILE_TYPE.audio);
           break;
-        case SEARCH_FILE_TYPE.pdf:
-          set.add(FILE_TYPE.pdf);
+        case WIKIMEDIA_SEARCH_FILE_TYPE.pdf:
+          set.add(WIKIMEDIA_API_FILE_TYPE.pdf);
           break;
         default:
           throw new Error(`Invalid search file type '${searchFileType}'`);

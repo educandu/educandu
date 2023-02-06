@@ -12,8 +12,8 @@ import { handleError } from '../../ui/error-helper.js';
 import mimeTypeHelper from '../../ui/mime-type-helper.js';
 import MediaPlayer from '../media-player/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { getResourceType } from '../../utils/resource-utils.js';
-import FileTextFilledIcon from '../icons/files/file-text-filled-icon.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 import CopyToClipboardIcon from '../icons/general/copy-to-clipboard-icon.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -36,21 +36,23 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   const [pdfPageNumber, setPdfPageNumber] = useState(1);
   const [imageDimensions, setImageDimensions] = useState(null);
 
-  const parsedUrl = new URL(url);
+  const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl: clientConfig.cdnRootUrl });
+
+  const parsedUrl = new URL(accessibleUrl);
   const resourceType = getResourceType(parsedUrl.href);
   const fileName = decodeURIComponent(parsedUrl.pathname.slice(parsedUrl.pathname.lastIndexOf('/') + 1));
   const category = mimeTypeHelper.getCategory(fileName);
 
   const pdfFile = useMemo(() => ({
-    url,
-    withCredentials: url.startsWith(clientConfig.cdnRootUrl)
-  }), [url, clientConfig.cdnRootUrl]);
+    url: accessibleUrl,
+    withCredentials: accessibleUrl.startsWith(clientConfig.cdnRootUrl)
+  }), [accessibleUrl, clientConfig.cdnRootUrl]);
 
   const handleCopyUrlToClipboardClick = async event => {
     event.preventDefault();
     event.stopPropagation();
     try {
-      await window.navigator.clipboard.writeText(url);
+      await window.navigator.clipboard.writeText(accessibleUrl);
       message.success(t('common:urlCopiedToClipboard'));
     } catch (error) {
       handleError({ message: t('common:copyUrlToClipboardError'), error, logger, t, duration: 30 });
@@ -82,15 +84,15 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
+    <MediaPlayer sourceUrl={accessibleUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
   );
 
   const renderVideo = () => (
-    <MediaPlayer sourceUrl={url} canDownload />
+    <MediaPlayer sourceUrl={accessibleUrl} canDownload />
   );
 
   const renderImage = () => (
-    <img className="FilePreview-image" src={url} ref={imageRef} />
+    <img className="FilePreview-image" src={accessibleUrl} ref={imageRef} />
   );
 
   const renderPdf = () => (
@@ -115,10 +117,6 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
     </div>
   );
 
-  const renderText = () => (
-    <div className="FilePreview-icon"><FileTextFilledIcon /></div>
-  );
-
   const renderGenericFile = () => (
     <div className="FilePreview-icon"><FileUnknownFilledIcon /></div>
   );
@@ -136,9 +134,6 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
       break;
     case RESOURCE_TYPE.pdf:
       renderPreview = renderPdf;
-      break;
-    case RESOURCE_TYPE.text:
-      renderPreview = renderText;
       break;
     default:
       renderPreview = renderGenericFile;
@@ -217,7 +212,7 @@ function ResourcePreview({ createdOn, updatedOn, size, url, layout }) {
           </Tooltip>
         </div>
         <div className="FilePreview-detailValue">
-          <LiteralUrlLink href={url} targetBlank />
+          <LiteralUrlLink href={accessibleUrl} targetBlank />
         </div>
       </Fragment>
     );

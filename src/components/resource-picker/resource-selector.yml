@@ -1,4 +1,7 @@
 resourceSelector:
+  sourceType_media-library:
+    en: Media library
+    de: Medien-Bibliothek
   sourceType_document-media:
     en: Document media
     de: Dokument-Medien

@@ -7,8 +7,16 @@ import { useService } from '../container-context.js';
 import WikimediaScreens from './wikimedia-screens.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
-import StorageLocationScreens from './storage-location-screens.js';
+import MediaLibraryScreens from './media-library-screens.js';
+import DocumentOrRoomMediaScreens from './document-or-room-media-screens.js';
 import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+
+const possibleSourceTypes = [
+  SOURCE_TYPE.mediaLibrary,
+  SOURCE_TYPE.roomMedia,
+  SOURCE_TYPE.documentMedia,
+  SOURCE_TYPE.wikimedia
+];
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
   const clientConfig = useService(ClientConfig);
@@ -25,7 +33,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
         case SOURCE_TYPE.roomMedia:
           return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.roomMedia);
         default:
-          return true;
+          return possibleSourceTypes.includes(sourceType);
       }
     });
 
@@ -53,9 +61,17 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
   const renderSourceType = sourceType => {
     switch (sourceType) {
+      case SOURCE_TYPE.mediaLibrary:
+        return (
+          <MediaLibraryScreens
+            initialUrl={initialUrl}
+            onSelect={onSelect}
+            onCancel={onCancel}
+            />
+        );
       case SOURCE_TYPE.documentMedia:
         return (
-          <StorageLocationScreens
+          <DocumentOrRoomMediaScreens
             storageLocationType={STORAGE_LOCATION_TYPE.documentMedia}
             initialUrl={initialUrl}
             onSelect={onSelect}
@@ -64,7 +80,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
         );
       case SOURCE_TYPE.roomMedia:
         return (
-          <StorageLocationScreens
+          <DocumentOrRoomMediaScreens
             storageLocationType={STORAGE_LOCATION_TYPE.roomMedia}
             initialUrl={initialUrl}
             onSelect={onSelect}
@@ -102,7 +118,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 }
 
 ResourceSelector.propTypes = {
-  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf([SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia])),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func

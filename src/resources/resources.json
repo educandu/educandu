@@ -276,9 +276,9 @@
       "en": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "de": "Möchtest du deine Mitgliedschaft im Raum \"{roomName}\" wirklich beenden?"
     },
-    "deleteCdnDocumentConfirmation": {
-      "en": "Do you really want to delete the file \"{fileName}\" from the internal storage?",
-      "de": "Möchtest du die Datei \"{fileName}\" wirklich vom internen Speicher löschen?"
+    "deleteMediaFileConfirmation": {
+      "en": "Do you really want to irreversibly delete the file \"{fileName}\"?",
+      "de": "Möchtest du die Datei \"{fileName}\" wirklich unwiderruflich löschen?"
     },
     "thisActionIsIrreversible": {
       "en": "This action is irreversible!",
@@ -1485,6 +1485,28 @@
       "de": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
     }
   },
+  "documentOrRoomMediaDefaultScreen": {
+    "filesView_list": {
+      "en": "List view",
+      "de": "Listenansicht"
+    },
+    "filesView_grid": {
+      "en": "Grid view",
+      "de": "Kachelansicht"
+    },
+    "privateStorageMessage": {
+      "en": "Private directory",
+      "de": "Privates Verzeichnis"
+    },
+    "publicStorageMessage": {
+      "en": "Public directory",
+      "de": "Öffentliches Verzeichnis"
+    },
+    "uploadFiles": {
+      "en": "Upload files",
+      "de": "Dateien hochladen"
+    }
+  },
   "fileEditorScreen": {
     "headline": {
       "en": "File editor",
@@ -1493,12 +1515,6 @@
     "applyChanges": {
       "en": "Apply changes",
       "de": "Änderungen übernehmen"
-    }
-  },
-  "filesGridViewer": {
-    "navigateToParent": {
-      "en": "Navigate to parent directory",
-      "de": "Zum übergeordneten Verzeichnis navigieren"
     }
   },
   "filesUploadScreen": {
@@ -1543,6 +1559,52 @@
       "de": "Bilder für Web optimieren"
     }
   },
+  "mediaLibrarySearch": {
+    "searchTerm": {
+      "en": "Search term",
+      "de": "Suchbegriff"
+    },
+    "searchFileType_image": {
+      "en": "Image",
+      "de": "Bild"
+    },
+    "searchFileType_video": {
+      "en": "Video",
+      "de": "Video"
+    },
+    "searchFileType_audio": {
+      "en": "Audio",
+      "de": "Audio"
+    },
+    "searchFileType_pdf": {
+      "en": "PDF",
+      "de": "PDF"
+    },
+    "searchFileType_text": {
+      "en": "Text",
+      "de": "Text"
+    },
+    "searchFileType_other": {
+      "en": "Other",
+      "de": "Andere"
+    },
+    "searchInvitationHeader": {
+      "en": "Search in the Media library",
+      "de": "Suche in der Medien-Bibliothek"
+    },
+    "searchInvitationDescription": {
+      "en": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
+      "de": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest"
+    },
+    "initialFilePreviewHeader": {
+      "en": "Currently selected file",
+      "de": "Momentan ausgewählte Datei"
+    },
+    "initialFilePreviewFooter": {
+      "en": "In order to select a different file, start a new search using the search field above",
+      "de": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
+    }
+  },
   "resourcePreviewScreen": {
     "headline": {
       "en": "File preview",
@@ -1550,6 +1612,10 @@
     }
   },
   "resourceSelector": {
+    "sourceType_media-library": {
+      "en": "Media library",
+      "de": "Medien-Bibliothek"
+    },
     "sourceType_document-media": {
       "en": "Document media",
       "de": "Dokument-Medien"
@@ -1561,28 +1627,6 @@
     "sourceType_wikimedia": {
       "en": "Wikimedia",
       "de": "Wikimedia"
-    }
-  },
-  "storageLocation": {
-    "filesView_list": {
-      "en": "List view",
-      "de": "Listenansicht"
-    },
-    "filesView_grid": {
-      "en": "Grid view",
-      "de": "Kachelansicht"
-    },
-    "privateStorageMessage": {
-      "en": "Private directory",
-      "de": "Privates Verzeichnis"
-    },
-    "publicStorageMessage": {
-      "en": "Public directory",
-      "de": "Öffentliches Verzeichnis"
-    },
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
     }
   },
   "wikimediaFilesViewer": {
@@ -1763,6 +1807,10 @@
     "tooltip_wikimedia": {
       "en": "Wikimedia",
       "de": "Wikimedia"
+    },
+    "tooltip_media-library": {
+      "en": "Media library",
+      "de": "Medien-Bibliothek"
     },
     "tooltip_document-media": {
       "en": "document media storage",

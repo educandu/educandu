@@ -1,13 +1,17 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
 import { createTagsPipelineQuery } from '../utils/tag-utils.js';
-import { mediaLibraryItemDbSchema } from '../domain/schemas/media-library-item-schemas.js';
+import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
 class MediaLibraryItemStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
     this.collection = db.mediaLibraryItems;
+  }
+
+  getMediaLibraryItemById(mediaLibraryItemId, { session } = {}) {
+    return this.collection.findOne({ _id: mediaLibraryItemId }, { session });
   }
 
   getMediaLibraryItemsByConditions(conditions, { session } = {}) {
@@ -21,14 +25,21 @@ class MediaLibraryItemStore {
       : Promise.resolve([]);
   }
 
-  insertMediaLibraryItem(mediaLibraryItem, { session } = {}) {
+  async insertMediaLibraryItem(mediaLibraryItem, { session } = {}) {
     validate(mediaLibraryItem, mediaLibraryItemDbSchema);
-    return this.collection.insertOne(mediaLibraryItem, { session });
+    await this.collection.insertOne(mediaLibraryItem, { session });
+    return mediaLibraryItem;
   }
 
-  updateMediaLibraryItem(mediaLibraryItem, { session } = {}) {
-    validate(mediaLibraryItem, mediaLibraryItemDbSchema);
-    return this.collection.updateOne({ _id: mediaLibraryItem._id }, mediaLibraryItem, { session });
+  async updateMediaLibraryItem(mediaLibraryItemId, metdata, { session } = {}) {
+    validate(metdata, mediaLibraryItemMetadataUpdateDbSchema);
+    const result = await this.collection.findOneAndUpdate({ _id: mediaLibraryItemId }, metdata, { returnDocument: 'after', session });
+    return result.value;
+  }
+
+  async deleteMediaLibraryItem(mediaLibraryItemId, { session } = {}) {
+    const result = await this.collection.deleteOne({ _id: mediaLibraryItemId }, { session });
+    return result.value;
   }
 }
 

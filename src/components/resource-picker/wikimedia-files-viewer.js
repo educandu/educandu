@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { memo } from 'react';
 import { Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import PreviewIcon from '../icons/general/preview-icon.js';
@@ -133,4 +133,4 @@ WikimediaFilesViewer.defaultProps = {
   selectedFileUrl: null
 };
 
-export default WikimediaFilesViewer;
+export default memo(WikimediaFilesViewer);

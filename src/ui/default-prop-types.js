@@ -7,39 +7,9 @@ import {
   ROOM_DOCUMENTS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
-  USER_ACTIVITY_TYPE
+  USER_ACTIVITY_TYPE,
+  RESOURCE_TYPE
 } from '../domain/constants.js';
-
-export const storageLocationShape = PropTypes.shape({
-  type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
-  usedBytes: PropTypes.number,
-  maxBytes: PropTypes.number,
-  path: PropTypes.string.isRequired,
-  isDeletionEnabled: PropTypes.bool.isRequired
-});
-
-export const cdnObjectShape = PropTypes.shape({
-  displayName: PropTypes.string.isRequired,
-  parentPath: PropTypes.string,
-  path: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
-  portableUrl: PropTypes.string.isRequired,
-  createdOn: PropTypes.string,
-  size: PropTypes.number
-});
-
-export const wikimediaFileShape = PropTypes.shape({
-  pageId: PropTypes.number.isRequired,
-  pageUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
-  thumbnailUrl: PropTypes.string,
-  updatedOn: PropTypes.string,
-  size: PropTypes.number.isRequired,
-  mimeType: PropTypes.string.isRequired
-});
-
-export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
 export const samlIdentityProviderClientShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
@@ -252,6 +222,72 @@ export const documentRevisionShape = PropTypes.shape({
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   publicContext: documentPublicContextShape
 });
+
+export const storageLocationShape = PropTypes.shape({
+  type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
+  usedBytes: PropTypes.number,
+  maxBytes: PropTypes.number,
+  path: PropTypes.string.isRequired,
+  isDeletionEnabled: PropTypes.bool.isRequired
+});
+
+const minimalFileProps = {
+  url: PropTypes.string.isRequired,
+  portableUrl: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired
+};
+
+export const minimalFileShape = PropTypes.shape({
+  url: PropTypes.string.isRequired,
+  portableUrl: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired
+});
+
+export const cdnObjectShape = PropTypes.shape({
+  ...minimalFileProps,
+  parentPath: PropTypes.string,
+  path: PropTypes.string.isRequired,
+  createdOn: PropTypes.string,
+  size: PropTypes.number.isRequired
+});
+
+const mediaLibraryItemProps = {
+  _id: PropTypes.string.isRequired,
+  resourceType: PropTypes.oneOf(Object.values(RESOURCE_TYPE)).isRequired,
+  contentType: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired,
+  url: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: otherUserShape.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired,
+  description: PropTypes.string.isRequired,
+  languages: PropTypes.arrayOf(PropTypes.string).isRequired,
+  licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+export const mediaLibraryItemShape = PropTypes.shape({
+  ...mediaLibraryItemProps
+});
+
+export const mediaLibraryItemWithRelevanceShape = PropTypes.shape({
+  ...mediaLibraryItemProps,
+  relevance: PropTypes.number.isRequired
+});
+
+export const wikimediaFileShape = PropTypes.shape({
+  pageId: PropTypes.number.isRequired,
+  pageUrl: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
+  thumbnailUrl: PropTypes.string,
+  updatedOn: PropTypes.string,
+  size: PropTypes.number.isRequired,
+  mimeType: PropTypes.string.isRequired
+});
+
+export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
 const formItemDimensionShape = PropTypes.shape({
   span: PropTypes.number.isRequired,

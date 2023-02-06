@@ -149,55 +149,55 @@ describe('url-utils', () => {
     const testCases = [
       {
         pathOrUrl: null,
-        expectedResult: { baseName: '', extension: '', rawExtension: '' }
+        expectedResult: { baseName: '', extension: '' }
       },
       {
         pathOrUrl: '',
-        expectedResult: { baseName: '', extension: '', rawExtension: '' }
+        expectedResult: { baseName: '', extension: '' }
       },
       {
         pathOrUrl: 'a',
-        expectedResult: { baseName: 'a', extension: '', rawExtension: '' }
+        expectedResult: { baseName: 'a', extension: '' }
       },
       {
         pathOrUrl: 'a.mp3',
-        expectedResult: { baseName: 'a', extension: '.mp3', rawExtension: 'mp3' }
+        expectedResult: { baseName: 'a', extension: '.mp3' }
       },
       {
         pathOrUrl: 'A.MP3',
-        expectedResult: { baseName: 'A', extension: '.MP3', rawExtension: 'MP3' }
+        expectedResult: { baseName: 'A', extension: '.MP3' }
       },
       {
         pathOrUrl: '.gitignore',
-        expectedResult: { baseName: '.gitignore', extension: '', rawExtension: '' }
+        expectedResult: { baseName: '.gitignore', extension: '' }
       },
       {
         pathOrUrl: 'https://some.place/path/.gitignore',
-        expectedResult: { baseName: 'https://some.place/path/.gitignore', extension: '', rawExtension: '' }
+        expectedResult: { baseName: 'https://some.place/path/.gitignore', extension: '' }
       },
       {
         pathOrUrl: 'https://some.place/path/a.mp3',
-        expectedResult: { baseName: 'https://some.place/path/a', extension: '.mp3', rawExtension: 'mp3' }
+        expectedResult: { baseName: 'https://some.place/path/a', extension: '.mp3' }
       },
       {
         pathOrUrl: 'filename-without-extension',
-        expectedResult: { baseName: 'filename-without-extension', extension: '', rawExtension: '' }
+        expectedResult: { baseName: 'filename-without-extension', extension: '' }
       },
       {
         pathOrUrl: 'https://some.place/path/filename-without-extension',
-        expectedResult: { baseName: 'https://some.place/path/filename-without-extension', extension: '', rawExtension: '' }
+        expectedResult: { baseName: 'https://some.place/path/filename-without-extension', extension: '' }
       },
       {
         pathOrUrl: 'https://some.place/path.with.dots/filename-without-extension',
-        expectedResult: { baseName: 'https://some.place/path.with.dots/filename-without-extension', extension: '', rawExtension: '' }
+        expectedResult: { baseName: 'https://some.place/path.with.dots/filename-without-extension', extension: '' }
       },
       {
         pathOrUrl: 'filename-with-extension.mp3',
-        expectedResult: { baseName: 'filename-with-extension', extension: '.mp3', rawExtension: 'mp3' }
+        expectedResult: { baseName: 'filename-with-extension', extension: '.mp3' }
       },
       {
         pathOrUrl: 'https://some.place/path/filename-with-extension.mp3',
-        expectedResult: { baseName: 'https://some.place/path/filename-with-extension', extension: '.mp3', rawExtension: 'mp3' }
+        expectedResult: { baseName: 'https://some.place/path/filename-with-extension', extension: '.mp3' }
       }
     ];
 

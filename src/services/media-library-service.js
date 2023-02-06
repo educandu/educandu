@@ -1,10 +1,13 @@
+import mime from 'mime';
 import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
+import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
-import { CDN_URL_PREFIX } from '../domain/constants.js';
+import { getResourceType } from '../utils/resource-utils.js';
 import { createTagSearchQuery } from '../utils/tag-utils.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
 
 class MediaLibraryService {
@@ -17,14 +20,13 @@ class MediaLibraryService {
     this.mediaLibraryItemStore = mediaLibraryItemStore;
   }
 
-  // Call this for the search
-  async getSearchableMediaLibraryItemsByTags(searchQuery) {
-    const tagQuery = createTagSearchQuery(searchQuery);
+  async getSearchableMediaLibraryItemsByTags({ query, resourceTypes }) {
+    const tagQuery = createTagSearchQuery(query);
     if (!tagQuery.isValid) {
       return [];
     }
 
-    const queryConditions = [tagQuery.query];
+    const queryConditions = [tagQuery.query, { resourceType: { $in: resourceTypes } }];
     const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(queryConditions);
     return mediaLibraryItems.map(item => ({
       ...item,
@@ -32,38 +34,70 @@ class MediaLibraryService {
     }));
   }
 
-  // Call this for the tag suggestions autocomplete
-  getMediaLibraryItemTagsMatchingText(searchString) {
-    const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
-    return this.mediaLibraryItemStore.getMediaLibraryItemTagsMatchingText(sanitizedSearchString);
-  }
-
-  // Extend and adjust this together with the UI, this is just a skeleton
-  async createMediaLibraryItem({ data, user }) {
+  async createMediaLibraryItem({ file, metadata, user }) {
     const now = new Date();
     const mediaLibraryItemId = uniqueId.create();
 
-    const storageFileName = createUniqueStorageFileName(data.originalFileName, () => mediaLibraryItemId);
+    const storageFileName = createUniqueStorageFileName(file.originalname, () => mediaLibraryItemId);
     const storagePath = urlUtils.concatParts(getMediaLibraryPath(), storageFileName);
     const storageUrl = `${CDN_URL_PREFIX}${storagePath}`;
+
+    const resourceType = getResourceType(storageUrl);
+    const contentType = mime.getType(storageUrl) || DEFAULT_CONTENT_TYPE;
+    const size = file.size;
+
     const newMediaLibraryItem = {
       _id: mediaLibraryItemId,
+      resourceType,
+      contentType,
+      size,
       createdBy: user._id,
       createdOn: now,
       updatedBy: user._id,
       updatedOn: now,
-      url: storageUrl
-      // tags, license, etc.
+      url: storageUrl,
+      description: metadata.description,
+      languages: metadata.languages,
+      licenses: metadata.licenses,
+      tags: metadata.tags
     };
 
     try {
-      await this.cdn.uploadObject(storagePath, data.filePath);
-      await this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem);
-      return newMediaLibraryItem;
+      await this.cdn.uploadObject(storagePath, file.path);
+      return this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem);
     } catch (error) {
       await this.cdn.deleteObject(storagePath);
       throw error;
     }
+  }
+
+  updateMediaLibraryItem({ mediaLibraryItemId, metadata, user }) {
+    const now = new Date();
+
+    const newMediaLibraryItemMetadata = {
+      updatedBy: user._id,
+      updatedOn: now,
+      description: metadata.description,
+      languages: metadata.languages,
+      licenses: metadata.licenses,
+      tags: metadata.tags
+    };
+
+    return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);
+  }
+
+  async deleteMediaLibraryItem({ mediaLibraryItemId }) {
+    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemById(mediaLibraryItemId);
+    if (mediaLibraryItem) {
+      await this.mediaLibraryItemStore.deleteMediaLibraryItem(mediaLibraryItemId);
+      await this.cdn.deleteObject(getCdnPath({ url: mediaLibraryItem.url }));
+    }
+  }
+
+  async getMediaLibraryItemTagsMatchingText(searchString) {
+    const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
+    const result = await this.mediaLibraryItemStore.getMediaLibraryItemTagsMatchingText(sanitizedSearchString);
+    return result[0]?.uniqueTags || [];
   }
 }
 
