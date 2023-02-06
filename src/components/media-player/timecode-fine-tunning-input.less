@@ -2,6 +2,7 @@
   display: grid;
   gap: 30px;
   align-items: center;
+  place-content: start;
   grid-auto-flow: column;
 }
 
@@ -13,5 +14,11 @@
 }
 
 .TimecodeFineTunningInput-select {
-  width: 80px;
+  width: 80px !important;
+}
+
+.TimecodeFineTunningInput-unit {
+  &.is-disabled {
+    color: @edu-text-color-secondary;
+  }
 }
