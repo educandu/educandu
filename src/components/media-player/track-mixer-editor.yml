@@ -3,8 +3,8 @@ trackMixerEditor:
     en: no track
     de: keine Spur
   volumePresetInfo:
-    en: Sets of track volume combinations. Adjust the track volumes to set up the current preset.
-    de: Sets of track volume combinations, ja? :)
+    en: Here you can define sets of volume combinations. The individual track volumes of the currently selected combination can be changed in the track mixer below.
+    de: Hier kannst du Sets von Lautstärke-Kombinationen definieren. Die einzelnen Spurlautstärken der momentan ausgewählten Kombination kannst im Spur-Mixer unten bearbeiten.
   trackDurations:
     en: Track durations
     de: Spur-Zeitdauern
