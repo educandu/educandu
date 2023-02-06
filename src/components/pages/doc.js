@@ -24,7 +24,6 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -32,6 +31,7 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { isTouchDevice, supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
@@ -100,15 +100,17 @@ function Doc({ initialState, PageTemplate }) {
   const controlPanelsRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
+  const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
-  const [controPanelTopInPx, setControlPanelTopInPx] = useState(0);
 
   const { room } = initialState;
 
   const ensureControlPanelPosition = useCallback(() => {
-    const windowHeight = Math.min(window.innerHeight, window.outerHeight);
-    setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    if (isTouchDevice()) {
+      const windowHeight = Math.min(window.innerHeight, window.outerHeight);
+      setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    }
   }, [controlPanelsRef]);
 
   useOnComponentMounted(() => {
@@ -614,7 +616,7 @@ function Doc({ initialState, PageTemplate }) {
       </PageTemplate>
       <div
         ref={controlPanelsRef}
-        style={{ top: `${controPanelTopInPx}px` }}
+        style={controPanelTopInPx !== null ? { top: `${controPanelTopInPx}px` } : {}}
         className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
         >
         {!!showHistoryPanel && (
