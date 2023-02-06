@@ -89,7 +89,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const selectedChapterUpperTimecodeLimit = useMemo(
     () => {
       const nextChapter = chapters[selectedChapterIndex + 1];
-      return nextChapter ? nextChapter.position * mainTrackPlaybackDuration : mainTrackPlaybackDuration;
+      return nextChapter ? nextChapter.startPosition * mainTrackPlaybackDuration : mainTrackPlaybackDuration;
     },
     [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
   );
@@ -244,7 +244,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleChapterStartTimecodeChange = newStartTime => {
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], startPosition: newStartTime / mainTrackMediaDuration };
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], startPosition: newStartTime / mainTrackPlaybackDuration };
     changeContent({ chapters: newChapters });
   };
 
@@ -389,8 +389,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             {!!chapters.length && (
             <Fragment>
               <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
-                {!mainTrackMediaDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
-                {!!mainTrackMediaDuration && (
+                {!mainTrackPlaybackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
+                {!!mainTrackPlaybackDuration && (
                   <TimecodeFineTunningInput
                     disabled={selectedChapterIndex === 0}
                     lowerLimit={selectedChapterLowerTimecodeLimit}

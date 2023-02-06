@@ -59,7 +59,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const selectedChapterUpperTimecodeLimit = useMemo(
     () => {
       const nextChapter = chapters[selectedChapterIndex + 1];
-      return nextChapter ? nextChapter.position * playbackDuration : playbackDuration;
+      return nextChapter ? nextChapter.startPosition * playbackDuration : playbackDuration;
     },
     [chapters, selectedChapterIndex, playbackDuration]
   );
