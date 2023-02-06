@@ -115,7 +115,6 @@ export function formatMillisecondsAsDuration(milliseconds, { millisecondsLength 
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);
 
-  const remainingMilliseconds = (millisecondsToFormat % 1000).toString().padStart(3, '0');
   const seconds = (totalSeconds % 60).toString().padStart(2, '0');
   const minutes = (totalMinutes % 60).toString().padStart(2, '0');
   const hours = totalHours.toString().padStart(2, '0');
@@ -127,7 +126,8 @@ export function formatMillisecondsAsDuration(milliseconds, { millisecondsLength 
   durationParts.push(minutes);
   durationParts.push(seconds);
 
-  const millisecondsText = remainingMilliseconds.toString().slice(0, millisecondsLength);
+  const remainingMilliseconds = (millisecondsToFormat % 1000).toFixed(0).padStart(3, '0');
+  const millisecondsText = remainingMilliseconds.slice(0, millisecondsLength);
 
   return millisecondsLength ? `${durationParts.join(':')}.${millisecondsText}` : durationParts.join(':');
 }
@@ -136,8 +136,8 @@ export function ensureValidMediaPosition(position) {
   return Math.max(0, Math.min(1, Number(position)));
 }
 
-export function formatMediaPosition({ formatPercentage, position, duration = 0 }) {
+export function formatMediaPosition({ formatPercentage, position, duration = 0, millisecondsLength = 0 }) {
   return duration
-    ? formatMillisecondsAsDuration(position * duration)
+    ? formatMillisecondsAsDuration(position * duration, { millisecondsLength })
     : formatPercentage(position);
 }
