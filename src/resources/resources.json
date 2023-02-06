@@ -956,21 +956,29 @@
       "en": "Set current playback position",
       "de": "Setze die aktuelle Wiedergabeposition"
     },
-    "setAs": {
-      "en": "set as",
-      "de": "Setze als"
+    "as": {
+      "en": "as",
+      "de": "als"
     },
-    "setAsStart": {
-      "en": "as start time",
-      "de": "als Anfangszeit"
+    "startTime": {
+      "en": "Start time",
+      "de": "Anfangszeit"
     },
-    "setAsEnd": {
-      "en": "as end time",
-      "de": "als Endezeit"
-    },
-    "endTimecode": {
+    "endTime": {
       "en": "End time",
       "de": "Endezeit"
+    },
+    "start": {
+      "en": "Start",
+      "de": "Anfang"
+    },
+    "end": {
+      "en": "End",
+      "de": "Ende"
+    },
+    "milliseconds": {
+      "en": "milliseconds",
+      "de": "Millisekunden"
     },
     "loadingMessage": {
       "en": "Determining media information ...",
@@ -989,6 +997,12 @@
     "missingSourcesMessage": {
       "en": "Cannot play because of missing media sources",
       "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+    }
+  },
+  "timecodeFineTunningInput": {
+    "milliseconds": {
+      "en": "milliseconds",
+      "de": "Millisekunden"
     }
   },
   "timeline": {

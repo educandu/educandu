@@ -106,7 +106,9 @@ function MediaPlayerProgressBar({
   const handleWindowMouseUp = stopDragging;
 
   const handlePartClick = part => {
-    onSeek(part.startPosition * durationInMilliseconds);
+    if (allowPartClick) {
+      onSeek(part.startPosition * durationInMilliseconds);
+    }
   };
 
   useEffect(() => {
