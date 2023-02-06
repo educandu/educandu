@@ -29,6 +29,7 @@ import TrackMixerEditor from '../../components/media-player/track-mixer-editor.j
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -71,6 +72,27 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
       sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
   }), [mainTrack, secondaryTracks, clientConfig]);
+
+  const selectedChapterStartTimecode = useMemo(
+    () => chapters[selectedChapterIndex].startPosition * mainTrackPlaybackDuration,
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
+
+  const selectedChapterLowerTimecodeLimit = useMemo(
+    () => {
+      const previousChapter = chapters[selectedChapterIndex - 1];
+      return previousChapter ? previousChapter.startPosition * mainTrackPlaybackDuration : 0;
+    },
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
+
+  const selectedChapterUpperTimecodeLimit = useMemo(
+    () => {
+      const nextChapter = chapters[selectedChapterIndex + 1];
+      return nextChapter ? nextChapter.position * mainTrackPlaybackDuration : mainTrackPlaybackDuration;
+    },
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -220,6 +242,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     setSelectedChapterIndex(chapterIndex);
   };
 
+  const handleChapterStartTimecodeChange = newStartTime => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], startPosition: newStartTime / mainTrackMediaDuration };
+    changeContent({ chapters: newChapters });
+  };
+
   const handleChapterStartPositionChange = (key, newStartPosition) => {
     const chapter = chapters.find(p => p.key === key);
     chapter.startPosition = newStartPosition;
@@ -361,14 +389,19 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             {!!chapters.length && (
             <Fragment>
               <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
-                <span className="InteractiveMediaEditor-readonlyValue">
-                  {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
-                </span>
+                {!mainTrackMediaDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
+                {!!mainTrackMediaDuration && (
+                  <TimecodeFineTunningInput
+                    disabled={selectedChapterIndex === 0}
+                    lowerLimit={selectedChapterLowerTimecodeLimit}
+                    upperLimit={selectedChapterUpperTimecodeLimit}
+                    value={selectedChapterStartTimecode}
+                    onValueChange={handleChapterStartTimecodeChange}
+                    />
+                )}
               </FormItem>
               <FormItem label={t('common:duration')} {...FORM_ITEM_LAYOUT}>
-                <span className="InteractiveMediaEditor-readonlyValue">
-                  {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
-                </span>
+                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
               </FormItem>
               <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
                 <Input

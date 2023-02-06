@@ -7,7 +7,6 @@ import { Button, Form, Input, Tooltip } from 'antd';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
@@ -16,12 +15,14 @@ import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
+import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -41,6 +42,27 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
+
+  const selectedChapterStartTimecode = useMemo(
+    () => chapters[selectedChapterIndex].startPosition * playbackDuration,
+    [chapters, selectedChapterIndex, playbackDuration]
+  );
+
+  const selectedChapterLowerTimecodeLimit = useMemo(
+    () => {
+      const previousChapter = chapters[selectedChapterIndex - 1];
+      return previousChapter ? previousChapter.startPosition * playbackDuration : 0;
+    },
+    [chapters, selectedChapterIndex, playbackDuration]
+  );
+
+  const selectedChapterUpperTimecodeLimit = useMemo(
+    () => {
+      const nextChapter = chapters[selectedChapterIndex + 1];
+      return nextChapter ? nextChapter.position * playbackDuration : playbackDuration;
+    },
+    [chapters, selectedChapterIndex, playbackDuration]
+  );
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -94,6 +116,12 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const handleChapterClick = key => {
     const chapterIndex = chapters.findIndex(p => p.key === key);
     setSelectedChapterIndex(chapterIndex);
+  };
+
+  const handleChapterStartTimecodeChange = newStartTime => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], startPosition: newStartTime / playbackDuration };
+    changeContent({ chapters: newChapters });
   };
 
   const handleChapterTitleChange = event => {
@@ -204,6 +232,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <div className="InteractiveMediaEditor-playerPreview">
           <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
           <MediaPlayer
+            allowPartClick
             aspectRatio={aspectRatio}
             parts={chapters}
             playbackRange={playbackRange}
@@ -228,14 +257,19 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         {!!chapters.length && (
           <Fragment>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
-              <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
-              </span>
+              {!playbackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
+              {!!playbackDuration && (
+                <TimecodeFineTunningInput
+                  disabled={selectedChapterIndex === 0}
+                  lowerLimit={selectedChapterLowerTimecodeLimit}
+                  upperLimit={selectedChapterUpperTimecodeLimit}
+                  value={selectedChapterStartTimecode}
+                  onValueChange={handleChapterStartTimecodeChange}
+                  />
+              )}
             </FormItem>
             <FormItem label={t('common:duration')} {...FORM_ITEM_LAYOUT}>
-              <span className="InteractiveMediaEditor-readonlyValue">
-                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration })}
-              </span>
+              {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: playbackDuration, millisecondsLength: 3 })}
             </FormItem>
             <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
               <Input
