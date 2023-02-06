@@ -47,6 +47,9 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
+        <Form.Item label={t('common:caption')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
+        </Form.Item>
         <Form.Item label={t('zoom')} {...FORM_ITEM_LAYOUT}>
           <StepSlider
             step={0.05}
@@ -64,9 +67,6 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </Form.Item>
-        <Form.Item label={t('common:caption')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
         </Form.Item>
       </Form>
     </div>

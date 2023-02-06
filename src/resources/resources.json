@@ -987,6 +987,12 @@
       "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
     }
   },
+  "timeline": {
+    "markersBarPlaceholder": {
+      "en": "Hover to see marker",
+      "de": "Bewege die Maus über den Streifen, um die Marker-Position zu sehen"
+    }
+  },
   "trackMixerDisplay": {
     "trackNumberLabel": {
       "en": "Track {trackNumber}",
@@ -998,9 +1004,13 @@
       "en": "no track",
       "de": "keine Spur"
     },
-    "manageVolumePresets": {
-      "en": "Manage volume presets",
-      "de": "Lautstärke-Voreinstellungen bearbeiten"
+    "volumePresetInfo": {
+      "en": "Here you can define sets of volume combinations. The individual track volumes of the currently selected combination can be changed in the track mixer below.",
+      "de": "Hier kannst du Sets von Lautstärke-Kombinationen definieren. Die einzelnen Spurlautstärken der momentan ausgewählten Kombination kannst im Spur-Mixer unten bearbeiten."
+    },
+    "trackDurations": {
+      "en": "Track durations",
+      "de": "Spur-Zeitdauern"
     }
   },
   "volumePresetsModal": {
@@ -3084,10 +3094,6 @@
       "en": "Chapter",
       "de": "Kapitel"
     },
-    "editChapter": {
-      "en": "Edit chapter",
-      "de": "Kapitel bearbeiten"
-    },
     "mainTrack": {
       "en": "Main track",
       "de": "Hauptspur"
@@ -3191,6 +3197,18 @@
     "filter": {
       "en": "Filter",
       "de": "Filter"
+    },
+    "playerSettings": {
+      "en": "Player settings",
+      "de": "Player-Einstellungen"
+    },
+    "initialVolume": {
+      "en": "Initial volume",
+      "de": "Anfangslautstärke"
+    },
+    "multitrackInitialVolumeInfo": {
+      "en": "This is the initial mix volume",
+      "de": "Dies ist die initiale Mix-Lautstärke"
     },
     "posterImageUrl": {
       "en": "Preview image URL",

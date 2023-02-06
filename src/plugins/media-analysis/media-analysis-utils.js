@@ -60,6 +60,7 @@ export function createDefaultContent(t) {
     mainTrack: createDefaultMainTrack(),
     secondaryTracks,
     chapters: [createDefaultChapter()],
+    initialVolume: 1,
     volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
   };
 }
@@ -125,6 +126,7 @@ export function validateContent(content) {
       copyrightNotice: joi.string().allow('').required()
     })).required(),
     chapters: joi.array().items(chapterSchema).required(),
+    initialVolume: joi.number().min(0).max(1).required(),
     volumePresets: joi.array().items(joi.object({
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),

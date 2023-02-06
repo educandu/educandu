@@ -1,3 +1,4 @@
+import Info from '../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
@@ -90,7 +91,9 @@ function TrackMixerEditor({
       <div className="TrackMixerEditor-tracks">
         <div className="TrackMixerEditor-volumesColumn">
           <div className="TrackMixerEditor-volumePresets">
-            <span>{`${t('common:volumePreset')}:`}</span>
+            <div className="TrackMixerEditor-volumePresetsLabel">
+              <Info tooltip={t('volumePresetInfo')}>{t('common:volumePreset')}:</Info>
+            </div>
             <div className="TrackMixerEditor-volumePresetsSetup">
               <Select
                 value={selectedVolumePresetIndex}
@@ -98,7 +101,7 @@ function TrackMixerEditor({
                 onSelect={onSelectedVolumePresetIndexChange}
                 className="TrackMixerEditor-volumePresetSelector"
                 />
-              <Tooltip title={t('manageVolumePresets')}>
+              <Tooltip title={t('common:edit')}>
                 <Button icon={<SettingOutlined />} type="primary" onClick={handleVolumePresetsSettingsClick} />
               </Tooltip>
             </div>
@@ -107,11 +110,14 @@ function TrackMixerEditor({
           {tracks.map(trackInfo => (
             <div className="TrackMixerEditor-trackNameAndVolume" key={trackInfo.secondaryTrackIndex}>
               <div className="TrackMixerEditor-trackName">{trackInfo.name}</div>
-              <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} />
+              <div className="TrackMixerEditor-trackVolume">
+                <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} useValueLabel />
+              </div>
             </div>
           ))}
         </div>
         <div className="TrackMixerEditor-barsColumn">
+          <div className="TrackMixerEditor-barsColumnLabel">{t('trackDurations')}</div>
           <DimensionsProvider>
             {({ containerWidth }) => tracks.map(trackInfo => (
               <div className="TrackMixerEditor-barRow" key={trackInfo.secondaryTrackIndex}>

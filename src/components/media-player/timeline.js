@@ -17,7 +17,7 @@ const MIN_PART_FRACTION_IN_PERCENTAGE = 0.005;
 
 function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartPositionChange, onPartClick }) {
   const timelineRef = useRef(null);
-  const { t } = useTranslation('');
+  const { t } = useTranslation('timeline');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
   const [dragState, setDragState] = useState(null);
@@ -310,6 +310,9 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         onMouseMove={handleMarkersBarMouseMove}
         onMouseLeave={handleMarkersBarMouseLeave}
         >
+        {parts.length <= 1 && (
+          <div className="Timeline-markersBarPlaceholder">{t('markersBarPlaceholder')}</div>
+        )}
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}
       </div>

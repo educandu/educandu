@@ -44,7 +44,8 @@ class EarTrainingInfo {
     return {
       sourceUrl: '',
       copyrightNotice: '',
-      playbackRange: [0, 1]
+      playbackRange: [0, 1],
+      initialVolume: 1
     };
   }
 
@@ -93,7 +94,8 @@ class EarTrainingInfo {
         sound: joi.object({
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required(),
-          playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+          playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+          initialVolume: joi.number().min(0).max(1).required()
         }).required()
       })).required(),
       testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
