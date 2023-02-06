@@ -9,7 +9,9 @@ const TOOLTIP_WIDTH_IN_PX = 60;
 const MARK_TIMECODE_WIDTH_IN_PX = 40;
 
 function MediaPlayerProgressBar({
+  allowPartClick,
   durationInMilliseconds,
+  millisecondsLength,
   playedMilliseconds,
   parts,
   onSeek,
@@ -45,12 +47,12 @@ function MediaPlayerProgressBar({
     const position = convertClientXToPosition(clientX);
 
     setTooltipState({
-      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds }),
+      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds, millisecondsLength }),
       left: (position * progressBarWidthInPx) - (TOOLTIP_WIDTH_IN_PX / 2)
     });
 
     onSeek(position * durationInMilliseconds);
-  }, [convertClientXToPosition, formatPercentage, durationInMilliseconds, progressBarWidthInPx, onSeek]);
+  }, [convertClientXToPosition, formatPercentage, durationInMilliseconds, progressBarWidthInPx, millisecondsLength, onSeek]);
 
   const handleBarMouseHover = event => {
     if (!isMediaLoaded || isDragging || isTouchDevice()) {
@@ -60,7 +62,7 @@ function MediaPlayerProgressBar({
     const position = convertClientXToPosition(event.clientX);
 
     setTooltipState({
-      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds }),
+      title: formatMediaPosition({ formatPercentage, position, duration: durationInMilliseconds, millisecondsLength }),
       left: (position * progressBarWidthInPx) - (TOOLTIP_WIDTH_IN_PX / 2)
     });
   };
@@ -103,6 +105,10 @@ function MediaPlayerProgressBar({
   const handleWindowTouchEnd = stopDragging;
   const handleWindowMouseUp = stopDragging;
 
+  const handlePartClick = part => {
+    onSeek(part.startPosition * durationInMilliseconds);
+  };
+
   useEffect(() => {
     captureProgressBarWidth();
     window.addEventListener('resize', captureProgressBarWidth);
@@ -142,15 +148,25 @@ function MediaPlayerProgressBar({
     }
 
     const leftPx = progressBarWidthInPx * part.startPosition;
+    const markTextClasses = classNames(
+      'MediaPlayerProgressBar-markText',
+      { 'MediaPlayerProgressBar-markText--clickable': allowPartClick }
+    );
 
     return (
       <Fragment key={part.startPosition}>
         <div className="MediaPlayerProgressBar-mark" style={{ left: `${leftPx}px` }} />
         <div
-          className="MediaPlayerProgressBar-markTimecode"
+          className={markTextClasses}
           style={{ width: `${MARK_TIMECODE_WIDTH_IN_PX}px`, left: `${leftPx - (MARK_TIMECODE_WIDTH_IN_PX / 2)}px` }}
+          onClick={() => handlePartClick(part)}
           >
-          {formatMediaPosition({ position: part.startPosition, duration: durationInMilliseconds, formatPercentage })}
+          {part.text || formatMediaPosition({
+            position: part.startPosition,
+            duration: durationInMilliseconds,
+            millisecondsLength,
+            formatPercentage
+          })}
         </div>
       </Fragment>
     );
@@ -186,20 +202,25 @@ function MediaPlayerProgressBar({
 }
 
 MediaPlayerProgressBar.propTypes = {
+  allowPartClick: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
+  millisecondsLength: PropTypes.number,
   onSeek: PropTypes.func.isRequired,
   onSeekEnd: PropTypes.func,
   onSeekStart: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
-    startPosition: PropTypes.number.isRequired
+    startPosition: PropTypes.number.isRequired,
+    text: PropTypes.string
   })),
   playedMilliseconds: PropTypes.number.isRequired
 };
 
 MediaPlayerProgressBar.defaultProps = {
+  allowPartClick: false,
+  millisecondsLength: 0,
+  parts: [{ startPosition: 0 }],
   onSeekEnd: () => {},
-  onSeekStart: () => {},
-  parts: [{ startPosition: 0 }]
+  onSeekStart: () => {}
 };
 
 export default MediaPlayerProgressBar;

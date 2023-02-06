@@ -84,10 +84,15 @@
   border-left: 1px dotted @edu-border-color-dark;
 }
 
-.MediaPlayerProgressBar-markTimecode {
+.MediaPlayerProgressBar-markText {
+  cursor: default;
   position: absolute;
   font-size: @edu-font-size-xs;
   text-align: center;
   color: @edu-text-color;
   top: @edu-progress-bar-hover-height + 5px;
+
+  &.MediaPlayerProgressBar-markText--clickable {
+    cursor: pointer;
+  }
 }
