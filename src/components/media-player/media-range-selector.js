@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Spin } from 'antd';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import TimecodeFineTunningInput from './timecode-fine-tunning-input.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { getAccessibleUrl, getSourceDuration } from '../../utils/source-utils.js';
-import { analyzeMediaUrl, formatMillisecondsAsDuration, ensureValidMediaPosition } from '../../utils/media-utils.js';
+import { analyzeMediaUrl, ensureValidMediaPosition } from '../../utils/media-utils.js';
 
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const clientConfig = useService(ClientConfig);
@@ -20,7 +21,11 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const [currentMediaInfo, setCurrentMediaInfo] = useState(null);
   const [isRetrievingMediaInfo, setIsRetrievingMediaInfo] = useState(false);
 
+  const currentStartTime = useMemo(() => Math.trunc(currentRange[0] * currentMediaInfo?.duration), [currentRange, currentMediaInfo]);
+  const currentEndTime = useMemo(() => Math.trunc(currentRange[1] * currentMediaInfo?.duration), [currentRange, currentMediaInfo]);
+
   useEffect(() => setCurrentRange(range), [range]);
+
   useEffect(() => {
     setCurrentPosition(currentMediaInfo?.duration ? currentProgress / currentMediaInfo.duration : 0);
   }, [currentProgress, currentMediaInfo]);
@@ -75,26 +80,29 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
     setCurrentProgress(timecode);
   };
 
+  const handleStartFineTunningValueChange = newValue => {
+    const newRangeStart = ensureValidMediaPosition(newValue / currentMediaInfo.duration);
+    setCurrentRange([newRangeStart, currentRange[1]]);
+  };
+
+  const handleEndFineTunningValueChange = newValue => {
+    const newRangeEnd = ensureValidMediaPosition(newValue / currentMediaInfo.duration);
+    setCurrentRange([currentRange[0], newRangeEnd]);
+  };
+
   function getCurrentRangeParts() {
     return [
-      { startPosition: currentRange[0] || Number.MIN_VALUE },
-      { startPosition: currentRange[1] || 1 }
+      { startPosition: currentRange[0] || Number.MIN_VALUE, text: t('start') },
+      { startPosition: currentRange[1] || 1, text: t('end') }
     ];
   }
-
-  const renderRangeText = () => {
-    return t('playbackRange', {
-      from: currentRange[0] !== 0 ? formatMillisecondsAsDuration(currentRange[0] * currentMediaInfo.duration) : 'start',
-      to: currentRange[1] !== 1 ? formatMillisecondsAsDuration(currentRange[1] * currentMediaInfo.duration) : 'end'
-    });
-  };
 
   const renderFooter = () => (
     <div className="MediaRangeSelector-footer">
       <Button onClick={handleSetMaxRange}>
         {t('clearRange')}
       </Button>
-      <div>
+      <div className="MediaRangeSelector-footerGroup">
         <Button onClick={handleCancel}>
           {t('common:cancel')}
         </Button>
@@ -128,48 +136,70 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         >
         <div className="u-modal-body">
           {!!isRetrievingMediaInfo && (
-            <div className="MediaRangeSelector-noMediaArea">
+            <div className="MediaRangeSelector-noMedia">
               <Spin tip={t('loadingMessage')} />
             </div>
           )}
           {!isRetrievingMediaInfo && !currentMediaInfo && (
-            <div className="MediaRangeSelector-noMediaArea">
+            <div className="MediaRangeSelector-noMedia">
               {t('errorMessage')}
             </div>
           )}
           {!isRetrievingMediaInfo && !!currentMediaInfo && (
-            <MediaPlayer
-              sourceUrl={currentMediaInfo.sanitizedUrl}
-              onProgress={handleProgress}
-              parts={getCurrentRangeParts()}
-              screenMode={getScreenMode()}
-              customUnderScreenContent={(
-                <div className="MediaRangeSelector-rangeSelectorArea">
-                  <div className="MediaRangeSelector-rangeDisplay">
-                    {renderRangeText()}
+            <Fragment>
+              <div className="MediaRangeSelector-player">
+                <MediaPlayer
+                  allowPartClick
+                  millisecondsLength={3}
+                  parts={getCurrentRangeParts()}
+                  screenMode={getScreenMode()}
+                  screenWidth={70}
+                  sourceUrl={currentMediaInfo.sanitizedUrl}
+                  onProgress={handleProgress}
+                  />
+              </div>
+              <div className="MediaRangeSelector-selector">
+                <div className="MediaRangeSelector-selectorQuickSelect">
+                  <span>
+                    {t('selectRangeLabel')}
+                  </span>
+                  <Button
+                    onClick={handleSetAsStartClick}
+                    disabled={currentRange[1] <= currentPosition}
+                    >
+                    {`${t('as')} ${t('startTime')}`}
+                  </Button>
+                  <Button
+                    onClick={handleSetAsEndClick}
+                    disabled={currentPosition <= currentRange[0]}
+                    >
+                    {`${t('as')} ${t('endTime')}`}
+                  </Button>
+                </div>
+                <div className="MediaRangeSelector-selectorFineTunning">
+                  <div className="MediaRangeSelector-selectorFineTunningInput">
+                    <span><b>{t('startTime')}:</b></span>
+                    <TimecodeFineTunningInput
+                      lowerLimit={0}
+                      upperLimit={currentEndTime}
+                      roundToLowerLimit
+                      value={currentStartTime}
+                      onValueChange={handleStartFineTunningValueChange}
+                      />
                   </div>
-                  <div className="MediaRangeSelector-rangeSelector">
-                    <span className="MediaRangeSelector-rangeSelectorLabel">
-                      {t('selectRangeLabel', { timecode: formatMillisecondsAsDuration(currentProgress) })}
-                    </span>
-                    <div className="MediaRangeSelector-rangeSelectorButtons">
-                      <Button
-                        onClick={handleSetAsStartClick}
-                        disabled={currentRange[1] <= currentPosition}
-                        >
-                        {t('setAsStart')}
-                      </Button>
-                      <Button
-                        onClick={handleSetAsEndClick}
-                        disabled={currentPosition <= currentRange[0]}
-                        >
-                        {t('setAsEnd')}
-                      </Button>
-                    </div>
+                  <div className="MediaRangeSelector-selectorFineTunningInput">
+                    <span><b>{t('endTime')}:</b></span>
+                    <TimecodeFineTunningInput
+                      lowerLimit={currentStartTime}
+                      upperLimit={currentMediaInfo?.duration || 0}
+                      roundToUpperLimit
+                      value={currentEndTime}
+                      onValueChange={handleEndFineTunningValueChange}
+                      />
                   </div>
                 </div>
-              )}
-              />
+              </div>
+            </Fragment>
           )}
         </div>
       </Modal>
