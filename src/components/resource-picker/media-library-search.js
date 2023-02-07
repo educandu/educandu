@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
+import { useUser } from '../user-context.js';
 import { SearchOutlined } from '@ant-design/icons';
+import FilesGridViewer from './files-grid-viewer.js';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Alert, Button, Checkbox, Empty, Input } from 'antd';
-import WikimediaFilesViewer from './wikimedia-files-viewer.js';
-import { wikimediaFileShape } from '../../ui/default-prop-types.js';
-import { WIKIMEDIA_SEARCH_FILE_TYPE } from '../../utils/wikimedia-utils.js';
+import { Alert, Button, Checkbox, Empty, Input, Spin } from 'antd';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
+import { MEDIA_LIBRARY_SEARCH_FILE_TYPE } from '../../utils/media-library-utils.js';
+import { mediaLibraryItemWithRelevanceShape } from '../../ui/default-prop-types.js';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -21,29 +23,30 @@ const SCREEN = {
 };
 
 const createSearchFileTypeOptions = t => {
-  return Object.values(WIKIMEDIA_SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
+  return Object.values(MEDIA_LIBRARY_SEARCH_FILE_TYPE).map(searchFileType => ({
+    label: t(`searchFileType_${searchFileType}`),
+    value: searchFileType
+  }));
 };
 
-function WikimediaSearch({
+function MediaLibrarySearch({
   files,
   isHidden,
   isLoading,
   initialUrl,
-  canLoadMore,
   searchParams,
   highlightedFile,
-  onLoadMore,
   onFileClick,
   onCancelClick,
   onFileDoubleClick,
+  onDeleteFileClick,
   onPreviewFileClick,
   onSearchParamsChange,
   onSelectInitialUrlClick,
-  onOpenWikimediaPageClick,
   onSelectHighlightedFileClick
 }) {
-  const { t } = useTranslation('wikimediaSearch');
-
+  const user = useUser();
+  const { t } = useTranslation('mediaLibrarySearch');
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchParams.searchTerm);
   const [searchFileTypeOptions, setSearchFileTypeOptions] = useState(createSearchFileTypeOptions(t));
@@ -93,19 +96,21 @@ function WikimediaSearch({
     setSelectedSearchFileTypes(newValues);
   };
 
-  const startSearch = newSearchParams => {
-    setHasSearchedAtLeastOnce(true);
-    onSearchParamsChange(newSearchParams);
+  const tryStartSearch = newSearchParams => {
+    if (newSearchParams.searchTerm.trim() && newSearchParams.searchFileTypes.length) {
+      setHasSearchedAtLeastOnce(true);
+      onSearchParamsChange(newSearchParams);
+    }
   };
 
   const handleSearchEnterKey = event => {
     const newSearchTerm = event.target.value;
     setTypedInSearchTerm(newSearchTerm);
-    startSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    tryStartSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const handleSearchButtonClick = () => {
-    startSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    tryStartSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const renderSearchInfo = () => {
@@ -131,9 +136,9 @@ function WikimediaSearch({
   const isSearchButtonDisabled = typedInSearchTerm.length < MIN_SEARCH_TERM_LENGTH || !selectedSearchFileTypes.length || isLoading;
 
   return (
-    <div className={classNames('WikimediaSearch', { 'is-hidden': isHidden })}>
-      <div className="WikimediaSearch-buttonsLine">
-        <div className="WikimediaSearch-buttonsLineItem">
+    <div className={classNames('MediaLibrarySearch', { 'is-hidden': isHidden })}>
+      <div className="MediaLibrarySearch-buttonsLine">
+        <div className="MediaLibrarySearch-buttonsLineItem">
           <Input
             placeholder={t('common:search')}
             value={typedInSearchTerm}
@@ -141,7 +146,7 @@ function WikimediaSearch({
             onChange={handleSearchTermChange}
             />
         </div>
-        <div className="WikimediaSearch-buttonsLineItem">
+        <div className="MediaLibrarySearch-buttonsLineItem">
           <CheckboxGroup
             options={searchFileTypeOptions}
             value={selectedSearchFileTypes}
@@ -149,7 +154,7 @@ function WikimediaSearch({
             disabled={isLoading}
             />
         </div>
-        <div className="WikimediaSearch-buttonsLineItem">
+        <div className="MediaLibrarySearch-buttonsLineItem">
           <Button
             type="primary"
             icon={<SearchOutlined />}
@@ -162,38 +167,41 @@ function WikimediaSearch({
       </div>
       {currentScreen === SCREEN.search && (
         <Fragment>
-          <div className="WikimediaSearch-filesViewer">
-            <div className="WikimediaSearch-filesViewerContent">
-              <WikimediaFilesViewer
+          <div className="MediaLibrarySearch-filesViewer">
+            <div className="MediaLibrarySearch-filesViewerContent">
+              <FilesGridViewer
                 files={files}
-                isLoading={isLoading}
-                onLoadMore={onLoadMore}
-                canLoadMore={canLoadMore}
+                selectedFileUrl={highlightedFile?.portableUrl}
+                canDelete={hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)}
                 onFileClick={onFileClick}
                 onFileDoubleClick={onFileDoubleClick}
-                selectedFileUrl={highlightedFile?.url}
+                onDeleteFileClick={onDeleteFileClick}
                 onPreviewFileClick={onPreviewFileClick}
-                onOpenWikimediaPageClick={onOpenWikimediaPageClick}
                 />
             </div>
+            {!!isLoading && (
+              <div className={classNames('MediaLibrarySearch-filesViewerOverlay')}>
+                <Spin size="large" />
+              </div>
+            )}
           </div>
-          <div className="WikimediaSearch-searchInfo">
+          <div className="MediaLibrarySearch-searchInfo">
             {renderSearchInfo()}
           </div>
         </Fragment>
       )}
       {currentScreen === SCREEN.searchInvitation && (
-        <div className="WikimediaSearch-noSearch">
+        <div className="MediaLibrarySearch-noSearch">
           <Empty
             image={(
-              <SearchOutlined className="WikimediaSearch-searchInvitationIcon" />
+              <SearchOutlined className="MediaLibrarySearch-searchInvitationIcon" />
             )}
             description={(
               <Fragment>
-                <div className="WikimediaSearch-searchInvitationHeader">
+                <div className="MediaLibrarySearch-searchInvitationHeader">
                   {t('searchInvitationHeader')}
                 </div>
-                <div className="WikimediaSearch-searchInvitationDescription">
+                <div className="MediaLibrarySearch-searchInvitationDescription">
                   {t('searchInvitationDescription')}
                 </div>
               </Fragment>
@@ -202,8 +210,8 @@ function WikimediaSearch({
         </div>
       )}
       {currentScreen === SCREEN.initialUrlPreview && (
-        <div className="WikimediaSearch-noSearch">
-          <div className="WikimediaSearch-initialFilePreviewHeader">
+        <div className="MediaLibrarySearch-noSearch">
+          <div className="MediaLibrarySearch-initialFilePreviewHeader">
             <b>{t('initialFilePreviewHeader')}:</b>
             <br />
             <LiteralUrl>{initialUrl}</LiteralUrl>
@@ -212,7 +220,7 @@ function WikimediaSearch({
             url={initialUrl}
             layout={RESOURCE_PREVIEW_LAYOUT.thumbnailOnly}
             />
-          <div className="WikimediaSearch-initialFilePreviewFooter">
+          <div className="MediaLibrarySearch-initialFilePreviewFooter">
             {t('initialFilePreviewFooter')}
           </div>
         </div>
@@ -229,31 +237,29 @@ function WikimediaSearch({
   );
 }
 
-WikimediaSearch.propTypes = {
-  canLoadMore: PropTypes.bool.isRequired,
-  files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
-  highlightedFile: wikimediaFileShape,
+MediaLibrarySearch.propTypes = {
+  files: PropTypes.arrayOf(mediaLibraryItemWithRelevanceShape).isRequired,
+  highlightedFile: mediaLibraryItemWithRelevanceShape,
   initialUrl: PropTypes.string,
   isHidden: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
-  onLoadMore: PropTypes.func.isRequired,
-  onOpenWikimediaPageClick: PropTypes.func.isRequired,
+  onDeleteFileClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,
   onSelectHighlightedFileClick: PropTypes.func.isRequired,
   onSelectInitialUrlClick: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchFileTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(WIKIMEDIA_SEARCH_FILE_TYPE))).isRequired
+    searchFileTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(MEDIA_LIBRARY_SEARCH_FILE_TYPE))).isRequired
   }).isRequired
 };
 
-WikimediaSearch.defaultProps = {
+MediaLibrarySearch.defaultProps = {
   highlightedFile: null,
   initialUrl: null
 };
 
-export default WikimediaSearch;
+export default MediaLibrarySearch;

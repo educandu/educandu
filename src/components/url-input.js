@@ -12,8 +12,8 @@ import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
-import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
+import { BankOutlined, GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -34,6 +34,8 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         return <YoutubeOutlined />;
       case SOURCE_TYPE.wikimedia:
         return <WikimediaIcon />;
+      case SOURCE_TYPE.mediaLibrary:
+        return <BankOutlined />;
       case SOURCE_TYPE.documentMedia:
         return <PublicIcon />;
       case SOURCE_TYPE.roomMedia:
@@ -89,6 +91,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
       <ResourcePicker
         url={value}
         disabled={disabled}
+        allowedSourceTypes={allowedSourceTypes}
         onUrlChange={handleInputValueChange}
         />
       {!!unsecureUrl && (
@@ -99,7 +102,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 }
 
 UrlInput.propTypes = {
-  allowedSourceTypes: PropTypes.arrayOf(PropTypes.string),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string

@@ -114,10 +114,10 @@ export function confirmLeaveRoom(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
-export function confirmCdnFileDelete(t, fileName, onOk, onCancel = () => {}) {
+export function confirmMediaFileHardDelete(t, fileName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:deleteCdnDocumentConfirmation', { fileName }),
+    content: t('confirmationDialogs:deleteMediaFileConfirmation', { fileName }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),

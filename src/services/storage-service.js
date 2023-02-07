@@ -1,3 +1,4 @@
+import by from 'thenby';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
@@ -363,6 +364,7 @@ export default class StorageService {
             url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
             portableUrl: `${CDN_URL_PREFIX}${encodedObjectSegments.join('/')}`,
             createdOn: obj.lastModified,
+            updatedOn: obj.lastModified,
             size: obj.size
           };
         })
@@ -370,7 +372,7 @@ export default class StorageService {
       obj => obj.portableUrl
     );
 
-    return objects;
+    return objects.sort(by(obj => obj.displayName));
   }
 
   async _deleteObjects(paths) {

@@ -17,7 +17,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function StorageLocation({
+function DocumentOrRoomMediaDefaultScreen({
   files,
   isLoading,
   filterText,
@@ -34,7 +34,7 @@ function StorageLocation({
   onFilesViewerDisplayChange,
   onFilesDropped
 }) {
-  const { t } = useTranslation('storageLocation');
+  const { t } = useTranslation('documentOrRoomMediaDefaultScreen');
 
   const dropzoneRef = useRef();
 
@@ -61,9 +61,9 @@ function StorageLocation({
   const renderStorageInfo = () => {
     if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
       const alertContent = (
-        <div className="StorageLocation-alertPrivateStorage">
+        <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorage">
           <span>{t('privateStorageMessage')}.</span>
-          <div className="StorageLocation-alertPrivateStorageUsage">
+          <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorageUsage">
             <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
           </div>
         </div>
@@ -79,7 +79,7 @@ function StorageLocation({
   };
 
   const getFilesViewerClasses = isDragActive => classNames({
-    'StorageLocation-filesViewer': true,
+    'DocumentOrRoomMediaDefaultScreen-filesViewer': true,
     'u-can-drop': isDragActive && !isLoading,
     'u-cannot-drop': isDragActive && !!isLoading
   });
@@ -89,12 +89,12 @@ function StorageLocation({
     : FilesListViewer;
 
   return (
-    <div className="StorageLocation">
-      <div className="StorageLocation-buttonsLine">
-        <div className="StorageLocation-buttonsLineItem">
+    <div className="DocumentOrRoomMediaDefaultScreen">
+      <div className="DocumentOrRoomMediaDefaultScreen-buttonsLine">
+        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem">
           <FilterInput value={filterText} onChange={handleFilterTextChange} />
         </div>
-        <div className="StorageLocation-buttonsLineItem StorageLocation-buttonsLineItem--select">
+        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem DocumentOrRoomMediaDefaultScreen-buttonsLineItem--select">
           <RadioGroup value={filesViewerDisplay} onChange={handleFilesViewerDisplayChange}>
             <Tooltip title={t('filesView_list')}>
               <RadioButton value={FILES_VIEWER_DISPLAY.list}>
@@ -118,7 +118,7 @@ function StorageLocation({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <div className="StorageLocation-filesViewerContent">
+            <div className="DocumentOrRoomMediaDefaultScreen-filesViewerContent">
               <FilesViewer
                 files={files}
                 selectedFileUrl={highlightedFile?.portableUrl || null}
@@ -130,14 +130,14 @@ function StorageLocation({
                 />
             </div>
             {!!isLoading && (
-              <div className={classNames('StorageLocation-filesViewerOverlay')}>
+              <div className={classNames('DocumentOrRoomMediaDefaultScreen-filesViewerOverlay')}>
                 <Spin size="large" />
               </div>
             )}
           </div>
         )}
       </ReactDropzone>
-      <div className="StorageLocation-locationInfo">
+      <div className="DocumentOrRoomMediaDefaultScreen-locationInfo">
         {renderStorageInfo()}
       </div>
       <div className="u-resource-picker-screen-footer">
@@ -157,7 +157,7 @@ function StorageLocation({
   );
 }
 
-StorageLocation.propTypes = {
+DocumentOrRoomMediaDefaultScreen.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
@@ -175,9 +175,9 @@ StorageLocation.propTypes = {
   onSelectHighlightedFileClick: PropTypes.func.isRequired
 };
 
-StorageLocation.defaultProps = {
+DocumentOrRoomMediaDefaultScreen.defaultProps = {
   highlightedFile: null,
   filterText: null
 };
 
-export default StorageLocation;
+export default DocumentOrRoomMediaDefaultScreen;

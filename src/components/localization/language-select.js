@@ -8,7 +8,7 @@ import LanguageDataProvider from '../../localization/language-data-provider.js';
 
 const Option = Select.Option;
 
-function LanguageSelect({ size, value, languages, onChange }) {
+function LanguageSelect({ multi, languages, ...rest }) {
   const { uiLanguage } = useLocale();
   const [languageList, setLanguageList] = useState([]);
   const languageDataProvider = useService(LanguageDataProvider);
@@ -24,13 +24,12 @@ function LanguageSelect({ size, value, languages, onChange }) {
 
   return (
     <Select
-      size={size}
-      value={value}
-      onChange={onChange}
-      optionFilterProp="title"
-      style={{ width: '100%' }}
       showSearch
       autoComplete="none"
+      optionFilterProp="title"
+      style={{ width: '100%' }}
+      mode={multi ? 'multiple' : null}
+      {...rest}
       >
       {languageList.map(ln => (
         <Option key={ln.code} value={ln.code} title={ln.name}>
@@ -43,16 +42,12 @@ function LanguageSelect({ size, value, languages, onChange }) {
 
 LanguageSelect.propTypes = {
   languages: PropTypes.arrayOf(PropTypes.string),
-  onChange: PropTypes.func,
-  size: PropTypes.oneOf(['small', 'middle', 'large']),
-  value: PropTypes.string
+  multi: PropTypes.bool
 };
 
 LanguageSelect.defaultProps = {
   languages: null,
-  onChange: () => 'underlying binding done through ant design form',
-  size: 'middle',
-  value: 'underlying binding done through ant design form'
+  multi: false
 };
 
 export default LanguageSelect;

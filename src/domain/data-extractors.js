@@ -23,3 +23,14 @@ export const extractUserIdsFromDocsOrRevisions = docsOrRevisions => {
   return [...idsSet];
 };
 
+const fillUserIdSetForMediaLibraryItems = (mediaLibraryItem, set) => {
+  set.add(mediaLibraryItem.createdBy);
+  set.add(mediaLibraryItem.updatedBy);
+  return set;
+};
+
+export const extractUserIdsFromMediaLibraryItems = mediaLibraryItems => {
+  const idsSet = mediaLibraryItems.reduce((set, item) => fillUserIdSetForMediaLibraryItems(item, set), new Set());
+  return [...idsSet];
+};
+

@@ -1,30 +1,30 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import urlUtils from '../../utils/url-utils.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import StorageLocation from './storage-location.js';
 import { useService } from '../container-context.js';
 import FileEditorScreen from './file-editor-screen.js';
 import FilesUploadScreen from './files-upload-screen.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import ResourcePreviewScreen from './resource-preview-screen.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { getResourceFullName } from '../../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../../common/cookie.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import { confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 import { useSetStorageLocation, useStorage } from '../storage-context.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import DocumentOrRoomMediaDefaultScreen from './document-or-room-media-default-screen.js';
+import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../confirmation-dialogs.js';
 
 const SCREEN = {
   default: 'default',
   fileEditor: 'file-editor',
-  filePreview: 'file-preview',
-  filesUpload: 'files-upload'
+  fileUpload: 'file-upload',
+  filePreview: 'file-preview'
 };
 
-function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
+function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const { locations } = useStorage();
   const setStorageLocation = useSetStorageLocation();
@@ -61,11 +61,10 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
       const result = await storageApiClient.getCdnObjects({ parentPath: storageLocation.path });
 
       setFiles(result.objects);
-
-      setIsLoading(false);
     } catch (err) {
-      setIsLoading(false);
       message.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   }, [storageLocation, storageApiClient]);
 
@@ -86,10 +85,12 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
     onSelect(file.portableUrl);
   };
 
-  const handleDeleteFileClick = async file => {
-    const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
-    setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
+  const handleDeleteFileClick = file => {
+    confirmMediaFileHardDelete(t, file.displayName, async () => {
+      const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
+      setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
+      setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
+    });
   };
 
   const handlePreviewFileClick = () => {
@@ -156,7 +157,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
         return;
       }
 
-      pushScreen(SCREEN.filesUpload);
+      pushScreen(SCREEN.fileUpload);
     };
 
     startUpload();
@@ -179,7 +180,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
       return;
     }
 
-    const initialResourceName = getResourceFullName(initialUrl);
+    const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
       const preSelectedFile = displayedFiles.find(file => file.displayName === initialResourceName);
@@ -198,7 +199,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   return (
     <Fragment>
       {screen === SCREEN.default && (
-        <StorageLocation
+        <DocumentOrRoomMediaDefaultScreen
           files={displayedFiles}
           isLoading={isLoading}
           filterText={filterText}
@@ -226,7 +227,7 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
           />
       )}
 
-      {screen === SCREEN.filesUpload && (
+      {screen === SCREEN.fileUpload && (
         <FilesUploadScreen
           uploadQueue={uploadQueue}
           storageLocation={storageLocation}
@@ -249,17 +250,17 @@ function StorageLocationScreens({ storageLocationType, initialUrl, onSelect, onC
   );
 }
 
-StorageLocationScreens.propTypes = {
+DocumentOrRoomMediaScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func,
   storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
 };
 
-StorageLocationScreens.defaultProps = {
+DocumentOrRoomMediaScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default StorageLocationScreens;
+export default DocumentOrRoomMediaScreens;

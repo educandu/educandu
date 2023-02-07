@@ -120,6 +120,7 @@ describe('storage-service', () => {
           url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-1.pdf',
           portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-1.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
+          updatedOn: '2022-06-09T12:00:00.000Z',
           size: 1000
         },
         {
@@ -129,6 +130,7 @@ describe('storage-service', () => {
           url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
           portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
+          updatedOn: '2022-06-09T12:00:00.000Z',
           size: 2000
         },
         {
@@ -138,6 +140,7 @@ describe('storage-service', () => {
           url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
           portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
+          updatedOn: '2022-06-09T12:00:00.000Z',
           size: 3000
         }
       ]);
@@ -236,6 +239,7 @@ describe('storage-service', () => {
               url: `https://cdn.domain.com/document-media/${docId}/file1-${id}.jpeg`,
               portableUrl: `cdn://document-media/${docId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
+              updatedOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             },
             'file2.jpeg': {
@@ -245,6 +249,7 @@ describe('storage-service', () => {
               url: `https://cdn.domain.com/document-media/${docId}/file2-${id}.jpeg`,
               portableUrl: `cdn://document-media/${docId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
+              updatedOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             }
           },
@@ -402,6 +407,7 @@ describe('storage-service', () => {
               url: `https://cdn.domain.com/room-media/${roomId}/file1-${id}.jpeg`,
               portableUrl: `cdn://room-media/${roomId}/file1-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
+              updatedOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             },
             'file2.jpeg': {
@@ -411,6 +417,7 @@ describe('storage-service', () => {
               url: `https://cdn.domain.com/room-media/${roomId}/file2-${id}.jpeg`,
               portableUrl: `cdn://room-media/${roomId}/file2-${id}.jpeg`,
               createdOn: '2022-06-09T12:00:00.000Z',
+              updatedOn: '2022-06-09T12:00:00.000Z',
               size: 3000000
             }
           },
