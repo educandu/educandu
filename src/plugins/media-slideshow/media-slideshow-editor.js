@@ -1,6 +1,6 @@
 import by from 'thenby';
+import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
-import { Divider, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
@@ -22,6 +22,7 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -39,7 +40,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
 
-  const { sourceUrl, playbackRange, chapters, width } = content;
+  const { sourceUrl, playbackRange, width, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -69,6 +70,10 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleChapterAdd = startPosition => {
@@ -185,18 +190,28 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
+        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+          <MediaVolumeSlider
+            value={initialVolume}
+            useValueLabel
+            useButton={false}
+            onChange={handleInitialVolumeChange}
+            />
+        </FormItem>
 
-        <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
-
-        <MediaPlayer
-          parts={chapters}
-          screenWidth={50}
-          playbackRange={playbackRange}
-          screenMode={MEDIA_SCREEN_MODE.audio}
-          customScreenOverlay={renderPlayingChapterImage()}
-          onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          />
+        <div className="MediaSlideshowEditor-playerPreview">
+          <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
+          <MediaPlayer
+            volume={initialVolume}
+            parts={chapters}
+            screenWidth={50}
+            playbackRange={playbackRange}
+            screenMode={MEDIA_SCREEN_MODE.audio}
+            customScreenOverlay={renderPlayingChapterImage()}
+            onPlayingPartIndexChange={handlePlayingPartIndexChange}
+            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+            />
+        </div>
 
         <Timeline
           parts={timelineParts}

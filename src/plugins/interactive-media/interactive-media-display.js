@@ -17,7 +17,7 @@ import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlin
 const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
-  const { aspectRatio, showVideo, width, playbackRange, posterImage, copyrightNotice, chapters } = content;
+  const { playbackRange, aspectRatio, showVideo, posterImage, copyrightNotice, width, initialVolume, chapters } = content;
 
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
@@ -142,6 +142,7 @@ function InteractiveMediaDisplay({ content }) {
           aspectRatio={aspectRatio}
           canDownload={canDownload}
           customScreenOverlay={renderInteractionOverlay()}
+          initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
           parts={parts}
           playbackRange={playbackRange}

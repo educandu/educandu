@@ -15,6 +15,7 @@ import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import { swapItemsAt, removeItemAt, ensureIsExcluded } from '../../utils/array-utils.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -141,6 +142,12 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
+  const handleSoundInitialVolumeChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.initialVolume = value;
+    changeContent({ tests: newTests });
+  };
+
   const renderCopyrightNoticeInput = (index, value, handleValueChange) => {
     return (
       <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
@@ -241,6 +248,15 @@ function EarTrainingEditor({ content, onContentChanged }) {
             </FormItem>
 
             {renderCopyrightNoticeInput(index, test.sound.copyrightNotice, handleSoundCopyrightNoticeChange)}
+
+            <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+              <MediaVolumeSlider
+                value={test.sound.initialVolume}
+                useValueLabel
+                useButton={false}
+                onChange={value => handleSoundInitialVolumeChange(value, index)}
+                />
+            </FormItem>
           </ItemPanel>
         ))}
       </Form>

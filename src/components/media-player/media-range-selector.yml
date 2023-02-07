@@ -2,18 +2,27 @@ mediaRangeSelector:
   modalTitle:
     en: Select playback range
     de: Abspielbereich auswählen
-  playbackRange:
-    en: "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
-    de: "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
   selectRangeLabel:
     en: Set current playback position
     de: Setze die aktuelle Wiedergabeposition
-  setAsStart:
-    en: as start time
-    de: als Anfangszeit
-  setAsEnd:
-    en: as end time
-    de: als Endezeit
+  as:
+    en: as
+    de: als
+  startTime:
+    en: Start time
+    de: Anfangszeit
+  endTime:
+    en: End time
+    de: Endezeit
+  start:
+    en: Start
+    de: Anfang
+  end:
+    en: End
+    de: Ende
+  milliseconds:
+    en: milliseconds
+    de: Millisekunden
   loadingMessage:
     en: Determining media information ...
     de: Medieninformationen werden ermittelt ...

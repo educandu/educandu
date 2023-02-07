@@ -42,12 +42,15 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 };
 
 function MediaPlayer({
+  allowPartClick,
   aspectRatio,
   canDownload,
   customScreenOverlay,
   customUnderScreenContent,
   downloadFileName,
+  initialVolume,
   mediaPlayerRef,
+  millisecondsLength,
   parts,
   playbackRange,
   playbackRate,
@@ -76,9 +79,9 @@ function MediaPlayer({
   const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [internalVolume, setInternalVolume] = useState(1);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalPlaybackRate, setInternaPlaybackRate] = useState(1);
+  const [internalVolume, setInternalVolume] = useState(initialVolume);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
 
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
@@ -246,7 +249,9 @@ function MediaPlayer({
       {!!renderProgressBar && renderProgressBar()}
       {!renderProgressBar && (
         <MediaPlayerProgressBar
+          allowPartClick={allowPartClick}
           durationInMilliseconds={durationInMilliseconds}
+          millisecondsLength={millisecondsLength}
           parts={parts}
           playedMilliseconds={playedMilliseconds}
           onSeek={handleSeek}
@@ -260,6 +265,7 @@ function MediaPlayer({
         <MediaPlayerControls
           durationInMilliseconds={durationInMilliseconds}
           isPlaying={isPlaying}
+          millisecondsLength={millisecondsLength}
           playedMilliseconds={playedMilliseconds}
           screenMode={screenMode}
           volume={appliedVolume}
@@ -275,11 +281,14 @@ function MediaPlayer({
 }
 
 MediaPlayer.propTypes = {
+  allowPartClick: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   canDownload: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
   downloadFileName: PropTypes.string,
+  initialVolume: PropTypes.number,
+  millisecondsLength: PropTypes.number,
   mediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -310,11 +319,14 @@ MediaPlayer.propTypes = {
 };
 
 MediaPlayer.defaultProps = {
+  allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   canDownload: false,
   customScreenOverlay: null,
   customUnderScreenContent: null,
   downloadFileName: null,
+  initialVolume: 1,
+  millisecondsLength: 0,
   mediaPlayerRef: {
     current: null
   },

@@ -952,21 +952,33 @@
       "en": "Select playback range",
       "de": "Abspielbereich auswählen"
     },
-    "playbackRange": {
-      "en": "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
-      "de": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
-    },
     "selectRangeLabel": {
       "en": "Set current playback position",
       "de": "Setze die aktuelle Wiedergabeposition"
     },
-    "setAsStart": {
-      "en": "as start time",
-      "de": "als Anfangszeit"
+    "as": {
+      "en": "as",
+      "de": "als"
     },
-    "setAsEnd": {
-      "en": "as end time",
-      "de": "als Endezeit"
+    "startTime": {
+      "en": "Start time",
+      "de": "Anfangszeit"
+    },
+    "endTime": {
+      "en": "End time",
+      "de": "Endezeit"
+    },
+    "start": {
+      "en": "Start",
+      "de": "Anfang"
+    },
+    "end": {
+      "en": "End",
+      "de": "Ende"
+    },
+    "milliseconds": {
+      "en": "milliseconds",
+      "de": "Millisekunden"
     },
     "loadingMessage": {
       "en": "Determining media information ...",
@@ -987,6 +999,18 @@
       "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
     }
   },
+  "timecodeFineTunningInput": {
+    "milliseconds": {
+      "en": "milliseconds",
+      "de": "Millisekunden"
+    }
+  },
+  "timeline": {
+    "markersBarPlaceholder": {
+      "en": "Hover to see marker",
+      "de": "Bewege die Maus über den Streifen, um die Marker-Position zu sehen"
+    }
+  },
   "trackMixerDisplay": {
     "trackNumberLabel": {
       "en": "Track {trackNumber}",
@@ -998,9 +1022,13 @@
       "en": "no track",
       "de": "keine Spur"
     },
-    "manageVolumePresets": {
-      "en": "Manage volume presets",
-      "de": "Lautstärke-Voreinstellungen bearbeiten"
+    "volumePresetInfo": {
+      "en": "Here you can define sets of volume combinations. The individual track volumes of the currently selected combination can be changed in the track mixer below.",
+      "de": "Hier kannst du Sets von Lautstärke-Kombinationen definieren. Die einzelnen Spurlautstärken der momentan ausgewählten Kombination kannst im Spur-Mixer unten bearbeiten."
+    },
+    "trackDurations": {
+      "en": "Track durations",
+      "de": "Spur-Zeitdauern"
     }
   },
   "volumePresetsModal": {
@@ -3132,10 +3160,6 @@
       "en": "Chapter",
       "de": "Kapitel"
     },
-    "editChapter": {
-      "en": "Edit chapter",
-      "de": "Kapitel bearbeiten"
-    },
     "mainTrack": {
       "en": "Main track",
       "de": "Hauptspur"
@@ -3239,6 +3263,18 @@
     "filter": {
       "en": "Filter",
       "de": "Filter"
+    },
+    "playerSettings": {
+      "en": "Player settings",
+      "de": "Player-Einstellungen"
+    },
+    "initialVolume": {
+      "en": "Initial volume",
+      "de": "Anfangslautstärke"
+    },
+    "multitrackInitialVolumeInfo": {
+      "en": "This is the initial mix volume",
+      "de": "Dies ist die initiale Mix-Lautstärke"
     },
     "posterImageUrl": {
       "en": "Preview image URL",

@@ -19,7 +19,7 @@ function MediaAnalysisDisplay({ content }) {
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
-  const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
 
   const sources = useMemo(() => ({
     mainTrack: {
@@ -132,6 +132,7 @@ function MediaAnalysisDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              initialVolume={initialVolume}
               customUnderScreenContent={renderChapters()}
               multitrackMediaPlayerRef={multitrackMediaPlayerRef}
               posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}

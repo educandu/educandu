@@ -41,14 +41,14 @@ function AbcNotationEditor({ content, onContentChanged }) {
             preview={<AbcNotation abcCode={abcCode} />}
             />
         </Form.Item>
+        <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCurrentCopyrightNoticeChanged} />
+        </Form.Item>
         <Form.Item
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </Form.Item>
-        <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput value={copyrightNotice} onChange={handleCurrentCopyrightNoticeChanged} />
         </Form.Item>
       </Form>
     </div>

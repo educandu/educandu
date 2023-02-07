@@ -26,8 +26,10 @@ import MainTrackEditor from '../../components/media-player/main-track-editor.js'
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
 import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -44,7 +46,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaAnalysis');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
-  const { width, mainTrack, secondaryTracks, chapters, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     getAccessibleUrl({
@@ -70,6 +72,27 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
       sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
     }))
   }), [mainTrack, secondaryTracks, clientConfig]);
+
+  const selectedChapterStartTimecode = useMemo(
+    () => chapters[selectedChapterIndex].startPosition * mainTrackPlaybackDuration,
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
+
+  const selectedChapterLowerTimecodeLimit = useMemo(
+    () => {
+      const previousChapter = chapters[selectedChapterIndex - 1];
+      return previousChapter ? previousChapter.startPosition * mainTrackPlaybackDuration : 0;
+    },
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
+
+  const selectedChapterUpperTimecodeLimit = useMemo(
+    () => {
+      const nextChapter = chapters[selectedChapterIndex + 1];
+      return nextChapter ? nextChapter.startPosition * mainTrackPlaybackDuration : mainTrackPlaybackDuration;
+    },
+    [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
+  );
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -98,6 +121,10 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleMoveTrackUp = index => {
@@ -215,6 +242,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     setSelectedChapterIndex(chapterIndex);
   };
 
+  const handleChapterStartTimecodeChange = newStartTime => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], startPosition: newStartTime / mainTrackPlaybackDuration };
+    changeContent({ chapters: newChapters });
+  };
+
   const handleChapterStartPositionChange = (key, newStartPosition) => {
     const chapter = chapters.find(p => p.key === key);
     chapter.startPosition = newStartPosition;
@@ -282,9 +315,32 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
+        <ItemPanel header={t('common:playerSettings')}>
+          <FormItem
+            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+          </FormItem>
+          <FormItem
+            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <MediaVolumeSlider
+              value={initialVolume}
+              useValueLabel
+              useButton={false}
+              onChange={handleInitialVolumeChange}
+              />
+          </FormItem>
+        </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
+            <div className="MediaAnalysisEditor-trackMixerPreviewLabel">
+              {t('common:preview')}
+            </div>
             <MultitrackMediaPlayer
+              initialVolume={initialVolume}
               posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
@@ -333,14 +389,19 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             {!!chapters.length && (
             <Fragment>
               <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
-                <span className="InteractiveMediaEditor-readonlyValue">
-                  {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: mainTrackPlaybackDuration })}
-                </span>
+                {!mainTrackPlaybackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
+                {!!mainTrackPlaybackDuration && (
+                  <TimecodeFineTunningInput
+                    disabled={selectedChapterIndex === 0}
+                    lowerLimit={selectedChapterLowerTimecodeLimit}
+                    upperLimit={selectedChapterUpperTimecodeLimit}
+                    value={selectedChapterStartTimecode}
+                    onValueChange={handleChapterStartTimecodeChange}
+                    />
+                )}
               </FormItem>
               <FormItem label={t('common:duration')} {...FORM_ITEM_LAYOUT}>
-                <span className="InteractiveMediaEditor-readonlyValue">
-                  {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
-                </span>
+                {formatMediaPosition({ formatPercentage, position: selectedChapterFraction, duration: mainTrackPlaybackDuration })}
               </FormItem>
               <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
                 <Input
@@ -370,12 +431,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             <Info tooltip={t('segmentsDropzoneInfo')} />
           </div>
         </div>
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
       </Form>
     </div>
   );

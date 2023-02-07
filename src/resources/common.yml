@@ -398,9 +398,6 @@ common:
   chapter:
     en: Chapter
     de: Kapitel
-  editChapter:
-    en: Edit chapter
-    de: Kapitel bearbeiten
   mainTrack:
     en: Main track
     de: Hauptspur
@@ -489,6 +486,15 @@ common:
   filter:
     en: Filter
     de: Filter
+  playerSettings:
+    en: Player settings
+    de: Player-Einstellungen
+  initialVolume:
+    en: Initial volume
+    de: Anfangslautstärke
+  multitrackInitialVolumeInfo:
+    en: This is the initial mix volume
+    de: Dies ist die initiale Mix-Lautstärke
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
