@@ -12,8 +12,8 @@ import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
-import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
 import { BankOutlined, GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { getSourceType, getPortableUrl, getAccessibleUrl, createMetadataForSource } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -49,12 +49,12 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 
   const handleInputValueChange = newValue => {
     const accessibleUrl = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
-
     const { sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
-
     const portableUrl = getPortableUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    onChange(portableUrl);
+    const metadata = createMetadataForSource({ url: portableUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    onChange(portableUrl, metadata);
   };
 
   const renderInputPrefix = () => {

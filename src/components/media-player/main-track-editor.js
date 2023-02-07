@@ -7,8 +7,8 @@ import MarkdownInput from '../markdown-input.js';
 import MediaRangeSelector from './media-range-selector.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
+import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -30,13 +30,11 @@ function MainTrackEditor({ content, onContentChanged, useShowVideo, useAspectRat
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = value => {
+  const handleSourceUrlChange = (value, metadata) => {
     const newContent = {
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: isYoutubeSourceType(value)
-        ? t('common:youtubeCopyrightNotice', { link: value })
-        : ''
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
     };
 
     if (useShowVideo) {

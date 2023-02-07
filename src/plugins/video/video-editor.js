@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
@@ -27,13 +27,11 @@ function VideoEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = value => {
+  const handleSourceUrlChange = (value, metadata) => {
     changeContent({
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: isYoutubeSourceType(value)
-        ? t('common:youtubeCopyrightNotice', { link: value })
-        : ''
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
     });
   };
 

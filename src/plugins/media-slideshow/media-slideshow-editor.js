@@ -11,7 +11,6 @@ import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -24,6 +23,7 @@ import MainTrackEditor from '../../components/media-player/main-track-editor.js'
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
+import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -110,9 +110,10 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterImageSourceUrlChange = value => {
+  const handleChapterImageSourceUrlChange = (value, metadata) => {
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.sourceUrl = value;
+    newChapters[selectedChapterIndex].image.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
     changeContent({ chapters: newChapters });
   };
 

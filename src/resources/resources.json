@@ -3140,6 +3140,10 @@
       "en": "Source: [Youtube]({link})\n",
       "de": "Quelle: [Youtube]({link})\n"
     },
+    "wikimediaCopyrightNotice": {
+      "en": "Source: [Wikimedia]({link})\n",
+      "de": "Quelle: [Wikimedia]({link})\n"
+    },
     "verifiedDocumentBadge": {
       "en": "This document was verified by a maintainer",
       "de": "Dieses Dokument wurde von einem Maintainer überprüft"

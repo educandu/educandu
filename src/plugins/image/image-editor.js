@@ -6,21 +6,20 @@ import UrlInput from '../../components/url-input.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
 import {
   createDefaultClipEffect,
   createDefaultHoverEffect,
   createDefaultRevealEffect,
   createInitialClipEffect,
   createInitialRevealEffect
-}
-  from './image-utils.js';
+} from './image-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -76,8 +75,12 @@ function ImageEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = value => {
-    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
+  const handleSourceUrlChange = (value, metadata) => {
+    changeContent({
+      sourceUrl: value,
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t),
+      clipEffect: resetClipEffect(effectType)
+    });
   };
 
   const handleCopyrightNoticeChange = event => {
@@ -99,8 +102,12 @@ function ImageEditor({ content, onContentChanged }) {
     });
   };
 
-  const handleHoverEffectSourceUrlChange = value => {
-    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
+  const handleHoverEffectSourceUrlChange = (value, metadata) => {
+    const newHoverEffect = {
+      ...hoverEffect,
+      sourceUrl: value,
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+    };
     changeContent({ hoverEffect: newHoverEffect });
   };
 
@@ -110,8 +117,12 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleRevealEffectSourceUrlChange = value => {
-    const newRevealEffect = { ...revealEffect, sourceUrl: value };
+  const handleRevealEffectSourceUrlChange = (value, metadata) => {
+    const newRevealEffect = {
+      ...revealEffect,
+      sourceUrl: value,
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+    };
     changeContent({ revealEffect: newRevealEffect });
   };
 
