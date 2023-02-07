@@ -231,35 +231,31 @@ export const storageLocationShape = PropTypes.shape({
   isDeletionEnabled: PropTypes.bool.isRequired
 });
 
-const minimalFileProps = {
+const commonFileProps = {
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired
 };
 
-export const minimalFileShape = PropTypes.shape({
-  url: PropTypes.string.isRequired,
-  portableUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired
+export const commonFileShape = PropTypes.shape({
+  ...commonFileProps
 });
 
 export const cdnObjectShape = PropTypes.shape({
-  ...minimalFileProps,
-  parentPath: PropTypes.string,
+  ...commonFileProps,
   path: PropTypes.string.isRequired,
-  createdOn: PropTypes.string,
-  size: PropTypes.number.isRequired
+  parentPath: PropTypes.string.isRequired
 });
 
 const mediaLibraryItemProps = {
+  ...commonFileProps,
   _id: PropTypes.string.isRequired,
   resourceType: PropTypes.oneOf(Object.values(RESOURCE_TYPE)).isRequired,
   contentType: PropTypes.string.isRequired,
-  size: PropTypes.number.isRequired,
-  url: PropTypes.string.isRequired,
-  createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
-  updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired,
   description: PropTypes.string.isRequired,
   languages: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -1,3 +1,4 @@
+import by from 'thenby';
 import mime from 'mime';
 import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
@@ -28,10 +29,12 @@ class MediaLibraryService {
 
     const queryConditions = [tagQuery.query, { resourceType: { $in: resourceTypes } }];
     const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(queryConditions);
-    return mediaLibraryItems.map(item => ({
-      ...item,
-      relevance: item.tags.filter(tag => tagQuery.positiveTokens.has(tag.toLowerCase())).length
-    }));
+    return mediaLibraryItems
+      .map(item => ({
+        ...item,
+        relevance: item.tags.filter(tag => tagQuery.positiveTokens.has(tag.toLowerCase())).length
+      }))
+      .sort(by(item => item.relevance).thenBy(item => item.url));
   }
 
   async createMediaLibraryItem({ file, metadata, user }) {

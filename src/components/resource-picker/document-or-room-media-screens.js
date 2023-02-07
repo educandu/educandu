@@ -20,8 +20,8 @@ import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../con
 const SCREEN = {
   default: 'default',
   fileEditor: 'file-editor',
-  filePreview: 'file-preview',
-  filesUpload: 'files-upload'
+  fileUpload: 'file-upload',
+  filePreview: 'file-preview'
 };
 
 function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
@@ -61,11 +61,10 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
       const result = await storageApiClient.getCdnObjects({ parentPath: storageLocation.path });
 
       setFiles(result.objects);
-
-      setIsLoading(false);
     } catch (err) {
-      setIsLoading(false);
       message.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   }, [storageLocation, storageApiClient]);
 
@@ -158,7 +157,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
         return;
       }
 
-      pushScreen(SCREEN.filesUpload);
+      pushScreen(SCREEN.fileUpload);
     };
 
     startUpload();
@@ -228,7 +227,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
           />
       )}
 
-      {screen === SCREEN.filesUpload && (
+      {screen === SCREEN.fileUpload && (
         <FilesUploadScreen
           uploadQueue={uploadQueue}
           storageLocation={storageLocation}

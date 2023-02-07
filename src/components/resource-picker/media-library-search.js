@@ -1,20 +1,16 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
+import { useUser } from '../user-context.js';
 import { SearchOutlined } from '@ant-design/icons';
+import FilesGridViewer from './files-grid-viewer.js';
 import { Trans, useTranslation } from 'react-i18next';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Alert, Button, Checkbox, Empty, Input, Spin } from 'antd';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 import { MEDIA_LIBRARY_SEARCH_FILE_TYPE } from '../../utils/media-library-utils.js';
 import { mediaLibraryItemWithRelevanceShape } from '../../ui/default-prop-types.js';
-import FilesGridViewer from './files-grid-viewer.js';
-import urlUtils from '../../utils/url-utils.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
-import { useService } from '../container-context.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { useUser } from '../user-context.js';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -27,7 +23,10 @@ const SCREEN = {
 };
 
 const createSearchFileTypeOptions = t => {
-  return Object.values(MEDIA_LIBRARY_SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
+  return Object.values(MEDIA_LIBRARY_SEARCH_FILE_TYPE).map(searchFileType => ({
+    label: t(`searchFileType_${searchFileType}`),
+    value: searchFileType
+  }));
 };
 
 function MediaLibrarySearch({
@@ -47,21 +46,11 @@ function MediaLibrarySearch({
   onSelectHighlightedFileClick
 }) {
   const user = useUser();
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibrarySearch');
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [typedInSearchTerm, setTypedInSearchTerm] = useState(searchParams.searchTerm);
   const [searchFileTypeOptions, setSearchFileTypeOptions] = useState(createSearchFileTypeOptions(t));
   const [selectedSearchFileTypes, setSelectedSearchFileTypes] = useState(searchParams.searchFileTypes);
-
-  const displayedItems = useMemo(() => {
-    return files.map(file => ({
-      originalFile: file,
-      url: getAccessibleUrl({ url: file.url, cdnRootUrl: clientConfig.cdnRootUrl }),
-      portableUrl: file.url,
-      displayName: urlUtils.getFileName(file.url)
-    }));
-  }, [files, clientConfig]);
 
   let currentScreen;
   let canSelectUrl;
@@ -107,19 +96,21 @@ function MediaLibrarySearch({
     setSelectedSearchFileTypes(newValues);
   };
 
-  const startSearch = newSearchParams => {
-    setHasSearchedAtLeastOnce(true);
-    onSearchParamsChange(newSearchParams);
+  const tryStartSearch = newSearchParams => {
+    if (newSearchParams.searchTerm.trim() && newSearchParams.searchFileTypes.length) {
+      setHasSearchedAtLeastOnce(true);
+      onSearchParamsChange(newSearchParams);
+    }
   };
 
   const handleSearchEnterKey = event => {
     const newSearchTerm = event.target.value;
     setTypedInSearchTerm(newSearchTerm);
-    startSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    tryStartSearch({ searchTerm: newSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const handleSearchButtonClick = () => {
-    startSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
+    tryStartSearch({ searchTerm: typedInSearchTerm, searchFileTypes: selectedSearchFileTypes });
   };
 
   const renderSearchInfo = () => {
@@ -179,13 +170,13 @@ function MediaLibrarySearch({
           <div className="MediaLibrarySearch-filesViewer">
             <div className="MediaLibrarySearch-filesViewerContent">
               <FilesGridViewer
-                files={displayedItems}
-                selectedFileUrl={highlightedFile?.url}
+                files={files}
+                selectedFileUrl={highlightedFile?.portableUrl}
                 canDelete={hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)}
-                onFileClick={file => onFileClick(file.originalFile)}
-                onFileDoubleClick={file => onFileDoubleClick(file.originalFile)}
-                onDeleteFileClick={file => onDeleteFileClick(file.originalFile)}
-                onPreviewFileClick={file => onPreviewFileClick(file.originalFile)}
+                onFileClick={onFileClick}
+                onFileDoubleClick={onFileDoubleClick}
+                onDeleteFileClick={onDeleteFileClick}
+                onPreviewFileClick={onPreviewFileClick}
                 />
             </div>
             {!!isLoading && (

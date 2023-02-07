@@ -1,19 +1,14 @@
-import by from 'thenby';
+import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../domain/constants.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
-import { minimalFileShape } from '../../ui/default-prop-types.js';
+import { commonFileShape } from '../../ui/default-prop-types.js';
 import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-
-const createdSortedFileList = files => {
-  return [...files].sort(by(file => file.displayName, { ignorecase: true }));
-};
 
 function FilesGridViewer({
   files,
@@ -25,8 +20,6 @@ function FilesGridViewer({
   onPreviewFileClick
 }) {
   const { t } = useTranslation();
-  const displayFiles = useMemo(() => createdSortedFileList(files), [files]);
-
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
     onPreviewFileClick(file);
@@ -84,7 +77,7 @@ function FilesGridViewer({
 
   return (
     <div className="FilesGridViewer">
-      {displayFiles.map(file => renderFile(file))}
+      {files.map(renderFile)}
     </div>
   );
 }
@@ -92,7 +85,7 @@ function FilesGridViewer({
 FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
   selectedFileUrl: PropTypes.string,
-  files: PropTypes.arrayOf(minimalFileShape).isRequired,
+  files: PropTypes.arrayOf(commonFileShape).isRequired,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
   onDeleteFileClick: PropTypes.func,

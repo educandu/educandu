@@ -53,11 +53,11 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
-    setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
+    setHighlightedFile(oldFile => oldFile?.portableUrl === newFile.portableUrl ? null : newFile);
   };
 
   const handleFileDoubleClick = newFile => {
-    onSelect(newFile.url);
+    onSelect(newFile.portableUrl);
   };
 
   const handleSelectInitialUrlClick = () => {
@@ -65,19 +65,19 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleSelectHighlightedFileClick = () => {
-    onSelect(highlightedFile.url);
-  };
-
-  const handlePreviewFileClick = () => {
-    pushScreen(SCREEN.filePreview);
+    onSelect(highlightedFile.portableUrl);
   };
 
   const handleDeleteFileClick = file => {
     confirmMediaFileHardDelete(t, file.displayName, async () => {
       await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: file._id });
-      setFiles(oldItems => oldItems.filter(item => item._id !== file._id));
-      setHighlightedFile(oldFile => oldFile._id !== file._id ? oldFile : null);
+      setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
+      setHighlightedFile(oldFile => oldFile.portableUrl !== file.portableUrl ? oldFile : null);
     });
+  };
+
+  const handlePreviewFileClick = () => {
+    pushScreen(SCREEN.filePreview);
   };
 
   const handleScreenBackClick = () => {
@@ -93,7 +93,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
       return;
     }
 
-    const previouslyHighlightedFileStillExists = files.some(file => file.url === highlightedFile.url);
+    const previouslyHighlightedFileStillExists = files.some(file => file.portableUrl === highlightedFile.portableUrl);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
