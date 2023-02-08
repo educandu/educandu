@@ -13,6 +13,8 @@ export const minUserPasswordLength = 8;
 
 export const maxMediaLibraryItemDescriptionLength = 1000;
 
+export const maxCatalogPluginItemLinkDescriptionLength = 200;
+
 export const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
 
 export const hexCodeValidationPattern = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
