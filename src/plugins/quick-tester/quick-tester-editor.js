@@ -2,12 +2,14 @@ import React from 'react';
 import { Form, Button, Radio } from 'antd';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
 import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
+import DragAndDropContainer from '../../components/drag-and-drop-container.js';
+import { swapItemsAt, removeItemAt, moveItem } from '../../utils/array-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -63,31 +65,25 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
+  const handleMoveTest = (fromIndex, toIndex) => {
+    changeContent({ tests: moveItem(tests, fromIndex, toIndex) });
+  };
+
   const handleTestsOrderChanged = event => {
     changeContent({ testsOrder: event.target.value });
   };
 
-  return (
-    <div className="QuickTesterEditor">
-      <Form layout="horizontal" labelAlign="left">
-        <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
-        </FormItem>
-        <FormItem label={`${t('common:title')}:`} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
-        </FormItem>
-        <FormItem label={t('testsOrder')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>
-            <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
-            <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
-          </RadioGroup>
-        </FormItem>
-      </Form>
-      {tests.map((test, index) => (
+  const dragAndDropPanelItems = tests.map((test, index) => ({
+    key: uniqueId.create(),
+    renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+      return (
         <ItemPanel
           index={index}
           key={index.toString()}
           itemsCount={tests.length}
+          isDragged={isDragged}
+          isOtherDragged={isOtherDragged}
+          dragHandleProps={dragHandleProps}
           header={t('testNumber', { number: index + 1 })}
           onMoveUp={handleMoveTestUp}
           onMoveDown={handleMoveTestDown}
@@ -112,7 +108,27 @@ function QuickTesterEditor({ content, onContentChanged }) {
             </div>
           </div>
         </ItemPanel>
-      ))}
+      );
+    }
+  }));
+
+  return (
+    <div className="QuickTesterEditor">
+      <Form layout="horizontal" labelAlign="left">
+        <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
+        </FormItem>
+        <FormItem label={`${t('common:title')}:`} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
+        </FormItem>
+        <FormItem label={t('testsOrder')} {...FORM_ITEM_LAYOUT}>
+          <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>
+            <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
+            <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
+          </RadioGroup>
+        </FormItem>
+      </Form>
+      <DragAndDropContainer droppableId={uniqueId.create()} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
       <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>
         {t('addTest')}
       </Button>
