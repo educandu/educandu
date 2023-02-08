@@ -1,9 +1,23 @@
 .ItemPanel {
   margin: 10px 0;
 
+  .ant-collapse-header {
+    background-color: @edu-background-color-light !important;
+    border-top-left-radius: @edu-border-radius-base !important;
+    border-top-right-radius: @edu-border-radius-base !important;
+  }
+
   &.is-dragged {
     border: 1px solid @edu-border-color-dark;
   }
+
+  &.is-other-dragged {
+    opacity: 0.60 !important;
+  }
+}
+
+.ItemPanel-contentWrapper {
+  background-color: @edu-white !important;
 }
 
 .ItemPanel-actionButtons {

@@ -16,8 +16,10 @@ function DragAndDropContainer({
 
   const handleDragEnd = ({ source, destination }) => {
     setIsDragging(false);
-    if (source !== destination && destination >= 0 && destination <= (items.length - 1)) {
-      onItemMove(source.index, destination.index);
+    const fromIndex = source.index;
+    const toIndex = destination.index;
+    if (fromIndex !== toIndex && toIndex >= 0 && toIndex <= (items.length - 1)) {
+      onItemMove(fromIndex, toIndex);
     }
   };
 

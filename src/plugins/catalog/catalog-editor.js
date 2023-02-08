@@ -1,14 +1,13 @@
-import classNames from 'classnames';
 import React, { Fragment } from 'react';
 import { Form, Radio, Button } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
+import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
 import CatalogItemEditor from './catalog-item-editor.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import { DragOutlined, PlusOutlined } from '@ant-design/icons';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -79,30 +78,23 @@ function CatalogEditor({ content, onContentChanged }) {
     key: uniqueId.create(),
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
-        <div className={classNames('CatalogEditor-panelItem', { 'is-other-dragged': isOtherDragged })}>
-          <ItemPanel
-            index={index}
-            isDragged={isDragged}
-            itemsCount={items.length}
-            header={t('itemNumber', { number: index + 1 })}
-            extraActionButtons={[
-              {
-                key: 'drag-handle',
-                title: t('dragToReorder'),
-                icon: <div {...dragHandleProps}><DragOutlined /></div>
-              }
-            ]}
-            onMoveUp={handleItemMoveUp}
-            onMoveDown={handleItemMoveDown}
-            onDelete={handleItemDelete}
-            >
-            <CatalogItemEditor
-              item={item}
-              enableImageEditing={displayMode === DISPLAY_MODE.imageTiles}
-              onChange={newItem => handleItemChange(index, newItem)}
-              />
-          </ItemPanel>
-        </div>
+        <ItemPanel
+          index={index}
+          isDragged={isDragged}
+          isOtherDragged={isOtherDragged}
+          dragHandleProps={dragHandleProps}
+          itemsCount={items.length}
+          header={t('itemNumber', { number: index + 1 })}
+          onMoveUp={handleItemMoveUp}
+          onMoveDown={handleItemMoveDown}
+          onDelete={handleItemDelete}
+          >
+          <CatalogItemEditor
+            item={item}
+            enableImageEditing={displayMode === DISPLAY_MODE.imageTiles}
+            onChange={newItem => handleItemChange(index, newItem)}
+            />
+        </ItemPanel>
       );
     }
   }));
