@@ -21,7 +21,7 @@ function TrackMixerDisplay({
 
   const handleTrackSoloClick = soloTrackIndex => {
     if (soloTrackIndex === currentSoloTrackIndex) {
-      const newVolumes = [...preSoloTrackVolumes];
+      const newVolumes = preSoloTrackVolumes.length ? [...preSoloTrackVolumes] : [...volumes];
       newVolumes[soloTrackIndex] = volumes[soloTrackIndex];
       setCurrentSoloTrackIndex(-1);
       onVolumesChange(newVolumes);
@@ -35,10 +35,16 @@ function TrackMixerDisplay({
   };
 
   const handleVolumePresetOptionSelect = newIndex => {
+    setCurrentSoloTrackIndex(-1);
+    setPreSoloTrackVolumes([]);
     onSelectedVolumePresetIndexChange(newIndex);
   };
 
   const handleVolumeChange = (newVolume, index) => {
+    if (currentSoloTrackIndex > -1 && index !== currentSoloTrackIndex) {
+      setCurrentSoloTrackIndex(-1);
+      setPreSoloTrackVolumes([]);
+    }
     onVolumesChange(replaceItemAt(volumes, newVolume, index));
   };
 
