@@ -5,7 +5,7 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import { isYoutubeSourceType } from '../../utils/source-utils.js';
+import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 
@@ -22,12 +22,10 @@ function SecondaryTrackEditor({ content, onContentChanged }) {
     changeContent({ name: event.target.value });
   };
 
-  const handleSourceUrlChange = value => {
+  const handleSourceUrlChange = (value, metadata) => {
     changeContent({
       sourceUrl: value,
-      copyrightNotice: isYoutubeSourceType(value)
-        ? t('common:youtubeCopyrightNotice', { link: value })
-        : ''
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
     });
   };
 

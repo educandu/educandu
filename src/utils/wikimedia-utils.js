@@ -1,3 +1,7 @@
+import urlUtils from './url-utils.js';
+
+const WIKIMEDIA_COMMONS_PAGE_URL_PREFIX = 'https://commons.wikimedia.org/wiki/File:';
+
 export const WIKIMEDIA_COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
 
 export const WIKIMEDIA_API_FILE_TYPE = {
@@ -65,4 +69,8 @@ export function processWikimediaResponse(responseData) {
     nextOffset,
     files
   };
+}
+
+export function getWikimediaPageFromUrl(url) {
+  return `${WIKIMEDIA_COMMONS_PAGE_URL_PREFIX}${urlUtils.getFileName(url)}`;
 }

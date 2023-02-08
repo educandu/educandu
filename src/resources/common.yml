@@ -383,6 +383,11 @@ common:
       Source: [Youtube]({link})
     de: |
       Quelle: [Youtube]({link})
+  wikimediaCopyrightNotice:
+    en: |
+      Source: [Wikimedia]({link})
+    de: |
+      Quelle: [Wikimedia]({link})
   verifiedDocumentBadge:
     en: This document was verified by a maintainer
     de: Dieses Dokument wurde von einem Maintainer überprüft

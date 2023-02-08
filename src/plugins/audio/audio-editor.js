@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -21,13 +21,11 @@ function AudioEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = value => {
+  const handleSourceUrlChange = (value, metadata) => {
     changeContent({
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: isYoutubeSourceType(value)
-        ? t('common:youtubeCopyrightNotice', { link: value })
-        : ''
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
     });
   };
 
