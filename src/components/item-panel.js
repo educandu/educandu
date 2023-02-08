@@ -15,8 +15,9 @@ function ItemPanel({
   onMoveUp,
   onMoveDown,
   onDelete,
-  canDeleteLastItem,
+  isDragged,
   itemsCount,
+  canDeleteLastItem,
   extraActionButtons,
   onExtraActionButtonClick
 }) {
@@ -47,7 +48,7 @@ function ItemPanel({
   if (onMoveUp) {
     actionButtons.push({
       key: 'moveUp',
-      label: t('common:moveUp'),
+      title: t('common:moveUp'),
       icon: <MoveUpIcon />,
       disabled: index === 0
     });
@@ -55,7 +56,7 @@ function ItemPanel({
   if (onMoveDown) {
     actionButtons.push({
       key: 'moveDown',
-      label: t('common:moveDown'),
+      title: t('common:moveDown'),
       icon: <MoveDownIcon />,
       disabled: index === itemsCount - 1
     });
@@ -64,7 +65,7 @@ function ItemPanel({
     const isDeleteDisabled = !canDeleteLastItem && itemsCount <= 1;
     actionButtons.push({
       key: 'delete',
-      label: t('common:delete'),
+      title: t('common:delete'),
       icon: <DeleteIcon />,
       danger: !isDeleteDisabled,
       disabled: isDeleteDisabled
@@ -81,7 +82,7 @@ function ItemPanel({
       <div className="ItemPanel-actionButtons">
         {actionButtons.map(actionButton => (
           <div key={actionButton.key} onClick={event => handleActionButtonWrapperClick(event, actionButton)}>
-            <Tooltip title={actionButton.label}>
+            <Tooltip title={actionButton.title}>
               <Button
                 type="text"
                 size="small"
@@ -98,7 +99,7 @@ function ItemPanel({
   };
 
   return (
-    <Collapse className="ItemPanel" defaultActiveKey="panel">
+    <Collapse className={classNames('ItemPanel', { 'is-dragged': isDragged })} defaultActiveKey="panel">
       <Collapse.Panel header={header} extra={renderActionButtons()} key="panel">
         {children}
       </Collapse.Panel>
@@ -111,13 +112,14 @@ ItemPanel.propTypes = {
   children: PropTypes.node.isRequired,
   extraActionButtons: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
     icon: PropTypes.node,
     danger: PropTypes.bool,
     disabled: PropTypes.bool
   })),
   header: PropTypes.string,
   index: PropTypes.number,
+  isDragged: PropTypes.bool,
   itemsCount: PropTypes.number,
   onDelete: PropTypes.func,
   onExtraActionButtonClick: PropTypes.func,
@@ -130,6 +132,7 @@ ItemPanel.defaultProps = {
   extraActionButtons: [],
   header: '',
   index: 0,
+  isDragged: false,
   itemsCount: 1,
   onDelete: null,
   onExtraActionButtonClick: () => {},

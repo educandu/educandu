@@ -503,3 +503,6 @@ common:
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
+  dragToReorder:
+    en: Drag to reorder
+    de: Durch Bewegen neu anordnen

@@ -366,12 +366,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
             extraActionButtons={[
               {
                 key: 'export-as-csv',
-                label: t('exportAsCsv'),
+                title: t('exportAsCsv'),
                 icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ExportOutlined /></div>
               },
               {
                 key: 'import-from-csv',
-                label: t('importFromCsv'),
+                title: t('importFromCsv'),
                 icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ImportOutlined /></div>
               }
             ]}
