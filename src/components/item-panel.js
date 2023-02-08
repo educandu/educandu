@@ -1,11 +1,11 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { useRef } from 'react';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Collapse } from 'antd';
+import { Button, Collapse, Tooltip } from 'antd';
 import DeleteIcon from '../components/icons/general/delete-icon.js';
 import MoveUpIcon from '../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../components/icons/general/move-down-icon.js';
-import SettingsIcon from '../components/icons/main-menu/settings-icon.js';
 import { confirmDeleteItem } from '../components/confirmation-dialogs.js';
 
 function ItemPanel({
@@ -17,25 +17,21 @@ function ItemPanel({
   onDelete,
   canDeleteLastItem,
   itemsCount,
-  extraItems,
-  onExtraItemClick
+  extraActionButtons,
+  onExtraActionButtonClick
 }) {
   const { t } = useTranslation();
-  const settingsButtonRef = useRef(null);
 
-  const handleDropdownClick = event => {
+  const handleActionButtonWrapperClick = (event, actionButton) => {
+    if (actionButton.disabled) {
+      event.stopPropagation();
+    }
+  };
+
+  const handleActionButtonClick = (event, actionButton) => {
     event.stopPropagation();
-  };
 
-  const closeSettingsMenu = () => {
-    settingsButtonRef.current.click();
-  };
-
-  const handleMenuClick = menuItem => {
-    menuItem.domEvent.stopPropagation();
-    closeSettingsMenu();
-
-    switch (menuItem.key) {
+    switch (actionButton.key) {
       case 'moveUp':
         return onMoveUp(index);
       case 'moveDown':
@@ -43,59 +39,67 @@ function ItemPanel({
       case 'delete':
         return confirmDeleteItem(t, header, () => onDelete(index));
       default:
-        return onExtraItemClick(menuItem.key);
+        return onExtraActionButtonClick(actionButton.key);
     }
   };
 
-  const items = [];
+  const actionButtons = [];
   if (onMoveUp) {
-    items.push({
+    actionButtons.push({
       key: 'moveUp',
       label: t('common:moveUp'),
-      icon: <MoveUpIcon className="u-dropdown-icon" />,
+      icon: <MoveUpIcon />,
       disabled: index === 0
     });
   }
   if (onMoveDown) {
-    items.push({
+    actionButtons.push({
       key: 'moveDown',
       label: t('common:moveDown'),
-      icon: <MoveDownIcon className="u-dropdown-icon" />,
+      icon: <MoveDownIcon />,
       disabled: index === itemsCount - 1
     });
   }
   if (onDelete) {
     const isDeleteDisabled = !canDeleteLastItem && itemsCount <= 1;
-    items.push({
+    actionButtons.push({
       key: 'delete',
       label: t('common:delete'),
-      icon: <DeleteIcon className="u-dropdown-icon" />,
+      icon: <DeleteIcon />,
       danger: !isDeleteDisabled,
       disabled: isDeleteDisabled
     });
   }
 
-  items.push(...extraItems);
+  actionButtons.push(...extraActionButtons);
 
-  const renderMenu = () => {
-    if (!items.length) {
+  const renderActionButtons = () => {
+    if (!actionButtons.length) {
       return null;
     }
     return (
-      <Dropdown
-        trigger={['click']}
-        placement="bottomRight"
-        onClick={handleDropdownClick}
-        menu={{ items, onClick: handleMenuClick }}
-        >
-        <Button ref={settingsButtonRef} type="ghost" icon={<SettingsIcon />} size="small" />
-      </Dropdown>
+      <div className="ItemPanel-actionButtons">
+        {actionButtons.map(actionButton => (
+          <div key={actionButton.key} onClick={event => handleActionButtonWrapperClick(event, actionButton)}>
+            <Tooltip title={actionButton.label}>
+              <Button
+                type="text"
+                size="small"
+                icon={actionButton.icon}
+                disabled={actionButton.disabled}
+                className={classNames('ItemPanel-actionButton', { 'ItemPanel-actionButton--danger': actionButton.danger })}
+                onClick={event => handleActionButtonClick(event, actionButton)}
+                />
+            </Tooltip>
+          </div>
+        ))}
+      </div>
     );
   };
 
   return (
     <Collapse className="ItemPanel" defaultActiveKey="panel">
-      <Collapse.Panel header={header} extra={renderMenu()} key="panel">
+      <Collapse.Panel header={header} extra={renderActionButtons()} key="panel">
         {children}
       </Collapse.Panel>
     </Collapse>
@@ -105,7 +109,7 @@ function ItemPanel({
 ItemPanel.propTypes = {
   canDeleteLastItem: PropTypes.bool,
   children: PropTypes.node.isRequired,
-  extraItems: PropTypes.arrayOf(PropTypes.shape({
+  extraActionButtons: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     icon: PropTypes.node,
@@ -116,19 +120,19 @@ ItemPanel.propTypes = {
   index: PropTypes.number,
   itemsCount: PropTypes.number,
   onDelete: PropTypes.func,
-  onExtraItemClick: PropTypes.func,
+  onExtraActionButtonClick: PropTypes.func,
   onMoveDown: PropTypes.func,
   onMoveUp: PropTypes.func
 };
 
 ItemPanel.defaultProps = {
   canDeleteLastItem: false,
-  extraItems: [],
+  extraActionButtons: [],
   header: '',
   index: 0,
   itemsCount: 1,
   onDelete: null,
-  onExtraItemClick: () => {},
+  onExtraActionButtonClick: () => {},
   onMoveDown: null,
   onMoveUp: null
 };
