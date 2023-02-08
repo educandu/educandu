@@ -1,5 +1,5 @@
 const CDN_PORTABLE_URL_PREFIX = 'cdn://';
-const CDN_ACCESSIBLE_URL_REGEX = /https:\/\/cdn\.[^/]+\//;
+const CDN_ACCESSIBLE_URL_REGEX = /https:\/\/cdn.(elmu\.online|integration\.openmusic\.academy|staging\.openmusic\.academy|openmusic\.academy|)\//;
 
 const OLD_ROOMS_CDN_PREFIX = 'cdn://rooms/';
 const OLD_MEDIA_CDN_PREFIX = 'cdn://media/';
