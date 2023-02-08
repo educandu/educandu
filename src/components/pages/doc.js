@@ -123,8 +123,6 @@ function Doc({ initialState, PageTemplate }) {
     window.removeEventListener('resize', ensureControlPanelPosition);
   });
 
-  const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
-
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
@@ -133,13 +131,14 @@ function Doc({ initialState, PageTemplate }) {
     ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
     : t('editRestrictionTooltip_annonymousUser');
 
-  const [isDirty, setIsDirty] = useState(false);
+  const [view, setView] = useState(null);
   const [comments, setComments] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
+  const [preSetView, setPreSetView] = useState();
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
-  const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
@@ -155,8 +154,28 @@ function Doc({ initialState, PageTemplate }) {
 
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
+    setPreSetView(null);
     setView(newView);
   };
+
+  useEffect(() => {
+    const viewValue = Object.values(VIEW).find(v => v === request.query.view);
+
+    if (!viewValue) {
+      setPreSetView(null);
+      setView(VIEW.display);
+      return;
+    }
+
+    if (viewValue === VIEW.edit) {
+      setPreSetView(user ? VIEW.edit : VIEW.display);
+      setView(user ? VIEW.edit : VIEW.display);
+      return;
+    }
+
+    setPreSetView(viewValue);
+    setView(viewValue);
+  }, [user, request.query.view]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -189,11 +208,11 @@ function Doc({ initialState, PageTemplate }) {
   }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
-    if (initialView === VIEW.edit || view === VIEW.edit) {
+    if (preSetView === VIEW.edit || view === VIEW.edit) {
       pluginRegistry.ensureAllEditorsAreLoaded();
     }
 
-    if (initialView === VIEW.history) {
+    if (preSetView === VIEW.history) {
       (async () => {
         try {
           const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
@@ -205,12 +224,12 @@ function Doc({ initialState, PageTemplate }) {
       })();
     }
 
-    if (initialView === VIEW.comments) {
+    if (preSetView === VIEW.comments) {
       (async () => {
         await fetchComments();
       })();
     }
-  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
+  }, [preSetView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -317,6 +336,24 @@ function Doc({ initialState, PageTemplate }) {
     switchView(VIEW.display);
     setComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    return true;
+  };
+
+  const handleHistoryOpen = async () => {
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+      setHistoryRevisions(documentRevisions);
+      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      switchView(VIEW.history);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  };
+
+  const handleHistoryClose = () => {
+    setHistoryRevisions([]);
+    setSelectedHistoryRevision(null);
+    switchView(VIEW.display);
     return true;
   };
 
@@ -427,24 +464,6 @@ function Doc({ initialState, PageTemplate }) {
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
     setIsDirty(true);
   }, [currentSections]);
-
-  const handleHistoryOpen = async () => {
-    try {
-      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-      setHistoryRevisions(documentRevisions);
-      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
-      switchView(VIEW.history);
-    } catch (error) {
-      handleApiError({ error, t, logger });
-    }
-  };
-
-  const handleHistoryClose = () => {
-    setHistoryRevisions([]);
-    setSelectedHistoryRevision(null);
-    switchView(VIEW.display);
-    return true;
-  };
 
   const handlePermalinkRequest = async () => {
     const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(selectedHistoryRevision._id));
@@ -625,7 +644,7 @@ function Doc({ initialState, PageTemplate }) {
               revisions={historyRevisions}
               selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
               canRestoreRevisions={userCanEditDocContent}
-              startOpen={initialView === VIEW.history}
+              startOpen={preSetView === VIEW.history}
               onOpen={handleHistoryOpen}
               onClose={handleHistoryClose}
               onPermalinkRequest={handlePermalinkRequest}
@@ -637,7 +656,7 @@ function Doc({ initialState, PageTemplate }) {
         {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
             <ControlPanel
-              startOpen={initialView === VIEW.comments}
+              startOpen={preSetView === VIEW.comments}
               openIcon={<CommentsIcon />}
               onOpen={handleCommentsOpen}
               onClose={handleCommentsClose}
@@ -650,7 +669,7 @@ function Doc({ initialState, PageTemplate }) {
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
             <EditControlPanel
               isDirtyState={isDirty}
-              startOpen={initialView === VIEW.edit}
+              startOpen={preSetView === VIEW.edit}
               disabled={!userCanEdit || !userCanEditDocContent}
               canEditMetadata={userCanEditDocMetadata}
               tooltipWhenDisabled={editDocRestrictionTooltip}
