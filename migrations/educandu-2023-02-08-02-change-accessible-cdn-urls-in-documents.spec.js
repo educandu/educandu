@@ -14,8 +14,10 @@ describe('educandu-2023-02-08-02-change-accessible-cdn-urls-in-documents', () =>
       const doc = {
         sections: [
           {
-            type: 'abc-notation',
-            content: null
+            type: 'audio',
+            content: {
+              sourceUrl: 'https://cdn.elmu.online/media/123/song.mp3'
+            }
           },
           {
             type: 'abc-notation',
@@ -42,8 +44,10 @@ describe('educandu-2023-02-08-02-change-accessible-cdn-urls-in-documents', () =>
       expect(result.doc).toStrictEqual({
         sections: [
           {
-            type: 'abc-notation',
-            content: null
+            type: 'audio',
+            content: {
+              sourceUrl: 'cdn://document-media/123/song.mp3'
+            }
           },
           {
             type: 'abc-notation',
