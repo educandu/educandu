@@ -9,27 +9,27 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
-import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
-import SettingsIcon from '../icons/main-menu/settings-icon.js';
+import { DragOutlined, MailOutlined } from '@ant-design/icons';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { Button, Tabs, message, Tooltip, Breadcrumb } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
-import { ensureIsExcluded, swapItemsAt } from '../../utils/array-utils.js';
+import React, { Fragment, useEffect, useId, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
-import { Button, Tabs, message, Tooltip, Breadcrumb, Dropdown } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
@@ -69,6 +69,7 @@ export default function Room({ PageTemplate, initialState }) {
   const formRef = useRef(null);
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
+  const droppableIdRef = useRef(useId());
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -81,6 +82,7 @@ export default function Room({ PageTemplate, initialState }) {
 
   const isUserRoomOwner = isRoomOwner({ room, userId: user?._id });
   const isUserRoomOwnerOrInvitedCollaborator = isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
+  const isUserInvitedCollaborator = !isUserRoomOwner && !!isUserRoomOwnerOrInvitedCollaborator;
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
@@ -202,6 +204,7 @@ export default function Room({ PageTemplate, initialState }) {
     const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
+    message.success(t('common:changesSavedSuccessfully'));
   };
 
   const handleDocumentMoveDown = async index => {
@@ -209,70 +212,109 @@ export default function Room({ PageTemplate, initialState }) {
     const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
+    message.success(t('common:changesSavedSuccessfully'));
   };
 
-  const handleDocumentMenuClick = (doc, index, menuItem) => {
-    switch (menuItem.key) {
+  const handleDocumentMove = async (fromIndex, toIndex) => {
+    const reorderedDocumentIds = moveItem(room.documents, fromIndex, toIndex);
+    const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
+    setRoom(response.room);
+    setDocuments(getSortedDocuments(response.room, documents));
+    message.success(t('common:changesSavedSuccessfully'));
+  };
+
+  const handleActionButtonClick = (doc, docIndex, actionButton) => {
+    switch (actionButton.key) {
       case 'clone':
         return handleNewDocumentClick(doc);
       case 'delete':
         return handleDeleteDocumentClick(doc);
       case 'moveUp':
-        return handleDocumentMoveUp(index);
+        return handleDocumentMoveUp(docIndex);
       case 'moveDown':
-        return handleDocumentMoveDown(index);
+        return handleDocumentMoveDown(docIndex);
       default:
-        throw new Error(`Unknown key: ${menuItem.key}`);
+        throw new Error(`Unknown key: ${actionButton.key}`);
     }
   };
 
-  const renderDocumentMenu = (doc, index, documentsSubset) => {
-    const items = [
+  const renderOwnerLink = () => (
+    <Fragment>
+      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
+    </Fragment>
+  );
+
+  const renderRoomDescription = () => {
+    return !!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>;
+  };
+
+  const renderCreateDocumentButton = () => {
+    return (
+      <Button type="primary" className="RoomPage-tabCreateItemButton" onClick={() => handleNewDocumentClick()} >
+        {t('common:createDocument')}
+      </Button>
+    );
+  };
+
+  const renderDocumentActionButtons = ({ doc, index, docsCount, dragHandleProps }) => {
+    const actionButtons = [
       {
-        key: 'clone',
-        label: t('common:duplicate'),
-        icon: <DuplicateIcon className="u-dropdown-icon" />
+        key: 'dragHandle',
+        title: t('common:dragToReorder'),
+        icon: <div {...dragHandleProps}><DragOutlined /></div>,
+        disabled: doc.roomContext.draft || docsCount === 1
       },
       {
         key: 'moveUp',
-        label: t('common:moveUp'),
-        icon: <MoveUpIcon className="u-dropdown-icon" />,
+        title: t('common:moveUp'),
+        icon: <MoveUpIcon />,
         disabled: doc.roomContext.draft || index === 0
       },
       {
         key: 'moveDown',
-        label: t('common:moveDown'),
-        icon: <MoveDownIcon className="u-dropdown-icon" />,
-        disabled: doc.roomContext.draft || index === documentsSubset.length - 1
+        title: t('common:moveDown'),
+        icon: <MoveDownIcon />,
+        disabled: doc.roomContext.draft || index === docsCount - 1
+      },
+      {
+        key: 'clone',
+        title: t('common:duplicate'),
+        icon: <DuplicateIcon />
       }
     ];
 
     if (isUserRoomOwner) {
-      items.push({
+      actionButtons.push({
         key: 'delete',
         label: t('common:delete'),
-        icon: <DeleteIcon className="u-dropdown-icon" />,
+        icon: <DeleteIcon />,
         danger: true
       });
     }
 
-    return (
-      <Dropdown
-        trigger={['click']}
-        placement="bottomRight"
-        menu={{ items, onClick: menuItem => handleDocumentMenuClick(doc, index, menuItem) }}
-        >
-        <Button type="ghost" icon={<SettingsIcon />} size="small" />
-      </Dropdown>
-    );
+    return actionButtons.map(actionButton => (
+      <div key={actionButton.key}>
+        <Tooltip title={actionButton.title}>
+          <Button
+            type="text"
+            size="small"
+            icon={actionButton.icon}
+            disabled={actionButton.disabled}
+            className={classNames('u-action-button', { 'u-danger-action-button': actionButton.danger })}
+            onClick={() => handleActionButtonClick(doc, index, actionButton)}
+            />
+        </Tooltip>
+      </div>
+    ));
   };
 
-  const renderDocument = (doc, index, documentsSubset) => {
+  const renderDocumentWithActionButtons = ({ doc, actionButtons, isDragged, isOtherDragged }) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
-    const showMenu = !!isUserRoomOwnerOrInvitedCollaborator;
     const classes = classNames(
       'RoomPage-document',
-      { 'RoomPage-document--withMenu': showMenu }
+      { 'is-dragged': isDragged },
+      { 'is-other-dragged': isOtherDragged },
+      { 'RoomPage-document--withActionButtons': !!actionButtons }
     );
 
     return (
@@ -280,10 +322,75 @@ export default function Room({ PageTemplate, initialState }) {
         <div className="RoomPage-documentTitle">
           <a href={url}>{doc.title}</a>
         </div>
-        <div className="RoomPage-documentMenu">
+        <div className="RoomPage-documentActionButtons">
           {!!doc.roomContext.draft && (<div className="RoomPage-documentDraftLabel">{t('common:draft')}</div>)}
-          {!!showMenu && renderDocumentMenu(doc, index, documentsSubset)}
+          {actionButtons}
         </div>
+      </div>
+    );
+  };
+
+  const renderDocumentsAsReadOnly = () => {
+    if (!documents.length) {
+      return null;
+    }
+
+    return (
+      <div className="RoomPage-documents">
+        {documents.map(doc => {
+          const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+
+          return (
+            <div key={doc._id} className="RoomPage-document">
+              <div className="RoomPage-documentTitle">
+                <a href={url}>{doc.title}</a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderNonDraftDocumentsAsDraggable = () => {
+    const nonDraftDocuments = documents.filter(doc => !doc.roomContext.draft);
+    const docsCount = nonDraftDocuments.length;
+
+    if (!docsCount) {
+      return null;
+    }
+
+    const draggableItems = nonDraftDocuments.map((doc, index) => ({
+      key: doc._id,
+      render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+        const actionButtons = renderDocumentActionButtons({ doc, index, docsCount, dragHandleProps });
+        return renderDocumentWithActionButtons({ doc, actionButtons, isDragged, isOtherDragged });
+      }
+    }));
+
+    return (
+      <DragAndDropContainer
+        droppableId={droppableIdRef.current}
+        items={draggableItems}
+        onItemMove={handleDocumentMove}
+        />
+    );
+  };
+
+  const renderDraftDocuments = () => {
+    const draftDocuments = documents.filter(doc => doc.roomContext.draft);
+    const docsCount = draftDocuments.length;
+
+    if (!docsCount) {
+      return null;
+    }
+
+    return (
+      <div className="RoomPage-documents">
+        {draftDocuments.map((doc, index) => {
+          const actionButtons = renderDocumentActionButtons({ doc, index, docsCount });
+          return renderDocumentWithActionButtons({ doc, actionButtons });
+        })}
       </div>
     );
   };
@@ -333,37 +440,7 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderRoomDocuments = () => {
-    const nonDraftDocuments = documents.filter(doc => !doc.roomContext.draft);
-    const draftDocuments = documents.filter(doc => doc.roomContext.draft);
-
-    return (
-      <div>
-        {!!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>}
-        {!!isUserRoomOwnerOrInvitedCollaborator && (
-          <Button
-            type="primary"
-            className="RoomPage-tabCreateItemButton"
-            onClick={() => handleNewDocumentClick()}
-            >
-            {t('common:createDocument')}
-          </Button>
-        )}
-        <div className="RoomPage-documents">
-          {!documents.length && t('documentsPlaceholder')}
-          {nonDraftDocuments.map((doc, index) => renderDocument(doc, index, nonDraftDocuments))}
-          {draftDocuments.map((doc, index) => renderDocument(doc, index, draftDocuments))}
-        </div>
-      </div>
-    );
-  };
-
   const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
-  const renderOwnerLink = () => (
-    <Fragment>
-      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
-    </Fragment>
-  );
 
   const membersTabCount = invitations.length
     ? `${room.members.length}/${room.members.length + invitations.length}`
@@ -391,7 +468,11 @@ export default function Room({ PageTemplate, initialState }) {
 
         {!isUserRoomOwner && (
           <div className="RoomPage-documents RoomPage-documents--roomMemberView">
-            {renderRoomDocuments()}
+            {renderRoomDescription()}
+            {!!isUserInvitedCollaborator && renderCreateDocumentButton()}
+            {!documents.length && t('documentsPlaceholder')}
+            {!isUserInvitedCollaborator && renderDocumentsAsReadOnly()}
+            {!!isUserInvitedCollaborator && renderNonDraftDocumentsAsDraggable()}
           </div>
         )}
 
@@ -407,7 +488,10 @@ export default function Room({ PageTemplate, initialState }) {
                 label: t('documentsTabTitle', { count: documents.length }),
                 children: (
                   <div className="Tabs-tabPane">
-                    {renderRoomDocuments()}
+                    {renderCreateDocumentButton()}
+                    {!documents.length && t('documentsPlaceholder')}
+                    {renderNonDraftDocumentsAsDraggable()}
+                    {renderDraftDocuments()}
                   </div>
                 )
               },
