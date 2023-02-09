@@ -3268,9 +3268,9 @@
       "en": "Filter",
       "de": "Filter"
     },
-    "playerSettings": {
-      "en": "Player settings",
-      "de": "Player-Einstellungen"
+    "player": {
+      "en": "Player",
+      "de": "Player"
     },
     "initialVolume": {
       "en": "Initial volume",

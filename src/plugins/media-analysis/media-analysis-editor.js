@@ -317,7 +317,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
-        <ItemPanel header={t('common:playerSettings')}>
+        <ItemPanel header={t('common:player')}>
           <FormItem
             label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
             {...FORM_ITEM_LAYOUT}
