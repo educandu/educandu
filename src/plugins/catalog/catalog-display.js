@@ -1,5 +1,5 @@
-import React from 'react';
 import classNames from 'classnames';
+import React, { Fragment } from 'react';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
@@ -35,9 +35,13 @@ function CatalogDisplay({ content }) {
       ? <Markdown inline>{item.title}</Markdown>
       : `[${t('noTitle')}]`;
 
-    return itemLinkUrl
-      ? <li key={index.toString()}><a href={itemLinkUrl}>{itemTitle}</a></li>
-      : <li key={index.toString()}>{itemTitle}</li>;
+    return (
+      <li key={index.toString()} className="CatalogDisplay-linkListItem">
+        {!itemLinkUrl && itemTitle}
+        {!!itemLinkUrl && <a href={itemLinkUrl}>{itemTitle}</a>}
+        <div className="CatalogDisplay-itemLinkDescription">{item.link.description}</div>
+      </li>
+    );
   };
 
   const renderImageTileItem = (item, index) => {
@@ -53,9 +57,19 @@ function CatalogDisplay({ content }) {
 
     const itemImage = <img className="CatalogDisplay-imageTileImage" src={itemImageUrl} />;
     const itemTitle = <Markdown className="CatalogDisplay-imageTileTitle" inline>{item.title}</Markdown>;
-    return itemLinkUrl
-      ? <li key={index.toString()} className={itemClasses}><a href={itemLinkUrl}>{itemImage}{itemTitle}</a></li>
-      : <li key={index.toString()} className={itemClasses}>{itemImage}{itemTitle}</li>;
+
+    return (
+      <li key={index.toString()} className={itemClasses}>
+        {!itemLinkUrl && (
+          <Fragment>
+            {itemImage}
+            {itemTitle}
+          </Fragment>
+        )}
+        {!!itemLinkUrl && <a href={itemLinkUrl}>{itemImage}{itemTitle}</a>}
+        <div className="CatalogDisplay-itemLinkDescription">{item.link.description}</div>
+      </li>
+    );
   };
 
   const renderLinkListItems = () => {

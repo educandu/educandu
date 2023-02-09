@@ -204,7 +204,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     URL.revokeObjectURL(url);
   };
 
-  const handleExtraItemClick = key => {
+  const handleExtraActionButtonClick = key => {
     switch (key) {
       case 'export-as-csv':
         startCsvExport();
@@ -363,19 +363,19 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
           <input {...csvImportDropzone.getInputProps()} hidden />
           <ItemPanel
             header={t('segmentsPanelHeader')}
-            extraItems={[
+            extraActionButtons={[
               {
                 key: 'export-as-csv',
-                label: t('exportAsCsv'),
-                icon: <ExportOutlined className="u-dropdown-icon" />
+                title: t('exportAsCsv'),
+                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ExportOutlined /></div>
               },
               {
                 key: 'import-from-csv',
-                label: t('importFromCsv'),
-                icon: <ImportOutlined className="u-dropdown-icon" />
+                title: t('importFromCsv'),
+                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ImportOutlined /></div>
               }
             ]}
-            onExtraItemClick={handleExtraItemClick}
+            onExtraActionButtonClick={handleExtraActionButtonClick}
             >
             <Timeline
               durationInMilliseconds={mainTrackPlaybackDuration}

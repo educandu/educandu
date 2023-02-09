@@ -28,8 +28,8 @@ export default class Catalog {
     return (await import('./catalog-editor.js')).default;
   }
 
-  getDefaultContent(t) {
-    return createDefaultContent(t);
+  getDefaultContent() {
+    return createDefaultContent();
   }
 
   validateContent(content) {

@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
 import { Form, Radio, Button } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
+import React, { Fragment, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
@@ -10,9 +11,10 @@ import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { createDefaultItem, consolidateForDisplayMode } from './catalog-utils.js';
-import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { TILES_HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW, DISPLAY_MODE } from './constants.js';
+import { swapItemsAt, removeItemAt, replaceItemAt, moveItem } from '../../utils/array-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -20,6 +22,7 @@ const FormItem = Form.Item;
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
+  const droppableIdRef = useRef(uniqueId.create());
 
   const { title, displayMode, width, items, imageTilesConfig } = content;
 
@@ -60,6 +63,10 @@ function CatalogEditor({ content, onContentChanged }) {
     triggerChange({ items: swapItemsAt(items, index, index + 1) });
   };
 
+  const handleItemMove = (fromIndex, toIndex) => {
+    triggerChange({ items: moveItem(items, fromIndex, toIndex) });
+  };
+
   const handleItemDelete = index => {
     triggerChange({ items: removeItemAt(items, index) });
   };
@@ -67,6 +74,31 @@ function CatalogEditor({ content, onContentChanged }) {
   const handleItemAdd = () => {
     triggerChange({ items: [...items, createDefaultItem()] });
   };
+
+  const dragAndDropPanelItems = items.map((item, index) => ({
+    key: item.key,
+    render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+      return (
+        <ItemPanel
+          index={index}
+          isDragged={isDragged}
+          isOtherDragged={isOtherDragged}
+          dragHandleProps={dragHandleProps}
+          itemsCount={items.length}
+          header={`${t('itemNumber', { number: index + 1 })}${item.title ? ': ' : ''}${item.title}`}
+          onMoveUp={handleItemMoveUp}
+          onMoveDown={handleItemMoveDown}
+          onDelete={handleItemDelete}
+          >
+          <CatalogItemEditor
+            item={item}
+            enableImageEditing={displayMode === DISPLAY_MODE.imageTiles}
+            onChange={newItem => handleItemChange(index, newItem)}
+            />
+        </ItemPanel>
+      );
+    }
+  }));
 
   return (
     <div className="CatalogEditor">
@@ -106,23 +138,7 @@ function CatalogEditor({ content, onContentChanged }) {
             </FormItem>
           </Fragment>
         )}
-        {items.map((item, index) => (
-          <ItemPanel
-            index={index}
-            key={index.toString()}
-            itemsCount={items.length}
-            header={t('itemNumber', { number: index + 1 })}
-            onMoveUp={handleItemMoveUp}
-            onMoveDown={handleItemMoveDown}
-            onDelete={handleItemDelete}
-            >
-            <CatalogItemEditor
-              item={item}
-              enableImageEditing={displayMode === DISPLAY_MODE.imageTiles}
-              onChange={newItem => handleItemChange(index, newItem)}
-              />
-          </ItemPanel>
-        ))}
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropPanelItems} onItemMove={handleItemMove} />
         <Button type="primary" icon={<PlusOutlined />} onClick={handleItemAdd}>
           {t('addItem')}
         </Button>

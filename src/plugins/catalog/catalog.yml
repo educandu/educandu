@@ -30,8 +30,8 @@ catalog:
     en: Add item
     de: Eintrag hinzufügen
   linkSource:
-    en: Link source
-    de: Link-Quelle
+    en: Link type
+    de: Link-Typ
   documentLink:
     en: document link
     de: Dokument-Link

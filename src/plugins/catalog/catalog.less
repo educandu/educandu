@@ -10,6 +10,18 @@
   list-style: none;
 }
 
+.CatalogDisplay-linkListItem {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 0;
+}
+
+.CatalogDisplay-itemLinkDescription {
+  text-align: center;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+}
+
 .CatalogDisplay-imageTiles {
   margin: 0;
   padding: 0;
@@ -39,4 +51,10 @@
 .CatalogDisplay-imageTileTitle {
   display: block;
   color: inherit;
+}
+
+.CatalogItemEditor-description {
+  .ant-input-textarea-show-count::after {
+    .u-input-count !important;
+  }
 }
