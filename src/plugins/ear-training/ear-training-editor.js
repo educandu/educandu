@@ -171,7 +171,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     return (
       <ItemPanel
         index={index}
-        key={test._id}
+        key={test.key}
         itemsCount={tests.length}
         isDragged={isDragged}
         isOtherDragged={isOtherDragged}
@@ -272,7 +272,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
   };
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
-    key: test._id,
+    key: test.key,
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => renderTestItemPanel({ test, index, dragHandleProps, isDragged, isOtherDragged })
   }));
 

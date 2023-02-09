@@ -11,7 +11,7 @@ function createDefaultItemImage() {
 
 export function createDefaultItem() {
   return {
-    _id: uniqueId.create(),
+    key: uniqueId.create(),
     title: '',
     image: createDefaultItemImage(),
     link: {
@@ -46,7 +46,7 @@ export function validateContent(content) {
     title: joi.string().allow('').required(),
     width: joi.number().min(0).max(100).required(),
     items: joi.array().items(joi.object({
-      _id: joi.string().required(),
+      key: joi.string().required(),
       title: joi.string().allow('').required(),
       image: joi.object({
         sourceUrl: joi.string().allow('').required()

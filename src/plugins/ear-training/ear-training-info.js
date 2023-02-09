@@ -52,7 +52,7 @@ class EarTrainingInfo {
 
   getDefaultTest() {
     return {
-      _id: uniqueId.create(),
+      key: uniqueId.create(),
       mode: TEST_MODE.image,
       questionImage: this.getDefaultImage(),
       answerImage: this.getDefaultImage(),
@@ -76,7 +76,7 @@ class EarTrainingInfo {
       title: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
       tests: joi.array().items(joi.object({
-        _id: joi.string().required(),
+        key: joi.string().required(),
         mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
         questionImage: joi.alternatives().try(
           joi.object({

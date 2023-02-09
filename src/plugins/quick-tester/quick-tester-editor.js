@@ -38,13 +38,13 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ title: value });
   };
 
-  const handleInputQuestionChanged = (testId, newValue) => {
-    const newTests = tests.map(test => test._id === testId ? { ...test, question: newValue } : test);
+  const handleInputQuestionChanged = (key, newValue) => {
+    const newTests = tests.map(test => test.key === key ? { ...test, question: newValue } : test);
     changeContent({ tests: newTests });
   };
 
-  const handleInputAnswerChanged = (testId, newValue) => {
-    const newTests = tests.map(test => test._id === testId ? { ...test, answer: newValue } : test);
+  const handleInputAnswerChanged = (key, newValue) => {
+    const newTests = tests.map(test => test.key === key ? { ...test, answer: newValue } : test);
     changeContent({ tests: newTests });
   };
 
@@ -78,12 +78,12 @@ function QuickTesterEditor({ content, onContentChanged }) {
   };
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
-    key: test._id,
+    key: test.key,
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
         <ItemPanel
           index={index}
-          key={test._id}
+          key={test.key}
           itemsCount={tests.length}
           isDragged={isDragged}
           isOtherDragged={isOtherDragged}
@@ -100,7 +100,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
                 preview
                 debounced
                 value={test.question}
-                onChange={event => handleInputQuestionChanged(test._id, event.target.value)}
+                onChange={event => handleInputQuestionChanged(test.key, event.target.value)}
                 />
             </div>
             <div>
@@ -109,7 +109,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
                 preview
                 debounced
                 value={test.answer}
-                onChange={event => handleInputAnswerChanged(test._id, event.target.value)}
+                onChange={event => handleInputAnswerChanged(test.key, event.target.value)}
                 />
             </div>
           </div>

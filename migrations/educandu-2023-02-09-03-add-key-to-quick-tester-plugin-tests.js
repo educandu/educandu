@@ -1,6 +1,6 @@
 import uniqueId from '../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_02_add_id_to_quick_tester_plugin_tests {
+export default class Educandu_2023_02_09_02_add_key_to_quick_tester_plugin_tests {
   constructor(db) {
     this.db = db;
   }
@@ -10,7 +10,7 @@ export default class Educandu_2023_02_09_02_add_id_to_quick_tester_plugin_tests 
       {},
       {
         $set: {
-          'sections.$[sectionElement].content.tests.$[]._id': uniqueId.create()
+          'sections.$[sectionElement].content.tests.$[].key': uniqueId.create()
         }
       },
       {
@@ -32,7 +32,7 @@ export default class Educandu_2023_02_09_02_add_id_to_quick_tester_plugin_tests 
       {},
       {
         $unset: {
-          'sections.$[sectionElement].content.tests.$[]._id': null
+          'sections.$[sectionElement].content.tests.$[].key': null
         }
       },
       {

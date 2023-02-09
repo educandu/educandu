@@ -1,6 +1,6 @@
 import uniqueId from '../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_02_add_id_to_ear_training_plugin_tests {
+export default class Educandu_2023_02_09_01_add_key_to_catalog_plugin_items {
   constructor(db) {
     this.db = db;
   }
@@ -10,13 +10,13 @@ export default class Educandu_2023_02_09_02_add_id_to_ear_training_plugin_tests 
       {},
       {
         $set: {
-          'sections.$[sectionElement].content.tests.$[]._id': uniqueId.create()
+          'sections.$[sectionElement].content.items.$[].key': uniqueId.create()
         }
       },
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'ear-training',
+            'sectionElement.type': 'catalog',
             'sectionElement.content': { $ne: null }
           }
         ],
@@ -32,13 +32,13 @@ export default class Educandu_2023_02_09_02_add_id_to_ear_training_plugin_tests 
       {},
       {
         $unset: {
-          'sections.$[sectionElement].content.tests.$[]._id': null
+          'sections.$[sectionElement].content.items.$[].key': null
         }
       },
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'ear-training',
+            'sectionElement.type': 'catalog',
             'sectionElement.content': { $ne: null }
           }
         ],

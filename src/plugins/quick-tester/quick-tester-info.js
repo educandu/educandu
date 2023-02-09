@@ -36,7 +36,7 @@ class QuickTesterInfo {
 
   getDefaultTest() {
     return {
-      _id: uniqueId.create(),
+      key: uniqueId.create(),
       question: '',
       answer: ''
     };
@@ -56,7 +56,7 @@ class QuickTesterInfo {
       title: joi.string().allow('').required(),
       teaser: joi.string().allow('').required(),
       tests: joi.array().items(joi.object({
-        _id: joi.string().required(),
+        key: joi.string().required(),
         question: joi.string().allow('').required(),
         answer: joi.string().allow('').required()
       })).required(),
