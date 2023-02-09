@@ -9,7 +9,6 @@ import MarkdownInput from '../../components/markdown-input.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
-import { maxCatalogPluginItemLinkDescriptionLength } from '../../domain/validation-constants.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -108,8 +107,6 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
           minRows={2}
           value={link.description}
           className="CatalogItemEditor-description"
-          maxLength={maxCatalogPluginItemLinkDescriptionLength}
-          showCount={{ formatter: ({ count, maxLength }) => `${count} / ${maxLength}` }}
           onChange={handleOnLinkDescriptionChange}
           />
       </FormItem>
