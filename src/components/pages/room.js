@@ -500,6 +500,7 @@ export default function Room({ PageTemplate, initialState }) {
                 label: t('documentsTabTitle', { count: documents.length }),
                 children: (
                   <div className="Tabs-tabPane">
+                    {renderRoomDescription()}
                     {renderCreateDocumentButton()}
                     {!documents.length && t('documentsPlaceholder')}
                     {renderNonDraftDocumentsAsDraggable()}
