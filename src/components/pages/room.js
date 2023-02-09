@@ -298,7 +298,7 @@ export default function Room({ PageTemplate, initialState }) {
     if (viewMode === VIEW_MODE.owner) {
       actionButtons.push({
         key: 'delete',
-        label: t('common:delete'),
+        title: t('common:delete'),
         icon: <DeleteIcon />,
         danger: true
       });
