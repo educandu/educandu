@@ -388,7 +388,7 @@ function Tests({ PageTemplate }) {
                     timeLimit={diTimeLimit}
                     elementType={diElementTypes[diElementType].elementType}
                     value={diValue}
-                    onChange={value => handleDiEvent('onChange', value)}
+                    onChange={event => handleDiEvent('onChange', event.target.value)}
                     {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
                     />
                 </div>

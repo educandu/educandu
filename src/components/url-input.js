@@ -57,6 +57,10 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
     onChange(portableUrl, metadata);
   };
 
+  const handleDebouncedInputValueChange = event => {
+    handleInputValueChange(event.target.value);
+  };
+
   const renderInputPrefix = () => {
     const tooltipTitle = `${t('common:source')}: ${t(`tooltip_${sourceType}`)}`;
     const classes = classNames(
@@ -86,7 +90,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         value={value}
         disabled={disabled}
         addonBefore={renderInputPrefix()}
-        onChange={handleInputValueChange}
+        onChange={handleDebouncedInputValueChange}
         />
       <ResourcePicker
         url={value}
