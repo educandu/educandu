@@ -40,13 +40,11 @@ function DragAndDropContainer({
                       ...draggableProvided.draggableProps.style
                     }}
                     >
-                    <section key={item.key}>
-                      {item.render({
-                        dragHandleProps: draggableProvided.dragHandleProps,
-                        isDragged: draggableState.isDragging,
-                        isOtherDragged: !!isDragging && !draggableState.isDragging
-                      })}
-                    </section>
+                    {item.render({
+                      dragHandleProps: draggableProvided.dragHandleProps,
+                      isDragged: draggableState.isDragging,
+                      isOtherDragged: !!isDragging && !draggableState.isDragging
+                    })}
                   </div>
                 )}
               </Draggable>
