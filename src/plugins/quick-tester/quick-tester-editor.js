@@ -79,7 +79,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
     key: test.key,
-    renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+    render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
         <ItemPanel
           index={index}

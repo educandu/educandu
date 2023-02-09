@@ -16,9 +16,9 @@ function DragAndDropContainer({
 
   const handleDragEnd = ({ source, destination }) => {
     setIsDragging(false);
-    const fromIndex = source.index;
-    const toIndex = destination.index;
-    if (fromIndex !== toIndex && toIndex >= 0 && toIndex <= (items.length - 1)) {
+    const fromIndex = source?.index;
+    const toIndex = destination?.index;
+    if (!!source && !!destination && fromIndex !== toIndex && toIndex >= 0 && toIndex <= (items.length - 1)) {
       onItemMove(fromIndex, toIndex);
     }
   };
@@ -41,7 +41,7 @@ function DragAndDropContainer({
                     }}
                     >
                     <section key={item.key}>
-                      {item.renderer({
+                      {item.render({
                         dragHandleProps: draggableProvided.dragHandleProps,
                         isDragged: draggableState.isDragging,
                         isOtherDragged: !!isDragging && !draggableState.isDragging
@@ -63,7 +63,7 @@ DragAndDropContainer.propTypes = {
   droppableId: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
-    renderer: PropTypes.func.isRequired
+    render: PropTypes.func.isRequired
   })).isRequired,
   onItemMove: PropTypes.func
 };

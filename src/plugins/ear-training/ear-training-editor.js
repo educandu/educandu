@@ -273,7 +273,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
     key: test.key,
-    renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => renderTestItemPanel({ test, index, dragHandleProps, isDragged, isOtherDragged })
+    render: ({ dragHandleProps, isDragged, isOtherDragged }) => renderTestItemPanel({ test, index, dragHandleProps, isDragged, isOtherDragged })
   }));
 
   return (

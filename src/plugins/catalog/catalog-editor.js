@@ -77,7 +77,7 @@ function CatalogEditor({ content, onContentChanged }) {
 
   const dragAndDropPanelItems = items.map((item, index) => ({
     key: item.key,
-    renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+    render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
         <ItemPanel
           index={index}
