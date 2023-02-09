@@ -1,6 +1,6 @@
 import uniqueId from '../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_02_add_key_to_quick_tester_plugin_tests {
+export default class Educandu_2023_02_09_03_add_key_to_quick_tester_plugin_tests {
   constructor(db) {
     this.db = db;
   }
