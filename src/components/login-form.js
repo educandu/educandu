@@ -10,12 +10,11 @@ import { Button, Divider, Form, Input } from 'antd';
 import PasswordFormItem from './password-form-item.js';
 import { handleApiError } from '../ui/error-helper.js';
 import BlockedLoginError from './blocked-login-error.js';
-import ClientConfig from '../bootstrap/client-config.js';
 import UserApiClient from '../api-clients/user-api-client.js';
+import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 import { samlIdentityProviderClientShape } from '../ui/default-prop-types.js';
 import ExternalAccountProviderDialog from './external-account-provider-dialog.js';
-import { ERROR_CODES, FEATURE_TOGGLES, HTTP_STATUS } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -37,7 +36,6 @@ export default function LoginForm({
   const setUser = useSetUser();
   const [form] = Form.useForm();
   const { t } = useTranslation('loginForm');
-  const clientConfig = useService(ClientConfig);
   const userApiClient = useService(UserApiClient);
   const [hasLoginFailed, setHasLoginFailed] = useState(false);
   const [isUserAccountLocked, setIsUserAccountLocked] = useState(false);
@@ -131,8 +129,7 @@ export default function LoginForm({
   ];
 
   const hasBlockingError = hasLoginFailedTooOften || isUserAccountLocked;
-  const showExternalLogin = showLoginButtons && samlIdentityProviders.length
-    && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.shibbolethLoginForm);
+  const showExternalLogin = showLoginButtons && samlIdentityProviders.length;
 
   return (
     <div className="LoginForm">
