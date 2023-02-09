@@ -24,7 +24,7 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  shibbolethLoginForm: 'shibbolethLoginForm'
+  mediaLibrary: 'mediaLibrary'
 };
 
 export const ROOM_USER_ROLE = {
