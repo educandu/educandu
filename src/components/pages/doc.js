@@ -129,11 +129,6 @@ function Doc({ initialState, PageTemplate }) {
       return { preSetView: null, view: VIEW.display };
     }
 
-    if (requestView === VIEW.edit) {
-      const allowedView = user ? VIEW.edit : VIEW.display;
-      return { preSetView: allowedView, view: allowedView };
-    }
-
     return { preSetView: requestView, view: requestView };
   };
 
