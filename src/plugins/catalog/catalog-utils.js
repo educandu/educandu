@@ -1,4 +1,5 @@
 import joi from 'joi';
+import uniqueId from '../../utils/unique-id.js';
 import { maxDocumentCommentTextLength } from '../../domain/validation-constants.js';
 import { DISPLAY_MODE, DEFAULT_MAX_TILES_PER_ROW, TILES_HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 
@@ -10,6 +11,7 @@ function createDefaultItemImage() {
 
 export function createDefaultItem() {
   return {
+    _id: uniqueId.create(),
     title: '',
     image: createDefaultItemImage(),
     link: {
@@ -44,6 +46,7 @@ export function validateContent(content) {
     title: joi.string().allow('').required(),
     width: joi.number().min(0).max(100).required(),
     items: joi.array().items(joi.object({
+      _id: joi.string().required(),
       title: joi.string().allow('').required(),
       image: joi.object({
         sourceUrl: joi.string().allow('').required()
