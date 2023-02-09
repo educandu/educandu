@@ -123,6 +123,20 @@ function Doc({ initialState, PageTemplate }) {
     window.removeEventListener('resize', ensureControlPanelPosition);
   });
 
+  const determineInitialViewState = () => {
+    const requestView = Object.values(VIEW).find(v => v === request.query.view);
+    if (!requestView) {
+      return { preSetView: null, view: VIEW.display };
+    }
+
+    if (requestView === VIEW.edit) {
+      const allowedView = user ? VIEW.edit : VIEW.display;
+      return { preSetView: allowedView, view: allowedView };
+    }
+
+    return { preSetView: requestView, view: requestView };
+  };
+
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
@@ -131,16 +145,16 @@ function Doc({ initialState, PageTemplate }) {
     ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
     : t('editRestrictionTooltip_annonymousUser');
 
-  const [view, setView] = useState(null);
   const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
-  const [preSetView, setPreSetView] = useState();
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [view, setView] = useState(determineInitialViewState().view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
+  const [preSetView, setPreSetView] = useState(determineInitialViewState().preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -157,25 +171,6 @@ function Doc({ initialState, PageTemplate }) {
     setPreSetView(null);
     setView(newView);
   };
-
-  useEffect(() => {
-    const viewValue = Object.values(VIEW).find(v => v === request.query.view);
-
-    if (!viewValue) {
-      setPreSetView(null);
-      setView(VIEW.display);
-      return;
-    }
-
-    if (viewValue === VIEW.edit) {
-      setPreSetView(user ? VIEW.edit : VIEW.display);
-      setView(user ? VIEW.edit : VIEW.display);
-      return;
-    }
-
-    setPreSetView(viewValue);
-    setView(viewValue);
-  }, [user, request.query.view]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
