@@ -54,7 +54,7 @@ function SectionsDisplay({
     }
   };
 
-  const renderSection = ({ section, index, dragHandleProps = {}, isDragged, isOtherDragged }) => {
+  const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false, isOtherDragged = false }) => {
     return (
       <SectionDisplay
         key={section.key}
