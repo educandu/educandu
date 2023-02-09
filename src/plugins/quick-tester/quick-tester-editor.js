@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Form, Button, Radio } from 'antd';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import { PlusOutlined } from '@ant-design/icons';
+import QuickTesterInfo from './quick-tester-info.js';
 import ItemPanel from '../../components/item-panel.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { swapItemsAt, removeItemAt, moveItem } from '../../utils/array-utils.js';
@@ -17,6 +19,8 @@ const RadioButton = Radio.Button;
 
 function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
+  const droppableIdRef = useRef(uniqueId.create());
+  const quickTesterInfo = useService(QuickTesterInfo);
 
   const { tests, testsOrder, teaser, title } = content;
 
@@ -34,13 +38,13 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ title: value });
   };
 
-  const handleInputQuestionChanged = (index, newValue) => {
-    const newTests = tests.map((test, i) => i === index ? { question: newValue, answer: test.answer } : test);
+  const handleInputQuestionChanged = (testId, newValue) => {
+    const newTests = tests.map(test => test._id === testId ? { ...test, question: newValue } : test);
     changeContent({ tests: newTests });
   };
 
-  const handleInputAnswerChanged = (index, newValue) => {
-    const newTests = tests.map((test, i) => i === index ? { question: test.question, answer: newValue } : test);
+  const handleInputAnswerChanged = (testId, newValue) => {
+    const newTests = tests.map(test => test._id === testId ? { ...test, answer: newValue } : test);
     changeContent({ tests: newTests });
   };
 
@@ -51,7 +55,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   const handleAddButtonClick = () => {
     const newTests = tests.slice();
-    newTests.push({ question: '', answer: '' });
+    newTests.push(quickTesterInfo.getDefaultTest());
     changeContent({ tests: newTests });
   };
 
@@ -74,12 +78,12 @@ function QuickTesterEditor({ content, onContentChanged }) {
   };
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
-    key: uniqueId.create(),
+    key: test._id,
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
         <ItemPanel
           index={index}
-          key={index.toString()}
+          key={test._id}
           itemsCount={tests.length}
           isDragged={isDragged}
           isOtherDragged={isOtherDragged}
@@ -94,16 +98,18 @@ function QuickTesterEditor({ content, onContentChanged }) {
               <span className="QuickTesterEditor-testContentLabel">{t('common:question')}</span>
               <MarkdownInput
                 preview
+                debounced
                 value={test.question}
-                onChange={event => handleInputQuestionChanged(index, event.target.value)}
+                onChange={event => handleInputQuestionChanged(test._id, event.target.value)}
                 />
             </div>
             <div>
               <span className="QuickTesterEditor-testContentLabel">{t('common:answer')}</span>
               <MarkdownInput
                 preview
+                debounced
                 value={test.answer}
-                onChange={event => handleInputAnswerChanged(index, event.target.value)}
+                onChange={event => handleInputAnswerChanged(test._id, event.target.value)}
                 />
             </div>
           </div>
@@ -128,7 +134,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
       </Form>
-      <DragAndDropContainer droppableId={uniqueId.create()} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
+      <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
       <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>
         {t('addTest')}
       </Button>
