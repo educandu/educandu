@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
 import { Form, Radio, Button } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
+import React, { Fragment, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
@@ -22,6 +22,7 @@ const FormItem = Form.Item;
 
 function CatalogEditor({ content, onContentChanged }) {
   const { t } = useTranslation('catalog');
+  const droppableIdRef = useRef(uniqueId.create());
 
   const { title, displayMode, width, items, imageTilesConfig } = content;
 
@@ -75,7 +76,7 @@ function CatalogEditor({ content, onContentChanged }) {
   };
 
   const dragAndDropPanelItems = items.map((item, index) => ({
-    key: uniqueId.create(),
+    key: item._id,
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => {
       return (
         <ItemPanel
@@ -137,7 +138,7 @@ function CatalogEditor({ content, onContentChanged }) {
             </FormItem>
           </Fragment>
         )}
-        <DragAndDropContainer droppableId={uniqueId.create()} items={dragAndDropPanelItems} onItemMove={handleItemMove} />
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropPanelItems} onItemMove={handleItemMove} />
         <Button type="primary" icon={<PlusOutlined />} onClick={handleItemAdd}>
           {t('addItem')}
         </Button>

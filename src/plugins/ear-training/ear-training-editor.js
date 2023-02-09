@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
+import React, { Fragment, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Form, Button, Radio, Divider } from 'antd';
@@ -31,6 +31,7 @@ const RadioButton = Radio.Button;
 const DEFAULT_ABC_CODE = 'X:1';
 function EarTrainingEditor({ content, onContentChanged }) {
   const { t } = useTranslation('earTraining');
+  const droppableIdRef = useRef(uniqueId.create());
   const earTrainingInfo = useService(EarTrainingInfo);
 
   const { tests } = content;
@@ -161,7 +162,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const renderCopyrightNoticeInput = (index, value, handleValueChange) => {
     return (
       <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-        <MarkdownInput value={value} onChange={event => handleValueChange(event, index)} />
+        <MarkdownInput debounced value={value} onChange={event => handleValueChange(event, index)} />
       </Form.Item>
     );
   };
@@ -170,7 +171,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     return (
       <ItemPanel
         index={index}
-        key={uniqueId.create()}
+        key={test._id}
         itemsCount={tests.length}
         isDragged={isDragged}
         isOtherDragged={isOtherDragged}
@@ -188,46 +189,60 @@ function EarTrainingEditor({ content, onContentChanged }) {
         </FormItem>
 
         {test.mode === TEST_MODE.image && (
-        <Fragment>
-          <Divider plain>{t('testQuestion')}</Divider>
-          <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
-            <UrlInput
-              value={test.questionImage.sourceUrl}
-              onChange={(value, metadata) => handleQuestionImageSourceUrlChange(value, metadata, index)}
-              allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
-              />
-          </FormItem>
-          {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, handleQuestionImageCopyrightNoticeChange)}
+          <Fragment>
+            <Divider plain>{t('testQuestion')}</Divider>
+            <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
+              <UrlInput
+                value={test.questionImage.sourceUrl}
+                onChange={(value, metadata) => handleQuestionImageSourceUrlChange(value, metadata, index)}
+                allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
+                />
+            </FormItem>
+            {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, handleQuestionImageCopyrightNoticeChange)}
 
-          <Divider plain>{t('testAnswer')}</Divider>
-          <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
-            <UrlInput
-              value={test.answerImage.sourceUrl}
-              onChange={(value, metadata) => handleAnswerImageSourceUrlChange(value, metadata, index)}
-              allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
-              />
-          </FormItem>
-          {renderCopyrightNoticeInput(index, test.answerImage.copyrightNotice, handleAnswerImageCopyrightNoticeChange)}
-        </Fragment>
+            <Divider plain>{t('testAnswer')}</Divider>
+            <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
+              <UrlInput
+                value={test.answerImage.sourceUrl}
+                onChange={(value, metadata) => handleAnswerImageSourceUrlChange(value, metadata, index)}
+                allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
+                />
+            </FormItem>
+            {renderCopyrightNoticeInput(index, test.answerImage.copyrightNotice, handleAnswerImageCopyrightNoticeChange)}
+          </Fragment>
         )}
 
         {test.mode === TEST_MODE.abcCode && (
-        <Fragment>
-          <Divider plain>{t('testQuestion')}</Divider>
-          <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
-            <InputAndPreview
-              input={<NeverScrollingTextArea minRows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />}
-              preview={<AbcNotation abcCode={test.questionAbcCode} />}
-              />
-          </Form.Item>
-          <Divider plain>{t('testAnswer')}</Divider>
-          <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
-            <InputAndPreview
-              input={<NeverScrollingTextArea minRows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />}
-              preview={<AbcNotation abcCode={test.answerAbcCode} />}
-              />
-          </Form.Item>
-        </Fragment>
+          <Fragment>
+            <Divider plain>{t('testQuestion')}</Divider>
+            <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
+              <InputAndPreview
+                input={
+                  <NeverScrollingTextArea
+                    debounced
+                    minRows={6}
+                    value={test.questionAbcCode}
+                    onChange={event => handleQuestionAbcCodeChanged(event, index)}
+                    />
+                }
+                preview={<AbcNotation abcCode={test.questionAbcCode} />}
+                />
+            </Form.Item>
+            <Divider plain>{t('testAnswer')}</Divider>
+            <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
+              <InputAndPreview
+                input={
+                  <NeverScrollingTextArea
+                    debounced
+                    minRows={6}
+                    value={test.answerAbcCode}
+                    onChange={event => handleAnswerAbcCodeChanged(event, index)}
+                    />
+                }
+                preview={<AbcNotation abcCode={test.answerAbcCode} />}
+                />
+            </Form.Item>
+          </Fragment>
         )}
 
         <Divider plain>{t('audio')}</Divider>
@@ -257,7 +272,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
   };
 
   const dragAndDropPanelItems = tests.map((test, index) => ({
-    key: uniqueId.create(),
+    key: test._id,
     renderer: ({ dragHandleProps, isDragged, isOtherDragged }) => renderTestItemPanel({ test, index, dragHandleProps, isDragged, isOtherDragged })
   }));
 
@@ -280,7 +295,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
 
-        <DragAndDropContainer droppableId={uniqueId.create()} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
       </Form>
 
       <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>

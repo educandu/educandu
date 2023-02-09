@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { memo, useState } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function DragAndDropContainer({
@@ -72,4 +72,4 @@ DragAndDropContainer.defaultProps = {
   onItemMove: () => {}
 };
 
-export default memo(DragAndDropContainer);
+export default DragAndDropContainer;

@@ -104,6 +104,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       )}
       <FormItem {...FORM_ITEM_LAYOUT} label={t('common:description')}>
         <NeverScrollingTextArea
+          debounced
           minRows={2}
           value={link.description}
           className="CatalogItemEditor-description"
