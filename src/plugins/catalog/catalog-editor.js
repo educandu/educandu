@@ -85,7 +85,7 @@ function CatalogEditor({ content, onContentChanged }) {
           isOtherDragged={isOtherDragged}
           dragHandleProps={dragHandleProps}
           itemsCount={items.length}
-          header={t('itemNumber', { number: index + 1 })}
+          header={`${t('itemNumber', { number: index + 1 })}${item.title ? ': ' : ''}${item.title}`}
           onMoveUp={handleItemMoveUp}
           onMoveDown={handleItemMoveDown}
           onDelete={handleItemDelete}

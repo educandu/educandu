@@ -111,7 +111,11 @@ function ItemPanel({
 
   return (
     <Collapse className={classNames('ItemPanel', { 'is-dragged': isDragged, 'is-other-dragged': isOtherDragged })} defaultActiveKey="panel">
-      <Collapse.Panel header={header} extra={renderActionButtons()} key="panel">
+      <Collapse.Panel
+        key="panel"
+        header={<div className="ItemPanel-header">{header}</div>}
+        extra={renderActionButtons()}
+        >
         <div className="ItemPanel-contentWrapper">
           {children}
         </div>
