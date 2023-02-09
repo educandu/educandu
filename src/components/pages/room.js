@@ -24,17 +24,23 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { Button, Tabs, message, Tooltip, Breadcrumb } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
-import React, { Fragment, useEffect, useId, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
-import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
+
+const VIEW_MODE = {
+  owner: 'owner',
+  collaborator: 'collaborator',
+  member: 'member'
+};
 
 function getDocumentMetadataModalState({ t, room, documentToClone = null, isOpen = false }) {
   const initialDocumentMetadata = documentToClone
@@ -80,9 +86,15 @@ export default function Room({ PageTemplate, initialState }) {
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
-  const isUserRoomOwner = isRoomOwner({ room, userId: user?._id });
-  const isUserRoomOwnerOrInvitedCollaborator = isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
-  const isUserInvitedCollaborator = !isUserRoomOwner && !!isUserRoomOwnerOrInvitedCollaborator;
+  const viewMode = useMemo(() => {
+    if (isRoomOwner({ room, userId: user?._id })) {
+      return VIEW_MODE.owner;
+    }
+    if (isRoomInvitedCollaborator({ room, userId: user?._id })) {
+      return VIEW_MODE.collaborator;
+    }
+    return VIEW_MODE.member;
+  }, [room, user]);
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
@@ -283,7 +295,7 @@ export default function Room({ PageTemplate, initialState }) {
       }
     ];
 
-    if (isUserRoomOwner) {
+    if (viewMode === VIEW_MODE.owner) {
       actionButtons.push({
         key: 'delete',
         label: t('common:delete'),
@@ -431,7 +443,7 @@ export default function Room({ PageTemplate, initialState }) {
             </div>
           }
           />
-        {!!isUserRoomOwner && (
+        {viewMode === VIEW_MODE.owner && (
         <Tooltip title={t('revokeInvitation')}>
           <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
         </Tooltip>
@@ -461,22 +473,22 @@ export default function Room({ PageTemplate, initialState }) {
         </div>
         <div className="RoomPage-subtitle">
           <div>{documentsModeText} | {renderOwnerLink()}</div>
-          {!isUserRoomOwner && (
+          {viewMode !== VIEW_MODE.owner && (
             <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
           )}
         </div>
 
-        {!isUserRoomOwner && (
+        {viewMode !== VIEW_MODE.owner && (
           <div className="RoomPage-documents RoomPage-documents--roomMemberView">
             {renderRoomDescription()}
-            {!!isUserInvitedCollaborator && renderCreateDocumentButton()}
+            {viewMode === VIEW_MODE.collaborator && renderCreateDocumentButton()}
             {!documents.length && t('documentsPlaceholder')}
-            {!isUserInvitedCollaborator && renderDocumentsAsReadOnly()}
-            {!!isUserInvitedCollaborator && renderNonDraftDocumentsAsDraggable()}
+            {viewMode === VIEW_MODE.member && renderDocumentsAsReadOnly()}
+            {viewMode === VIEW_MODE.collaborator && renderNonDraftDocumentsAsDraggable()}
           </div>
         )}
 
-        {!!isUserRoomOwner && (
+        {viewMode === VIEW_MODE.owner && (
           <Tabs
             className="Tabs"
             defaultActiveKey="1"
