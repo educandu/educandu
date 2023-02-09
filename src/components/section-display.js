@@ -184,8 +184,8 @@ function SectionDisplay({
         size="small"
         icon={action.icon}
         disabled={!action.isEnabled}
+        className={classNames('u-action-button', { 'u-danger-action-button': action.type === 'delete' })}
         onClick={action.handleAction}
-        className={`SectionDisplay-actionButton SectionDisplay-actionButton--${action.type}`}
         />
     </Tooltip>
   );
@@ -197,7 +197,7 @@ function SectionDisplay({
         type="text"
         icon={<HardDeleteIcon />}
         onClick={onSectionHardDelete}
-        className="SectionDisplay-actionButton SectionDisplay-actionButton--delete"
+        className="u-danger-action-button"
         />
     </Tooltip>
   );
