@@ -1,6 +1,6 @@
 import uniqueId from '../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_10_01_change_data_model_for_multitrack_media_plugin {
+export default class Educandu_2023_02_10_02_change_data_model_for_multitrack_media_plugin {
   constructor(db) {
     this.db = db;
   }
@@ -52,8 +52,7 @@ export default class Educandu_2023_02_10_01_change_data_model_for_multitrack_med
       let isUpdated = false;
       for (const section of doc.sections) {
         if (section.type === 'multitrack-media' && !!section.content) {
-          console.log('Migrating', collectionName, doc._id, section.key);
-          this.sectionUp();
+          this.sectionUp(section);
           isUpdated = true;
         }
       }
