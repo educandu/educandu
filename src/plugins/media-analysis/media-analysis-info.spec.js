@@ -17,81 +17,76 @@ describe('media-analysis-info', () => {
   describe('redactContent', () => {
     it('redacts the copyrightNotice', () => {
       content = {
-        mainTrack: {
-          sourceUrl: '',
-          copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`,
-          posterImage: {
-            sourceUrl: ''
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`
+          },
           {
             copyrightNotice: `[Click me too](cdn://room-media/${currentRoomId}/my-file-2.pdf)`
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
       };
       result = sut.redactContent(content, otherRoomId);
-      expect(result.mainTrack.copyrightNotice).toBe('[Click me]()');
-      expect(result.secondaryTracks[0].copyrightNotice).toBe('[Click me too]()');
+      expect(result.tracks[0].copyrightNotice).toBe('[Click me]()');
+      expect(result.tracks[1].copyrightNotice).toBe('[Click me too]()');
     });
 
     it('redacts the media source url', () => {
       content = {
-        mainTrack: {
-          sourceUrl: `room-media/${currentRoomId}/my-video-1.mp4`,
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: ''
-          }
-        },
-        secondaryTracks: [
+        tracks: [
           {
-            sourceUrl: `room-media/${currentRoomId}/my-video-2.mp4`,
+            sourceUrl: `cdn://room-media/${currentRoomId}/my-video-1.mp4`,
+            copyrightNotice: ''
+          },
+          {
+            sourceUrl: `cdn://room-media/${currentRoomId}/my-video-2.mp4`,
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: `cdn://room-media/${currentRoomId}/my-photo.jpeg`
+        }
       };
       result = sut.redactContent(content, otherRoomId);
-      expect(result.mainTrack.sourceUrl).toBe('');
-      expect(result.secondaryTracks[0].sourceUrl).toBe('');
+      expect(result.tracks[0].sourceUrl).toBe('');
+      expect(result.tracks[1].sourceUrl).toBe('');
+      expect(result.posterImage.sourceUrl).toBe('');
     });
 
     it('redacts the poster image source url', () => {
       content = {
-        mainTrack: {
-          sourceUrl: '',
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: `room-media/${currentRoomId}/my-image.jpg`
-          }
-        },
-        secondaryTracks: [
+        tracks: [
           {
-            sourceUrl: `room-media/${currentRoomId}/my-video-2.mp4`,
+            sourceUrl: '',
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: `cdn://room-media/${currentRoomId}/my-image.jpg`
+        }
       };
       result = sut.redactContent(content, otherRoomId);
-      expect(result.mainTrack.sourceUrl).toBe('');
-      expect(result.secondaryTracks[0].sourceUrl).toBe('');
+      expect(result.posterImage.sourceUrl).toBe('');
     });
 
     it('leaves accessible paths intact', () => {
       content = {
-        mainTrack: {
-          sourceUrl: `room-media/${currentRoomId}/my-file-1.pdf`,
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: `room-media/${currentRoomId}/my-image.jpg`
-          }
-        },
-        secondaryTracks: [
+        tracks: [
           {
-            sourceUrl: `room-media/${currentRoomId}/my-file-2.pdf`,
+            sourceUrl: `cdn://room-media/${currentRoomId}/my-file-1.pdf`,
+            copyrightNotice: ''
+          },
+          {
+            sourceUrl: `cdn://room-media/${currentRoomId}/my-file-2.pdf`,
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: `cdn://room-media/${currentRoomId}/my-image.jpg`
+        }
       };
       result = sut.redactContent(content, currentRoomId);
       expect(result).toStrictEqual(content);
@@ -101,19 +96,19 @@ describe('media-analysis-info', () => {
   describe('getCdnResources', () => {
     it('returns CDN resources from copyrightNotice', () => {
       content = {
-        mainTrack: {
-          sourceUrl: '',
-          copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)',
-          posterImage: {
-            sourceUrl: ''
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: '',
+            copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)'
+          },
           {
             sourceUrl: '',
             copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-2.pdf) and [another one](https://google.com)'
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toStrictEqual([
@@ -124,19 +119,19 @@ describe('media-analysis-info', () => {
 
     it('returns empty list for a YouTube resource', () => {
       content = {
-        mainTrack: {
-          sourceUrl: 'https://youtube.com/something',
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: 'https://youtube.com/something'
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: 'https://youtube.com/something',
+            copyrightNotice: ''
+          },
           {
             sourceUrl: 'https://youtube.com/something',
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
@@ -144,19 +139,19 @@ describe('media-analysis-info', () => {
 
     it('returns empty list for an external resource', () => {
       content = {
-        mainTrack: {
-          sourceUrl: 'https://someplace.com/video.mp4',
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: 'https://someplace.com/image.jpg'
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: 'https://someplace.com/video.mp4',
+            copyrightNotice: ''
+          },
           {
             sourceUrl: 'https://someplace.com/video.mp4',
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: 'https://someplace.com/image.jpg'
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
@@ -164,19 +159,19 @@ describe('media-analysis-info', () => {
 
     it('returns empty list for an internal resource without url', () => {
       content = {
-        mainTrack: {
-          sourceUrl: null,
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: null
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: null,
+            copyrightNotice: ''
+          },
           {
             sourceUrl: null,
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toHaveLength(0);
@@ -184,49 +179,49 @@ describe('media-analysis-info', () => {
 
     it('returns a list with the url for an internal public resource', () => {
       content = {
-        mainTrack: {
-          sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: 'cdn://document-media/12345/some-image.jpg'
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
+            copyrightNotice: ''
+          },
           {
             sourceUrl: 'cdn://document-media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: 'cdn://document-media/12345/some-image.jpg'
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
         'cdn://document-media/12345/some-video-1.mp4',
-        'cdn://document-media/12345/some-image.jpg',
-        'cdn://document-media/12345/some-video-2.mp4'
+        'cdn://document-media/12345/some-video-2.mp4',
+        'cdn://document-media/12345/some-image.jpg'
       ]);
     });
 
     it('returns a list with the url for an internal room-media resource', () => {
       content = {
-        mainTrack: {
-          sourceUrl: 'cdn://room-media/12345/some-video-1.mp4',
-          copyrightNotice: '',
-          posterImage: {
-            sourceUrl: 'cdn://room-media/12345/some-image.jpg'
-          }
-        },
-        secondaryTracks: [
+        tracks: [
+          {
+            sourceUrl: 'cdn://room-media/12345/some-video-1.mp4',
+            copyrightNotice: ''
+          },
           {
             sourceUrl: 'cdn://room-media/12345/some-video-2.mp4',
             copyrightNotice: ''
           }
-        ]
+        ],
+        posterImage: {
+          sourceUrl: 'cdn://room-media/12345/some-image.jpg'
+        }
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
         'cdn://room-media/12345/some-video-1.mp4',
-        'cdn://room-media/12345/some-image.jpg',
-        'cdn://room-media/12345/some-video-2.mp4'
+        'cdn://room-media/12345/some-video-2.mp4',
+        'cdn://room-media/12345/some-image.jpg'
       ]);
     });
   });

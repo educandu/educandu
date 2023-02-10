@@ -1,44 +1,50 @@
 import by from 'thenby';
 import classNames from 'classnames';
-import { Button, Form, Input } from 'antd';
 import Info from '../../components/info.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
+import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { Button, Form, Input, Radio, Switch } from 'antd';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
-import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
+import TrackEditor from '../../components/media-player/track-editor.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
-import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
+import { analyzeMediaUrl, formatMediaPosition } from '../../utils/media-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
-import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
+import { ensureIsExcluded, removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
-import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
+import { createDefaultChapter, createDefaultTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 const logger = new Logger(import.meta.url);
 
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
+const shouldDisableVideo = sourceUrl => {
+  const { resourceType } = analyzeMediaUrl(sourceUrl);
+  return ![RESOURCE_TYPE.video, RESOURCE_TYPE.none, RESOURCE_TYPE.unknown].includes(resourceType);
+};
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
   const httpClient = useService(HttpClient);
@@ -46,32 +52,28 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaAnalysis');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
-  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
+  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     getAccessibleUrl({
-      url: mainTrack.sourceUrl,
+      url: tracks[0].sourceUrl,
       cdnRootUrl: clientConfig.cdnRootUrl
     })
   ]);
 
   const mainTrackSourceDuration = mainTrackMediaDuration.duration;
-  const mainTrackPlaybackDuration = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackSourceDuration;
+  const mainTrackPlaybackDuration = (tracks[0].playbackRange[1] - tracks[0].playbackRange[0]) * mainTrackSourceDuration;
 
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const sources = useMemo(() => ({
-    mainTrack: {
-      ...mainTrack,
-      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    },
-    secondaryTracks: secondaryTracks.map(track => ({
+  const sources = useMemo(() => {
+    return tracks.map(track => ({
       ...track,
       sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    }))
-  }), [mainTrack, secondaryTracks, clientConfig]);
+    }));
+  }, [tracks, clientConfig]);
 
   const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
 
@@ -106,19 +108,36 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleMainTrackNameChanged = event => {
-    const { value } = event.target;
-    changeContent({ mainTrack: { ...mainTrack, name: value } });
+  const handeTrackContentChanged = (index, value) => {
+    const isMainTrack = index === 0;
+    const newTracks = cloneDeep(tracks);
+    newTracks[index] = value;
+
+    const disableVideo = isMainTrack && shouldDisableVideo(value.sourceUrl);
+    if (disableVideo) {
+      changeContent({ tracks: newTracks, showVideo: false, posterImage: { sourceUrl: '' } });
+      return;
+    }
+
+    changeContent({ tracks: newTracks });
   };
 
-  const handeSecondaryTrackContentChanged = (index, value) => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index] = value;
-    changeContent({ secondaryTracks: newSecondaryTracks });
+  const handleAspectRatioChanged = event => {
+    changeContent({ aspectRatio: event.target.value });
   };
 
-  const handleMainTrackContentChanged = newMainTrackContent => {
-    changeContent({ mainTrack: newMainTrackContent });
+  const handleShowVideoChanged = value => {
+    const newContent = { showVideo: value };
+
+    if (!newContent.showVideo) {
+      newContent.posterImage = { sourceUrl: '' };
+    }
+
+    changeContent(newContent);
+  };
+
+  const handlePosterImageSourceUrlChange = url => {
+    changeContent({ posterImage: { sourceUrl: url } });
   };
 
   const handleWidthChanged = newValue => {
@@ -130,40 +149,38 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   };
 
   const handleMoveTrackUp = index => {
-    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index - 1);
+    const newTracks = swapItemsAt(tracks, index, index - 1);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index - 1);
+      preset.tracks = swapItemsAt(preset.tracks, index, index - 1);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleMoveTrackDown = index => {
-    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index + 1);
+    const newTracks = swapItemsAt(tracks, index, index + 1);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index + 1);
+      preset.tracks = swapItemsAt(preset.tracks, index, index + 1);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleDeleteTrack = index => {
-    const newSecondaryTracks = removeItemAt(secondaryTracks, index);
+    const newTracks = removeItemAt(tracks, index);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = removeItemAt(preset.secondaryTracks, index);
+      preset.tracks = removeItemAt(preset.tracks, index);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleAddTrackButtonClick = () => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks.push(createDefaultSecondaryTrack());
+    const newTracks = cloneDeep(tracks);
+    newTracks.push(createDefaultTrack());
     const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets.forEach(preset => {
-      preset.secondaryTracks.push(1);
-    });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    newVolumePresets.forEach(preset => preset.tracks.push(1));
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleSelectedVolumePresetChange = volumePresetIndex => {
@@ -277,6 +294,49 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const renderTrackPanel = (track, trackIndex) => {
+    if (trackIndex === 0) {
+      return (
+        <ItemPanel
+          collapsed
+          header={t('common:mainTrack')}
+          key={track.key}
+          >
+          <TrackEditor
+            content={track}
+            usePlaybackRange
+            onContentChanged={value => handeTrackContentChanged(trackIndex, value)}
+            />
+        </ItemPanel>
+      );
+    }
+
+    const indexWithinSecondaryTracks = trackIndex - 1;
+    const secondaryTracksCount = tracks.length - 1;
+
+    const headerPrefix = t('common:secondaryTrack', { number: indexWithinSecondaryTracks + 2 });
+    const header = `${headerPrefix}${track.name ? ': ' : ''}${track.name}`;
+
+    return (
+      <ItemPanel
+        collapsed
+        canDeleteLastItem
+        header={header}
+        index={indexWithinSecondaryTracks}
+        itemsCount={secondaryTracksCount}
+        key={track.key}
+        onMoveUp={() => handleMoveTrackUp(trackIndex)}
+        onMoveDown={() => handleMoveTrackDown(trackIndex)}
+        onDelete={() => handleDeleteTrack(trackIndex)}
+        >
+        <TrackEditor
+          content={track}
+          onContentChanged={value => handeTrackContentChanged(trackIndex, value)}
+          />
+      </ItemPanel>
+    );
+  };
+
   const segmentsDropzoneClasses = classNames({
     'MediaAnalysisEditor-segmentsDropzone': true,
     'u-can-drop': csvImportDropzone.isDragAccept,
@@ -286,38 +346,41 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   return (
     <div className="MediaAnalysisEditor">
       <Form layout="horizontal" labelAlign="left">
-        <ItemPanel header={t('common:mainTrack')}>
-          <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
-            <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
-          </FormItem>
-          <MainTrackEditor
-            content={mainTrack}
-            onContentChanged={handleMainTrackContentChanged}
-            />
-        </ItemPanel>
+        {tracks.map(renderTrackPanel)}
 
-        {secondaryTracks.map((secondaryTrack, index) => (
-          <ItemPanel
-            index={index}
-            collapsed
-            canDeleteLastItem
-            key={index.toString()}
-            itemsCount={secondaryTracks.length}
-            header={t('common:secondaryTrack', { number: index + 2 })}
-            onMoveUp={handleMoveTrackUp}
-            onMoveDown={handleMoveTrackDown}
-            onDelete={handleDeleteTrack}
-            >
-            <SecondaryTrackEditor
-              content={secondaryTrack}
-              onContentChanged={value => handeSecondaryTrackContentChanged(index, value)}
-              />
-          </ItemPanel>
-        ))}
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
+
         <ItemPanel header={t('common:player')}>
+          <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
+            <RadioGroup
+              value={aspectRatio}
+              defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
+              disabled={shouldDisableVideo(tracks[0].sourceUrl)}
+              onChange={handleAspectRatioChanged}
+              >
+              {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
+                <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+              ))}
+            </RadioGroup>
+          </FormItem>
+          <FormItem label={t('common:videoDisplay')} {...FORM_ITEM_LAYOUT}>
+            <Switch
+              size="small"
+              checked={showVideo}
+              disabled={shouldDisableVideo(tracks[0].sourceUrl)}
+              onChange={handleShowVideoChanged}
+              />
+          </FormItem>
+          <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
+            <UrlInput
+              value={posterImage.sourceUrl}
+              allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
+              disabled={shouldDisableVideo(tracks[0].sourceUrl) || !showVideo}
+              onChange={handlePosterImageSourceUrlChange}
+              />
+          </FormItem>
           <FormItem
             label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
             {...FORM_ITEM_LAYOUT}
@@ -336,31 +399,34 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               />
           </FormItem>
         </ItemPanel>
+
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
             <div className="MediaAnalysisEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
+              aspectRatio={aspectRatio}
               initialVolume={initialVolume}
-              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              parts={playerParts}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
+              showVideo={showVideo}
               showTrackMixer={false}
               sources={sources}
               volumePresets={volumePresets}
-              parts={playerParts}
               />
           </div>
           <TrackMixerEditor
-            mainTrack={sources.mainTrack}
-            secondaryTracks={sources.secondaryTracks}
+            tracks={sources}
             volumePresets={volumePresets}
             onVolumePresetsChange={handleVolumePresetsChange}
             selectedVolumePresetIndex={selectedVolumePresetIndex}
             onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
+
         <div {...csvImportDropzone.getRootProps({ className: segmentsDropzoneClasses })}>
           <input {...csvImportDropzone.getInputProps()} hidden />
           <ItemPanel
