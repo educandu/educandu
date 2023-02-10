@@ -149,6 +149,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     return (
       <ItemPanel
         collapsed
+        canDeleteLastItem
         header={header}
         index={indexWithinSecondaryTracks}
         itemsCount={secondaryTracksCount}

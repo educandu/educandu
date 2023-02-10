@@ -8,16 +8,18 @@ import MediaPlayerControls from './media-player-controls.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
-const sourcesCanBeConsideredEqual = (source1, source2) => {
-  if (!source1 || !source2 || source1 === source2) {
-    return source1 === source2;
+const sourcesCanBeConsideredEqual = (sources1, sources2) => {
+  if (!sources1 || !sources2 || sources1 === sources2) {
+    return sources1 === sources2;
   }
 
-  return source1.length === source2.length
-    && source1.every((track, index) => {
-      return track.sourceUrl === source2[index].sourceUrl
-        && track.playbackRange[0] === source2[index].playbackRange[0]
-        && track.playbackRange[1] === source2[index].playbackRange[1];
+  return sources1.length === sources2.length
+    && sources1.every((track1, index) => {
+      const track2 = sources2[index];
+      return track1.key === track2.key
+        && track1.sourceUrl === track2.sourceUrl
+        && track1.playbackRange[0] === track2.playbackRange[0]
+        && track1.playbackRange[1] === track2.playbackRange[1];
     });
 };
 
@@ -73,19 +75,26 @@ function MultitrackMediaPlayer({
       return;
     }
 
-    const newStates = sources.map((track, index) => ({
-      key: track.key,
-      name: track.name,
-      sourceUrl: track.sourceUrl,
-      playbackRange: track.playbackRange,
-      isMainTrack: index === 0,
-      isReady: false,
-      durationInMilliseconds: 0
-    }));
-
     setPlaybackRate(1);
     setLastSources(sources);
-    setTrackStates(newStates);
+
+    setTrackStates(prevStates => {
+      const newStates = sources.map((track, index) => {
+        const prevState = prevStates.find(oldTrack => sourcesCanBeConsideredEqual([oldTrack], [track]));
+
+        return {
+          key: track.key,
+          name: track.name,
+          sourceUrl: track.sourceUrl,
+          playbackRange: track.playbackRange,
+          isMainTrack: index === 0,
+          isReady: prevState?.isReady || false,
+          durationInMilliseconds: prevState?.durationInMilliseconds || 0
+        };
+      });
+
+      return newStates;
+    });
   }, [sources, lastSources]);
 
   useEffect(() => {
