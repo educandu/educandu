@@ -1,12 +1,10 @@
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import LicenseManager from '../resources/license-manager.js';
 
 function LicenseSelect({ multi, value, onChange, ...selectProps }) {
-  const { t } = useTranslation('licenseSelect');
   const licenseManager = useService(LicenseManager);
   const licenseOptions = useMemo(() => {
     return licenseManager.getLicenses().map(l => ({ label: l.key, value: l.key }));
@@ -26,7 +24,6 @@ function LicenseSelect({ multi, value, onChange, ...selectProps }) {
       options={licenseOptions}
       mode={multi ? 'multiple' : null}
       value={multi ? value || [] : value || null}
-      placeholder={t(multi ? 'multiModePlaceholder' : 'singleModePlaceholder')}
       onChange={handleLicenseChange}
       />
   );

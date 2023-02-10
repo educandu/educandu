@@ -3,11 +3,11 @@ import classNames from 'classnames';
 import React, { memo } from 'react';
 import { Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import PreviewIcon from '../icons/general/preview-icon.js';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import WikimediaIcon from '../icons/wikimedia/wikimedia-icon.js';
-import { wikimediaFileShape } from '../../ui/default-prop-types.js';
-import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import PreviewIcon from '../../icons/general/preview-icon.js';
+import WikimediaIcon from '../../icons/wikimedia/wikimedia-icon.js';
+import { wikimediaFileShape } from '../../../ui/default-prop-types.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../action-button.js';
 
 function WikimediaFilesViewer({
   files,

@@ -1,0 +1,49 @@
+.WikimediaSearchScreen {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto 1fr auto auto;
+
+  &.is-hidden {
+    visibility: hidden;
+  }
+}
+
+.WikimediaSearchScreen-noSearch {
+  display: grid;
+  padding: 20px;
+}
+
+.WikimediaSearchScreen-filesViewer {
+  margin: 20px 0;
+  border: 1px solid @edu-border-color-base;
+  overflow: hidden;
+}
+
+.WikimediaSearchScreen-filesViewerContent {
+  height: 100%;
+  overflow: auto;
+}
+
+.WikimediaSearchScreen-buttonsLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  @media @edu-media-phone {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.WikimediaSearchScreen-buttonsLineItem {
+  white-space: nowrap;
+  margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
+}
+
+.WikimediaSearchScreen-searchInfo {
+  min-height: 40px;
+  margin-bottom: 20px;
+}

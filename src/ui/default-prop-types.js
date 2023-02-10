@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { isBrowser } from './browser-helper.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
   DOCUMENT_ALLOWED_OPEN_CONTRIBUTION,
@@ -10,6 +11,10 @@ import {
   USER_ACTIVITY_TYPE,
   RESOURCE_TYPE
 } from '../domain/constants.js';
+
+const File = isBrowser() ? window.File : class File {};
+
+export const browserFileType = PropTypes.instanceOf(File);
 
 export const samlIdentityProviderClientShape = PropTypes.shape({
   key: PropTypes.string.isRequired,

@@ -1,0 +1,57 @@
+.MediaLibraryUploadScreen {}
+
+.MediaLibraryUploadScreen-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MediaLibraryUploadScreen-editor {
+  width: 100%;
+  display: grid;
+  overflow-y: auto;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  gap: @edu-page-content-padding;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: auto;
+  }
+}
+
+.MediaLibraryUploadScreen-previewArea {
+  display: grid;
+  padding: 10px;
+}
+
+.MediaLibraryUploadScreen-previewContent {
+  display: grid;
+  padding: 10px 0;
+  align-items: center;
+  justify-items: center;
+
+  &.MediaLibraryUploadScreen-previewContent--canDrop {
+    .m-dropzone-base;
+
+    &:hover {
+      .m-dropzone-hover;
+    }
+
+    &.is-drag-active {
+      .m-dropzone-active;
+    }
+  }
+}
+
+.MediaLibraryUploadScreen-divider {
+  min-width: 80%;
+}
+
+.MediaLibraryUploadScreen-editorArea {
+  display: grid;
+  align-items: center;
+  justify-items: stretch;
+}

@@ -506,3 +506,12 @@ common:
   dragToReorder:
     en: Drag to reorder
     de: Mit Drag&Drop verschieben
+  browseFilesButtonLabel:
+    en: Browse ...
+    de: Durchsuchen ...
+  dropFileInvitation:
+    en: Drag a file here
+    de: Ziehe eine Datei hierher
+  dropDifferentFileInvitation:
+    en: Drag a different file here
+    de: Ziehe eine andere Datei hierher

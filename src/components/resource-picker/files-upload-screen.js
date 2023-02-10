@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { Button, Checkbox, Tooltip } from 'antd';
 import cloneDeep from '../../utils/clone-deep.js';
-import ResourcePreview from './resource-preview.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import FileIcon from '../icons/general/file-icon.js';
+import ResourceDetails from './shared/resource-details.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
 import { useSetStorageLocation } from '../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -221,7 +221,7 @@ function FilesUploadScreen({
         {!!item.errorMessage && <div className="FilesUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
           <div className="FilesUploadScreen-fileStatusPreview">
-            <ResourcePreview
+            <ResourceDetails
               url={item.uploadedFile.url}
               size={item.uploadedFile.size}
               createdOn={item.uploadedFile.createdOn}

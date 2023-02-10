@@ -1,21 +1,21 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
-import cloneDeep from '../../utils/clone-deep.js';
-import { useService } from '../container-context.js';
-import FileEditorScreen from './file-editor-screen.js';
-import FilesUploadScreen from './files-upload-screen.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import ResourcePreviewScreen from './resource-preview-screen.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { getCookie, setSessionCookie } from '../../common/cookie.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
-import { useSetStorageLocation, useStorage } from '../storage-context.js';
+import urlUtils from '../../../utils/url-utils.js';
+import cloneDeep from '../../../utils/clone-deep.js';
+import { useService } from '../../container-context.js';
+import FileEditorScreen from '../file-editor-screen.js';
+import FilesUploadScreen from '../files-upload-screen.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
+import { getCookie, setSessionCookie } from '../../../common/cookie.js';
+import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
+import StorageApiClient from '../../../api-clients/storage-api-client.js';
+import { useSetStorageLocation, useStorage } from '../../storage-context.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import DocumentOrRoomMediaDefaultScreen from './document-or-room-media-default-screen.js';
-import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../confirmation-dialogs.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
+import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 
 const SCREEN = {
   default: 'default',

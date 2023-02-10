@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LiteralUrl from './literal-url.js';
+import BreakIntoWords from './break-into-words.js';
 
 function LiteralUrlLink({ href, targetBlank, ...rest }) {
   const attributes = targetBlank
@@ -9,7 +9,7 @@ function LiteralUrlLink({ href, targetBlank, ...rest }) {
 
   return (
     <a href={href} {...attributes}>
-      <LiteralUrl>{href}</LiteralUrl>
+      <BreakIntoWords>{href}</BreakIntoWords>
     </a>
   );
 }

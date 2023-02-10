@@ -1,63 +1,77 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
-import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
-import { useIsMounted } from '../../ui/hooks.js';
-import MediaLibrarySearch from './media-library-search.js';
-import ResourcePreviewScreen from './resource-preview-screen.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import urlUtils from '../../../utils/url-utils.js';
+import { useIsMounted } from '../../../ui/hooks.js';
+import { useService } from '../../container-context.js';
+import { ensureIsUnique } from '../../../utils/array-utils.js';
+import WikimediaSearchScreen from './wikimedia-search-screen.js';
+import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
-import { mapSearchFileTypesToResourceTypes, MEDIA_LIBRARY_SEARCH_FILE_TYPE } from '../../utils/media-library-utils.js';
+import WikimediaApiClient from '../../../api-clients/wikimedia-api-client.js';
+import { ALLOWED_WIKIMEDIA_RESOURCE_TYPES, mapResourceTypesToWikimediaApiFileTypes, processWikimediaResponse } from '../../../utils/wikimedia-utils.js';
 
 const SCREEN = {
   search: 'search',
-  fileUpload: 'file-upload',
-  filePreview: 'file-preview'
+  preview: 'preview'
 };
 
-function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
-  const { t } = useTranslation();
+function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
+  const wikimediaApiClient = useService(WikimediaApiClient);
+
   const isMounted = useIsMounted();
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [nextSearchOffset, setNextSearchOffset] = useState(0);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
-  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
-  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchFileTypes: Object.values(MEDIA_LIBRARY_SEARCH_FILE_TYPE) });
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceTypes: Object.values(ALLOWED_WIKIMEDIA_RESOURCE_TYPES) });
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
-  const queryMediaLibraryItems = useCallback(async ({ searchTerm, searchFileTypes }) => {
+  const fetchWikimediaFiles = useCallback(async ({ searchTerm, searchResourceTypes }, searchOffset) => {
     if (!isMounted.current) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const resourceTypes = mapSearchFileTypesToResourceTypes(searchFileTypes);
-      const foundItems = await mediaLibraryApiClient.queryMediaLibraryItems({ query: searchTerm, resourceTypes });
+      const fileTypes = mapResourceTypesToWikimediaApiFileTypes(searchResourceTypes);
+      const response = await wikimediaApiClient.queryMediaFiles({
+        searchText: searchTerm,
+        offset: searchOffset,
+        fileTypes
+      });
+
+      const result = processWikimediaResponse(response);
       if (isMounted.current) {
-        setFiles(foundItems);
+        setNextSearchOffset(result.canContinue ? result.nextOffset : 0);
+        setFiles(previousFiles => {
+          return searchOffset !== 0
+            ? ensureIsUnique([...previousFiles, ...result.files], file => file.url)
+            : result.files;
+        });
       }
     } catch (err) {
       message.error(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [mediaLibraryApiClient, isMounted]);
+  }, [wikimediaApiClient, isMounted]);
+
+  const handleLoadMore = () => {
+    fetchWikimediaFiles(searchParams, nextSearchOffset);
+  };
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
-    setHighlightedFile(oldFile => oldFile?.portableUrl === newFile.portableUrl ? null : newFile);
+    setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
   };
 
   const handleFileDoubleClick = newFile => {
-    onSelect(newFile.portableUrl);
+    onSelect(newFile.url);
   };
 
   const handleSelectInitialUrlClick = () => {
@@ -65,19 +79,15 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleSelectHighlightedFileClick = () => {
-    onSelect(highlightedFile.portableUrl);
-  };
-
-  const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.displayName, async () => {
-      await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: file._id });
-      setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-      setHighlightedFile(oldFile => oldFile.portableUrl !== file.portableUrl ? oldFile : null);
-    });
+    onSelect(highlightedFile.url);
   };
 
   const handlePreviewFileClick = () => {
-    pushScreen(SCREEN.filePreview);
+    pushScreen(SCREEN.preview);
+  };
+
+  const handleOpenWikimediaPageClick = file => {
+    window.open(file.pageUrl, '_blank');
   };
 
   const handleScreenBackClick = () => {
@@ -93,7 +103,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
       return;
     }
 
-    const previouslyHighlightedFileStillExists = files.some(file => file.portableUrl === highlightedFile.portableUrl);
+    const previouslyHighlightedFileStillExists = files.some(file => file.url === highlightedFile.url);
     if (!previouslyHighlightedFileStillExists) {
       setHighlightedFile(null);
     }
@@ -118,31 +128,32 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     }
 
     setFiles([]);
-    queryMediaLibraryItems(searchParams);
-  }, [queryMediaLibraryItems, searchParams]);
+    setNextSearchOffset(0);
+    fetchWikimediaFiles(searchParams, 0);
+  }, [fetchWikimediaFiles, searchParams]);
 
   return (
     <Fragment>
-      <MediaLibrarySearch
+      <WikimediaSearchScreen
         files={files}
         isLoading={isLoading}
         initialUrl={initialUrl}
         onCancelClick={onCancel}
+        onLoadMore={handleLoadMore}
         searchParams={searchParams}
         onFileClick={handleFileClick}
         highlightedFile={highlightedFile}
         isHidden={screen !== SCREEN.search}
+        canLoadMore={nextSearchOffset !== 0}
         onFileDoubleClick={handleFileDoubleClick}
-        onDeleteFileClick={handleDeleteFileClick}
         onPreviewFileClick={handlePreviewFileClick}
         onSearchParamsChange={handleSearchParamsChange}
         onSelectInitialUrlClick={handleSelectInitialUrlClick}
+        onOpenWikimediaPageClick={handleOpenWikimediaPageClick}
         onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
         />
-      {screen === SCREEN.fileUpload && (
-        <div>TODO</div>
-      )}
-      {screen === SCREEN.filePreview && (
+
+      {screen === SCREEN.preview && (
         <ResourcePreviewScreen
           file={highlightedFile}
           onCancelClick={onCancel}
@@ -154,16 +165,16 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   );
 }
 
-MediaLibraryScreens.propTypes = {
+WikimediaScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
   onSelect: PropTypes.func
 };
 
-MediaLibraryScreens.defaultProps = {
+WikimediaScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default MediaLibraryScreens;
+export default WikimediaScreens;

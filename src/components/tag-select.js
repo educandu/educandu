@@ -5,15 +5,15 @@ import React, { useEffect, useState } from 'react';
 const MIN_SEARCH_TEXT_LENGTH = 3;
 const DEFAULT_TOKEN_SEPARATORS = [' ', '\t'];
 
-function TagSelect({ initialTags, selectedTags, onSelectedTagsChange, onSuggestionsNeeded, ...rest }) {
+function TagSelect({ initialValue, onSuggestionsNeeded, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);
   const [tagOptions, setTagOptions] = useState([]);
   const [suggestedTags, setSuggestedTags] = useState([]);
 
   useEffect(() => {
-    const mergedTags = new Set([...initialTags, ...suggestedTags]);
+    const mergedTags = new Set([...initialValue, ...suggestedTags]);
     setTagOptions([...mergedTags].map(tag => ({ key: tag, value: tag })));
-  }, [initialTags, suggestedTags]);
+  }, [initialValue, suggestedTags]);
 
   const handleTagSearch = async searchText => {
     const trimmedSearchText = searchText.trim();
@@ -31,26 +31,22 @@ function TagSelect({ initialTags, selectedTags, onSelectedTagsChange, onSuggesti
       mode="tags"
       loading={isLoading}
       autoComplete="none"
-      value={selectedTags}
       options={tagOptions}
       notFoundContent={null}
-      onSearch={handleTagSearch}
-      onChange={onSelectedTagsChange}
       tokenSeparators={DEFAULT_TOKEN_SEPARATORS}
+      onSearch={handleTagSearch}
       {...rest}
       />
   );
 }
 
 TagSelect.propTypes = {
-  initialTags: PropTypes.arrayOf(PropTypes.string),
-  selectedTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onSelectedTagsChange: PropTypes.func.isRequired,
+  initialValue: PropTypes.arrayOf(PropTypes.string),
   onSuggestionsNeeded: PropTypes.func.isRequired
 };
 
 TagSelect.defaultProps = {
-  initialTags: []
+  initialValue: []
 };
 
 export default TagSelect;

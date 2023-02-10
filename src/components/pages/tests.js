@@ -262,7 +262,7 @@ function Tests({ PageTemplate }) {
                   <div>Licenses:</div>
                   <LicenseSelect multi value={mediaLibraryLicenses} onChange={setMediaLibraryLicenses} />
                   <div>Tags:</div>
-                  <TagSelect selectedTags={mediaLibraryTags} onSelectedTagsChange={setMediaLibraryTags} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
+                  <TagSelect value={mediaLibraryTags} onChange={setMediaLibraryTags} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
                   <div>File:</div>
                   <Upload maxCount={1} multiple={false} fileList={mediaLibraryFileList} onChange={({ fileList }) => setMediaLibraryFileList(fileList)}>
                     <Button icon={<UploadOutlined />}>Select file</Button>

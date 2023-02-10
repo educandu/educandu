@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
-import WikimediaScreens from './wikimedia-screens.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
-import MediaLibraryScreens from './media-library-screens.js';
-import DocumentOrRoomMediaScreens from './document-or-room-media-screens.js';
+import WikimediaScreens from './wikimedia/wikimedia-screens.js';
+import MediaLibraryScreens from './media-library/media-library-screens.js';
 import { FEATURE_TOGGLES, SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import DocumentOrRoomMediaScreens from './document-or-room-media/document-or-room-media-screens.js';
 
 const possibleSourceTypes = [
   SOURCE_TYPE.mediaLibrary,

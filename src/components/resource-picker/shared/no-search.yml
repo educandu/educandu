@@ -1,0 +1,13 @@
+noSearch:
+  searchInvitationHeaderForMediaLibrary:
+    en: Search in the Media library
+    de: Suche in der Medien-Bibliothek
+  searchInvitationHeaderForWikimedia:
+    en: Search in the Wikimedia database
+    de: Suche in der Wikimedia-Datenbank
+  searchInvitationDescription:
+    en: Enter your search term above
+    de: Gib deinen Suchbegriff oben ein
+  initialFilePreviewFooter:
+    en: Use the search above to select a different file
+    de: Benutze die Suche oben, um eine andere Datei auszuwählen

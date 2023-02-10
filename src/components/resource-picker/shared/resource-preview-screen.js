@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import ResourcePreview from './resource-preview.js';
+import ResourceDetails from './resource-details.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 function ResourcePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick }) {
@@ -12,7 +12,7 @@ function ResourcePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick
     <div className="u-resource-picker-screen">
       <h3>{t('headline')}</h3>
       <div className="u-resource-picker-screen-content u-resource-picker-screen-content-fit u-resource-picker-screen-content-scrollable">
-        <ResourcePreview url={file.url} size={file.size} createdOn={file.createdOn || null} updatedOn={file.updatedOn || null} />
+        <ResourceDetails url={file.url} size={file.size} createdOn={file.createdOn || null} updatedOn={file.updatedOn || null} />
       </div>
       <div className="u-resource-picker-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>

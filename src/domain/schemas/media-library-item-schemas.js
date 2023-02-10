@@ -8,7 +8,7 @@ const licenseSchema = joi.string().valid(...Object.keys(spdxLicenseList));
 
 const mediaLibraryItemMetadataProperties = {
   description: joi.string().allow('').max(maxMediaLibraryItemDescriptionLength).required(),
-  languages: joi.array().min(1).items(joi.string().case('lower')).required(),
+  languages: joi.array().items(joi.string().case('lower')).required(),
   licenses: joi.array().min(1).items(licenseSchema.required()).required(),
   tags: joi.array().min(1).items(joi.string().required()).required()
 };

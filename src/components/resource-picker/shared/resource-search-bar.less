@@ -1,0 +1,17 @@
+.ResourceSearchBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  @media @edu-media-phone {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.ResourceSearchBar-item {
+  white-space: nowrap;
+  margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
+}

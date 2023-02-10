@@ -356,11 +356,11 @@ function DocumentMetadataModal({
           }
           >
           <TagSelect
-            initialTags={initialDocumentMetadata.tags || []}
-            selectedTags={tags}
-            onSelectedTagsChange={setTags}
-            onSuggestionsNeeded={handleTagSuggestionsNeeded}
+            value={tags}
             placeholder={t('tagsPlaceholder')}
+            initialValue={initialDocumentMetadata.tags || []}
+            onChange={setTags}
+            onSuggestionsNeeded={handleTagSuggestionsNeeded}
             />
         </FormItem>
         {!!canCreateSequence && (

@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useRef } from 'react';
-import UsedStorage from '../used-storage.js';
 import reactDropzoneNs from 'react-dropzone';
-import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
-import FilesGridViewer from './files-grid-viewer.js';
-import FilesListViewer from './files-list-viewer.js';
-import UploadIcon from '../icons/general/upload-icon.js';
+import FilterInput from '../../filter-input.js';
+import UsedStorage from '../../used-storage.js';
+import FilesGridViewer from '../files-grid-viewer.js';
+import FilesListViewer from '../files-list-viewer.js';
+import UploadIcon from '../../icons/general/upload-icon.js';
 import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { storageLocationShape, cdnObjectShape } from '../../ui/default-prop-types.js';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { storageLocationShape, cdnObjectShape } from '../../../ui/default-prop-types.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
