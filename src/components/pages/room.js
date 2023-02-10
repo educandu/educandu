@@ -251,7 +251,7 @@ export default function Room({ PageTemplate, initialState }) {
       case 'moveDown':
         return handleDocumentMoveDown(docIndex);
       default:
-        throw new Error(`Unknown key: ${actionButton.key}`);
+        return null;
     }
   };
 
