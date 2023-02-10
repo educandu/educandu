@@ -18,25 +18,20 @@ function ControlPanel({
   onClose
 }) {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(startOpen);
-  const [isContentVisible, setIsContentVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isContentVisible, setIsContentVisible] = useState(startOpen);
 
   const isPanelClosed = !isOpen || !!disabled;
   const isPanelFullyOpen = !disabled && !!isOpen && isContentVisible;
 
   useEffect(() => {
-    if (startOpen) {
-      setIsContentVisible(true);
-      return;
-    }
-
     if (isOpen) {
       setTimeout(() => setIsContentVisible(true), 500);
     } else {
       setIsContentVisible(false);
     }
-  }, [startOpen, isOpen]);
+  }, [isOpen]);
 
   const handleOpenClick = async () => {
     try {

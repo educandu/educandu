@@ -15,6 +15,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createDefaultSecondaryTrack } from './multitrack-media-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
@@ -25,7 +26,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const { t } = useTranslation('multitrackMedia');
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const { width, mainTrack, secondaryTracks, volumePresets } = content;
+  const { width, mainTrack, secondaryTracks, initialVolume, volumePresets } = content;
 
   const sources = useMemo(() => ({
     mainTrack: {
@@ -60,6 +61,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleMoveTrackUp = index => {
@@ -141,9 +146,32 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
+        <ItemPanel header={t('common:playerSettings')}>
+          <FormItem
+            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+          </FormItem>
+          <FormItem
+            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
+            {...FORM_ITEM_LAYOUT}
+            >
+            <MediaVolumeSlider
+              value={initialVolume}
+              useValueLabel
+              useButton={false}
+              onChange={handleInitialVolumeChange}
+              />
+          </FormItem>
+        </ItemPanel>
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MultitrackMediaEditor-trackMixerPreview">
+            <div className="MultitrackMediaEditor-trackMixerPreviewLabel">
+              {t('common:preview')}
+            </div>
             <MultitrackMediaPlayer
+              initialVolume={initialVolume}
               posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
@@ -161,13 +189,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
-
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
       </Form>
     </div>
   );

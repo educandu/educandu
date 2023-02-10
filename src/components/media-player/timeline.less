@@ -15,6 +15,24 @@
 
   &:hover {
     background-color: @edu-background-color-light;
+
+    .Timeline-markersBarPlaceholder {
+      display: none;
+    }
+  }
+}
+
+.Timeline-markersBarPlaceholder {
+  width: 100%;
+  display: flex;
+  font-style: italic;
+  align-items: center;
+  padding-left: 5px;
+  font-size: @edu-font-size-sm;
+  background-color: @edu-background-color-light;
+
+  &:hover {
+    display: none;
   }
 }
 

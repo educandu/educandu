@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { isYoutubeSourceType } from '../../utils/source-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
 
@@ -13,20 +14,18 @@ const FormItem = Form.Item;
 
 function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
-  const { sourceUrl, playbackRange, copyrightNotice } = content;
+  const { sourceUrl, playbackRange, copyrightNotice, initialVolume } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = value => {
+  const handleSourceUrlChange = (value, metadata) => {
     changeContent({
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: isYoutubeSourceType(value)
-        ? t('common:youtubeCopyrightNotice', { link: value })
-        : ''
+      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
     });
   };
 
@@ -37,6 +36,10 @@ function AudioEditor({ content, onContentChanged }) {
   const handleCopyrightNoticeChange = event => {
     const newValue = event.target.value;
     changeContent({ copyrightNotice: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   return (
@@ -54,6 +57,14 @@ function AudioEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
         </Form.Item>
+        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+          <MediaVolumeSlider
+            value={initialVolume}
+            useValueLabel
+            useButton={false}
+            onChange={handleInitialVolumeChange}
+            />
+        </FormItem>
       </Form>
     </div>
   );

@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import LiteralUrl from '../literal-url.js';
-import DebouncedInput from '../debounced-input.js';
 import { SearchOutlined } from '@ant-design/icons';
-import { Alert, Button, Checkbox, Empty } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
-import { SEARCH_FILE_TYPE } from './wikimedia-utils.js';
 import React, { Fragment, useEffect, useState } from 'react';
+import { Alert, Button, Checkbox, Empty, Input } from 'antd';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import { wikimediaFileShape } from '../../ui/default-prop-types.js';
+import { WIKIMEDIA_SEARCH_FILE_TYPE } from '../../utils/wikimedia-utils.js';
 import ResourcePreview, { RESOURCE_PREVIEW_LAYOUT } from './resource-preview.js';
 
 const CheckboxGroup = Checkbox.Group;
@@ -22,7 +21,7 @@ const SCREEN = {
 };
 
 const createSearchFileTypeOptions = t => {
-  return Object.values(SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
+  return Object.values(WIKIMEDIA_SEARCH_FILE_TYPE).map(sft => ({ label: t(`searchFileType_${sft}`), value: sft }));
 };
 
 function WikimediaSearch({
@@ -86,8 +85,8 @@ function WikimediaSearch({
     }
   };
 
-  const handleSearchTermChange = value => {
-    setTypedInSearchTerm(value);
+  const handleSearchTermChange = event => {
+    setTypedInSearchTerm(event.target.value);
   };
 
   const handleSelectedSearchFileTypesChange = newValues => {
@@ -135,7 +134,7 @@ function WikimediaSearch({
     <div className={classNames('WikimediaSearch', { 'is-hidden': isHidden })}>
       <div className="WikimediaSearch-buttonsLine">
         <div className="WikimediaSearch-buttonsLineItem">
-          <DebouncedInput
+          <Input
             placeholder={t('common:search')}
             value={typedInSearchTerm}
             onPressEnter={handleSearchEnterKey}
@@ -248,7 +247,7 @@ WikimediaSearch.propTypes = {
   onSelectInitialUrlClick: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchFileTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SEARCH_FILE_TYPE))).isRequired
+    searchFileTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(WIKIMEDIA_SEARCH_FILE_TYPE))).isRequired
   }).isRequired
 };
 

@@ -149,7 +149,7 @@ function TableDesigner({ content, onContentChange }) {
           verticalAlignment={designerCell.verticalAlignment}
           horizontalAlignment={designerCell.horizontalAlignment}
           value={designerCell.text}
-          onChange={newText => handleDesignerCellTextChange(designerCell, newText)}
+          onChange={event => handleDesignerCellTextChange(designerCell, event.target.value)}
           minRows={1}
           embeddable
           />

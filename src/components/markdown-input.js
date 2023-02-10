@@ -5,6 +5,7 @@ import { Input, Tooltip } from 'antd';
 import MarkdownHelp from './markdown-help.js';
 import { useTranslation } from 'react-i18next';
 import { LinkOutlined } from '@ant-design/icons';
+import DebouncedInput from './debounced-input.js';
 import { useStorage } from './storage-context.js';
 import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
@@ -14,7 +15,7 @@ import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
 
 const URL_INSERT_EVENT = 'urlInsert';
 
-function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChange, preview, embeddable, maxLength, ...rest }) {
+function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, value, onChange, preview, embeddable, maxLength, ...rest }) {
   const { locations } = useStorage();
   const { t } = useTranslation('markdownInput');
   const [currentCaretPosition, setCurrentCaretPosition] = useState(-1);
@@ -70,21 +71,25 @@ function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChan
     setCurrentCaretPosition(event.target.selectionStart);
   };
 
-  const renderInlineInput = () => (
-    <div className="MarkdownInput-inlineInputContainer">
-      <Input
-        {...rest}
-        className={classNames('MarkdownInput-input', { 'is-disabled': disabled })}
-        value={value}
-        onClick={handleClick}
-        onChange={handleChange}
-        disabled={disabled}
-        maxLength={maxLength || null}
-        addonAfter={<MarkdownHelp disabled={disabled} inline />}
-        />
-      {renderCount()}
-    </div>
-  );
+  const renderInlineInput = () => {
+    const inputProps = {
+      ...rest,
+      value,
+      disabled,
+      maxLength: maxLength || null,
+      addonAfter: <MarkdownHelp disabled={disabled} inline />,
+      className: classNames('MarkdownInput-input', { 'is-disabled': disabled }),
+      onClick: handleClick,
+      onChange: handleChange
+    };
+    return (
+      <div className="MarkdownInput-inlineInputContainer">
+        {!debounced && <Input {...inputProps} />}
+        {!!debounced && <DebouncedInput {...inputProps} elementType={Input} />}
+        {renderCount()}
+      </div>
+    );
+  };
 
   const renderResourcePicker = () => {
     return (
@@ -112,6 +117,7 @@ function MarkdownInput({ minRows, disabled, inline, renderAnchors, value, onChan
         {...rest}
         className="MarkdownInput-textarea"
         value={value}
+        debounced={debounced}
         onChange={handleChange}
         onClick={handleClick}
         disabled={disabled}
@@ -162,6 +168,7 @@ MarkdownInput.propTypes = {
   disabled: PropTypes.bool,
   embeddable: PropTypes.bool,
   inline: PropTypes.bool,
+  debounced: PropTypes.bool,
   maxLength: PropTypes.number,
   minRows: PropTypes.number,
   onChange: PropTypes.func,
@@ -174,6 +181,7 @@ MarkdownInput.defaultProps = {
   disabled: false,
   embeddable: false,
   inline: false,
+  debounced: false,
   maxLength: 0,
   minRows: 3,
   onChange: () => {},

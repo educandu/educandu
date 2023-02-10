@@ -42,8 +42,13 @@ function splitAtExtension(pathOrUrl) {
   const sanitizedUrl = (pathOrUrl || '').trim();
   const matches = sanitizedUrl.match(/^(.*[^/])(\.[^./]+)$/i);
   return matches
-    ? { baseName: matches[1], extension: matches[2], rawExtension: matches[2].replace(/^\./, '') }
-    : { baseName: sanitizedUrl, extension: '', rawExtension: '' };
+    ? { baseName: matches[1], extension: matches[2] }
+    : { baseName: sanitizedUrl, extension: '' };
+}
+
+function getFileName(pathOrUrl) {
+  const sanitizedUrl = (pathOrUrl || '').trim();
+  return sanitizedUrl.split('/').pop();
 }
 
 function createRedirectUrl(path, redirect) {
@@ -74,6 +79,7 @@ export default {
   createFullyQualifiedUrl,
   concatParts,
   splitAtExtension,
+  getFileName,
   createRedirectUrl,
   isFullyQualifiedUrl,
   ensureIsFullyQualifiedUrl,

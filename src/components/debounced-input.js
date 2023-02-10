@@ -17,7 +17,7 @@ function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onCh
 
   const handleChange = event => {
     setActualValue(event.target.value);
-    debouncedOnChange(event.target.value);
+    debouncedOnChange(event);
   };
 
   const componentProps = { ...props };

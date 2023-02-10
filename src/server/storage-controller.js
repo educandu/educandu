@@ -2,15 +2,15 @@ import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
 import httpErrors from 'http-errors';
-import prettyBytes from 'pretty-bytes';
 import routes from '../utils/routes.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
+import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
+import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { tryGetRoomIdFromStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 import {
   getCdnObjectsQuerySchema,
@@ -27,13 +27,6 @@ const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 const { BadRequest, Unauthorized } = httpErrors;
-
-const uploadLimitExceededMiddleware = (req, res, next) => {
-  const requestSize = !!req.headers['content-length'] && Number(req.headers['content-length']);
-  return requestSize && requestSize > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES
-    ? next(new Error(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, requested ${prettyBytes(requestSize)}.`))
-    : next();
-};
 
 class StorageController {
   static get inject() { return [StorageService, RoomService]; }
@@ -163,30 +156,25 @@ class StorageController {
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
-      [
-        needsPermission(permissions.VIEW_FILES),
-        jsonParser,
-        validateQuery(getCdnObjectsQuerySchema)
-      ],
+      needsPermission(permissions.VIEW_FILES),
+      jsonParser,
+      validateQuery(getCdnObjectsQuerySchema),
       (req, res) => this.handleGetCdnObjects(req, res)
     );
 
     router.delete(
       '/api/v1/storage/objects',
-      [
-        needsPermission(permissions.DELETE_OWN_FILES),
-        validateQuery(deleteCdnObjectQuerySchema)
-      ],
+      needsPermission(permissions.DELETE_OWN_FILES),
+      validateQuery(deleteCdnObjectQuerySchema),
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
       '/api/v1/storage/objects',
-      [
-        needsPermission(permissions.CREATE_FILE),
-        uploadLimitExceededMiddleware,
-        multipartParser.array('files'), validateBody(postCdnObjectsBodySchema)
-      ],
+      needsPermission(permissions.CREATE_FILE),
+      uploadLimitExceededMiddleware(),
+      multipartParser.array('files'),
+      validateBody(postCdnObjectsBodySchema),
       (req, res) => this.handlePostCdnObject(req, res)
     );
 

@@ -4,13 +4,11 @@ import axios from 'axios';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
+import { DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
 
 const logger = new Logger(import.meta.url);
 
-const defaultContentType = 'application/octet-stream';
-
-// Wraps access to a specific bucket using S3 client
 class Cdn {
   constructor(s3Client, bucketName, region, rootUrl) {
     this.s3Client = s3Client;
@@ -40,14 +38,14 @@ class Cdn {
     const metadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
+    const contentType = mime.getType(sanitizedObjectName) || DEFAULT_CONTENT_TYPE;
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
   }
 
   async uploadObjectFromUrl(objectName, url) {
     try {
       const response = await axios.get(url, { responseType: 'stream' });
-      const contentType = mime.getType(objectName) || defaultContentType;
+      const contentType = mime.getType(objectName) || DEFAULT_CONTENT_TYPE;
       await this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
     } catch (error) {
       if (error.response?.status === 404) {
@@ -61,7 +59,7 @@ class Cdn {
   uploadEmptyObject(objectName) {
     const metadata = this._getDefaultMetadata();
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, '', defaultContentType, metadata);
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, '', DEFAULT_CONTENT_TYPE, metadata);
   }
 
   async deleteObject(objectName) {

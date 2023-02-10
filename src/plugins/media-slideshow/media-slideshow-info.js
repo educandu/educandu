@@ -58,6 +58,7 @@ class MediaSlideshowInfo {
       copyrightNotice: '',
       playbackRange: [0, 1],
       width: 100,
+      initialVolume: 1,
       chapters: [this.getDefaultChapter()]
     };
   }
@@ -68,6 +69,7 @@ class MediaSlideshowInfo {
       copyrightNotice: joi.string().allow('').required(),
       playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
       width: joi.number().min(0).max(100).required(),
+      initialVolume: joi.number().min(0).max(1).required(),
       chapters: joi.array().items(joi.object({
         key: joi.string().required(),
         startPosition: joi.number().min(0).max(1).required(),

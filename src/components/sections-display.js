@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { PlusOutlined } from '@ant-design/icons';
 import SectionDisplay from './section-display.js';
-import React, { Fragment, memo, useState } from 'react';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import DragAndDropContainer from './drag-and-drop-container.js';
+import React, { Fragment, memo, useId, useRef, useState } from 'react';
 
 function SectionsDisplay({
   sections,
@@ -27,26 +27,11 @@ function SectionsDisplay({
   onSectionPasteFromClipboard,
   onSectionHardDelete
 }) {
-  const [isDragging, setIsDragging] = useState(false);
+  const droppableIdRef = useRef(useId());
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
 
-  const handleDragStart = () => {
-    setIsDragging(true);
-  };
-
-  const handleDragEnd = ({ source, destination }) => {
-    setIsDragging(false);
-    if (destination) {
-      onSectionMove(source.index, destination.index);
-    }
-  };
-
-  const handleSectionMove = (sourceIndex, destinationIndex) => {
-    if (sourceIndex !== destinationIndex
-        && destinationIndex >= 0
-        && destinationIndex <= (sections.length - 1)) {
-      onSectionMove(sourceIndex, destinationIndex);
-    }
+  const handleSectionMove = (fromIndex, toIndex) => {
+    onSectionMove(fromIndex, toIndex);
   };
 
   const handleNewSectionClick = insertIndex => {
@@ -69,7 +54,7 @@ function SectionsDisplay({
     }
   };
 
-  const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false }) => {
+  const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false, isOtherDragged = false }) => {
     return (
       <SectionDisplay
         key={section.key}
@@ -79,7 +64,7 @@ function SectionsDisplay({
         dragHandleProps={dragHandleProps}
         isDragged={isDragged}
         isEditing={editedSectionKeys.includes(section.key)}
-        isOtherSectionDragged={!!isDragging && !isDragged}
+        isOtherSectionDragged={isOtherDragged}
         isPending={pendingSectionKeys.includes(section.key)}
         onPendingSectionApply={() => onPendingSectionApply(index)}
         onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
@@ -96,9 +81,9 @@ function SectionsDisplay({
     );
   };
 
-  const renderSectionDivider = insertIndex => {
+  const renderSectionDivider = ({ insertIndex, isDragged }) => {
     return (
-      <div className={classNames('SectionsDisplay-divider', { 'is-hidden': isDragging })}>
+      <div className={classNames('SectionsDisplay-divider', { 'is-hidden': isDragged })}>
         <Button
           shape="circle"
           type="primary"
@@ -114,41 +99,22 @@ function SectionsDisplay({
     return sections.map((section, index) => renderSection({ section, index }));
   }
 
+  const dragAndDropItems = sections.map((section, index) => ({
+    key: section.key,
+    render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+      return (
+        <Fragment>
+          {renderSection({ section, index, dragHandleProps, isDragged, isOtherDragged })}
+          {renderSectionDivider({ insertIndex: index + 1, isDragged }) }
+        </Fragment>
+      );
+    }
+  }));
+
   return (
     <Fragment>
-      { renderSectionDivider(0) }
-      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <Droppable droppableId="droppable" ignoreContainerClipping>
-          {droppableProvided => (
-            <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-              {sections.map((section, index) => (
-                <Draggable key={section.key} draggableId={section.key} index={index}>
-                  {(draggableProvided, draggableState) => (
-                    <div
-                      key={section.key}
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      style={{
-                        userSelect: draggableState.isDragging ? 'none' : null,
-                        ...draggableProvided.draggableProps.style
-                      }}
-                      >
-                      {renderSection({
-                        section,
-                        index,
-                        dragHandleProps: draggableProvided.dragHandleProps,
-                        isDragged: draggableState.isDragging
-                      })}
-                      {renderSectionDivider(index + 1) }
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {droppableProvided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      { renderSectionDivider({ insertIndex: 0, isDragged: false }) }
+      <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropItems} onItemMove={handleSectionMove} />
 
       <PluginSelectorDialog
         isOpen={currentNewSectionIndex > -1}

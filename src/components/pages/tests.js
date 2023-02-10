@@ -3,24 +3,30 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
+import TagSelect from '../tag-select.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import LicenseSelect from '../license-select.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
+import { UploadOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import MusicXmlDocument from '../music-xml-document.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import DimensionsProvider from '../dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
+import LanguageSelect from '../localization/language-select.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ResourcePicker from '../resource-picker/resource-picker.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-picker/resource-selector.js';
+import { WIKIMEDIA_API_FILE_TYPE } from '../../utils/wikimedia-utils.js';
+import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-canvas.js';
-import WikimediaApiClient, { FILE_TYPE } from '../../api-clients/wikimedia-api-client.js';
-import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message } from 'antd';
 import { HORIZONTAL_ALIGNMENT, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message, Upload } from 'antd';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
   DEFAULT_WAVEFORM_BASELINE_COLOR,
@@ -50,23 +56,40 @@ function Tests({ PageTemplate }) {
     message.success('Copied to clipboard');
   };
 
-  // LicenseSelect
-  const [selectedLicenses, setSelectedLicenses] = useState([]);
-  const [isLicenseMultiModeEnabled, setIsLicenseMultiModeEnabled] = useState(false);
-  const handleSelectedLicensesChange = (_keyOrKeys, licenseOrLicenses) => {
-    setSelectedLicenses(Array.isArray(licenseOrLicenses) ? licenseOrLicenses : [licenseOrLicenses]);
+  // ResourceSelector
+  const [rsResourceUrl, setRsResourceUrl] = useState('');
+
+  // MediaLibrary
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [mediaLibraryResourcePickerUrl, setMediaLibraryResourcePickerUrl] = useState('');
+  const [mediaLibraryDescription, setMediaLibraryDescription] = useState('');
+  const [mediaLibraryLanguages, setMediaLibraryLanguages] = useState([]);
+  const [mediaLibraryLicenses, setMediaLibraryLicenses] = useState([]);
+  const [mediaLibraryTags, setMediaLibraryTags] = useState([]);
+  const [mediaLibraryFileList, setMediaLibraryFileList] = useState([]);
+  const handleMediaLibraryTagSuggestionsNeeded = searchText => {
+    return mediaLibraryApiClient.getMediaLibraryTagSuggestions(searchText).catch(error => {
+      console.error(error);
+      return [];
+    });
   };
-  const handleIsLicenseMultiModeEnabledChange = event => {
-    const isSwitchingToMultiMode = event.target.checked;
-    setIsLicenseMultiModeEnabled(isSwitchingToMultiMode);
-    setSelectedLicenses(oldLicenses => !isSwitchingToMultiMode && oldLicenses.length ? oldLicenses.slice(0, 1) : oldLicenses);
+  const handleMediaLibraryUploadClick = async () => {
+    const newItem = await mediaLibraryApiClient.createMediaLibraryItem({
+      file: mediaLibraryFileList[0].originFileObj,
+      description: mediaLibraryDescription,
+      languages: mediaLibraryLanguages,
+      licenses: mediaLibraryLicenses,
+      tags: mediaLibraryTags
+    });
+    console.log(newItem);
+    setMediaLibraryResourcePickerUrl(newItem.url);
   };
 
   // WikimediaApiClient
   const [wikimediaQuery, setWikimediaQuery] = useState('');
   const [wikimediaResult, setWikimediaResult] = useState('');
   const wikimediaApiClient = useService(WikimediaApiClient);
-  const [wikimediaFileTypes, setWikimediaFileTypes] = useState(Object.values(FILE_TYPE));
+  const [wikimediaFileTypes, setWikimediaFileTypes] = useState(Object.values(WIKIMEDIA_API_FILE_TYPE));
   const handleWikimediaSearchClick = async () => {
     const data = await wikimediaApiClient.queryMediaFiles({ searchText: wikimediaQuery, fileTypes: wikimediaFileTypes });
     setWikimediaResult(JSON.stringify(data, null, 2));
@@ -161,9 +184,6 @@ function Tests({ PageTemplate }) {
     setTimelineParts(oldParts => oldParts.map(p => p.key === key ? { ...p, startPosition: newValue } : p).sort(by(p => p.startTimecode)));
   };
 
-  // ResourcePicker
-  const [rsResourceUrl, setRsResourceUrl] = useState('');
-
   // NeverScrollingTextArea
   const [nstaValue1, setNstaValue1] = useState('Hello World');
   const [nstaValue2, setNstaValue2] = useState('Hello World');
@@ -184,9 +204,7 @@ function Tests({ PageTemplate }) {
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
   const handleUrlInputSetRoomMediaCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/document-media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
   const handleUrlInputSetDocumentMediaCdnClick = () => setUrlInputValue('http://localhost:10000/document-media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
-  const handleUrlInputChange = url => {
-    setUrlInputValue(url);
-  };
+  const handleUrlInputChange = url => setUrlInputValue(url);
 
   return (
     <PageTemplate>
@@ -197,28 +215,60 @@ function Tests({ PageTemplate }) {
           destroyInactiveTabPane
           items={[
             {
-              key: 'LicenseSelect',
-              label: 'LicenseSelect',
+              key: 'ResourceSelector',
+              label: 'ResourceSelector',
               children: (
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '25px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
-                    <Checkbox checked={isLicenseMultiModeEnabled} onChange={handleIsLicenseMultiModeEnabledChange}>
-                      Multiple selection mode
-                    </Checkbox>
-                    <LicenseSelect
-                      style={{ width: isLicenseMultiModeEnabled ? '500px' : '250px' }}
-                      multi={isLicenseMultiModeEnabled}
-                      value={isLicenseMultiModeEnabled ? selectedLicenses.map(l => l.key) : selectedLicenses[0]?.key || null}
-                      onChange={handleSelectedLicensesChange}
+                  <h3>Select</h3>
+                  <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr auto' }}>
+                    <Input
+                      value={rsResourceUrl}
+                      onChange={event => setRsResourceUrl(event.target.value)}
+                      />
+                    <ResourcePicker
+                      url={rsResourceUrl}
+                      onUrlChange={setRsResourceUrl}
                       />
                   </div>
-                  {selectedLicenses.map(license => (
-                    <div key={license.key} style={{ marginBottom: '25px' }}>
-                      <div>Key: <b>{license.key}</b></div>
-                      <div>Name: <b>{license.name}</b></div>
-                      <div>URL: <b><a href={license.url} target="_blank" rel="noreferrer">{license.url}</a></b></div>
-                    </div>
-                  ))}
+                  <h3>Dialog Content</h3>
+                  <div style={{ border: '2px solid silver', padding: '10px' }}>
+                    <ResourceSelector
+                      allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia]}
+                      initialUrl={rsResourceUrl}
+                      onSelect={setRsResourceUrl}
+                      />
+                  </div>
+                </div>
+              )
+            },
+            {
+              key: 'MediaLibrary',
+              label: 'MediaLibrary',
+              children: (
+                <div style={{ display: 'grid', gridTemplateColumns: '100px 640px', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                    <h3>Select</h3>
+                  </div>
+                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                    <UrlInput value={mediaLibraryResourcePickerUrl} onChange={setMediaLibraryResourcePickerUrl} allowedSourceTypes={[SOURCE_TYPE.mediaLibrary]} />
+                  </div>
+                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                    <h3>Upload</h3>
+                  </div>
+                  <div>Description:</div>
+                  <TextArea rows={3} value={mediaLibraryDescription} onChange={event => setMediaLibraryDescription(event.target.value)} />
+                  <div>Languages:</div>
+                  <LanguageSelect multi value={mediaLibraryLanguages} onChange={setMediaLibraryLanguages} />
+                  <div>Licenses:</div>
+                  <LicenseSelect multi value={mediaLibraryLicenses} onChange={setMediaLibraryLicenses} />
+                  <div>Tags:</div>
+                  <TagSelect selectedTags={mediaLibraryTags} onSelectedTagsChange={setMediaLibraryTags} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
+                  <div>File:</div>
+                  <Upload maxCount={1} multiple={false} fileList={mediaLibraryFileList} onChange={({ fileList }) => setMediaLibraryFileList(fileList)}>
+                    <Button icon={<UploadOutlined />}>Select file</Button>
+                  </Upload>
+                  <div>&nbsp;</div>
+                  <Button type="primary" onClick={handleMediaLibraryUploadClick}>Upload</Button>
                 </div>
               )
             },
@@ -229,7 +279,7 @@ function Tests({ PageTemplate }) {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
                     File types:
-                    <Checkbox.Group options={Object.values(FILE_TYPE)} value={wikimediaFileTypes} onChange={setWikimediaFileTypes} />
+                    <Checkbox.Group options={Object.values(WIKIMEDIA_API_FILE_TYPE)} value={wikimediaFileTypes} onChange={setWikimediaFileTypes} />
                     Search text:
                     <Input value={wikimediaQuery} onChange={event => setWikimediaQuery(event.target.value)} />
                     <Button type="primary" onClick={handleWikimediaSearchClick}>Search</Button>
@@ -338,7 +388,7 @@ function Tests({ PageTemplate }) {
                     timeLimit={diTimeLimit}
                     elementType={diElementTypes[diElementType].elementType}
                     value={diValue}
-                    onChange={value => handleDiEvent('onChange', value)}
+                    onChange={event => handleDiEvent('onChange', event.target.value)}
                     {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
                     />
                 </div>
@@ -386,37 +436,6 @@ function Tests({ PageTemplate }) {
                     onPartDelete={handleTimelinePartDelete}
                     onStartPositionChange={handleTimelineStartPositionChange}
                     />
-                </div>
-              )
-            },
-            {
-              key: 'ResourceSelector',
-              label: 'ResourceSelector',
-              children: (
-                <div>
-                  <ResourceSelector
-                    allowedSourceTypes={[SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia]}
-                    onSelect={ev => console.log('select', ev)}
-                    onCancel={ev => console.log('cancel', ev)}
-                    />
-                </div>
-              )
-            },
-            {
-              key: 'ResourcePicker',
-              label: 'ResourcePicker',
-              children: (
-                <div>
-                  <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr auto' }}>
-                    <Input
-                      value={rsResourceUrl}
-                      onChange={event => setRsResourceUrl(event.target.value)}
-                      />
-                    <ResourcePicker
-                      url={rsResourceUrl}
-                      onUrlChange={setRsResourceUrl}
-                      />
-                  </div>
                 </div>
               )
             },

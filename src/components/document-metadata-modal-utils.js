@@ -154,11 +154,6 @@ export function getDialogOkButtonText(mode, t) {
   }
 }
 
-export function composeTagOptions(initialDocumentTags = [], tagSuggestions = []) {
-  const mergedTags = new Set([...initialDocumentTags, ...tagSuggestions]);
-  return [...mergedTags].map(tag => ({ key: tag, value: tag }));
-}
-
 export function getDefaultLanguageFromUiLanguage(uiLanguage) {
   switch (uiLanguage) {
     case 'de': return 'de';

@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import { TESTS_ORDER } from './constants.js';
+import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
 import QuickTesterDisplay from './quick-tester-display.js';
@@ -33,16 +34,19 @@ class QuickTesterInfo {
     return (await import('./quick-tester-editor.js')).default;
   }
 
+  getDefaultTest() {
+    return {
+      key: uniqueId.create(),
+      question: '',
+      answer: ''
+    };
+  }
+
   getDefaultContent() {
     return {
       title: '',
       teaser: '',
-      tests: [
-        {
-          question: '',
-          answer: ''
-        }
-      ],
+      tests: [this.getDefaultTest()],
       testsOrder: TESTS_ORDER.given
     };
   }
@@ -52,6 +56,7 @@ class QuickTesterInfo {
       title: joi.string().allow('').required(),
       teaser: joi.string().allow('').required(),
       tests: joi.array().items(joi.object({
+        key: joi.string().required(),
         question: joi.string().allow('').required(),
         answer: joi.string().allow('').required()
       })).required(),

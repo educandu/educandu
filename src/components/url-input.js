@@ -12,8 +12,8 @@ import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourcePicker from './resource-picker/resource-picker.js';
-import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
-import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
+import { BankOutlined, GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { getSourceType, getPortableUrl, getAccessibleUrl, createMetadataForSource } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -34,6 +34,8 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         return <YoutubeOutlined />;
       case SOURCE_TYPE.wikimedia:
         return <WikimediaIcon />;
+      case SOURCE_TYPE.mediaLibrary:
+        return <BankOutlined />;
       case SOURCE_TYPE.documentMedia:
         return <PublicIcon />;
       case SOURCE_TYPE.roomMedia:
@@ -47,12 +49,16 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 
   const handleInputValueChange = newValue => {
     const accessibleUrl = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
-
     const { sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
-
     const portableUrl = getPortableUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    onChange(portableUrl);
+    const metadata = createMetadataForSource({ url: portableUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    onChange(portableUrl, metadata);
+  };
+
+  const handleDebouncedInputValueChange = event => {
+    handleInputValueChange(event.target.value);
   };
 
   const renderInputPrefix = () => {
@@ -84,11 +90,12 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         value={value}
         disabled={disabled}
         addonBefore={renderInputPrefix()}
-        onChange={handleInputValueChange}
+        onChange={handleDebouncedInputValueChange}
         />
       <ResourcePicker
         url={value}
         disabled={disabled}
+        allowedSourceTypes={allowedSourceTypes}
         onUrlChange={handleInputValueChange}
         />
       {!!unsecureUrl && (
@@ -99,7 +106,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 }
 
 UrlInput.propTypes = {
-  allowedSourceTypes: PropTypes.arrayOf(PropTypes.string),
+  allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string

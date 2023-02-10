@@ -1,15 +1,6 @@
 import HttpClient from './http-client.js';
 import urlUtils from '../utils/url-utils.js';
-
-const WIKIMEDIA_COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
-
-export const FILE_TYPE = {
-  bitmap: 'bitmap',
-  drawing: 'drawing',
-  video: 'video',
-  audio: 'audio',
-  pdf: 'pdf'
-};
+import { WIKIMEDIA_API_FILE_TYPE, WIKIMEDIA_COMMONS_API_URL } from '../utils/wikimedia-utils.js';
 
 class WikimediaApiClient {
   static inject() { return [HttpClient]; }
@@ -18,7 +9,7 @@ class WikimediaApiClient {
     this.httpClient = httpClient;
   }
 
-  queryMediaFiles({ searchText, fileTypes = Object.values(FILE_TYPE), thumbnailHeight = 180, limit = 50, offset = 0 }) {
+  queryMediaFiles({ searchText, fileTypes = Object.values(WIKIMEDIA_API_FILE_TYPE), thumbnailHeight = 180, limit = 50, offset = 0 }) {
     const queryString = urlUtils.composeQueryString({
       action: 'query',
       format: 'json',

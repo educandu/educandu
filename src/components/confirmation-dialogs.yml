@@ -29,9 +29,9 @@ confirmationDialogs:
   leaveRoomConfirmation:
     en: Do you really want to cancel your membership in room "{roomName}"?
     de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?
-  deleteCdnDocumentConfirmation:
-    en: Do you really want to delete the file "{fileName}" from the internal storage?
-    de: Möchtest du die Datei "{fileName}" wirklich vom internen Speicher löschen?
+  deleteMediaFileConfirmation:
+    en: Do you really want to irreversibly delete the file "{fileName}"?
+    de: Möchtest du die Datei "{fileName}" wirklich unwiderruflich löschen?
   thisActionIsIrreversible:
     en: This action is irreversible!
     de: Diese Aktion ist unwiderrufbar!

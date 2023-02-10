@@ -42,7 +42,8 @@ class VideoInfo {
       posterImage: {
         sourceUrl: ''
       },
-      playbackRange: [0, 1]
+      playbackRange: [0, 1],
+      initialVolume: 1
     };
   }
 
@@ -55,7 +56,8 @@ class VideoInfo {
       posterImage: joi.object({
         sourceUrl: joi.string().allow('').required()
       }).required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+      initialVolume: joi.number().min(0).max(1).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

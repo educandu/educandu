@@ -24,7 +24,6 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -32,6 +31,7 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { isTouchDevice, supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
@@ -100,15 +100,17 @@ function Doc({ initialState, PageTemplate }) {
   const controlPanelsRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
+  const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
-  const [controPanelTopInPx, setControlPanelTopInPx] = useState(0);
 
   const { room } = initialState;
 
   const ensureControlPanelPosition = useCallback(() => {
-    const windowHeight = Math.min(window.innerHeight, window.outerHeight);
-    setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    if (isTouchDevice()) {
+      const windowHeight = Math.min(window.innerHeight, window.outerHeight);
+      setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    }
   }, [controlPanelsRef]);
 
   useOnComponentMounted(() => {
@@ -121,7 +123,14 @@ function Doc({ initialState, PageTemplate }) {
     window.removeEventListener('resize', ensureControlPanelPosition);
   });
 
-  const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
+  const determineInitialViewState = () => {
+    const requestView = Object.values(VIEW).find(v => v === request.query.view);
+    if (!requestView) {
+      return { preSetView: null, view: VIEW.display };
+    }
+
+    return { preSetView: requestView, view: requestView };
+  };
 
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
@@ -131,15 +140,16 @@ function Doc({ initialState, PageTemplate }) {
     ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
     : t('editRestrictionTooltip_annonymousUser');
 
-  const [isDirty, setIsDirty] = useState(false);
   const [comments, setComments] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
-  const [view, setView] = useState(user ? initialView : VIEW.display);
+  const [view, setView] = useState(determineInitialViewState().view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
+  const [preSetView, setPreSetView] = useState(determineInitialViewState().preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -153,6 +163,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
+    setPreSetView(null);
     setView(newView);
   };
 
@@ -187,11 +198,11 @@ function Doc({ initialState, PageTemplate }) {
   }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
-    if (initialView === VIEW.edit || view === VIEW.edit) {
+    if (preSetView === VIEW.edit || view === VIEW.edit) {
       pluginRegistry.ensureAllEditorsAreLoaded();
     }
 
-    if (initialView === VIEW.history) {
+    if (preSetView === VIEW.history) {
       (async () => {
         try {
           const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
@@ -203,12 +214,12 @@ function Doc({ initialState, PageTemplate }) {
       })();
     }
 
-    if (initialView === VIEW.comments) {
+    if (preSetView === VIEW.comments) {
       (async () => {
         await fetchComments();
       })();
     }
-  }, [initialView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
+  }, [preSetView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -315,6 +326,24 @@ function Doc({ initialState, PageTemplate }) {
     switchView(VIEW.display);
     setComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    return true;
+  };
+
+  const handleHistoryOpen = async () => {
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+      setHistoryRevisions(documentRevisions);
+      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      switchView(VIEW.history);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  };
+
+  const handleHistoryClose = () => {
+    setHistoryRevisions([]);
+    setSelectedHistoryRevision(null);
+    switchView(VIEW.display);
     return true;
   };
 
@@ -425,24 +454,6 @@ function Doc({ initialState, PageTemplate }) {
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
     setIsDirty(true);
   }, [currentSections]);
-
-  const handleHistoryOpen = async () => {
-    try {
-      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-      setHistoryRevisions(documentRevisions);
-      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
-      switchView(VIEW.history);
-    } catch (error) {
-      handleApiError({ error, t, logger });
-    }
-  };
-
-  const handleHistoryClose = () => {
-    setHistoryRevisions([]);
-    setSelectedHistoryRevision(null);
-    switchView(VIEW.display);
-    return true;
-  };
 
   const handlePermalinkRequest = async () => {
     const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(selectedHistoryRevision._id));
@@ -614,7 +625,7 @@ function Doc({ initialState, PageTemplate }) {
       </PageTemplate>
       <div
         ref={controlPanelsRef}
-        style={{ top: `${controPanelTopInPx}px` }}
+        style={controPanelTopInPx !== null ? { top: `${controPanelTopInPx}px` } : {}}
         className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
         >
         {!!showHistoryPanel && (
@@ -623,7 +634,7 @@ function Doc({ initialState, PageTemplate }) {
               revisions={historyRevisions}
               selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
               canRestoreRevisions={userCanEditDocContent}
-              startOpen={initialView === VIEW.history}
+              startOpen={preSetView === VIEW.history}
               onOpen={handleHistoryOpen}
               onClose={handleHistoryClose}
               onPermalinkRequest={handlePermalinkRequest}
@@ -635,7 +646,7 @@ function Doc({ initialState, PageTemplate }) {
         {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
             <ControlPanel
-              startOpen={initialView === VIEW.comments}
+              startOpen={preSetView === VIEW.comments}
               openIcon={<CommentsIcon />}
               onOpen={handleCommentsOpen}
               onClose={handleCommentsClose}
@@ -648,7 +659,7 @@ function Doc({ initialState, PageTemplate }) {
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
             <EditControlPanel
               isDirtyState={isDirty}
-              startOpen={initialView === VIEW.edit}
+              startOpen={preSetView === VIEW.edit}
               disabled={!userCanEdit || !userCanEditDocContent}
               canEditMetadata={userCanEditDocMetadata}
               tooltipWhenDisabled={editDocRestrictionTooltip}

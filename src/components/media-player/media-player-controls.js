@@ -18,15 +18,16 @@ const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 function MediaPlayerControls({
   durationInMilliseconds,
-  playedMilliseconds,
   isPlaying,
-  volume,
-  onPauseClick,
-  onPlayClick,
-  onVolumeChange,
-  onPlaybackRateChange,
+  millisecondsLength,
+  playedMilliseconds,
   screenMode,
-  onDownloadClick
+  volume,
+  onDownloadClick,
+  onPauseClick,
+  onPlaybackRateChange,
+  onPlayClick,
+  onVolumeChange
 }) {
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
@@ -72,10 +73,12 @@ function MediaPlayerControls({
 
     return items;
   };
+  const formattedPlayedTime = formatMillisecondsAsDuration(playedMilliseconds, { millisecondsLength });
+  const formattedDuration = formatMillisecondsAsDuration(durationInMilliseconds, { millisecondsLength });
 
   const renderTimeDisplay = () => {
     return durationInMilliseconds
-      ? <Fragment>{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</Fragment>
+      ? <Fragment>{formattedPlayedTime}&nbsp;/&nbsp;{formattedDuration}</Fragment>
       : <Fragment>--:--&nbsp;/&nbsp;--:--</Fragment>;
   };
 
@@ -111,21 +114,23 @@ function MediaPlayerControls({
 
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
+  millisecondsLength: PropTypes.number,
+  playedMilliseconds: PropTypes.number.isRequired,
+  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
+  volume: PropTypes.number.isRequired,
   onDownloadClick: PropTypes.func,
   onPauseClick: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onPlaybackRateChange: PropTypes.func,
-  onVolumeChange: PropTypes.func.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
-  playedMilliseconds: PropTypes.number.isRequired,
-  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  volume: PropTypes.number.isRequired
+  onVolumeChange: PropTypes.func.isRequired
 };
 
 MediaPlayerControls.defaultProps = {
+  millisecondsLength: 0,
+  screenMode: MEDIA_SCREEN_MODE.video,
   onDownloadClick: null,
-  onPlaybackRateChange: () => {},
-  screenMode: MEDIA_SCREEN_MODE.video
+  onPlaybackRateChange: () => {}
 };
 
 export default MediaPlayerControls;

@@ -2,6 +2,9 @@ trackMixerEditor:
   noTrack:
     en: no track
     de: keine Spur
-  manageVolumePresets:
-    en: Manage volume presets
-    de: Lautstärke-Voreinstellungen bearbeiten
+  volumePresetInfo:
+    en: Here you can define sets of volume combinations. The individual track volumes of the currently selected combination can be changed in the track mixer below.
+    de: Hier kannst du Sets von Lautstärke-Kombinationen definieren. Die einzelnen Spurlautstärken der momentan ausgewählten Kombination kannst im Spur-Mixer unten bearbeiten.
+  trackDurations:
+    en: Track durations
+    de: Spur-Zeitdauern

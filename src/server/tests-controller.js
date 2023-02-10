@@ -2,15 +2,18 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
+import DocumentService from '../services/document-service.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { getDocumentMediaDocumentPath, getRoomMediaRoomPath } from '../utils/storage-utils.js';
 
 class TestsController {
-  static get inject() { return [PageRenderer, RoomService, StorageService]; }
+  static get inject() { return [PageRenderer, DocumentService, RoomService, StorageService]; }
 
-  constructor(pageRenderer, roomService, storageService) {
+  constructor(pageRenderer, documentService, roomService, storageService) {
     this.pageRenderer = pageRenderer;
+    this.documentService = documentService;
     this.roomService = roomService;
     this.storageService = storageService;
   }
@@ -19,15 +22,20 @@ class TestsController {
     const { user } = req;
     const initialState = {};
 
-    const locations = [
-      {
+    const locations = [];
+
+    const docs = await this.documentService.getAllPublicDocumentsMetadata();
+    const doc = docs[0];
+
+    if (doc) {
+      locations.push({
         type: STORAGE_LOCATION_TYPE.documentMedia,
-        path: 'media',
+        path: getDocumentMediaDocumentPath(doc._id),
         usedBytes: 0,
         maxBytes: 0,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
-      }
-    ];
+      });
+    }
 
     const rooms = await this.roomService.getRoomsOwnedByUser(user?._id || 'hihi');
     const room = rooms[0];
@@ -48,7 +56,7 @@ class TestsController {
       });
     }
 
-    // Hack
+    // Hack the manipulated locations into the current request:
     req.storage = { ...req.storage, locations };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.tests, initialState);
@@ -57,6 +65,7 @@ class TestsController {
   registerPages(router) {
     router.get(
       '/tests',
+      needsPermission(permissions.ADMIN),
       (req, res) => this.handleGetTestsPage(req, res)
     );
   }

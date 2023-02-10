@@ -1,11 +1,18 @@
 .RoomCard {
   .m-card;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 10px;
+  grid-template-rows: 1fr auto;
   padding: @edu-content-padding;
   border-radius: @edu-border-radius-base;
   background-color: @edu-background-color-base;
+}
+
+.RoomCard-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .RoomCard-header {
@@ -16,7 +23,7 @@
 }
 
 .RoomCard-divider {
-  margin: 15px 0;
+  margin: 12px 0;
 }
 
 .RoomCard-name {

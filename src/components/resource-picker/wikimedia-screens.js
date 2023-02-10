@@ -1,14 +1,14 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
+import urlUtils from '../../utils/url-utils.js';
 import { useIsMounted } from '../../ui/hooks.js';
 import WikimediaSearch from './wikimedia-search.js';
+import { useService } from '../container-context.js';
 import { ensureIsUnique } from '../../utils/array-utils.js';
 import ResourcePreviewScreen from './resource-preview-screen.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { getResourceFullName } from '../../utils/resource-utils.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
-import { mapSearchFileTypesToWikimediaFileTypes, processWikimediaResponse, SEARCH_FILE_TYPE } from './wikimedia-utils.js';
+import { mapSearchFileTypesToApiFileTypes, processWikimediaResponse, WIKIMEDIA_SEARCH_FILE_TYPE } from '../../utils/wikimedia-utils.js';
 
 const SCREEN = {
   search: 'search',
@@ -16,7 +16,7 @@ const SCREEN = {
 };
 
 function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
-  const wikimediaApiClient = useSessionAwareApiClient(WikimediaApiClient);
+  const wikimediaApiClient = useService(WikimediaApiClient);
 
   const isMounted = useIsMounted();
   const [files, setFiles] = useState([]);
@@ -25,7 +25,7 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
-  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchFileTypes: Object.values(SEARCH_FILE_TYPE) });
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchFileTypes: Object.values(WIKIMEDIA_SEARCH_FILE_TYPE) });
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
@@ -38,7 +38,7 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const fileTypes = mapSearchFileTypesToWikimediaFileTypes(searchFileTypes);
+      const fileTypes = mapSearchFileTypesToApiFileTypes(searchFileTypes);
       const response = await wikimediaApiClient.queryMediaFiles({
         searchText: searchTerm,
         offset: searchOffset,
@@ -114,7 +114,7 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
       return;
     }
 
-    const initialResourceName = getResourceFullName(initialUrl);
+    const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
       const preSelectedFile = files.find(file => file.displayName === initialResourceName);

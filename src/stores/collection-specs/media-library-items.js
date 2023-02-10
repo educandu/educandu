@@ -12,6 +12,10 @@ export default {
     {
       name: '_idx_tags_',
       key: { tags: 1 }
+    },
+    {
+      name: '_idx_resourceType_tags_',
+      key: { resourceType: 1, tags: 1 }
     }
   ]
 };

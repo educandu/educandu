@@ -1,3 +1,58 @@
 .ItemPanel {
   margin: 10px 0;
+
+  .ant-collapse-header {
+    background-color: @edu-background-color-light !important;
+    border-top-left-radius: @edu-border-radius-base !important;
+    border-top-right-radius: @edu-border-radius-base !important;
+  }
+
+  &.is-dragged {
+    border: 1px solid @edu-border-color-dark;
+  }
+
+  &.is-other-dragged {
+    opacity: 0.60 !important;
+  }
+}
+
+.ItemPanel-header {
+  .m-line-clamp(1);
+}
+
+.ItemPanel-contentWrapper {
+  background-color: @edu-white !important;
+}
+
+.ItemPanel-actionButtons {
+  display: grid;
+  gap: 3px;
+  grid-auto-flow: column;
+}
+
+.ItemPanel-actionButton {
+  line-height: 26px;
+  height: 26px !important;
+  width: 26px !important;
+  color: darken(@edu-text-color, 20%) !important;
+
+  &:disabled {
+    border-radius: @edu-border-radius-base !important;
+    color: @edu-disabled-color !important;
+  }
+
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: @edu-white !important;
+  }
+
+  &.ItemPanel-actionButton--danger {
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: @edu-error-color !important;
+    }
+  }
 }

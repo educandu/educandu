@@ -1,6 +1,6 @@
 import by from 'thenby';
+import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
-import { Divider, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
@@ -11,7 +11,6 @@ import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -22,7 +21,9 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
+import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -39,7 +40,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
 
-  const { sourceUrl, playbackRange, chapters, width } = content;
+  const { sourceUrl, playbackRange, width, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -69,6 +70,10 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handleInitialVolumeChange = newValue => {
+    changeContent({ initialVolume: newValue });
   };
 
   const handleChapterAdd = startPosition => {
@@ -105,9 +110,10 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterImageSourceUrlChange = value => {
+  const handleChapterImageSourceUrlChange = (value, metadata) => {
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.sourceUrl = value;
+    newChapters[selectedChapterIndex].image.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
     changeContent({ chapters: newChapters });
   };
 
@@ -185,18 +191,28 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
+        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+          <MediaVolumeSlider
+            value={initialVolume}
+            useValueLabel
+            useButton={false}
+            onChange={handleInitialVolumeChange}
+            />
+        </FormItem>
 
-        <Divider className="MediaSlideshowEditor-chapterEditorDivider" plain>{t('common:editChapter')}</Divider>
-
-        <MediaPlayer
-          parts={chapters}
-          screenWidth={50}
-          playbackRange={playbackRange}
-          screenMode={MEDIA_SCREEN_MODE.audio}
-          customScreenOverlay={renderPlayingChapterImage()}
-          onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          />
+        <div className="MediaSlideshowEditor-playerPreview">
+          <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
+          <MediaPlayer
+            volume={initialVolume}
+            parts={chapters}
+            screenWidth={50}
+            playbackRange={playbackRange}
+            screenMode={MEDIA_SCREEN_MODE.audio}
+            customScreenOverlay={renderPlayingChapterImage()}
+            onPlayingPartIndexChange={handlePlayingPartIndexChange}
+            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+            />
+        </div>
 
         <Timeline
           parts={timelineParts}

@@ -1,4 +1,6 @@
 import joi from 'joi';
+import uniqueId from '../../utils/unique-id.js';
+import { maxDocumentCommentTextLength } from '../../domain/validation-constants.js';
 import { DISPLAY_MODE, DEFAULT_MAX_TILES_PER_ROW, TILES_HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 
 function createDefaultItemImage() {
@@ -9,30 +11,32 @@ function createDefaultItemImage() {
 
 export function createDefaultItem() {
   return {
+    key: uniqueId.create(),
     title: '',
     image: createDefaultItemImage(),
     link: {
       sourceType: LINK_SOURCE_TYPE.document,
       sourceUrl: '',
-      documentId: null
+      documentId: null,
+      description: ''
     }
   };
 }
 
-function ceateDefaultImageTileConfig() {
+function createDefaultImageTileConfig() {
   return {
     maxTilesPerRow: DEFAULT_MAX_TILES_PER_ROW,
     hoverEffect: TILES_HOVER_EFFECT.none
   };
 }
 
-export function createDefaultContent(t) {
+export function createDefaultContent() {
   return {
     displayMode: DISPLAY_MODE.linkList,
-    title: `[${t('common:title')}]`,
+    title: '',
     width: 100,
     items: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, createDefaultItem),
-    imageTilesConfig: ceateDefaultImageTileConfig()
+    imageTilesConfig: createDefaultImageTileConfig()
   };
 }
 
@@ -42,6 +46,7 @@ export function validateContent(content) {
     title: joi.string().allow('').required(),
     width: joi.number().min(0).max(100).required(),
     items: joi.array().items(joi.object({
+      key: joi.string().required(),
       title: joi.string().allow('').required(),
       image: joi.object({
         sourceUrl: joi.string().allow('').required()
@@ -49,7 +54,8 @@ export function validateContent(content) {
       link: joi.object({
         sourceType: joi.string().valid(...Object.values(LINK_SOURCE_TYPE)).required(),
         sourceUrl: joi.string().allow('').required(),
-        documentId: joi.string().allow(null).required()
+        documentId: joi.string().allow(null).required(),
+        description: joi.string().allow('').max(maxDocumentCommentTextLength).required()
       }).required()
     })).required(),
     imageTilesConfig: joi.object({
@@ -66,7 +72,7 @@ export function consolidateForDisplayMode(content) {
     return {
       ...content,
       items: content.items.map(item => ({ ...item, image: createDefaultItemImage() })),
-      imageTilesConfig: ceateDefaultImageTileConfig()
+      imageTilesConfig: createDefaultImageTileConfig()
     };
   }
 

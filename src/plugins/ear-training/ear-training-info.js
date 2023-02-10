@@ -1,5 +1,6 @@
 import joi from 'joi';
 import React from 'react';
+import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
@@ -44,12 +45,14 @@ class EarTrainingInfo {
     return {
       sourceUrl: '',
       copyrightNotice: '',
-      playbackRange: [0, 1]
+      playbackRange: [0, 1],
+      initialVolume: 1
     };
   }
 
   getDefaultTest() {
     return {
+      key: uniqueId.create(),
       mode: TEST_MODE.image,
       questionImage: this.getDefaultImage(),
       answerImage: this.getDefaultImage(),
@@ -73,6 +76,7 @@ class EarTrainingInfo {
       title: joi.string().allow('').required(),
       width: joi.number().min(0).max(100).required(),
       tests: joi.array().items(joi.object({
+        key: joi.string().required(),
         mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
         questionImage: joi.alternatives().try(
           joi.object({
@@ -93,7 +97,8 @@ class EarTrainingInfo {
         sound: joi.object({
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required(),
-          playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+          playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+          initialVolume: joi.number().min(0).max(1).required()
         }).required()
       })).required(),
       testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()

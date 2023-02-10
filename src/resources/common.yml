@@ -383,6 +383,11 @@ common:
       Source: [Youtube]({link})
     de: |
       Quelle: [Youtube]({link})
+  wikimediaCopyrightNotice:
+    en: |
+      Source: [Wikimedia]({link})
+    de: |
+      Quelle: [Wikimedia]({link})
   verifiedDocumentBadge:
     en: This document was verified by a maintainer
     de: Dieses Dokument wurde von einem Maintainer überprüft
@@ -398,9 +403,6 @@ common:
   chapter:
     en: Chapter
     de: Kapitel
-  editChapter:
-    en: Edit chapter
-    de: Kapitel bearbeiten
   mainTrack:
     en: Main track
     de: Hauptspur
@@ -489,6 +491,18 @@ common:
   filter:
     en: Filter
     de: Filter
+  playerSettings:
+    en: Player settings
+    de: Player-Einstellungen
+  initialVolume:
+    en: Initial volume
+    de: Anfangslautstärke
+  multitrackInitialVolumeInfo:
+    en: This is the initial mix volume
+    de: Dies ist die initiale Mix-Lautstärke
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
+  dragToReorder:
+    en: Drag to reorder
+    de: Mit Drag&Drop verschieben

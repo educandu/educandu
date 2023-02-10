@@ -1,5 +1,6 @@
 import Info from './info.js';
 import PropTypes from 'prop-types';
+import TagSelect from './tag-select.js';
 import Logger from '../common/logger.js';
 import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -19,7 +20,6 @@ import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Rad
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
   CLONING_STRATEGY,
-  composeTagOptions,
   determineActualTemplateDocumentId,
   determineDocumentRoomId,
   DOCUMENT_METADATA_MODAL_MODE,
@@ -76,7 +76,6 @@ function DocumentMetadataModal({
   const [tags, setTags] = useState([]);
   const [title, setTitle] = useState('');
   const [language, setLanguage] = useState(null);
-  const [tagOptions, setTagOptions] = useState([]);
   const [description, setDescription] = useState('');
   const [roomContext, setRoomContext] = useState(null);
   const [publicContext, setPublicContext] = useState(null);
@@ -121,7 +120,6 @@ function DocumentMetadataModal({
     setDescription(initialDocumentMetadata.description || '');
     setSlug(initialDocumentMetadata.slug || '');
     setTags(initialDocumentMetadata.tags || []);
-    setTagOptions(composeTagOptions(initialDocumentMetadata.tags || []));
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
     if (mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
       setPublicContext(getDefaultPublicContext());
@@ -164,18 +162,11 @@ function DocumentMetadataModal({
     setRoomContext(getDefaultRoomContext());
   }, [cloningStrategy]);
 
-  const handleTagSearch = async typedInTag => {
-    const sanitizedTypedInTag = (typedInTag || '').trim();
-    try {
-      if (sanitizedTypedInTag.length < 3) {
-        return;
-      }
-      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(sanitizedTypedInTag);
-      const newTagOptions = composeTagOptions(initialDocumentMetadata.tags || [], tagSuggestions);
-      setTagOptions(newTagOptions);
-    } catch (error) {
+  const handleTagSuggestionsNeeded = searchText => {
+    return documentApiClient.getDocumentTagSuggestions(searchText).catch(error => {
       handleApiError({ error, t });
-    }
+      return [];
+    });
   };
 
   const handleOk = () => {
@@ -211,10 +202,6 @@ function DocumentMetadataModal({
   const handleSlugChange = event => {
     const { value } = event.target;
     setSlug(value);
-  };
-
-  const handleTagsChange = value => {
-    setTags(value);
   };
 
   const handleGenerateSequenceChange = event => {
@@ -368,15 +355,11 @@ function DocumentMetadataModal({
             <Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>
           }
           >
-          <Select
-            mode="tags"
-            value={tags}
-            autoComplete="none"
-            options={tagOptions}
-            notFoundContent={null}
-            onSearch={handleTagSearch}
-            onChange={handleTagsChange}
-            tokenSeparators={[' ', '\t']}
+          <TagSelect
+            initialTags={initialDocumentMetadata.tags || []}
+            selectedTags={tags}
+            onSelectedTagsChange={setTags}
+            onSuggestionsNeeded={handleTagSuggestionsNeeded}
             placeholder={t('tagsPlaceholder')}
             />
         </FormItem>

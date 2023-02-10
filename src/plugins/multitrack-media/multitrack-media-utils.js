@@ -37,6 +37,7 @@ export function createDefaultContent(t) {
     width: 100,
     mainTrack: createDefaultMainTrack(),
     secondaryTracks,
+    initialVolume: 1,
     volumePresets: [createDefaultVolumePreset(t, secondaryTracks.length)]
   };
 }
@@ -60,6 +61,7 @@ export function validateContent(content) {
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required()
     })).required(),
+    initialVolume: joi.number().min(0).max(1).required(),
     volumePresets: joi.array().items(joi.object({
       name: joi.string().required(),
       mainTrack: joi.number().min(0).max(1).required(),

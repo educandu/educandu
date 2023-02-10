@@ -124,7 +124,8 @@ describe('document-service', () => {
                 sourceUrl: ''
               },
               playbackRange: [0, 1],
-              width: 100
+              width: 100,
+              initialVolume: 1
             }
           }
         ],
@@ -283,7 +284,8 @@ describe('document-service', () => {
                 sourceUrl: ''
               },
               playbackRange: [0, 1],
-              width: 100
+              width: 100,
+              initialVolume: 1
             }
           }
         ],
@@ -321,7 +323,8 @@ describe('document-service', () => {
                 sourceUrl: ''
               },
               playbackRange: [0, 1],
-              width: 100
+              width: 100,
+              initialVolume: 1
             }
           }
         ]
@@ -805,7 +808,8 @@ describe('document-service', () => {
           content: {
             sourceUrl: 'cdn://document-media/audio-1.mp3',
             copyrightNotice: 'Unmodified text',
-            playbackRange: [0, 1]
+            playbackRange: [0, 1],
+            initialVolume: 1
           }
         };
 
@@ -816,7 +820,8 @@ describe('document-service', () => {
           content: {
             sourceUrl: 'cdn://document-media/audio-2.mp3',
             copyrightNotice: 'Initial text',
-            playbackRange: [0, 1]
+            playbackRange: [0, 1],
+            initialVolume: 1
           }
         };
 

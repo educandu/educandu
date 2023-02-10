@@ -45,47 +45,49 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
 
   return (
     <div className="RoomCard">
-      <div className="RoomCard-header">
-        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
-        {!!showOwner && !isDeletedRoom && renderOwner()}
-      </div>
-      <Divider className="RoomCard-divider" />
-      {!!room?.documentsMode && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
-        <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
-      </div>
-      )}
-      {!!room?.createdOn && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('common:created')}:</span>
-        <div>{formatDate(room.createdOn)}</div>
-      </div>
-      )}
-      {!!room?.updatedOn && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
-        <div>{formatDate(room.updatedOn)}</div>
-      </div>
-      )}
-      {!userAsMember && !!room?.members && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('members')}:</span>
-        <div>{room.members.length}</div>
-      </div>
-      )}
-      {!!userAsMember && (
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('joined')}:</span>
-        <div>{formatDate(userAsMember.joinedOn)}</div>
-      </div>
-      )}
-      {!!invitation?.sentOn && (
+      <div className="RoomCard-content">
+        <div className="RoomCard-header">
+          <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
+          {!!showOwner && !isDeletedRoom && renderOwner()}
+        </div>
+        <Divider className="RoomCard-divider" />
+        {!!room?.documentsMode && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
+          <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
+        </div>
+        )}
+        {!!room?.createdOn && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('common:created')}:</span>
+          <div>{formatDate(room.createdOn)}</div>
+        </div>
+        )}
+        {!!room?.updatedOn && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
+          <div>{formatDate(room.updatedOn)}</div>
+        </div>
+        )}
+        {!userAsMember && !!room?.members && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('members')}:</span>
+          <div>{room.members.length}</div>
+        </div>
+        )}
+        {!!userAsMember && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('joined')}:</span>
+          <div>{formatDate(userAsMember.joinedOn)}</div>
+        </div>
+        )}
+        {!!invitation?.sentOn && (
         <div className="RoomCard-infoRow">
           <span className="RoomCard-infoLabel">{t('invited')}:</span>
           <div>{formatDate(invitation.sentOn)}</div>
         </div>
-      )}
+        )}
+      </div>
       {!!invitation?.expiresOn && (
         <div className="RoomCard-infoRow RoomCard-infoRow--textBlock">
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>

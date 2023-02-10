@@ -1,11 +1,11 @@
-.StorageLocation {
+.DocumentOrRoomMediaDefaultScreen {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   grid-template-columns: 100%;
 }
 
-.StorageLocation-filesViewer {
+.DocumentOrRoomMediaDefaultScreen-filesViewer {
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
@@ -17,12 +17,12 @@
   }
 }
 
-.StorageLocation-filesViewerContent {
+.DocumentOrRoomMediaDefaultScreen-filesViewerContent {
   height: 100%;
   overflow: auto;
 }
 
-.StorageLocation-filesViewerOverlay {
+.DocumentOrRoomMediaDefaultScreen-filesViewerOverlay {
   .m-mask;
   display: grid;
   align-content: center;
@@ -30,32 +30,32 @@
   background-color: fade(@edu-background-color-light, 60%);
 }
 
-.StorageLocation-buttonsLine {
+.DocumentOrRoomMediaDefaultScreen-buttonsLine {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
 
-.StorageLocation-buttonsLineItem {
+.DocumentOrRoomMediaDefaultScreen-buttonsLineItem {
   margin-top: @edu-control-spacing-base;
 
-  &.StorageLocation-buttonsLineItem--select {
+  &.DocumentOrRoomMediaDefaultScreen-buttonsLineItem--select {
     min-width: 100px;
   }
 }
 
-.StorageLocation-locationInfo {
+.DocumentOrRoomMediaDefaultScreen-locationInfo {
   min-height: 40px;
   margin-bottom: 20px;
 }
 
-.StorageLocation-alertPrivateStorage {
+.DocumentOrRoomMediaDefaultScreen-alertPrivateStorage {
   display: flex;
   flex-wrap: wrap;
 }
 
-.StorageLocation-alertPrivateStorageUsage {
+.DocumentOrRoomMediaDefaultScreen-alertPrivateStorageUsage {
   flex-grow: 1;
   margin-left: 5px;
 }

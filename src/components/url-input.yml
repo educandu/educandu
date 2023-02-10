@@ -5,6 +5,9 @@ urlInput:
   tooltip_wikimedia:
     en: Wikimedia
     de: Wikimedia
+  tooltip_media-library:
+    en: Media library
+    de: Medien-Bibliothek
   tooltip_document-media:
     en: document media storage
     de: Dokument-Medien Speicher
