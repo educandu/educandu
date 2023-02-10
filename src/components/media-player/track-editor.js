@@ -60,7 +60,7 @@ function TrackEditor({ content, onContentChanged, usePlaybackRange }) {
         </FormItem>
       )}
       <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-        <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
+        <MarkdownInput value={copyrightNotice} debounced onChange={handleCopyrightNoticeChanged} />
       </FormItem>
     </Fragment>
   );

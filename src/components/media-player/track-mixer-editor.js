@@ -61,7 +61,7 @@ function TrackMixerEditor({
     onVolumePresetsChange(newPresets);
   };
 
-  const tracksInfo = tracks.map((track, index) => ({
+  const trackInfos = tracks.map((track, index) => ({
     key: track.key,
     name: track.name,
     volume: volumePresets[selectedVolumePresetIndex].tracks[index],
@@ -92,7 +92,7 @@ function TrackMixerEditor({
             </div>
           </div>
 
-          {tracksInfo.map(trackInfo => (
+          {trackInfos.map(trackInfo => (
             <div className="TrackMixerEditor-trackNameAndVolume" key={trackInfo.key}>
               <div className="TrackMixerEditor-trackName">{trackInfo.name}</div>
               <div className="TrackMixerEditor-trackVolume">
@@ -104,7 +104,7 @@ function TrackMixerEditor({
         <div className="TrackMixerEditor-barsColumn">
           <div className="TrackMixerEditor-barsColumnLabel">{t('trackDurations')}</div>
           <DimensionsProvider>
-            {({ containerWidth }) => tracks.map(trackInfo => (
+            {({ containerWidth }) => trackInfos.map(trackInfo => (
               <div className="TrackMixerEditor-barRow" key={trackInfo.key}>
                 {!!trackInfo.trackDurationInMs && (
                 <div
