@@ -73,6 +73,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     }))
   }), [mainTrack, secondaryTracks, clientConfig]);
 
+  const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
+
   const selectedChapterStartTimecode = useMemo(
     () => chapters[selectedChapterIndex].startPosition * mainTrackPlaybackDuration,
     [chapters, selectedChapterIndex, mainTrackPlaybackDuration]
@@ -347,7 +349,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               showTrackMixer={false}
               sources={sources}
               volumePresets={volumePresets}
-              parts={chapters}
+              parts={playerParts}
               />
           </div>
           <TrackMixerEditor

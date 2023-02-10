@@ -21,6 +21,8 @@ function MediaAnalysisDisplay({ content }) {
 
   const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
 
+  const playerParts = chapters.map(chapter => ({ startPosition: chapter.startPosition }));
+
   const sources = useMemo(() => ({
     mainTrack: {
       ...mainTrack,
@@ -136,7 +138,7 @@ function MediaAnalysisDisplay({ content }) {
               customUnderScreenContent={renderChapters()}
               multitrackMediaPlayerRef={multitrackMediaPlayerRef}
               posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              parts={chapters}
+              parts={playerParts}
               showTrackMixer
               sources={sources}
               volumePresets={volumePresets}
