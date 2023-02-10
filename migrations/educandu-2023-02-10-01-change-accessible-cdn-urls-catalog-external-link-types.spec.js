@@ -22,28 +22,24 @@ describe('educandu-2023-02-10-01-change-accessible-cdn-urls-catalog-external-lin
           {
             type: 'catalog',
             content: {
-              link: {
-                sourceType: 'document',
-                sourceUrl: 'https://cdn.integration.openmusic.academy/media/123/logo.pdf'
-              }
-            }
-          },
-          {
-            type: 'catalog',
-            content: {
-              link: {
-                sourceType: 'external',
-                sourceUrl: 'https://cdn.integration.openmusic.academy/media/123/logo.pdf'
-              }
-            }
-          },
-          {
-            type: 'catalog',
-            content: {
-              link: {
-                sourceType: 'external',
-                sourceUrl: 'cdn://rooms/123/media/logo.pdf'
-              }
+              items: [
+                {
+                  link: {
+                    sourceType: 'document',
+                    sourceUrl: 'https://cdn.integration.openmusic.academy/media/123/logo.pdf'
+                  }
+                }, {
+                  link: {
+                    sourceType: 'external',
+                    sourceUrl: 'https://cdn.integration.openmusic.academy/media/123/logo.pdf'
+                  }
+                }, {
+                  link: {
+                    sourceType: 'external',
+                    sourceUrl: 'cdn://rooms/123/media/logo.pdf'
+                  }
+                }
+              ]
             }
           }
         ]
@@ -55,34 +51,30 @@ describe('educandu-2023-02-10-01-change-accessible-cdn-urls-catalog-external-lin
           {
             type: 'audio',
             content: {
-              sourceUrl: 'cdn://document-media/123/song.mp3'
+              sourceUrl: 'https://cdn.elmu.online/media/123/song.mp3'
             }
           },
           {
             type: 'catalog',
             content: {
-              link: {
-                sourceType: 'document',
-                sourceUrl: 'cdn://document-media/123/logo.pdf'
-              }
-            }
-          },
-          {
-            type: 'catalog',
-            content: {
-              link: {
-                sourceType: 'external',
-                sourceUrl: 'cdn://document-media/123/logo.pdf'
-              }
-            }
-          },
-          {
-            type: 'catalog',
-            content: {
-              link: {
-                sourceType: 'external',
-                sourceUrl: 'cdn://room-media/123/logo.pdf'
-              }
+              items: [
+                {
+                  link: {
+                    sourceType: 'document',
+                    sourceUrl: 'https://cdn.integration.openmusic.academy/media/123/logo.pdf'
+                  }
+                }, {
+                  link: {
+                    sourceType: 'external',
+                    sourceUrl: 'cdn://document-media/123/logo.pdf'
+                  }
+                }, {
+                  link: {
+                    sourceType: 'external',
+                    sourceUrl: 'cdn://room-media/123/logo.pdf'
+                  }
+                }
+              ]
             }
           }
         ]
