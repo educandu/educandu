@@ -2,9 +2,9 @@ import { createSandbox } from 'sinon';
 import uniqueId from '../src/utils/unique-id.js';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
 
-import MigrationScript from './educandu-2023-02-09-04-change-data-model-for-multitrack-media-plugin.js';
+import MigrationScript from './educandu-2023-02-10-01-change-data-model-for-multitrack-media-plugin.js';
 
-describe('educandu-2023-02-09-04-change-data-model-for-multitrack-media-plugin', () => {
+describe('educandu-2023-02-10-01-change-data-model-for-multitrack-media-plugin', () => {
   let sut;
   const sandbox = createSandbox();
 

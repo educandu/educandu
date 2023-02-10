@@ -1,6 +1,6 @@
 import uniqueId from '../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_04_change_data_model_for_multitrack_media_plugin {
+export default class Educandu_2023_02_10_01_change_data_model_for_multitrack_media_plugin {
   constructor(db) {
     this.db = db;
   }
