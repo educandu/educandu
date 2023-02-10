@@ -229,9 +229,14 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleDocumentMove = async (fromIndex, toIndex) => {
     const reorderedDocumentIds = moveItem(room.documents, fromIndex, toIndex);
+    const clientSideDocumentsReordered = reorderedDocumentIds.map(_id => documents.find(doc => doc._id === _id));
+    setDocuments(clientSideDocumentsReordered);
+
     const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
+
+    const serverSideDocumentsReordered = getSortedDocuments(response.room, documents);
     setRoom(response.room);
-    setDocuments(getSortedDocuments(response.room, documents));
+    setDocuments(serverSideDocumentsReordered);
     message.success(t('common:changesSavedSuccessfully'));
   };
 
