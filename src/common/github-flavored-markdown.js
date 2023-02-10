@@ -4,7 +4,7 @@ import markdownItAnchor from 'markdown-it-anchor';
 import { escapeHtml } from '../utils/string-utils.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceType } from '../utils/resource-utils.js';
-import { getAccessibleUrl, isPortableCdnUrl, getCdnPath } from '../utils/source-utils.js';
+import { getAccessibleUrl, isPortableCdnUrl, getCdnPath, getPortableUrl } from '../utils/source-utils.js';
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
 const imageInsideOfLinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
@@ -104,24 +104,24 @@ class GithubFlavoredMarkdown {
     return [...linkSet];
   }
 
+  _redactUrls(markdown, redactionCallback) {
+    return typeof markdown === 'string'
+      ? markdown
+        .replace(imageInsideOfLinkPattern, (_match, g1, g2, g3, g4, g5) => `${g1}${redactionCallback(g2)}${g3}${redactionCallback(g4)}${g5}`)
+        .replace(simpleLinkOrImagePattern, (_match, g1, g2, g3) => `${g1}${redactionCallback(g2)}${g3}`)
+        .replace(autoLinkPattern, (_match, g1, g2, g3) => `${g1}${redactionCallback(g2)}${g3}`)
+      : markdown;
+  }
+
   redactCdnResources(markdown, redactionCallback) {
-    if (!markdown) {
-      return markdown;
-    }
-
-    const redact = url => {
+    return this._redactUrls(markdown, url => {
       const isRedactableUrl = isPortableCdnUrl(url) && !!getCdnPath({ url });
-      if (isRedactableUrl) {
-        return redactionCallback(url);
-      }
+      return isRedactableUrl ? redactionCallback(url) : url;
+    });
+  }
 
-      return url;
-    };
-
-    return markdown
-      .replace(imageInsideOfLinkPattern, (_match, g1, g2, g3, g4, g5) => `${g1}${redact(g2)}${g3}${redact(g4)}${g5}`)
-      .replace(simpleLinkOrImagePattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`)
-      .replace(autoLinkPattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`);
+  makeCdnResourcesPortable(markdown, cdnRootUrl) {
+    return this._redactUrls(markdown, url => getPortableUrl({ url, cdnRootUrl }));
   }
 }
 
