@@ -55,9 +55,21 @@
   padding: 10px;
   border-radius: @edu-border-radius-base;
 
-  &.RoomPage-document--withMenu {
+  &.RoomPage-document--withActionButtons {
     &:hover {
       background-color: @edu-background-color-light;
+    }
+  }
+
+  &.is-dragged {
+    background-color: @edu-background-color-light;
+  }
+
+  &.is-other-dragged {
+    opacity: 0.60;
+
+    &:hover {
+      background-color: inherit;
     }
   }
 }
@@ -67,7 +79,7 @@
   padding-right: 10px;
 }
 
-.RoomPage-documentMenu {
+.RoomPage-documentActionButtons {
   display: flex;
   align-items: center;
 }

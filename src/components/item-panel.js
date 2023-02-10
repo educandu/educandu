@@ -99,7 +99,7 @@ function ItemPanel({
                 size="small"
                 icon={actionButton.icon}
                 disabled={actionButton.disabled}
-                className={classNames('ItemPanel-actionButton', { 'ItemPanel-actionButton--danger': actionButton.danger })}
+                className={classNames('u-action-button', { 'u-danger-action-button': actionButton.danger })}
                 onClick={event => handleActionButtonClick(event, actionButton)}
                 />
             </Tooltip>

@@ -22,3 +22,9 @@ export const isRoomOwnerOrInvitedCollaborator = ({ room, userId }) => {
   const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && isInvitedRoomMember({ room, userId });
   return isOwner || isCollaborator;
 };
+
+export const isRoomInvitedCollaborator = ({ room, userId }) => {
+  const isOwner = isRoomOwner({ room, userId });
+  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && isInvitedRoomMember({ room, userId });
+  return !isOwner && isCollaborator;
+};
