@@ -38,8 +38,8 @@ const logger = new Logger(import.meta.url);
 
 const VIEW_MODE = {
   owner: 'owner',
-  collaborator: 'collaborator',
-  member: 'member'
+  collaboratingMember: 'collaborating-member',
+  nonCollaboratingMember: 'non-collaborating-member'
 };
 
 function getDocumentMetadataModalState({ t, room, documentToClone = null, isOpen = false }) {
@@ -91,9 +91,9 @@ export default function Room({ PageTemplate, initialState }) {
       return VIEW_MODE.owner;
     }
     if (isRoomInvitedCollaborator({ room, userId: user?._id })) {
-      return VIEW_MODE.collaborator;
+      return VIEW_MODE.collaboratingMember;
     }
-    return VIEW_MODE.member;
+    return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
   useEffect(() => {
@@ -481,10 +481,10 @@ export default function Room({ PageTemplate, initialState }) {
         {viewMode !== VIEW_MODE.owner && (
           <div className="RoomPage-documents RoomPage-documents--roomMemberView">
             {renderRoomDescription()}
-            {viewMode === VIEW_MODE.collaborator && renderCreateDocumentButton()}
+            {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
             {!documents.length && t('documentsPlaceholder')}
-            {viewMode === VIEW_MODE.member && renderDocumentsAsReadOnly()}
-            {viewMode === VIEW_MODE.collaborator && renderNonDraftDocumentsAsDraggable()}
+            {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
+            {viewMode === VIEW_MODE.collaboratingMember && renderNonDraftDocumentsAsDraggable()}
           </div>
         )}
 
