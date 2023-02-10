@@ -34,13 +34,13 @@ export function createDefaultContent(t) {
 
 export function validateContent(content) {
   const schema = joi.object({
-    tracks: joi.object({
+    tracks: joi.array().items(joi.object({
       key: joi.string().required(),
       name: joi.string().allow('').required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
-    }).min(1).required(),
+    })).min(1).required(),
     volumePresets: joi.array().items(joi.object({
       name: joi.string().required(),
       tracks: joi.array().items(joi.number().min(0).max(1)).min(1).required()
