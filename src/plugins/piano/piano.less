@@ -1,27 +1,29 @@
 .Piano {}
 
-.Piano-MidiControlsContainer {
+.Piano-controlsContainer {
   display: flex;
   width: 100%;
 }
 
-.Piano-MidiControlsWrapper {
+.Piano-controlsWrapper {
   width: 100%;
-  padding: 1rem 0;
 }
 
 .Piano-midiTrackTitle {
+  margin-left: 0.1rem;
   display: flex;
   justify-content: left;
 }
 
 .Piano-midiPlayerControls {
   display: flex;
+  gap: 0.2rem;
   justify-content: left;
   padding: 0 0 0.5rem 0;
+  margin-bottom: 0.3rem;
 }
 
-.Piano-inputSwitch {
+.Piano-midiInputSwitch {
   width: 100%;
   padding: 1rem 0;
   display: flex;
@@ -37,7 +39,6 @@
   justify-content: center;
   flex-flow: row nowrap;
   border-collapse: collapse;
-  // cursor: pointer;
 }
 
 .Piano-selectorPianoContainer {
@@ -92,7 +93,7 @@
 }
 
 .Piano-key.Piano-keySelected {
-  background-color: rgb(127, 202, 230) !important;
+  background-color: #82E2FF !important;
 }
 
 .Piano-keyBlack {
@@ -107,7 +108,7 @@
   z-index: 1;
 }
 
-.Piano-Switch {
+.Piano-switch {
   position: relative;
   background-color: rgb(230,230,230);
   height: 22px;
@@ -124,12 +125,12 @@
   width: 100%;
 }
 
-.Piano-SwitchChecked {
+.Piano-switchChecked {
   background-color: rgb(109,139,177);
   transition: all 0.2s ease-in-out;
 }
 
-.Piano-SwitchHandle {
+.Piano-switchHandle {
   position: absolute;
   background-color: white;
   border-radius: 50%;
@@ -141,76 +142,80 @@
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.Piano-Switch.Piano-SwitchChecked .Piano-SwitchHandle {
+.Piano-switch.Piano-switchChecked .Piano-switchHandle {
   left: calc(100% - 18px - 2px);
   transition: all 0.2s ease-in-out;
 }
 
-.Piano-PlayExerciseModeRG {
-  margin-top: -0.5rem;
+.Piano-playExerciseModeRGContainer {
   margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
+  width: 100%;
 }
 
-.Piano-EarTrainingControlsContainer {
+.Piano-playExerciseModeRG {
+  width: 100%;
+}
+
+.Piano-btnPlayExerciseMode {
+  width: 50%;
+}
+
+.Piano-earTrainingControlsContainer {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
+  padding-bottom: 1rem;
 }
-
 
 .Piano-earTrainingControls {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0;
-}
-
-.Piano-EarTrainingControls {
   display: flex;
   flex-direction: column;
   text-align: center;
   align-items: center;
 }
 
-.Piano-EarTrainingControlsItem {
+.Piano-earTrainingControlsItem {
   margin-bottom: 0.8rem;
+  display: flex;
+  gap: 0.2rem;
 }
 
-.Piano-BtnShowHideSolution {
-  width: fit-content;
+.Piano-noteDurationSlider {
+  width: 100%;
 }
 
-.Piano-BtnNewExercise {
-  width: fit-content;
+.Piano-btnShowHideSolution {
+  width: 100%;
 }
 
-.Piano-AbcDisplayContainer {
+.Piano-btnNewExercise {
+  width: 100%;
+}
+
+.Piano-abcDisplayContainer {
   padding-bottom: 1rem;
 }
 
-.Piano-AbcDisplay {
-  display: flex;
-}
-
-.Piano-AnswerAbcDisplay {
+.Piano-answerAbcDisplay {
   margin-left: 0 !important;
   text-align: left !important;
 }
 
-.Piano-NoteInputSwitch {
+.Piano-noteInputSwitch {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.Piano-AnswerAbcNotation {
+.Piano-answerAbcNotation {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 7rem;
 }
 
-.Piano-BtnDeleteNote {
+.Piano-btnDeleteNote {
   min-width: 3rem;
   display: flex;
   justify-content: right;
@@ -218,14 +223,13 @@
   padding: 0.5rem;
 }
 
-.Piano-SolutionAbcDisplay {
+.Piano-solutionAbcDisplay {
   position: absolute;
   left: 50%;
-  // max-width: 50% !important;
   text-align: left !important;
 }
 
-.Piano-SolutionAbcNotation {
+.Piano-solutionAbcNotation {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -237,14 +241,98 @@
   width: 100%;
 }
 
-.Piano-OneOfThreeFlexColumns {
+.Piano-oneOfThreeFlexColumns {
   display: flex;
   width: 100%;
 }
 
-.Piano-ChordSolutionDisplay {
+.Piano-chordSolutionDisplay {
   width: 100%;
   display: flex;
   justify-content: center;
   font-weight: bold;
+}
+
+.Piano-headlineMidi {
+  margin-left: 0.1rem;
+  margin-bottom: 1rem;
+}
+
+.Piano-headlineEarTraining {
+  position: absolute;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.Piano-controlsLabel {
+  margin-left: 0.3rem;
+  margin-right: 0.5rem;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.Piano-playFromNoteInput {
+  flex: 1;
+}
+
+.Piano-controlsLabelPlayFromNote {
+  width: fit-content;
+}
+
+.Piano-earTrainingHeadline {
+  height: 3.8rem;
+  margin-bottom: 0.8rem;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.Piano-playFromNoteInputContainer {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-bottom: 0.5rem;
+  width: 100%
+}
+
+.Piano-exerciseBtns {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.Piano-noteDurationControlsItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Piano-earTrainingControlsBody {
+  width: 100%;
+}
+
+.Piano-flex {
+  display: flex !important;
+}
+
+.Piano-midiInputSwitchContainer {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.Piano-checkbox {
+  min-width: 6rem;
+}
+
+.Piano-whiteKeysCheckbox {
+  margin-top: 1rem;
+}
+
+.Piano-cardSelector {
+  margin-bottom: 1.2rem;
 }

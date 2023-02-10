@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
+import id from '../../../utils/unique-id.js';
 import React, { useEffect, useRef } from 'react';
 import { KeyWhite, KeyWhiteWithBlack } from './keys.js';
-import { create as createId } from '../../utils/unique-id.js';
 import { EXERCISE_TYPES, MIDI_NOTE_NAMES } from './constants.js';
 
 // 0 represents white and black key, 1 respresents white key. Second element is midiValue for white key.
@@ -12,7 +12,7 @@ export const pianoLayout = [
   [1, 107], [1, 108]
 ];
 
-export default function CustomPiano(props) {
+export default function Piano(props) {
 
   const { keys,
     test,
@@ -24,9 +24,9 @@ export default function CustomPiano(props) {
     activeNotes,
     exerciseData,
     updateKeyStyle,
+    canShowSolution,
     hasSamplerLoaded,
     updateActiveNotes,
-    canShowSolutionRef,
     isNoteInputEnabled,
     isExercisePlayingRef,
     answerMidiValueSequence } = props;
@@ -43,7 +43,7 @@ export default function CustomPiano(props) {
   };
 
   const isBlackKey = key => {
-    if (key.classList.contains('MidiPiano-keyBlack')) {
+    if (key.classList.contains('Piano-keyBlack')) {
       return true;
     }
     return false;
@@ -129,16 +129,18 @@ export default function CustomPiano(props) {
   };
 
   useEffect(() => {
-    if (!hasSamplerLoaded || !sampler.current) {
-      return;
-    }
     piano.current.addEventListener('mousedown', handleMouseDown);
     piano.current.addEventListener('mouseup', handleMouseUp);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasSamplerLoaded, sampler]);
+
+    return function cleanup() {
+      piano.current?.removeEventListener('mousedown', handleMouseDown);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      piano.current?.removeEventListener('mouseup', handleMouseUp);
+    };
+  });
 
   useEffect(() => {
-    const keyElems = document.querySelectorAll(`#${pianoId} .MidiPiano-key`);
+    const keyElems = document.querySelectorAll(`#${pianoId} .Piano-key`);
     for (const key of keyElems) {
       key.addEventListener('mouseover', handleMouseOver);
       key.addEventListener('mouseleave', handleMouseOut);
@@ -163,17 +165,17 @@ export default function CustomPiano(props) {
   });
 
   return (
-    <div ref={piano} id={pianoId} className="MidiPiano-pianoContainer">
+    <div ref={piano} id={pianoId} className="Piano-pianoContainer">
       {keyRangeLayout.map((elem, index) => {
         if (elem[0] === 0 && index < keyRangeLayout.length - 1) {
           return (
             <KeyWhiteWithBlack
               colors={colors}
-              key={createId()}
+              key={id.create()}
               midiValue={elem[1]}
               exerciseType={exerciseType}
+              canShowSolution={canShowSolution}
               midiValueSequence={midiValueSequence}
-              canShowSolutionRef={canShowSolutionRef}
               answerMidiValueSequence={answerMidiValueSequence}
               />
           );
@@ -181,11 +183,11 @@ export default function CustomPiano(props) {
         return (
           <KeyWhite
             colors={colors}
-            key={createId()}
+            key={id.create()}
             midiValue={elem[1]}
             exerciseType={exerciseType}
+            canShowSolution={canShowSolution}
             midiValueSequence={midiValueSequence}
-            canShowSolutionRef={canShowSolutionRef}
             answerMidiValueSequence={answerMidiValueSequence}
             />
         );
@@ -194,10 +196,10 @@ export default function CustomPiano(props) {
   );
 }
 
-CustomPiano.propTypes = {
+Piano.propTypes = {
   activeNotes: PropTypes.object.isRequired,
   answerMidiValueSequence: PropTypes.array,
-  canShowSolutionRef: PropTypes.object,
+  canShowSolution: PropTypes.bool,
   colors: PropTypes.object.isRequired,
   content: PropTypes.object.isRequired,
   exerciseData: PropTypes.object,
@@ -213,9 +215,9 @@ CustomPiano.propTypes = {
   updateKeyStyle: PropTypes.func.isRequired
 };
 
-CustomPiano.defaultProps = {
+Piano.defaultProps = {
   answerMidiValueSequence: [],
-  canShowSolutionRef: {},
+  canShowSolution: false,
   exerciseData: {},
   inputNote: () => {},
   isNoteInputEnabled: {},

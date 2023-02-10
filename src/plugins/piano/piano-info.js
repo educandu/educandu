@@ -1,8 +1,7 @@
 import React from 'react';
-import PianoIcon from './piano-icon.js';
 import PianoDisplay from './piano-display.js';
+import PianoIcon from './icons/piano-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MIDI_SOURCE_TYPE } from '../../domain/constants.js';
 
 class PianoInfo {
 
@@ -30,12 +29,12 @@ class PianoInfo {
 
   getDefaultCustomNoteSequence() {
     return {
-      abc: 'c',
-      abcNoteNameSequence: ['c'],
+      abc: 'C',
+      abcNoteNameSequence: ['C'],
       clef: 'treble',
-      filteredAbc: 'c',
-      midiNoteNameSequence: ['C5'],
-      midiValueSequence: [72],
+      filteredAbc: 'C',
+      midiNoteNameSequence: ['C4'],
+      midiValueSequence: [60],
       noteRange: { first: 19, last: 39 }
     };
   }
@@ -115,7 +114,6 @@ class PianoInfo {
   getDefaultContent() {
 
     return {
-      sourceType: MIDI_SOURCE_TYPE.internal,
       sourceUrl: '',
       keyRange: { first: 12, last: 39 },
       midiTrackTitle: '',

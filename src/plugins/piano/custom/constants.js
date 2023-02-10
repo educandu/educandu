@@ -1,12 +1,13 @@
-// Note names for each midi Value that can be played by Tone.js sampler. Also included in midiPlayerNs.Constants as NOTES
+// Note names for each midi Value that can be played by Tone.js sampler. Also included in midi player namespace in .Constants.NOTES
 export const MIDI_NOTE_NAMES = ['C-1', 'Db-1', 'D-1', 'Eb-1', 'E-1', 'F-1', 'Gb-1', 'G-1', 'Ab-1', 'A-1', 'Bb-1', 'B-1', 'C0', 'Db0', 'D0', 'Eb0', 'E0', 'F0', 'Gb0', 'G0', 'Ab0', 'A0', 'Bb0', 'B0', 'C1', 'Db1', 'D1', 'Eb1', 'E1', 'F1', 'Gb1', 'G1', 'Ab1', 'A1', 'Bb1', 'B1', 'C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2', 'Bb2', 'B2', 'C3', 'Db3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'Ab3', 'A3', 'Bb3', 'B3', 'C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4', 'C5', 'Db5', 'D5', 'Eb5', 'E5', 'F5', 'Gb5', 'G5', 'Ab5', 'A5', 'Bb5', 'B5', 'C6', 'Db6', 'D6', 'Eb6', 'E6', 'F6', 'Gb6', 'G6', 'Ab6', 'A6', 'Bb6', 'B6', 'C7', 'Db7', 'D7', 'Eb7', 'E7', 'F7', 'Gb7', 'G7', 'Ab7', 'A7', 'Bb7', 'B7', 'C8', 'Db8', 'D8', 'Eb8', 'E8', 'F8', 'Gb8', 'G8', 'Ab8', 'A8', 'Bb8', 'B8', 'C9', 'Db9', 'D9', 'Eb9', 'E9', 'F9', 'Gb9', 'G9', 'Ab9', 'A9', 'Bb9', 'B9'];
 
 // Chromatic abc note names
 export const ABC_NOTE_NAMES = ['C,,,,,', '^C,,,,,', 'D,,,,,', '_E,,,,,', 'E,,,,,', 'F,,,,,', '^F,,,,,', 'G,,,,,', '^G,,,,,', 'A,,,,,', '_B,,,,,', 'B,,,,,', 'C,,,,', '^C,,,,', 'D,,,,', '_E,,,,', 'E,,,,', 'F,,,,', '^F,,,,', 'G,,,,', '^G,,,,', 'A,,,,', '_B,,,,', 'B,,,,', 'C,,,', '^C,,,', 'D,,,', '_E,,,', 'E,,,', 'F,,,', '^F,,,', 'G,,,', '^G,,,', 'A,,,', '_B,,,', 'B,,,', 'C,,', '^C,,', 'D,,', '_E,,', 'E,,', 'F,,', '^F,,', 'G,,', '^G,,', 'A,,', '_B,,', 'B,,', 'C,', '^C,', 'D,', '_E,', 'E,', 'F,', '^F,', 'G,', '^G,', 'A,', '_B,', 'B,', 'C', '^C', 'D', '_E', 'E', 'F', '^F', 'G', '^G', 'A', '_B', 'B', 'c', '^c', 'd', '_e', 'e', 'f', '^f', 'g', '^g', 'a', '_b', 'b', 'c\'', '^c\'', 'd\'', '_e\'', 'e\'', 'f\'', '^f\'', 'g\'', '^g\'', 'a\'', '_b\'', 'b\'', 'c\'\'', '^c\'\'', 'd\'\'', '_e\'\'', 'e\'\'', 'f\'\'', '^f\'\'', 'g\'\'', '^g\'\'', 'a\'\'', '_b\'\'', 'b\'\'', 'c\'\'\'', '^c\'\'\'', 'd\'\'\'', '_e\'\'\'', 'e\'\'\'', 'f\'\'\'', '^f\'\'\'', 'g\'\'\'', '^g\'\'\'', 'a\'\'\'', '_b\'\'\'', 'b\'\'\'', 'c\'\'\'\'', '^c\'\'\'\'', 'd\'\'\'\'', '_e\'\'\'\'', 'e\'\'\'\'', 'f\'\'\'\'', '^f\'\'\'\'', 'g\'\'\'\'', '^g\'\'\'\'', 'a\'\'\'\'', '_b\'\'\'\'', 'b\'\'\'\''];
 
-// Only white key abc note names.
+// Only white key abc note names
 const abcNaturalNoteNames = ['C,,,,,', 'D,,,,,', 'E,,,,,', 'F,,,,,', 'G,,,,,', 'A,,,,,', 'B,,,,,', 'C,,,,', 'D,,,,', 'E,,,,', 'F,,,,', 'G,,,,', 'A,,,,', 'B,,,,', 'C,,,', 'D,,,', 'E,,,', 'F,,,', 'G,,,', 'A,,,', 'B,,,', 'C,,', 'D,,', 'E,,', 'F,,', 'G,,', 'A,,', 'B,,', 'C,', 'D,', 'E,', 'F,', 'G,', 'A,', 'B,', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'c\'', 'd\'', 'e\'', 'f\'', 'g\'', 'a\'', 'b\'', 'c\'\'', 'd\'\'', 'e\'\'', 'f\'\'', 'g\'\'', 'a\'\'', 'b\'\'', 'c\'\'\'', 'd\'\'\'', 'e\'\'\'', 'f\'\'\'', 'g\'\'\'', 'a\'\'\'', 'b\'\'\'', 'c\'\'\'\'', 'd\'\'\'\'', 'e\'\'\'\'', 'f\'\'\'\'', 'g\'\'\'\'', 'a\'\'\'\'', 'b\'\'\'\''];
 
+// Vectors that lead from white key to next white key
 const incrementBy = new Map();
 incrementBy.set('c', 2);
 incrementBy.set('C', 2);
@@ -23,7 +24,7 @@ incrementBy.set('A', 2);
 incrementBy.set('b', 1);
 incrementBy.set('B', 1);
 
-// Converts abc note names to midi note names which Tone.js sampler can play.
+// Convert abc note names to midi note names which Tone.js sampler can play
 export const NOTE_CONVERSION_MAP = (() => {
   const map = new Map();
 
@@ -50,7 +51,7 @@ export const NOTE_CONVERSION_MAP = (() => {
   return map;
 })();
 
-// Provides midi values for all white keys.
+// Provide midi values for all white keys
 export const WHITE_KEYS_MIDI_VALUES = (() => {
   const arr = [];
   const octave = [0, 2, 4, 5, 7, 9, 11];
@@ -76,8 +77,7 @@ export const SAMPLE_TYPES = {
 
 export const MIDI_COMMANDS = {
   noteOn: 144,
-  noteOff: 128,
-  sustainOff: 176
+  noteOff: 128
 };
 
 export const EXERCISE_TYPES = {
@@ -202,9 +202,9 @@ export const CHORD_VECTOR_MAP = new Map([
   ['[4,7]', { type: 'majorChord', inversion: 'fundamental' }],
   ['[3,8]', { type: 'majorChord', inversion: 'firstInversion' }],
   ['[5,9]', { type: 'majorChord', inversion: 'secondInversion' }],
-  ['[3,7]', { type: 'minorTriad', inversion: 'fundamental' }],
-  ['[4,9]', { type: 'minorTriad', inversion: 'firstInversion' }],
-  ['[5,8]', { type: 'minorTriad', inversion: 'secondInversion' }],
+  ['[3,7]', { type: 'minorChord', inversion: 'fundamental' }],
+  ['[4,9]', { type: 'minorChord', inversion: 'firstInversion' }],
+  ['[5,8]', { type: 'minorChord', inversion: 'secondInversion' }],
   ['[3,6]', { type: 'diminishedTriad', inversion: 'fundamental' }],
   ['[3,9]', { type: 'diminishedTriad', inversion: 'firstInversion' }],
   ['[6,9]', { type: 'diminishedTriad', inversion: 'secondInversion' }],

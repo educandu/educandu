@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { EXERCISE_TYPES } from './constants.js';
 
-const getStyle = (keyMidiValue, midiValueSequence, colors, canShowSolutionRef, answerMidiValueSequence, exerciseType) => {
+const getStyle = (keyMidiValue, midiValueSequence, colors, answerMidiValueSequence, exerciseType, canShowSolution) => {
 
   if (!midiValueSequence) {
     return null;
@@ -23,18 +23,18 @@ const getStyle = (keyMidiValue, midiValueSequence, colors, canShowSolutionRef, a
   const isSolutionKey = midiValueSequence.includes(keyMidiValue);
   const isAnswerKey = answerMidiValueSequence.includes(keyMidiValue);
 
-  if (isSolutionKey && canShowSolutionRef.current) {
+  if (isSolutionKey && canShowSolution) {
     style.backgroundColor = colors.correct;
   }
-  if (isAnswerKey && !canShowSolutionRef.current) {
+  if (isAnswerKey && !canShowSolution) {
     style.backgroundColor = colors.answer;
   }
-  if (isAnswerKey && !isSolutionKey && canShowSolutionRef.current) {
+  if (isAnswerKey && !isSolutionKey && canShowSolution) {
     style.backgroundColor = colors.wrong;
   }
   if (isIndicationKey) {
     style.backgroundColor = colors.activeKey;
-    if (exerciseType === EXERCISE_TYPES.interval && midiValueSequence[0] === midiValueSequence[1] && canShowSolutionRef.current) {
+    if (exerciseType === EXERCISE_TYPES.interval && midiValueSequence[0] === midiValueSequence[1] && canShowSolution) {
       style.backgroundColor = colors.correct;
     }
   }
@@ -48,19 +48,19 @@ export function KeyWhite(props) {
     colors,
     midiValue,
     exerciseType,
-    canShowSolutionRef,
+    canShowSolution,
     midiValueSequence,
     updateKeyRangeSelection,
     answerMidiValueSequence } = props;
 
   return (
     <div
-      className="MidiPiano-key MidiPiano-keyWhite"
+      className="Piano-key Piano-keyWhite"
       onClick={updateKeyRangeSelection}
       data-midi-value={midiValue}
       data-default-color={colors.whiteKey}
       data-index={index}
-      style={getStyle(midiValue, midiValueSequence, colors, canShowSolutionRef, answerMidiValueSequence, exerciseType)}
+      style={getStyle(midiValue, midiValueSequence, colors, answerMidiValueSequence, exerciseType, canShowSolution)}
       />
   );
 }
@@ -71,25 +71,25 @@ export function KeyWhiteWithBlack(props) {
     colors,
     midiValue,
     exerciseType,
-    canShowSolutionRef,
     midiValueSequence,
+    canShowSolution,
     updateKeyRangeSelection,
     answerMidiValueSequence } = props;
 
   return (
     <div
-      className="MidiPiano-key MidiPiano-keyWhite"
+      className="Piano-key Piano-keyWhite"
       onClick={updateKeyRangeSelection}
       data-midi-value={midiValue}
       data-default-color={colors.whiteKey}
       data-index={index}
-      style={getStyle(midiValue, midiValueSequence, colors, canShowSolutionRef, answerMidiValueSequence, exerciseType)}
+      style={getStyle(midiValue, midiValueSequence, colors, answerMidiValueSequence, exerciseType, canShowSolution)}
       >
       <div
-        className="MidiPiano-key MidiPiano-keyBlack"
+        className="Piano-key Piano-keyBlack"
         data-midi-value={midiValue + 1}
         data-default-color={colors.blackKey}
-        style={getStyle(midiValue + 1, midiValueSequence, colors, canShowSolutionRef, answerMidiValueSequence, exerciseType)}
+        style={getStyle(midiValue + 1, midiValueSequence, colors, answerMidiValueSequence, exerciseType, canShowSolution)}
         />
     </div>
   );

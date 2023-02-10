@@ -2112,8 +2112,66 @@
     }
   },
   "earTraining": {
-    "en": "Ear Training",
-    "de": "Gehörbildung"
+    "name": {
+      "en": "Ear training",
+      "de": "Gehörbildung"
+    },
+    "nextExercise": {
+      "en": "Next exercise",
+      "de": "Nächste Übung"
+    },
+    "abcCode": {
+      "en": "ABC code",
+      "de": "ABC-Code"
+    },
+    "useMidi": {
+      "en": "Use MIDI (auto)",
+      "de": "MIDI benutzen (auto)"
+    },
+    "testsOrder": {
+      "en": "Display order",
+      "de": "Anzeigereihenfolge"
+    },
+    "testsOrderGiven": {
+      "en": "as specified",
+      "de": "wie angegeben"
+    },
+    "testsOrderRandom": {
+      "en": "random",
+      "de": "zufällig"
+    },
+    "testMode": {
+      "en": "Test mode",
+      "de": "Test-Modus"
+    },
+    "testModeImage": {
+      "en": "image",
+      "de": "Bild"
+    },
+    "testModeAbcCode": {
+      "en": "ABC code",
+      "de": "ABC-Code"
+    },
+    "addTest": {
+      "en": "Add test",
+      "de": "Test hinzufügen"
+    },
+    "testNumber": {
+      "en": "Test {number}",
+      "de": "Test {number}"
+    },
+    "testQuestion": {
+      "en": "Question",
+      "de": "Frage"
+    },
+    "testAnswer": {
+      "en": "Answer",
+      "de": "Antwort"
+    },
+    "audio": {
+      "en": "Audio",
+      "de": "Audio"
+    }
   },
   "iframe": {
     "name": {
@@ -2393,353 +2451,359 @@
       "de": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
     }
   },
-  "name": {
-    "en": "Midi piano",
-    "de": "Midi-Klavier"
-  },
-  "pianoKeyRange": {
-    "en": "Key range",
-    "de": "Tastenumfang"
-  },
-  "midiInput": {
-    "en": "Midi Input",
-    "de": "Midi-Eingabe"
-  },
   "piano": {
-    "en": "Piano",
-    "de": "Klavier"
-  },
-  "harpsichord": {
-    "en": "Harpsichord",
-    "de": "Cembalo"
-  },
-  "keyRangeSelectionText": {
-    "en": "Please select the two outermost white keys to be shown.",
-    "de": "Bitte wählen Sie die beiden äußersten anzuzeigenden weißen Tasten aus."
-  },
-  "testNumber": {
-    "en": "Test {number}",
-    "de": "Test {number}"
-  },
-  "exerciseType": {
-    "en": "Exercise type",
-    "de": "Übungstyp"
-  },
-  "interval": {
-    "en": "Interval",
-    "de": "Intervall"
-  },
-  "chord": {
-    "en": "Chord",
-    "de": "Akkord"
-  },
-  "noteSequence": {
-    "en": "Note Sequence",
-    "de": "Tonfolge"
-  },
-  "numberOfNotes": {
-    "en": "Number of notes",
-    "de": "Anzahl an Tönen"
-  },
-  "intervals": {
-    "en": "Intervals",
-    "de": "Intervalle"
-  },
-  "chords": {
-    "en": "Chords",
-    "de": "Akkorde"
-  },
-  "all": {
-    "en": "All",
-    "de": "Alle"
-  },
-  "prime": {
-    "en": "Prime",
-    "de": "Prime"
-  },
-  "second": {
-    "en": "Second",
-    "de": "Sekunde"
-  },
-  "third": {
-    "en": "Third",
-    "de": "Terz"
-  },
-  "fourth": {
-    "en": "Fourth",
-    "de": "Quarte"
-  },
-  "tritone": {
-    "en": "Tritone",
-    "de": "Tritonus"
-  },
-  "fifth": {
-    "en": "Fifth",
-    "de": "Quinte"
-  },
-  "sixth": {
-    "en": "Sixth",
-    "de": "Sexte"
-  },
-  "seventh": {
-    "en": "Seventh",
-    "de": "Septime"
-  },
-  "octave": {
-    "en": "Octave",
-    "de": "Oktave"
-  },
-  "minor": {
-    "en": "Minor",
-    "de": "Klein"
-  },
-  "major": {
-    "en": "Major",
-    "de": "Groß"
-  },
-  "majorTriad": {
-    "en": "Major",
-    "de": "Dur"
-  },
-  "minorTriad": {
-    "en": "Minor",
-    "de": "Moll"
-  },
-  "diminished": {
-    "en": "Diminished",
-    "de": "Vermindert"
-  },
-  "augmented": {
-    "en": "Augmented",
-    "de": "Übermäßig"
-  },
-  "triads": {
-    "en": "Triads",
-    "de": "Dreiklänge"
-  },
-  "seventhChords": {
-    "en": "Seventh Chords",
-    "de": "Septakkorde"
-  },
-  "majorTriadMajorSeventh": {
-    "en": "Major Triad + Major Seventh",
-    "de": "Großer Durseptakkord"
-  },
-  "majorTriadMinorSeventh": {
-    "en": "Major Triad + Minor Seventh",
-    "de": "Kleiner Durseptakkord"
-  },
-  "minorTriadMinorSeventh": {
-    "en": "Minor Triad + Minor Seventh",
-    "de": "Kleiner Mollseptakkord"
-  },
-  "minorTriadMajorSeventh": {
-    "en": "Minor Triad + Major Seventh",
-    "de": "Großer Mollseptakkord"
-  },
-  "diminishedSeventh": {
-    "en": "Diminished Seventh",
-    "de": "Vollvermindert"
-  },
-  "halfDiminished": {
-    "en": "Half-diminished",
-    "de": "Halbvermindert"
-  },
-  "inversions": {
-    "en": "Inversions",
-    "de": "Umkehrungen"
-  },
-  "fundamental": {
-    "en": "Fundamental",
-    "de": "Grundstellung"
-  },
-  "firstInversion": {
-    "en": "First Inversion",
-    "de": "Erste Umkehrung"
-  },
-  "secondInversion": {
-    "en": "Second Inversion",
-    "de": "Zweite Umkehrung"
-  },
-  "thirdInversion": {
-    "en": "Third Inversion",
-    "de": "Dritte Umkehrung"
-  },
-  "anyInversion": {
-    "en": "Any inversion possible",
-    "de": "Jede Umkehrung möglich"
-  },
-  "direction": {
-    "en": "Direction",
-    "de": "Richtung"
-  },
-  "upwards": {
-    "en": "Upwards",
-    "de": "Aufwärts"
-  },
-  "downwards": {
-    "en": "Downwards",
-    "de": "Abwärts"
-  },
-  "noteRange": {
-    "en": "Note Range",
-    "de": "Tonumfang"
-  },
-  "noteB": {
-    "en": "B",
-    "de": "H"
-  },
-  "whiteKeysOnly": {
-    "en": "White Keys Only",
-    "de": "Nur weiße Tasten"
-  },
-  "type": {
-    "en": "Type",
-    "de": "Typ"
-  },
-  "predefined": {
-    "en": "Predefined",
-    "de": "Vordefiniert"
-  },
-  "random": {
-    "en": "Random",
-    "de": "Zufällig"
-  },
-  "abcCode": {
-    "en": "ABC Code",
-    "de": "ABC-Code"
-  },
-  "preview": {
-    "en": "Preview",
-    "de": "Vorschau"
-  },
-  "clef": {
-    "en": "Clef",
-    "de": "Notenschlüssel"
-  },
-  "trebleClef": {
-    "en": "Treble",
-    "de": "Violinschlüssel"
-  },
-  "bassClef": {
-    "en": "Bass",
-    "de": "Bassschlüssel"
-  },
-  "accidentals": {
-    "en": "Accidentals",
-    "de": "Vorzeichen"
-  },
-  "addCustomNoteSequence": {
-    "en": "Add Note Sequence",
-    "de": "Tonfolge hinzufügen"
-  },
-  "noteSequenceNumber": {
-    "en": "Note Sequence {number}",
-    "de": "Tonfolge {number}"
-  },
-  "c1": {
-    "en": "C1",
-    "de": "C1"
-  },
-  "c2": {
-    "en": "C2",
-    "de": "C"
-  },
-  "c3": {
-    "en": "C3",
-    "de": "c"
-  },
-  "c4": {
-    "en": "C4",
-    "de": "c1"
-  },
-  "c5": {
-    "en": "C5",
-    "de": "c2"
-  },
-  "c6": {
-    "en": "C6",
-    "de": "c3"
-  },
-  "c7": {
-    "en": "C7",
-    "de": "c4"
-  },
-  "c8": {
-    "en": "C8",
-    "de": "c5"
-  },
-  "successive": {
-    "en": "Successive",
-    "de": "Sukzessiv"
-  },
-  "simultaneous": {
-    "en": "Simultaneous",
-    "de": "Simultan"
-  },
-  "showSolution": {
-    "en": "Show Solution",
-    "de": "Lösung anzeigen"
-  },
-  "hideSolution": {
-    "en": "Hide Solution",
-    "de": "Lösung ausblenden"
-  },
-  "playFromNote": {
-    "en": "Play from Note",
-    "de": "Abspielen von Ton"
-  },
-  "noteDuration": {
-    "en": "Note Duration",
-    "de": "Tondauer"
-  },
-  "newExercise": {
-    "en": "New Exercise",
-    "de": "Neue Übung"
-  },
-  "noteInput": {
-    "en": "Note Input",
-    "de": "Noteneingabe"
-  },
-  "firstNote": {
-    "en": "First Note",
-    "de": "Erster Ton"
-  },
-  "solution": {
-    "en": "Solution",
-    "de": "Lösung"
-  },
-  "largeIntervals": {
-    "en": "Large Intervals",
-    "de": "Große Intervalle"
-  },
-  "intervalsPlusOctave": {
-    "en": "Selected Intervals + Octave(s)",
-    "de": "Ausgewählte Intervalle + Oktave(n)"
-  },
-  "allowLargeIntervals": {
-    "en": "Allow intervals larger than octave",
-    "de": "Intervalle größer als Oktave zulassen"
-  },
-  "majorChord": {
-    "en": "Major triad",
-    "de": "Dur-Dreiklang"
-  },
-  "minorChord": {
-    "en": "Minor triad",
-    "de": "Moll-Dreiklang"
-  },
-  "diminishedTriad": {
-    "en": "Diminished triad",
-    "de": "Verminderter Dreiklang"
-  },
-  "augmentedTriad": {
-    "en": "Augmented triad",
-    "de": "Übermäßiger Dreiklang"
-  },
-  "options": {
-    "en": "Options",
-    "de": "Optionen"
+    "name": {
+      "en": "Piano",
+      "de": "Klavier"
+    },
+    "pianoKeyRange": {
+      "en": "Key range",
+      "de": "Tastenumfang"
+    },
+    "midiInput": {
+      "en": "Midi Input",
+      "de": "Midi-Eingabe"
+    },
+    "earTraining": {
+      "en": "Ear Training",
+      "de": "Gehörbildung"
+    },
+    "piano": {
+      "en": "Piano",
+      "de": "Klavier"
+    },
+    "harpsichord": {
+      "en": "Harpsichord",
+      "de": "Cembalo"
+    },
+    "keyRangeSelectionText": {
+      "en": "Please select the two outermost white keys to be shown.",
+      "de": "Bitte wählen Sie die beiden äußersten anzuzeigenden weißen Tasten aus."
+    },
+    "testNumber": {
+      "en": "Test {number}",
+      "de": "Test {number}"
+    },
+    "exerciseType": {
+      "en": "Exercise type",
+      "de": "Übungstyp"
+    },
+    "interval": {
+      "en": "Interval",
+      "de": "Intervall"
+    },
+    "chord": {
+      "en": "Chord",
+      "de": "Akkord"
+    },
+    "noteSequence": {
+      "en": "Note Sequence",
+      "de": "Tonfolge"
+    },
+    "numberOfNotes": {
+      "en": "Number of notes",
+      "de": "Anzahl an Tönen"
+    },
+    "intervals": {
+      "en": "Intervals",
+      "de": "Intervalle"
+    },
+    "chords": {
+      "en": "Chords",
+      "de": "Akkorde"
+    },
+    "all": {
+      "en": "All",
+      "de": "Alle"
+    },
+    "prime": {
+      "en": "Prime",
+      "de": "Prime"
+    },
+    "second": {
+      "en": "Second",
+      "de": "Sekunde"
+    },
+    "third": {
+      "en": "Third",
+      "de": "Terz"
+    },
+    "fourth": {
+      "en": "Fourth",
+      "de": "Quarte"
+    },
+    "tritone": {
+      "en": "Tritone",
+      "de": "Tritonus"
+    },
+    "fifth": {
+      "en": "Fifth",
+      "de": "Quinte"
+    },
+    "sixth": {
+      "en": "Sixth",
+      "de": "Sexte"
+    },
+    "seventh": {
+      "en": "Seventh",
+      "de": "Septime"
+    },
+    "octave": {
+      "en": "Octave",
+      "de": "Oktave"
+    },
+    "minor": {
+      "en": "Minor",
+      "de": "Klein"
+    },
+    "major": {
+      "en": "Major",
+      "de": "Groß"
+    },
+    "majorTriad": {
+      "en": "Major",
+      "de": "Dur"
+    },
+    "minorTriad": {
+      "en": "Minor",
+      "de": "Moll"
+    },
+    "diminished": {
+      "en": "Diminished",
+      "de": "Vermindert"
+    },
+    "augmented": {
+      "en": "Augmented",
+      "de": "Übermäßig"
+    },
+    "triads": {
+      "en": "Triads",
+      "de": "Dreiklänge"
+    },
+    "seventhChords": {
+      "en": "Seventh Chords",
+      "de": "Septakkorde"
+    },
+    "majorTriadMajorSeventh": {
+      "en": "Major Triad + Major Seventh",
+      "de": "Großer Durseptakkord"
+    },
+    "majorTriadMinorSeventh": {
+      "en": "Major Triad + Minor Seventh",
+      "de": "Kleiner Durseptakkord"
+    },
+    "minorTriadMinorSeventh": {
+      "en": "Minor Triad + Minor Seventh",
+      "de": "Kleiner Mollseptakkord"
+    },
+    "minorTriadMajorSeventh": {
+      "en": "Minor Triad + Major Seventh",
+      "de": "Großer Mollseptakkord"
+    },
+    "diminishedSeventh": {
+      "en": "Diminished Seventh",
+      "de": "Vollvermindert"
+    },
+    "halfDiminished": {
+      "en": "Half-diminished",
+      "de": "Halbvermindert"
+    },
+    "inversions": {
+      "en": "Inversions",
+      "de": "Umkehrungen"
+    },
+    "fundamental": {
+      "en": "Fundamental",
+      "de": "Grundstellung"
+    },
+    "firstInversion": {
+      "en": "First Inversion",
+      "de": "Erste Umkehrung"
+    },
+    "secondInversion": {
+      "en": "Second Inversion",
+      "de": "Zweite Umkehrung"
+    },
+    "thirdInversion": {
+      "en": "Third Inversion",
+      "de": "Dritte Umkehrung"
+    },
+    "anyInversion": {
+      "en": "Any inversion possible",
+      "de": "Jede Umkehrung möglich"
+    },
+    "direction": {
+      "en": "Direction",
+      "de": "Richtung"
+    },
+    "upwards": {
+      "en": "Upwards",
+      "de": "Aufwärts"
+    },
+    "downwards": {
+      "en": "Downwards",
+      "de": "Abwärts"
+    },
+    "noteRange": {
+      "en": "Note Range",
+      "de": "Tonumfang"
+    },
+    "noteB": {
+      "en": "B",
+      "de": "H"
+    },
+    "whiteKeysOnly": {
+      "en": "White Keys Only",
+      "de": "Nur weiße Tasten"
+    },
+    "type": {
+      "en": "Type",
+      "de": "Typ"
+    },
+    "predefined": {
+      "en": "Predefined",
+      "de": "Vordefiniert"
+    },
+    "random": {
+      "en": "Random",
+      "de": "Zufällig"
+    },
+    "abcCode": {
+      "en": "ABC Code",
+      "de": "ABC-Code"
+    },
+    "preview": {
+      "en": "Preview",
+      "de": "Vorschau"
+    },
+    "clef": {
+      "en": "Clef",
+      "de": "Notenschlüssel"
+    },
+    "trebleClef": {
+      "en": "Treble",
+      "de": "Violinschlüssel"
+    },
+    "bassClef": {
+      "en": "Bass",
+      "de": "Bassschlüssel"
+    },
+    "accidentals": {
+      "en": "Accidentals",
+      "de": "Vorzeichen"
+    },
+    "addCustomNoteSequence": {
+      "en": "Add Note Sequence",
+      "de": "Tonfolge hinzufügen"
+    },
+    "noteSequenceNumber": {
+      "en": "Note Sequence {number}",
+      "de": "Tonfolge {number}"
+    },
+    "c1": {
+      "en": "C1",
+      "de": "C1"
+    },
+    "c2": {
+      "en": "C2",
+      "de": "C"
+    },
+    "c3": {
+      "en": "C3",
+      "de": "c"
+    },
+    "c4": {
+      "en": "C4",
+      "de": "c1"
+    },
+    "c5": {
+      "en": "C5",
+      "de": "c2"
+    },
+    "c6": {
+      "en": "C6",
+      "de": "c3"
+    },
+    "c7": {
+      "en": "C7",
+      "de": "c4"
+    },
+    "c8": {
+      "en": "C8",
+      "de": "c5"
+    },
+    "successive": {
+      "en": "Successive",
+      "de": "Sukzessiv"
+    },
+    "simultaneous": {
+      "en": "Simultaneous",
+      "de": "Simultan"
+    },
+    "showSolution": {
+      "en": "Show Solution",
+      "de": "Lösung anzeigen"
+    },
+    "hideSolution": {
+      "en": "Hide Solution",
+      "de": "Lösung ausblenden"
+    },
+    "playFromNote": {
+      "en": "Play from Note",
+      "de": "Abspielen von Ton"
+    },
+    "noteDuration": {
+      "en": "Note Duration",
+      "de": "Tondauer"
+    },
+    "newExercise": {
+      "en": "New Exercise",
+      "de": "Neue Übung"
+    },
+    "noteInput": {
+      "en": "Note Input",
+      "de": "Noteneingabe"
+    },
+    "firstNote": {
+      "en": "First Note",
+      "de": "Erster Ton"
+    },
+    "solution": {
+      "en": "Solution",
+      "de": "Lösung"
+    },
+    "largeIntervals": {
+      "en": "Large Intervals",
+      "de": "Große Intervalle"
+    },
+    "intervalsPlusOctave": {
+      "en": "Selected Intervals + Octave(s)",
+      "de": "Ausgewählte Intervalle + Oktave(n)"
+    },
+    "allowLargeIntervals": {
+      "en": "Allow intervals larger than octave",
+      "de": "Intervalle größer als Oktave zulassen"
+    },
+    "majorChord": {
+      "en": "Major triad",
+      "de": "Dur-Dreiklang"
+    },
+    "minorChord": {
+      "en": "Minor triad",
+      "de": "Moll-Dreiklang"
+    },
+    "diminishedTriad": {
+      "en": "Diminished triad",
+      "de": "Verminderter Dreiklang"
+    },
+    "augmentedTriad": {
+      "en": "Augmented triad",
+      "de": "Übermäßiger Dreiklang"
+    },
+    "options": {
+      "en": "Options",
+      "de": "Optionen"
+    }
   },
   "quickTester": {
     "name": {

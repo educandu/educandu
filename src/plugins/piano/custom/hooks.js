@@ -1,13 +1,14 @@
 import * as ut from './utils.js';
 import * as C from './constants.js';
-import HttpClient from '../../api-clients/http-client.js';
-import { create as createId } from '../../utils/unique-id.js';
+import id from '../../../utils/unique-id.js';
+import Logger from '../../../common/logger.js';
+import HttpClient from '../../../api-clients/http-client.js';
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 
-/**
- * This hook uses the Web MIDI API for checking if a MIDI device is connected.
- * If true, stores the Midi Acces Object on browser document object to be accessed by each piano on the page.
- */
+const logger = new Logger(import.meta.url);
+
+// Use the Web MIDI API for checking if a MIDI device is connected
+// If true, store the Midi Acces Object on browser document object to be accessed by each piano on the page
 export function useMidiDevice() {
   const [isMidiDeviceConnected, setIsMidiDeviceConnected] = useState(false);
 
@@ -29,7 +30,7 @@ export function useMidiDevice() {
       }
     }
     function onMIDIFailure(error) {
-      console.log(error);
+      logger.error(error);
     }
 
     navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
@@ -56,9 +57,10 @@ export function useMidiData(src) {
   return midiData;
 }
 
+// Initialize midi player if midi data is loaded
 export function useMidiPlayer(midiData) {
   const midiPlayer = useRef(null);
-  const midiPlayerHandlerRef = useRef({
+  const midiPlayerHandler = useRef({
     handleMidiPlayerEvent: () => {},
     resetAllKeyStyles: () => {},
     updateActiveNotes: () => {}
@@ -69,25 +71,23 @@ export function useMidiPlayer(midiData) {
       .then(module => {
         midiPlayer.current = new module.default.Player();
         midiPlayer.current.on('midiEvent', message => {
-          midiPlayerHandlerRef.current.handleMidiPlayerEvent(message);
+          midiPlayerHandler.current.handleMidiPlayerEvent(message);
         });
         midiPlayer.current.on('endOfFile', () => {
           midiPlayer.current.stop();
-          midiPlayerHandlerRef.current.resetAllKeyStyles();
-          midiPlayerHandlerRef.current.updateActiveNotes('Reset');
+          midiPlayerHandler.current.resetAllKeyStyles();
+          midiPlayerHandler.current.updateActiveNotes('Reset');
         });
         midiPlayer.current.loadArrayBuffer(midiData);
       });
   }
 
-  return [midiPlayer, midiPlayerHandlerRef];
+  return [midiPlayer, midiPlayerHandler];
 }
 
-/**
- * This Hook initiates a Tone.js sampler used for playback of any notes.
- * The Sampler is stored on the browser document object so that it can be accessed by every piano on the page.
- * Currently there are only piano samples available. By including the sampleType variable it will be easy to add further samples like Harpsichord later.
- */
+// Initialize a Tone.js sampler used for playback of any notes
+// Store Sampler on browser document object so that it can be accessed by every piano on the page
+// Currently only piano samples being used. By including the sampleType variable it will be easy to add further samples like Harpsichord later
 export function useToneJsSampler(sampleType) {
   const [hasSamplerLoaded, setHasSamplerLoaded] = useState(false);
   const sampler = useRef(null);
@@ -132,7 +132,7 @@ export function useToneJsSampler(sampleType) {
             setHasSamplerLoaded(true);
             sampler.current = document.toneJsSamplers[sampleType];
           },
-          baseUrl: 'https://tonejs.github.io/audio/salamander/' // Samples better be hosted in project XXX
+          baseUrl: 'https://tonejs.github.io/audio/salamander/'
         }).toDestination();
       });
   }, [sampleType]);
@@ -158,24 +158,24 @@ export function useToneJsSampler(sampleType) {
   return [sampler, hasSamplerLoaded];
 }
 
-// Set unique pianoId which does not start with a number character for use as CSS selector in updateMidiInputSwitches in midi-piano-display.js
+// Set unique pianoId which does not start with a number character for use as CSS selector in manageSiblingPianosMidiInput in piano-display.js
 export function usePianoId(defaultValue) {
   const [pianoId, setPianoId] = useState(defaultValue);
 
   useEffect(() => {
-    const id = `ID${createId()}`;
-    setPianoId(id);
+    const newId = `ID${id.create()}`;
+    setPianoId(newId);
   }, []);
 
   return pianoId;
 }
 
-export function useExercise(content, currentTestIndex, currentExerciseIndex, defaultKeyRange) {
-
+// Generate ear training exercise data
+export function useExercise(content, currentTestIndex, currentExerciseIndex) {
   const currentTest = useCallback(() => content.tests[currentTestIndex], [content.tests, currentTestIndex]);
-  const currentNoteSequence = useCallback(() => currentTest().customNoteSequences[currentExerciseIndex], [currentExerciseIndex, currentTest]);
 
-  // Used for all exercise modes except chord mode which as own method. NoteRange (defined with slider in editor) becomes rendered piano keyRange.
+  // Used for interval and noteSequence exercise modes. Chord mode has own method. NoteRange (defined with slider in editor) becomes rendered piano keyRange.
+  // Both noteRange and keyRange are defined with white key indices (not midi values) for first and last key. Example: For full keyRange (52 white keys), will be {first: 0, last: 51}
   // Checks if noteRange is too narrow for exercise and if so widens it.
   const getKeyRange = useCallback(params => {
     const { intervalVectors, midiNoteNameSequence, noteRange } = params;
@@ -192,7 +192,7 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     firstKeyRangeMidiValue = C.WHITE_KEYS_MIDI_VALUES.includes(firstKeyRangeMidiValue) ? firstKeyRangeMidiValue : firstKeyRangeMidiValue - 1;
     lastKeyRangeMidiValue = C.WHITE_KEYS_MIDI_VALUES.includes(lastKeyRangeMidiValue) ? lastKeyRangeMidiValue : lastKeyRangeMidiValue + 1;
 
-    // Convert midi values to white key indices which are needed for rendering CustomPiano
+    // Convert midi values to white key indices which are needed for rendering piano
     return {
       first: C.WHITE_KEYS_MIDI_VALUES.indexOf(firstKeyRangeMidiValue),
       last: C.WHITE_KEYS_MIDI_VALUES.indexOf(lastKeyRangeMidiValue)
@@ -213,6 +213,7 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     };
   }, [currentTest]);
 
+  // Get interval vectors used to generate subsequent notes in interval and noteSequence mode. Example: vector 7 is perfect fifth
   const getIntervalVectors = useCallback((test, intervalCheckboxStates) => {
 
     if (intervalCheckboxStates.all) {
@@ -223,23 +224,20 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
 
     for (const interval of C.INTERVAL_NAMES) {
       if (typeof intervalCheckboxStates[interval].minor !== 'undefined') {
-
-        /**
-         * In white keys only mode (random note sequence mode) is checked, you can not check minor or major type of interval in editor.
-         * If white keys only and interval is checked, only minor interval type vector is included.
-         * If minor interval type vector leads to black key, minor interval type vector + 1 (major interval type vector) will be used to generate new note.
-         */
+        // If only white keys are used in random note sequence mode, you can not check minor or major type of interval in editor.
+        // In this case only minor interval type vector is included.
+        // If minor interval type vector leads to black key, minor interval type vector + 1 (major interval type vector) will be used to generate new note.
         if (ut.usesWhiteKeysOnly(test)) {
           (intervalCheckboxStates[interval].minor || intervalCheckboxStates[interval].major) && intervalVectors.push(C.INTERVAL_VECTORS[interval].minor);
         } else {
-          intervalVectors.push(intervalCheckboxStates[interval].minor ? C.INTERVAL_VECTORS[interval].minor : null);
-          intervalVectors.push(intervalCheckboxStates[interval].major ? C.INTERVAL_VECTORS[interval].major : null);
+          intervalCheckboxStates[interval].minor && intervalVectors.push(C.INTERVAL_VECTORS[interval].minor);
+          intervalCheckboxStates[interval].major && intervalVectors.push(C.INTERVAL_VECTORS[interval].major);
         }
       } else {
-        intervalVectors.push(intervalCheckboxStates[interval] ? C.INTERVAL_VECTORS[interval] : null);
+        intervalCheckboxStates[interval] && intervalVectors.push(C.INTERVAL_VECTORS[interval]);
       }
     }
-    return intervalVectors.filter(interval => interval);
+    return intervalVectors;
   }, []);
 
   const getSequencesForIntervalMode = useCallback((keyRange, intervalVectors) => {
@@ -308,6 +306,31 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     return [midiValueSequence, midiNoteNameSequence, abcNoteNameSequence];
   }, [currentTest]);
 
+  const getSequencesAndChordVector = useCallback((keyRange, chordVectors) => {
+
+    let midiValueSequence = [];
+    const [firstKeyRangeMidiValue, lastKeyRangeMidiValue] = ut.getBorderKeyRangeMidiValues(keyRange);
+
+    // In chord mode indication key is always bass note. Make sure bassNote key is in lower half of keyRange
+    const bassNoteMidiValue = ut.randomIntBetween(firstKeyRangeMidiValue, (firstKeyRangeMidiValue + lastKeyRangeMidiValue) / 2);
+    midiValueSequence.push(bassNoteMidiValue);
+
+    // Example: chordVector for dominantseventh chord is [4, 7, 10]
+    const chordVector = ut.randomArrayElem(chordVectors);
+
+    for (let i = 0; i < chordVector.length; i += 1) {
+      const nextMidiValue = ut.getNextChordMidiValue(currentTest(), bassNoteMidiValue, chordVector[i], keyRange);
+      midiValueSequence.push(nextMidiValue);
+    }
+
+    midiValueSequence = ut.sortLowToHigh(midiValueSequence);
+
+    const abcNoteNameSequence = midiValueSequence.map(value => C.ABC_NOTE_NAMES[value]);
+    const midiNoteNameSequence = midiValueSequence.map(value => C.MIDI_NOTE_NAMES[value]);
+
+    return [midiValueSequence, midiNoteNameSequence, abcNoteNameSequence, chordVector];
+  }, [currentTest]);
+
   const getSolution = useCallback(abcNoteNameSequence => {
     let solution = '';
     for (const noteName of abcNoteNameSequence) {
@@ -327,6 +350,7 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     const inversions = Object.keys(inversionCheckboxStates).map(key => inversionCheckboxStates[key] && key).filter(elem => elem);
 
     for (const inversion of inversions) {
+      // Filter since triad does not have third inversion like seventh chord
       chordVectors.push(...triads.map(triad => C.CHORD_VECTORS.triads[triad][inversion]).filter(elem => elem));
       chordVectors.push(...seventhChords.map(seventhChord => C.CHORD_VECTORS.seventhChords[seventhChord][inversion]));
     }
@@ -334,42 +358,18 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     return chordVectors;
   }, [currentTest]);
 
-  const getSequencesAndChordVector = useCallback((keyRange, chordVectors) => {
-
-    let midiValueSequence = [];
-    const [firstKeyRangeMidiValue, lastKeyRangeMidiValue] = ut.getBorderKeyRangeMidiValues(keyRange);
-
-    // In chord mode indication key is always bass note. Make sure bassNote key is in lower half of keyRange
-    const bassNoteMidiValue = ut.randomIntBetween(firstKeyRangeMidiValue, (firstKeyRangeMidiValue + lastKeyRangeMidiValue) / 2);
-    midiValueSequence.push(bassNoteMidiValue);
-
-    // For example, chordVector for dominantseventh chord is [4, 7, 10]
-    const chordVector = ut.randomArrayElem(chordVectors);
-
-    for (let i = 0; i < chordVector.length; i += 1) {
-      const nextMidiValue = ut.getNextChordMidiValue(currentTest(), bassNoteMidiValue, chordVector[i], keyRange);
-      midiValueSequence.push(nextMidiValue);
-    }
-
-    midiValueSequence = ut.sortLowToHigh(midiValueSequence);
-
-    const abcNoteNameSequence = midiValueSequence.map(value => C.ABC_NOTE_NAMES[value]);
-    const midiNoteNameSequence = midiValueSequence.map(value => C.MIDI_NOTE_NAMES[value]);
-
-    return [midiValueSequence, midiNoteNameSequence, abcNoteNameSequence, chordVector];
-  }, [currentTest]);
-
   const getData = useCallback(
     () => {
       if (content.tests.length === 0) {
-        return null;
+        return {
+          keyRange: content.keyRange
+        };
       }
 
       const test = currentTest();
-      const contentKeyRange = content.keyRange;
 
       if (ut.isCustomNoteSequenceExercise(test)) {
-        const noteSequence = currentNoteSequence();
+        const noteSequence = currentTest().customNoteSequences[currentExerciseIndex];
         const midiNoteNameSequence = noteSequence.midiNoteNameSequence;
         const keyRange = getKeyRange({ midiNoteNameSequence, noteRange: noteSequence.noteRange });
 
@@ -433,9 +433,9 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
           indicationMidiValue: midiValueSequence[0]
         };
       }
-
+      // Never runs. Here for ESLint rule consistent return
       return {
-        keyRange: contentKeyRange
+        keyRange: content.keyRange
       };
     },
     [
@@ -445,7 +445,7 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
       getChordVectors,
       content.keyRange,
       getIntervalVectors,
-      currentNoteSequence,
+      currentExerciseIndex,
       content.tests.length,
       getKeyRangeForChordMode,
       getSequencesAndChordVector,
@@ -454,12 +454,10 @@ export function useExercise(content, currentTestIndex, currentExerciseIndex, def
     ]
   );
 
-  // No dependency needed since only needs to execute once
   const defaultData = useMemo(() => {
-    const keyRange = getData().keyRange;
     return {
       abcNoteNameSequence: [],
-      keyRange: keyRange ? keyRange : defaultKeyRange,
+      keyRange: getData().keyRange,
       indication: '',
       solution: ''
     };

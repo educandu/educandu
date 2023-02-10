@@ -17,22 +17,24 @@ export const randomArrayElem = array => {
 export const getMidiValueFromWhiteKeyIndex = index => WHITE_KEYS_MIDI_VALUES[index];
 export const getMidiValueFromNoteName = noteName => MIDI_NOTE_NAMES.indexOf(noteName);
 export const getMidiValueFromMidiNoteName = midiNoteName => MIDI_NOTE_NAMES.indexOf(midiNoteName);
+export const getNoteNameFromMidiValue = midiValue => MIDI_NOTE_NAMES[midiValue];
 
 export const isIntervalExercise = test => test.exerciseType === EXERCISE_TYPES.interval;
 export const isChordExercise = test => test.exerciseType === EXERCISE_TYPES.chord;
 export const isNoteSequenceExercise = test => test.exerciseType === EXERCISE_TYPES.noteSequence;
 export const isRandomNoteSequenceExercise = test => test.exerciseType === EXERCISE_TYPES.noteSequence && !test.isCustomNoteSequence;
 export const isCustomNoteSequenceExercise = test => test.exerciseType === EXERCISE_TYPES.noteSequence && test.isCustomNoteSequence;
+export const isIntervalOrChordExercise = test => isIntervalExercise(test) || isChordExercise(test);
 export const allowsLargeIntervals = test => test[`${test.exerciseType}AllowsLargeIntervals`];
 
 export const getBorderKeyRangeMidiValues = noteRange => [getMidiValueFromWhiteKeyIndex(noteRange.first), getMidiValueFromWhiteKeyIndex(noteRange.last)];
 
 export const isAnswerComplete = params => {
-  const { test, answerMidiValueSequenceRef, midiValueSequence, answerAbcNoteNameSequenceRef, abcNoteNameSequence } = params;
+  const { test, answerMidiValueSequence, midiValueSequence, answerAbcNoteNameSequenceRef, abcNoteNameSequence } = params;
   if (isNoteSequenceExercise(test)) {
     return answerAbcNoteNameSequenceRef.current.length >= abcNoteNameSequence.length - 1;
   }
-  return answerMidiValueSequenceRef.current.length >= midiValueSequence.length - 1;
+  return answerMidiValueSequence.length >= midiValueSequence.length - 1;
 };
 
 export function filterAbcString(string) {
@@ -54,7 +56,10 @@ export function filterAbcString(string) {
 
 export function analyseABC(string) {
   if (string.length === 0) {
-    return [null, null, null, null];
+    return { abcNoteNameSequence: null,
+      midiNoteNameSequence: null,
+      midiValueSequence: null,
+      filteredAbc: null };
   }
 
   const noteNameLetters = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'z', 'x', 'C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -98,7 +103,6 @@ export function analyseABC(string) {
       index += 1;
     }
 
-    // Optimierbar? XXX
     // Checks if only last note is remaining.
     if (typeof nextNoteStartIndex === 'undefined') {
       let lastNote = true;
@@ -114,7 +118,7 @@ export function analyseABC(string) {
         abcNoteNameSequence.push(abcNoteName);
         midiNoteNameSequence.push(midiNoteName);
         midiValueSequence.push(midiValue);
-        return [abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc];
+        return { abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc };
       }
     }
 
@@ -128,10 +132,10 @@ export function analyseABC(string) {
     newString = newString.substring(nextNoteStartIndex);
 
     if (typeof newString[0] === 'undefined') {
-      return [abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc];
+      return { abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc };
     }
   }
-  return [abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc];
+  return { abcNoteNameSequence, midiNoteNameSequence, midiValueSequence, filteredAbc };
 }
 
 export const playNotesSimultaneously = async (sampler, midiNoteNameSequence, noteDurationRef, isExercisePlayingRef) => {
@@ -395,4 +399,35 @@ export const ensureOneChordIsChecked = (index, newTests) => {
   if (areAllChordsUnchecked) {
     newTests[index].triadCheckboxStates[TRIADS.majorTriad] = true;
   }
+};
+
+export const ensureOneIntervalIsChecked = (index, newTests, exerciseType) => {
+  let areAllIntervalsUnchecked = true;
+  for (const key of Object.keys(newTests[index][`${exerciseType}CheckboxStates`])) {
+    if (typeof newTests[index][`${exerciseType}CheckboxStates`][key].minor === 'undefined') {
+      if (newTests[index][`${exerciseType}CheckboxStates`][key]) {
+        areAllIntervalsUnchecked = false;
+      }
+    } else if (typeof newTests[index][`${exerciseType}CheckboxStates`][key].minor !== 'undefined') {
+      if (newTests[index][`${exerciseType}CheckboxStates`][key].minor || newTests[index][`${exerciseType}CheckboxStates`][key].major) {
+        areAllIntervalsUnchecked = false;
+      }
+    }
+  }
+
+  if (areAllIntervalsUnchecked) {
+    newTests[index][`${exerciseType}CheckboxStates`].second.minor = true;
+    newTests[index][`${exerciseType}CheckboxStates`].second.major = true;
+  }
+};
+
+export const getNumberOfAbcNotes = string => {
+  let numberOfAbcNotes = 0;
+  const validNoteNameChars = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'C', 'D', 'E', 'F', 'G', 'A', 'B'];
+  for (let i = 0; i < string.length; i += 1) {
+    if (validNoteNameChars.includes(string[i])) {
+      numberOfAbcNotes += 1;
+    }
+  }
+  return numberOfAbcNotes;
 };
