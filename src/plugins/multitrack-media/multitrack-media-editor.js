@@ -49,8 +49,16 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handeTrackContentChanged = (index, value) => {
+    const isMainTrack = index === 0;
     const newTracks = cloneDeep(tracks);
     newTracks[index] = value;
+
+    const disableVideo = isMainTrack && shouldDisableVideo(value.sourceUrl);
+    if (disableVideo) {
+      changeContent({ tracks: newTracks, showVideo: false, posterImage: { sourceUrl: '' } });
+      return;
+    }
+
     changeContent({ tracks: newTracks });
   };
 
