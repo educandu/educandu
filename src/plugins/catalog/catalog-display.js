@@ -10,11 +10,11 @@ import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { TILES_HOVER_EFFECT, LINK_SOURCE_TYPE, DISPLAY_MODE } from './constants.js';
 
-const getItemLinkUrl = item => {
+const getItemLinkUrl = ({ item, cdnRootUrl }) => {
   const link = item.link || {};
   switch (link.sourceType) {
     case LINK_SOURCE_TYPE.external:
-      return link.sourceUrl;
+      return getAccessibleUrl({ url: link.sourceUrl, cdnRootUrl });
     case LINK_SOURCE_TYPE.document:
       return link.documentId ? routes.getDocUrl({ id: link.documentId }) : '';
     default:
@@ -29,7 +29,7 @@ function CatalogDisplay({ content }) {
   const { title, displayMode, width, items, imageTilesConfig } = content;
 
   const renderLinkListItem = (item, index) => {
-    const itemLinkUrl = getItemLinkUrl(item);
+    const itemLinkUrl = getItemLinkUrl({ item, cdnRootUrl: clientConfig.cdnRootUrl });
 
     const itemTitle = item.title
       ? <Markdown inline>{item.title}</Markdown>
@@ -41,7 +41,7 @@ function CatalogDisplay({ content }) {
   };
 
   const renderImageTileItem = (item, index) => {
-    const itemLinkUrl = getItemLinkUrl(item);
+    const itemLinkUrl = getItemLinkUrl({ item, cdnRootUrl: clientConfig.cdnRootUrl });
     const itemImageUrl = getAccessibleUrl({ url: item.image.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     const itemClasses = classNames({
