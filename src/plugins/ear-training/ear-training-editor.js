@@ -1,13 +1,12 @@
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../utils/unique-id.js';
-import React, { Fragment, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Form, Button, Radio, Divider } from 'antd';
 import EarTrainingInfo from './ear-training-info.js';
 import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
+import React, { Fragment, useId, useRef } from 'react';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -30,8 +29,8 @@ const RadioButton = Radio.Button;
 
 const DEFAULT_ABC_CODE = 'X:1';
 function EarTrainingEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const { t } = useTranslation('earTraining');
-  const droppableIdRef = useRef(uniqueId.create());
   const earTrainingInfo = useService(EarTrainingInfo);
 
   const { tests } = content;

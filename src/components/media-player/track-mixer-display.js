@@ -16,36 +16,36 @@ function TrackMixerDisplay({
 }) {
   const { t } = useTranslation('trackMixerDisplay');
 
-  const [currentSoloTrackIndex, setCurrentSoloTrackIndex] = useState(-1);
+  const [currentSoloTrackKey, setCurrentSoloTrackKey] = useState(null);
   const [preSoloTrackVolumes, setPreSoloTrackVolumes] = useState([...volumes]);
 
-  const handleTrackSoloClick = soloTrackIndex => {
-    if (soloTrackIndex === currentSoloTrackIndex) {
+  const handleTrackSoloClick = (soloTrackKey, soloTrackIndex) => {
+    if (soloTrackKey === currentSoloTrackKey) {
       const newVolumes = preSoloTrackVolumes.length ? [...preSoloTrackVolumes] : [...volumes];
       newVolumes[soloTrackIndex] = volumes[soloTrackIndex];
-      setCurrentSoloTrackIndex(-1);
+      setCurrentSoloTrackKey(null);
       onVolumesChange(newVolumes);
     } else {
       setPreSoloTrackVolumes([...volumes]);
       const newVolumes = volumes.map(() => 0);
       newVolumes[soloTrackIndex] = volumes[soloTrackIndex];
-      setCurrentSoloTrackIndex(soloTrackIndex);
+      setCurrentSoloTrackKey(soloTrackKey);
       onVolumesChange(newVolumes);
     }
   };
 
   const handleVolumePresetOptionSelect = newIndex => {
-    setCurrentSoloTrackIndex(-1);
+    setCurrentSoloTrackKey(null);
     setPreSoloTrackVolumes([]);
     onSelectedVolumePresetIndexChange(newIndex);
   };
 
-  const handleVolumeChange = (newVolume, index) => {
-    if (currentSoloTrackIndex > -1 && index !== currentSoloTrackIndex) {
-      setCurrentSoloTrackIndex(-1);
+  const handleVolumeChange = (newVolume, trackKey, trackIndex) => {
+    if (!!currentSoloTrackKey && trackKey !== currentSoloTrackKey) {
+      setCurrentSoloTrackKey(null);
       setPreSoloTrackVolumes([]);
     }
-    onVolumesChange(replaceItemAt(volumes, newVolume, index));
+    onVolumesChange(replaceItemAt(volumes, newVolume, trackIndex));
   };
 
   return (
@@ -65,27 +65,27 @@ function TrackMixerDisplay({
         </div>
       )}
       <div className="TrackMixerDisplay-tracks">
-        {tracks.map((track, index) => (
-          <div key={index.toString()} className="TrackMixerDisplay-track">
+        {tracks.map((track, trackIndex) => (
+          <div key={track.key} className="TrackMixerDisplay-track">
             <div className="TrackMixerDisplay-trackVolume">
               <MediaVolumeSlider
                 orientation="vertical"
-                value={volumes[index]}
-                onChange={newValue => handleVolumeChange(newValue, index)}
+                value={volumes[trackIndex]}
+                onChange={newValue => handleVolumeChange(newValue, track.key, trackIndex)}
                 />
               {tracks.length > 1 && (
-              <div className="TrackMixerDisplay-trackSolo">
-                <Button
-                  type="link"
-                  icon={<SoloIcon />}
-                  disabled={currentSoloTrackIndex > -1 && currentSoloTrackIndex !== index}
-                  onClick={() => handleTrackSoloClick(index)}
-                  />
-              </div>
+                <div className="TrackMixerDisplay-trackSolo">
+                  <Button
+                    type="link"
+                    icon={<SoloIcon />}
+                    disabled={!!currentSoloTrackKey && currentSoloTrackKey !== track.key}
+                    onClick={() => handleTrackSoloClick(track.key, trackIndex)}
+                    />
+                </div>
               )}
             </div>
             <div className="TrackMixerDisplay-trackName">
-              {track.name || t('trackNumberLabel', { trackNumber: index + 1 })}
+              {track.name || t('trackNumberLabel', { trackNumber: trackIndex + 1 })}
             </div>
           </div>
         ))}
@@ -96,6 +96,7 @@ function TrackMixerDisplay({
 
 TrackMixerDisplay.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
     name: PropTypes.string
   })).isRequired,
   volumes: PropTypes.arrayOf(PropTypes.number).isRequired,

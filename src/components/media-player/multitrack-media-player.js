@@ -2,28 +2,29 @@ import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
 import MediaPlayerControls from './media-player-controls.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
-const sourcesCanBeConsideredEqual = (source1, source2) => {
-  if (!source1 || !source2 || source1 === source2) {
-    return source1 === source2;
+const sourcesCanBeConsideredEqual = (sources1, sources2) => {
+  if (!sources1 || !sources2 || sources1 === sources2) {
+    return sources1 === sources2;
   }
 
-  return source1.mainTrack.sourceUrl === source2.mainTrack.sourceUrl
-    && source1.mainTrack.aspectRatio === source2.mainTrack.aspectRatio
-    && source1.mainTrack.playbackRange[0] === source2.mainTrack.playbackRange[0]
-    && source1.mainTrack.playbackRange[1] === source2.mainTrack.playbackRange[1]
-    && source1.mainTrack.showVideo === source2.mainTrack.showVideo
-    && source1.secondaryTracks.length === source2.secondaryTracks.length
-    && source1.secondaryTracks.every((track, index) => track.sourceUrl === source2.secondaryTracks[index].sourceUrl);
+  return sources1.length === sources2.length
+    && sources1.every((track1, index) => {
+      const track2 = sources2[index];
+      return track1.key === track2.key
+        && track1.sourceUrl === track2.sourceUrl
+        && track1.playbackRange[0] === track2.playbackRange[0]
+        && track1.playbackRange[1] === track2.playbackRange[1];
+    });
 };
 
 function MultitrackMediaPlayer({
+  aspectRatio,
   customUnderScreenContent,
   initialVolume,
   multitrackMediaPlayerRef,
@@ -32,6 +33,7 @@ function MultitrackMediaPlayer({
   screenWidth,
   selectedVolumePresetIndex,
   showTrackMixer,
+  showVideo,
   sources,
   volumePresets,
   onEnded,
@@ -48,6 +50,7 @@ function MultitrackMediaPlayer({
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
+  const screenMode = showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none;
   const isReady = useMemo(() => trackStates.every(ts => ts.isReady), [trackStates]);
   const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
 
@@ -72,34 +75,26 @@ function MultitrackMediaPlayer({
       return;
     }
 
-    const newStates = [
-      {
-        key: uniqueId.create(),
-        name: sources.mainTrack.name,
-        isMainTrack: true,
-        isReady: false,
-        durationInMilliseconds: 0,
-        sourceUrl: sources.mainTrack.sourceUrl,
-        aspectRatio: sources.mainTrack.aspectRatio,
-        playbackRange: sources.mainTrack.playbackRange,
-        screenMode: sources.mainTrack.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none
-      },
-      ...sources.secondaryTracks.map(secondaryTrack => ({
-        key: uniqueId.create(),
-        name: secondaryTrack.name,
-        isMainTrack: false,
-        isReady: false,
-        durationInMilliseconds: 0,
-        sourceUrl: secondaryTrack.sourceUrl,
-        aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-        playbackRange: [0, 1],
-        screenMode: MEDIA_SCREEN_MODE.none
-      }))
-    ];
-
     setPlaybackRate(1);
     setLastSources(sources);
-    setTrackStates(newStates);
+
+    setTrackStates(prevStates => {
+      const newStates = sources.map((track, index) => {
+        const prevState = prevStates.find(oldTrack => sourcesCanBeConsideredEqual([oldTrack], [track]));
+
+        return {
+          key: track.key,
+          name: track.name,
+          sourceUrl: track.sourceUrl,
+          playbackRange: track.playbackRange,
+          isMainTrack: index === 0,
+          isReady: prevState?.isReady || false,
+          durationInMilliseconds: prevState?.durationInMilliseconds || 0
+        };
+      });
+
+      return newStates;
+    });
   }, [sources, lastSources]);
 
   useEffect(() => {
@@ -108,7 +103,7 @@ function MultitrackMediaPlayer({
   }, [trackStates]);
 
   useEffect(() => {
-    setTrackVolumes([volumePresets[appliedSelectedVolumePresetIndex].mainTrack, ...volumePresets[appliedSelectedVolumePresetIndex].secondaryTracks]);
+    setTrackVolumes(volumePresets[appliedSelectedVolumePresetIndex].tracks);
   }, [volumePresets, appliedSelectedVolumePresetIndex]);
 
   const triggerPlayMainTrack = () => {
@@ -208,7 +203,7 @@ function MultitrackMediaPlayer({
         <MediaPlayerControls
           volume={mixVolume}
           isPlaying={isPlaying}
-          screenMode={trackStates[0]?.screenMode}
+          screenMode={screenMode}
           playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={trackStates[0]?.durationInMilliseconds || 0}
           onVolumeChange={setMixVolume}
@@ -217,16 +212,16 @@ function MultitrackMediaPlayer({
           onPlaybackRateChange={setPlaybackRate}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
-        <div className="MultitrackMediaPlayer-trackMixerDisplay">
-          <TrackMixerDisplay
-            tracks={trackStates}
-            volumes={trackVolumes}
-            volumePresets={volumePresets}
-            selectedVolumePresetIndex={appliedSelectedVolumePresetIndex}
-            onVolumesChange={setTrackVolumes}
-            onSelectedVolumePresetIndexChange={setInternalSelectedVolumePresetIndex}
-            />
-        </div>
+          <div className="MultitrackMediaPlayer-trackMixerDisplay">
+            <TrackMixerDisplay
+              tracks={trackStates}
+              volumes={trackVolumes}
+              volumePresets={volumePresets}
+              selectedVolumePresetIndex={appliedSelectedVolumePresetIndex}
+              onVolumesChange={setTrackVolumes}
+              onSelectedVolumePresetIndexChange={setInternalSelectedVolumePresetIndex}
+              />
+          </div>
         )}
         {!isReady && (
           <div className="MultitrackMediaPlayer-loadingOverlay">
@@ -257,7 +252,7 @@ function MultitrackMediaPlayer({
       {trackStates.map((trackState, trackIndex) => (
         <MediaPlayer
           key={trackState.key}
-          aspectRatio={trackState.aspectRatio}
+          aspectRatio={aspectRatio}
           customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
           parts={parts}
           playbackRange={trackState.playbackRange}
@@ -267,7 +262,7 @@ function MultitrackMediaPlayer({
           mediaPlayerRef={getTrackRef(trackState.key)}
           renderControls={trackState.isMainTrack ? renderControls : () => null}
           renderProgressBar={trackState.isMainTrack ? null : () => null}
-          screenMode={trackState.screenMode}
+          screenMode={trackState.isMainTrack ? screenMode : MEDIA_SCREEN_MODE.none}
           screenWidth={screenWidth}
           sourceUrl={trackState.sourceUrl}
           volume={mixVolume * trackVolumes[trackIndex]}
@@ -298,23 +293,17 @@ MultitrackMediaPlayer.propTypes = {
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
-  sources: PropTypes.shape({
-    mainTrack: PropTypes.shape({
-      name: PropTypes.string,
-      sourceUrl: PropTypes.string,
-      aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-      playbackRange: PropTypes.arrayOf(PropTypes.number),
-      showVideo: PropTypes.bool
-    }),
-    secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      sourceUrl: PropTypes.string
-    }))
-  }).isRequired,
+  showVideo: PropTypes.bool,
+  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+  sources: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
+    name: PropTypes.string,
+    sourceUrl: PropTypes.string,
+    playbackRange: PropTypes.arrayOf(PropTypes.number)
+  })).isRequired,
   volumePresets: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    mainTrack: PropTypes.number,
-    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
+    tracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired,
   onEnded: PropTypes.func,
   onPause: PropTypes.func,
@@ -322,6 +311,7 @@ MultitrackMediaPlayer.propTypes = {
 };
 
 MultitrackMediaPlayer.defaultProps = {
+  aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {
@@ -332,6 +322,7 @@ MultitrackMediaPlayer.defaultProps = {
   screenWidth: 100,
   selectedVolumePresetIndex: null,
   showTrackMixer: false,
+  showVideo: true,
   onEnded: () => {},
   onPause: () => {},
   onPlay: () => {}

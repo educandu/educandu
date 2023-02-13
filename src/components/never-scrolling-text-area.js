@@ -27,7 +27,7 @@ const handleBottomContainerClick = event => {
   return (event.target === event.currentTarget) && selectSiblingTextarea(event.target, false);
 };
 
-function NeverScrollingTextArea({ className, disabled, embeddable, debounced, horizontalAlignment, minRows, verticalAlignment, ...textAreaProps }) {
+function NeverScrollingTextArea({ className, disabled, embeddable, debounced, debouncedApiRef, horizontalAlignment, minRows, verticalAlignment, ...textAreaProps }) {
   const context = useContext(FormItemInputContext);
 
   const componentClasses = classNames(
@@ -55,7 +55,7 @@ function NeverScrollingTextArea({ className, disabled, embeddable, debounced, ho
           <TextArea {...textAreaProps} autoSize={{ minRows }} disabled={disabled} />
         )}
         {!!debounced && (
-          <DebouncedInput {...textAreaProps} autoSize={{ minRows }} disabled={disabled} elementType={TextArea} />
+          <DebouncedInput apiRef={debouncedApiRef} {...textAreaProps} autoSize={{ minRows }} disabled={disabled} elementType={TextArea} />
         )}
       </FormItemInputContext.Provider>
       <div onClick={disabled ? null : handleBottomContainerClick} />
@@ -68,6 +68,7 @@ NeverScrollingTextArea.propTypes = {
   disabled: PropTypes.bool,
   embeddable: PropTypes.bool,
   debounced: PropTypes.bool,
+  debouncedApiRef: PropTypes.object,
   horizontalAlignment: PropTypes.oneOf(Object.values(HORIZONTAL_ALIGNMENT)),
   minRows: PropTypes.number,
   verticalAlignment: PropTypes.oneOf(Object.values(VERTICAL_ALIGNMENT))
@@ -78,6 +79,7 @@ NeverScrollingTextArea.defaultProps = {
   disabled: false,
   embeddable: false,
   debounced: false,
+  debouncedApiRef: { current: null },
   horizontalAlignment: HORIZONTAL_ALIGNMENT.left,
   minRows: 3,
   verticalAlignment: VERTICAL_ALIGNMENT.top

@@ -1,9 +1,8 @@
 import { Form, Radio, Button } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../utils/unique-id.js';
-import React, { Fragment, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
+import React, { Fragment, useId, useRef } from 'react';
 import ItemPanel from '../../components/item-panel.js';
 import StepSlider from '../../components/step-slider.js';
 import CatalogItemEditor from './catalog-item-editor.js';
@@ -21,8 +20,8 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
 function CatalogEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const { t } = useTranslation('catalog');
-  const droppableIdRef = useRef(uniqueId.create());
 
   const { title, displayMode, width, items, imageTilesConfig } = content;
 

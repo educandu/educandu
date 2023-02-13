@@ -7,6 +7,7 @@ import TagSelect from '../tag-select.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import LicenseSelect from '../license-select.js';
+import MarkdownInput from '../markdown-input.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
@@ -135,6 +136,26 @@ function Tests({ PageTemplate }) {
       : `${currentLog}[${new Date().toISOString()}] ${eventName}\n`);
     setTimeout(() => {
       const eventLogElement = diEventLogRef.current;
+      eventLogElement.scrollTop = eventLogElement.scrollHeight;
+    }, 0);
+  };
+
+  // MarkdownInput
+  const miEventLogRef = useRef();
+  const [miValue, setMiValue] = useState('');
+  const [miInline, setMiInline] = useState(false);
+  const [miEventLog, setMiEventLog] = useState('');
+  const [miDebounced, setMiDebounced] = useState(false);
+  const [miSanitizeCdnUrls, setMiSanitizeCdnUrls] = useState(false);
+  const handleMiEvent = (eventName, ...args) => {
+    if (eventName === 'onChange') {
+      setMiValue(args[0]);
+    }
+    setMiEventLog(currentLog => args.length
+      ? `${currentLog}[${new Date().toISOString()}] ${eventName}: ${JSON.stringify(args.length > 1 ? args : args[0])}\n`
+      : `${currentLog}[${new Date().toISOString()}] ${eventName}\n`);
+    setTimeout(() => {
+      const eventLogElement = miEventLogRef.current;
       eventLogElement.scrollTop = eventLogElement.scrollHeight;
     }, 0);
   };
@@ -380,8 +401,34 @@ function Tests({ PageTemplate }) {
                     timeLimit={diTimeLimit}
                     elementType={diElementTypes[diElementType].elementType}
                     value={diValue}
+                    onBlur={() => handleDiEvent('onBlur')}
                     onChange={event => handleDiEvent('onChange', event.target.value)}
                     {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
+                    />
+                </div>
+              )
+            },
+            {
+              key: 'MarkdownInput',
+              label: 'MarkdownInput',
+              children: (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <Checkbox checked={miInline} onChange={event => setMiInline(event.target.checked)}>Inline</Checkbox>
+                    <Checkbox checked={miDebounced} onChange={event => setMiDebounced(event.target.checked)}>Debounced</Checkbox>
+                    <Checkbox checked={miSanitizeCdnUrls} onChange={event => setMiSanitizeCdnUrls(event.target.checked)}>Sanitize CDN URLs</Checkbox>
+                  </div>
+                  <div>Event Log</div>
+                  <div ref={miEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
+                    <pre>{miEventLog}</pre>
+                  </div>
+                  <MarkdownInput
+                    value={miValue}
+                    inline={miInline}
+                    debounced={miDebounced}
+                    sanitizeCdnUrls={miSanitizeCdnUrls}
+                    onBlur={() => handleMiEvent('onBlur')}
+                    onChange={event => handleMiEvent('onChange', event.target.value)}
                     />
                 </div>
               )

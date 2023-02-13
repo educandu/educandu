@@ -6,6 +6,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import UrlInput from '../../components/url-input.js';
+import ItemPanel from '../../components/item-panel.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -15,13 +16,12 @@ import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
-import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
+import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
 import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
 
@@ -40,7 +40,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
 
-  const { sourceUrl, playbackRange, width, initialVolume, chapters } = content;
+  const { sourceUrl, playbackRange, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -57,8 +57,12 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleMainTrackContentChange = changedContent => {
-    changeContent({ ...changedContent });
+  const handleTrackContentChange = changedContent => {
+    changeContent(changedContent);
+  };
+
+  const handlePlayerSettingsContentChange = changedContent => {
+    changeContent(changedContent);
   };
 
   const handleChapterStartPositionChange = (key, newStartPosition) => {
@@ -66,14 +70,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     chapter.startPosition = newStartPosition;
     const newChapters = [...chapters];
     changeContent({ chapters: newChapters });
-  };
-
-  const handleWidthChanged = newValue => {
-    changeContent({ width: newValue });
-  };
-
-  const handleInitialVolumeChange = newValue => {
-    changeContent({ initialVolume: newValue });
   };
 
   const handleChapterAdd = startPosition => {
@@ -170,7 +166,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const timelineParts = chapters.map((chapter, index) => ({
     ...chapter,
-    title: `${t('common:chapter')} ${index + 1}`
+    title: `${t('common:segment')} ${index + 1}`
   }));
 
   const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
@@ -178,53 +174,50 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   return (
     <div className="MediaSlideshowEditor">
       <Form layout="horizontal" labelAlign="left">
-        <MainTrackEditor
-          content={content}
-          useShowVideo={false}
-          useAspectRatio={false}
-          usePosterImage={false}
-          onContentChanged={handleMainTrackContentChange}
-          />
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
-        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
-          <MediaVolumeSlider
-            value={initialVolume}
-            useValueLabel
-            useButton={false}
-            onChange={handleInitialVolumeChange}
+        <ItemPanel header={t('common:track')}>
+          <TrackEditor
+            content={content}
+            useName={false}
+            onContentChange={handleTrackContentChange}
             />
-        </FormItem>
+        </ItemPanel>
 
-        <div className="MediaSlideshowEditor-playerPreview">
-          <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
-          <MediaPlayer
-            volume={initialVolume}
-            parts={chapters}
-            screenWidth={50}
-            playbackRange={playbackRange}
-            screenMode={MEDIA_SCREEN_MODE.audio}
-            customScreenOverlay={renderPlayingChapterImage()}
-            onPlayingPartIndexChange={handlePlayingPartIndexChange}
-            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+        <ItemPanel header={t('common:player')}>
+          <PlayerSettingsEditor
+            content={content}
+            useShowVideo={false}
+            useAspectRatio={false}
+            usePosterImage={false}
+            onContentChange={handlePlayerSettingsContentChange}
             />
-        </div>
+        </ItemPanel>
 
-        <Timeline
-          parts={timelineParts}
-          durationInMilliseconds={playbackDuration}
-          selectedPartIndex={selectedChapterIndex}
-          onPartAdd={handleChapterAdd}
-          onPartClick={handleChapterClick}
-          onPartDelete={handleChapterDelete}
-          onStartPositionChange={handleChapterStartPositionChange}
-          />
+        <ItemPanel header={t('common:segments')}>
+          <div className="MediaSlideshowEditor-playerPreview">
+            <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
+            <MediaPlayer
+              volume={initialVolume}
+              parts={chapters}
+              screenWidth={50}
+              playbackRange={playbackRange}
+              screenMode={MEDIA_SCREEN_MODE.audio}
+              customScreenOverlay={renderPlayingChapterImage()}
+              onPlayingPartIndexChange={handlePlayingPartIndexChange}
+              sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              />
+          </div>
 
-        {!!chapters.length && (
+          <Timeline
+            parts={timelineParts}
+            durationInMilliseconds={playbackDuration}
+            selectedPartIndex={selectedChapterIndex}
+            onPartAdd={handleChapterAdd}
+            onPartClick={handleChapterClick}
+            onPartDelete={handleChapterDelete}
+            onStartPositionChange={handleChapterStartPositionChange}
+            />
+
+          {!!chapters.length && (
           <Fragment>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="MediaSlideshowEditor-readonlyValue">
@@ -274,7 +267,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
               </FormItem>
             )}
           </Fragment>
-        )}
+          )}
+        </ItemPanel>
       </Form>
     </div>
   );

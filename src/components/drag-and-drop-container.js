@@ -14,12 +14,12 @@ function DragAndDropContainer({
     setIsDragging(true);
   };
 
-  const handleDragEnd = ({ source, destination }) => {
+  const handleDragEnd = async ({ source, destination }) => {
     setIsDragging(false);
     const fromIndex = source?.index;
     const toIndex = destination?.index;
     if (!!source && !!destination && fromIndex !== toIndex && toIndex >= 0 && toIndex <= (items.length - 1)) {
-      onItemMove(fromIndex, toIndex);
+      await onItemMove(fromIndex, toIndex);
     }
   };
 

@@ -20,21 +20,21 @@ mediaSlideshow:
   imageFitInfoMarkdown:
     en: |
       __cover__
-  
+
       Scales the image (while preserving its ratio) to the smallest possible
       size to fill the display area, leaving no empty space.
-  
+
       __contain__
-  
+
       Scales the image as large as possible within the display
       area without cropping or stretching the image.
     de: |
       __Abdecken__
-  
+
       Skaliert das Bild (unter Beibehaltung der Proportionen) auf die kleinstmögliche
       Größe, um den Anzeigebereich so auszufüllen, dass kein Leerraum bleibt.
-  
+
       __Umfassen__
-  
+
       Skaliert das Bild so groß wie möglich innerhalb des Anzeigebereichs,
       ohne das Bild zu beschneiden oder zu strecken.

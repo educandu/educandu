@@ -4,71 +4,65 @@ import Markdown from './markdown.js';
 import { Input, Tooltip } from 'antd';
 import MarkdownHelp from './markdown-help.js';
 import { useTranslation } from 'react-i18next';
+import React, { useRef, useState } from 'react';
 import { LinkOutlined } from '@ant-design/icons';
 import DebouncedInput from './debounced-input.js';
 import { useStorage } from './storage-context.js';
+import { useService } from './container-context.js';
 import InputAndPreview from './input-and-preview.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import PreviewIcon from './icons/general/preview-icon.js';
-import React, { useEffect, useRef, useState } from 'react';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
-const URL_INSERT_EVENT = 'urlInsert';
-
-function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, value, onChange, preview, embeddable, maxLength, ...rest }) {
+function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sanitizeCdnUrls, value, onBlur, onChange, preview, embeddable, maxLength, ...rest }) {
   const { locations } = useStorage();
+  const inputContainerRef = useRef(null);
+  const debouncedInputApiRef = useRef(null);
   const { t } = useTranslation('markdownInput');
-  const [currentCaretPosition, setCurrentCaretPosition] = useState(-1);
-
-  const blockInputContainerRef = useRef(null);
+  const clientConfig = useService(ClientConfig);
+  const gfm = useService(GithubFlavoredMarkdown);
   const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (blockInputContainerRef?.current) {
-      const currentTextArea = blockInputContainerRef.current;
-      currentTextArea.addEventListener(URL_INSERT_EVENT, onChange);
-      return () => {
-        if (currentTextArea) {
-          currentTextArea.removeEventListener(URL_INSERT_EVENT, onChange);
-        }
-      };
+  const insertText = ({ text, replaceAll = false, focus = false }) => {
+    const input = inputContainerRef.current.querySelector(inline ? 'input[type=text]' : 'textarea');
+    if (focus) {
+      input.focus();
     }
-    return () => {};
-  }, [blockInputContainerRef, onChange]);
 
-  const renderCount = () => !!maxLength
-    && <div className="u-input-count">{value.length} / {maxLength}</div>;
+    const selectionStart = replaceAll ? 0 : input.selectionStart;
+    const selectionEnd = replaceAll ? input.value.length : input.selectionEnd;
+    const selectionMode = replaceAll ? 'end' : 'select';
+
+    input.setRangeText(text, selectionStart, selectionEnd, selectionMode);
+    input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    debouncedInputApiRef.current?.flush();
+  };
+
+  const renderCount = () => !!maxLength && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
   const handleOpenResourceSelectorClick = () => {
-    if (disabled) {
-      return;
+    if (!disabled) {
+      setIsResourceSelectorDialogOpen(true);
     }
-    setIsResourceSelectorDialogOpen(true);
   };
 
   const handleResourceSelectorDialogSelect = url => {
-    const caretPosition = currentCaretPosition > -1 ? currentCaretPosition : value.length;
-    const valueBeforeCaret = value.substr(0, caretPosition);
-    const valueAfterCaret = value.substr(caretPosition);
-    const urlMarkdown = `![](${url})`;
-
-    blockInputContainerRef.current.value = `${valueBeforeCaret}${urlMarkdown}${valueAfterCaret}`;
-    blockInputContainerRef.current.dispatchEvent(new Event(URL_INSERT_EVENT));
-
     setIsResourceSelectorDialogOpen(false);
+    setTimeout(() => insertText({ text: `![](${url})`, focus: true }), 500);
   };
 
   const handleResourceSelectorDialogClose = () => {
     setIsResourceSelectorDialogOpen(false);
   };
 
-  const handleChange = event => {
-    setCurrentCaretPosition(event.target.selectionStart);
-    onChange(event);
-  };
-
-  const handleClick = event => {
-    setCurrentCaretPosition(event.target.selectionStart);
+  const handleBlur = event => {
+    const sanitizedValue = gfm.makeCdnResourcesPortable(value, clientConfig.cdnRootUrl);
+    if (value !== sanitizedValue) {
+      insertText({ text: sanitizedValue, replaceAll: true });
+    }
+    onBlur(event);
   };
 
   const renderInlineInput = () => {
@@ -79,13 +73,13 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
       maxLength: maxLength || null,
       addonAfter: <MarkdownHelp disabled={disabled} inline />,
       className: classNames('MarkdownInput-input', { 'is-disabled': disabled }),
-      onClick: handleClick,
-      onChange: handleChange
+      onBlur: handleBlur,
+      onChange
     };
     return (
-      <div className="MarkdownInput-inlineInputContainer">
+      <div className="MarkdownInput-inlineInputContainer" ref={inputContainerRef}>
         {!debounced && <Input {...inputProps} />}
-        {!!debounced && <DebouncedInput {...inputProps} elementType={Input} />}
+        {!!debounced && <DebouncedInput apiRef={debouncedInputApiRef} {...inputProps} elementType={Input} />}
         {renderCount()}
       </div>
     );
@@ -112,14 +106,15 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
   };
 
   const renderBlockInput = () => (
-    <div className="MarkdownInput-textareaContainer" ref={blockInputContainerRef}>
+    <div className="MarkdownInput-textareaContainer" ref={inputContainerRef}>
       <NeverScrollingTextArea
         {...rest}
         className="MarkdownInput-textarea"
         value={value}
         debounced={debounced}
-        onChange={handleChange}
-        onClick={handleClick}
+        debouncedApiRef={debouncedInputApiRef}
+        onChange={onChange}
+        onBlur={handleBlur}
         disabled={disabled}
         minRows={minRows}
         embeddable={embeddable}
@@ -171,9 +166,11 @@ MarkdownInput.propTypes = {
   debounced: PropTypes.bool,
   maxLength: PropTypes.number,
   minRows: PropTypes.number,
+  onBlur: PropTypes.func,
   onChange: PropTypes.func,
   preview: PropTypes.bool,
   renderAnchors: PropTypes.bool,
+  sanitizeCdnUrls: PropTypes.bool,
   value: PropTypes.string
 };
 
@@ -184,9 +181,11 @@ MarkdownInput.defaultProps = {
   debounced: false,
   maxLength: 0,
   minRows: 3,
+  onBlur: () => {},
   onChange: () => {},
   preview: false,
   renderAnchors: false,
+  sanitizeCdnUrls: true,
   value: ''
 };
 
