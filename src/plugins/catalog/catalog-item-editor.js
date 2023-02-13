@@ -33,7 +33,7 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
   };
 
   const handleLinkSourceTypeChange = event => {
-    triggerChange({ link: { sourceType: event.target.value, sourceUrl: '', documentId: null } });
+    triggerChange({ link: { ...link, sourceType: event.target.value, sourceUrl: '', documentId: null } });
   };
 
   const handleExternalLinkUrlValueChange = event => {
