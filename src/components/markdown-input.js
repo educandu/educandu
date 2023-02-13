@@ -4,6 +4,7 @@ import Markdown from './markdown.js';
 import { Input, Tooltip } from 'antd';
 import MarkdownHelp from './markdown-help.js';
 import { useTranslation } from 'react-i18next';
+import React, { useRef, useState } from 'react';
 import { LinkOutlined } from '@ant-design/icons';
 import DebouncedInput from './debounced-input.js';
 import { useStorage } from './storage-context.js';
@@ -11,76 +12,58 @@ import { useService } from './container-context.js';
 import InputAndPreview from './input-and-preview.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PreviewIcon from './icons/general/preview-icon.js';
-import React, { useEffect, useRef, useState } from 'react';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
 
-const URL_INSERT_EVENT = 'urlInsert';
-
 function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sanitizeCdnUrls, value, onBlur, onChange, preview, embeddable, maxLength, ...rest }) {
   const { locations } = useStorage();
-  const blockInputContainerRef = useRef(null);
+  const inputContainerRef = useRef(null);
+  const debouncedInputApiRef = useRef(null);
   const { t } = useTranslation('markdownInput');
   const clientConfig = useService(ClientConfig);
   const gfm = useService(GithubFlavoredMarkdown);
-  const [currentCaretPosition, setCurrentCaretPosition] = useState(-1);
   const [isResourcePickerOpen, setIsResourcePickerOpen] = useState(false);
 
-  useEffect(() => {
-    if (blockInputContainerRef?.current) {
-      const currentTextArea = blockInputContainerRef.current;
-      currentTextArea.addEventListener(URL_INSERT_EVENT, onChange);
-      return () => {
-        if (currentTextArea) {
-          currentTextArea.removeEventListener(URL_INSERT_EVENT, onChange);
-        }
-      };
+  const insertText = ({ text, replaceAll = false, focus = false }) => {
+    const input = inputContainerRef.current.querySelector(inline ? 'input[type=text]' : 'textarea');
+    if (focus) {
+      input.focus();
     }
-    return () => {};
-  }, [blockInputContainerRef, onChange]);
+
+    const selectionStart = replaceAll ? 0 : input.selectionStart;
+    const selectionEnd = replaceAll ? input.value.length : input.selectionEnd;
+    const selectionMode = replaceAll ? 'end' : 'select';
+
+    input.setRangeText(text, selectionStart, selectionEnd, selectionMode);
+    input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    debouncedInputApiRef.current?.flush();
+  };
 
   const renderCount = () => !!maxLength
     && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
   const handleResourcePickerClick = () => {
-    if (disabled) {
-      return;
+    if (!disabled) {
+      setIsResourcePickerOpen(true);
     }
-    setIsResourcePickerOpen(true);
   };
 
   const handleResourcePickerUrlSelect = url => {
-    const caretPosition = currentCaretPosition > -1 ? currentCaretPosition : value.length;
-    const valueBeforeCaret = value.substr(0, caretPosition);
-    const valueAfterCaret = value.substr(caretPosition);
-    const urlMarkdown = `![](${url})`;
-
-    blockInputContainerRef.current.value = `${valueBeforeCaret}${urlMarkdown}${valueAfterCaret}`;
-    blockInputContainerRef.current.dispatchEvent(new Event(URL_INSERT_EVENT));
-
     setIsResourcePickerOpen(false);
+    setTimeout(() => insertText({ text: `![](${url})`, focus: true }), 500);
   };
 
   const handleResourcePickerClose = () => {
     setIsResourcePickerOpen(false);
   };
 
-  const handleChange = event => {
-    setCurrentCaretPosition(event.target.selectionStart);
-    onChange(event);
-  };
-
   const handleBlur = event => {
     const sanitizedValue = gfm.makeCdnResourcesPortable(value, clientConfig.cdnRootUrl);
     if (value !== sanitizedValue) {
-      onChange({ target: { value: sanitizedValue } });
+      insertText({ text: sanitizedValue, replaceAll: true });
     }
     onBlur(event);
-  };
-
-  const handleClick = event => {
-    setCurrentCaretPosition(event.target.selectionStart);
   };
 
   const renderInlineInput = () => {
@@ -92,13 +75,12 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
       addonAfter: <MarkdownHelp disabled={disabled} inline />,
       className: classNames('MarkdownInput-input', { 'is-disabled': disabled }),
       onBlur: handleBlur,
-      onClick: handleClick,
-      onChange: handleChange
+      onChange
     };
     return (
-      <div className="MarkdownInput-inlineInputContainer">
+      <div className="MarkdownInput-inlineInputContainer" ref={inputContainerRef}>
         {!debounced && <Input {...inputProps} />}
-        {!!debounced && <DebouncedInput {...inputProps} elementType={Input} />}
+        {!!debounced && <DebouncedInput apiRef={debouncedInputApiRef} {...inputProps} elementType={Input} />}
         {renderCount()}
       </div>
     );
@@ -125,14 +107,14 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
   };
 
   const renderBlockInput = () => (
-    <div className="MarkdownInput-textareaContainer" ref={blockInputContainerRef}>
+    <div className="MarkdownInput-textareaContainer" ref={inputContainerRef}>
       <NeverScrollingTextArea
         {...rest}
         className="MarkdownInput-textarea"
         value={value}
         debounced={debounced}
-        onChange={handleChange}
-        onClick={handleClick}
+        debouncedApiRef={debouncedInputApiRef}
+        onChange={onChange}
         onBlur={handleBlur}
         disabled={disabled}
         minRows={minRows}
