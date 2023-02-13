@@ -67,6 +67,37 @@ describe('GithubFlavoredMarkdown', () => {
 
   });
 
+  describe('makeCdnResourcesPortable', () => {
+    it('converts all links and images starting with the cdn root URL into portable URLs', () => {
+      const result = sut.makeCdnResourcesPortable([
+        'This is a [hyperlink](https://cdn.root.url/) and',
+        'this is a [hyperlink](https://cdn.root.url/document-media/12345/example.png) and',
+        'this is too: <https://cdn.root.url/document-media/12345/example.png>, and',
+        'this is an image: ![](https://cdn.root.url/document-media/12345/example.png  ) and',
+        'this is an image: ![alt](https://cdn.root.url/document-media/12345/example.png  "") and',
+        'this is an image: ![alt](https://cdn.root.url/document-media/12345/example.png "image title") and',
+        'this is a path and not an URL: ![alt](media/12345/example.png "path") and',
+        'this is an image inside a hyperlink: [![alt](https://cdn.root.url/example.png "image title")](https://cdn.root.url/example-target);',
+        'this, too: [![alt](https://example.com/file.png "image title")](https://cdn.root.url/example-target);',
+        'this, too: [![alt](https://cdn.root.url/example.png "image title")](https://example.com/example-target);',
+        'this not: https://cdn.root.url/example.png.'
+      ].join('\n\n'), 'https://cdn.root.url');
+      expect(result).toEqual([
+        'This is a [hyperlink](cdn://) and',
+        'this is a [hyperlink](cdn://document-media/12345/example.png) and',
+        'this is too: <cdn://document-media/12345/example.png>, and',
+        'this is an image: ![](cdn://document-media/12345/example.png  ) and',
+        'this is an image: ![alt](cdn://document-media/12345/example.png  "") and',
+        'this is an image: ![alt](cdn://document-media/12345/example.png "image title") and',
+        'this is a path and not an URL: ![alt](media/12345/example.png "path") and',
+        'this is an image inside a hyperlink: [![alt](cdn://example.png "image title")](cdn://example-target);',
+        'this, too: [![alt](https://example.com/file.png "image title")](cdn://example-target);',
+        'this, too: [![alt](cdn://example.png "image title")](https://example.com/example-target);',
+        'this not: https://cdn.root.url/example.png.'
+      ].join('\n\n'));
+    });
+  });
+
   describe('redactCdnResources', () => {
     it('redacts all links and images starting with the cdn protocol only', () => {
       const result = sut.redactCdnResources([
