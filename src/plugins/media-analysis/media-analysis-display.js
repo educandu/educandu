@@ -19,25 +19,20 @@ function MediaAnalysisDisplay({ content }) {
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
-  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
+  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
+
+  const sources = useMemo(() => {
+    return tracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    }));
+  }, [tracks, clientConfig]);
 
   const playerParts = chapters.map(chapter => ({ startPosition: chapter.startPosition }));
 
-  const sources = useMemo(() => ({
-    mainTrack: {
-      ...mainTrack,
-      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    },
-    secondaryTracks: secondaryTracks.map(track => ({
-      ...track,
-      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    }))
-  }), [mainTrack, secondaryTracks, clientConfig]);
+  const canRenderMediaPlayer = sources.every(track => track.sourceUrl);
 
-  const canRenderMediaPlayer = sources.mainTrack.sourceUrl && sources.secondaryTracks.every(track => track.sourceUrl);
-
-  const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)]
-    .filter(text => !!text).join('\n\n');
+  const combinedCopyrightNotice = tracks.map(track => track.copyrightNotice).filter(text => !!text).join('\n\n');
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -134,12 +129,14 @@ function MediaAnalysisDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               customUnderScreenContent={renderChapters()}
               multitrackMediaPlayerRef={multitrackMediaPlayerRef}
-              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               parts={playerParts}
               showTrackMixer
+              showVideo={showVideo}
               sources={sources}
               volumePresets={volumePresets}
               onEnded={handleEnded}

@@ -52,8 +52,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
       ...oldPresets,
       {
         name: '',
-        mainTrack: 1,
-        secondaryTracks: new Array(volumePresets[0].secondaryTracks.length).fill(1)
+        tracks: Array.from({ length: volumePresets[0].tracks.length }, () => 1)
       }
     ]);
     setIsDirty(true);
@@ -120,8 +119,7 @@ VolumePresetsModal.propTypes = {
   onOk: PropTypes.func.isRequired,
   volumePresets: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    mainTrack: PropTypes.number,
-    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
+    tracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired
 };
 

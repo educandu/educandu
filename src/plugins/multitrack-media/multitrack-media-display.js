@@ -9,29 +9,27 @@ import MultitrackMediaPlayer from '../../components/media-player/multitrack-medi
 function MultitrackMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const { width, mainTrack, secondaryTracks, initialVolume, volumePresets } = content;
+  const { tracks, volumePresets, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
 
-  const sources = useMemo(() => ({
-    mainTrack: {
-      ...mainTrack,
-      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    },
-    secondaryTracks: secondaryTracks.map(track => ({
+  const sources = useMemo(() => {
+    return tracks.map(track => ({
       ...track,
       sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    }))
-  }), [mainTrack, secondaryTracks, clientConfig]);
+    }));
+  }, [tracks, clientConfig]);
 
-  const combinedCopyrightNotice = [mainTrack.copyrightNotice, ...secondaryTracks.map(track => track.copyrightNotice)].filter(text => !!text).join('\n\n');
+  const combinedCopyrightNotice = tracks.map(track => track.copyrightNotice).filter(text => !!text).join('\n\n');
 
   return (
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
         <MultitrackMediaPlayer
-          posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          showTrackMixer
-          sources={sources}
+          aspectRatio={aspectRatio}
           initialVolume={initialVolume}
+          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+          showTrackMixer
+          showVideo={showVideo}
+          sources={sources}
           volumePresets={volumePresets}
           />
         <CopyrightNotice value={combinedCopyrightNotice} />

@@ -400,9 +400,15 @@ common:
   startTimecode:
     en: Start time
     de: Startzeit
-  chapter:
-    en: Chapter
-    de: Kapitel
+  segment:
+    en: Segment
+    de: Abschnitt
+  segments:
+    en: Segments
+    de: Abschnitte
+  track:
+    en: Track
+    de: Spur
   mainTrack:
     en: Main track
     de: Hauptspur
@@ -491,9 +497,9 @@ common:
   filter:
     en: Filter
     de: Filter
-  playerSettings:
-    en: Player settings
-    de: Player-Einstellungen
+  player:
+    en: Player
+    de: Player
   initialVolume:
     en: Initial volume
     de: Anfangslautstärke

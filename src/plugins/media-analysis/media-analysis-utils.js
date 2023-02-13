@@ -12,33 +12,20 @@ const chapterSchema = joi.object({
   text: joi.string().allow('').required()
 });
 
-export function createDefaultSecondaryTrack() {
+export function createDefaultTrack() {
   return {
-    name: '',
-    sourceUrl: '',
-    copyrightNotice: ''
-  };
-}
-
-export function createDefaultMainTrack() {
-  return {
+    key: uniqueId.create(),
     name: '',
     sourceUrl: '',
     copyrightNotice: '',
-    aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-    showVideo: false,
-    playbackRange: [0, 1],
-    posterImage: {
-      sourceUrl: ''
-    }
+    playbackRange: [0, 1]
   };
 }
 
-export function createDefaultVolumePreset(t, secondaryTracksCount) {
+export function createDefaultVolumePreset(t, tracksCount) {
   return {
     name: t('common:defaultVolumePreset'),
-    mainTrack: 1,
-    secondaryTracks: new Array(secondaryTracksCount).fill(1)
+    tracks: Array.from({ length: tracksCount }, () => 1)
   };
 }
 
@@ -53,15 +40,17 @@ export function createDefaultChapter() {
 }
 
 export function createDefaultContent(t) {
-  const secondaryTracks = [];
+  const tracks = [createDefaultTrack()];
 
   return {
-    width: 100,
-    mainTrack: createDefaultMainTrack(),
-    secondaryTracks,
+    tracks,
+    volumePresets: [createDefaultVolumePreset(t, tracks.length)],
     chapters: [createDefaultChapter()],
-    initialVolume: 1,
-    volumePresets: [createDefaultVolumePreset(t, secondaryTracks.count)]
+    showVideo: false,
+    aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+    posterImage: { sourceUrl: '' },
+    width: 100,
+    initialVolume: 1
   };
 }
 
@@ -108,30 +97,25 @@ export async function importChaptersFromCsv(csvStringOrFile) {
 
 export function validateContent(content) {
   const schema = joi.object({
-    width: joi.number().min(0).max(100).required(),
-    mainTrack: joi.object({
+    tracks: joi.array().items(joi.object({
+      key: joi.string().required(),
       name: joi.string().allow('').required(),
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
-      aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
-      showVideo: joi.boolean().required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
-      posterImage: joi.object({
-        sourceUrl: joi.string().allow('').required()
-      }).required()
-    }).required(),
-    secondaryTracks: joi.array().items(joi.object({
-      name: joi.string().allow('').required(),
-      sourceUrl: joi.string().allow('').required(),
-      copyrightNotice: joi.string().allow('').required()
-    })).required(),
-    chapters: joi.array().items(chapterSchema).required(),
-    initialVolume: joi.number().min(0).max(1).required(),
+      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
+    })).min(1).required(),
     volumePresets: joi.array().items(joi.object({
       name: joi.string().required(),
-      mainTrack: joi.number().min(0).max(1).required(),
-      secondaryTracks: joi.array().items(joi.number().min(0).max(1)).required()
-    })).min(1).required()
+      tracks: joi.array().items(joi.number().min(0).max(1)).min(1).required()
+    })).min(1).required(),
+    chapters: joi.array().items(chapterSchema).required(),
+    showVideo: joi.boolean().required(),
+    aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
+    posterImage: joi.object({
+      sourceUrl: joi.string().allow('').required()
+    }).required(),
+    width: joi.number().min(0).max(100).required(),
+    initialVolume: joi.number().min(0).max(1).required()
   });
 
   joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

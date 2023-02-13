@@ -14,23 +14,22 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
-import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
-import ObjectWidthSlider from '../../components/object-width-slider.js';
+import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
-import MainTrackEditor from '../../components/media-player/main-track-editor.js';
+import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { moveItem, removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
-import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
-import SecondaryTrackEditor from '../../components/media-player/secondary-track-editor.js';
+import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
-import { createDefaultChapter, createDefaultSecondaryTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
+import { createDefaultChapter, createDefaultTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
@@ -41,37 +40,35 @@ const logger = new Logger(import.meta.url);
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
-  const { width, mainTrack, secondaryTracks, chapters, initialVolume, volumePresets } = content;
+  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, initialVolume } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     getAccessibleUrl({
-      url: mainTrack.sourceUrl,
+      url: tracks[0].sourceUrl,
       cdnRootUrl: clientConfig.cdnRootUrl
     })
   ]);
 
   const mainTrackSourceDuration = mainTrackMediaDuration.duration;
-  const mainTrackPlaybackDuration = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackSourceDuration;
+  const mainTrackPlaybackDuration = (tracks[0].playbackRange[1] - tracks[0].playbackRange[0]) * mainTrackSourceDuration;
 
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+  const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(content.tracks[0].sourceUrl));
 
-  const sources = useMemo(() => ({
-    mainTrack: {
-      ...mainTrack,
-      sourceUrl: getAccessibleUrl({ url: mainTrack.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    },
-    secondaryTracks: secondaryTracks.map(track => ({
+  const sources = useMemo(() => {
+    return tracks.map(track => ({
       ...track,
       sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    }))
-  }), [mainTrack, secondaryTracks, clientConfig]);
+    }));
+  }, [tracks, clientConfig]);
 
   const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
 
@@ -103,67 +100,70 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
+    const newDisableVideo = shouldDisableVideo(newContent.tracks[0].sourceUrl);
+
+    const reEnableVideo = !content.showVideo;
+    newContent.showVideo = newDisableVideo ? false : reEnableVideo || newContent.showVideo;
+    newContent.posterImage = newDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
-  const handleMainTrackNameChanged = event => {
-    const { value } = event.target;
-    changeContent({ mainTrack: { ...mainTrack, name: value } });
-  };
-
-  const handeSecondaryTrackContentChanged = (index, value) => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks[index] = value;
-    changeContent({ secondaryTracks: newSecondaryTracks });
-  };
-
-  const handleMainTrackContentChanged = newMainTrackContent => {
-    changeContent({ mainTrack: newMainTrackContent });
-  };
-
-  const handleWidthChanged = newValue => {
-    changeContent({ width: newValue });
-  };
-
-  const handleInitialVolumeChange = newValue => {
-    changeContent({ initialVolume: newValue });
+  const handeTrackContentChange = (index, value) => {
+    const newTracks = cloneDeep(tracks);
+    newTracks[index] = value;
+    changeContent({ tracks: newTracks });
   };
 
   const handleMoveTrackUp = index => {
-    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index - 1);
+    const newTracks = swapItemsAt(tracks, index, index - 1);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index - 1);
+      preset.tracks = swapItemsAt(preset.tracks, index, index - 1);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleMoveTrackDown = index => {
-    const newSecondaryTracks = swapItemsAt(secondaryTracks, index, index + 1);
+    const newTracks = swapItemsAt(tracks, index, index + 1);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = swapItemsAt(preset.secondaryTracks, index, index + 1);
+      preset.tracks = swapItemsAt(preset.tracks, index, index + 1);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
+  };
+
+  const handleMoveSecondaryTrack = (fromSecondaryTrackIndex, toSecondaryTrackIndex) => {
+    const fromIndex = fromSecondaryTrackIndex + 1;
+    const toIndex = toSecondaryTrackIndex + 1;
+    const newTracks = moveItem(tracks, fromIndex, toIndex);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.tracks = moveItem(preset.tracks, fromIndex, toIndex);
+    });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleDeleteTrack = index => {
-    const newSecondaryTracks = removeItemAt(secondaryTracks, index);
+    const newTracks = removeItemAt(tracks, index);
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
-      preset.secondaryTracks = removeItemAt(preset.secondaryTracks, index);
+      preset.tracks = removeItemAt(preset.tracks, index);
     });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
   const handleAddTrackButtonClick = () => {
-    const newSecondaryTracks = cloneDeep(secondaryTracks);
-    newSecondaryTracks.push(createDefaultSecondaryTrack());
+    const newTracks = cloneDeep(tracks);
+    newTracks.push(createDefaultTrack());
     const newVolumePresets = cloneDeep(volumePresets);
-    newVolumePresets.forEach(preset => {
-      preset.secondaryTracks.push(1);
-    });
-    changeContent({ secondaryTracks: newSecondaryTracks, volumePresets: newVolumePresets });
+    newVolumePresets.forEach(preset => preset.tracks.push(1));
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
+  };
+
+  const handlePlayerSettingsContentChange = changedContent => {
+    changeContent(changedContent);
   };
 
   const handleSelectedVolumePresetChange = volumePresetIndex => {
@@ -277,6 +277,42 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
+  const secondaryTracksCount = tracks.length - 1;
+
+  const dragAndDropSecondaryTracks = tracks.slice(1).map((track, secondaryTrackIndex) => {
+    const headerPrefix = t('common:secondaryTrack', { number: secondaryTrackIndex + 2 });
+    const header = `${headerPrefix}${track.name ? ': ' : ''}${track.name}`;
+    const trackIndex = secondaryTrackIndex + 1;
+
+    return {
+      key: track.key,
+      render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+        return (
+          <ItemPanel
+            collapsed
+            canDeleteLastItem
+            header={header}
+            isDragged={isDragged}
+            isOtherDragged={isOtherDragged}
+            dragHandleProps={dragHandleProps}
+            index={secondaryTrackIndex}
+            itemsCount={secondaryTracksCount}
+            key={track.key}
+            onMoveUp={() => handleMoveTrackUp(trackIndex)}
+            onMoveDown={() => handleMoveTrackDown(trackIndex)}
+            onDelete={() => handleDeleteTrack(trackIndex)}
+            >
+            <TrackEditor
+              content={track}
+              usePlaybackRange={false}
+              onContentChange={value => handeTrackContentChange(trackIndex, value)}
+              />
+          </ItemPanel>
+        );
+      }
+    };
+  });
+
   const segmentsDropzoneClasses = classNames({
     'MediaAnalysisEditor-segmentsDropzone': true,
     'u-can-drop': csvImportDropzone.isDragAccept,
@@ -286,85 +322,63 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   return (
     <div className="MediaAnalysisEditor">
       <Form layout="horizontal" labelAlign="left">
-        <ItemPanel header={t('common:mainTrack')}>
-          <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
-            <Input value={mainTrack?.name} onChange={handleMainTrackNameChanged} />
-          </FormItem>
-          <MainTrackEditor
-            content={mainTrack}
-            onContentChanged={handleMainTrackContentChanged}
+
+        <ItemPanel
+          collapsed
+          key={tracks[0].key}
+          header={`${t('common:mainTrack')}${tracks[0].name ? ': ' : ''}${tracks[0].name}`}
+          >
+          <TrackEditor
+            content={tracks[0]}
+            onContentChange={value => handeTrackContentChange(0, value)}
             />
         </ItemPanel>
 
-        {secondaryTracks.map((secondaryTrack, index) => (
-          <ItemPanel
-            index={index}
-            collapsed
-            canDeleteLastItem
-            key={index.toString()}
-            itemsCount={secondaryTracks.length}
-            header={t('common:secondaryTrack', { number: index + 2 })}
-            onMoveUp={handleMoveTrackUp}
-            onMoveDown={handleMoveTrackDown}
-            onDelete={handleDeleteTrack}
-            >
-            <SecondaryTrackEditor
-              content={secondaryTrack}
-              onContentChanged={value => handeSecondaryTrackContentChanged(index, value)}
-              />
-          </ItemPanel>
-        ))}
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropSecondaryTracks} onItemMove={handleMoveSecondaryTrack} />
+
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
         </Button>
-        <ItemPanel header={t('common:playerSettings')}>
-          <FormItem
-            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-            {...FORM_ITEM_LAYOUT}
-            >
-            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-          </FormItem>
-          <FormItem
-            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
-            {...FORM_ITEM_LAYOUT}
-            >
-            <MediaVolumeSlider
-              value={initialVolume}
-              useValueLabel
-              useButton={false}
-              onChange={handleInitialVolumeChange}
-              />
-          </FormItem>
+
+        <ItemPanel header={t('common:player')}>
+          <PlayerSettingsEditor
+            content={content}
+            disableVideo={disableVideo}
+            onContentChange={handlePlayerSettingsContentChange}
+            />
         </ItemPanel>
+
         <ItemPanel header={t('common:trackMixer')}>
           <div className="MediaAnalysisEditor-trackMixerPreview">
             <div className="MediaAnalysisEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
+              aspectRatio={aspectRatio}
               initialVolume={initialVolume}
-              posterImageUrl={getAccessibleUrl({ url: mainTrack.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              parts={playerParts}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
+              showVideo={!disableVideo && showVideo}
               showTrackMixer={false}
               sources={sources}
               volumePresets={volumePresets}
-              parts={playerParts}
               />
           </div>
           <TrackMixerEditor
-            mainTrack={sources.mainTrack}
-            secondaryTracks={sources.secondaryTracks}
+            tracks={sources}
             volumePresets={volumePresets}
             onVolumePresetsChange={handleVolumePresetsChange}
             selectedVolumePresetIndex={selectedVolumePresetIndex}
             onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
+
         <div {...csvImportDropzone.getRootProps({ className: segmentsDropzoneClasses })}>
           <input {...csvImportDropzone.getInputProps()} hidden />
           <ItemPanel
-            header={t('segmentsPanelHeader')}
+            header={t('common:segments')}
             extraActionButtons={[
               {
                 key: 'export-as-csv',

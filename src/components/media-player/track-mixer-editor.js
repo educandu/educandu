@@ -15,26 +15,26 @@ import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 const ALLOWED_TRACK_BAR_OVERFLOW_IN_PX = 10;
 
 function TrackMixerEditor({
-  mainTrack,
-  secondaryTracks,
+  tracks,
   volumePresets,
   onVolumePresetsChange,
   selectedVolumePresetIndex,
   onSelectedVolumePresetIndexChange
 }) {
   const { t } = useTranslation('trackMixerEditor');
-  const [mainTrackDuration] = useMediaDurations([mainTrack.sourceUrl]);
   const [isVolumePresetsModalOpen, setIsVolumePresetsModalOpen] = useState(false);
-  const secondaryTrackDurations = useMediaDurations(secondaryTracks.map(track => track.sourceUrl));
+  const trackDurations = useMediaDurations(tracks.map(track => track.sourceUrl));
 
-  const mainTrackDurationInMs = (mainTrack.playbackRange[1] - mainTrack.playbackRange[0]) * mainTrackDuration.duration;
+  const mainTrackPlaybackDurationInMs = (tracks[0].playbackRange[1] - tracks[0].playbackRange[0]) * trackDurations[0].duration;
 
-  const calculateBarWidth = (containerWidth, trackDuration) => {
-    if (!containerWidth || !trackDuration || !mainTrackDurationInMs) {
+  const calculateBarWidth = (containerWidth, trackIndex) => {
+    const trackDuration = trackDurations[trackIndex].duration;
+
+    if (!containerWidth || !trackDuration) {
       return 0;
     }
 
-    const msToPxRatio = containerWidth / mainTrackDurationInMs;
+    const msToPxRatio = containerWidth / mainTrackPlaybackDurationInMs;
     const maxBarWidth = containerWidth + ALLOWED_TRACK_BAR_OVERFLOW_IN_PX;
     return Math.min(maxBarWidth, trackDuration * msToPxRatio);
   };
@@ -55,36 +55,21 @@ function TrackMixerEditor({
     setIsVolumePresetsModalOpen(false);
   };
 
-  const handleMainTrackVolumeChange = newVolume => {
+  const handleTrackVolumeChange = (newVolume, index) => {
     const newPresets = cloneDeep(volumePresets);
-    newPresets[selectedVolumePresetIndex].mainTrack = newVolume;
+    newPresets[selectedVolumePresetIndex].tracks[index] = newVolume;
     onVolumePresetsChange(newPresets);
   };
 
-  const handleSecondaryTrackVolumeChange = (newVolume, index) => {
-    const newPresets = cloneDeep(volumePresets);
-    newPresets[selectedVolumePresetIndex].secondaryTracks[index] = newVolume;
-    onVolumePresetsChange(newPresets);
-  };
-
-  const tracks = [
-    {
-      name: mainTrack.name,
-      volume: volumePresets[selectedVolumePresetIndex].mainTrack,
-      secondaryTrackIndex: -1,
-      trackDurationInMs: mainTrackDurationInMs,
-      getBarWidth: containerWidth => calculateBarWidth(containerWidth, mainTrackDurationInMs),
-      handleVolumeChange: volume => handleMainTrackVolumeChange(volume)
-    },
-    ...secondaryTracks.map((secondaryTrack, index) => ({
-      name: secondaryTrack.name,
-      volume: volumePresets[selectedVolumePresetIndex].secondaryTracks[index],
-      secondaryTrackIndex: index,
-      trackDurationInMs: secondaryTrackDurations[index].duration,
-      getBarWidth: containerWidth => calculateBarWidth(containerWidth, secondaryTrackDurations[index].duration),
-      handleVolumeChange: volume => handleSecondaryTrackVolumeChange(volume, index)
-    }))
-  ];
+  const trackInfos = tracks.map((track, index) => ({
+    key: track.key,
+    name: track.name,
+    volume: volumePresets[selectedVolumePresetIndex].tracks[index],
+    isMainTrack: index === 0,
+    trackDurationInMs: index === 0 ? mainTrackPlaybackDurationInMs : trackDurations[index].duration,
+    getBarWidth: containerWidth => calculateBarWidth(containerWidth, index),
+    handleVolumeChange: volume => handleTrackVolumeChange(volume, index)
+  }));
 
   return (
     <div className="TrackMixerEditor">
@@ -107,8 +92,8 @@ function TrackMixerEditor({
             </div>
           </div>
 
-          {tracks.map(trackInfo => (
-            <div className="TrackMixerEditor-trackNameAndVolume" key={trackInfo.secondaryTrackIndex}>
+          {trackInfos.map(trackInfo => (
+            <div className="TrackMixerEditor-trackNameAndVolume" key={trackInfo.key}>
               <div className="TrackMixerEditor-trackName">{trackInfo.name}</div>
               <div className="TrackMixerEditor-trackVolume">
                 <MediaVolumeSlider value={trackInfo.volume} onChange={trackInfo.handleVolumeChange} useValueLabel />
@@ -119,13 +104,13 @@ function TrackMixerEditor({
         <div className="TrackMixerEditor-barsColumn">
           <div className="TrackMixerEditor-barsColumnLabel">{t('trackDurations')}</div>
           <DimensionsProvider>
-            {({ containerWidth }) => tracks.map(trackInfo => (
-              <div className="TrackMixerEditor-barRow" key={trackInfo.secondaryTrackIndex}>
+            {({ containerWidth }) => trackInfos.map(trackInfo => (
+              <div className="TrackMixerEditor-barRow" key={trackInfo.key}>
                 {!!trackInfo.trackDurationInMs && (
                 <div
                   className={classNames({
                     'TrackMixerEditor-bar': true,
-                    'TrackMixerEditor-bar--secondaryTrack': trackInfo.secondaryTrackIndex !== -1
+                    'TrackMixerEditor-bar--secondaryTrack': !trackInfo.isMainTrack
                   })}
                   style={{ width: `${trackInfo.getBarWidth(containerWidth)}px` }}
                   >
@@ -153,19 +138,15 @@ function TrackMixerEditor({
 }
 
 TrackMixerEditor.propTypes = {
-  mainTrack: PropTypes.shape({
+  tracks: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
     name: PropTypes.string,
     sourceUrl: PropTypes.string,
     playbackRange: PropTypes.arrayOf(PropTypes.number).isRequired
-  }).isRequired,
-  secondaryTracks: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    sourceUrl: PropTypes.string
   })).isRequired,
   volumePresets: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    mainTrack: PropTypes.number,
-    secondaryTracks: PropTypes.arrayOf(PropTypes.number)
+    tracks: PropTypes.arrayOf(PropTypes.number)
   })).isRequired,
   onVolumePresetsChange: PropTypes.func.isRequired,
   selectedVolumePresetIndex: PropTypes.number.isRequired,

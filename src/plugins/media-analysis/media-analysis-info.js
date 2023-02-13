@@ -47,29 +47,20 @@ class MediaAnalysisInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    redactedContent.mainTrack.copyrightNotice = this.gfm.redactCdnResources(
-      redactedContent.mainTrack.copyrightNotice,
-      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
-    );
-
-    if (!couldAccessUrlFromRoom(redactedContent.mainTrack.sourceUrl, targetRoomId)) {
-      redactedContent.mainTrack.sourceUrl = '';
-    }
-
-    if (!couldAccessUrlFromRoom(redactedContent.mainTrack.posterImage.sourceUrl, targetRoomId)) {
-      redactedContent.mainTrack.posterImage.sourceUrl = '';
-    }
-
-    redactedContent.secondaryTracks.forEach(secondaryTrack => {
-      secondaryTrack.copyrightNotice = this.gfm.redactCdnResources(
-        secondaryTrack.copyrightNotice,
+    redactedContent.tracks.forEach(track => {
+      track.copyrightNotice = this.gfm.redactCdnResources(
+        track.copyrightNotice,
         url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
       );
 
-      if (!couldAccessUrlFromRoom(secondaryTrack.sourceUrl, targetRoomId)) {
-        secondaryTrack.sourceUrl = '';
+      if (!couldAccessUrlFromRoom(track.sourceUrl, targetRoomId)) {
+        track.sourceUrl = '';
       }
     });
+
+    if (!couldAccessUrlFromRoom(redactedContent.posterImage.sourceUrl, targetRoomId)) {
+      redactedContent.posterImage.sourceUrl = '';
+    }
 
     return redactedContent;
   }
@@ -77,23 +68,17 @@ class MediaAnalysisInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.mainTrack.copyrightNotice));
+    content.tracks.forEach(track => {
+      cdnResources.push(...this.gfm.extractCdnResources(track.copyrightNotice));
 
-    if (isInternalSourceType({ url: content.mainTrack.sourceUrl })) {
-      cdnResources.push(content.mainTrack.sourceUrl);
-    }
-
-    if (isInternalSourceType({ url: content.mainTrack.posterImage.sourceUrl })) {
-      cdnResources.push(content.mainTrack.posterImage.sourceUrl);
-    }
-
-    content.secondaryTracks.forEach(secondaryTrack => {
-      cdnResources.push(...this.gfm.extractCdnResources(secondaryTrack.copyrightNotice));
-
-      if (isInternalSourceType({ url: secondaryTrack.sourceUrl })) {
-        cdnResources.push(secondaryTrack.sourceUrl);
+      if (isInternalSourceType({ url: track.sourceUrl })) {
+        cdnResources.push(track.sourceUrl);
       }
     });
+
+    if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
+      cdnResources.push(content.posterImage.sourceUrl);
+    }
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }

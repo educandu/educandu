@@ -2358,10 +2358,6 @@
       "en": "Media analysis",
       "de": "Medien-Analyse"
     },
-    "segmentsPanelHeader": {
-      "en": "Segments",
-      "de": "Segmente"
-    },
     "chapterColorLabel": {
       "en": "Color",
       "de": "Farbe"
@@ -3160,9 +3156,17 @@
       "en": "Start time",
       "de": "Startzeit"
     },
-    "chapter": {
-      "en": "Chapter",
-      "de": "Kapitel"
+    "segment": {
+      "en": "Segment",
+      "de": "Abschnitt"
+    },
+    "segments": {
+      "en": "Segments",
+      "de": "Abschnitte"
+    },
+    "track": {
+      "en": "Track",
+      "de": "Spur"
     },
     "mainTrack": {
       "en": "Main track",
@@ -3268,9 +3272,9 @@
       "en": "Filter",
       "de": "Filter"
     },
-    "playerSettings": {
-      "en": "Player settings",
-      "de": "Player-Einstellungen"
+    "player": {
+      "en": "Player",
+      "de": "Player"
     },
     "initialVolume": {
       "en": "Initial volume",
