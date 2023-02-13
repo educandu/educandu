@@ -1,50 +1,42 @@
 import by from 'thenby';
 import classNames from 'classnames';
+import { Button, Form, Input } from 'antd';
 import Info from '../../components/info.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import * as reactDropzoneNs from 'react-dropzone';
-import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import { Button, Form, Input, Radio, Switch } from 'antd';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
-import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
-import { analyzeMediaUrl, formatMediaPosition } from '../../utils/media-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
-import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
-import { ensureIsExcluded, removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
+import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
+import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
-import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, RESOURCE_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 import { createDefaultChapter, createDefaultTrack, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 
 const logger = new Logger(import.meta.url);
 
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
-const shouldDisableVideo = sourceUrl => {
-  const { resourceType } = analyzeMediaUrl(sourceUrl);
-  return ![RESOURCE_TYPE.video, RESOURCE_TYPE.none, RESOURCE_TYPE.unknown].includes(resourceType);
-};
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
   const httpClient = useService(HttpClient);
@@ -52,7 +44,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const { t } = useTranslation('mediaAnalysis');
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
 
-  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
+  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, initialVolume } = content;
 
   const [mainTrackMediaDuration] = useMediaDurations([
     getAccessibleUrl({
@@ -67,6 +59,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+  const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(content.tracks[0].sourceUrl));
 
   const sources = useMemo(() => {
     return tracks.map(track => ({
@@ -105,47 +98,20 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
+    const newDisableVideo = shouldDisableVideo(newContent.tracks[0].sourceUrl);
+
+    const reEnableVideo = !content.showVideo;
+    newContent.showVideo = newDisableVideo ? false : reEnableVideo || newContent.showVideo;
+    newContent.posterImage = newDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
-  const handeTrackContentChanged = (index, value) => {
-    const isMainTrack = index === 0;
+  const handeTrackContentChange = (index, value) => {
     const newTracks = cloneDeep(tracks);
     newTracks[index] = value;
-
-    const disableVideo = isMainTrack && shouldDisableVideo(value.sourceUrl);
-    if (disableVideo) {
-      changeContent({ tracks: newTracks, showVideo: false, posterImage: { sourceUrl: '' } });
-      return;
-    }
-
     changeContent({ tracks: newTracks });
-  };
-
-  const handleAspectRatioChanged = event => {
-    changeContent({ aspectRatio: event.target.value });
-  };
-
-  const handleShowVideoChanged = value => {
-    const newContent = { showVideo: value };
-
-    if (!newContent.showVideo) {
-      newContent.posterImage = { sourceUrl: '' };
-    }
-
-    changeContent(newContent);
-  };
-
-  const handlePosterImageSourceUrlChange = url => {
-    changeContent({ posterImage: { sourceUrl: url } });
-  };
-
-  const handleWidthChanged = newValue => {
-    changeContent({ width: newValue });
-  };
-
-  const handleInitialVolumeChange = newValue => {
-    changeContent({ initialVolume: newValue });
   };
 
   const handleMoveTrackUp = index => {
@@ -181,6 +147,10 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => preset.tracks.push(1));
     changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
+  };
+
+  const handlePlayerSettingsContentChange = changedContent => {
+    changeContent(changedContent);
   };
 
   const handleSelectedVolumePresetChange = volumePresetIndex => {
@@ -304,8 +274,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
           >
           <TrackEditor
             content={track}
-            usePlaybackRange
-            onContentChanged={value => handeTrackContentChanged(trackIndex, value)}
+            onContentChange={value => handeTrackContentChange(trackIndex, value)}
             />
         </ItemPanel>
       );
@@ -331,7 +300,8 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         >
         <TrackEditor
           content={track}
-          onContentChanged={value => handeTrackContentChanged(trackIndex, value)}
+          usePlaybackRange={false}
+          onContentChange={value => handeTrackContentChange(trackIndex, value)}
           />
       </ItemPanel>
     );
@@ -353,51 +323,11 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         </Button>
 
         <ItemPanel header={t('common:player')}>
-          <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
-            <RadioGroup
-              value={aspectRatio}
-              defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
-              disabled={shouldDisableVideo(tracks[0].sourceUrl)}
-              onChange={handleAspectRatioChanged}
-              >
-              {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
-                <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
-              ))}
-            </RadioGroup>
-          </FormItem>
-          <FormItem label={t('common:videoDisplay')} {...FORM_ITEM_LAYOUT}>
-            <Switch
-              size="small"
-              checked={showVideo}
-              disabled={shouldDisableVideo(tracks[0].sourceUrl)}
-              onChange={handleShowVideoChanged}
-              />
-          </FormItem>
-          <FormItem label={t('common:posterImageUrl')} {...FORM_ITEM_LAYOUT}>
-            <UrlInput
-              value={posterImage.sourceUrl}
-              allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
-              disabled={shouldDisableVideo(tracks[0].sourceUrl) || !showVideo}
-              onChange={handlePosterImageSourceUrlChange}
-              />
-          </FormItem>
-          <FormItem
-            label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-            {...FORM_ITEM_LAYOUT}
-            >
-            <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-          </FormItem>
-          <FormItem
-            label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
-            {...FORM_ITEM_LAYOUT}
-            >
-            <MediaVolumeSlider
-              value={initialVolume}
-              useValueLabel
-              useButton={false}
-              onChange={handleInitialVolumeChange}
-              />
-          </FormItem>
+          <PlayerSettingsEditor
+            content={content}
+            disableVideo={disableVideo}
+            onContentChange={handlePlayerSettingsContentChange}
+            />
         </ItemPanel>
 
         <ItemPanel header={t('common:trackMixer')}>
@@ -412,7 +342,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
-              showVideo={showVideo}
+              showVideo={!disableVideo && showVideo}
               showTrackMixer={false}
               sources={sources}
               volumePresets={volumePresets}

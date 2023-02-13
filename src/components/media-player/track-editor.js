@@ -11,14 +11,14 @@ import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 
-function TrackEditor({ content, onContentChanged, usePlaybackRange }) {
+function TrackEditor({ content, onContentChange, useName, usePlaybackRange }) {
   const { t } = useTranslation('trackEditor');
 
   const { name, sourceUrl, playbackRange, copyrightNotice } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    onContentChanged(newContent);
+    onContentChange(newContent);
   };
 
   const handleNameChange = event => {
@@ -45,9 +45,11 @@ function TrackEditor({ content, onContentChanged, usePlaybackRange }) {
 
   return (
     <Fragment>
-      <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
-        <Input value={name} onChange={handleNameChange} />
-      </FormItem>
+      {!!useName && (
+        <FormItem label={t('common:name')} {...FORM_ITEM_LAYOUT}>
+          <Input value={name} onChange={handleNameChange} />
+        </FormItem>
+      )}
       <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
         <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} />
       </FormItem>
@@ -73,12 +75,14 @@ TrackEditor.propTypes = {
     playbackRange: PropTypes.arrayOf(PropTypes.number),
     copyrightNotice: PropTypes.string
   }).isRequired,
-  onContentChanged: PropTypes.func.isRequired,
+  onContentChange: PropTypes.func.isRequired,
+  useName: PropTypes.bool,
   usePlaybackRange: PropTypes.bool
 };
 
 TrackEditor.defaultProps = {
-  usePlaybackRange: false
+  useName: true,
+  usePlaybackRange: true
 };
 
 export default TrackEditor;

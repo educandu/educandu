@@ -353,6 +353,6 @@ MediaPlayer.defaultProps = {
   onSeekStart: () => {}
 };
 
-export default remountOnPropChanges(MediaPlayer, ({ sourceUrl, playbackRange = [0, 1] }) => {
-  return [sourceUrl, ...playbackRange].join('|');
+export default remountOnPropChanges(MediaPlayer, ({ sourceUrl, playbackRange = [0, 1], aspectRatio }) => {
+  return [sourceUrl, ...playbackRange, aspectRatio].join('|');
 });

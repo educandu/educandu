@@ -141,3 +141,8 @@ export function formatMediaPosition({ formatPercentage, position, duration = 0, 
     ? formatMillisecondsAsDuration(position * duration, { millisecondsLength })
     : formatPercentage(position);
 }
+
+export function shouldDisableVideo(sourceUrl) {
+  const { resourceType } = analyzeMediaUrl(sourceUrl);
+  return ![RESOURCE_TYPE.video, RESOURCE_TYPE.none, RESOURCE_TYPE.unknown].includes(resourceType);
+}

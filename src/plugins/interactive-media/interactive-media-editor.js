@@ -1,6 +1,5 @@
 import by from 'thenby';
 import classNames from 'classnames';
-import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Form, Input, Tooltip } from 'antd';
@@ -11,17 +10,16 @@ import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMediaPosition } from '../../utils/media-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
-import MainTrackEditor from '../../components/media-player/main-track-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
-import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
+import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
+import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, FORM_ITEM_LAYOUT_WITHOUT_LABEL } from '../../domain/constants.js';
 
@@ -34,9 +32,12 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const { t } = useTranslation('interactiveMedia');
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
   const formatPercentage = usePercentageFormat({ decimalPlaces: 2 });
+
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterFraction, setSelectedChapterFraction] = useState(0);
-  const { sourceUrl, playbackRange, aspectRatio, showVideo, posterImage, width, initialVolume, chapters } = content;
+  const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(content.sourceUrl));
+
+  const { sourceUrl, playbackRange, aspectRatio, showVideo, posterImage, initialVolume, chapters } = content;
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
@@ -71,11 +72,22 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
+    const newDisableVideo = shouldDisableVideo(newContent.sourceUrl);
+
+    const reEnableVideo = !content.showVideo;
+    newContent.showVideo = newDisableVideo ? false : reEnableVideo || newContent.showVideo;
+    newContent.posterImage = newDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
-  const handleMainTrackContentChange = changedContent => {
-    changeContent({ ...changedContent });
+  const handleTrackContentChange = changedContent => {
+    changeContent(changedContent);
+  };
+
+  const handlePlayerSettingsContentChange = changedContent => {
+    changeContent(changedContent);
   };
 
   const handleChapterStartPositionChange = (key, newStartPosition) => {
@@ -83,14 +95,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     chapter.startPosition = newStartPosition;
     const newChapters = [...chapters];
     changeContent({ chapters: newChapters });
-  };
-
-  const handleWidthChanged = newValue => {
-    changeContent({ width: newValue });
-  };
-
-  const handleInitialVolumeChange = newValue => {
-    changeContent({ initialVolume: newValue });
   };
 
   const handleChapterAdd = startPosition => {
@@ -210,24 +214,16 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   return (
     <div className="InteractiveMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <MainTrackEditor
+        <TrackEditor
           content={content}
-          onContentChanged={handleMainTrackContentChange}
+          useName={false}
+          onContentChange={handleTrackContentChange}
           />
-        <FormItem
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </FormItem>
-        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
-          <MediaVolumeSlider
-            value={initialVolume}
-            useValueLabel
-            useButton={false}
-            onChange={handleInitialVolumeChange}
-            />
-        </FormItem>
+        <PlayerSettingsEditor
+          content={content}
+          disableVideo={disableVideo}
+          onContentChange={handlePlayerSettingsContentChange}
+          />
 
         <div className="InteractiveMediaEditor-playerPreview">
           <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
@@ -238,7 +234,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             playbackRange={playbackRange}
             posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
             screenWidth={50}
-            screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+            screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
             sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
             volume={initialVolume}
             />
