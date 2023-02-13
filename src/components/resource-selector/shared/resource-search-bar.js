@@ -71,8 +71,9 @@ function ResourceSearchBar({ isLoading, allowedResourceTypes, initialSearchParam
     <div className="ResourceSearchBar">
       <div className="ResourceSearchBar-item">
         <Input
-          placeholder={t('searchTerm')}
+          allowClear
           value={typedInSearchTerm}
+          placeholder={t('searchTerm')}
           onPressEnter={handleSearchEnterKey}
           onChange={handleSearchTermChange}
           />
