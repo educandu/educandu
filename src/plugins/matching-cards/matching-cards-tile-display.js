@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
+import React, { useEffect, useRef } from 'react';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
-import { RESOURCE_TYPE } from '../../domain/constants.js';
-import React, { Fragment, useEffect, useRef } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
-import AudioIcon from '../../components/icons/general/audio-icon.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 
 function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia }) {
   const mediaPlayerRef = useRef();
@@ -38,10 +37,10 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
     }
   }, [mediaPlayerRef, playMedia, isMounted]);
 
-  const renderMediaPlayer = audioOnly => {
+  const renderMediaPlayer = screenMode => {
     return (
       <MediaPlayer
-        audioOnly={audioOnly}
+        screenMode={screenMode}
         sourceUrl={accessibleUrl}
         renderControls={() => null}
         playbackRange={playbackRange}
@@ -54,14 +53,9 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
   const renderMedia = () => {
     switch (resourceType) {
       case RESOURCE_TYPE.audio:
-        return (
-          <Fragment>
-            {renderMediaPlayer(true)}
-            <div className="MatchingCardsTileDisplay-audio"><AudioIcon /></div>
-          </Fragment>
-        );
+        return renderMediaPlayer(MEDIA_SCREEN_MODE.audio);
       case RESOURCE_TYPE.video:
-        return renderMediaPlayer(false);
+        return renderMediaPlayer(MEDIA_SCREEN_MODE.video);
       case RESOURCE_TYPE.image:
         return <img className="MatchingCardsTileDisplay-image" src={accessibleUrl} />;
       default:
