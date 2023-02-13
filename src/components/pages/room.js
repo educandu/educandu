@@ -146,7 +146,7 @@ export default function Room({ PageTemplate, initialState }) {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isOpen: true }));
   };
 
-  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
+  const handleDocumentMetadataModalSave = async (createdDocuments, templateDocumentId) => {
     const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
     const shouldNavigateToCreatedDocument = createdDocuments.length === 1;
 
@@ -158,7 +158,9 @@ export default function Room({ PageTemplate, initialState }) {
         templateDocumentId: clonedOrTemplateDocumentId
       });
     } else {
-      setDocuments([...documents, ...createdDocuments]);
+      const response = await roomApiClient.getRoom({ roomId: room._id });
+      setRoom(response.room);
+      setDocuments(getSortedDocuments(response.room, [...documents, ...createdDocuments]));
       setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
       message.success(t('common:changesSavedSuccessfully'));
     }
@@ -193,7 +195,9 @@ export default function Room({ PageTemplate, initialState }) {
   const handleDeleteDocumentClick = doc => {
     confirmDocumentDelete(t, doc.title, async () => {
       await documentApiClient.hardDeleteDocument(doc._id);
-      setDocuments(ensureIsExcluded(documents, doc));
+      const response = await roomApiClient.getRoom({ roomId: room._id });
+      setRoom(response.room);
+      setDocuments(getSortedDocuments(response.room, ensureIsExcluded(documents, doc)));
     });
   };
 

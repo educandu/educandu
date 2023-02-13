@@ -25,9 +25,11 @@ import {
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
+  getRoomsQuerySchema,
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
   deleteRoomsQuerySchema,
+  getRoomWithSlugParamsSchema,
   patchRoomMetadataBodySchema,
   deleteRoomMemberParamsSchema,
   postRoomInvitationsBodySchema,
@@ -35,8 +37,7 @@ import {
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
-  getRoomMembershipConfirmationParamsSchema,
-  getRoomsQuerySchema
+  getRoomMembershipConfirmationParamsSchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
@@ -87,6 +88,25 @@ export default class RoomController {
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
 
     return res.send({ rooms: mappedRooms });
+  }
+
+  async handleGetRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
+    }
+
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room);
+
+    return res.send({ room: mappedRoom });
   }
 
   async handlePostRoom(req, res) {
@@ -317,6 +337,12 @@ export default class RoomController {
       (req, res) => this.handleGetRooms(req, res)
     );
 
+    router.get(
+      '/api/v1/rooms/:roomId',
+      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
+      (req, res) => this.handleGetRoom(req, res)
+    );
+
     router.post(
       '/api/v1/rooms',
       [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
@@ -381,7 +407,7 @@ export default class RoomController {
   registerPages(router) {
     router.get(
       '/rooms/:roomId*',
-      validateParams(getRoomParamsSchema),
+      validateParams(getRoomWithSlugParamsSchema),
       (req, res) => this.handleGetRoomPage(req, res)
     );
 

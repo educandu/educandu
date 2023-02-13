@@ -8,6 +8,15 @@ class RoomApiClient {
     this.httpClient = httpClient;
   }
 
+  getRoom({ roomId }) {
+    return this.httpClient
+      .get(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getRooms({ userRole }) {
     return this.httpClient
       .get(

@@ -25,9 +25,13 @@ export const postRoomInvitationConfirmBodySchema = joi.object({
   token: idOrKeySchema.required()
 });
 
-export const getRoomParamsSchema = joi.object({
+export const getRoomWithSlugParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 }).unknown(true);
+
+export const getRoomParamsSchema = joi.object({
+  roomId: idOrKeySchema.required()
+});
 
 export const patchRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()

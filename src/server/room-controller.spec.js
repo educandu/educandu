@@ -174,6 +174,98 @@ describe('room-controller', () => {
 
   });
 
+  describe('handleGetRoom', () => {
+
+    describe('when called as an owner', () => {
+      let roomId;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        roomId = uniqueId.create();
+        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.collaborative, owner: user._id, members: [] };
+        mappedRoom = cloneDeep(room);
+
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+
+        req = { user, params: { roomId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRoom(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the owned room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+    });
+
+    describe('when called as a collaborative member', () => {
+      let roomId;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        roomId = uniqueId.create();
+        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.collaborative, owner: 'some-other-user', members: [{ userId: user._id }] };
+        mappedRoom = cloneDeep(room);
+
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+
+        req = { user, params: { roomId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRoom(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the owned room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+    });
+
+    describe('when called as a non-collaborative member', () => {
+      beforeEach(() => {
+        const roomId = uniqueId.create();
+        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, owner: 'some-other-user', members: [{ userId: user._id }] };
+        const mappedRoom = cloneDeep(room);
+
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+
+        req = { user, params: { roomId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleGetRoom(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when called for a non-existing room', () => {
+      beforeEach(() => {
+        const roomId = uniqueId.create();
+        roomService.getRoomById.withArgs(roomId).resolves(null);
+
+        req = { user, params: { roomId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleGetRoom(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+  });
+
   describe('handlePostRoom', () => {
 
     describe('when the request data is valid', () => {
