@@ -149,7 +149,11 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <ItemPanel collapsed header={t('common:mainTrack')} key={tracks[0].key} >
+        <ItemPanel
+          collapsed
+          key={tracks[0].key}
+          header={`${t('common:mainTrack')}${tracks[0].name ? ': ' : ''}${tracks[0].name}`}
+          >
           <TrackEditor
             content={tracks[0]}
             onContentChange={value => handeTrackContentChange(0, value)}
