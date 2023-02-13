@@ -84,7 +84,7 @@ function MediaLibrarySearchScreen({
 
     if (searchParams.searchTerm) {
       const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
-      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} components={[<i key="0" />]} />;
+      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
       return <Alert type="info" message={message} showIcon />;
     }
 
