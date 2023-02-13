@@ -2250,6 +2250,10 @@
       "en": "Interactive media",
       "de": "Interaktive Medien"
     },
+    "chapters": {
+      "en": "Chapters",
+      "de": "Kapitel"
+    },
     "answers": {
       "en": "Answers",
       "de": "Antworten"
@@ -2391,6 +2395,10 @@
     "name": {
       "en": "Media slideshow",
       "de": "Medien-Slideshow"
+    },
+    "segments": {
+      "en": "Segments",
+      "de": "Segmente (oder Abschnitte?)"
     },
     "chapterType_image": {
       "en": "image",
@@ -3163,6 +3171,10 @@
     "chapter": {
       "en": "Chapter",
       "de": "Kapitel"
+    },
+    "track": {
+      "en": "Track",
+      "de": "Spur"
     },
     "mainTrack": {
       "en": "Main track",

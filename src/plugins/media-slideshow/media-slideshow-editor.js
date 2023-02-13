@@ -6,6 +6,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import UrlInput from '../../components/url-input.js';
+import ItemPanel from '../../components/item-panel.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -173,44 +174,50 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   return (
     <div className="MediaSlideshowEditor">
       <Form layout="horizontal" labelAlign="left">
-        <TrackEditor
-          content={content}
-          useName={false}
-          onContentChange={handleTrackContentChange}
-          />
-        <PlayerSettingsEditor
-          content={content}
-          useShowVideo={false}
-          useAspectRatio={false}
-          usePosterImage={false}
-          onContentChange={handlePlayerSettingsContentChange}
-          />
-
-        <div className="MediaSlideshowEditor-playerPreview">
-          <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
-          <MediaPlayer
-            volume={initialVolume}
-            parts={chapters}
-            screenWidth={50}
-            playbackRange={playbackRange}
-            screenMode={MEDIA_SCREEN_MODE.audio}
-            customScreenOverlay={renderPlayingChapterImage()}
-            onPlayingPartIndexChange={handlePlayingPartIndexChange}
-            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+        <ItemPanel header={t('common:track')}>
+          <TrackEditor
+            content={content}
+            useName={false}
+            onContentChange={handleTrackContentChange}
             />
-        </div>
+        </ItemPanel>
 
-        <Timeline
-          parts={timelineParts}
-          durationInMilliseconds={playbackDuration}
-          selectedPartIndex={selectedChapterIndex}
-          onPartAdd={handleChapterAdd}
-          onPartClick={handleChapterClick}
-          onPartDelete={handleChapterDelete}
-          onStartPositionChange={handleChapterStartPositionChange}
-          />
+        <ItemPanel header={t('common:player')}>
+          <PlayerSettingsEditor
+            content={content}
+            useShowVideo={false}
+            useAspectRatio={false}
+            usePosterImage={false}
+            onContentChange={handlePlayerSettingsContentChange}
+            />
+        </ItemPanel>
 
-        {!!chapters.length && (
+        <ItemPanel header={t('segments')}>
+          <div className="MediaSlideshowEditor-playerPreview">
+            <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
+            <MediaPlayer
+              volume={initialVolume}
+              parts={chapters}
+              screenWidth={50}
+              playbackRange={playbackRange}
+              screenMode={MEDIA_SCREEN_MODE.audio}
+              customScreenOverlay={renderPlayingChapterImage()}
+              onPlayingPartIndexChange={handlePlayingPartIndexChange}
+              sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              />
+          </div>
+
+          <Timeline
+            parts={timelineParts}
+            durationInMilliseconds={playbackDuration}
+            selectedPartIndex={selectedChapterIndex}
+            onPartAdd={handleChapterAdd}
+            onPartClick={handleChapterClick}
+            onPartDelete={handleChapterDelete}
+            onStartPositionChange={handleChapterStartPositionChange}
+            />
+
+          {!!chapters.length && (
           <Fragment>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="MediaSlideshowEditor-readonlyValue">
@@ -260,7 +267,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
               </FormItem>
             )}
           </Fragment>
-        )}
+          )}
+        </ItemPanel>
       </Form>
     </div>
   );

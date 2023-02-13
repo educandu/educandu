@@ -2,6 +2,9 @@ interactiveMedia:
   name:
     en: Interactive media
     de: Interaktive Medien
+  chapters:
+    en: Chapters
+    de: Kapitel
   answers:
     en: Answers
     de: Antworten

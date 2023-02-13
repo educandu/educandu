@@ -403,6 +403,9 @@ common:
   chapter:
     en: Chapter
     de: Kapitel
+  track:
+    en: Track
+    de: Spur
   mainTrack:
     en: Main track
     de: Hauptspur

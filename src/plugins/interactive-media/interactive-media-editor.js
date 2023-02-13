@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Button, Form, Input, Tooltip } from 'antd';
+import ItemPanel from '../../components/item-panel.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
@@ -214,43 +215,50 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   return (
     <div className="InteractiveMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <TrackEditor
-          content={content}
-          useName={false}
-          onContentChange={handleTrackContentChange}
-          />
-        <PlayerSettingsEditor
-          content={content}
-          disableVideo={disableVideo}
-          onContentChange={handlePlayerSettingsContentChange}
-          />
 
-        <div className="InteractiveMediaEditor-playerPreview">
-          <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
-          <MediaPlayer
-            allowPartClick
-            aspectRatio={aspectRatio}
-            parts={chapters}
-            playbackRange={playbackRange}
-            posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-            screenWidth={50}
-            screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-            sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-            volume={initialVolume}
+        <ItemPanel header={t('common:track')}>
+          <TrackEditor
+            content={content}
+            useName={false}
+            onContentChange={handleTrackContentChange}
             />
-        </div>
+        </ItemPanel>
 
-        <Timeline
-          durationInMilliseconds={playbackDuration}
-          parts={chapters}
-          selectedPartIndex={selectedChapterIndex}
-          onPartAdd={handleChapterAdd}
-          onPartClick={handleChapterClick}
-          onPartDelete={handleChapterDelete}
-          onStartPositionChange={handleChapterStartPositionChange}
-          />
+        <ItemPanel header={t('common:player')}>
+          <PlayerSettingsEditor
+            content={content}
+            disableVideo={disableVideo}
+            onContentChange={handlePlayerSettingsContentChange}
+            />
+        </ItemPanel>
 
-        {!!chapters.length && (
+        <ItemPanel header={t('chapters')}>
+          <div className="InteractiveMediaEditor-playerPreview">
+            <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
+            <MediaPlayer
+              allowPartClick
+              aspectRatio={aspectRatio}
+              parts={chapters}
+              playbackRange={playbackRange}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              screenWidth={50}
+              screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+              sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              volume={initialVolume}
+              />
+          </div>
+
+          <Timeline
+            durationInMilliseconds={playbackDuration}
+            parts={chapters}
+            selectedPartIndex={selectedChapterIndex}
+            onPartAdd={handleChapterAdd}
+            onPartClick={handleChapterClick}
+            onPartDelete={handleChapterDelete}
+            onStartPositionChange={handleChapterStartPositionChange}
+            />
+
+          {!!chapters.length && (
           <Fragment>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               {!playbackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
@@ -299,7 +307,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
               </Tooltip>
             </FormItem>
           </Fragment>
-        )}
+          )}
+        </ItemPanel>
       </Form>
     </div>
   );
