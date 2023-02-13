@@ -254,22 +254,15 @@
 
 .m-dropzone-base {
   .m-dropzone-transition;
-  background-color: transparent;
-  border: 1px dashed transparent;
-  border-radius: @edu-border-radius-base;
-  outline: @edu-outline-blur-size;
-}
-
-.m-dropzone-hover {
-  .m-dropzone-transition;
   background-color: @edu-background-color-light;
-  border-color: @edu-border-color-active;
+  border: 1px dashed @edu-border-color-active;
+  border-radius: @edu-border-radius-base;
 }
 
 .m-dropzone-active {
   .m-dropzone-transition;
   background-color: @edu-background-color-base;
-  border-color: @edu-border-color-active;
+  border-style: solid;
   .m-border-glow-success;
 }
 
