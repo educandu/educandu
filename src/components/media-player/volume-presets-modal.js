@@ -52,7 +52,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
       ...oldPresets,
       {
         name: '',
-        tracks: new Array(volumePresets[0].tracks.length).fill(1)
+        tracks: Array.from({ length: volumePresets[0].tracks.length }, () => 1)
       }
     ]);
     setIsDirty(true);
