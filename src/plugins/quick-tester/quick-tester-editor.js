@@ -1,8 +1,7 @@
-import React, { useRef } from 'react';
 import { Form, Button, Radio } from 'antd';
 import { TESTS_ORDER } from './constants.js';
+import React, { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../utils/unique-id.js';
 import { PlusOutlined } from '@ant-design/icons';
 import QuickTesterInfo from './quick-tester-info.js';
 import ItemPanel from '../../components/item-panel.js';
@@ -18,8 +17,8 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 function QuickTesterEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const { t } = useTranslation('quickTester');
-  const droppableIdRef = useRef(uniqueId.create());
   const quickTesterInfo = useService(QuickTesterInfo);
 
   const { tests, testsOrder, teaser, title } = content;

@@ -17,14 +17,15 @@ import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
+import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { moveItem, removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
@@ -39,6 +40,7 @@ const logger = new Logger(import.meta.url);
 const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startPosition));
 
 function MediaAnalysisEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaAnalysis');
@@ -128,6 +130,17 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     const newVolumePresets = cloneDeep(volumePresets);
     newVolumePresets.forEach(preset => {
       preset.tracks = swapItemsAt(preset.tracks, index, index + 1);
+    });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
+  };
+
+  const handleMoveSecondaryTrack = (fromSecondaryTrackIndex, toSecondaryTrackIndex) => {
+    const fromIndex = fromSecondaryTrackIndex + 1;
+    const toIndex = toSecondaryTrackIndex + 1;
+    const newTracks = moveItem(tracks, fromIndex, toIndex);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.tracks = moveItem(preset.tracks, fromIndex, toIndex);
     });
     changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
@@ -264,48 +277,41 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const renderTrackPanel = (track, trackIndex) => {
-    if (trackIndex === 0) {
-      return (
-        <ItemPanel
-          collapsed
-          header={t('common:mainTrack')}
-          key={track.key}
-          >
-          <TrackEditor
-            content={track}
-            onContentChange={value => handeTrackContentChange(trackIndex, value)}
-            />
-        </ItemPanel>
-      );
-    }
+  const secondaryTracksCount = tracks.length - 1;
 
-    const indexWithinSecondaryTracks = trackIndex - 1;
-    const secondaryTracksCount = tracks.length - 1;
-
-    const headerPrefix = t('common:secondaryTrack', { number: indexWithinSecondaryTracks + 2 });
+  const dragAndDropSecondaryTracks = tracks.slice(1).map((track, secondaryTrackIndex) => {
+    const headerPrefix = t('common:secondaryTrack', { number: secondaryTrackIndex + 2 });
     const header = `${headerPrefix}${track.name ? ': ' : ''}${track.name}`;
+    const trackIndex = secondaryTrackIndex + 1;
 
-    return (
-      <ItemPanel
-        collapsed
-        canDeleteLastItem
-        header={header}
-        index={indexWithinSecondaryTracks}
-        itemsCount={secondaryTracksCount}
-        key={track.key}
-        onMoveUp={() => handleMoveTrackUp(trackIndex)}
-        onMoveDown={() => handleMoveTrackDown(trackIndex)}
-        onDelete={() => handleDeleteTrack(trackIndex)}
-        >
-        <TrackEditor
-          content={track}
-          usePlaybackRange={false}
-          onContentChange={value => handeTrackContentChange(trackIndex, value)}
-          />
-      </ItemPanel>
-    );
-  };
+    return {
+      key: track.key,
+      render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+        return (
+          <ItemPanel
+            collapsed
+            canDeleteLastItem
+            header={header}
+            isDragged={isDragged}
+            isOtherDragged={isOtherDragged}
+            dragHandleProps={dragHandleProps}
+            index={secondaryTrackIndex}
+            itemsCount={secondaryTracksCount}
+            key={track.key}
+            onMoveUp={() => handleMoveTrackUp(trackIndex)}
+            onMoveDown={() => handleMoveTrackDown(trackIndex)}
+            onDelete={() => handleDeleteTrack(trackIndex)}
+            >
+            <TrackEditor
+              content={track}
+              usePlaybackRange={false}
+              onContentChange={value => handeTrackContentChange(trackIndex, value)}
+              />
+          </ItemPanel>
+        );
+      }
+    };
+  });
 
   const segmentsDropzoneClasses = classNames({
     'MediaAnalysisEditor-segmentsDropzone': true,
@@ -316,7 +322,15 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   return (
     <div className="MediaAnalysisEditor">
       <Form layout="horizontal" labelAlign="left">
-        {tracks.map(renderTrackPanel)}
+
+        <ItemPanel collapsed header={t('common:mainTrack')} key={tracks[0].key} >
+          <TrackEditor
+            content={tracks[0]}
+            onContentChange={value => handeTrackContentChange(0, value)}
+            />
+        </ItemPanel>
+
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropSecondaryTracks} onItemMove={handleMoveSecondaryTrack} />
 
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}

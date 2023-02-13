@@ -1,22 +1,24 @@
 import { Button, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
-import React, { useMemo, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { shouldDisableVideo } from '../../utils/media-utils.js';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import { createDefaultTrack } from './multitrack-media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { removeItemAt, swapItemsAt } from '../../utils/array-utils.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
+import DragAndDropContainer from '../../components/drag-and-drop-container.js';
+import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
+  const droppableIdRef = useRef(useId());
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('multitrackMedia');
 
@@ -68,6 +70,17 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
   };
 
+  const handleMoveSecondaryTrack = (fromSecondaryTrackIndex, toSecondaryTrackIndex) => {
+    const fromIndex = fromSecondaryTrackIndex + 1;
+    const toIndex = toSecondaryTrackIndex + 1;
+    const newTracks = moveItem(tracks, fromIndex, toIndex);
+    const newVolumePresets = cloneDeep(volumePresets);
+    newVolumePresets.forEach(preset => {
+      preset.tracks = moveItem(preset.tracks, fromIndex, toIndex);
+    });
+    changeContent({ tracks: newTracks, volumePresets: newVolumePresets });
+  };
+
   const handleDeleteTrack = index => {
     const newTracks = removeItemAt(tracks, index);
     const newVolumePresets = cloneDeep(volumePresets);
@@ -97,53 +110,52 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ volumePresets: updatedVolumePresets });
   };
 
-  const renderTrackPanel = (track, trackIndex) => {
-    if (trackIndex === 0) {
-      return (
-        <ItemPanel
-          collapsed
-          header={t('common:mainTrack')}
-          key={track.key}
-          >
-          <TrackEditor
-            content={track}
-            onContentChange={value => handeTrackContentChange(trackIndex, value)}
-            />
-        </ItemPanel>
-      );
-    }
+  const secondaryTracksCount = tracks.length - 1;
 
-    const indexWithinSecondaryTracks = trackIndex - 1;
-    const secondaryTracksCount = tracks.length - 1;
-
-    const headerPrefix = t('common:secondaryTrack', { number: indexWithinSecondaryTracks + 2 });
+  const dragAndDropSecondaryTracks = tracks.slice(1).map((track, secondaryTrackIndex) => {
+    const headerPrefix = t('common:secondaryTrack', { number: secondaryTrackIndex + 2 });
     const header = `${headerPrefix}${track.name ? ': ' : ''}${track.name}`;
+    const trackIndex = secondaryTrackIndex + 1;
 
-    return (
-      <ItemPanel
-        collapsed
-        canDeleteLastItem
-        header={header}
-        index={indexWithinSecondaryTracks}
-        itemsCount={secondaryTracksCount}
-        key={track.key}
-        onMoveUp={() => handleMoveTrackUp(trackIndex)}
-        onMoveDown={() => handleMoveTrackDown(trackIndex)}
-        onDelete={() => handleDeleteTrack(trackIndex)}
-        >
-        <TrackEditor
-          content={track}
-          usePlaybackRange={false}
-          onContentChange={value => handeTrackContentChange(trackIndex, value)}
-          />
-      </ItemPanel>
-    );
-  };
+    return {
+      key: track.key,
+      render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
+        return (
+          <ItemPanel
+            collapsed
+            canDeleteLastItem
+            header={header}
+            isDragged={isDragged}
+            isOtherDragged={isOtherDragged}
+            dragHandleProps={dragHandleProps}
+            index={secondaryTrackIndex}
+            itemsCount={secondaryTracksCount}
+            key={track.key}
+            onMoveUp={() => handleMoveTrackUp(trackIndex)}
+            onMoveDown={() => handleMoveTrackDown(trackIndex)}
+            onDelete={() => handleDeleteTrack(trackIndex)}
+            >
+            <TrackEditor
+              content={track}
+              usePlaybackRange={false}
+              onContentChange={value => handeTrackContentChange(trackIndex, value)}
+              />
+          </ItemPanel>
+        );
+      }
+    };
+  });
 
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        {tracks.map(renderTrackPanel)}
+        <ItemPanel collapsed header={t('common:mainTrack')} key={tracks[0].key} >
+          <TrackEditor
+            content={tracks[0]}
+            onContentChange={value => handeTrackContentChange(0, value)}
+            />
+        </ItemPanel>
+        <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropSecondaryTracks} onItemMove={handleMoveSecondaryTrack} />
 
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTrackButtonClick}>
           {t('common:addTrack')}
