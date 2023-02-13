@@ -4,24 +4,24 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import cloneDeep from '../../../utils/clone-deep.js';
 import { useService } from '../../container-context.js';
-import FileEditorScreen from '../file-editor-screen.js';
-import FilesUploadScreen from '../files-upload-screen.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
+import FileEditorScreen from '../shared/file-editor-screen.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { getCookie, setSessionCookie } from '../../../common/cookie.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { useSetStorageLocation, useStorage } from '../../storage-context.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import DocumentOrRoomMediaUploadScreen from './document-or-room-media-upload-screen.js';
 import DocumentOrRoomMediaDefaultScreen from './document-or-room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 
 const SCREEN = {
   default: 'default',
-  fileEditor: 'file-editor',
-  fileUpload: 'file-upload',
-  filePreview: 'file-preview'
+  editor: 'editor',
+  upload: 'upload',
+  preview: 'preview'
 };
 
 function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
@@ -94,7 +94,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   };
 
   const handlePreviewFileClick = () => {
-    pushScreen(SCREEN.filePreview);
+    pushScreen(SCREEN.preview);
   };
 
   const handleScreenBackClick = () => {
@@ -123,7 +123,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
 
   const handleEditFileClick = fileIndex => {
     setCurrentEditedFileIndex(fileIndex);
-    pushScreen(SCREEN.fileEditor);
+    pushScreen(SCREEN.editor);
   };
 
   const handleFileEditorScreenApplyClick = newFile => {
@@ -157,7 +157,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
         return;
       }
 
-      pushScreen(SCREEN.fileUpload);
+      pushScreen(SCREEN.upload);
     };
 
     startUpload();
@@ -218,7 +218,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
           />
       )}
 
-      {screen === SCREEN.filePreview && (
+      {screen === SCREEN.preview && (
         <ResourcePreviewScreen
           file={highlightedFile}
           onCancelClick={onCancel}
@@ -227,8 +227,8 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
           />
       )}
 
-      {screen === SCREEN.fileUpload && (
-        <FilesUploadScreen
+      {screen === SCREEN.upload && (
+        <DocumentOrRoomMediaUploadScreen
           uploadQueue={uploadQueue}
           storageLocation={storageLocation}
           onCancelClick={onCancel}
@@ -238,7 +238,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
           />
       )}
 
-      {screen === SCREEN.fileEditor && (
+      {screen === SCREEN.editor && (
         <FileEditorScreen
           file={uploadQueue[currentEditedFileIndex].file}
           onCancelClick={onCancel}
@@ -264,3 +264,11 @@ DocumentOrRoomMediaScreens.defaultProps = {
 };
 
 export default DocumentOrRoomMediaScreens;
+
+export function DocumentMediaScreens({ ...props }) {
+  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.documentMedia} {...props} />;
+}
+
+export function RoomMediaScreens({ ...props }) {
+  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.roomMedia} {...props} />;
+}

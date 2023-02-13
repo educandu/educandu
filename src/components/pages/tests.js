@@ -18,9 +18,8 @@ import DimensionsProvider from '../dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
 import LanguageSelect from '../localization/language-select.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import ResourcePicker from '../resource-picker/resource-picker.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
-import ResourceSelector from '../resource-picker/resource-selector.js';
+import ResourceSelector from '../resource-selector/resource-selector.js';
 import { WIKIMEDIA_API_FILE_TYPE } from '../../utils/wikimedia-utils.js';
 import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
@@ -61,7 +60,7 @@ function Tests({ PageTemplate }) {
 
   // MediaLibrary
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [mediaLibraryResourcePickerUrl, setMediaLibraryResourcePickerUrl] = useState('');
+  const [mediaLibraryUrl, setMediaLibraryUrl] = useState('');
   const [mediaLibraryDescription, setMediaLibraryDescription] = useState('');
   const [mediaLibraryLanguages, setMediaLibraryLanguages] = useState([]);
   const [mediaLibraryLicenses, setMediaLibraryLicenses] = useState([]);
@@ -82,7 +81,7 @@ function Tests({ PageTemplate }) {
       tags: mediaLibraryTags
     });
     console.log(newItem);
-    setMediaLibraryResourcePickerUrl(newItem.url);
+    setMediaLibraryUrl(newItem.url);
   };
 
   // WikimediaApiClient
@@ -220,15 +219,8 @@ function Tests({ PageTemplate }) {
               children: (
                 <div>
                   <h3>Select</h3>
-                  <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr auto' }}>
-                    <Input
-                      value={rsResourceUrl}
-                      onChange={event => setRsResourceUrl(event.target.value)}
-                      />
-                    <ResourcePicker
-                      url={rsResourceUrl}
-                      onUrlChange={setRsResourceUrl}
-                      />
+                  <div>
+                    <UrlInput value={rsResourceUrl} onChange={setRsResourceUrl} />
                   </div>
                   <h3>Dialog Content</h3>
                   <div style={{ border: '2px solid silver', padding: '10px' }}>
@@ -250,7 +242,7 @@ function Tests({ PageTemplate }) {
                     <h3>Select</h3>
                   </div>
                   <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-                    <UrlInput value={mediaLibraryResourcePickerUrl} onChange={setMediaLibraryResourcePickerUrl} allowedSourceTypes={[SOURCE_TYPE.mediaLibrary]} />
+                    <UrlInput value={mediaLibraryUrl} onChange={setMediaLibraryUrl} allowedSourceTypes={[SOURCE_TYPE.mediaLibrary]} />
                   </div>
                   <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
                     <h3>Upload</h3>

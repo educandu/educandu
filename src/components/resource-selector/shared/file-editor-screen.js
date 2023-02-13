@@ -1,11 +1,11 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import ImageEditor from '../image-editor.js';
 import { useTranslation } from 'react-i18next';
+import ImageEditor from '../../image-editor.js';
 import React, { useRef, useState } from 'react';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { confirmExitFileEditor } from '../confirmation-dialogs.js';
-import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
+import { confirmExitFileEditor } from '../../confirmation-dialogs.js';
+import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../../domain/constants.js';
 
 function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   const { t } = useTranslation('fileEditorScreen');
@@ -30,9 +30,9 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   };
 
   return (
-    <div className="u-resource-picker-screen">
+    <div className="u-resource-selector-screen">
       <h3>{t('headline')}</h3>
-      <div className="u-resource-picker-screen-content">
+      <div className="u-resource-selector-screen-content">
         <div className="FileEditorScreen">
           <ImageEditor
             file={file}
@@ -41,9 +41,9 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
             />
         </div>
       </div>
-      <div className="u-resource-picker-screen-footer">
+      <div className="u-resource-selector-screen-footer">
         <Button onClick={handleBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-        <div className="u-resource-picker-screen-footer-buttons">
+        <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" disabled={!fileIsDirty} onClick={handleApplyChanges}>{t('applyChanges')}</Button>
         </div>

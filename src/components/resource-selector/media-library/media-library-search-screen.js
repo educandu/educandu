@@ -4,11 +4,11 @@ import { Alert, Button, Spin } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
 import NoSearch from '../shared/no-search.js';
 import { useUser } from '../../user-context.js';
-import FilesGridViewer from '../files-grid-viewer.js';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { Fragment, useRef, useState } from 'react';
 import { SOURCE_TYPE } from '../../../domain/constants.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
+import FilesGridViewer from '../shared/files-grid-viewer.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
@@ -151,11 +151,11 @@ function MediaLibrarySearchScreen({
           <NoSearch sourceType={SOURCE_TYPE.mediaLibrary} url={initialUrl} onFileDrop={onFileDrop} />
         </div>
       )}
-      <div className={currentScreen === SCREEN.search ? 'u-resource-picker-screen-footer' : 'u-resource-picker-screen-footer-right-aligned'}>
+      <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
         {currentScreen === SCREEN.search && (
           <Button onClick={handleUploadButtonClick} icon={<UploadIcon />}>{t('uploadFile')}</Button>
         )}
-        <div className="u-resource-picker-screen-footer-buttons">
+        <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>{t('common:select')}</Button>
         </div>

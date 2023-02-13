@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ResourceSelector from './resource-selector.js';
 import { SOURCE_TYPE } from '../../domain/constants.js';
 
-function ResourcePickerDialog({ allowedSourceTypes, isOpen, url, onSelect, onClose }) {
+function ResourceSelectorDialog({ allowedSourceTypes, isOpen, url, onSelect, onClose }) {
   const handleCancel = event => {
     if (!event.key) {
       onClose();
@@ -34,7 +34,7 @@ function ResourcePickerDialog({ allowedSourceTypes, isOpen, url, onSelect, onClo
   );
 }
 
-ResourcePickerDialog.propTypes = {
+ResourceSelectorDialog.propTypes = {
   allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
@@ -42,11 +42,11 @@ ResourcePickerDialog.propTypes = {
   url: PropTypes.string
 };
 
-ResourcePickerDialog.defaultProps = {
+ResourceSelectorDialog.defaultProps = {
   allowedSourceTypes: Object.values(SOURCE_TYPE),
   onClose: () => { },
   onSelect: () => { },
   url: ''
 };
 
-export default ResourcePickerDialog;
+export default ResourceSelectorDialog;

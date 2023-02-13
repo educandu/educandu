@@ -3,12 +3,12 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import DeleteIcon from '../icons/general/delete-icon.js';
-import { RESOURCE_TYPE } from '../../domain/constants.js';
-import PreviewIcon from '../icons/general/preview-icon.js';
-import { commonFileShape } from '../../ui/default-prop-types.js';
-import { getResourceIcon, getResourceType } from '../../utils/resource-utils.js';
-import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import DeleteIcon from '../../icons/general/delete-icon.js';
+import { RESOURCE_TYPE } from '../../../domain/constants.js';
+import PreviewIcon from '../../icons/general/preview-icon.js';
+import { commonFileShape } from '../../../ui/default-prop-types.js';
+import { getResourceIcon, getResourceType } from '../../../utils/resource-utils.js';
+import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../action-button.js';
 
 function FilesGridViewer({
   files,

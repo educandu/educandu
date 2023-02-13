@@ -121,8 +121,8 @@ function WikimediaSearchScreen({
           <NoSearch sourceType={SOURCE_TYPE.wikimedia} url={initialUrl} />
         </div>
       )}
-      <div className="u-resource-picker-screen-footer-right-aligned">
-        <div className="u-resource-picker-screen-footer-buttons">
+      <div className="u-resource-selector-screen-footer-right-aligned">
+        <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>
             {t('common:select')}

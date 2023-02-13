@@ -11,7 +11,7 @@ import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import React, { useEffect, useRef, useState } from 'react';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
-import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
+import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
 const URL_INSERT_EVENT = 'urlInsert';
 
@@ -21,7 +21,7 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
   const [currentCaretPosition, setCurrentCaretPosition] = useState(-1);
 
   const blockInputContainerRef = useRef(null);
-  const [isResourcePickerOpen, setIsResourcePickerOpen] = useState(false);
+  const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
 
   useEffect(() => {
     if (blockInputContainerRef?.current) {
@@ -39,14 +39,14 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
   const renderCount = () => !!maxLength
     && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
-  const handleResourcePickerClick = () => {
+  const handleOpenResourceSelectorClick = () => {
     if (disabled) {
       return;
     }
-    setIsResourcePickerOpen(true);
+    setIsResourceSelectorDialogOpen(true);
   };
 
-  const handleResourcePickerUrlSelect = url => {
+  const handleResourceSelectorDialogSelect = url => {
     const caretPosition = currentCaretPosition > -1 ? currentCaretPosition : value.length;
     const valueBeforeCaret = value.substr(0, caretPosition);
     const valueAfterCaret = value.substr(caretPosition);
@@ -55,11 +55,11 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
     blockInputContainerRef.current.value = `${valueBeforeCaret}${urlMarkdown}${valueAfterCaret}`;
     blockInputContainerRef.current.dispatchEvent(new Event(URL_INSERT_EVENT));
 
-    setIsResourcePickerOpen(false);
+    setIsResourceSelectorDialogOpen(false);
   };
 
-  const handleResourcePickerClose = () => {
-    setIsResourcePickerOpen(false);
+  const handleResourceSelectorDialogClose = () => {
+    setIsResourceSelectorDialogOpen(false);
   };
 
   const handleChange = event => {
@@ -91,21 +91,21 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
     );
   };
 
-  const renderResourcePicker = () => {
+  const renderResourceSelector = () => {
     return (
       <div
-        onClick={handleResourcePickerClick}
+        onClick={handleOpenResourceSelectorClick}
         className={classNames({
-          'MarkdownInput-resourcePicker': true,
-          'MarkdownInput-resourcePicker--small': embeddable,
+          'MarkdownInput-resourceSelector': true,
+          'MarkdownInput-resourceSelector--small': embeddable,
           'is-disabled': disabled
         })}
         >
         <LinkOutlined />
-        <ResourcePickerDialog
-          isOpen={isResourcePickerOpen}
-          onSelect={handleResourcePickerUrlSelect}
-          onClose={handleResourcePickerClose}
+        <ResourceSelectorDialog
+          isOpen={isResourceSelectorDialogOpen}
+          onSelect={handleResourceSelectorDialogSelect}
+          onClose={handleResourceSelectorDialogClose}
           />
       </div>
     );
@@ -132,8 +132,8 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, va
         )}
         >
         {!!locations.length && !disabled
-          && (<Tooltip title={t('resourcePickerTooltip')}>{renderResourcePicker()}</Tooltip>)}
-        {!!locations.length && !!disabled && renderResourcePicker()}
+          && (<Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>)}
+        {!!locations.length && !!disabled && renderResourceSelector()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
       {renderCount()}

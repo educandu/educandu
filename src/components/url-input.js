@@ -1,8 +1,8 @@
-import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useMemo } from 'react';
+import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import React, { useMemo, useState } from 'react';
 import DebouncedInput from './debounced-input.js';
 import { useService } from './container-context.js';
 import { SOURCE_TYPE } from '../domain/constants.js';
@@ -11,13 +11,14 @@ import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
-import ResourcePicker from './resource-picker/resource-picker.js';
+import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 import { BankOutlined, GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { getSourceType, getPortableUrl, getAccessibleUrl, createMetadataForSource } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
   const clientConfig = useService(ClientConfig);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const unsecureUrl = value && value.startsWith('http://');
 
@@ -61,6 +62,19 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
     handleInputValueChange(event.target.value);
   };
 
+  const handleSelectButtonClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogSelect = newUrl => {
+    handleInputValueChange(newUrl);
+    setIsDialogOpen(false);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
   const renderInputPrefix = () => {
     const tooltipTitle = `${t('common:source')}: ${t(`tooltip_${sourceType}`)}`;
     const classes = classNames(
@@ -92,15 +106,23 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         addonBefore={renderInputPrefix()}
         onChange={handleDebouncedInputValueChange}
         />
-      <ResourcePicker
-        url={value}
+      <Button
+        type="primary"
         disabled={disabled}
-        allowedSourceTypes={allowedSourceTypes}
-        onUrlChange={handleInputValueChange}
-        />
+        onClick={handleSelectButtonClick}
+        >
+        {t('common:select')}
+      </Button>
       {!!unsecureUrl && (
         <div className="UrlInput-warning">{t('unsecureUrl')}</div>
       )}
+      <ResourceSelectorDialog
+        url={value}
+        isOpen={isDialogOpen}
+        allowedSourceTypes={allowedSourceTypes}
+        onSelect={handleDialogSelect}
+        onClose={handleDialogClose}
+        />
     </div>
   );
 }

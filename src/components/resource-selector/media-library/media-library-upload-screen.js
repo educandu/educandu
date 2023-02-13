@@ -5,11 +5,11 @@ import reactDropzoneNs from 'react-dropzone';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import LicenseSelect from '../../license-select.js';
-import FileEditorScreen from '../file-editor-screen.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import ActionInvitation from '../shared/action-invitation.js';
 import { Button, Checkbox, Divider, Form, Input } from 'antd';
+import FileEditorScreen from '../shared/file-editor-screen.js';
 import LanguageSelect from '../../localization/language-select.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
@@ -148,9 +148,9 @@ function MediaLibraryUploadScreen({
 
   if (currentScreen === SCREEN.previewCreatedItem) {
     return (
-      <div className="MediaLibraryUploadScreen u-resource-picker-screen">
+      <div className="MediaLibraryUploadScreen u-resource-selector-screen">
         <h3>{t('previewHeadline')}</h3>
-        <div className="MediaLibraryUploadScreen-content u-resource-picker-screen-content">
+        <div className="MediaLibraryUploadScreen-content u-resource-selector-screen-content">
           <ResourceDetails
             url={createdItem.url}
             size={createdItem.size}
@@ -158,9 +158,9 @@ function MediaLibraryUploadScreen({
             updatedOn={createdItem.updatedOn}
             />
         </div>
-        <div className="u-resource-picker-screen-footer">
+        <div className="u-resource-selector-screen-footer">
           <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-          <div className="u-resource-picker-screen-footer-buttons">
+          <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
             <Button type="primary" onClick={handleSelectCreatedItemClick}>{t('common:select')}</Button>
           </div>
@@ -170,9 +170,9 @@ function MediaLibraryUploadScreen({
   }
 
   return (
-    <div className="MediaLibraryUploadScreen u-resource-picker-screen">
+    <div className="MediaLibraryUploadScreen u-resource-selector-screen">
       <h3>{t('uploadHeadline')}</h3>
-      <div className="MediaLibraryUploadScreen-content u-resource-picker-screen-content">
+      <div className="MediaLibraryUploadScreen-content u-resource-selector-screen-content">
         <div className="MediaLibraryUploadScreen-editor">
           <div className="MediaLibraryUploadScreen-previewArea">
             <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
@@ -235,9 +235,9 @@ function MediaLibraryUploadScreen({
           </div>
         </div>
       </div>
-      <div className="u-resource-picker-screen-footer">
+      <div className="u-resource-selector-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
-        <div className="u-resource-picker-screen-footer-buttons">
+        <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo} loading={isCurrentlyUploading}>{t('common:create')}</Button>
         </div>

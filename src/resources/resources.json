@@ -912,7 +912,7 @@
       "en": "Preview area",
       "de": "Vorschaubereich"
     },
-    "resourcePickerTooltip": {
+    "resourceSelectorTooltip": {
       "en": "Click here to insert a link to a selected resource",
       "de": "Klicke hier, um einen Link zu einer ausgewählten Ressource einzufügen"
     }
@@ -1525,17 +1525,7 @@
       "de": "Dateien hochladen"
     }
   },
-  "fileEditorScreen": {
-    "headline": {
-      "en": "File editor",
-      "de": "Datei-Editor"
-    },
-    "applyChanges": {
-      "en": "Apply changes",
-      "de": "Änderungen übernehmen"
-    }
-  },
-  "filesUploadScreen": {
+  "documentOrRoomMediaUploadScreen": {
     "headline": {
       "en": "Files upload",
       "de": "Datei-Upload"
@@ -1673,6 +1663,16 @@
     "sourceType_wikimedia": {
       "en": "Wikimedia",
       "de": "Wikimedia"
+    }
+  },
+  "fileEditorScreen": {
+    "headline": {
+      "en": "File editor",
+      "de": "Datei-Editor"
+    },
+    "applyChanges": {
+      "en": "Apply changes",
+      "de": "Änderungen übernehmen"
     }
   },
   "noSearch": {

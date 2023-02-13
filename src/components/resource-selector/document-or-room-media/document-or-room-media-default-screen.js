@@ -5,10 +5,10 @@ import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
 import UsedStorage from '../../used-storage.js';
-import FilesGridViewer from '../files-grid-viewer.js';
-import FilesListViewer from '../files-list-viewer.js';
-import UploadIcon from '../../icons/general/upload-icon.js';
 import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
+import UploadIcon from '../../icons/general/upload-icon.js';
+import FilesGridViewer from '../shared/files-grid-viewer.js';
+import FilesListViewer from '../shared/files-list-viewer.js';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { storageLocationShape, cdnObjectShape } from '../../../ui/default-prop-types.js';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
@@ -140,11 +140,11 @@ function DocumentOrRoomMediaDefaultScreen({
       <div className="DocumentOrRoomMediaDefaultScreen-locationInfo">
         {renderStorageInfo()}
       </div>
-      <div className="u-resource-picker-screen-footer">
+      <div className="u-resource-selector-screen-footer">
         <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={!canAcceptFiles}>
           {t('uploadFiles')}
         </Button>
-        <div className="u-resource-picker-screen-footer-buttons">
+        <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>
             {t('common:cancel')}
           </Button>

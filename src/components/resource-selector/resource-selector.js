@@ -9,7 +9,7 @@ import { getSourceType } from '../../utils/source-utils.js';
 import WikimediaScreens from './wikimedia/wikimedia-screens.js';
 import MediaLibraryScreens from './media-library/media-library-screens.js';
 import { FEATURE_TOGGLES, SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
-import DocumentOrRoomMediaScreens from './document-or-room-media/document-or-room-media-screens.js';
+import { DocumentMediaScreens, RoomMediaScreens } from './document-or-room-media/document-or-room-media-screens.js';
 
 const possibleSourceTypes = [
   SOURCE_TYPE.mediaLibrary,
@@ -62,44 +62,25 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
   };
 
   const renderSourceType = sourceType => {
+    let Component;
     switch (sourceType) {
       case SOURCE_TYPE.mediaLibrary:
-        return (
-          <MediaLibraryScreens
-            initialUrl={initialUrl}
-            onSelect={onSelect}
-            onCancel={onCancel}
-            />
-        );
+        Component = MediaLibraryScreens;
+        break;
       case SOURCE_TYPE.documentMedia:
-        return (
-          <DocumentOrRoomMediaScreens
-            storageLocationType={STORAGE_LOCATION_TYPE.documentMedia}
-            initialUrl={initialUrl}
-            onSelect={onSelect}
-            onCancel={onCancel}
-            />
-        );
+        Component = DocumentMediaScreens;
+        break;
       case SOURCE_TYPE.roomMedia:
-        return (
-          <DocumentOrRoomMediaScreens
-            storageLocationType={STORAGE_LOCATION_TYPE.roomMedia}
-            initialUrl={initialUrl}
-            onSelect={onSelect}
-            onCancel={onCancel}
-            />
-        );
+        Component = RoomMediaScreens;
+        break;
       case SOURCE_TYPE.wikimedia:
-        return (
-          <WikimediaScreens
-            initialUrl={initialUrl}
-            onSelect={onSelect}
-            onCancel={onCancel}
-            />
-        );
+        Component = WikimediaScreens;
+        break;
       default:
         throw new Error(`Invalid location type: ${sourceType}`);
     }
+
+    return <Component initialUrl={initialUrl} onSelect={onSelect} onCancel={onCancel} />;
   };
 
   return (
