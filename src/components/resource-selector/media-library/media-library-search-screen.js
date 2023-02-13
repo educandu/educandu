@@ -78,23 +78,17 @@ function MediaLibrarySearchScreen({
   };
 
   const renderSearchInfo = () => {
-    let searchMessage;
     if (isLoading) {
-      searchMessage = t('common:searchOngoing');
-    } else if (searchParams.searchTerm) {
-      searchMessage = (
-        <Trans
-          t={t}
-          i18nKey="common:searchResultInfo"
-          values={{ resultCount: files.length, searchTerm: searchParams.searchTerm }}
-          components={[<i key="0" />]}
-          />
-      );
-    } else {
-      searchMessage = null;
+      return <Alert type="info" message={t('common:searchOngoing')} showIcon />;
     }
 
-    return searchMessage ? <Alert type="info" message={searchMessage} showIcon /> : null;
+    if (searchParams.searchTerm) {
+      const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
+      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} components={[<i key="0" />]} />;
+      return <Alert type="info" message={message} showIcon />;
+    }
+
+    return null;
   };
 
   const getFilesViewerClasses = isDragActive => classNames({
