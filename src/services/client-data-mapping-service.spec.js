@@ -356,7 +356,7 @@ describe('client-data-mapping-service', () => {
       assert.calledWith(userStore.getUserById, 'owner');
     });
 
-    it('should call getUsersById with "[member1, memeber2]"', () => {
+    it('should call getUsersById with "[member1, member2]"', () => {
       assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
     });
 

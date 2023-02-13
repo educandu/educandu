@@ -196,6 +196,7 @@ class ClientDataMappingService {
   async mapRoom(room, viewingUser) {
     const mappedRoom = cloneDeep(room);
     const grantedPermissions = getAllUserPermissions(viewingUser);
+    const viewingUserIsRoomOwner = viewingUser._id === room.owner;
 
     const owner = await this.userStore.getUserById(room.owner);
     mappedRoom.owner = this._mapOtherUser({ user: owner, grantedPermissions });
@@ -205,13 +206,17 @@ class ClientDataMappingService {
     mappedRoom.members = room.members.map(member => {
       const memberUser = memberUsers.find(m => member.userId === m._id);
       const mappedMemberUser = this.mapWebsitePublicUser({ viewedUser: memberUser, viewingUser });
-      return {
+      const memberEmail = viewingUserIsRoomOwner ? memberUser.email : mappedMemberUser.email || null;
+      const result = {
         userId: member.userId,
-        joinedOn: member.joinedOn && member.joinedOn.toISOString(),
+        joinedOn: member.joinedOn?.toISOString() || null,
         displayName: mappedMemberUser.displayName,
-        email: mappedMemberUser.email,
         avatarUrl: mappedMemberUser.avatarUrl
       };
+      if (memberEmail) {
+        result.email = memberEmail;
+      }
+      return result;
     });
 
     return {

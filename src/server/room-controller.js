@@ -13,7 +13,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
+import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -100,11 +100,11 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+    if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
     }
 
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
 
     return res.send({ room: mappedRoom });
   }
@@ -262,8 +262,8 @@ export default class RoomController {
   }
 
   async handleGetRoomPage(req, res) {
+    const { user } = req;
     const { roomId } = req.params;
-    const userId = req.user?._id;
     const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
@@ -276,29 +276,29 @@ export default class RoomController {
       return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
-    if (!userId) {
+    if (!user) {
       throw new Unauthorized();
     }
 
     let invitations = [];
 
-    const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
+    const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, user._id);
     if (!isRoomOwnerOrMember) {
       throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
-    const isRoomOwner = room.owner === userId;
+    const isRoomOwner = room.owner === user._id;
     if (isRoomOwner) {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
     let documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
 
-    if (room.owner !== userId) {
+    if (room.owner !== user._id) {
       documentsMetadata = documentsMetadata.filter(doc => !doc.roomContext.draft);
     }
 
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room, isRoomOwner ? req.user : null);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 

@@ -233,20 +233,30 @@ describe('room-controller', () => {
     });
 
     describe('when called as a non-collaborative member', () => {
-      beforeEach(() => {
-        const roomId = uniqueId.create();
+      let roomId;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        roomId = uniqueId.create();
         const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, owner: 'some-other-user', members: [{ userId: user._id }] };
-        const mappedRoom = cloneDeep(room);
+        mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
         clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
 
         req = { user, params: { roomId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleGetRoom(req, res).catch(reject);
+      }));
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(() => sut.handleGetRoom(req, res)).rejects.toThrow(Forbidden);
+      it('should respond with the owned room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
       });
     });
 
