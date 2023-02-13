@@ -2250,10 +2250,6 @@
       "en": "Interactive media",
       "de": "Interaktive Medien"
     },
-    "chapters": {
-      "en": "Chapters",
-      "de": "Kapitel"
-    },
     "answers": {
       "en": "Answers",
       "de": "Antworten"
@@ -2362,10 +2358,6 @@
       "en": "Media analysis",
       "de": "Medien-Analyse"
     },
-    "segmentsPanelHeader": {
-      "en": "Segments",
-      "de": "Segmente"
-    },
     "chapterColorLabel": {
       "en": "Color",
       "de": "Farbe"
@@ -2395,10 +2387,6 @@
     "name": {
       "en": "Media slideshow",
       "de": "Medien-Slideshow"
-    },
-    "segments": {
-      "en": "Segments",
-      "de": "Segmente (oder Abschnitte?)"
     },
     "chapterType_image": {
       "en": "image",
@@ -3168,9 +3156,13 @@
       "en": "Start time",
       "de": "Startzeit"
     },
-    "chapter": {
-      "en": "Chapter",
-      "de": "Kapitel"
+    "segment": {
+      "en": "Segment",
+      "de": "Abschnitt"
+    },
+    "segments": {
+      "en": "Segments",
+      "de": "Abschnitte"
     },
     "track": {
       "en": "Track",

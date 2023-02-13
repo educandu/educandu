@@ -232,7 +232,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             />
         </ItemPanel>
 
-        <ItemPanel header={t('chapters')}>
+        <ItemPanel header={t('common:segments')}>
           <div className="InteractiveMediaEditor-playerPreview">
             <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
             <MediaPlayer

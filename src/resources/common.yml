@@ -400,9 +400,12 @@ common:
   startTimecode:
     en: Start time
     de: Startzeit
-  chapter:
-    en: Chapter
-    de: Kapitel
+  segment:
+    en: Segment
+    de: Abschnitt
+  segments:
+    en: Segments
+    de: Abschnitte
   track:
     en: Track
     de: Spur

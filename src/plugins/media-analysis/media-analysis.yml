@@ -2,9 +2,6 @@ mediaAnalysis:
   name:
     en: Media analysis
     de: Medien-Analyse
-  segmentsPanelHeader:
-    en: Segments
-    de: Segmente
   chapterColorLabel:
     en: Color
     de: Farbe

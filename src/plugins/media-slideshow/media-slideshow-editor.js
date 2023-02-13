@@ -166,7 +166,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const timelineParts = chapters.map((chapter, index) => ({
     ...chapter,
-    title: `${t('common:chapter')} ${index + 1}`
+    title: `${t('common:segment')} ${index + 1}`
   }));
 
   const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
@@ -192,7 +192,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
             />
         </ItemPanel>
 
-        <ItemPanel header={t('segments')}>
+        <ItemPanel header={t('common:segments')}>
           <div className="MediaSlideshowEditor-playerPreview">
             <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
             <MediaPlayer

@@ -2,9 +2,6 @@ mediaSlideshow:
   name:
     en: Media slideshow
     de: Medien-Slideshow
-  segments:
-    en: Segments
-    de: Segmente (oder Abschnitte?)
   chapterType_image:
     en: image
     de: Bild

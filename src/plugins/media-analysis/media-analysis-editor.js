@@ -374,7 +374,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
         <div {...csvImportDropzone.getRootProps({ className: segmentsDropzoneClasses })}>
           <input {...csvImportDropzone.getInputProps()} hidden />
           <ItemPanel
-            header={t('segmentsPanelHeader')}
+            header={t('common:segments')}
             extraActionButtons={[
               {
                 key: 'export-as-csv',
