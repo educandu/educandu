@@ -67,7 +67,7 @@ function CatalogDisplay({ content }) {
           </Fragment>
         )}
         {!!itemLinkUrl && <a href={itemLinkUrl}>{itemImage}{itemTitle}</a>}
-        <div className="CatalogDisplay-itemLinkDescription">{item.link.description}</div>
+        <div className="CatalogDisplay-itemLinkDescription CatalogDisplay-itemLinkDescription--centered">{item.link.description}</div>
       </li>
     );
   };
