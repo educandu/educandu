@@ -77,7 +77,7 @@ function ResourceSearchBar({ isLoading, allowedResourceTypes, initialSearchParam
           onChange={handleSearchTermChange}
           />
       </div>
-      <div className="ResourceSearchBar-item">
+      <div className="ResourceSearchBar-item ResourceSearchBar-item--long">
         <CheckboxGroup
           options={resourceTypeOptions}
           value={selectedResourceTypes}

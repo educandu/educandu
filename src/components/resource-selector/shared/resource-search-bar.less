@@ -14,4 +14,13 @@
 .ResourceSearchBar-item {
   white-space: nowrap;
   margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
+
+  &.ResourceSearchBar-item--long {
+    .ant-checkbox-group {
+      @media @edu-media-phone {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  }
 }

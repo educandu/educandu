@@ -150,7 +150,7 @@ function MediaLibraryUploadScreen({
     return (
       <div className="MediaLibraryUploadScreen u-resource-selector-screen">
         <h3>{t('previewHeadline')}</h3>
-        <div className="MediaLibraryUploadScreen-content u-resource-selector-screen-content">
+        <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
           <ResourceDetails
             url={createdItem.url}
             size={createdItem.size}
@@ -172,8 +172,8 @@ function MediaLibraryUploadScreen({
   return (
     <div className="MediaLibraryUploadScreen u-resource-selector-screen">
       <h3>{t('uploadHeadline')}</h3>
-      <div className="MediaLibraryUploadScreen-content u-resource-selector-screen-content">
-        <div className="MediaLibraryUploadScreen-editor">
+      <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
+        <div className="MediaLibraryUploadScreen-splitScreen">
           <div className="MediaLibraryUploadScreen-previewArea">
             <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
               {({ getRootProps, getInputProps, isDragActive }) => (
