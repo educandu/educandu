@@ -2069,11 +2069,11 @@
       "de": "Hover-Effekt"
     },
     "hoverEffect_none": {
-      "en": "No effect",
+      "en": "no effect",
       "de": "Kein Effekt"
     },
     "hoverEffect_colorizeZoom": {
-      "en": "Color and zoom",
+      "en": "color and zoom",
       "de": "Färben und Zoomen"
     },
     "itemNumber": {
@@ -2084,21 +2084,21 @@
       "en": "Add item",
       "de": "Eintrag hinzufügen"
     },
-    "linkSource": {
-      "en": "Link type",
-      "de": "Link-Typ"
+    "linkSourceType": {
+      "en": "Item type",
+      "de": "Eintragstyp"
     },
     "documentLink": {
       "en": "document link",
       "de": "Dokument-Link"
     },
-    "externalLink": {
-      "en": "external link",
-      "de": "Externer Link"
+    "link": {
+      "en": "link",
+      "de": "Link"
     },
-    "externalUrl": {
-      "en": "External URL",
-      "de": "Externe URL"
+    "linkSource": {
+      "en": "Link source",
+      "de": "Link-Quelle"
     },
     "adoptDocumentTitle": {
       "en": "Use as title",

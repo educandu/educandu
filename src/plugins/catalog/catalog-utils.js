@@ -15,7 +15,7 @@ export function createDefaultItem() {
     title: '',
     image: createDefaultItemImage(),
     link: {
-      sourceType: LINK_SOURCE_TYPE.document,
+      sourceType: LINK_SOURCE_TYPE.documentId,
       sourceUrl: '',
       documentId: null,
       description: ''

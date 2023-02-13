@@ -42,11 +42,7 @@ function IframeEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form layout="horizontal" labelAlign="left">
-        <FormItem
-          {...FORM_ITEM_LAYOUT}
-          label={t('common:url')}
-          hasFeedback
-          >
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <Input value={url} onChange={handleExternalUrlValueChanged} />
         </FormItem>
         <Form.Item label={t('border')} {...FORM_ITEM_LAYOUT}>

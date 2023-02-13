@@ -8,22 +8,22 @@ describe('catalog-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns empty list for an external resource', () => {
+    it('returns empty list for an image with an external URL', () => {
       const result = sut.getCdnResources({ items: [{ image: { sourceUrl: 'https://someplace.com/image.png' } }] });
       expect(result).toHaveLength(0);
     });
 
-    it('returns empty list for an internal resource without url', () => {
+    it('returns empty list for an image without url', () => {
       const result = sut.getCdnResources({ items: [{ image: { sourceUrl: null } }] });
       expect(result).toHaveLength(0);
     });
 
-    it('returns a list with the url for an internal resource', () => {
+    it('returns a list with the url for an image with an internal URL', () => {
       const result = sut.getCdnResources({ items: [{ image: { sourceUrl: 'cdn://document-media/some-image.png' } }] });
       expect(result).toEqual(['cdn://document-media/some-image.png']);
     });
 
-    it('returns a list with all urls for all internal resources', () => {
+    it('returns a list with all internal URLs', () => {
       const result = sut.getCdnResources({
         items: [
           { image: { sourceUrl: 'cdn://document-media/12345/some-image-1.png' } },

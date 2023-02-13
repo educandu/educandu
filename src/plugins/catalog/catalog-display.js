@@ -13,9 +13,9 @@ import { TILES_HOVER_EFFECT, LINK_SOURCE_TYPE, DISPLAY_MODE } from './constants.
 const getItemLinkUrl = ({ item, cdnRootUrl }) => {
   const link = item.link || {};
   switch (link.sourceType) {
-    case LINK_SOURCE_TYPE.external:
+    case LINK_SOURCE_TYPE.sourceUrl:
       return getAccessibleUrl({ url: link.sourceUrl, cdnRootUrl });
-    case LINK_SOURCE_TYPE.document:
+    case LINK_SOURCE_TYPE.documentId:
       return link.documentId ? routes.getDocUrl({ id: link.documentId }) : '';
     default:
       return '';
