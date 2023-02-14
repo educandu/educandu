@@ -26,7 +26,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
   useEffect(() => {
     (async () => {
       setFetchingDocuments(true);
-      const documentApiClientResponse = await documentApiClient.getDocumentsByContributingUser(user._id);
+      const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser(user._id);
       setFetchingDocuments(false);
       setDocuments(documentApiClientResponse.documents);
     })();

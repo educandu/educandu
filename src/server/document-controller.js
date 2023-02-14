@@ -23,7 +23,7 @@ import {
   getDocumentQuerySchema,
   patchDocSectionsBodySchema,
   createDocumentDataBodySchema,
-  getDocumentsByContributingUserParams,
+  getPublicNonArchivedDocumentsByContributingUserParams,
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
@@ -138,7 +138,7 @@ class DocumentController {
   async handleGetDocumentsByContributingUser(req, res) {
     const { userId } = req.params;
 
-    const contributedDocuments = await this.documentService.getDocumentsByContributingUser(userId);
+    const contributedDocuments = await this.documentService.getPublicNonArchivedDocumentsByContributingUser(userId);
     const mappedContributedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(contributedDocuments);
 
     return res.send({ documents: mappedContributedDocuments });
@@ -348,7 +348,7 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs/users/:userId',
-      [validateParams(getDocumentsByContributingUserParams)],
+      [validateParams(getPublicNonArchivedDocumentsByContributingUserParams)],
       (req, res) => this.handleGetDocumentsByContributingUser(req, res)
     );
 
