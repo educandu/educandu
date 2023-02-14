@@ -46,7 +46,7 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getDocumentsByContributingUser(userId) {
+  getPublicNonArchivedDocumentsByContributingUser(userId) {
     return this.httpClient
       .get(
         `/api/v1/docs/users/${encodeURIComponent(userId)}`,

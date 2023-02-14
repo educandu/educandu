@@ -7,7 +7,7 @@ export const getSearchableDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().allow('').required()
 });
 
-export const getDocumentsByContributingUserParams = joi.object({
+export const getPublicNonArchivedDocumentsByContributingUserParams = joi.object({
   userId: idOrKeySchema.required()
 });
 
