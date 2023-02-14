@@ -186,7 +186,7 @@ describe('room-controller', () => {
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+        clientDataMappingService.mapRoom.withArgs({ room, viewingUser: user }).resolves(mappedRoom);
 
         req = { user, params: { roomId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -214,7 +214,7 @@ describe('room-controller', () => {
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+        clientDataMappingService.mapRoom.withArgs({ room, viewingUser: user }).resolves(mappedRoom);
 
         req = { user, params: { roomId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -242,7 +242,7 @@ describe('room-controller', () => {
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMappingService.mapRoom.withArgs(room).resolves(mappedRoom);
+        clientDataMappingService.mapRoom.withArgs({ room, viewingUser: user }).resolves(mappedRoom);
 
         req = { user, params: { roomId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -353,7 +353,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+        assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
       });
 
       it('should respond with the updated room', () => {
@@ -446,7 +446,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapRoom, updatedRoom);
+        assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
       });
 
       it('should respond with the updated room', () => {
@@ -647,12 +647,14 @@ describe('room-controller', () => {
     describe('when the request is made by the room owner', () => {
       let documents;
       let invitations;
+      let viewingUser;
       let mappedInvitations;
 
       beforeEach(async () => {
+        viewingUser = { _id: 'owner' };
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
-          user: { _id: 'owner' }
+          user: viewingUser
         };
 
         documents = [
@@ -682,7 +684,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapRoom, room);
+        assert.calledWith(clientDataMappingService.mapRoom, { room, viewingUser });
       });
 
       it('should call getRoomInvitations', () => {
@@ -714,13 +716,15 @@ describe('room-controller', () => {
 
     describe('when the request is made by a room member', () => {
       let documents;
+      let viewingUser;
       let mappedInvitations;
       let mappedNonDraftDocuments;
 
       beforeEach(async () => {
+        viewingUser = { _id: 'member' };
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
-          user: { _id: 'member' }
+          user: viewingUser
         };
 
         documents = [
@@ -746,7 +750,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapRoom, room);
+        assert.calledWith(clientDataMappingService.mapRoom, { room, viewingUser });
       });
 
       it('should not call getRoomInvitations', () => {
@@ -1139,7 +1143,7 @@ describe('room-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
         userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
         roomService.removeRoomMember.withArgs({ room, memberUserId: memberUser._id }).resolves(updatedRoom);
-        clientDataMappingService.mapRoom.withArgs(updatedRoom).resolves(mappedRoom);
+        clientDataMappingService.mapRoom.withArgs({ room: updatedRoom, viewingUser: user }).resolves(mappedRoom);
         mailService.sendRoomMemberRemovalNotificationEmail.resolves();
 
         req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
@@ -1182,7 +1186,7 @@ describe('room-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
         userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
         roomService.removeRoomMember.withArgs({ room, memberUserId: memberUser._id }).resolves(updatedRoom);
-        clientDataMappingService.mapRoom.withArgs(updatedRoom).resolves(mappedRoom);
+        clientDataMappingService.mapRoom.withArgs({ room: updatedRoom, viewingUser: memberUser }).resolves(mappedRoom);
         mailService.sendRoomMemberRemovalNotificationEmail.resolves();
 
         req = { user: memberUser, params: { roomId: room._id, memberUserId: memberUser._id } };

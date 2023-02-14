@@ -310,82 +310,139 @@ describe('client-data-mapping-service', () => {
 
   describe('mapRoom', () => {
     let result;
+    let room;
+    let owner;
+    let member1;
+    let member2;
 
-    const owner = {
-      _id: 'owner',
-      email: 'owner@owner',
-      displayName: 'Owner user',
-      storage: { plan: 'basic', usedBytes: 20, reminders: [] }
-    };
+    beforeEach(() => {
+      owner = {
+        _id: 'owner',
+        email: 'owner@owner',
+        displayName: 'Owner user',
+        storage: { plan: 'basic', usedBytes: 20, reminders: [] }
+      };
 
-    const member1 = {
-      _id: 'member1',
-      displayName: 'Member user 1'
-    };
+      member1 = {
+        _id: 'member1',
+        email: 'member1@test.com',
+        displayName: 'Member user 1'
+      };
 
-    const member2 = {
-      _id: 'member2',
-      displayName: 'Member user 2'
-    };
+      member2 = {
+        _id: 'member2',
+        email: 'member2@test.com',
+        displayName: 'Member user 2'
+      };
 
-    const room = {
-      _id: 'roomId',
-      name: 'my room',
-      owner: 'owner',
-      createdOn: new Date(),
-      updatedOn: new Date(),
-      members: [
-        {
-          userId: 'member1',
-          joinedOn: new Date()
-        },
-        {
-          userId: 'member2',
-          joinedOn: new Date()
-        }
-      ]
-    };
-
-    beforeEach(async () => {
-      sandbox.stub(userStore, 'getUserById').resolves(owner);
-      sandbox.stub(userStore, 'getUsersByIds').resolves([member1, member2]);
-      result = await sut.mapRoom(room, { roles: [ROLE.admin] });
-    });
-
-    it('should call getUserById with "owner"', () => {
-      assert.calledWith(userStore.getUserById, 'owner');
-    });
-
-    it('should call getUsersById with "[member1, member2]"', () => {
-      assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
-    });
-
-    it('should return the mapped result', () => {
-      expect(result).toEqual({
-        ...room,
-        createdOn: room.createdOn.toISOString(),
-        updatedOn: room.updatedOn.toISOString(),
-        owner: {
-          displayName: owner.displayName,
-          email: owner.email,
-          _id: owner._id
-        },
+      room = {
+        _id: 'roomId',
+        name: 'my room',
+        owner: 'owner',
+        createdOn: new Date(),
+        updatedOn: new Date(),
         members: [
           {
-            userId: room.members[0].userId,
-            displayName: member1.displayName,
-            joinedOn: room.members[0].joinedOn.toISOString(),
-            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
+            userId: 'member1',
+            joinedOn: new Date()
           },
           {
-            userId: room.members[1].userId,
-            displayName: member2.displayName,
-            joinedOn: room.members[1].joinedOn.toISOString(),
-            avatarUrl: '//www.gravatar.com/avatar/d415f0e30c471dfdd9bc4f827329ef48?s=110&d=mp'
+            userId: 'member2',
+            joinedOn: new Date()
           }
         ]
+      };
+
+      sandbox.stub(userStore, 'getUserById').resolves(owner);
+      sandbox.stub(userStore, 'getUsersByIds').resolves([member1, member2]);
+      sandbox.stub(urlUtils, 'getGravatarUrl');
+      urlUtils.getGravatarUrl.withArgs(member1.email).returns(`www://avatar.domain/${member1.email}`);
+      urlUtils.getGravatarUrl.withArgs(member2.email).returns(`www://avatar.domain/${member2.email}`);
+    });
+
+    describe('when the viewingUser is the room owner', () => {
+      beforeEach(async () => {
+        result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, roles: [ROLE.admin] } });
+      });
+
+      it('should call getUserById with "owner"', () => {
+        assert.calledWith(userStore.getUserById, 'owner');
+      });
+
+      it('should call getUsersById with "[member1, member2]"', () => {
+        assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
+      });
+
+      it('should return the mapped result', () => {
+        expect(result).toEqual({
+          ...room,
+          createdOn: room.createdOn.toISOString(),
+          updatedOn: room.updatedOn.toISOString(),
+          owner: {
+            displayName: owner.displayName,
+            email: owner.email,
+            _id: owner._id
+          },
+          members: [
+            {
+              userId: room.members[0].userId,
+              email: member1.email,
+              displayName: member1.displayName,
+              joinedOn: room.members[0].joinedOn.toISOString(),
+              avatarUrl: 'www://avatar.domain/member1@test.com'
+            },
+            {
+              userId: room.members[1].userId,
+              email: member2.email,
+              displayName: member2.displayName,
+              joinedOn: room.members[1].joinedOn.toISOString(),
+              avatarUrl: 'www://avatar.domain/member2@test.com'
+            }
+          ]
+        });
       });
     });
+
+    describe('when the viewingUser is not set', () => {
+      beforeEach(async () => {
+        result = await sut.mapRoom({ room });
+      });
+
+      it('should call getUserById with "owner"', () => {
+        assert.calledWith(userStore.getUserById, 'owner');
+      });
+
+      it('should call getUsersById with "[member1, member2]"', () => {
+        assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
+      });
+
+      it('should return the mapped result', () => {
+        expect(result).toEqual({
+          ...room,
+          createdOn: room.createdOn.toISOString(),
+          updatedOn: room.updatedOn.toISOString(),
+          owner: {
+            displayName: owner.displayName,
+            _id: owner._id
+          },
+          members: [
+            {
+              userId: room.members[0].userId,
+              displayName: member1.displayName,
+              joinedOn: room.members[0].joinedOn.toISOString(),
+              avatarUrl: 'www://avatar.domain/member1@test.com'
+            },
+            {
+              userId: room.members[1].userId,
+              displayName: member2.displayName,
+              joinedOn: room.members[1].joinedOn.toISOString(),
+              avatarUrl: 'www://avatar.domain/member2@test.com'
+            }
+          ]
+        });
+      });
+    });
+
   });
 
   describe('mapRoomInvitations', () => {
