@@ -71,8 +71,8 @@ class DocumentService {
     return documentsMetadata.sort(by(doc => doc.createdOn, 'asc'));
   }
 
-  async getDocumentsByContributingUser(contributingUserId) {
-    const documentsMetadata = await this.documentStore.getDocumentsByContributingUser(contributingUserId);
+  async getPublicNonArchivedDocumentsByContributingUser(contributingUserId) {
+    const documentsMetadata = await this.documentStore.getPublicNonArchivedDocumentsByContributingUser(contributingUserId);
     const sortedDocumentsMetadata = documentsMetadata
       .map(doc => {
         const userIsMidContributorOnly = doc.createdBy !== contributingUserId && doc.updatedBy !== contributingUserId;

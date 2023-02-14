@@ -1304,7 +1304,7 @@ describe('document-service', () => {
     });
   });
 
-  describe('getDocumentsByContributingUser', () => {
+  describe('getPublicNonArchivedDocumentsByContributingUser', () => {
     let result;
     let otherUser;
 
@@ -1314,7 +1314,22 @@ describe('document-service', () => {
 
     describe('when the user did not contribute to any documents', () => {
       beforeEach(async () => {
-        result = await sut.getDocumentsByContributingUser(user._id);
+        result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
+      });
+
+      it('should return an empty array', () => {
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('when the user contributed on private documents or public documents that are now archived', () => {
+      beforeEach(async () => {
+        const room = await createTestRoom(container);
+        await createTestDocument(container, user, { title: 'Created doc 1', roomId: room._id });
+
+        sandbox.clock.tick(1000);
+        await createTestDocument(container, user, { publicContext: { archived: true } });
+        result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
       });
 
       it('should return an empty array', () => {
@@ -1333,7 +1348,7 @@ describe('document-service', () => {
         sandbox.clock.tick(1000);
         await createTestDocument(container, user, { title: 'Created doc 2' });
 
-        result = await sut.getDocumentsByContributingUser(user._id);
+        result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
       });
 
       it('should return the user created documents sorted by last update descending', () => {
@@ -1358,7 +1373,7 @@ describe('document-service', () => {
         sandbox.clock.tick(1000);
         await updateTestDocument({ container, documentId: doc._id, user, data: { title: 'Updated doc 2' } });
 
-        result = await sut.getDocumentsByContributingUser(user._id);
+        result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
       });
 
       it('should return the user updated documents sorted by last update descending', () => {
@@ -1403,7 +1418,7 @@ describe('document-service', () => {
         sandbox.clock.tick(1000);
         await updateTestDocument({ container, documentId: doc._id, user: otherUser, data: {} });
 
-        result = await sut.getDocumentsByContributingUser(user._id);
+        result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
       });
 
       it('should return the documents sorted by last, first, mid contribution stages, then by last update date', () => {

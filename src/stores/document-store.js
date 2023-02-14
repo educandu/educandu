@@ -73,9 +73,13 @@ class DocumentStore {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
-  getDocumentsByContributingUser(contributingUserId, { session } = {}) {
+  getPublicNonArchivedDocumentsByContributingUser(contributingUserId, { session } = {}) {
     return this.collection.find(
-      { contributors: contributingUserId },
+      {
+        'roomId': null,
+        'publicContext.archived': false,
+        'contributors': contributingUserId
+      },
       { projection: contributedDocumentMetadataProjection, session }
     ).toArray();
   }
