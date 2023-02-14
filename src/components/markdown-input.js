@@ -14,7 +14,7 @@ import ClientConfig from '../bootstrap/client-config.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
-import ResourcePickerDialog from './resource-picker/resource-picker-dialog.js';
+import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
 function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sanitizeCdnUrls, value, onBlur, onChange, preview, embeddable, maxLength, ...rest }) {
   const { locations } = useStorage();
@@ -23,7 +23,7 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
   const { t } = useTranslation('markdownInput');
   const clientConfig = useService(ClientConfig);
   const gfm = useService(GithubFlavoredMarkdown);
-  const [isResourcePickerOpen, setIsResourcePickerOpen] = useState(false);
+  const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
 
   const insertText = ({ text, replaceAll = false, focus = false }) => {
     const input = inputContainerRef.current.querySelector(inline ? 'input[type=text]' : 'textarea');
@@ -40,22 +40,21 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
     debouncedInputApiRef.current?.flush();
   };
 
-  const renderCount = () => !!maxLength
-    && <div className="u-input-count">{value.length} / {maxLength}</div>;
+  const renderCount = () => !!maxLength && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
-  const handleResourcePickerClick = () => {
+  const handleOpenResourceSelectorClick = () => {
     if (!disabled) {
-      setIsResourcePickerOpen(true);
+      setIsResourceSelectorDialogOpen(true);
     }
   };
 
-  const handleResourcePickerUrlSelect = url => {
-    setIsResourcePickerOpen(false);
+  const handleResourceSelectorDialogSelect = url => {
+    setIsResourceSelectorDialogOpen(false);
     setTimeout(() => insertText({ text: `![](${url})`, focus: true }), 500);
   };
 
-  const handleResourcePickerClose = () => {
-    setIsResourcePickerOpen(false);
+  const handleResourceSelectorDialogClose = () => {
+    setIsResourceSelectorDialogOpen(false);
   };
 
   const handleBlur = event => {
@@ -86,21 +85,21 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
     );
   };
 
-  const renderResourcePicker = () => {
+  const renderResourceSelector = () => {
     return (
       <div
-        onClick={handleResourcePickerClick}
+        onClick={handleOpenResourceSelectorClick}
         className={classNames({
-          'MarkdownInput-resourcePicker': true,
-          'MarkdownInput-resourcePicker--small': embeddable,
+          'MarkdownInput-resourceSelector': true,
+          'MarkdownInput-resourceSelector--small': embeddable,
           'is-disabled': disabled
         })}
         >
         <LinkOutlined />
-        <ResourcePickerDialog
-          isOpen={isResourcePickerOpen}
-          onSelect={handleResourcePickerUrlSelect}
-          onClose={handleResourcePickerClose}
+        <ResourceSelectorDialog
+          isOpen={isResourceSelectorDialogOpen}
+          onSelect={handleResourceSelectorDialogSelect}
+          onClose={handleResourceSelectorDialogClose}
           />
       </div>
     );
@@ -128,8 +127,8 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
         )}
         >
         {!!locations.length && !disabled
-          && (<Tooltip title={t('resourcePickerTooltip')}>{renderResourcePicker()}</Tooltip>)}
-        {!!locations.length && !!disabled && renderResourcePicker()}
+          && (<Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>)}
+        {!!locations.length && !!disabled && renderResourceSelector()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
       {renderCount()}

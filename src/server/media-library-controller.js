@@ -76,9 +76,9 @@ class MediaLibraryController {
   }
 
   async handleGetMediaLibraryTagSuggestions(req, res) {
-    const searchString = req.params[0] || '';
+    const { query } = req.query;
 
-    const mediaLibraryItemTags = await this.mediaLibraryService.getMediaLibraryItemTagsMatchingText(searchString);
+    const mediaLibraryItemTags = await this.mediaLibraryService.getMediaLibraryItemTagsMatchingText(query);
 
     return res.send(mediaLibraryItemTags);
   }
@@ -96,6 +96,12 @@ class MediaLibraryController {
       needsPermission(permissions.CREATE_FILE),
       uploadLimitExceededMiddleware(),
       multipartParser.single('file'),
+      (req, res, next) => {
+        // Multipart form data cannot transport "empty" arrays,
+        // so in case no language was provided we have to set an empty array
+        req.body.languages ||= [];
+        next();
+      },
       validateBody(mediaLibraryItemMetadataBodySchema),
       (req, res) => this.handleCreateMediaLibraryItem(req, res)
     );

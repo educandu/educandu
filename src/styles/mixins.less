@@ -245,6 +245,27 @@
   box-shadow: 0 0 0 @edu-outline-width fade(@edu-error-color, @edu-outline-fade);
 }
 
+.m-dropzone-transition {
+  transition:
+    background-color @edu-animation-duration-slow,
+    border-color @edu-animation-duration-slow,
+    box-shadow @edu-animation-duration-slow;
+}
+
+.m-dropzone-base {
+  .m-dropzone-transition;
+  background-color: @edu-background-color-light;
+  border: 1px dashed @edu-border-color-active;
+  border-radius: @edu-border-radius-base;
+}
+
+.m-dropzone-active {
+  .m-dropzone-transition;
+  background-color: @edu-background-color-base;
+  border-style: solid;
+  .m-border-glow-success;
+}
+
 .m-info-card {
   width: 100%;
   display: block;

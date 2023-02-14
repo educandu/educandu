@@ -443,14 +443,14 @@ common:
     en: |
       {
       resultCount, select,
-      0 {Searching for the term <0>{searchTerm}</0> yielded no results}
-      other {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}
+      0 {No results found for: {searchTerm}}
+      other {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}
       }
     de: |
       {
       resultCount, select,
-      0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}
-      other {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}
+      0 {Keine Ergebnisse gefunden für: {searchTerm}}
+      other {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}
       }
   more:
     en: more ...
@@ -512,3 +512,12 @@ common:
   dragToReorder:
     en: Drag to reorder
     de: Mit Drag&Drop verschieben
+  browseFilesButtonLabel:
+    en: Browse ...
+    de: Durchsuchen ...
+  dropFileInvitation:
+    en: Drag a file here
+    de: Ziehe eine Datei hierher
+  dropDifferentFileInvitation:
+    en: Drag a different file here
+    de: Ziehe eine andere Datei hierher

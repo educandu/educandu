@@ -1,0 +1,41 @@
+.MediaLibrarySearchScreen {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  &.is-hidden {
+    visibility: hidden;
+  }
+}
+
+.MediaLibrarySearchScreen-searchContent {
+  display: grid;
+}
+
+.MediaLibrarySearchScreen-filesViewer {
+  border: 1px solid @edu-border-color-base;
+  overflow: hidden;
+  position: relative;
+}
+
+.MediaLibrarySearchScreen-filesViewerContent {
+  height: 100%;
+  overflow: auto;
+}
+
+.MediaLibrarySearchScreen-filesViewerOverlay {
+  .m-mask;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
+}
+
+.MediaLibrarySearchScreen-searchInfo {
+  min-height: 40px;
+  margin-bottom: 20px;
+}
+
+.MediaLibrarySearchScreen-noSearch {
+  display: grid;
+}

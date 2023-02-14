@@ -1,8 +1,16 @@
 import urlUtils from './url-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 
 const WIKIMEDIA_COMMONS_PAGE_URL_PREFIX = 'https://commons.wikimedia.org/wiki/File:';
 
 export const WIKIMEDIA_COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
+
+export const ALLOWED_WIKIMEDIA_RESOURCE_TYPES = [
+  RESOURCE_TYPE.image,
+  RESOURCE_TYPE.audio,
+  RESOURCE_TYPE.video,
+  RESOURCE_TYPE.pdf
+];
 
 export const WIKIMEDIA_API_FILE_TYPE = {
   bitmap: 'bitmap',
@@ -12,32 +20,25 @@ export const WIKIMEDIA_API_FILE_TYPE = {
   pdf: 'pdf'
 };
 
-export const WIKIMEDIA_SEARCH_FILE_TYPE = {
-  image: 'image',
-  audio: 'audio',
-  video: 'video',
-  pdf: 'pdf'
-};
-
-export function mapSearchFileTypesToApiFileTypes(searchFileTypes) {
+export function mapResourceTypesToWikimediaApiFileTypes(resourceTypes) {
   return [
-    ...searchFileTypes.reduce((set, searchFileType) => {
-      switch (searchFileType) {
-        case WIKIMEDIA_SEARCH_FILE_TYPE.image:
+    ...resourceTypes.reduce((set, searchResourceType) => {
+      switch (searchResourceType) {
+        case RESOURCE_TYPE.image:
           set.add(WIKIMEDIA_API_FILE_TYPE.bitmap);
           set.add(WIKIMEDIA_API_FILE_TYPE.drawing);
           break;
-        case WIKIMEDIA_SEARCH_FILE_TYPE.video:
+        case RESOURCE_TYPE.video:
           set.add(WIKIMEDIA_API_FILE_TYPE.video);
           break;
-        case WIKIMEDIA_SEARCH_FILE_TYPE.audio:
+        case RESOURCE_TYPE.audio:
           set.add(WIKIMEDIA_API_FILE_TYPE.audio);
           break;
-        case WIKIMEDIA_SEARCH_FILE_TYPE.pdf:
+        case RESOURCE_TYPE.pdf:
           set.add(WIKIMEDIA_API_FILE_TYPE.pdf);
           break;
         default:
-          throw new Error(`Invalid search file type '${searchFileType}'`);
+          throw new Error(`Invalid search file type '${searchResourceType}'`);
       }
       return set;
     }, new Set())

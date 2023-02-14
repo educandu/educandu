@@ -849,16 +849,6 @@
       "de": "weniger anzeigen"
     }
   },
-  "licenseSelect": {
-    "singleModePlaceholder": {
-      "en": "Please select a license",
-      "de": "Bitte wähle eine Lizenz aus"
-    },
-    "multiModePlaceholder": {
-      "en": "Please select one or more licenses",
-      "de": "Bitte wähle eine oder meherere Lizenzen aus"
-    }
-  },
   "loginForm": {
     "enterPassword": {
       "en": "Please enter your password",
@@ -922,7 +912,7 @@
       "en": "Preview area",
       "de": "Vorschaubereich"
     },
-    "resourcePickerTooltip": {
+    "resourceSelectorTooltip": {
       "en": "Click here to insert a link to a selected resource",
       "de": "Klicke hier, um einen Link zu einer ausgewählten Ressource einzufügen"
     }
@@ -1535,17 +1525,7 @@
       "de": "Dateien hochladen"
     }
   },
-  "fileEditorScreen": {
-    "headline": {
-      "en": "File editor",
-      "de": "Datei-Editor"
-    },
-    "applyChanges": {
-      "en": "Apply changes",
-      "de": "Änderungen übernehmen"
-    }
-  },
-  "filesUploadScreen": {
+  "documentOrRoomMediaUploadScreen": {
     "headline": {
       "en": "Files upload",
       "de": "Datei-Upload"
@@ -1587,35 +1567,7 @@
       "de": "Bilder für Web optimieren"
     }
   },
-  "mediaLibrarySearch": {
-    "searchTerm": {
-      "en": "Search term",
-      "de": "Suchbegriff"
-    },
-    "searchFileType_image": {
-      "en": "Image",
-      "de": "Bild"
-    },
-    "searchFileType_video": {
-      "en": "Video",
-      "de": "Video"
-    },
-    "searchFileType_audio": {
-      "en": "Audio",
-      "de": "Audio"
-    },
-    "searchFileType_pdf": {
-      "en": "PDF",
-      "de": "PDF"
-    },
-    "searchFileType_text": {
-      "en": "Text",
-      "de": "Text"
-    },
-    "searchFileType_other": {
-      "en": "Other",
-      "de": "Andere"
-    },
+  "mediaLibrarySearchScreen": {
     "searchInvitationHeader": {
       "en": "Search in the Media library",
       "de": "Suche in der Medien-Bibliothek"
@@ -1631,12 +1583,68 @@
     "initialFilePreviewFooter": {
       "en": "In order to select a different file, start a new search using the search field above",
       "de": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
+    },
+    "uploadFile": {
+      "en": "Upload file",
+      "de": "Datei hochladen"
     }
   },
-  "resourcePreviewScreen": {
-    "headline": {
-      "en": "File preview",
-      "de": "Datei-Vorschau"
+  "mediaLibraryUploadScreen": {
+    "uploadHeadline": {
+      "en": "Create media",
+      "de": "Medien erstellen"
+    },
+    "previewHeadline": {
+      "en": "Media created",
+      "de": "Medien erstellt"
+    },
+    "preprocessed": {
+      "en": "edited",
+      "de": "bearbeitet"
+    },
+    "description": {
+      "en": "Description",
+      "de": "Beschreibung"
+    },
+    "languages": {
+      "en": "Languages",
+      "de": "Sprachen"
+    },
+    "licenses": {
+      "en": "Licenses",
+      "de": "Lizenzen"
+    },
+    "licensesRequired": {
+      "en": "Please select at least one license",
+      "de": "Bitte wähle mindestens eine Lizenz aus"
+    },
+    "tags": {
+      "en": "Tags",
+      "de": "Tags"
+    },
+    "tagsRequired": {
+      "en": "Please provide at least one tag",
+      "de": "Bitte gib mindestens einen Tag an"
+    },
+    "optimizeImage": {
+      "en": "Optimize image for web display",
+      "de": "Bild für Webdarstellung optimieren"
+    },
+    "stage_uploadNotStarted": {
+      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
+      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen."
+    },
+    "stage_uploading": {
+      "en": "Uploading ...",
+      "de": "Hochladen ..."
+    },
+    "stage_uploadFinished": {
+      "en": "Upload finished.",
+      "de": "Upload beendet."
+    },
+    "fileWillBeAddedToMediaLibrary": {
+      "en": "This file will be added to the Media library",
+      "de": "Diese Datei wird der Medien-Bibliothek hinzugefügt"
     }
   },
   "resourceSelector": {
@@ -1657,33 +1665,79 @@
       "de": "Wikimedia"
     }
   },
+  "fileEditorScreen": {
+    "headline": {
+      "en": "File editor",
+      "de": "Datei-Editor"
+    },
+    "applyChanges": {
+      "en": "Apply changes",
+      "de": "Änderungen übernehmen"
+    }
+  },
+  "noSearch": {
+    "searchInvitationHeaderForMediaLibrary": {
+      "en": "Search in the Media library",
+      "de": "Suche in der Medien-Bibliothek"
+    },
+    "searchInvitationHeaderForWikimedia": {
+      "en": "Search in the Wikimedia database",
+      "de": "Suche in der Wikimedia-Datenbank"
+    },
+    "searchInvitationDescription": {
+      "en": "Enter your search term above",
+      "de": "Gib deinen Suchbegriff oben ein"
+    },
+    "initialFilePreviewFooter": {
+      "en": "Use the search above to select a different file",
+      "de": "Benutze die Suche oben, um eine andere Datei auszuwählen"
+    }
+  },
+  "resourcePreviewScreen": {
+    "headline": {
+      "en": "File preview",
+      "de": "Datei-Vorschau"
+    }
+  },
+  "resourceSearchBar": {
+    "searchTerm": {
+      "en": "Search term",
+      "de": "Suchbegriff"
+    },
+    "resourceType_unknown": {
+      "en": "Other",
+      "de": "Andere"
+    },
+    "resourceType_audio": {
+      "en": "Audio",
+      "de": "Audio"
+    },
+    "resourceType_video": {
+      "en": "Video",
+      "de": "Video"
+    },
+    "resourceType_image": {
+      "en": "Image",
+      "de": "Bild"
+    },
+    "resourceType_pdf": {
+      "en": "PDF",
+      "de": "PDF"
+    }
+  },
+  "selectedResourceDisplay": {
+    "currentlySelectedFile": {
+      "en": "Currently selected file",
+      "de": "Momentan ausgewählte Datei"
+    }
+  },
   "wikimediaFilesViewer": {
     "openWikimediaPage": {
       "en": "Open Wikimedia page",
       "de": "Seite auf Wikimedia öffnen"
     }
   },
-  "wikimediaSearch": {
-    "searchTerm": {
-      "en": "Search term",
-      "de": "Suchbegriff"
-    },
-    "searchFileType_image": {
-      "en": "Image",
-      "de": "Bild"
-    },
-    "searchFileType_video": {
-      "en": "Video",
-      "de": "Video"
-    },
-    "searchFileType_audio": {
-      "en": "Audio",
-      "de": "Audio"
-    },
-    "searchFileType_pdf": {
-      "en": "PDF",
-      "de": "PDF"
-    },
+  "wikimediaSearchScreen": {
     "searchInvitationHeader": {
       "en": "Search in the Wikimedia database",
       "de": "Suche in der Wikimedia-Datenbank"
@@ -3209,8 +3263,8 @@
       "de": "Suche ..."
     },
     "searchResultInfo": {
-      "en": "{\nresultCount, select,\n0 {Searching for the term <0>{searchTerm}</0> yielded no results}\nother {You are seeing {resultCount, plural, =1 {# result} other {# results}} for the search term <0>{searchTerm}</0>}\n}\n",
-      "de": "{\nresultCount, select,\n0 {Die Suche nach dem Begriff <0>{searchTerm}</0> erzielte keine Ergebnisse}\nother {Du siehst {resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} für den Suchbegriff <0>{searchTerm}</0>}\n}\n"
+      "en": "{\nresultCount, select,\n0 {No results found for: {searchTerm}}\nother {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}\n}\n",
+      "de": "{\nresultCount, select,\n0 {Keine Ergebnisse gefunden für: {searchTerm}}\nother {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}\n}\n"
     },
     "more": {
       "en": "more ...",
@@ -3291,6 +3345,18 @@
     "dragToReorder": {
       "en": "Drag to reorder",
       "de": "Mit Drag&Drop verschieben"
+    },
+    "browseFilesButtonLabel": {
+      "en": "Browse ...",
+      "de": "Durchsuchen ..."
+    },
+    "dropFileInvitation": {
+      "en": "Drag a file here",
+      "de": "Ziehe eine Datei hierher"
+    },
+    "dropDifferentFileInvitation": {
+      "en": "Drag a different file here",
+      "de": "Ziehe eine andere Datei hierher"
     }
   },
   "pageNames": {

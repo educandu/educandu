@@ -16,7 +16,7 @@ import { useService } from '../../components/container-context.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { createWaveformImageUrl, extractPeaks } from './audio-waveform-utils.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import ResourcePickerDialog from '../../components/resource-picker/resource-picker-dialog.js';
+import ResourceSelectorDialog from '../../components/resource-selector/resource-selector-dialog.js';
 import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { DEFAULT_WAVEFORM_BACKGROUND_COLOR, DEFAULT_WAVEFORM_BASELINE_COLOR, DEFAULT_WAVEFORM_PEN_COLOR } from './constants.js';
 
@@ -34,8 +34,8 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isGeneratingPeaks, setIsGeneratingPeaks] = useState(false);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [isCdnResourcePickerOpen, setIsCdnResourcePickerOpen] = useState(false);
   const [waveformPenColor, setWaveformPenColor] = useState(DEFAULT_WAVEFORM_PEN_COLOR);
+  const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
   const [waveformBackgroundColor, setWaveformBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
 
@@ -117,11 +117,11 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   };
 
   const handleOpenCdnFilePickerClick = () => {
-    setIsCdnResourcePickerOpen(true);
+    setIsResourceSelectorDialogOpen(true);
   };
 
-  const handleCdnResourcePickerSelect = sourceUrl => {
-    setIsCdnResourcePickerOpen(false);
+  const handleResourceSelectorDialogSelect = sourceUrl => {
+    setIsResourceSelectorDialogOpen(false);
     generatePeaks(async () => {
       const url = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
@@ -134,8 +134,8 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     });
   };
 
-  const handleCdnResourcePickerClose = () => {
-    setIsCdnResourcePickerOpen(false);
+  const handleResourceSelectorDialogClose = () => {
+    setIsResourceSelectorDialogOpen(false);
   };
 
   const segmentsDropzoneClasses = classNames({
@@ -193,10 +193,10 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
           </div>
         </div>
       </Modal>
-      <ResourcePickerDialog
-        isOpen={isCdnResourcePickerOpen}
-        onSelect={handleCdnResourcePickerSelect}
-        onClose={handleCdnResourcePickerClose}
+      <ResourceSelectorDialog
+        isOpen={isResourceSelectorDialogOpen}
+        onSelect={handleResourceSelectorDialogSelect}
+        onClose={handleResourceSelectorDialogClose}
         />
     </Fragment>
   );

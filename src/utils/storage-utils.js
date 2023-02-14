@@ -75,12 +75,14 @@ export function isEditableImageFile(file) {
   return rasterImageFileTypes.includes(file.type);
 }
 
+export function processFileBeforeUpload({ file, optimizeImages }) {
+  return rasterImageFileTypes.includes(file.type)
+    ? convertImageToBlob({ file, optimize: optimizeImages })
+    : file;
+}
+
 export function processFilesBeforeUpload({ files, optimizeImages }) {
-  return Promise.all(files.map(file => {
-    return rasterImageFileTypes.includes(file.type)
-      ? convertImageToBlob({ file, optimize: optimizeImages })
-      : file;
-  }));
+  return Promise.all(files.map(file => processFileBeforeUpload({ file, optimizeImages })));
 }
 
 export function getStorageLocationTypeForPath(path) {
