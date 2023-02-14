@@ -4,8 +4,8 @@ export const DISPLAY_MODE = {
 };
 
 export const LINK_SOURCE_TYPE = {
-  external: 'external',
-  document: 'document'
+  sourceUrl: 'sourceUrl',
+  documentId: 'documentId'
 };
 
 export const TILES_HOVER_EFFECT = {

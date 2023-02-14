@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
+import { Button, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { LINK_SOURCE_TYPE } from './constants.js';
 import React, { Fragment, useState } from 'react';
-import { Button, Form, Input, Radio } from 'antd';
 import UrlInput from '../../components/url-input.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -36,11 +36,11 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
     triggerChange({ link: { ...link, sourceType: event.target.value, sourceUrl: '', documentId: null } });
   };
 
-  const handleExternalLinkUrlValueChange = event => {
-    triggerChange({ link: { ...link, sourceUrl: event.target.value, documentId: null } });
+  const handleLinkSourceUrlChange = value => {
+    triggerChange({ link: { ...link, sourceUrl: value, documentId: null } });
   };
 
-  const handleDocumentChange = value => {
+  const handleLinkDocumentIdChange = value => {
     triggerChange({ link: { ...link, sourceUrl: '', documentId: value } });
   };
 
@@ -63,27 +63,23 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
         <MarkdownInput inline value={title} onChange={handleTitleChange} />
       </FormItem>
-      <FormItem label={t('linkSource')} {...FORM_ITEM_LAYOUT}>
+      <FormItem label={t('linkSourceType')} {...FORM_ITEM_LAYOUT}>
         <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeChange}>
-          <RadioButton value={LINK_SOURCE_TYPE.document}>{t('documentLink')}</RadioButton>
-          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+          <RadioButton value={LINK_SOURCE_TYPE.documentId}>{t('documentLink')}</RadioButton>
+          <RadioButton value={LINK_SOURCE_TYPE.sourceUrl}>{t('link')}</RadioButton>
         </RadioGroup>
       </FormItem>
-      {link.sourceType === LINK_SOURCE_TYPE.external && (
-        <FormItem
-          label={t('catalog:externalUrl')}
-          {...FORM_ITEM_LAYOUT}
-          hasFeedback
-          >
-          <Input value={link.sourceUrl} onChange={handleExternalLinkUrlValueChange} />
+      {link.sourceType === LINK_SOURCE_TYPE.sourceUrl && (
+        <FormItem label={t('linkSource')} {...FORM_ITEM_LAYOUT}>
+          <UrlInput value={link.sourceUrl} onChange={handleLinkSourceUrlChange} />
         </FormItem>
       )}
-      {link.sourceType === LINK_SOURCE_TYPE.document && (
+      {link.sourceType === LINK_SOURCE_TYPE.documentId && (
         <FormItem label={t('common:document')} {...FORM_ITEM_LAYOUT}>
           <div className="u-input-and-button">
             <DocumentSelector
               documentId={link.documentId}
-              onChange={handleDocumentChange}
+              onChange={handleLinkDocumentIdChange}
               onTitleChange={handleDocumentTitleChange}
               />
             <Button
