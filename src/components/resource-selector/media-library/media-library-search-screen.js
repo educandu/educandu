@@ -4,8 +4,8 @@ import { Alert, Button, Spin } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
 import NoSearch from '../shared/no-search.js';
 import { useUser } from '../../user-context.js';
+import React, { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import React, { Fragment, useRef, useState } from 'react';
 import { SOURCE_TYPE } from '../../../domain/constants.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
@@ -99,59 +99,65 @@ function MediaLibrarySearchScreen({
 
   return (
     <div className={classNames('MediaLibrarySearchScreen', { 'is-hidden': isHidden })}>
-      <ResourceSearchBar
-        isLoading={isLoading}
-        initialSearchParams={searchParams}
-        allowedResourceTypes={ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES}
-        onSearch={handleSearch}
-        />
-      {currentScreen === SCREEN.search && (
-        <Fragment>
-          <ReactDropzone
-            ref={dropzoneRef}
-            onDrop={fs => fs.length && onFileDrop(fs[0])}
-            noKeyboard
-            noClick
-            >
-            {({ getRootProps, getInputProps, isDragActive }) => (
-              <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
-                <input {...getInputProps()} hidden />
-                <div className="MediaLibrarySearchScreen-filesViewerContent">
-                  <FilesGridViewer
-                    files={files}
-                    selectedFileUrl={highlightedFile?.portableUrl}
-                    canDelete={hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)}
-                    onFileClick={onFileClick}
-                    onFileDoubleClick={onFileDoubleClick}
-                    onDeleteFileClick={onDeleteFileClick}
-                    onPreviewFileClick={onPreviewFileClick}
-                    />
+      <div className="u-resource-selector-screen">
+        <div className="MediaLibrarySearchScreen-searchBar u-resource-selector-screen-content u-resource-selector-screen-content-fit">
+          <ResourceSearchBar
+            isLoading={isLoading}
+            initialSearchParams={searchParams}
+            allowedResourceTypes={ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES}
+            onSearch={handleSearch}
+            />
+        </div>
+        {currentScreen === SCREEN.search && (
+          <div className="MediaLibrarySearchScreen-searchContent u-resource-selector-screen-content">
+            <ReactDropzone
+              ref={dropzoneRef}
+              onDrop={fs => fs.length && onFileDrop(fs[0])}
+              noKeyboard
+              noClick
+              >
+              {({ getRootProps, getInputProps, isDragActive }) => (
+                <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+                  <input {...getInputProps()} hidden />
+                  <div className="MediaLibrarySearchScreen-filesViewerContent">
+                    <FilesGridViewer
+                      files={files}
+                      selectedFileUrl={highlightedFile?.portableUrl}
+                      canDelete={hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)}
+                      onFileClick={onFileClick}
+                      onFileDoubleClick={onFileDoubleClick}
+                      onDeleteFileClick={onDeleteFileClick}
+                      onPreviewFileClick={onPreviewFileClick}
+                      />
+                  </div>
+                  {!!isLoading && (
+                  <div className={classNames('MediaLibrarySearchScreen-filesViewerOverlay')}>
+                    <Spin size="large" />
+                  </div>
+                  )}
                 </div>
-                {!!isLoading && (
-                <div className={classNames('MediaLibrarySearchScreen-filesViewerOverlay')}>
-                  <Spin size="large" />
-                </div>
-                )}
-              </div>
-            )}
-          </ReactDropzone>
-          <div className="MediaLibrarySearchScreen-searchInfo">
+              )}
+            </ReactDropzone>
+          </div>
+        )}
+        {currentScreen === SCREEN.search && (
+          <div className="MediaLibrarySearchScreen-searchInfo u-resource-selector-screen-content u-resource-selector-screen-content-fit">
             {renderSearchInfo()}
           </div>
-        </Fragment>
-      )}
-      {currentScreen !== SCREEN.search && (
-        <div className="MediaLibrarySearchScreen-noSearch">
-          <NoSearch sourceType={SOURCE_TYPE.mediaLibrary} url={initialUrl} onFileDrop={onFileDrop} />
-        </div>
-      )}
-      <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
-        {currentScreen === SCREEN.search && (
-          <Button onClick={handleUploadButtonClick} icon={<UploadIcon />}>{t('uploadFile')}</Button>
         )}
-        <div className="u-resource-selector-screen-footer-buttons">
-          <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>{t('common:select')}</Button>
+        {currentScreen !== SCREEN.search && (
+          <div className="MediaLibrarySearchScreen-noSearch u-resource-selector-screen-content u-resource-selector-screen-content-scrollable">
+            <NoSearch sourceType={SOURCE_TYPE.mediaLibrary} url={initialUrl} onFileDrop={onFileDrop} />
+          </div>
+        )}
+        <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
+          {currentScreen === SCREEN.search && (
+            <Button onClick={handleUploadButtonClick} icon={<UploadIcon />}>{t('uploadFile')}</Button>
+          )}
+          <div className="u-resource-selector-screen-footer-buttons">
+            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
+            <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>{t('common:select')}</Button>
+          </div>
         </div>
       </div>
     </div>
