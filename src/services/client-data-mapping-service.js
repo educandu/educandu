@@ -193,10 +193,10 @@ class ClientDataMappingService {
     };
   }
 
-  async mapRoom(room, viewingUser) {
+  async mapRoom({ room, viewingUser }) {
     const mappedRoom = cloneDeep(room);
     const grantedPermissions = getAllUserPermissions(viewingUser);
-    const viewingUserIsRoomOwner = viewingUser._id === room.owner;
+    const viewingUserIsRoomOwner = viewingUser?._id === room.owner;
 
     const owner = await this.userStore.getUserById(room.owner);
     mappedRoom.owner = this._mapOtherUser({ user: owner, grantedPermissions });
@@ -224,10 +224,6 @@ class ClientDataMappingService {
       createdOn: mappedRoom.createdOn.toISOString(),
       updatedOn: mappedRoom.updatedOn.toISOString()
     };
-  }
-
-  mapRooms(rooms) {
-    return Promise.all(rooms.map(room => this.mapRoom(room)));
   }
 
   mapRoomInvitations(invitations) {
@@ -281,7 +277,7 @@ class ClientDataMappingService {
       case FAVORITE_TYPE.room:
         return {
           ...mappedFavorite,
-          data: favorite.data ? await this.mapRoom(favorite.data, user) : null
+          data: favorite.data ? await this.mapRoom({ room: favorite.data, viewingUser: user }) : null
         };
       case FAVORITE_TYPE.document:
         return {

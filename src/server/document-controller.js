@@ -106,7 +106,7 @@ class DocumentController {
       return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
-    const mappedRoom = room ? await this.clientDataMappingService.mapRoom(room, user) : null;
+    const mappedRoom = room ? await this.clientDataMappingService.mapRoom({ room, viewingUser: user }) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 

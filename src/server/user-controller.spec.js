@@ -63,7 +63,6 @@ describe('user-controller', () => {
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMappingService = {
-      mapRooms: sandbox.stub(),
       mapWebsiteUser: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       mapWebsitePublicUser: sandbox.stub(),

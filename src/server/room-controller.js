@@ -85,7 +85,7 @@ export default class RoomController {
       default:
         throw new BadRequest();
     }
-    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom({ room, viewingUser: user })));
 
     return res.send({ rooms: mappedRooms });
   }
@@ -104,7 +104,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE);
     }
 
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room, viewingUser: user });
 
     return res.send({ room: mappedRoom });
   }
@@ -133,7 +133,7 @@ export default class RoomController {
     }
 
     const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, documentsMode, description });
-    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
 
     return res.status(201).send({ room: mappedRoom });
   }
@@ -154,7 +154,7 @@ export default class RoomController {
     }
 
     const updatedRoom = await this.roomService.updateRoomDocumentsOrder(roomId, documentIds);
-    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
 
     return res.status(201).send({ room: mappedRoom });
   }
@@ -214,7 +214,7 @@ export default class RoomController {
     }
 
     const updatedRoom = await this.roomService.removeRoomMember({ room, memberUserId });
-    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
     if (memberUserId !== user._id) {
       await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.displayName, memberUser });
     }
@@ -298,7 +298,7 @@ export default class RoomController {
       documentsMetadata = documentsMetadata.filter(doc => !doc.roomContext.draft);
     }
 
-    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room, viewingUser: user });
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
