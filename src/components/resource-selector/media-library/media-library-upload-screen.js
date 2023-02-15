@@ -149,8 +149,8 @@ function MediaLibraryUploadScreen({
   if (currentScreen === SCREEN.previewCreatedItem) {
     return (
       <div className="MediaLibraryUploadScreen u-resource-selector-screen">
-        <h3>{t('previewHeadline')}</h3>
-        <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
+        <h3 className="u-resource-selector-screen-headline">{t('previewHeadline')}</h3>
+        <div className="u-overflow-auto">
           <ResourceDetails
             url={createdItem.url}
             size={createdItem.size}
@@ -171,8 +171,8 @@ function MediaLibraryUploadScreen({
 
   return (
     <div className="MediaLibraryUploadScreen u-resource-selector-screen">
-      <h3>{t('uploadHeadline')}</h3>
-      <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
+      <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
+      <div className="u-overflow-auto">
         <div className="MediaLibraryUploadScreen-splitScreen">
           <div className="MediaLibraryUploadScreen-previewArea">
             <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>

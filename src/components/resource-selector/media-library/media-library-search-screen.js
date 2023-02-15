@@ -100,7 +100,7 @@ function MediaLibrarySearchScreen({
   return (
     <div className={classNames('MediaLibrarySearchScreen', { 'is-hidden': isHidden })}>
       <div className="u-resource-selector-screen">
-        <div className="MediaLibrarySearchScreen-searchBar u-resource-selector-screen-content u-resource-selector-screen-content-fit">
+        <div className="MediaLibrarySearchScreen-searchBar">
           <ResourceSearchBar
             isLoading={isLoading}
             initialSearchParams={searchParams}
@@ -140,13 +140,9 @@ function MediaLibrarySearchScreen({
             </ReactDropzone>
           </div>
         )}
-        {currentScreen === SCREEN.search && (
-          <div className="MediaLibrarySearchScreen-searchInfo u-resource-selector-screen-content u-resource-selector-screen-content-fit">
-            {renderSearchInfo()}
-          </div>
-        )}
+        {currentScreen === SCREEN.search && renderSearchInfo()}
         {currentScreen !== SCREEN.search && (
-          <div className="MediaLibrarySearchScreen-noSearch u-resource-selector-screen-content u-resource-selector-screen-content-scrollable">
+          <div className="MediaLibrarySearchScreen-noSearch">
             <NoSearch sourceType={SOURCE_TYPE.mediaLibrary} url={initialUrl} onFileDrop={onFileDrop} />
           </div>
         )}

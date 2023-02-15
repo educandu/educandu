@@ -10,9 +10,9 @@ function ResourcePreviewScreen({ file, onBackClick, onCancelClick, onSelectClick
 
   return (
     <div className="u-resource-selector-screen">
-      <h3>{t('headline')}</h3>
-      <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
-        <ResourceDetails url={file.url} size={file.size} createdOn={file.createdOn || null} updatedOn={file.updatedOn || null} />
+      <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
+      <div className="u-overflow-auto">
+        <ResourceDetails url={file.url} size={file.size} />
       </div>
       <div className="u-resource-selector-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>

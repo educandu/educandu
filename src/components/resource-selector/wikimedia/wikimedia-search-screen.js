@@ -105,9 +105,7 @@ function WikimediaSearchScreen({
                 />
             </div>
           </div>
-          <div className="WikimediaSearchScreen-searchInfo">
-            {renderSearchInfo()}
-          </div>
+          {renderSearchInfo()}
         </Fragment>
       )}
       {currentScreen !== SCREEN.search && (
