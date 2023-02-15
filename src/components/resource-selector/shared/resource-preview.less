@@ -6,6 +6,10 @@
   background-color: @edu-white;
   display: flex;
   justify-content: center;
+
+  &.ResourcePreview--pdf {
+    height: 330px;
+  }
 }
 
 .ResourcePreview-image {
@@ -27,14 +31,6 @@
 .ResourcePreview-pdf {
   display: flex;
   flex-direction: column;
-}
-
-.ResourcePreview-pdfDocument {
-  flex: 0 1 0%;
-}
-
-.ResourcePreview-pdfPager {
-  flex: none;
 }
 
 .ResourcePreview-mediaPlayer {

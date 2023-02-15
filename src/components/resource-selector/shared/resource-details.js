@@ -51,18 +51,15 @@ function ResourceDetails({ size, url }) {
         <div className="ResourceDetails-fileMetadata">
           <div>{mimeTypeHelper.localizeCategory(category, t)}</div>
           {typeof size === 'number' && (
-          <div>{prettyBytes(size)}</div>
+            <div>{prettyBytes(size)}</div>
           )}
           {resourceData.resourceType === RESOURCE_TYPE.image && (
-          <div>{resourceData.width}&nbsp;⨉&nbsp;{resourceData.height}&nbsp;px</div>
+            <div>{resourceData.width}&nbsp;⨉&nbsp;{resourceData.height}&nbsp;px</div>
           )}
           {(resourceData.resourceType === RESOURCE_TYPE.audio || resourceData.resourceType === RESOURCE_TYPE.video) && (
-          <div>
-            {formatMediaPosition({ position: 1, duration: resourceData.durationInMilliseconds, formatPercentage })}
-          </div>
-          )}
-          {resourceData.resourceType === RESOURCE_TYPE.pdf && (
-          <div>{resourceData.numPages}</div>
+            <div>
+              {formatMediaPosition({ position: 1, duration: resourceData.durationInMilliseconds, formatPercentage })}
+            </div>
           )}
         </div>
       </div>
