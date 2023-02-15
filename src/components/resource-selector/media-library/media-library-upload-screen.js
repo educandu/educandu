@@ -152,10 +152,7 @@ function MediaLibraryUploadScreen({
       <div className="MediaLibraryUploadScreen u-resource-selector-screen">
         <h3 className="u-resource-selector-screen-headline">{t('previewHeadline')}</h3>
         <div className="u-overflow-auto">
-          <ResourceDetails
-            url={createdItem.url}
-            size={createdItem.size}
-            />
+          <ResourceDetails url={createdItem.url} size={createdItem.size} />
         </div>
         <div className="u-resource-selector-screen-footer">
           <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
