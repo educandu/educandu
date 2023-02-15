@@ -57,15 +57,21 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
   };
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={sourceUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} onDuration={handleMediaLoad} />
+    <div className="ResourcePreview-mediaPlayer">
+      <MediaPlayer sourceUrl={sourceUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} onDuration={handleMediaLoad} />
+    </div>
   );
 
   const renderVideo = () => (
-    <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+    <div className="ResourcePreview-mediaPlayer">
+      <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+    </div>
   );
 
   const renderImage = () => (
-    <img className="ResourcePreview-image" src={sourceUrl} onLoad={handleImageLoad} />
+    <div className="ResourcePreview-image" >
+      <img src={sourceUrl} onLoad={handleImageLoad} />
+    </div>
   );
 
   const renderPdf = () => (
@@ -122,9 +128,7 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
 
   return (
     <div className="ResourcePreview">
-      <div className="ResourcePreview-previewArea">
-        {renderPreview()}
-      </div>
+      {renderPreview()}
     </div>
   );
 }

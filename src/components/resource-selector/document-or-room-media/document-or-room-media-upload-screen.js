@@ -221,11 +221,7 @@ function DocumentOrRoomMediaUploadScreen({
         {!!item.errorMessage && <div className="DocumentOrRoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
           <div className="DocumentOrRoomMediaUploadScreen-fileStatusPreview">
-            <ResourceDetails
-              url={item.uploadedFile.url}
-              size={item.uploadedFile.size}
-              createdOn={item.uploadedFile.createdOn}
-              />
+            <ResourceDetails url={item.uploadedFile.url} size={item.uploadedFile.size} />
           </div>
         )}
       </div>
@@ -234,7 +230,7 @@ function DocumentOrRoomMediaUploadScreen({
 
   return (
     <div className="u-resource-selector-screen">
-      <h3>{t('headline')}</h3>
+      <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
         <div className="DocumentOrRoomMediaUploadScreen">
           {storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (

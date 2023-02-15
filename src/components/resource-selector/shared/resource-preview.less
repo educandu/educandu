@@ -1,26 +1,22 @@
 .ResourcePreview {
-  display: grid;
-  align-items: center;
-  justify-items: stretch;
-}
-
-.ResourcePreview-previewArea {
-  width: 100%;
-  height: fit-content;
+  min-width: 180px;
   max-width: 360px;
-  max-height: 280px;
-  border-radius: @edu-border-radius-base;
+  height: 280px;
+  overflow: hidden;
   background-color: @edu-white;
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .ResourcePreview-image {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
+  display: flex;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 
 .ResourcePreview-icon {
@@ -39,4 +35,10 @@
 
 .ResourcePreview-pdfPager {
   flex: none;
+}
+
+.ResourcePreview-mediaPlayer {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
 }

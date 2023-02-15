@@ -155,8 +155,6 @@ function MediaLibraryUploadScreen({
           <ResourceDetails
             url={createdItem.url}
             size={createdItem.size}
-            createdOn={createdItem.createdOn}
-            updatedOn={createdItem.updatedOn}
             />
         </div>
         <div className="u-resource-selector-screen-footer">
