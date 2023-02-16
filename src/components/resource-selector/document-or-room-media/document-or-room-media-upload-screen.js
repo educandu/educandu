@@ -221,7 +221,7 @@ function DocumentOrRoomMediaUploadScreen({
         {!!item.errorMessage && <div className="DocumentOrRoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
           <div className="DocumentOrRoomMediaUploadScreen-fileStatusPreview">
-            <ResourceDetails url={item.uploadedFile.url} size={item.uploadedFile.size} />
+            <ResourceDetails url={item.uploadedFile.url} size={item.uploadedFile.size} previewOnly />
           </div>
         )}
       </div>
