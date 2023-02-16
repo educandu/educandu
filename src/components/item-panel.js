@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { DragOutlined } from '@ant-design/icons';
 import { Button, Collapse, Tooltip } from 'antd';
 import DeleteIcon from '../components/icons/general/delete-icon.js';
 import MoveUpIcon from '../components/icons/general/move-up-icon.js';
@@ -48,14 +47,6 @@ function ItemPanel({
   };
 
   const actionButtons = [];
-  if (dragHandleProps) {
-    actionButtons.push({
-      key: 'dragHandle',
-      title: t('common:dragToReorder'),
-      icon: <div {...dragHandleProps}><DragOutlined /></div>,
-      disabled: itemsCount === 1
-    });
-  }
   if (onMoveUp) {
     actionButtons.push({
       key: 'moveUp',
@@ -110,10 +101,10 @@ function ItemPanel({
   };
 
   return (
-    <Collapse className={classNames('ItemPanel', { 'is-dragged': isDragged, 'is-other-dragged': isOtherDragged })} defaultActiveKey="panel">
+    <Collapse collapsible="icon" className={classNames('ItemPanel', { 'is-dragged': isDragged, 'is-other-dragged': isOtherDragged })} defaultActiveKey="panel">
       <Collapse.Panel
         key="panel"
-        header={<div className="ItemPanel-header">{header}</div>}
+        header={<div {...dragHandleProps} className="ItemPanel-header">{header}</div>}
         extra={renderActionButtons()}
         >
         <div className="ItemPanel-contentWrapper">

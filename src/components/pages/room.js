@@ -9,13 +9,13 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
-import { DragOutlined, MailOutlined } from '@ant-design/icons';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -277,14 +277,8 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderDocumentActionButtons = ({ doc, index, docsCount, dragHandleProps }) => {
+  const renderDocumentActionButtons = ({ doc, index, docsCount }) => {
     const actionButtons = [
-      {
-        key: 'dragHandle',
-        title: t('common:dragToReorder'),
-        icon: <div {...dragHandleProps}><DragOutlined /></div>,
-        disabled: doc.roomContext.draft || docsCount === 1
-      },
       {
         key: 'moveUp',
         title: t('common:moveUp'),
@@ -329,7 +323,7 @@ export default function Room({ PageTemplate, initialState }) {
     ));
   };
 
-  const renderDocumentWithActionButtons = ({ doc, actionButtons, isDragged, isOtherDragged }) => {
+  const renderDocumentWithActionButtons = ({ doc, actionButtons, dragHandleProps, isDragged, isOtherDragged }) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
     const classes = classNames(
       'RoomPage-document',
@@ -339,7 +333,7 @@ export default function Room({ PageTemplate, initialState }) {
     );
 
     return (
-      <div key={doc._id} className={classes}>
+      <div key={doc._id} className={classes} {...dragHandleProps}>
         <div className="RoomPage-documentTitle">
           <a href={url}>{doc.title}</a>
         </div>
@@ -384,8 +378,8 @@ export default function Room({ PageTemplate, initialState }) {
     const draggableItems = nonDraftDocuments.map((doc, index) => ({
       key: doc._id,
       render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
-        const actionButtons = renderDocumentActionButtons({ doc, index, docsCount, dragHandleProps });
-        return renderDocumentWithActionButtons({ doc, actionButtons, isDragged, isOtherDragged });
+        const actionButtons = renderDocumentActionButtons({ doc, index, docsCount });
+        return renderDocumentWithActionButtons({ doc, actionButtons, dragHandleProps, isDragged, isOtherDragged });
       }
     }));
 
