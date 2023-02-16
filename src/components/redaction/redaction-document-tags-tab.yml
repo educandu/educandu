@@ -1,0 +1,25 @@
+redactionDocumentTagsTab:
+  filterPlaceholder:
+    en: Filter by name
+    de: Nach Name filtern
+  sortedByTag:
+    en: Sorted by tag
+    de: Nach Tag sortiert
+  frequency:
+    en: Frequency
+    de: Häufigkeit
+  sortedByFrequency:
+    en: Sorted by frequency
+    de: Nach Häufigkeit sortiert
+  companionTagCount:
+    en: Companion tags count
+    de: Anzahl von Begleit-Tags
+  sortedByCompanionTagCount:
+    en: Sorted by companion tags count
+    de: Nach Anzahl von Begleit-Tags sortiert
+  documents:
+    en: Documents
+    de: Dokumente
+  companionTags:
+    en: Companion tags
+    de: Begleit-Tags
