@@ -624,13 +624,9 @@
       "en": "Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}",
       "de": "Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein"
     },
-    "tagsPlaceholder": {
-      "en": "Enter keywords",
-      "de": "Stichwörter angeben"
-    },
     "tagsInfo": {
-      "en": "Here you can specify search terms with which your document can be found by other users",
-      "de": "Hier kannst du Suchbegriffe angeben, mit denen dein Dokument von anderen Nutzern gefunden werden kann"
+      "en": "Specify search terms with which your document can be found by other users",
+      "de": "Gib Suchbegriffe an, mit denen dein Dokument von anderen Nutzern gefunden werden kann"
     },
     "content": {
       "en": "Content",
@@ -1612,17 +1608,9 @@
       "en": "Search in the Media library",
       "de": "Suche in der Medien-Bibliothek"
     },
-    "searchInvitationDescription": {
-      "en": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
-      "de": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest"
-    },
     "initialFilePreviewHeader": {
       "en": "Currently selected file",
       "de": "Momentan ausgewählte Datei"
-    },
-    "initialFilePreviewFooter": {
-      "en": "In order to select a different file, start a new search using the search field above",
-      "de": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
     },
     "uploadFile": {
       "en": "Upload file",
@@ -1658,9 +1646,9 @@
       "en": "Please select at least one license",
       "de": "Bitte wähle mindestens eine Lizenz aus"
     },
-    "tags": {
-      "en": "Tags",
-      "de": "Tags"
+    "tagsInfo": {
+      "en": "Specify search terms with which your resource can be found by other users",
+      "de": "Gib Suchbegriffe an, mit denen deine Ressource von anderen Nutzern gefunden werden kann"
     },
     "tagsRequired": {
       "en": "Please provide at least one tag",
@@ -1715,24 +1703,6 @@
       "de": "Änderungen übernehmen"
     }
   },
-  "noSearch": {
-    "searchInvitationHeaderForMediaLibrary": {
-      "en": "Search in the Media library",
-      "de": "Suche in der Medien-Bibliothek"
-    },
-    "searchInvitationHeaderForWikimedia": {
-      "en": "Search in the Wikimedia database",
-      "de": "Suche in der Wikimedia-Datenbank"
-    },
-    "searchInvitationDescription": {
-      "en": "Enter your search term above",
-      "de": "Gib deinen Suchbegriff oben ein"
-    },
-    "initialFilePreviewFooter": {
-      "en": "Use the search above to select a different file",
-      "de": "Benutze die Suche oben, um eine andere Datei auszuwählen"
-    }
-  },
   "resourcePreviewScreen": {
     "headline": {
       "en": "File preview",
@@ -1782,17 +1752,9 @@
       "en": "Search in the Wikimedia database",
       "de": "Suche in der Wikimedia-Datenbank"
     },
-    "searchInvitationDescription": {
-      "en": "Enter a search term in the field above and select whether you want to search for images, videos, etc.",
-      "de": "Gib einen Suchbegriff in das Feld oben ein und wähle aus, ob du nach Bildern, Videos, etc. suchen möchtest"
-    },
     "initialFilePreviewHeader": {
       "en": "Currently selected file",
       "de": "Momentan ausgewählte Datei"
-    },
-    "initialFilePreviewFooter": {
-      "en": "In order to select a different file, start a new search using the search field above",
-      "de": "Um eine andere Datei auszuwählen, starte eine neue Suche im Suchfeld oben"
     }
   },
   "roomCard": {
@@ -2978,6 +2940,10 @@
       "en": "Tags",
       "de": "Tags"
     },
+    "tagsPlaceholder": {
+      "en": "Enter keywords",
+      "de": "Stichwörter angeben"
+    },
     "archived": {
       "en": "Archived",
       "de": "Archiviert"
@@ -3389,6 +3355,14 @@
     "dropDifferentFileInvitation": {
       "en": "Drag a different file here",
       "de": "Ziehe eine andere Datei hierher"
+    },
+    "useSearchToChangeFile": {
+      "en": "Use the search above to select a different file",
+      "de": "Benutze die Suche oben, um eine andere Datei auszuwählen"
+    },
+    "searchInvitationDescription": {
+      "en": "Enter your search term above",
+      "de": "Gib deinen Suchbegriff oben ein"
     }
   },
   "pageNames": {

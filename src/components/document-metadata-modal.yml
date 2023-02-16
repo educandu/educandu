@@ -20,12 +20,9 @@ documentMetadataModal:
   invalidTags:
     en: Keywords cannot have less than {minChars, plural, =1 {# character} other {# characters}} or more than {maxChars, plural, =1 {# character} other {# characters}}
     de: Stichwörter dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein
-  tagsPlaceholder:
-    en: Enter keywords
-    de: Stichwörter angeben
   tagsInfo:
-    en: Here you can specify search terms with which your document can be found by other users
-    de: Hier kannst du Suchbegriffe angeben, mit denen dein Dokument von anderen Nutzern gefunden werden kann
+    en: Specify search terms with which your document can be found by other users
+    de: Gib Suchbegriffe an, mit denen dein Dokument von anderen Nutzern gefunden werden kann
   content:
     en: Content
     de: Inhalt

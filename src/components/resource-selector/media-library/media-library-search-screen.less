@@ -16,6 +16,16 @@
   border: 1px solid @edu-border-color-base;
   overflow: hidden;
   position: relative;
+
+  &.is-dropping {
+    .m-dropzone;
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone;
+    .m-dropzone-error;
+  }
 }
 
 .MediaLibrarySearchScreen-filesViewerContent {
@@ -31,11 +41,27 @@
   background-color: fade(@edu-background-color-light, 60%);
 }
 
-.MediaLibrarySearchScreen-searchInfo {
-  min-height: 40px;
-  margin-bottom: 20px;
+.MediaLibrarySearchScreen-noSearch {
+  .m-dropzone;
+  display: grid;
+  height: 100%;
+  overflow: auto;
+
+  &.is-dropping {
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone-error;
+  }
 }
 
-.MediaLibrarySearchScreen-noSearch {
+.MediaLibrarySearchScreen-noSearchContent {
   display: grid;
+  padding: @edu-content-padding;
+  align-content: space-around;
+}
+
+.MediaLibrarySearchScreen-noSearchDivider {
+  min-width: 80%;
 }

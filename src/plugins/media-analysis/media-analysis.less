@@ -86,6 +86,20 @@
 .MediaAnalysisEditor-segmentsDropzone {
   border-radius: @edu-border-radius-base;
   position: relative;
+
+  &.is-dropping {
+    .ant-collapse {
+      .m-dropzone;
+      .m-dropzone-active;
+    }
+  }
+
+  &.is-drop-rejected {
+    .ant-collapse {
+      .m-dropzone;
+      .m-dropzone-error;
+    }
+  }
 }
 
 .MediaAnalysisEditor-segmentsDropzoneInfo {

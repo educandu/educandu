@@ -11,11 +11,13 @@
 
 .WikimediaSearchScreen-noSearch {
   display: grid;
-  padding: 20px;
+  align-items: center;
+  margin: @edu-content-padding;
+  overflow: auto;
 }
 
 .WikimediaSearchScreen-filesViewer {
-  margin: 20px 0;
+  margin: @edu-content-padding 0;
   border: 1px solid @edu-border-color-base;
   overflow: hidden;
 }
@@ -41,9 +43,4 @@
 .WikimediaSearchScreen-buttonsLineItem {
   white-space: nowrap;
   margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
-}
-
-.WikimediaSearchScreen-searchInfo {
-  min-height: 40px;
-  margin-bottom: 20px;
 }

@@ -7,6 +7,7 @@
   grid-auto-flow: column;
   grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
+  padding: @edu-content-padding;
   gap: @edu-page-content-padding;
 
   @media @edu-media-phone {
@@ -18,21 +19,21 @@
 
 .MediaLibraryUploadScreen-previewArea {
   display: grid;
+  .m-dropzone;
+
+  &.is-dropping {
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone-error;
+  }
 }
 
-.MediaLibraryUploadScreen-previewContent {
+.MediaLibraryUploadScreen-previewAreaContent {
   display: grid;
-  padding: 10px;
-  align-items: center;
-  justify-items: center;
-
-  &.MediaLibraryUploadScreen-previewContent--canDrop {
-    .m-dropzone-base;
-
-    &.is-drag-active {
-      .m-dropzone-active;
-    }
-  }
+  padding: @edu-content-padding;
+  align-content: space-around;
 }
 
 .MediaLibraryUploadScreen-divider {

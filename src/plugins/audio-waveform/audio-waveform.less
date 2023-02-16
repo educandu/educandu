@@ -40,6 +40,16 @@
 .AudioWaveformGeneratorDialog-dropzone {
   .m-control-border-base;
   padding: 10px;
+
+  &.is-dropping {
+    .m-dropzone;
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone;
+    .m-dropzone-error;
+  }
 }
 
 .AudioWaveformGeneratorDialog-previewArea {

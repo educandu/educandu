@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Alert, Button } from 'antd';
-import NoSearch from '../shared/no-search.js';
 import React, { Fragment, useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
-import { SOURCE_TYPE } from '../../../domain/constants.js';
+import ActionInvitation from '../shared/action-invitation.js';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import { wikimediaFileShape } from '../../../ui/default-prop-types.js';
+import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import { ALLOWED_WIKIMEDIA_RESOURCE_TYPES } from '../../../utils/wikimedia-utils.js';
 
 const SCREEN = {
@@ -105,14 +106,21 @@ function WikimediaSearchScreen({
                 />
             </div>
           </div>
-          <div className="WikimediaSearchScreen-searchInfo">
-            {renderSearchInfo()}
-          </div>
+          {renderSearchInfo()}
         </Fragment>
       )}
       {currentScreen !== SCREEN.search && (
         <div className="WikimediaSearchScreen-noSearch">
-          <NoSearch sourceType={SOURCE_TYPE.wikimedia} url={initialUrl} />
+          {!!initialUrl && (
+            <SelectedResourceDisplay urlOrFile={initialUrl} footer={t('common:useSearchToChangeFile')} />
+          )}
+          {!initialUrl && (
+            <ActionInvitation
+              icon={<SearchOutlined />}
+              title={t('searchInvitationHeader')}
+              subtitle={t('common:searchInvitationDescription')}
+              />
+          )}
         </div>
       )}
       <div className="u-resource-selector-screen-footer-right-aligned">

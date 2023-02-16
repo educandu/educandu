@@ -1,3 +1,4 @@
+import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TagSelect from '../../tag-select.js';
@@ -129,11 +130,11 @@ function MediaLibraryUploadScreen({
     setCurrentScreen(SCREEN.enterData);
   };
 
-  const getPreviewAreaClasses = isDragActive => classNames({
-    'MediaLibraryUploadScreen-previewContent': true,
-    'MediaLibraryUploadScreen-previewContent--canDrop': !isCurrentlyUploading,
-    'is-drag-active': !isCurrentlyUploading && isDragActive
-  });
+  const getPreviewAreaClasses = isDragActive => classNames(
+    'MediaLibraryUploadScreen-previewArea',
+    { 'is-dropping': !isCurrentlyUploading && isDragActive },
+    { 'is-drop-rejected': isCurrentlyUploading && isDragActive }
+  );
 
   if (currentScreen === SCREEN.editImage) {
     return (
@@ -149,8 +150,8 @@ function MediaLibraryUploadScreen({
   if (currentScreen === SCREEN.previewCreatedItem) {
     return (
       <div className="MediaLibraryUploadScreen u-resource-selector-screen">
-        <h3>{t('previewHeadline')}</h3>
-        <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
+        <h3 className="u-resource-selector-screen-headline">{t('previewHeadline')}</h3>
+        <div className="u-overflow-auto">
           <ResourceDetails
             url={createdItem.url}
             size={createdItem.size}
@@ -171,13 +172,14 @@ function MediaLibraryUploadScreen({
 
   return (
     <div className="MediaLibraryUploadScreen u-resource-selector-screen">
-      <h3>{t('uploadHeadline')}</h3>
-      <div className="u-resource-selector-screen-content u-resource-selector-screen-content-fit u-resource-selector-screen-content-scrollable">
+      <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
+      <div className="u-overflow-auto">
         <div className="MediaLibraryUploadScreen-splitScreen">
-          <div className="MediaLibraryUploadScreen-previewArea">
-            <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
-              {({ getRootProps, getInputProps, isDragActive }) => (
-                <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
+
+          <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
+            {({ getRootProps, getInputProps, isDragActive }) => (
+              <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
+                <div className="MediaLibraryUploadScreen-previewAreaContent">
                   <input {...getInputProps()} hidden />
                   {!!fileInfo && (
                     <Fragment>
@@ -187,11 +189,11 @@ function MediaLibraryUploadScreen({
                           <Fragment>
                             <div>{t('fileWillBeAddedToMediaLibrary')}</div>
                             {!!canEditImage && (
-                              <div>
-                                <Button type="primary" onClick={handleEditImageClick}>
-                                  {t('common:edit')}
-                                </Button>
-                              </div>
+                            <div>
+                              <Button type="primary" onClick={handleEditImageClick}>
+                                {t('common:edit')}
+                              </Button>
+                            </div>
                             )}
                           </Fragment>
                         )}
@@ -211,9 +213,9 @@ function MediaLibraryUploadScreen({
                     )}
                     />
                 </div>
-              )}
-            </ReactDropzone>
-          </div>
+              </div>
+            )}
+          </ReactDropzone>
           <div className="MediaLibraryUploadScreen-editorArea">
             <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={handleFinish}>
               <FormItem name="description" label={t('description')}>
@@ -225,8 +227,12 @@ function MediaLibraryUploadScreen({
               <FormItem name="licenses" label={t('licenses')} rules={[{ required: true, message: t('licensesRequired') }]}>
                 <LicenseSelect multi />
               </FormItem>
-              <FormItem name="tags" label={t('tags')} rules={[{ required: true, message: t('tagsRequired') }]}>
-                <TagSelect onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
+              <FormItem
+                name="tags"
+                label={<Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>}
+                rules={[{ required: true, message: t('tagsRequired') }]}
+                >
+                <TagSelect placeholder={t('common:tagsPlaceholder')} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
               </FormItem>
               <FormItem name="optimizeImage" valuePropName="checked">
                 <Checkbox disabled={!canEditImage}>{t('optimizeImage')}</Checkbox>
