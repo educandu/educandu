@@ -1622,25 +1622,9 @@
       "en": "Create media",
       "de": "Medien erstellen"
     },
-    "previewHeadline": {
-      "en": "Media created",
-      "de": "Medien erstellt"
-    },
     "preprocessed": {
       "en": "edited",
       "de": "bearbeitet"
-    },
-    "description": {
-      "en": "Description",
-      "de": "Beschreibung"
-    },
-    "languages": {
-      "en": "Languages",
-      "de": "Sprachen"
-    },
-    "licenses": {
-      "en": "Licenses",
-      "de": "Lizenzen"
     },
     "licensesRequired": {
       "en": "Please select at least one license",
@@ -1707,6 +1691,10 @@
     "headline": {
       "en": "File preview",
       "de": "Datei-Vorschau"
+    },
+    "missing": {
+      "en": "missing",
+      "de": "fehtl"
     }
   },
   "resourceSearchBar": {
@@ -2800,6 +2788,10 @@
       "en": "Language",
       "de": "Sprache"
     },
+    "languages": {
+      "en": "Languages",
+      "de": "Sprachen"
+    },
     "proposedSectionsAlert": {
       "en": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "de": "Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n"
@@ -3363,6 +3355,10 @@
     "searchInvitationDescription": {
       "en": "Enter your search term above",
       "de": "Gib deinen Suchbegriff oben ein"
+    },
+    "licenses": {
+      "en": "Licenses",
+      "de": "Lizenzen"
     }
   },
   "pageNames": {

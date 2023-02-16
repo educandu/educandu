@@ -6,7 +6,6 @@ import reactDropzoneNs from 'react-dropzone';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import LicenseSelect from '../../license-select.js';
-import ResourceDetails from '../shared/resource-details.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import ActionInvitation from '../shared/action-invitation.js';
 import { Button, Checkbox, Divider, Form, Input } from 'antd';
@@ -15,6 +14,7 @@ import LanguageSelect from '../../localization/language-select.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import { ArrowLeftOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
@@ -149,19 +149,13 @@ function MediaLibraryUploadScreen({
 
   if (currentScreen === SCREEN.previewCreatedItem) {
     return (
-      <div className="MediaLibraryUploadScreen u-resource-selector-screen">
-        <h3 className="u-resource-selector-screen-headline">{t('previewHeadline')}</h3>
-        <div className="u-overflow-auto">
-          <ResourceDetails url={createdItem.url} size={createdItem.size} />
-        </div>
-        <div className="u-resource-selector-screen-footer">
-          <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>
-          <div className="u-resource-selector-screen-footer-buttons">
-            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-            <Button type="primary" onClick={handleSelectCreatedItemClick}>{t('common:select')}</Button>
-          </div>
-        </div>
-      </div>
+      <ResourcePreviewScreen
+        file={createdItem}
+        renderMediaLibraryMetadata
+        onBackClick={onBackClick}
+        onCancelClick={onCancelClick}
+        onSelectClick={handleSelectCreatedItemClick}
+        />
     );
   }
 
@@ -213,13 +207,13 @@ function MediaLibraryUploadScreen({
           </ReactDropzone>
           <div className="MediaLibraryUploadScreen-editorArea">
             <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={handleFinish}>
-              <FormItem name="description" label={t('description')}>
+              <FormItem name="description" label={t('common:description')}>
                 <TextArea rows={3} />
               </FormItem>
-              <FormItem name="languages" label={t('languages')}>
+              <FormItem name="languages" label={t('common:languages')}>
                 <LanguageSelect multi />
               </FormItem>
-              <FormItem name="licenses" label={t('licenses')} rules={[{ required: true, message: t('licensesRequired') }]}>
+              <FormItem name="licenses" label={t('common:licenses')} rules={[{ required: true, message: t('licensesRequired') }]}>
                 <LicenseSelect multi />
               </FormItem>
               <FormItem

@@ -165,6 +165,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.preview && (
         <ResourcePreviewScreen
           file={highlightedFile}
+          renderMediaLibraryMetadata
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
           onSelectClick={handleSelectHighlightedFileClick}

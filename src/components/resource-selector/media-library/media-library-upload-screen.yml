@@ -2,21 +2,9 @@ mediaLibraryUploadScreen:
   uploadHeadline:
     en: Create media
     de: Medien erstellen
-  previewHeadline:
-    en: Media created
-    de: Medien erstellt
   preprocessed:
     en: edited
     de: bearbeitet
-  description:
-    en: Description
-    de: Beschreibung
-  languages:
-    en: Languages
-    de: Sprachen
-  licenses:
-    en: Licenses
-    de: Lizenzen
   licensesRequired:
     en: Please select at least one license
     de: Bitte wähle mindestens eine Lizenz aus

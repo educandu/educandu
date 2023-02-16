@@ -1,25 +1,19 @@
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import { message, Tooltip } from 'antd';
 import React, { useState } from 'react';
-import Logger from '../../../common/logger.js';
+import ResourceUrl from './resource-url.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import ResourcePreview from './resource-preview.js';
-import LiteralUrlLink from '../../literal-url-link.js';
 import { useService } from '../../container-context.js';
-import { handleError } from '../../../ui/error-helper.js';
 import mimeTypeHelper from '../../../ui/mime-type-helper.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
 import { usePercentageFormat } from '../../locale-context.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../../utils/source-utils.js';
 import { formatMediaPosition } from '../../../utils/media-utils.js';
-import CopyToClipboardIcon from '../../icons/general/copy-to-clipboard-icon.js';
 
-const logger = new Logger(import.meta.url);
-
-function ResourceDetails({ size, url }) {
+function ResourceDetails({ size, url, previewOnly }) {
   const { t } = useTranslation();
   const clientConfig = useService(ClientConfig);
   const formatPercentage = usePercentageFormat();
@@ -29,22 +23,13 @@ function ResourceDetails({ size, url }) {
   const fileName = decodeURIComponent(urlUtils.getFileName(accessibleUrl));
   const category = mimeTypeHelper.getCategory(fileName);
 
-  const handleCopyUrlToClipboardClick = async event => {
-    event.preventDefault();
-    event.stopPropagation();
-    try {
-      await window.navigator.clipboard.writeText(accessibleUrl);
-      message.success(t('common:urlCopiedToClipboard'));
-    } catch (error) {
-      handleError({ message: t('common:copyUrlToClipboardError'), error, logger, t, duration: 30 });
-    }
-  };
-
   return (
     <div className="ResourceDetails">
-      <div className="ResourceDetails-file">
-        <div className="ResourceDetails-fileName">{fileName}</div>
-      </div>
+      {!previewOnly && (
+        <div className="ResourceDetails-file">
+          <div className="ResourceDetails-fileName">{fileName}</div>
+        </div>
+      )}
 
       <div className="ResourceDetails-previewArea">
         <ResourcePreview urlOrFile={accessibleUrl} onResourceLoad={setResourceData} />
@@ -64,25 +49,20 @@ function ResourceDetails({ size, url }) {
         </div>
       </div>
 
-      <div className="ResourceDetails-link">
-        <Tooltip title={t('common:copyUrlToClipboard')}>
-          <a onClick={handleCopyUrlToClipboardClick}>
-            <div className="ResourceDetails-linkIcon"><CopyToClipboardIcon /></div>
-          </a>
-        </Tooltip>
-        <LiteralUrlLink href={accessibleUrl} targetBlank />
-      </div>
+      {!previewOnly && <ResourceUrl url={url} />}
     </div>
   );
 }
 
 ResourceDetails.propTypes = {
   size: PropTypes.number,
-  url: PropTypes.string.isRequired
+  url: PropTypes.string.isRequired,
+  previewOnly: PropTypes.bool
 };
 
 ResourceDetails.defaultProps = {
-  size: null
+  size: null,
+  previewOnly: false
 };
 
 export default ResourceDetails;

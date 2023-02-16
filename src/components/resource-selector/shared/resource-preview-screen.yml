@@ -2,3 +2,6 @@ resourcePreviewScreen:
   headline:
     en: File preview
     de: Datei-Vorschau
+  missing:
+    en: missing
+    de: fehtl
