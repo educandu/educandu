@@ -357,7 +357,7 @@ function DocumentMetadataModal({
           >
           <TagSelect
             value={tags}
-            placeholder={t('tagsPlaceholder')}
+            placeholder={t('common:tagsPlaceholder')}
             initialValue={initialDocumentMetadata.tags || []}
             onChange={setTags}
             onSuggestionsNeeded={handleTagSuggestionsNeeded}

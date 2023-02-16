@@ -1,3 +1,4 @@
+import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TagSelect from '../../tag-select.js';
@@ -226,8 +227,12 @@ function MediaLibraryUploadScreen({
               <FormItem name="licenses" label={t('licenses')} rules={[{ required: true, message: t('licensesRequired') }]}>
                 <LicenseSelect multi />
               </FormItem>
-              <FormItem name="tags" label={t('tags')} rules={[{ required: true, message: t('tagsRequired') }]}>
-                <TagSelect onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
+              <FormItem
+                name="tags"
+                label={<Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>}
+                rules={[{ required: true, message: t('tagsRequired') }]}
+                >
+                <TagSelect placeholder={t('common:tagsPlaceholder')} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
               </FormItem>
               <FormItem name="optimizeImage" valuePropName="checked">
                 <Checkbox disabled={!canEditImage}>{t('optimizeImage')}</Checkbox>

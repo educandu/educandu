@@ -192,6 +192,9 @@ common:
   tags:
     en: Tags
     de: Tags
+  tagsPlaceholder:
+    en: Enter keywords
+    de: Stichwörter angeben
   archived:
     en: Archived
     de: Archiviert
