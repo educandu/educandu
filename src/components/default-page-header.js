@@ -1,6 +1,6 @@
+import React from 'react';
 import Login from './login.js';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 import { Button, Dropdown } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
@@ -8,17 +8,14 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
 import EditIcon from './icons/general/edit-icon.js';
+import { QuestionOutlined } from '@ant-design/icons';
 import MenuIcon from './icons/main-menu/menu-icon.js';
 import DefaultHeaderLogo from './default-header-logo.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
-import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DashboardIcon from './icons/main-menu/dashboard-icon.js';
-import DocumentMetadataModal from './document-metadata-modal.js';
-import { PlusOutlined, QuestionOutlined } from '@ant-design/icons';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { DOCUMENT_METADATA_MODAL_MODE } from './document-metadata-modal-utils.js';
 
 function DefaultPageHeader({ onUiLanguageClick }) {
   const user = useUser();
@@ -27,16 +24,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
   const { t } = useTranslation('page');
   const helpPage = settings?.helpPage?.[uiLanguage];
 
-  const [isDocumentMetadataModalOpen, setIsDocumentMetadataModalOpen] = useState(false);
-
   const pageMenuItems = [
-    {
-      key: 'createDocument',
-      label: t('common:newDocument'),
-      icon: <PlusOutlined />,
-      onClick: () => { setIsDocumentMetadataModalOpen(true); },
-      showWhen: !!user
-    },
     {
       key: 'dashboard',
       label: t('pageNames:dashboard'),
@@ -86,20 +74,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
     clickedItem.onClick();
   };
 
-  const handleDocumentMetadataModalSave = createdDocuments => {
-    setIsDocumentMetadataModalOpen(false);
-
-    window.location = routes.getDocUrl({
-      id: createdDocuments[0]._id,
-      slug: createdDocuments[0].slug,
-      view: DOC_VIEW_QUERY_PARAM.edit
-    });
-  };
-
-  const handleDocumentMetadataModalClose = () => {
-    setIsDocumentMetadataModalOpen(false);
-  };
-
   const menuItems = pageMenuItems.map(({ key, label, icon }) => ({ key, label, icon }));
 
   return (
@@ -124,13 +98,6 @@ function DefaultPageHeader({ onUiLanguageClick }) {
           </Dropdown>
         </div>
       </div>
-      <DocumentMetadataModal
-        initialDocumentMetadata={{}}
-        isOpen={isDocumentMetadataModalOpen}
-        mode={DOCUMENT_METADATA_MODAL_MODE.create}
-        onSave={handleDocumentMetadataModalSave}
-        onClose={handleDocumentMetadataModalClose}
-        />
     </header>
   );
 }
