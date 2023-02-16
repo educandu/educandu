@@ -41,11 +41,9 @@ function ResourcePreviewScreen({ file, renderMediaLibraryMetadata, onBackClick, 
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-overflow-auto">
         {!!renderMediaLibraryMetadata && (
-          <div className="ResourcePreviewScreen">
-            <div className="ResourcePreviewScreen-file">
-              <div className="ResourcePreviewScreen-fileName">{renderFileName()}</div>
-            </div>
-            <div className="ResourcePreviewScreen-content">
+          <div className="ResourcePreviewScreen u-resource-selector-screen-content-rows">
+            <div className="u-resource-selector-screen-file-name">{renderFileName()}</div>
+            <div className="u-resource-selector-screen-content-split">
               {renderResourceDetails(true)}
               <div className="ResourcePreviewScreen-metadata">
                 <div>

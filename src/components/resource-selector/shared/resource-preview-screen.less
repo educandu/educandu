@@ -1,38 +1,8 @@
-.ResourcePreviewScreen {
-  display: grid;
-  gap: 30px;
-  grid-auto-flow: row;
-  place-items: center;
-}
-
-.ResourcePreviewScreen-content {
-  display: grid;
-  gap: 20px;
-  align-items: center;
-  grid-template-columns: 1fr 1fr;
-
-  @media @edu-media-phone {
-    gap: 10px;
-    grid-template-columns: auto;
-    grid-auto-flow: rows;
-  }
-}
+.ResourcePreviewScreen {}
 
 .ResourcePreviewScreen-metadata {
   display: grid;
   gap: @edu-content-padding;
   grid-auto-flow: row;
   padding: @edu-content-padding
-}
-
-.ResourcePreviewScreen-file {
-  display: flex;
-  grid-auto-flow: column;
-  justify-content: center;
-  gap: @edu-control-spacing-base;
-  margin-bottom: 10px;
-}
-
-.ResourcePreviewScreen-fileName {
-  .m-overflow-ellipsis;
 }

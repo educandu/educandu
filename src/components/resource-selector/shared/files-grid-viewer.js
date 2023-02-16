@@ -3,6 +3,7 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import EditIcon from '../../icons/general/edit-icon.js';
 import DeleteIcon from '../../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
@@ -14,20 +15,28 @@ function FilesGridViewer({
   files,
   selectedFileUrl,
   canDelete,
+  canEdit,
+  onDeleteFileClick,
+  onEditFileClick,
   onFileClick,
   onFileDoubleClick,
-  onDeleteFileClick,
   onPreviewFileClick
 }) {
   const { t } = useTranslation();
-  const handlePreviewClick = (event, file) => {
-    event.stopPropagation();
-    onPreviewFileClick(file);
-  };
 
   const handleDeleteClick = (event, file) => {
     event.stopPropagation();
     onDeleteFileClick(file);
+  };
+
+  const handleEditClick = (event, file) => {
+    event.stopPropagation();
+    onEditFileClick(file);
+  };
+
+  const handlePreviewClick = (event, file) => {
+    event.stopPropagation();
+    onPreviewFileClick(file);
   };
 
   const renderFile = file => {
@@ -56,10 +65,17 @@ function FilesGridViewer({
             <ActionButton
               title={t('common:preview')}
               icon={<PreviewIcon />}
-              intent={ACTION_BUTTON_INTENT.success}
               onClick={event => handlePreviewClick(event, file)}
               overlay
               />
+            {!!canEdit && (
+              <ActionButton
+                title={t('common:edit')}
+                icon={<EditIcon />}
+                onClick={event => handleEditClick(event, file)}
+                overlay
+                />
+            )}
             {!!canDelete && (
               <ActionButton
                 title={t('common:delete')}
@@ -84,20 +100,24 @@ function FilesGridViewer({
 
 FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
+  canEdit: PropTypes.bool,
   selectedFileUrl: PropTypes.string,
   files: PropTypes.arrayOf(commonFileShape).isRequired,
+  onDeleteFileClick: PropTypes.func,
+  onEditFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,
-  onDeleteFileClick: PropTypes.func,
   onPreviewFileClick: PropTypes.func
 };
 
 FilesGridViewer.defaultProps = {
   canDelete: false,
+  canEdit: false,
   selectedFileUrl: null,
+  onDeleteFileClick: () => {},
+  onEditFileClick: () => {},
   onFileClick: () => {},
   onFileDoubleClick: () => {},
-  onDeleteFileClick: () => {},
   onPreviewFileClick: () => {}
 };
 

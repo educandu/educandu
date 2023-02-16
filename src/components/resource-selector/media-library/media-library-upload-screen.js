@@ -1,27 +1,22 @@
-import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import TagSelect from '../../tag-select.js';
 import reactDropzoneNs from 'react-dropzone';
+import { Button, Divider, Form } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import LicenseSelect from '../../license-select.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import ActionInvitation from '../shared/action-invitation.js';
-import { Button, Checkbox, Divider, Form, Input } from 'antd';
 import FileEditorScreen from '../shared/file-editor-screen.js';
-import LanguageSelect from '../../localization/language-select.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import { ArrowLeftOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
 
-const FormItem = Form.Item;
-const TextArea = Input.TextArea;
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
 const logger = new Logger(import.meta.url);
@@ -34,14 +29,6 @@ const SCREEN = {
 };
 
 const createFileInfo = file => file ? { file, isEdited: false } : null;
-
-const initialFormValues = {
-  description: '',
-  languages: [],
-  licenses: [],
-  tags: [],
-  optimizeImage: true
-};
 
 function MediaLibraryUploadScreen({
   initialFile,
@@ -61,18 +48,10 @@ function MediaLibraryUploadScreen({
     setCreatedItem(null);
     setCurrentScreen(SCREEN.enterData);
     setFileInfo(createFileInfo(initialFile));
-    form.resetFields();
   }, [initialFile, form]);
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
   const canEditImage = fileInfo && isEditableImageFile(fileInfo.file);
-
-  const handleMediaLibraryTagSuggestionsNeeded = searchText => {
-    return mediaLibraryApiClient.getMediaLibraryTagSuggestions(searchText).catch(error => {
-      handleApiError({ error, logger, t });
-      return [];
-    });
-  };
 
   const handleUploadButtonClick = () => {
     dropzoneRef.current.open();
@@ -84,7 +63,7 @@ function MediaLibraryUploadScreen({
     }
   };
 
-  const handleFinish = async ({ description, languages, licenses, tags, optimizeImage }) => {
+  const handleMetadataFormFinish = async ({ description, languages, licenses, tags, optimizeImage }) => {
     const currentFile = fileInfo?.file || null;
     if (!currentFile) {
       return;
@@ -163,7 +142,7 @@ function MediaLibraryUploadScreen({
     <div className="MediaLibraryUploadScreen u-resource-selector-screen">
       <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
       <div className="u-overflow-auto">
-        <div className="MediaLibraryUploadScreen-splitScreen">
+        <div className="u-resource-selector-screen-content-split">
 
           <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
             {({ getRootProps, getInputProps, isDragActive }) => (
@@ -192,6 +171,7 @@ function MediaLibraryUploadScreen({
                       </div>
                     </Fragment>
                   )}
+
                   <ActionInvitation
                     icon={<CloudUploadOutlined />}
                     title={t('common:dropDifferentFileInvitation')}
@@ -205,29 +185,8 @@ function MediaLibraryUploadScreen({
               </div>
             )}
           </ReactDropzone>
-          <div className="MediaLibraryUploadScreen-editorArea">
-            <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={handleFinish}>
-              <FormItem name="description" label={t('common:description')}>
-                <TextArea rows={3} />
-              </FormItem>
-              <FormItem name="languages" label={t('common:languages')}>
-                <LanguageSelect multi />
-              </FormItem>
-              <FormItem name="licenses" label={t('common:licenses')} rules={[{ required: true, message: t('licensesRequired') }]}>
-                <LicenseSelect multi />
-              </FormItem>
-              <FormItem
-                name="tags"
-                label={<Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>}
-                rules={[{ required: true, message: t('tagsRequired') }]}
-                >
-                <TagSelect placeholder={t('common:tagsPlaceholder')} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
-              </FormItem>
-              <FormItem name="optimizeImage" valuePropName="checked">
-                <Checkbox disabled={!canEditImage}>{t('optimizeImage')}</Checkbox>
-              </FormItem>
-            </Form>
-          </div>
+
+          <MediaLibraryMetadataForm form={form} disableOptimizeImage={!canEditImage} onFinish={handleMetadataFormFinish} />
         </div>
       </div>
       <div className="u-resource-selector-screen-footer">

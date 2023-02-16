@@ -24,6 +24,17 @@
   overflow: hidden;
 }
 
+.u-resource-selector-screen-content-rows {
+  display: grid;
+  gap: 30px;
+  grid-auto-flow: row;
+  place-items: center;
+
+  @media @edu-media-phone {
+    gap: 10px;
+  }
+}
+
 .u-resource-selector-screen-footer {
   display: flex;
   flex-wrap: wrap;
@@ -41,6 +52,22 @@
   margin-top: @edu-control-spacing-base;
 }
 
-.u-label {
-  color: @edu-label-color;
+.u-resource-selector-screen-content-split {
+  width: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  gap: @edu-page-content-padding;
+
+  @media @edu-media-phone {
+    grid-template-columns: auto;
+  }
+}
+
+.u-resource-selector-screen-file-name {
+  .m-overflow-ellipsis;
+  max-width: 100%;
+  text-align: center;
+  font-size: @edu-font-size-lg;
 }

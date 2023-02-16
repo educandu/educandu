@@ -24,11 +24,9 @@ function ResourceDetails({ size, url, previewOnly }) {
   const category = mimeTypeHelper.getCategory(fileName);
 
   return (
-    <div className="ResourceDetails">
+    <div className="ResourceDetails u-resource-selector-screen-content-rows">
       {!previewOnly && (
-        <div className="ResourceDetails-file">
-          <div className="ResourceDetails-fileName">{fileName}</div>
-        </div>
+        <div className="u-resource-selector-screen-file-name">{fileName}</div>
       )}
 
       <div className="ResourceDetails-previewArea">

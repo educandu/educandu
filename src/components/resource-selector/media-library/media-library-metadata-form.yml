@@ -1,0 +1,13 @@
+mediaLibraryMetadataForm:
+  licensesRequired:
+    en: Please select at least one license
+    de: Bitte wähle mindestens eine Lizenz aus
+  tagsInfo:
+    en: Specify search terms with which your resource can be found by other users
+    de: Gib Suchbegriffe an, mit denen deine Ressource von anderen Nutzern gefunden werden kann
+  tagsRequired:
+    en: Please provide at least one tag
+    de: Bitte gib mindestens einen Tag an
+  optimizeImage:
+    en: Optimize image for web display
+    de: Bild für Webdarstellung optimieren
