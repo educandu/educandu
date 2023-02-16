@@ -313,11 +313,11 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
     };
   });
 
-  const segmentsDropzoneClasses = classNames({
-    'MediaAnalysisEditor-segmentsDropzone': true,
-    'u-can-drop': csvImportDropzone.isDragAccept,
-    'u-cannot-drop': csvImportDropzone.isDragReject
-  });
+  const segmentsDropzoneClasses = classNames(
+    'MediaAnalysisEditor-segmentsDropzone',
+    { 'is-dropping': csvImportDropzone.isDragAccept },
+    { 'is-drop-rejected': csvImportDropzone.isDragReject }
+  );
 
   return (
     <div className="MediaAnalysisEditor">

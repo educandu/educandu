@@ -129,11 +129,11 @@ function MediaLibraryUploadScreen({
     setCurrentScreen(SCREEN.enterData);
   };
 
-  const getPreviewAreaClasses = isDragActive => classNames({
-    'MediaLibraryUploadScreen-previewContent': true,
-    'MediaLibraryUploadScreen-previewContent--canDrop': !isCurrentlyUploading,
-    'is-drag-active': !isCurrentlyUploading && isDragActive
-  });
+  const getPreviewAreaClasses = isDragActive => classNames(
+    'MediaLibraryUploadScreen-previewArea',
+    { 'is-dropping': !isCurrentlyUploading && isDragActive },
+    { 'is-drop-rejected': isCurrentlyUploading && isDragActive }
+  );
 
   if (currentScreen === SCREEN.editImage) {
     return (
@@ -174,10 +174,11 @@ function MediaLibraryUploadScreen({
       <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
       <div className="u-overflow-auto">
         <div className="MediaLibraryUploadScreen-splitScreen">
-          <div className="MediaLibraryUploadScreen-previewArea">
-            <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
-              {({ getRootProps, getInputProps, isDragActive }) => (
-                <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
+
+          <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
+            {({ getRootProps, getInputProps, isDragActive }) => (
+              <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
+                <div className="MediaLibraryUploadScreen-previewAreaContent">
                   <input {...getInputProps()} hidden />
                   {!!fileInfo && (
                     <Fragment>
@@ -187,11 +188,11 @@ function MediaLibraryUploadScreen({
                           <Fragment>
                             <div>{t('fileWillBeAddedToMediaLibrary')}</div>
                             {!!canEditImage && (
-                              <div>
-                                <Button type="primary" onClick={handleEditImageClick}>
-                                  {t('common:edit')}
-                                </Button>
-                              </div>
+                            <div>
+                              <Button type="primary" onClick={handleEditImageClick}>
+                                {t('common:edit')}
+                              </Button>
+                            </div>
                             )}
                           </Fragment>
                         )}
@@ -211,9 +212,9 @@ function MediaLibraryUploadScreen({
                     )}
                     />
                 </div>
-              )}
-            </ReactDropzone>
-          </div>
+              </div>
+            )}
+          </ReactDropzone>
           <div className="MediaLibraryUploadScreen-editorArea">
             <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={handleFinish}>
               <FormItem name="description" label={t('description')}>

@@ -80,8 +80,8 @@ function DocumentOrRoomMediaDefaultScreen({
 
   const getFilesViewerClasses = isDragActive => classNames({
     'DocumentOrRoomMediaDefaultScreen-filesViewer': true,
-    'u-can-drop': isDragActive && !isLoading,
-    'u-cannot-drop': isDragActive && !!isLoading
+    'is-dropping': isDragActive && !isLoading,
+    'is-drop-rejected': isDragActive && isLoading
   });
 
   const FilesViewer = filesViewerDisplay === FILES_VIEWER_DISPLAY.grid

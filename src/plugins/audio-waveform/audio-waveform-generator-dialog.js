@@ -140,8 +140,8 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
 
   const segmentsDropzoneClasses = classNames({
     'AudioWaveformGeneratorDialog-dropzone': true,
-    'u-can-drop': dropzone.isDragAccept && !isGeneratingPeaks,
-    'u-cannot-drop': dropzone.isDragReject || (dropzone.isDragAccept && isGeneratingPeaks)
+    'is-dropping': dropzone.isDragAccept && !isGeneratingPeaks,
+    'is-drop-rejected': dropzone.isDragReject || (dropzone.isDragAccept && isGeneratingPeaks)
   });
 
   return (
