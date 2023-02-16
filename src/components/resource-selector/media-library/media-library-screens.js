@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import { useIsMounted } from '../../../ui/hooks.js';
+import { replaceItem } from '../../../utils/array-utils.js';
+import MediaLibraryEditScreen from './media-library-edit-screen.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibrarySearchScreen from './media-library-search-screen.js';
 import MediaLibraryUploadScreen from './media-library-upload-screen.js';
@@ -15,7 +17,8 @@ import { ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES } from '../../../utils/media-libra
 const SCREEN = {
   search: 'search',
   upload: 'upload',
-  preview: 'preview'
+  preview: 'preview',
+  edit: 'edit'
 };
 
 function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
@@ -86,11 +89,30 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     });
   };
 
+  const handleEditFileClick = () => {
+    pushScreen(SCREEN.edit);
+  };
+
   const handlePreviewFileClick = () => {
     pushScreen(SCREEN.preview);
   };
 
   const handleScreenBackClick = () => {
+    popScreen();
+  };
+
+  const handleSaveEditedMetadataClick = async ({ description, languages, licenses, tags }) => {
+    const editedFile = await mediaLibraryApiClient.updateMediaLibraryItem({
+      mediaLibraryItemId: highlightedFile._id, description, languages, licenses, tags
+    });
+    const oldFile = files.find(file => file._id === editedFile._id);
+    const newFile = { ...oldFile, ...editedFile };
+
+    const newFiles = replaceItem(files, newFile);
+    setFiles(newFiles);
+    setHighlightedFile(newFile);
+
+    message.success(t('common:changesSavedSuccessfully'));
     popScreen();
   };
 
@@ -148,6 +170,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
         onFileDrop={handleFileDrop}
         onFileClick={handleFileClick}
         onFileDoubleClick={handleFileDoubleClick}
+        onEditFileClick={handleEditFileClick}
         onDeleteFileClick={handleDeleteFileClick}
         onPreviewFileClick={handlePreviewFileClick}
         onSearchParamsChange={handleSearchParamsChange}
@@ -169,6 +192,15 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
           onSelectClick={handleSelectHighlightedFileClick}
+          />
+      )}
+      {screen === SCREEN.edit && (
+        <MediaLibraryEditScreen
+          file={highlightedFile}
+          renderMediaLibraryMetadata
+          onCancelClick={onCancel}
+          onBackClick={handleScreenBackClick}
+          onSaveClick={handleSaveEditedMetadataClick}
           />
       )}
     </Fragment>

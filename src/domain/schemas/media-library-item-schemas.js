@@ -27,7 +27,9 @@ export const mediaLibraryItemDbSchema = joi.object({
 });
 
 export const mediaLibraryItemMetadataUpdateDbSchema = joi.object({
-  ...mediaLibraryItemMetadataProperties
+  ...mediaLibraryItemMetadataProperties,
+  updatedOn: joi.date().required(),
+  updatedBy: idOrKeySchema.required()
 });
 
 export const mediaLibraryItemMetadataBodySchema = joi.object({
