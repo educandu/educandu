@@ -24,11 +24,13 @@ import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.j
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import DocumentTagsForceGraph from '../../document-tags-force-graph.js';
 
 const logger = new Logger(import.meta.url);
 
 const TABS = {
-  documents: 'documents'
+  documents: 'documents',
+  documentTags: 'document-tags'
 };
 
 const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
@@ -60,7 +62,7 @@ function Redaction({ initialState, PageTemplate }) {
 
   const changeTab = tab => {
     setCurrentTab(tab);
-    history.replaceState(null, '', routes.getAdminUrl({ tab }));
+    history.replaceState(null, '', routes.getRedactionUrl({ tab }));
   };
 
   const handleTabChange = newKey => {
@@ -308,6 +310,10 @@ function Redaction({ initialState, PageTemplate }) {
     );
   };
 
+  const renderDocumentTagsTab = () => {
+    return <DocumentTagsForceGraph docs={initialState.documents} />;
+  };
+
   const tabItems = [
     {
       key: TABS.documents,
@@ -315,6 +321,15 @@ function Redaction({ initialState, PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           {renderDocumentsTab()}
+        </div>
+      )
+    },
+    {
+      key: TABS.documentTags,
+      label: t('documentTagsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          {renderDocumentTagsTab()}
         </div>
       )
     }

@@ -2,6 +2,9 @@ redaction:
   documentsTabTitle:
     en: Documents
     de: Dokumente
+  documentTagsTabTitle:
+    en: Document tags
+    de: Dokument-Tags
   initialAuthor:
     en: Initial author
     de: Erstautor

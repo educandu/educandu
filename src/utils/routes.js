@@ -24,10 +24,6 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function getRedactionUrl() {
-  return redactionPath;
-}
-
 function getUserProfileUrl(id) {
   return urlUtils.concatParts(userProfilePrefix, encodeURIComponent(id));
 }
@@ -42,6 +38,11 @@ function getDocUrl({ id, slug, view, templateDocumentId }) {
 
 function getDocumentRevisionUrl(revisionId) {
   return urlUtils.concatParts(revisionPrefix, revisionId);
+}
+
+function getRedactionUrl({ tab } = {}) {
+  const queryString = urlUtils.composeQueryString({ tab });
+  return queryString ? `${redactionPath}?${queryString}` : redactionPath;
 }
 
 function getAdminUrl({ tab } = {}) {
