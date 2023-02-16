@@ -1,10 +1,10 @@
 import Info from '../../info.js';
 import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import TagSelect from '../../tag-select.js';
 import { Checkbox, Form, Input } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useMemo } from 'react';
 import LicenseSelect from '../../license-select.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import LanguageSelect from '../../localization/language-select.js';
@@ -27,10 +27,6 @@ const getDefaultFormValues = () => ({
 function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimizeImage, onFinish }) {
   const { t } = useTranslation('mediaLibraryMetadataForm');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-
-  useEffect(() => {
-    form.resetFields();
-  }, [file, form]);
 
   const initialFormValues = useMemo(() => file || getDefaultFormValues(), [file]);
 
