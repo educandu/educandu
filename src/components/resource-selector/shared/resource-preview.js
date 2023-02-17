@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import MiniPager from '../../mini-pager.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../../container-context.js';
@@ -57,36 +58,38 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
   };
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={sourceUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} onDuration={handleMediaLoad} />
+    <div className="ResourcePreview-mediaPlayer">
+      <MediaPlayer sourceUrl={sourceUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} onDuration={handleMediaLoad} />
+    </div>
   );
 
   const renderVideo = () => (
-    <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+    <div className="ResourcePreview-mediaPlayer">
+      <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+    </div>
   );
 
   const renderImage = () => (
-    <img className="ResourcePreview-image" src={sourceUrl} onLoad={handleImageLoad} />
+    <div className="ResourcePreview-image" >
+      <img src={sourceUrl} onLoad={handleImageLoad} />
+    </div>
   );
 
   const renderPdf = () => (
     <div className="ResourcePreview-pdf">
-      <div className="ResourcePreview-pdfDocument">
-        <PdfDocument
-          file={pdfFile}
-          pageNumber={pdfPageNumber}
-          stretchDirection={PDF_DOCUMENT_STRETCH_DIRECTION.horizontal}
-          onLoadSuccess={handlePdfLoad}
-          />
-      </div>
-      <div className="ResourcePreview-pdfPager">
-        {pdf?.numPages > 1 && (
-          <MiniPager
-            currentPage={pdfPageNumber}
-            totalPages={pdf?.numPages || 0}
-            onNavigate={setPdfPageNumber}
-            />
-        )}
-      </div>
+      <PdfDocument
+        file={pdfFile}
+        pageNumber={pdfPageNumber}
+        stretchDirection={PDF_DOCUMENT_STRETCH_DIRECTION.horizontal}
+        onLoadSuccess={handlePdfLoad}
+        />
+      {pdf?.numPages > 1 && (
+      <MiniPager
+        currentPage={pdfPageNumber}
+        totalPages={pdf?.numPages || 0}
+        onNavigate={setPdfPageNumber}
+        />
+      )}
     </div>
   );
 
@@ -94,37 +97,13 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
     <div className="ResourcePreview-icon"><FileUnknownFilledIcon /></div>
   );
 
-  const renderNothing = () => null;
-
-  let renderPreview;
-  switch (resourceType) {
-    case RESOURCE_TYPE.audio:
-      renderPreview = renderAudio;
-      break;
-    case RESOURCE_TYPE.video:
-      renderPreview = renderVideo;
-      break;
-    case RESOURCE_TYPE.image:
-      renderPreview = renderImage;
-      break;
-    case RESOURCE_TYPE.pdf:
-      renderPreview = renderPdf;
-      break;
-    case RESOURCE_TYPE.unknown:
-      renderPreview = renderGenericFile;
-      break;
-    case RESOURCE_TYPE.none:
-      renderPreview = renderNothing;
-      break;
-    default:
-      throw new Error(`Cannot render resource type '${resourceType}'`);
-  }
-
   return (
-    <div className="ResourcePreview">
-      <div className="ResourcePreview-previewArea">
-        {renderPreview()}
-      </div>
+    <div className={classNames('ResourcePreview', { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf })}>
+      {resourceType === RESOURCE_TYPE.audio && renderAudio()}
+      {resourceType === RESOURCE_TYPE.video && renderVideo()}
+      {resourceType === RESOURCE_TYPE.image && renderImage()}
+      {resourceType === RESOURCE_TYPE.pdf && renderPdf()}
+      {resourceType === RESOURCE_TYPE.unknown && renderGenericFile()}
     </div>
   );
 }

@@ -31,9 +31,14 @@ class MediaLibraryItemStore {
     return mediaLibraryItem;
   }
 
-  async updateMediaLibraryItem(mediaLibraryItemId, metdata, { session } = {}) {
-    validate(metdata, mediaLibraryItemMetadataUpdateDbSchema);
-    const result = await this.collection.findOneAndUpdate({ _id: mediaLibraryItemId }, metdata, { returnDocument: 'after', session });
+  async updateMediaLibraryItem(mediaLibraryItemId, metadata, { session } = {}) {
+    validate(metadata, mediaLibraryItemMetadataUpdateDbSchema);
+
+    const filter = { _id: mediaLibraryItemId };
+    const update = { $set: { ...metadata } };
+    const options = { returnDocument: 'after', session };
+
+    const result = await this.collection.findOneAndUpdate(filter, update, options);
     return result.value;
   }
 

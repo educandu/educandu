@@ -35,6 +35,7 @@ function MediaLibrarySearchScreen({
   onCancelClick,
   onFileDoubleClick,
   onDeleteFileClick,
+  onEditFileClick,
   onPreviewFileClick,
   onSearchParamsChange,
   onSelectInitialUrlClick,
@@ -126,10 +127,12 @@ function MediaLibrarySearchScreen({
                     <FilesGridViewer
                       files={files}
                       selectedFileUrl={highlightedFile?.portableUrl}
+                      canEdit
                       canDelete={hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)}
                       onFileClick={onFileClick}
                       onFileDoubleClick={onFileDoubleClick}
                       onDeleteFileClick={onDeleteFileClick}
+                      onEditFileClick={onEditFileClick}
                       onPreviewFileClick={onPreviewFileClick}
                       />
                   </div>
@@ -208,6 +211,7 @@ MediaLibrarySearchScreen.propTypes = {
   onCancelClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onDeleteFileClick: PropTypes.func.isRequired,
+  onEditFileClick: PropTypes.func.isRequired,
   onPreviewFileClick: PropTypes.func.isRequired,
   onSearchParamsChange: PropTypes.func.isRequired,
   onSelectInitialUrlClick: PropTypes.func.isRequired,

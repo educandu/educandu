@@ -74,16 +74,16 @@ class MediaLibraryService {
     }
   }
 
-  updateMediaLibraryItem({ mediaLibraryItemId, metadata, user }) {
+  updateMediaLibraryItem({ mediaLibraryItemId, data, user }) {
     const now = new Date();
 
     const newMediaLibraryItemMetadata = {
       updatedBy: user._id,
       updatedOn: now,
-      description: metadata.description,
-      languages: metadata.languages,
-      licenses: metadata.licenses,
-      tags: metadata.tags
+      description: data.description,
+      languages: data.languages,
+      licenses: data.licenses,
+      tags: data.tags
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);

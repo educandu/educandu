@@ -83,13 +83,14 @@ function WikimediaSearchScreen({
 
   return (
     <div className={classNames('WikimediaSearchScreen', { 'is-hidden': isHidden })}>
-      <ResourceSearchBar
-        isLoading={isLoading}
-        initialSearchParams={searchParams}
-        allowedResourceTypes={ALLOWED_WIKIMEDIA_RESOURCE_TYPES}
-        onSearch={handleSearch}
-        />
-      {currentScreen === SCREEN.search && (
+      <div className="u-resource-selector-screen">
+        <ResourceSearchBar
+          isLoading={isLoading}
+          initialSearchParams={searchParams}
+          allowedResourceTypes={ALLOWED_WIKIMEDIA_RESOURCE_TYPES}
+          onSearch={handleSearch}
+          />
+        {currentScreen === SCREEN.search && (
         <Fragment>
           <div className="WikimediaSearchScreen-filesViewer">
             <div className="WikimediaSearchScreen-filesViewerContent">
@@ -108,8 +109,8 @@ function WikimediaSearchScreen({
           </div>
           {renderSearchInfo()}
         </Fragment>
-      )}
-      {currentScreen !== SCREEN.search && (
+        )}
+        {currentScreen !== SCREEN.search && (
         <div className="WikimediaSearchScreen-noSearch">
           {!!initialUrl && (
             <SelectedResourceDisplay urlOrFile={initialUrl} footer={t('common:useSearchToChangeFile')} />
@@ -122,13 +123,14 @@ function WikimediaSearchScreen({
               />
           )}
         </div>
-      )}
-      <div className="u-resource-selector-screen-footer-right-aligned">
-        <div className="u-resource-selector-screen-footer-buttons">
-          <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>
-            {t('common:select')}
-          </Button>
+        )}
+        <div className="u-resource-selector-screen-footer-right-aligned">
+          <div className="u-resource-selector-screen-footer-buttons">
+            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
+            <Button type="primary" onClick={handleSelectClick} disabled={!canSelectUrl}>
+              {t('common:select')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

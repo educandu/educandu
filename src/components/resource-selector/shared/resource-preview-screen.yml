@@ -2,3 +2,6 @@ resourcePreviewScreen:
   headline:
     en: File preview
     de: Datei-Vorschau
+  missingDataPlaceholder:
+    en: not provided
+    de: nicht angegeben

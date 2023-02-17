@@ -53,6 +53,9 @@ common:
   create:
     en: Create
     de: Erstellen
+  upload:
+    en: Upload
+    de: Hochladen
   moveUp:
     en: Move up
     de: Nach oben verschieben
@@ -77,6 +80,9 @@ common:
   language:
     en: Language
     de: Sprache
+  languages:
+    en: Languages
+    de: Sprachen
   proposedSectionsAlert:
     en: |
       Apply or discard the proposed sections. Unapplied sections are
@@ -524,3 +530,6 @@ common:
   searchInvitationDescription:
     en: Enter your search term above
     de: Gib deinen Suchbegriff oben ein
+  licenses:
+    en: Licenses
+    de: Lizenzen

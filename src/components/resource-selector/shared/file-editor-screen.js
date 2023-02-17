@@ -31,7 +31,7 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
 
   return (
     <div className="u-resource-selector-screen">
-      <h3>{t('headline')}</h3>
+      <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
         <div className="FileEditorScreen">
           <ImageEditor

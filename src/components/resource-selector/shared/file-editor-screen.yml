@@ -1,7 +1,7 @@
 fileEditorScreen:
   headline:
-    en: File editor
-    de: Datei-Editor
+    en: Image editor
+    de: Bild-Editor
   applyChanges:
     en: Apply changes
     de: Änderungen übernehmen
