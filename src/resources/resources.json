@@ -3327,6 +3327,10 @@
     "settings": {
       "en": "Settings",
       "de": "Einstellungen"
+    },
+    "hello": {
+      "en": "Hello",
+      "de": "Hallo"
     }
   },
   "pageNames": {

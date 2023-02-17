@@ -1,0 +1,48 @@
+.NavigationMobile {}
+
+.NavigationMobile-anonymousUserButtons {
+  display: grid;
+  gap: 10px;
+  grid-auto-flow: row;
+}
+
+.NavigationMobile-whiteIcon {
+  color: @edu-white;
+}
+
+.NavigationMobile-drawerTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.NavigationMobile-drawerContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.NavigationMobile-drawerContentItems {
+  display: grid;
+  gap: 25px;
+  grid-auto-flow: row;
+
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
+}
+
+.NavigationMobile-drawerContentItem {
+  display: grid;
+  gap: 15px;
+  align-items: center;
+  place-content: start;
+  grid-auto-flow: column;
+}
+
+.NavigationMobile-drawerContentItemChildren {
+  display: grid;
+  gap: 10px;
+  grid-auto-flow: row;
+  place-items: start;
+}

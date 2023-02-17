@@ -1,4 +1,5 @@
 import React from 'react';
+import NavigationMobile from './navigation-mobile.js';
 import NavigationDesktop from './navigation-desktop.js';
 import DefaultHeaderLogo from './default-header-logo.js';
 
@@ -14,7 +15,7 @@ function DefaultPageHeader() {
             <NavigationDesktop />
           </div>
           <div className="DefaultPageHeader-headerNavigation DefaultPageHeader-headerNavigation--mobile">
-            hello
+            <NavigationMobile />
           </div>
         </div>
       </div>
