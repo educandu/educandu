@@ -664,25 +664,13 @@
       "en": "Document sequences",
       "de": "Veranstaltungsreihen"
     },
-    "allowedOpenContribution": {
-      "en": "Allowed open contribution",
-      "de": "Erlaubte offene Beiträge"
-    },
-    "allowedOpenContribution_metadataAndContent": {
-      "en": "Metadata and content",
-      "de": "Metadaten und Inhalt"
-    },
-    "allowedOpenContribution_content": {
-      "en": "Content only",
-      "de": "Nur Inhalt"
-    },
-    "allowedOpenContribution_none": {
-      "en": "None",
-      "de": "Keine"
-    },
     "sequenceInfo": {
-      "en": "You can create multiple documents at once.\nA sequential number is appended to the title or slug for each document.\n",
-      "de": "Du kannst mehrere Dokumente gleichzeitig anlegen.\nAn den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt.\n"
+      "en": "You can create multiple documents at once. A sequential number is appended to the title or slug for each document.",
+      "de": "Du kannst mehrere Dokumente gleichzeitig anlegen. An den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt."
+    },
+    "protectedInfo": {
+      "en": "Protected documents can only be edited by maintainers.",
+      "de": "Geschützte Dokumente können nur von Maintainers editiert werden."
     },
     "archivedInfo": {
       "en": "Archived documents can not be edited and can not be discovered through search.",
@@ -694,11 +682,7 @@
     },
     "reviewInfo": {
       "en": "You can write a review of the document, if it does not meet quality requirements. The review will be shown on top of the document page.",
-      "de": "Du kannst eine Review für das Dokument schreiben. Die Review wird auf der Dokumentseite angezeigt."
-    },
-    "allowedOpenContributionInfo": {
-      "en": "You can restrict the parts of the document the open community can contribute to.",
-      "de": "Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann."
+      "de": "Du kannst ein Review für das Dokument schreiben. Das Review wird auf der Dokumentseite angezeigt."
     },
     "cloningStrategy": {
       "en": "Where should the duplicated document be created?",
@@ -763,10 +747,6 @@
     "editMetadata": {
       "en": "Edit metadata",
       "de": "Metadaten bearbeiten"
-    },
-    "editMetadataDisabledTooltip": {
-      "en": "Editing the metadata of this document was disabled by a maintainer",
-      "de": "Die Metadaten-Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert"
     }
   },
   "emailFormItem": {
@@ -1234,17 +1214,17 @@
       "en": "Comments",
       "de": "Kommentare"
     },
-    "editRestrictionTooltip_annonymousUser": {
+    "editRestrictionTooltip_anonymousUser": {
       "en": "Log in in order to edit this document",
       "de": "Melde dich an, um dieses Dokument zu bearbeiten"
     },
-    "editRestrictionTooltip_openContribution": {
-      "en": "Editing this document was disabled by a maintainer",
-      "de": "Die Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert"
+    "editRestrictionTooltip_protected": {
+      "en": "This document cannot be edited because it is protected",
+      "de": "Dieses Dokument kann nicht bearbeitet werden, da es geschützt ist"
     },
     "editRestrictionTooltip_archive": {
       "en": "This document cannot be edited because it is archived",
-      "de": "Dieses Dokument kann nicht bearbeitet werden da es archiviert ist"
+      "de": "Dieses Dokument kann nicht bearbeitet werden, da es archiviert ist"
     },
     "editRestrictionTooltip_room": {
       "en": "Editing this document is only allowed for the room owner",
@@ -1511,14 +1491,6 @@
     "badges": {
       "en": "Badges",
       "de": "Kennzeichen"
-    },
-    "allowedOpenContributionBadge_metadataAndContent": {
-      "en": "Open contribution to this document's metadata and content is allowed",
-      "de": "Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden"
-    },
-    "allowedOpenContributionBadge_content": {
-      "en": "Open contribution to this document's content is allowed",
-      "de": "Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden"
     }
   },
   "registrationForm": {
@@ -2929,8 +2901,8 @@
       "de": "Slug"
     },
     "slugInfo": {
-      "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.\n",
-      "de": "Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
+      "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashed.\nEach part and can only contain lower case letters (a-z), digits and hyphens.\n",
+      "de": "Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten.\nJeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
     },
     "invalidSlug": {
       "en": "The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
@@ -2943,6 +2915,10 @@
     "tagsPlaceholder": {
       "en": "Enter keywords",
       "de": "Stichwörter angeben"
+    },
+    "protected": {
+      "en": "Protected",
+      "de": "Geschützt"
     },
     "archived": {
       "en": "Archived",
@@ -3193,12 +3169,16 @@
       "de": "Die Tests sind in einer zufälligen Reihenfolge angeordnet"
     },
     "youtubeCopyrightNotice": {
-      "en": "Source: [Youtube]({link})\n",
-      "de": "Quelle: [Youtube]({link})\n"
+      "en": "Source: [Youtube]({link})",
+      "de": "Quelle: [Youtube]({link})"
     },
     "wikimediaCopyrightNotice": {
-      "en": "Source: [Wikimedia]({link})\n",
-      "de": "Quelle: [Wikimedia]({link})\n"
+      "en": "Source: [Wikimedia]({link})",
+      "de": "Quelle: [Wikimedia]({link})"
+    },
+    "protectedDocumentBadge": {
+      "en": "This document is protected",
+      "de": "Dieses Dokument ist geschützt"
     },
     "verifiedDocumentBadge": {
       "en": "This document was verified by a maintainer",

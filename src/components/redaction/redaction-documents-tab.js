@@ -15,15 +15,15 @@ import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import { CheckOutlined, LikeOutlined } from '@ant-design/icons';
+import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -55,9 +55,9 @@ function createTableRows(docs) {
     createdBy: doc.createdBy,
     language: doc.language,
     user: doc.user,
+    protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
-    verified: doc.publicContext.verified,
-    allowedOpenContribution: doc.publicContext.allowedOpenContribution
+    verified: doc.publicContext.verified
   }));
 }
 
@@ -84,7 +84,7 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' }
     ];
 
-    if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
+    if (hasUserPermission(user, permissions.ARCHIVE_DOC)) {
       options.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
     }
 
@@ -210,21 +210,12 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       <div className="RedactionDocumentsTab-badges">
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
-            <LikeOutlined className="u-verified-badge" />
+            <LikeOutlined className="u-large-badge" />
           </Tooltip>
         )}
-        {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content && (
-          <Tooltip title={t('allowedOpenContributionBadge_content')}>
-            <div className="u-badge">
-              C
-            </div>
-          </Tooltip>
-        )}
-        {row.allowedOpenContribution === DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent && (
-          <Tooltip title={t('allowedOpenContributionBadge_metadataAndContent')}>
-            <div className="u-badge">
-              M C
-            </div>
+        {!!row.protected && (
+          <Tooltip title={t('common:protectedDocumentBadge')}>
+            <SafetyCertificateOutlined className="u-large-badge" />
           </Tooltip>
         )}
       </div>
@@ -268,7 +259,7 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       key: 'archived',
       render: renderDocumentArchived,
       responsive: ['lg'],
-      needsPermission: permissions.MANAGE_ARCHIVED_DOCS,
+      needsPermission: permissions.ARCHIVE_DOC,
       width: '100px'
     },
     {

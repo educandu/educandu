@@ -4,10 +4,10 @@ import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
+import { MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, MEDIA_ASPECT_RATIO } from '../domain/constants.js';
 import {
   createTestDocument,
   updateTestDocument,
@@ -293,10 +293,10 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          protected: false,
           archived: false,
           verified: false,
-          review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+          review: ''
         }
       };
 
@@ -720,10 +720,10 @@ describe('document-service', () => {
           roomId: null,
           roomContext: null,
           publicContext: {
+            protected: true,
             archived: false,
             verified: true,
-            review: 'Review',
-            allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+            review: 'Review'
           }
         });
 
@@ -762,10 +762,10 @@ describe('document-service', () => {
           roomId: null,
           roomContext: null,
           publicContext: {
+            protected: true,
             archived: true,
             verified: true,
-            review: 'Review',
-            allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content
+            review: 'Review'
           }
         });
 
@@ -1039,10 +1039,10 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          protected: false,
           archived: false,
           verified: false,
-          review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+          review: ''
         }
       });
 
@@ -1056,10 +1056,10 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          protected: false,
           archived: false,
           verified: false,
-          review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+          review: ''
         }
       });
 
@@ -1073,10 +1073,10 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          protected: false,
           archived: false,
           verified: true,
-          review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+          review: ''
         }
       });
 
@@ -1090,10 +1090,10 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          protected: false,
           archived: true,
           verified: false,
-          review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+          review: ''
         }
       });
 

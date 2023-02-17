@@ -21,8 +21,8 @@ import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
+import { DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -550,10 +550,10 @@ class DocumentService {
     const publicContext = data.roomId
       ? null
       : {
+        protected: data.publicContext?.protected || false,
         archived: data.publicContext?.archived || false,
         verified: data.publicContext?.verified || false,
-        review: data.publicContext?.review || '',
-        allowedOpenContribution: data.publicContext?.allowedOpenContribution || DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        review: data.publicContext?.review || ''
       };
     const roomContext = data.roomId
       ? {

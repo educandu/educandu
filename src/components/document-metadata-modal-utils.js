@@ -1,5 +1,4 @@
 import inputValidators from '../utils/input-validators.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 import { maxDocumentDescriptionLength, maxDocumentTagLength, minDocumentTagLength } from '../domain/validation-constants.js';
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
@@ -52,13 +51,6 @@ export function getCloningOptions({ mode, documentToClone, availableRooms, t }) 
   }
 
   return { strategyOptions, roomOptions };
-}
-
-export function getAllowedOpenContributionOptions({ t }) {
-  return Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION).map(optionKey => ({
-    key: optionKey,
-    value: t(`allowedOpenContribution_${optionKey}`)
-  }));
 }
 
 export function getValidationState({ cloningStrategy, cloningTargetRoomId, title, description, slug, tags, t }) {

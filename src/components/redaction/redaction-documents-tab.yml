@@ -8,9 +8,3 @@ redactionDocumentsTab:
   badges:
     en: Badges
     de: Kennzeichen
-  allowedOpenContributionBadge_metadataAndContent:
-    en: Open contribution to this document's metadata and content is allowed
-    de: Die Metadaten und der Inhalt dieses Dokuments können öffentlich bearbeitet werden
-  allowedOpenContributionBadge_content:
-    en: Open contribution to this document's content is allowed
-    de: Der Inhalt dieses Dokuments kann öffentlich bearbeitet werden

@@ -4,8 +4,8 @@ import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -54,7 +54,7 @@ describe('document-controller', () => {
       slug: '',
       sections: [],
       publicContext: {
-        allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+        protected: false
       }
     };
 

@@ -50,43 +50,21 @@ documentMetadataModal:
   sequenceInfoBoxHeader:
     en: Document sequences
     de: Veranstaltungsreihen
-  allowedOpenContribution:
-    en: Allowed open contribution
-    de: Erlaubte offene Beiträge
-  allowedOpenContribution_metadataAndContent:
-    en: Metadata and content
-    de: Metadaten und Inhalt
-  allowedOpenContribution_content:
-    en: Content only
-    de: Nur Inhalt
-  allowedOpenContribution_none:
-    en: None
-    de: Keine
   sequenceInfo:
-    en: |
-      You can create multiple documents at once.
-      A sequential number is appended to the title or slug for each document.
-    de: |
-      Du kannst mehrere Dokumente gleichzeitig anlegen.
-      An den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt.
+    en: You can create multiple documents at once. A sequential number is appended to the title or slug for each document.
+    de: Du kannst mehrere Dokumente gleichzeitig anlegen. An den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt.
+  protectedInfo:
+    en: Protected documents can only be edited by maintainers.
+    de: Geschützte Dokumente können nur von Maintainers editiert werden.
   archivedInfo:
-    en:
-      Archived documents can not be edited and can not be discovered through search.
-    de:
-      Archivierte Dokumente können nicht editiert werden und sind nicht suchbar.
+    en: Archived documents can not be edited and can not be discovered through search.
+    de: Archivierte Dokumente können nicht editiert werden und sind nicht suchbar.
   verifiedInfo:
-    en:
-      You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
-    de:
-      Du kannst bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
+    en: You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
+    de: Du kannst bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
   reviewInfo:
-    en:
-      You can write a review of the document, if it does not meet quality requirements. The review will be shown on top of the document page.
-    de:
-      Du kannst eine Review für das Dokument schreiben. Die Review wird auf der Dokumentseite angezeigt.
-  allowedOpenContributionInfo:
-    en: You can restrict the parts of the document the open community can contribute to.
-    de: Du kannst die Teile des Dokuments einschränken, zu denen die offene Community beitragen kann.
+    en: You can write a review of the document, if it does not meet quality requirements. The review will be shown on top of the document page.
+    de: Du kannst ein Review für das Dokument schreiben. Das Review wird auf der Dokumentseite angezeigt.
   cloningStrategy:
     en: Where should the duplicated document be created?
     de: Wo soll das duplizierte Dokument erstellt werden?

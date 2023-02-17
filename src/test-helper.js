@@ -4,8 +4,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
+import { ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 
 async function purgeDatabase(db) {
   const collections = await db._db.collections();
@@ -186,10 +186,10 @@ export function createTestDocument(container, user, data) {
       publicContext: data.roomId
         ? null
         : {
+          protected: false,
           archived: false,
           verified: false,
           review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
           ...data.publicContext
         },
       roomContext: data.roomId
@@ -226,10 +226,10 @@ export async function createTestRevisions(container, user, revisions) {
       publicContext: revision.roomId
         ? null
         : {
+          protected: false,
           archived: false,
           verified: false,
           review: '',
-          allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent,
           ...revision.publicContext
         },
       roomContext: revision.roomId

@@ -5,8 +5,8 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
-import { canEditDocContent } from '../utils/doc-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -102,7 +102,7 @@ class DocumentController {
       room = null;
     }
 
-    if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDocContent({ user, doc, room })) {
+    if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDoc({ user, doc, room })) {
       return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
@@ -394,13 +394,13 @@ class DocumentController {
 
     router.patch(
       '/api/v1/docs/:documentId/archive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentIdParamsOrQuerySchema)],
+      [needsPermission(permissions.ARCHIVE_DOC), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocArchive(req, res)
     );
 
     router.patch(
       '/api/v1/docs/:documentId/unarchive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentIdParamsOrQuerySchema)],
+      [needsPermission(permissions.ARCHIVE_DOC), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 

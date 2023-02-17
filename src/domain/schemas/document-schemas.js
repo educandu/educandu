@@ -1,7 +1,7 @@
 import joi from 'joi';
+import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, DOC_VIEW_QUERY_PARAM } from '../constants.js';
 
 export const getSearchableDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().allow('').required()
@@ -20,10 +20,10 @@ export const patchDocSectionsBodySchema = joi.object({
 });
 
 export const publicContextSchema = joi.object({
+  protected: joi.boolean().required(),
   archived: joi.boolean().required(),
   verified: joi.boolean().required(),
-  review: joi.string().allow(null).allow('').required(),
-  allowedOpenContribution: joi.string().valid(...Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION)).required()
+  review: joi.string().allow(null).allow('').required()
 });
 
 export const publicContextConditionalSchema = joi.alternatives().conditional(

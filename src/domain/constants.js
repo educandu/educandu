@@ -132,12 +132,6 @@ export const FILES_VIEWER_DISPLAY = {
   list: 'list'
 };
 
-export const DOCUMENT_ALLOWED_OPEN_CONTRIBUTION = {
-  metadataAndContent: 'metadataAndContent',
-  content: 'content',
-  none: 'none'
-};
-
 export const FORM_ITEM_LAYOUT = {
   labelCol: {
     sm: { span: 6, offset: 0 },
