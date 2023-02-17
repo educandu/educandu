@@ -74,7 +74,6 @@ function WikimediaFilesViewer({
             <ActionButton
               title={t('common:preview')}
               icon={<PreviewIcon />}
-              intent={ACTION_BUTTON_INTENT.success}
               onClick={event => handlePreviewClick(event, file)}
               overlay
               />
