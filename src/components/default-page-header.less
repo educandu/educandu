@@ -1,12 +1,12 @@
 .DefaultPageHeader {
   .m-page-content;
-  flex: none;
 }
 
 .DefaultPageHeader-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: @edu-white;
 }
 
 .DefaultPageHeader-headerContent {
@@ -17,24 +17,21 @@
     align-items: center;
     justify-content: flex-start;
   }
+}
 
-  &.DefaultPageHeader-headerContent--right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+.DefaultPageHeader-headerNavigation {
+
+  &.DefaultPageHeader-headerNavigation--desktop {
+    @media @edu-media-phone {
+      display: none;
+    }
   }
-}
 
-.DefaultPageHeader-logo {
-  font-weight: bold;
-}
+  &.DefaultPageHeader-headerNavigation--mobile {
+    display: none;
 
-.DefaultPageHeader-headerButton {
-  .m-icon-button;
-  .m-grouped-button;
-}
-
-.DefaultPageHeader-loginButton {
-  cursor: pointer;
-  margin-right: (3 * @edu-control-spacing-base);
+    @media @edu-media-phone {
+      display: block;
+    }
+  }
 }

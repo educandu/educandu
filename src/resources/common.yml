@@ -133,6 +133,9 @@ common:
   logOut:
     en: Log out
     de: Abmelden
+  register:
+    en: Sign up
+    de: Registrieren
   created:
     en: Created
     de: Erstellt
@@ -537,3 +540,6 @@ common:
   licenses:
     en: Licenses
     de: Lizenzen
+  settings:
+    en: Settings
+    de: Einstellungen

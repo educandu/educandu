@@ -1,7 +1,4 @@
 admin:
-  settingsTabTitle:
-    en: Settings
-    de: Einstellungen
   userAccountsTabTitle:
     en: User accounts
     de: Benutzerkonten

@@ -539,7 +539,7 @@ export default function Room({ PageTemplate, initialState }) {
               },
               {
                 key: '3',
-                label: t('settingsTabTitle'),
+                label: t('common:settings'),
                 children: (
                   <div className="Tabs-tabPane" >
                     <div className="RoomPage-sectionHeadline">{t('roomMetadataHeadline')}</div>

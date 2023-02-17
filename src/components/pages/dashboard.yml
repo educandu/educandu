@@ -5,9 +5,6 @@ dashboard:
   favoritesTabTitle:
     en: Favorites
     de: Favoriten
-  settingsTabTitle:
-    en: Settings
-    de: Einstellungen
   documentsTabTitle:
     en: Documents
     de: Dokumente
