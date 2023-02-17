@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useLocale } from '../locale-context.js';
 import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import LanguageFlagAndName from '../localization/language-flag-and-name.js';
+import LanguageIcon from '../localization/language-icon.js';
 
 function MarkdownSettingInSupportedLanguages({ settingValue, onChange }) {
   const { supportedUiLanguages } = useLocale();
@@ -16,16 +16,16 @@ function MarkdownSettingInSupportedLanguages({ settingValue, onChange }) {
 
   return (
     <div>
-      {supportedUiLanguages.map((lang, idx) => (
-        <React.Fragment key={lang}>
-          {idx !== 0 && <br />}
+      {supportedUiLanguages.map((uiLanguageCode, index) => (
+        <React.Fragment key={uiLanguageCode}>
+          {index !== 0 && <br />}
           <h5>
-            <LanguageFlagAndName language={lang} />
+            <LanguageIcon language={uiLanguageCode} />
           </h5>
           <MarkdownInput
             preview
-            value={settingValue?.[lang] || ''}
-            onChange={event => handleSettingTextChanged(lang, event.target.value)}
+            value={settingValue?.[uiLanguageCode] || ''}
+            onChange={event => handleSettingTextChanged(uiLanguageCode, event.target.value)}
             />
         </React.Fragment>
       ))}
