@@ -1605,8 +1605,8 @@
   },
   "mediaLibraryEditScreen": {
     "editHeadline": {
-      "en": "Edit data",
-      "de": "Datei bearbeiten"
+      "en": "File editor",
+      "de": "Datei-Editor"
     }
   },
   "mediaLibraryMetadataForm": {
@@ -1643,8 +1643,8 @@
   },
   "mediaLibraryUploadScreen": {
     "uploadHeadline": {
-      "en": "Create media",
-      "de": "Medien erstellen"
+      "en": "File upload",
+      "de": "Datei-Upload"
     },
     "preprocessed": {
       "en": "edited",
@@ -1687,8 +1687,8 @@
   },
   "fileEditorScreen": {
     "headline": {
-      "en": "File editor",
-      "de": "Datei-Editor"
+      "en": "Image editor",
+      "de": "Bild-Editor"
     },
     "applyChanges": {
       "en": "Apply changes",
@@ -1700,9 +1700,9 @@
       "en": "File preview",
       "de": "Datei-Vorschau"
     },
-    "missing": {
-      "en": "missing",
-      "de": "fehtl"
+    "missingDataPlaceholder": {
+      "en": "not provided",
+      "de": "nicht angegeben"
     }
   },
   "resourceSearchBar": {
@@ -2763,6 +2763,10 @@
     "create": {
       "en": "Create",
       "de": "Erstellen"
+    },
+    "upload": {
+      "en": "Upload",
+      "de": "Hochladen"
     },
     "moveUp": {
       "en": "Move up",

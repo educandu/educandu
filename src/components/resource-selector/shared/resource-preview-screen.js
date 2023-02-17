@@ -34,7 +34,7 @@ function ResourcePreviewScreen({ file, renderMediaLibraryMetadata, onBackClick, 
     }).join(', ');
   };
 
-  const renderMissingData = () => <i>{t('missing')}</i>;
+  const renderMissingData = () => <i>{t('missingDataPlaceholder')}</i>;
 
   return (
     <div className="u-resource-selector-screen">

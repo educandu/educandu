@@ -1,7 +1,7 @@
 mediaLibraryUploadScreen:
   uploadHeadline:
-    en: Create media
-    de: Medien erstellen
+    en: File upload
+    de: Datei-Upload
   preprocessed:
     en: edited
     de: bearbeitet

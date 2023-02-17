@@ -53,6 +53,9 @@ common:
   create:
     en: Create
     de: Erstellen
+  upload:
+    en: Upload
+    de: Hochladen
   moveUp:
     en: Move up
     de: Nach oben verschieben

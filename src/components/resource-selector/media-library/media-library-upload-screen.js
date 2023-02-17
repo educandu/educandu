@@ -193,7 +193,7 @@ function MediaLibraryUploadScreen({
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo} loading={isCurrentlyUploading}>{t('common:create')}</Button>
+          <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
         </div>
       </div>
     </div>
