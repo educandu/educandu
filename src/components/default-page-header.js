@@ -6,17 +6,13 @@ import DefaultHeaderLogo from './default-header-logo.js';
 function DefaultPageHeader() {
   return (
     <header className="DefaultPageHeader">
-      <div className="DefaultPageHeader-header">
-        <div className="DefaultPageHeader-headerContent PageHeader-headerContent--left">
-          <DefaultHeaderLogo />
+      <div className="DefaultPageHeader-content">
+        <DefaultHeaderLogo />
+        <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
+          <NavigationDesktop />
         </div>
-        <div className="DefaultPageHeader-headerContent PageHeader-headerContent--right">
-          <div className="DefaultPageHeader-headerNavigation DefaultPageHeader-headerNavigation--desktop">
-            <NavigationDesktop />
-          </div>
-          <div className="DefaultPageHeader-headerNavigation DefaultPageHeader-headerNavigation--mobile">
-            <NavigationMobile />
-          </div>
+        <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--mobile">
+          <NavigationMobile />
         </div>
       </div>
     </header>

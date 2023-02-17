@@ -2,32 +2,24 @@
   .m-page-content;
 }
 
-.DefaultPageHeader-header {
-  display: flex;
+.DefaultPageHeader-content {
+  display: grid;
+  place-items: start;
   align-items: center;
-  justify-content: space-between;
+  grid-template-columns: auto 1fr;
   background-color: @edu-white;
 }
 
-.DefaultPageHeader-headerContent {
-  display: block;
+.DefaultPageHeader-navigation {
+  width: 100%;
 
-  &.DefaultPageHeader-headerContent--left {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-}
-
-.DefaultPageHeader-headerNavigation {
-
-  &.DefaultPageHeader-headerNavigation--desktop {
+  &.DefaultPageHeader-navigation--desktop {
     @media @edu-media-phone {
       display: none;
     }
   }
 
-  &.DefaultPageHeader-headerNavigation--mobile {
+  &.DefaultPageHeader-navigation--mobile {
     display: none;
 
     @media @edu-media-phone {

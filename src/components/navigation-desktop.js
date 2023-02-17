@@ -1,10 +1,13 @@
 import gravatar from 'gravatar';
-import routes from '../utils/routes.js';
+import classNames from 'classnames';
 import { Avatar, Select } from 'antd';
+import routes from '../utils/routes.js';
+import SearchBar from './search-bar.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import React, { useMemo, useState } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
@@ -22,6 +25,7 @@ function NavigationDesktop() {
   const languageDataProvider = useService(LanguageDataProvider);
 
   const helpPage = settings?.helpPage?.[uiLanguage];
+  const [isSearchBarActive, setIsSearchBarActive] = useState();
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(uiLanguage.toUpperCase());
 
   const languageOptions = supportedUiLanguages.map(languageCode => {
@@ -47,6 +51,14 @@ function NavigationDesktop() {
 
   const handleLogOutClick = () => {
     window.location = routes.getLogoutUrl();
+  };
+
+  const handleSearchClick = () => {
+    setIsSearchBarActive(true);
+  };
+
+  const handleSearch = searchText => {
+    window.location = routes.getSearchUrl(searchText.trim());
   };
 
   const renderMenu = () => {
@@ -111,15 +123,21 @@ function NavigationDesktop() {
 
   return (
     <div className="NavigationDesktop">
-      <Select
-        bordered={false}
-        placement="bottomRight"
-        options={languageOptions}
-        value={displayedSelectedLanguage}
-        dropdownMatchSelectWidth={false}
-        onChange={handleLanguageChange}
-        />
-      {user ? renderAuthenticatedUserComponent() : renderAnonymousUserComponent()}
+      <div className={classNames('NavigationDesktop-searchBar', { 'is-active': isSearchBarActive })} onClick={handleSearchClick}>
+        <SearchBar onSearch={handleSearch} size="medium" />
+        <div className="NavigationDesktop-searchBarMask"><SearchOutlined /></div>
+      </div>
+      <div className="NavigationDesktop-menu">
+        <Select
+          bordered={false}
+          placement="bottomRight"
+          options={languageOptions}
+          value={displayedSelectedLanguage}
+          dropdownMatchSelectWidth={false}
+          onChange={handleLanguageChange}
+          />
+        {user ? renderAuthenticatedUserComponent() : renderAnonymousUserComponent()}
+      </div>
     </div>
   );
 }

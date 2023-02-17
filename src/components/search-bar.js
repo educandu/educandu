@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useState, useRef } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 
-export default function SearchBar({ initialValue, autoFocus, onSearch }) {
+export default function SearchBar({ initialValue, autoFocus, onSearch, ...params }) {
   const inputRef = useRef();
   const { t } = useTranslation('searchBar');
   const [searchText, setSearchText] = useState(initialValue);
@@ -30,6 +30,7 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
         onChange={handleSearchInputChange}
         autoFocus={autoFocus}
         suffix={<div className="SearchBar-suffix"><SearchOutlined /></div>}
+        {...params}
         />
     </div>
   );

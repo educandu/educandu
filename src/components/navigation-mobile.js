@@ -8,13 +8,12 @@ import { Button, Collapse, Drawer } from 'antd';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import CloseIcon from './icons/general/close-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
-import { FormOutlined, GlobalOutlined } from '@ant-design/icons';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
+import { CloseOutlined, FormOutlined, GlobalOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -62,7 +61,7 @@ function NavigationMobile() {
     return (
       <div className="NavigationMobile-drawerTitle">
         <b>{user?.displayName || t('common:hello')}</b>
-        <Button type="text" icon={<CloseIcon />} onClick={handleDrawerClose} />
+        <Button type="text" icon={<CloseOutlined />} onClick={handleDrawerClose} />
       </div>
     );
   };
@@ -71,7 +70,7 @@ function NavigationMobile() {
     const languagesData = supportedUiLanguages.map(l => languageDataProvider.getLanguageData(l, l));
 
     return (
-      <Collapse ghost expandIconPosition="end">
+      <Collapse ghost expandIconPosition="end" className="NavigationMobile-drawerLanguageItem">
         <Panel header={<div className="NavigationMobile-drawerContentItem"><GlobalOutlined />{t('common:language')}</div>}>
           <div className="NavigationMobile-drawerContentItemChildren">
             {languagesData.map(languageData => (
@@ -110,14 +109,14 @@ function NavigationMobile() {
     if (!user) {
       return (
         <div className="NavigationMobile-anonymousUserButtons">
-          <Button type="primary" icon={<UsersIcon />} onClick={handleLogInClick}>{t('common:logIn')}</Button>
-          <Button icon={<FormOutlined />} onClick={handleRegisterClick}>{t('common:register')}</Button>
+          <Button size="large" type="primary" icon={<UsersIcon />} onClick={handleLogInClick}>{t('common:logIn')}</Button>
+          <Button size="large" icon={<FormOutlined />} onClick={handleRegisterClick}>{t('common:register')}</Button>
         </div>
       );
     }
 
     return (
-      <Button icon={<LogoutIcon />} onClick={handleLogOutClick}>{t('common:logOut')}</Button>
+      <Button size="large" icon={<LogoutIcon />} onClick={handleLogOutClick}>{t('common:logOut')}</Button>
     );
   };
 

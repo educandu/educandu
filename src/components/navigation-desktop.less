@@ -1,4 +1,50 @@
+@navigation-desktop-search-bar-inactive-width: 35px;
+@navigation-desktop-search-bar-transition: width 0.4s ease;
+@navigation-desktop-search-bar-active-width: 80%;
+
 .NavigationDesktop {
+  display: grid;
+  gap: 20px;
+  place-items: end;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+}
+
+.NavigationDesktop-searchBar {
+  position: relative;
+  width: @navigation-desktop-search-bar-inactive-width;
+  transition: @navigation-desktop-search-bar-transition;
+
+  &.is-active {
+    width: @navigation-desktop-search-bar-active-width;
+
+    .NavigationDesktop-searchBarMask {
+      display: none;
+    }
+  }
+
+  &:hover {
+    width: @navigation-desktop-search-bar-active-width;
+    transition: @navigation-desktop-search-bar-transition;
+  }
+}
+
+.NavigationDesktop-searchBarMask {
+  .m-mask;
+  display: flex;
+  padding-right: 5px;
+  justify-content: center;
+  color: @edu-border-color-dark;
+  background-color: @edu-white;
+  border-radius: @edu-border-radius-base;
+  width: @navigation-desktop-search-bar-inactive-width;
+
+  &:hover {
+    width: 0px;
+  }
+}
+
+.NavigationDesktop-menu {
   display: grid;
   gap: 20px;
   align-items: center;

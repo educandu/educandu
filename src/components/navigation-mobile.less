@@ -1,4 +1,8 @@
-.NavigationMobile {}
+.NavigationMobile {
+  display: grid;
+  place-items: end;
+  align-items: center;
+}
 
 .NavigationMobile-anonymousUserButtons {
   display: grid;
@@ -32,10 +36,6 @@
   place-items: start;
   grid-auto-flow: row;
   margin-bottom: 15px;
-
-  .ant-collapse-header {
-    padding: 0 !important;
-  }
 }
 
 .NavigationMobile-drawerContentItem {
@@ -44,6 +44,14 @@
   align-items: center;
   place-content: start;
   grid-auto-flow: column;
+}
+
+.NavigationMobile-drawerLanguageItem {
+  width: 100%;
+
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
 }
 
 .NavigationMobile-drawerContentItemChildren {

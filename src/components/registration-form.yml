@@ -1,6 +1,6 @@
 registrationForm:
   register:
-    en: Register
+    en: Sign up
     de: Registrieren
   termsAndConditionsConfirmation:
     en: I have read the <0>terms and conditions</0> and agree to them.
