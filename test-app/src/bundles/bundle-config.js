@@ -1,10 +1,10 @@
 import SiteLogo from './site-logo.js';
-import PageTemplate from './page-template.js';
 import HomePageTemplate from './home-page-template.js';
+import DefaultPageTemplate from '../../../src/components/default-page-template.js';
 
 export default {
   getPageTemplateComponent() {
-    return PageTemplate;
+    return DefaultPageTemplate;
   },
   getHomePageTemplateComponent() {
     return HomePageTemplate;

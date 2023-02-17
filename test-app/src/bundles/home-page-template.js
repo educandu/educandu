@@ -1,31 +1,21 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import SiteLogo from './site-logo.js';
-import React, { useState } from 'react';
-import PageHeader from './page-header.js';
-import PageFooter from './page-footer.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../src/components/markdown.js';
 import HomePageIllustration from './home-page-illustration.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
 import { useSettings } from '../../../src/components/settings-context.js';
-import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
+import DefaultPageFooter from '../../../src/components/default-page-footer.js';
+import DefaultPageHeader from '../../../src/components/default-page-header.js';
 
 function HomePageTemplate({ children }) {
   const settings = useSettings();
   const { t } = useTranslation('testApp');
-  const [isUiLanguageDialogOpen, setIsUiLanguageDialogOpen] = useState(false);
-
-  const handleUiLanguageDialogClose = () => {
-    setIsUiLanguageDialogOpen(false);
-  };
-
-  const handleUiLanguageClick = () => {
-    setIsUiLanguageDialogOpen(true);
-  };
 
   return (
     <div className="HomePageTemplate">
-      <PageHeader onUiLanguageClick={handleUiLanguageClick} />
+      <DefaultPageHeader />
       <main className="HomePageTemplate-contentArea">
         <div className="HomePageTemplate-content">
           <div className="HomePageTemplate-logo" >
@@ -43,8 +33,7 @@ function HomePageTemplate({ children }) {
           </div>
         </div>
       </main>
-      <PageFooter />
-      <UiLanguageDialog isOpen={isUiLanguageDialogOpen} onClose={handleUiLanguageDialogClose} />
+      <DefaultPageFooter />
       <ConsentDialog />
     </div>
   );
