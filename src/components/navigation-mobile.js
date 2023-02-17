@@ -74,13 +74,9 @@ function NavigationMobile() {
         <Panel header={<div className="NavigationMobile-drawerContentItem"><GlobalOutlined />{t('common:language')}</div>}>
           <div className="NavigationMobile-drawerContentItemChildren">
             {languagesData.map(languageData => (
-              <Button
-                type={selectedLanguageCode === languageData.code ? 'default' : 'link'}
-                key={languageData.code}
-                onClick={() => handleLanguageChange(languageData.code)}
-                >
+              <div key={languageData.code} onClick={() => handleLanguageChange(languageData.code)}>
                 {languageData.name}
-              </Button>
+              </div>
             ))}
           </div>
         </Panel>
