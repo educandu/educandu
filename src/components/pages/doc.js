@@ -43,10 +43,9 @@ import {
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
 import {
-  canEditDocContent,
-  canEditDocMetadata,
+  canEditDoc,
   findCurrentlyWorkedOnSectionKey,
-  getEditDocContentRestrictionTooltip,
+  getEditDocRestrictionTooltip,
   tryBringSectionIntoView
 } from '../../utils/doc-utils.js';
 
@@ -134,11 +133,8 @@ function Doc({ initialState, PageTemplate }) {
 
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
-  const userCanEditDocContent = canEditDocContent({ user, doc: initialState.doc, room });
-  const userCanEditDocMetadata = canEditDocMetadata({ user, doc: initialState.doc, room });
-  const editDocRestrictionTooltip = userCanEdit
-    ? getEditDocContentRestrictionTooltip({ t, user, doc: initialState.doc, room })
-    : t('editRestrictionTooltip_annonymousUser');
+  const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
+  const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
   const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
@@ -572,18 +568,20 @@ function Doc({ initialState, PageTemplate }) {
             </Breadcrumb>
           )}
           <div className="DocPage-badges">
-            <Tooltip title={t('duplicateDocument')}>
-              <Button
-                type="text"
-                shape="circle"
-                icon={<DuplicateIcon />}
-                className="DocPage-cloneButton"
-                onClick={() => handleDocumentCloneClick()}
-                />
-            </Tooltip>
+            {!!userCanEdit && (
+              <Tooltip title={t('duplicateDocument')}>
+                <Button
+                  type="text"
+                  shape="circle"
+                  icon={<DuplicateIcon />}
+                  className="DocPage-cloneButton"
+                  onClick={() => handleDocumentCloneClick()}
+                  />
+              </Tooltip>
+            )}
             {!!doc.publicContext?.verified && (
               <Tooltip title={t('common:verifiedDocumentBadge')}>
-                <LikeOutlined className="u-verified-badge" />
+                <LikeOutlined className="u-large-badge" />
               </Tooltip>
             )}
             <FavoriteStar className="DocPage-badge" type={FAVORITE_TYPE.document} id={doc._id} />
@@ -633,7 +631,7 @@ function Doc({ initialState, PageTemplate }) {
             <HistoryControlPanel
               revisions={historyRevisions}
               selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-              canRestoreRevisions={userCanEditDocContent}
+              canRestoreRevisions={userCanEditDoc}
               startOpen={preSetView === VIEW.history}
               onOpen={handleHistoryOpen}
               onClose={handleHistoryClose}
@@ -660,8 +658,7 @@ function Doc({ initialState, PageTemplate }) {
             <EditControlPanel
               isDirtyState={isDirty}
               startOpen={preSetView === VIEW.edit}
-              disabled={!userCanEdit || !userCanEditDocContent}
-              canEditMetadata={userCanEditDocMetadata}
+              disabled={!userCanEdit || !userCanEditDoc}
               tooltipWhenDisabled={editDocRestrictionTooltip}
               onOpen={handleEditOpen}
               onMetadataOpen={handleEditMetadataOpen}

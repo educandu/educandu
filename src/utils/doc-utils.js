@@ -2,79 +2,54 @@ import by from 'thenby';
 import { isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getViewportMeasurementsForElement } from '../ui/browser-helper.js';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION } from '../domain/constants.js';
 
 const DATA_ATTRIBUTE_SECTION_KEY = 'data-section-key';
 const DATA_ATTRIBUTE_SECTION_TYPE = 'data-section-type';
 const DATA_ATTRIBUTE_SECTION_REVISION = 'data-section-revision';
 
-export const DOCUMENT_EDIT_RESTRICTION_REASON = {
+const DOCUMENT_EDIT_RESTRICTION_REASON = {
   none: 'none',
-  archive: 'archive',
   room: 'room',
-  openContribution: 'open-controbution'
+  archived: 'archived',
+  protected: 'protected'
 };
 
-function getEditDocPartRestrictionReason({ user, doc, room, validContributionParts }) {
+function getEditDocRestrictionReason({ user, doc, room }) {
   if (doc.publicContext?.archived) {
-    return DOCUMENT_EDIT_RESTRICTION_REASON.archive;
+    return DOCUMENT_EDIT_RESTRICTION_REASON.archived;
   }
 
   if (room && !isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id })) {
     return DOCUMENT_EDIT_RESTRICTION_REASON.room;
   }
 
-  const docAllowsContributionToPart = validContributionParts.includes(doc.publicContext?.allowedOpenContribution);
-  if (!room && !hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION) && !docAllowsContributionToPart) {
-    return DOCUMENT_EDIT_RESTRICTION_REASON.openContribution;
+  if (!room && doc.publicContext.protected && !hasUserPermission(user, permissions.PROTECT_DOC)) {
+    return DOCUMENT_EDIT_RESTRICTION_REASON.protected;
   }
 
   return DOCUMENT_EDIT_RESTRICTION_REASON.none;
 }
 
-function getEditDocContentRestrictionReason({ user, doc, room }) {
-  return getEditDocPartRestrictionReason({
-    user,
-    doc,
-    room,
-    validContributionParts: [
-      DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.content,
-      DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
-    ]
-  });
-}
+export function getEditDocRestrictionTooltip({ t, user, doc, room }) {
+  if (!user) {
+    return t('doc:editRestrictionTooltip_anonymousUser');
+  }
 
-function getEditDocMetadataRestrictionReason({ user, doc, room }) {
-  return getEditDocPartRestrictionReason({
-    user,
-    doc,
-    room,
-    validContributionParts: [DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent]
-  });
-}
-
-export function getEditDocContentRestrictionTooltip({ t, user, doc, room }) {
-  const restrictionReason = getEditDocContentRestrictionReason({ user, doc, room });
+  const restrictionReason = getEditDocRestrictionReason({ user, doc, room });
   switch (restrictionReason) {
-    case DOCUMENT_EDIT_RESTRICTION_REASON.archive:
+    case DOCUMENT_EDIT_RESTRICTION_REASON.protected:
+      return t('doc:editRestrictionTooltip_protected');
+    case DOCUMENT_EDIT_RESTRICTION_REASON.archived:
       return t('doc:editRestrictionTooltip_archive');
     case DOCUMENT_EDIT_RESTRICTION_REASON.room:
       return t('doc:editRestrictionTooltip_room');
-    case DOCUMENT_EDIT_RESTRICTION_REASON.openContribution:
-      return t('doc:editRestrictionTooltip_openContribution');
     default:
       return null;
   }
 }
 
-export function canEditDocContent({ user, doc, room }) {
-  const restrictionReason = getEditDocContentRestrictionReason({ user, doc, room });
-  return restrictionReason === DOCUMENT_EDIT_RESTRICTION_REASON.none;
-}
-
-export function canEditDocMetadata({ user, doc, room }) {
-  const restrictionReason = getEditDocMetadataRestrictionReason({ user, doc, room });
-  return restrictionReason === DOCUMENT_EDIT_RESTRICTION_REASON.none;
+export function canEditDoc({ user, doc, room }) {
+  return getEditDocRestrictionReason({ user, doc, room }) === DOCUMENT_EDIT_RESTRICTION_REASON.none;
 }
 
 export function findCurrentlyWorkedOnSectionKey() {

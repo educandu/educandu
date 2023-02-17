@@ -11,6 +11,3 @@ editControlPanel:
   editMetadata:
     en: Edit metadata
     de: Metadaten bearbeiten
-  editMetadataDisabledTooltip:
-    en: Editing the metadata of this document was disabled by a maintainer
-    de: Die Metadaten-Bearbeitung dieses Dokuments wurde von einem Maintainer deaktiviert

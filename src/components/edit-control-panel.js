@@ -13,7 +13,6 @@ function EditControlPanel({
   startOpen,
   disabled,
   isDirtyState,
-  canEditMetadata,
   tooltipWhenDisabled,
   onOpen,
   onMetadataOpen,
@@ -60,17 +59,14 @@ function EditControlPanel({
   const renderEditMetadataButton = () => (
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
-        <Tooltip title={canEditMetadata ? null : t('editMetadataDisabledTooltip')}>
-          <Button
-            ghost
-            icon={<EditIcon />}
-            disabled={!canEditMetadata}
-            className="EditControlPanel-editButton"
-            onClick={onMetadataOpen}
-            >
-            {t('editMetadata')}
-          </Button>
-        </Tooltip>
+        <Button
+          ghost
+          icon={<EditIcon />}
+          className="EditControlPanel-editButton"
+          onClick={onMetadataOpen}
+          >
+          {t('editMetadata')}
+        </Button>
       </span>
     </span>
   );
@@ -111,7 +107,6 @@ EditControlPanel.propTypes = {
   isDirtyState: PropTypes.bool.isRequired,
   startOpen: PropTypes.bool,
   disabled: PropTypes.bool,
-  canEditMetadata: PropTypes.bool,
   tooltipWhenDisabled: PropTypes.string,
   onOpen: PropTypes.func,
   onMetadataOpen: PropTypes.func,
@@ -122,7 +117,6 @@ EditControlPanel.propTypes = {
 EditControlPanel.defaultProps = {
   startOpen: false,
   disabled: false,
-  canEditMetadata: false,
   tooltipWhenDisabled: null,
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),

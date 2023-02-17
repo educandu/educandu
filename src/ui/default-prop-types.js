@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { isBrowser } from './browser-helper.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
-  DOCUMENT_ALLOWED_OPEN_CONTRIBUTION,
   BATCH_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   ROOM_DOCUMENTS_MODE,
@@ -193,10 +192,10 @@ export const contributedDocumentMetadataShape = PropTypes.shape({
 });
 
 export const documentPublicContextShape = PropTypes.shape({
+  protected: PropTypes.bool,
   archived: PropTypes.bool,
   verified: PropTypes.bool,
-  review: PropTypes.string,
-  allowedOpenContribution: PropTypes.oneOf(Object.values(DOCUMENT_ALLOWED_OPEN_CONTRIBUTION))
+  review: PropTypes.string
 });
 
 export const documentMetadataEditShape = PropTypes.shape({

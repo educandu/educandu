@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
 import { handleApiError } from '../ui/error-helper.js';
+import { ROOM_USER_ROLE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -15,7 +16,6 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DOCUMENT_ALLOWED_OPEN_CONTRIBUTION, ROOM_USER_ROLE } from '../domain/constants.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
@@ -23,7 +23,6 @@ import {
   determineActualTemplateDocumentId,
   determineDocumentRoomId,
   DOCUMENT_METADATA_MODAL_MODE,
-  getAllowedOpenContributionOptions,
   getCloningOptions,
   getDefaultLanguageFromUiLanguage,
   getDialogOkButtonText,
@@ -32,7 +31,6 @@ import {
 } from './document-metadata-modal-utils.js';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const CollapsePanel = Collapse.Panel;
@@ -41,10 +39,10 @@ const logger = new Logger(import.meta.url);
 
 const getDefaultPublicContext = () => (
   {
+    protected: false,
     archived: false,
     verified: false,
-    review: '',
-    allowedOpenContribution: DOCUMENT_ALLOWED_OPEN_CONTRIBUTION.metadataAndContent
+    review: ''
   }
 );
 
@@ -95,15 +93,14 @@ function DocumentMetadataModal({
   }), [mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId]);
 
   const publicContextPermissions = {
-    canArchive: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS),
+    canProtect: hasUserPermission(user, permissions.PROTECT_DOC),
+    canArchive: hasUserPermission(user, permissions.ARCHIVE_DOC),
     canVerify: hasUserPermission(user, permissions.VERIFY_DOC),
-    canReview: hasUserPermission(user, permissions.REVIEW_DOC),
-    canRestrictOpenContribution: hasUserPermission(user, permissions.RESTRICT_OPEN_CONTRIBUTION)
+    canReview: hasUserPermission(user, permissions.REVIEW_DOC)
   };
   const hasPublicContextPermissions = Object.values(publicContextPermissions).some(value => value);
 
   const cloningOptions = getCloningOptions({ mode, documentToClone, availableRooms, t });
-  const allowedOpenContributionOptions = getAllowedOpenContributionOptions({ t });
 
   const defaultTemplateDocumentId = settings.templateDocument?.documentId || null;
   const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
@@ -218,6 +215,11 @@ function DocumentMetadataModal({
     setUseTemplateDocument(value);
   };
 
+  const handleProtectedChange = event => {
+    const { checked } = event.target;
+    setPublicContext(prevState => ({ ...prevState, protected: checked }));
+  };
+
   const handleArchivedChange = event => {
     const { checked } = event.target;
     setPublicContext(prevState => ({ ...prevState, archived: checked }));
@@ -231,10 +233,6 @@ function DocumentMetadataModal({
   const handleReviewChange = event => {
     const { value } = event.target;
     setPublicContext(prevState => ({ ...prevState, review: value }));
-  };
-
-  const handleAllowedOpenContributionChange = value => {
-    setPublicContext(prevState => ({ ...prevState, allowedOpenContribution: value }));
   };
 
   const handleDraftChange = event => {
@@ -392,19 +390,26 @@ function DocumentMetadataModal({
         {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
+              {!!publicContextPermissions.canProtect && (
+                <FormItem>
+                  <Checkbox checked={publicContext.protected} onChange={handleProtectedChange}>
+                    <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
+                  </Checkbox>
+                </FormItem>
+              )}
               {!!publicContextPermissions.canArchive && (
-              <FormItem>
-                <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
-                  <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
-                </Checkbox>
-              </FormItem>
+                <FormItem>
+                  <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
+                    <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
+                  </Checkbox>
+                </FormItem>
               )}
               {!!publicContextPermissions.canVerify && (
-              <FormItem>
-                <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
-                  <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
-                </Checkbox>
-              </FormItem>
+                <FormItem>
+                  <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
+                    <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
+                  </Checkbox>
+                </FormItem>
               )}
               {!!publicContextPermissions.canReview && (
                 <FormItem
@@ -413,17 +418,6 @@ function DocumentMetadataModal({
                   }
                   >
                   <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
-                </FormItem>
-              )}
-              {!!publicContextPermissions.canRestrictOpenContribution && (
-                <FormItem
-                  label={
-                    <Info tooltip={t('allowedOpenContributionInfo')} iconAfterContent>{t('allowedOpenContribution')}</Info>
-                  }
-                  >
-                  <Select value={publicContext.allowedOpenContribution} onChange={handleAllowedOpenContributionChange}>
-                    {allowedOpenContributionOptions.map(option => <Option key={option.key}>{option.value}</Option>)}
-                  </Select>
                 </FormItem>
               )}
             </CollapsePanel>

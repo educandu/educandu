@@ -107,11 +107,11 @@ common:
     de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
   pasteSectionFromClipboardError:
     en: |
-        Error pasting the section from the clipboard. Either the clipboard contains content that cannot
-        be pasted as a new section or the browser denies access to the clipboard.
+      Error pasting the section from the clipboard. Either the clipboard contains content that cannot
+      be pasted as a new section or the browser denies access to the clipboard.
     de: |
-        Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht
-        als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.
+      Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht
+      als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.
   sectionCopiedToClipboard:
     en: The section was copied to the clipboard
     de: Der Abschnitt wurde in die Zwischenablage kopiert
@@ -189,9 +189,11 @@ common:
     de: Slug
   slugInfo:
     en: |
-      The slug is added to the end of the URL and can contain one or more parts separated by slashed. Each part and can only contain lower case letters (a-z), digits and hyphens.
+      The slug is added to the end of the URL and can contain one or more parts separated by slashed.
+      Each part and can only contain lower case letters (a-z), digits and hyphens.
     de: |
-      Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten. Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
+      Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten.
+      Jeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.
   invalidSlug:
     en: The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
     de: Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
@@ -201,6 +203,9 @@ common:
   tagsPlaceholder:
     en: Enter keywords
     de: Stichwörter angeben
+  protected:
+    en: Protected
+    de: Geschützt
   archived:
     en: Archived
     de: Archiviert
@@ -388,15 +393,14 @@ common:
     en: The tests are arranged in random order
     de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
   youtubeCopyrightNotice:
-    en: |
-      Source: [Youtube]({link})
-    de: |
-      Quelle: [Youtube]({link})
+    en: "Source: [Youtube]({link})"
+    de: "Quelle: [Youtube]({link})"
   wikimediaCopyrightNotice:
-    en: |
-      Source: [Wikimedia]({link})
-    de: |
-      Quelle: [Wikimedia]({link})
+    en: "Source: [Wikimedia]({link})"
+    de: "Quelle: [Wikimedia]({link})"
+  protectedDocumentBadge:
+    en: This document is protected
+    de: Dieses Dokument ist geschützt
   verifiedDocumentBadge:
     en: This document was verified by a maintainer
     de: Dieses Dokument wurde von einem Maintainer überprüft

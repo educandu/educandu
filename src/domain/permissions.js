@@ -10,6 +10,8 @@ const VERIFY_DOC = 'verify-doc';
 const VIEW_FILES = 'view-files';
 const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
+const PROTECT_DOC = 'protect-doc';
+const ARCHIVE_DOC = 'archive-doc';
 const MIGRATE_DATA = 'migrate-data';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_BATCHES = 'manage-batches';
@@ -19,14 +21,12 @@ const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
 const HARD_DELETE_SECTION = 'hard-delete-section';
 const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
-const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const DELETE_ANY_STORAGE_FILE = 'delete-storage-file';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const CREATE_DOCUMENT_COMMENTS = 'create-document-comments';
 const MANAGE_DOCUMENT_COMMENTS = 'manage-document-comments';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
-const RESTRICT_OPEN_CONTRIBUTION = 'restrict-open-contribution';
 
 const userPermissions = [
   EDIT_DOC,
@@ -48,10 +48,10 @@ const maintainerPermissions = [
     DELETE_ANY_STORAGE_FILE,
     SEE_USER_EMAIL,
     RESTORE_DOC_REVISIONS,
-    MANAGE_ARCHIVED_DOCS,
+    ARCHIVE_DOC,
     REVIEW_DOC,
     VERIFY_DOC,
-    RESTRICT_OPEN_CONTRIBUTION,
+    PROTECT_DOC,
     MANAGE_DOCUMENT_COMMENTS,
     MANAGE_CONTENT
   ])
@@ -92,7 +92,7 @@ export default {
   VIEW_DOCS,
   REVIEW_DOC,
   VERIFY_DOC,
-  RESTRICT_OPEN_CONTRIBUTION,
+  PROTECT_DOC,
   EDIT_FILE,
   VIEW_FILES,
   DELETE_OWN_FILES,
@@ -104,7 +104,7 @@ export default {
   HARD_DELETE_SECTION,
   SEE_USER_EMAIL,
   MIGRATE_DATA,
-  MANAGE_ARCHIVED_DOCS,
+  ARCHIVE_DOC,
   RESTORE_DOC_REVISIONS,
   DELETE_ANY_STORAGE_FILE,
   OWN_ROOMS,

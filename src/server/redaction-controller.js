@@ -15,7 +15,7 @@ class DashboardController {
   }
 
   async handleGetRedactionPage(req, res) {
-    const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
+    const includeArchived = hasUserPermission(req.user, permissions.ARCHIVE_DOC);
     const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
 
     const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
