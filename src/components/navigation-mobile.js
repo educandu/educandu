@@ -1,4 +1,5 @@
 import routes from '../utils/routes.js';
+import SearchBar from './search-bar.js';
 import React, { useState } from 'react';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -36,11 +37,6 @@ function NavigationMobile() {
     setIsDrawerOpen(false);
   };
 
-  const handleLanguageChange = languageCode => {
-    i18n.changeLanguage(languageCode);
-    setSelectedLanguageCode(languageCode);
-  };
-
   const handleLogInClick = () => {
     window.location = routes.getLoginUrl(getCurrentUrl());
   };
@@ -51,6 +47,15 @@ function NavigationMobile() {
 
   const handleLogOutClick = () => {
     window.location = routes.getLogoutUrl();
+  };
+
+  const handleLanguageChange = languageCode => {
+    i18n.changeLanguage(languageCode);
+    setSelectedLanguageCode(languageCode);
+  };
+
+  const handleSearch = searchText => {
+    window.location = routes.getSearchUrl(searchText.trim());
   };
 
   const renderDrawerTitle = () => {
@@ -87,13 +92,11 @@ function NavigationMobile() {
   const renderDrawerItems = () => {
     const items = getCommonNavigationMenuItems({ t, user, helpPage })
       .filter(item => item.showWhen)
-      .map(({ key, label, icon }) => {
-        return (
-          <div key={key} className="NavigationMobile-drawerContentItem">
-            {icon}{label}
-          </div>
-        );
-      });
+      .map(({ key, label, icon, onClick }) => (
+        <div key={key} onClick={onClick} className="NavigationMobile-drawerContentItem">
+          {icon}{label}
+        </div>
+      ));
 
     return (
       <div className="NavigationMobile-drawerContentItems">
@@ -129,7 +132,12 @@ function NavigationMobile() {
         onClose={handleDrawerClose}
         >
         <div className="NavigationMobile-drawerContent">
-          {renderDrawerItems()}
+          <div>
+            <div className="NavigationMobile-drawerContentSearch">
+              <SearchBar onSearch={handleSearch} autoFocus />
+            </div>
+            {renderDrawerItems()}
+          </div>
           {renderDrawerFooter()}
         </div>
       </Drawer>
