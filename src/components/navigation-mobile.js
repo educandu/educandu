@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import SearchBar from './search-bar.js';
 import React, { useState } from 'react';
@@ -74,7 +75,11 @@ function NavigationMobile() {
         <Panel header={<div className="NavigationMobile-drawerContentItem"><GlobalOutlined />{t('common:language')}</div>}>
           <div className="NavigationMobile-drawerContentItemChildren">
             {languagesData.map(languageData => (
-              <div key={languageData.code} onClick={() => handleLanguageChange(languageData.code)}>
+              <div
+                key={languageData.code}
+                className={classNames('NavigationMobile-languageMenuItem', { 'is-selected': languageData.code === selectedLanguageCode })}
+                onClick={() => handleLanguageChange(languageData.code)}
+                >
                 {languageData.name}
               </div>
             ))}

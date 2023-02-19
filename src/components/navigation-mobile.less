@@ -6,8 +6,8 @@
 
 .NavigationMobile-anonymousUserButtons {
   display: grid;
-  gap: 10px;
   grid-auto-flow: row;
+  gap: @edu-content-padding;
 }
 
 .NavigationMobile-whiteIcon {
@@ -40,10 +40,10 @@
 
 .NavigationMobile-drawerContentItem {
   display: grid;
-  gap: 15px;
   align-items: center;
   place-content: start;
   grid-auto-flow: column;
+  gap: @edu-content-padding;
 }
 
 .NavigationMobile-drawerLanguageItem {
@@ -55,8 +55,16 @@
 }
 
 .NavigationMobile-drawerContentItemChildren {
+  padding-top: 10px;
   display: grid;
-  gap: 10px;
   grid-auto-flow: row;
   place-items: start;
+  gap: 25px;
+  padding-left: @edu-content-padding;
+}
+
+.NavigationMobile-languageMenuItem {
+  &.is-selected {
+    border-bottom: 1px solid @edu-border-color-base;
+  }
 }
