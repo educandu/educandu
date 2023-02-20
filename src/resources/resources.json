@@ -843,16 +843,6 @@
       "de": "Mit Shibboleth anmelden"
     }
   },
-  "login": {
-    "register": {
-      "en": "Register",
-      "de": "Registrieren"
-    },
-    "loginState": {
-      "en": "Hello <0>{displayName}</0>!",
-      "de": "Hallo <0>{displayName}</0>!"
-    }
-  },
   "markdownHelp": {
     "inlineTooltipHtml": {
       "en": "<div>\n  <p>In this field you can use the following formatting options:</p>\n  <p>*italic* or _italic_<br />**bold** or __bold__</p>\n  <p>Please enter links using this format:</p>\n  <p>[link text](link URL)</p>\n</div>\n",
@@ -1010,10 +1000,6 @@
     }
   },
   "admin": {
-    "settingsTabTitle": {
-      "en": "Settings",
-      "de": "Einstellungen"
-    },
     "userAccountsTabTitle": {
       "en": "User accounts",
       "de": "Benutzerkonten"
@@ -1172,10 +1158,6 @@
       "en": "Favorites",
       "de": "Favoriten"
     },
-    "settingsTabTitle": {
-      "en": "Settings",
-      "de": "Einstellungen"
-    },
     "documentsTabTitle": {
       "en": "Documents",
       "de": "Dokumente"
@@ -1317,10 +1299,6 @@
     "membersTabTitle": {
       "en": "Members ({count})",
       "de": "Mitglieder ({count})"
-    },
-    "settingsTabTitle": {
-      "en": "Settings",
-      "de": "Einstellungen"
     },
     "documentsPlaceholder": {
       "en": "The room does not contain any documents",
@@ -1495,7 +1473,7 @@
   },
   "registrationForm": {
     "register": {
-      "en": "Register",
+      "en": "Sign up",
       "de": "Registrieren"
     },
     "termsAndConditionsConfirmation": {
@@ -1839,16 +1817,6 @@
     "searchPlaceholder": {
       "en": "Search",
       "de": "Suchen"
-    }
-  },
-  "uiLanguageDialog": {
-    "title": {
-      "en": "Choose language",
-      "de": "Sprache auswählen"
-    },
-    "explanation": {
-      "en": "Please select your preferred language for user interface elements like buttons, menus etc.",
-      "de": "Bitte wähle deine bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
     }
   },
   "urlInput": {
@@ -2832,6 +2800,10 @@
       "en": "Log out",
       "de": "Abmelden"
     },
+    "register": {
+      "en": "Sign up",
+      "de": "Registrieren"
+    },
     "created": {
       "en": "Created",
       "de": "Erstellt"
@@ -3351,6 +3323,14 @@
     "licenses": {
       "en": "Licenses",
       "de": "Lizenzen"
+    },
+    "settings": {
+      "en": "Settings",
+      "de": "Einstellungen"
+    },
+    "hello": {
+      "en": "Hello",
+      "de": "Hallo"
     }
   },
   "pageNames": {
@@ -3369,6 +3349,10 @@
     "redaction": {
       "en": "Redaction",
       "de": "Redaktion"
+    },
+    "userProfile": {
+      "en": "Profile",
+      "de": "Profil"
     }
   },
   "mailService": {

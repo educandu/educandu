@@ -1,0 +1,70 @@
+.NavigationMobile {
+  display: grid;
+  place-items: end;
+  align-items: center;
+}
+
+.NavigationMobile-anonymousUserButtons {
+  display: grid;
+  grid-auto-flow: row;
+  gap: @edu-content-padding;
+}
+
+.NavigationMobile-whiteIcon {
+  color: @edu-white;
+}
+
+.NavigationMobile-drawerTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.NavigationMobile-drawerContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.NavigationMobile-drawerContentSearch {
+  margin-bottom: 40px;
+}
+
+.NavigationMobile-drawerContentItems {
+  display: grid;
+  gap: 25px;
+  place-items: start;
+  grid-auto-flow: row;
+  margin-bottom: 15px;
+}
+
+.NavigationMobile-drawerContentItem {
+  display: grid;
+  align-items: center;
+  place-content: start;
+  grid-auto-flow: column;
+  gap: @edu-content-padding;
+}
+
+.NavigationMobile-drawerLanguageItem {
+  width: 100%;
+
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
+}
+
+.NavigationMobile-drawerContentItemChildren {
+  padding-top: 10px;
+  display: grid;
+  grid-auto-flow: row;
+  place-items: start;
+  gap: 25px;
+  padding-left: @edu-content-padding;
+}
+
+.NavigationMobile-languageMenuItem {
+  &.is-selected {
+    border-bottom: 1px solid @edu-border-color-base;
+  }
+}

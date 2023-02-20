@@ -11,3 +11,6 @@ pageNames:
   redaction:
     en: Redaction
     de: Redaktion
+  userProfile:
+    en: Profile
+    de: Profil

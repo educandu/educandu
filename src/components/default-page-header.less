@@ -1,40 +1,29 @@
 .DefaultPageHeader {
   .m-page-content;
-  flex: none;
 }
 
-.DefaultPageHeader-header {
-  display: flex;
+.DefaultPageHeader-content {
+  display: grid;
+  place-items: start;
   align-items: center;
-  justify-content: space-between;
+  grid-template-columns: auto 1fr;
+  background-color: @edu-white;
 }
 
-.DefaultPageHeader-headerContent {
-  display: block;
+.DefaultPageHeader-navigation {
+  width: 100%;
 
-  &.DefaultPageHeader-headerContent--left {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+  &.DefaultPageHeader-navigation--desktop {
+    @media @edu-media-phone {
+      display: none;
+    }
   }
 
-  &.DefaultPageHeader-headerContent--right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+  &.DefaultPageHeader-navigation--mobile {
+    display: none;
+
+    @media @edu-media-phone {
+      display: block;
+    }
   }
-}
-
-.DefaultPageHeader-logo {
-  font-weight: bold;
-}
-
-.DefaultPageHeader-headerButton {
-  .m-icon-button;
-  .m-grouped-button;
-}
-
-.DefaultPageHeader-loginButton {
-  cursor: pointer;
-  margin-right: (3 * @edu-control-spacing-base);
 }

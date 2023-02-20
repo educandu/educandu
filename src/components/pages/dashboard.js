@@ -200,7 +200,7 @@ function Dashboard({ PageTemplate }) {
 
   items.push({
     key: TAB_KEYS.settings,
-    label: t('settingsTabTitle'),
+    label: t('common:settings'),
     children: (
       <div className="Tabs-tabPane">
         <SettingsTab />

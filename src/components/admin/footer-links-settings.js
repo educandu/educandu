@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useLocale } from '../locale-context.js';
+import LanguageIcon from '../localization/language-icon.js';
 import SettingsDocumentsTable from './settings-documents-table.js';
 import { settingsDocumentShape } from '../../ui/default-prop-types.js';
-import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
 function FooterLinksSettings({ footerLinks, onChange }) {
   const { supportedUiLanguages } = useLocale();
@@ -18,15 +18,15 @@ function FooterLinksSettings({ footerLinks, onChange }) {
 
   return (
     <div>
-      {supportedUiLanguages.map((lang, idx) => (
-        <React.Fragment key={lang}>
-          {idx !== 0 && <br />}
+      {supportedUiLanguages.map((uiLanguageCode, index) => (
+        <React.Fragment key={uiLanguageCode}>
+          {index !== 0 && <br />}
           <h3>
-            <LanguageFlagAndName language={lang} />
+            <LanguageIcon language={uiLanguageCode} />
           </h3>
           <SettingsDocumentsTable
-            settingsDocuments={footerLinks?.[lang] || []}
-            onChange={items => handleChange(lang, items)}
+            settingsDocuments={footerLinks?.[uiLanguageCode] || []}
+            onChange={items => handleChange(uiLanguageCode, items)}
             />
         </React.Fragment>
       ))}

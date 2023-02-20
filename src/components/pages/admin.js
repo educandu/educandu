@@ -51,7 +51,7 @@ function Admin({ PageTemplate }) {
   const items = [
     {
       key: TABS.settings,
-      label: t('settingsTabTitle'),
+      label: t('common:settings'),
       children: (
         <div className="Tabs-tabPane">
           <AdminSettingsTab onDirtyStateChange={setIsCurrentTabDirty} />

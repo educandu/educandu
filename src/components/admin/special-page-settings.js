@@ -4,8 +4,8 @@ import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import DocumentSelector from '../document-selector.js';
+import LanguageIcon from '../localization/language-icon.js';
 import { settingsDocumentShape } from '../../ui/default-prop-types.js';
-import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
 const FormItem = Form.Item;
 
@@ -43,7 +43,7 @@ function SpecialPageSettings({ settings, onChange }) {
   };
 
   const renderLanguage = (text, record) => (
-    <LanguageFlagAndName language={record.language} />
+    <LanguageIcon language={record.language} />
   );
 
   const renderLinkTitle = (text, record, index) => (

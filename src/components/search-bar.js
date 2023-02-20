@@ -1,12 +1,10 @@
+import { Input } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useRef } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 
-const { Search } = Input;
-
-export default function SearchBar({ initialValue, autoFocus, onSearch }) {
+export default function SearchBar({ initialValue, autoFocus, onSearch, ...params }) {
   const inputRef = useRef();
   const { t } = useTranslation('searchBar');
   const [searchText, setSearchText] = useState(initialValue);
@@ -15,27 +13,24 @@ export default function SearchBar({ initialValue, autoFocus, onSearch }) {
     setSearchText(event.target.value);
   };
 
-  const handleSearch = value => {
-    if (value) {
-      onSearch(value);
+  const handleSearch = () => {
+    if (searchText) {
+      onSearch(searchText);
     }
   };
 
   return (
     <div className="SearchBar">
-      <Search
+      <Input
         size="large"
         ref={inputRef}
         placeholder={t('searchPlaceholder')}
         value={searchText}
-        onSearch={handleSearch}
+        onPressEnter={handleSearch}
         onChange={handleSearchInputChange}
-        enterButton={
-          <Button type="primary">
-            <SearchOutlined />
-          </Button>
-        }
         autoFocus={autoFocus}
+        suffix={<div className="SearchBar-suffix"><SearchOutlined /></div>}
+        {...params}
         />
     </div>
   );
