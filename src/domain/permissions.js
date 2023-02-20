@@ -13,6 +13,7 @@ const CREATE_FILE = 'create-file';
 const PROTECT_DOC = 'protect-doc';
 const ARCHIVE_DOC = 'archive-doc';
 const MIGRATE_DATA = 'migrate-data';
+const SEARCH_USERS = 'search-users';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_BATCHES = 'manage-batches';
 const SEE_USER_EMAIL = 'see-user-email';
@@ -27,6 +28,7 @@ const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const CREATE_DOCUMENT_COMMENTS = 'create-document-comments';
 const MANAGE_DOCUMENT_COMMENTS = 'manage-document-comments';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
+const MANAGE_ACCREDITED_EDITORS = 'manage-accredited-editors';
 
 const userPermissions = [
   EDIT_DOC,
@@ -46,6 +48,7 @@ const maintainerPermissions = [
     ...userPermissions,
     HARD_DELETE_SECTION,
     DELETE_ANY_STORAGE_FILE,
+    SEARCH_USERS,
     SEE_USER_EMAIL,
     RESTORE_DOC_REVISIONS,
     ARCHIVE_DOC,
@@ -53,7 +56,8 @@ const maintainerPermissions = [
     VERIFY_DOC,
     PROTECT_DOC,
     MANAGE_DOCUMENT_COMMENTS,
-    MANAGE_CONTENT
+    MANAGE_CONTENT,
+    MANAGE_ACCREDITED_EDITORS
   ])
 ];
 
@@ -97,6 +101,7 @@ export default {
   VIEW_FILES,
   DELETE_OWN_FILES,
   CREATE_FILE,
+  SEARCH_USERS,
   MANAGE_USERS,
   MANAGE_BATCHES,
   MANAGE_SETTINGS,
@@ -113,5 +118,6 @@ export default {
   JOIN_ROOMS,
   CREATE_DOCUMENT_COMMENTS,
   MANAGE_DOCUMENT_COMMENTS,
-  MANAGE_CONTENT
+  MANAGE_CONTENT,
+  MANAGE_ACCREDITED_EDITORS
 };

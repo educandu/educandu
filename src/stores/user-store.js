@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import escapeStringRegexp from 'escape-string-regexp';
 import { favoriteDBSchema, userDBSchema } from '../domain/schemas/user-schemas.js';
 
 class UserStore {
@@ -11,6 +12,16 @@ class UserStore {
 
   getAllUsers() {
     return this.collection.find().toArray();
+  }
+
+  getActiveUserBySearch(query, { session } = {}) {
+    const searchRegexp = `.*${escapeStringRegexp(query)}.*`;
+    const searchCriteria = [
+      { email: { $regex: searchRegexp, $options: 'i' } },
+      { displayName: { $regex: searchRegexp, $options: 'i' } }
+    ];
+
+    return this.collection.find({ $and: [{ accountClosedOn: null, $or: searchCriteria }] }, { session }).toArray();
   }
 
   findUserByVerificationCode(verificationCode, { session } = {}) {

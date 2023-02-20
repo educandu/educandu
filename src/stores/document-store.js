@@ -39,6 +39,7 @@ const documentExtendedMetadataProjection = {
   'updatedBy': 1,
   'tags': 1,
   'contributors': 1,
+  'publicContext.accreditedEditors': 1,
   'publicContext.protected': 1,
   'publicContext.archived': 1,
   'publicContext.verified': 1,

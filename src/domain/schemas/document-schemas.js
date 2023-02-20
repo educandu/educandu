@@ -20,6 +20,7 @@ export const patchDocSectionsBodySchema = joi.object({
 });
 
 export const publicContextSchema = joi.object({
+  accreditedEditors: joi.array().items(idOrKeySchema).required(),
   protected: joi.boolean().required(),
   archived: joi.boolean().required(),
   verified: joi.boolean().required(),

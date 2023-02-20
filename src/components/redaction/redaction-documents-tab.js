@@ -22,8 +22,8 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
 
 const logger = new Logger(import.meta.url);
 
@@ -55,6 +55,7 @@ function createTableRows(docs) {
     createdBy: doc.createdBy,
     language: doc.language,
     user: doc.user,
+    accreditedEditors: doc.publicContext.accreditedEditors,
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified
@@ -214,8 +215,13 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
           </Tooltip>
         )}
         {!!row.protected && (
-          <Tooltip title={t('common:protectedDocumentBadge')}>
+          <Tooltip title={t('protectedDocumentBadge')}>
             <SafetyCertificateOutlined className="u-large-badge" />
+          </Tooltip>
+        )}
+        {!!row.accreditedEditors.length && (
+          <Tooltip title={t('accreditedEditorsBadge')}>
+            <TeamOutlined className="u-large-badge" />
           </Tooltip>
         )}
       </div>
@@ -251,7 +257,7 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       key: 'badges',
       render: renderDocumentBadges,
       responsive: ['lg'],
-      width: '50px'
+      width: '140px'
     },
     {
       title: t('common:archived'),

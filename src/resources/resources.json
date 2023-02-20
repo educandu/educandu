@@ -644,6 +644,10 @@
       "en": "Begin with either an empty document or with a template of suggested content, which you can then modify as you please",
       "de": "Starte entweder mit einem leeren Dokument oder mit einer Vorlage mit Inhaltvorschlägen, die du dann nach deinen Wünschen verändern kannst"
     },
+    "accreditedEditors": {
+      "en": "Accredited editors",
+      "de": "Akkreditierte Bearbeiter"
+    },
     "review": {
       "en": "Review",
       "de": "Review"
@@ -668,13 +672,17 @@
       "en": "You can create multiple documents at once. A sequential number is appended to the title or slug for each document.",
       "de": "Du kannst mehrere Dokumente gleichzeitig anlegen. An den Titel bzw. Slug wird für jedes Dokument eine laufende Nummer angehängt."
     },
+    "accreditedEditorsInfo": {
+      "en": "Accredited users can edit this document even if it is protected.",
+      "de": "Akkreditierte Benutzer dürfen dieses Dokument bearbeiten, auch wenn es geschützt ist."
+    },
     "protectedInfo": {
-      "en": "Protected documents can only be edited by maintainers.",
-      "de": "Geschützte Dokumente können nur von Maintainers editiert werden."
+      "en": "Protected documents can only be edited by a maintainer or accredited user.",
+      "de": "Geschützte Dokumente können nur von einem Maintainer oder akkreditierten Benutzer bearbeitet werden."
     },
     "archivedInfo": {
       "en": "Archived documents can not be edited and can not be discovered through search.",
-      "de": "Archivierte Dokumente können nicht editiert werden und sind nicht suchbar."
+      "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
     },
     "verifiedInfo": {
       "en": "You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
@@ -1214,7 +1222,7 @@
       "en": "Comments",
       "de": "Kommentare"
     },
-    "editRestrictionTooltip_anonymousUser": {
+    "editRestrictionTooltip_anonymous": {
       "en": "Log in in order to edit this document",
       "de": "Melde dich an, um dieses Dokument zu bearbeiten"
     },
@@ -1491,6 +1499,14 @@
     "badges": {
       "en": "Badges",
       "de": "Kennzeichen"
+    },
+    "protectedDocumentBadge": {
+      "en": "This document is protected",
+      "de": "Dieses Dokument ist geschützt"
+    },
+    "accreditedEditorsBadge": {
+      "en": "This document has accredited editors",
+      "de": "Dieses Dokument hat akkreditierte Bearbeiter"
     }
   },
   "registrationForm": {
@@ -3179,10 +3195,6 @@
     "wikimediaCopyrightNotice": {
       "en": "Source: [Wikimedia]({link})",
       "de": "Quelle: [Wikimedia]({link})"
-    },
-    "protectedDocumentBadge": {
-      "en": "This document is protected",
-      "de": "Dieses Dokument ist geschützt"
     },
     "verifiedDocumentBadge": {
       "en": "This document was verified by a maintainer",

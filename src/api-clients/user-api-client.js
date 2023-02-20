@@ -16,6 +16,15 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  searchUsers({ query }) {
+    return this.httpClient
+      .get(
+        `/api/v1/users/search?query=${encodeURIComponent(query || '')}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getExternalAccounts() {
     return this.httpClient
       .get(

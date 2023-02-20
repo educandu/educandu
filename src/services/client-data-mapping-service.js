@@ -8,7 +8,7 @@ import PluginRegistry from '../plugins/plugin-registry.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
 import { BATCH_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
-import permissions, { getAllUserPermissions } from '../domain/permissions.js';
+import permissions, { getAllUserPermissions, hasUserPermission } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
@@ -36,7 +36,7 @@ class ClientDataMappingService {
       accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
     };
 
-    if (getAllUserPermissions(viewingUser).includes(permissions.SEE_USER_EMAIL)) {
+    if (hasUserPermission(viewingUser, permissions.SEE_USER_EMAIL)) {
       mappedViewedUser.email = viewedUser.email;
     }
 
@@ -459,6 +459,14 @@ class ClientDataMappingService {
           break;
         case 'sections':
           result[key] = value.map(s => this._mapDocumentSection(s, userMap, grantedPermissions));
+          break;
+        case 'publicContext':
+          result[key] = value
+            ? {
+              ...value,
+              accreditedEditors: value.accreditedEditors.map(c => this._mapOtherUser({ user: userMap.get(c), grantedPermissions }))
+            }
+            : value;
           break;
         case 'cdnResources':
           break;

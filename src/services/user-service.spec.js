@@ -52,6 +52,28 @@ describe('user-service', () => {
     sandbox.restore();
   });
 
+  describe('getActiveUsersBySearch', () => {
+    let result;
+
+    beforeEach(async () => {
+      await Promise.all([
+        setupTestUser(container, { displayName: 'test-user-abc', password: '1234qwer', email: 'email1@test.com' }),
+        setupTestUser(container, { displayName: 'test-user', password: '1234qwer', email: 'abc@test.com' }),
+        setupTestUser(container, { displayName: 'abc', password: '1234qwer', email: 'email3@test.com' })
+      ]);
+
+      result = await sut.getActiveUsersBySearch({ query: 'abc' });
+    });
+
+    it('returns the users ordered by relevance', () => {
+      expect(result).toMatchObject([
+        { displayName: 'abc', email: 'email3@test.com' },
+        { displayName: 'test-user', email: 'abc@test.com' },
+        { displayName: 'test-user-abc', email: 'email1@test.com' }
+      ]);
+    });
+  });
+
   describe('findConfirmedActiveUserById', () => {
     let result;
 

@@ -1,5 +1,5 @@
 import by from 'thenby';
-import { isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getViewportMeasurementsForElement } from '../ui/browser-helper.js';
 
@@ -10,20 +10,47 @@ const DATA_ATTRIBUTE_SECTION_REVISION = 'data-section-revision';
 const DOCUMENT_EDIT_RESTRICTION_REASON = {
   none: 'none',
   room: 'room',
+  draft: 'draft',
   archived: 'archived',
-  protected: 'protected'
+  protected: 'protected',
+  anonymous: 'anonymous'
 };
 
+function userIsAccreditedEditor({ user, doc }) {
+  // Check against potentially client-data-mapped user as well as pure string IDs (DB model):
+  return (doc.publicContext.accreditedEditors || [])
+    .map(item => typeof item === 'object' ? item._id : item)
+    .includes(user._id);
+}
+
 function getEditDocRestrictionReason({ user, doc, room }) {
-  if (doc.publicContext?.archived) {
+  if (!doc || (doc.roomId && !room)) {
+    throw new Error('Inconsistent arguments');
+  }
+
+  if (!user) {
+    return DOCUMENT_EDIT_RESTRICTION_REASON.anonymous;
+  }
+
+  if (room) {
+    if (doc.roomContext.draft && !isRoomOwner({ room, userId: user?._id })) {
+      return DOCUMENT_EDIT_RESTRICTION_REASON.draft;
+    }
+
+    return isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id })
+      ? DOCUMENT_EDIT_RESTRICTION_REASON.none
+      : DOCUMENT_EDIT_RESTRICTION_REASON.room;
+  }
+
+  if (doc.publicContext.archived) {
     return DOCUMENT_EDIT_RESTRICTION_REASON.archived;
   }
 
-  if (room && !isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id })) {
-    return DOCUMENT_EDIT_RESTRICTION_REASON.room;
-  }
-
-  if (!room && doc.publicContext.protected && !hasUserPermission(user, permissions.PROTECT_DOC)) {
+  if (
+    doc.publicContext.protected
+    && !hasUserPermission(user, permissions.MANAGE_CONTENT)
+    && !userIsAccreditedEditor({ user, doc })
+  ) {
     return DOCUMENT_EDIT_RESTRICTION_REASON.protected;
   }
 
@@ -31,12 +58,10 @@ function getEditDocRestrictionReason({ user, doc, room }) {
 }
 
 export function getEditDocRestrictionTooltip({ t, user, doc, room }) {
-  if (!user) {
-    return t('doc:editRestrictionTooltip_anonymousUser');
-  }
-
   const restrictionReason = getEditDocRestrictionReason({ user, doc, room });
   switch (restrictionReason) {
+    case DOCUMENT_EDIT_RESTRICTION_REASON.anonymous:
+      return t('doc:editRestrictionTooltip_anonymous');
     case DOCUMENT_EDIT_RESTRICTION_REASON.protected:
       return t('doc:editRestrictionTooltip_protected');
     case DOCUMENT_EDIT_RESTRICTION_REASON.archived:

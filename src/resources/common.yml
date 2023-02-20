@@ -398,9 +398,6 @@ common:
   wikimediaCopyrightNotice:
     en: "Source: [Wikimedia]({link})"
     de: "Quelle: [Wikimedia]({link})"
-  protectedDocumentBadge:
-    en: This document is protected
-    de: Dieses Dokument ist geschützt
   verifiedDocumentBadge:
     en: This document was verified by a maintainer
     de: Dieses Dokument wurde von einem Maintainer überprüft

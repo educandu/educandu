@@ -76,6 +76,7 @@ describe('permissions', () => {
           permissions.CREATE_DOCUMENT_COMMENTS,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
+          permissions.SEARCH_USERS,
           permissions.SEE_USER_EMAIL,
           permissions.RESTORE_DOC_REVISIONS,
           permissions.ARCHIVE_DOC,
@@ -83,7 +84,8 @@ describe('permissions', () => {
           permissions.VERIFY_DOC,
           permissions.PROTECT_DOC,
           permissions.MANAGE_DOCUMENT_COMMENTS,
-          permissions.MANAGE_CONTENT
+          permissions.MANAGE_CONTENT,
+          permissions.MANAGE_ACCREDITED_EDITORS
         ]);
       });
     });
@@ -108,6 +110,7 @@ describe('permissions', () => {
           permissions.CREATE_DOCUMENT_COMMENTS,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
+          permissions.SEARCH_USERS,
           permissions.SEE_USER_EMAIL,
           permissions.RESTORE_DOC_REVISIONS,
           permissions.ARCHIVE_DOC,
@@ -116,6 +119,7 @@ describe('permissions', () => {
           permissions.PROTECT_DOC,
           permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.MANAGE_CONTENT,
+          permissions.MANAGE_ACCREDITED_EDITORS,
           permissions.ADMIN,
           permissions.MANAGE_USERS,
           permissions.MANAGE_BATCHES,

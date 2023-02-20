@@ -13,9 +13,9 @@ import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   NOT_ROOM_OWNER_ERROR_MESSAGE,
   NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE,

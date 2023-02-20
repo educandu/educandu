@@ -68,7 +68,7 @@ export function createTagsPipelineQuery(searchString = '', tagsKey = 'tags') {
     isValid: true,
     query: [
       { $unwind: `$${tagsKey}` },
-      { $match: { [tagsKey]: { $regex: `.*${searchString}.*`, $options: 'i' } } },
+      { $match: { [tagsKey]: { $regex: `.*${escapeStringRegexp(searchString)}.*`, $options: 'i' } } },
       { $group: { _id: null, uniqueTags: { $push: `$${tagsKey}` } } },
       { $project: {
         _id: 0,
