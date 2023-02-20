@@ -37,10 +37,10 @@ function HomePageTemplate({ children }) {
         {t('homePage.supportedBy')}
         <div className="HomePageTemplate-sponsors">
           <a className="HomePageTemplate-sponsor" href="https://stiftung-hochschullehre.de/" target="_blank" rel="noreferrer">
-            <img src="/images/stiftung-logo.png" />
+            <img src="/images/sih-logo.svg" />
           </a>
           <a className="HomePageTemplate-sponsor" href="https://www.hmtm.de/de/" target="_blank" rel="noreferrer">
-            <img src="/images/myt-logo.png" />
+            <img src="/images/hmtm-logo.svg" />
           </a>
         </div>
       </div>
