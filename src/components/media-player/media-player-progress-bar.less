@@ -1,8 +1,6 @@
 @edu-progress-bar-height: 8px;
 @edu-progress-bar-vertical-padding: 1px;
-@edu-progress-bar-tooltip-text-height: 20px;
 @edu-progress-bar-tooltip-arrow-size: 5px;
-@edu-progress-bar-tooltip-height: @edu-progress-bar-tooltip-text-height + @edu-progress-bar-tooltip-arrow-size;
 @edu-progress-bar-hover-height: @edu-progress-bar-height + 2 * @edu-progress-bar-vertical-padding;
 
 .MediaPlayerProgressBar {
@@ -58,7 +56,7 @@
   justify-content: center;
   flex-direction: column;
   z-index: @edu-z-index-overlay-layer;
-  top: -@edu-progress-bar-tooltip-height - 10px;
+  top: -40px;
 }
 
 .MediaPlayerProgressBar-progressTooltipText {
