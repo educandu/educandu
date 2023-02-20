@@ -8,3 +8,9 @@ redactionDocumentsTab:
   badges:
     en: Badges
     de: Kennzeichen
+  protectedDocumentBadge:
+    en: This document is protected
+    de: Dieses Dokument ist geschützt
+  accreditedEditorsBadge:
+    en: This document has accredited editors
+    de: Dieses Dokument hat akkreditierte Bearbeiter

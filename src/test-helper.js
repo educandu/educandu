@@ -187,6 +187,7 @@ export function createTestDocument(container, user, data) {
       publicContext: data.roomId
         ? null
         : {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: false,
@@ -227,6 +228,7 @@ export async function createTestRevisions(container, user, revisions) {
       publicContext: revision.roomId
         ? null
         : {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: false,

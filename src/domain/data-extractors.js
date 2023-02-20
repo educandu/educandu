@@ -6,14 +6,17 @@ const fillUserIdSetForDocOrRevision = (docOrRev, set) => {
     set.add(docOrRev.updatedBy);
   }
   if (docOrRev.contributors) {
-    docOrRev.contributors.forEach(c => set.add(c));
+    docOrRev.contributors.forEach(contributor => set.add(contributor));
   }
   if (docOrRev.sections) {
-    docOrRev.sections.forEach(s => {
-      if (s.deletedBy) {
-        set.add(s.deletedBy);
+    docOrRev.sections.forEach(section => {
+      if (section.deletedBy) {
+        set.add(section.deletedBy);
       }
     });
+  }
+  if (docOrRev.publicContext) {
+    docOrRev.publicContext.accreditedEditors.forEach(accreditedEditor => set.add(accreditedEditor));
   }
   return set;
 };

@@ -20,9 +20,9 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import ExternalAccountService from '../services/external-account-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import RequestLimitRecordService from '../services/request-limit-record-service.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { ANTI_BRUTE_FORCE_MAX_REQUESTS, ANTI_BRUTE_FORCE_EXPIRES_IN_MS, SAVE_USER_RESULT, ERROR_CODES } from '../domain/constants.js';
 import {
   postUserRegistrationRequestBodySchema,
@@ -37,7 +37,8 @@ import {
   userIdParamsSchema,
   favoriteBodySchema,
   loginBodySchema,
-  externalAccountIdParamsSchema
+  externalAccountIdParamsSchema,
+  getUsersBySearchQuerySchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -225,6 +226,15 @@ class UserController {
   async handleGetUsers(req, res) {
     const users = await this.userService.getAllUsers();
     const mappedUsers = this.clientDataMappingService.mapUsersForAdminArea(users);
+    res.send({ users: mappedUsers });
+  }
+
+  async handleGetUsersBySearch(req, res) {
+    const { query } = req.query;
+    const viewingUser = req.user;
+
+    const users = await this.userService.getActiveUsersBySearch({ query, limit: 10 });
+    const mappedUsers = users.map(viewedUser => this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser }));
     res.send({ users: mappedUsers });
   }
 
@@ -602,6 +612,13 @@ class UserController {
       '/api/v1/users',
       needsPermission(permissions.MANAGE_USERS),
       (req, res) => this.handleGetUsers(req, res)
+    );
+
+    router.get(
+      '/api/v1/users/search',
+      needsPermission(permissions.SEARCH_USERS),
+      validateQuery(getUsersBySearchQuerySchema),
+      (req, res) => this.handleGetUsersBySearch(req, res)
     );
 
     router.get(

@@ -14,6 +14,10 @@ const emailSchema = joi.string().case('lower');
 const passwordSchema = joi.string().min(minUserPasswordLength).pattern(passwordValidationPattern);
 const displayNameSchema = joi.string().min(minUserDisplayNameLength).max(maxUserDisplayNameLength);
 
+export const getUsersBySearchQuerySchema = joi.object({
+  query: joi.string().required()
+});
+
 export const postUserRegistrationRequestBodySchema = joi.object({
   email: emailSchema.required(),
   password: passwordSchema.required(),

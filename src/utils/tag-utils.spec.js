@@ -102,14 +102,14 @@ describe('tag-utils', () => {
 
     describe('when search string is not empty', () => {
       beforeEach(() => {
-        result = createTagsPipelineQuery('abc');
+        result = createTagsPipelineQuery('ab.c');
       });
       it('should return a valid result', () => {
         expect(result).toStrictEqual({
           isValid: true,
           query: [
             { $unwind: '$tags' },
-            { $match: { tags: { $regex: '.*abc.*', $options: 'i' } } },
+            { $match: { tags: { $regex: '.*ab\\.c.*', $options: 'i' } } },
             { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
             { $project: {
               _id: 0,

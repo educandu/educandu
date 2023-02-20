@@ -2,6 +2,7 @@ import Info from './info.js';
 import PropTypes from 'prop-types';
 import TagSelect from './tag-select.js';
 import Logger from '../common/logger.js';
+import UserSelect from './user-select.js';
 import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,7 @@ import { useSettings } from './settings-context.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { ROOM_USER_ROLE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
+import UserApiClient from '../api-clients/user-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
@@ -39,6 +41,7 @@ const logger = new Logger(import.meta.url);
 
 const getDefaultPublicContext = () => (
   {
+    accreditedEditors: [],
     protected: false,
     archived: false,
     verified: false,
@@ -64,6 +67,7 @@ function DocumentMetadataModal({
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('documentMetadataModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -93,6 +97,7 @@ function DocumentMetadataModal({
   }), [mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId]);
 
   const publicContextPermissions = {
+    canAssignAccreditedEditors: hasUserPermission(user, permissions.MANAGE_ACCREDITED_EDITORS),
     canProtect: hasUserPermission(user, permissions.PROTECT_DOC),
     canArchive: hasUserPermission(user, permissions.ARCHIVE_DOC),
     canVerify: hasUserPermission(user, permissions.VERIFY_DOC),
@@ -161,7 +166,7 @@ function DocumentMetadataModal({
 
   const handleTagSuggestionsNeeded = searchText => {
     return documentApiClient.getDocumentTagSuggestions(searchText).catch(error => {
-      handleApiError({ error, t });
+      handleApiError({ error, logger, t });
       return [];
     });
   };
@@ -173,6 +178,16 @@ function DocumentMetadataModal({
   };
 
   const handleCancel = () => onClose();
+
+  const handleUserSuggestionsNeeded = async searchText => {
+    try {
+      const { users } = await userApiClient.searchUsers({ query: searchText });
+      return users;
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      return [];
+    }
+  };
 
   const handleCloningStrategyChange = value => {
     setCloningStrategy(value);
@@ -213,6 +228,10 @@ function DocumentMetadataModal({
   const handleUseTemplateDocumentChange = event => {
     const { value } = event.target;
     setUseTemplateDocument(value);
+  };
+
+  const handleAccreditedEditorsChange = value => {
+    setPublicContext(prevState => ({ ...prevState, accreditedEditors: value }));
   };
 
   const handleProtectedChange = event => {
@@ -256,13 +275,18 @@ function DocumentMetadataModal({
         defaultTemplateDocumentId
       });
 
+      const mappedPublicContext = {
+        ...publicContext,
+        accreditedEditors: publicContext.accreditedEditors.map(e => e._id)
+      };
+
       const mappedDocument = {
         title: title.trim(),
         slug: slug.trim(),
         description,
         language,
         tags,
-        publicContext: documentRoomId ? null : publicContext,
+        publicContext: documentRoomId ? null : mappedPublicContext,
         roomContext: documentRoomId ? roomContext : null
       };
 
@@ -390,6 +414,11 @@ function DocumentMetadataModal({
         {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
+              {!!publicContextPermissions.canAssignAccreditedEditors && (
+                <FormItem label={<Info tooltip={t('accreditedEditorsInfo')} iconAfterContent>{t('accreditedEditors')}</Info>}>
+                  <UserSelect value={publicContext.accreditedEditors} onChange={handleAccreditedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
+                </FormItem>
+              )}
               {!!publicContextPermissions.canProtect && (
                 <FormItem>
                   <Checkbox checked={publicContext.protected} onChange={handleProtectedChange}>

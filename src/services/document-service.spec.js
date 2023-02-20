@@ -293,6 +293,7 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: false,
@@ -1039,6 +1040,7 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: false,
@@ -1056,6 +1058,7 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: false,
@@ -1073,6 +1076,7 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          accreditedEditors: [],
           protected: false,
           archived: false,
           verified: true,
@@ -1090,6 +1094,7 @@ describe('document-service', () => {
         roomId: null,
         roomContext: null,
         publicContext: {
+          accreditedEditors: [],
           protected: false,
           archived: true,
           verified: false,

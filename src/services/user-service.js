@@ -47,6 +47,39 @@ class UserService {
     return this.userStore.getAllUsers();
   }
 
+  async getActiveUsersBySearch({ query, limit = Number.MAX_VALUE }) {
+    const sanitizedQuery = query.trim().toLowerCase();
+    if (!sanitizedQuery) {
+      return [];
+    }
+
+    const matchingUsers = await this.userStore.getActiveUserBySearch(sanitizedQuery);
+    return matchingUsers
+      .map(user => {
+        const sanitizedEmail = user.email.toLowerCase();
+        const sanitizedDisplayName = user.displayName.toLowerCase();
+
+        let relevance;
+        if (sanitizedEmail === sanitizedQuery || sanitizedDisplayName === sanitizedQuery) {
+          relevance = 1;
+        } else if (sanitizedEmail.startsWith(sanitizedQuery) || sanitizedDisplayName.startsWith(sanitizedQuery)) {
+          relevance = 2;
+        } else {
+          relevance = 3;
+        }
+
+        return { ...user, _relevance: relevance };
+      })
+      .sort(by(user => user._relevance)
+        .thenBy(user => user.displayName, { ignoreCase: true })
+        .thenBy(user => user.email, { ignoreCase: true }))
+      .map(user => {
+        delete user._relevance;
+        return user;
+      })
+      .slice(0, limit);
+  }
+
   getUserById(id) {
     return this.userStore.getUserById(id);
   }

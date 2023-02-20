@@ -141,7 +141,7 @@ export const pageNameProps = {
   pageName: PropTypes.oneOf(Object.values(PAGE_NAME)).isRequired
 };
 
-const otherUserShape = PropTypes.shape({
+export const otherUserShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   email: PropTypes.string, // This is only visible to admins
   displayName: PropTypes.string.isRequired
@@ -201,6 +201,7 @@ export const contributedDocumentMetadataShape = PropTypes.shape({
 });
 
 export const documentPublicContextShape = PropTypes.shape({
+  accreditedEditors: PropTypes.arrayOf(otherUserShape),
   protected: PropTypes.bool,
   archived: PropTypes.bool,
   verified: PropTypes.bool,

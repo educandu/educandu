@@ -11,7 +11,7 @@ doc:
   commentsHeader:
     en: Comments
     de: Kommentare
-  editRestrictionTooltip_anonymousUser:
+  editRestrictionTooltip_anonymous:
     en: Log in in order to edit this document
     de: Melde dich an, um dieses Dokument zu bearbeiten
   editRestrictionTooltip_protected:

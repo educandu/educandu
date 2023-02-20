@@ -295,22 +295,28 @@ class DocumentController {
     const { user } = req;
     const { documentId } = req.params;
 
-    const document = await this.documentService.getDocumentById(documentId);
+    if (!user) {
+      throw new Forbidden();
+    }
 
-    if (!document) {
+    const doc = await this.documentService.getDocumentById(documentId);
+
+    if (!doc) {
       throw new NotFound();
     }
 
-    if (document.roomId) {
-      const room = await this.roomService.getRoomById(document.roomId);
-
-      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
-        throw new Forbidden();
+    let room;
+    if (doc.roomId) {
+      room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+      if (!room) {
+        throw new NotFound();
       }
+    } else {
+      room = null;
+    }
 
-      if (document.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
-        throw new Forbidden();
-      }
+    if (!canEditDoc({ user, doc, room })) {
+      throw new Forbidden();
     }
   }
 
