@@ -2,10 +2,10 @@ import { CHAPTER_TYPE } from './constants.js';
 import { cssUrl } from '../../utils/css-utils.js';
 import Markdown from '../../components/markdown.js';
 import { preloadImage } from '../../utils/image-utils.js';
-import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
@@ -19,6 +19,7 @@ function MediaSlideshowDisplay({ content }) {
   const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
 
   const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
 
   useEffect(() => {
     (async () => {
@@ -76,7 +77,7 @@ function MediaSlideshowDisplay({ content }) {
           customScreenOverlay={renderPlayingChapter()}
           initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
-          parts={chapters}
+          parts={playerParts}
           playbackRange={playbackRange}
           screenMode={MEDIA_SCREEN_MODE.audio}
           sourceUrl={sourceUrl}

@@ -10,12 +10,12 @@ import ItemPanel from '../../components/item-panel.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import MarkdownInput from '../../components/markdown-input.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
@@ -46,6 +46,11 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
+  const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
+  const timelineParts = useMemo(() => chapters.map((chapter, index) => ({
+    ...chapter,
+    title: `${t('common:segment')} ${index + 1}`
+  })), [chapters, t]);
 
   useEffect(() => {
     const nextChapterStartPosition = chapters[selectedChapterIndex + 1]?.startPosition || 1;
@@ -164,11 +169,6 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     );
   };
 
-  const timelineParts = chapters.map((chapter, index) => ({
-    ...chapter,
-    title: `${t('common:segment')} ${index + 1}`
-  }));
-
   const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube);
 
   return (
@@ -197,7 +197,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
             <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
             <MediaPlayer
               volume={initialVolume}
-              parts={chapters}
+              parts={playerParts}
               screenWidth={50}
               playbackRange={playbackRange}
               screenMode={MEDIA_SCREEN_MODE.audio}
