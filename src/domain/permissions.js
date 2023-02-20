@@ -10,7 +10,6 @@ const VERIFY_DOC = 'verify-doc';
 const VIEW_FILES = 'view-files';
 const JOIN_ROOMS = 'join-rooms';
 const CREATE_FILE = 'create-file';
-const PROTECT_DOC = 'protect-doc';
 const ARCHIVE_DOC = 'archive-doc';
 const MIGRATE_DATA = 'migrate-data';
 const SEARCH_USERS = 'search-users';
@@ -18,6 +17,8 @@ const MANAGE_USERS = 'manage-users';
 const MANAGE_BATCHES = 'manage-batches';
 const SEE_USER_EMAIL = 'see-user-email';
 const MANAGE_CONTENT = 'manage-content';
+const PROTECT_ANY_DOC = 'protect-any-doc';
+const PROTECT_OWN_DOC = 'protect-own-doc';
 const MANAGE_SETTINGS = 'manage-settings';
 const DELETE_OWN_FILES = 'delete-own-files';
 const HARD_DELETE_SECTION = 'hard-delete-section';
@@ -43,9 +44,15 @@ const userPermissions = [
   CREATE_DOCUMENT_COMMENTS
 ];
 
+const accreditedAuthorPermissions = [
+  ...userPermissions,
+  PROTECT_OWN_DOC
+];
+
 const maintainerPermissions = [
   ...new Set([
     ...userPermissions,
+    ...accreditedAuthorPermissions,
     HARD_DELETE_SECTION,
     DELETE_ANY_STORAGE_FILE,
     SEARCH_USERS,
@@ -54,7 +61,7 @@ const maintainerPermissions = [
     ARCHIVE_DOC,
     REVIEW_DOC,
     VERIFY_DOC,
-    PROTECT_DOC,
+    PROTECT_ANY_DOC,
     MANAGE_DOCUMENT_COMMENTS,
     MANAGE_CONTENT,
     MANAGE_ACCREDITED_EDITORS
@@ -64,6 +71,7 @@ const maintainerPermissions = [
 const adminPermissions = [
   ...new Set([
     ...userPermissions,
+    ...accreditedAuthorPermissions,
     ...maintainerPermissions,
     ADMIN,
     MANAGE_USERS,
@@ -77,6 +85,7 @@ const adminPermissions = [
 
 const permissionsPerRole = {
   [ROLE.user]: userPermissions,
+  [ROLE.accreditedAuthor]: accreditedAuthorPermissions,
   [ROLE.maintainer]: maintainerPermissions,
   [ROLE.admin]: adminPermissions
 };
@@ -96,7 +105,8 @@ export default {
   VIEW_DOCS,
   REVIEW_DOC,
   VERIFY_DOC,
-  PROTECT_DOC,
+  PROTECT_ANY_DOC,
+  PROTECT_OWN_DOC,
   EDIT_FILE,
   VIEW_FILES,
   DELETE_OWN_FILES,

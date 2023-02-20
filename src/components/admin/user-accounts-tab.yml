@@ -23,6 +23,9 @@ userAccountsTab:
   activeAccounts:
     en: Active accounts
     de: Aktive Konten
+  unconfirmedAccounts:
+    en: Unconfirmed accounts
+    de: Unbestätigte Konten
   externalAccounts:
     en: External accounts
     de: Externe Konten
