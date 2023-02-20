@@ -33,6 +33,17 @@ function HomePageTemplate({ children }) {
           </div>
         </div>
       </main>
+      <div className="HomePageTemplate-sponsorsFooter">
+        {t('homePage.supportedBy')}
+        <div className="HomePageTemplate-sponsors">
+          <a className="HomePageTemplate-sponsor" href="https://stiftung-hochschullehre.de/" target="_blank" rel="noreferrer">
+            <img src="/images/stiftung-logo.png" />
+          </a>
+          <a className="HomePageTemplate-sponsor" href="https://www.hmtm.de/de/" target="_blank" rel="noreferrer">
+            <img src="/images/myt-logo.png" />
+          </a>
+        </div>
+      </div>
       <DefaultPageFooter />
       <ConsentDialog />
     </div>
