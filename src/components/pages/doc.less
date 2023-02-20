@@ -6,7 +6,9 @@
   min-height: %(~"calc(100vh - %s)", @control-panel-height);
 }
 
-.DocPage {}
+.DocPage {
+  padding-bottom: @control-panel-height;
+}
 
 .DocPage-controlPanels {
   position: sticky;
@@ -14,14 +16,24 @@
   left: 0;
   right: 0;
   height: @control-panel-height;
-  margin-right: 50px;
+  margin: -@edu-page-content-padding;
+  margin-right: 20px;
   display: flex;
   justify-content: flex-end;
   z-index: @edu-z-index-overlay-layer;
   pointer-events: none;
 
   &.is-panel-open {
-    margin: 0;
+    margin-right: -@edu-page-content-padding;
+  }
+
+  @media @edu-media-phone {
+    margin: calc(-@edu-page-content-padding / 2);
+    margin-right: 20px;
+
+    &.is-panel-open {
+      margin-right: calc(-@edu-page-content-padding / 2);
+    }
   }
 }
 

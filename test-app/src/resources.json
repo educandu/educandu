@@ -3,6 +3,10 @@
     "homePage.subtitle": {
       "en": "Open educational music resources for everyone!",
       "de": "Open Educational Resources zur Musik für alle!"
+    },
+    "homePage.supportedBy": {
+      "en": "Supported by:",
+      "de": "Unterstütz durch:"
     }
   }
 }
