@@ -3,6 +3,11 @@ import { validate } from '../domain/validation.js';
 import { createTagsPipelineQuery } from '../utils/tag-utils.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
+const documentTagsProjection = {
+  _id: 1,
+  tags: 1
+};
+
 const documentMetadataProjection = {
   _id: 1,
   revision: 1,
@@ -95,6 +100,11 @@ class DocumentStore {
 
   getDocumentsMetadataByRoomId(roomId, { session } = {}) {
     return this.collection.find({ roomId }, { session }).toArray();
+  }
+
+  getDocumentsTagsByConditions(conditions, { session } = {}) {
+    const predicate = conditions.length ? { $and: conditions } : {};
+    return this.collection.find(predicate, { projection: documentTagsProjection, session }).toArray();
   }
 
   getDocumentsMetadataByConditions(conditions, { session } = {}) {

@@ -5,7 +5,7 @@ import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 
-function Index({ HomePageTemplate }) {
+function Index({ HomePageTemplate, initialState }) {
   const { t } = useTranslation('index');
 
   const handleSearch = searchText => {
@@ -13,7 +13,15 @@ function Index({ HomePageTemplate }) {
   };
 
   const handleTagClick = tag => {
-    window.location = routes.getSearchUrl('musik');
+    window.location = routes.getSearchUrl(tag);
+  };
+
+  const renderTag = tag => {
+    return (
+      <div key={tag}>
+        <Tag className="Tag Tag--clickable" onClick={() => handleTagClick(tag)}>{tag}</Tag>
+      </div>
+    );
   };
 
   return (
@@ -22,9 +30,7 @@ function Index({ HomePageTemplate }) {
         <SearchBar onSearch={handleSearch} autoFocus />
         <div className="IndexPage-popularSearches">
           <div className="IndexPage-popularSearchesLabel">{t('popularSearches')}:</div>
-          <div><Tag className="Tag Tag--clickable" onClick={handleTagClick}>Musik</Tag></div>
-          <div><Tag className="Tag Tag--clickable" onClick={handleTagClick}>Hochschule</Tag></div>
-          <div><Tag className="Tag Tag--clickable" onClick={handleTagClick}>Munchen</Tag></div>
+          {initialState.tags.map(renderTag)}
         </div>
       </div>
     </HomePageTemplate>
@@ -32,7 +38,10 @@ function Index({ HomePageTemplate }) {
 }
 
 Index.propTypes = {
-  HomePageTemplate: PropTypes.func.isRequired
+  HomePageTemplate: PropTypes.func.isRequired,
+  initialState: PropTypes.shape({
+    tags: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired
 };
 
 export default Index;

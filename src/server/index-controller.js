@@ -14,8 +14,10 @@ class IndexController {
     this.pageRenderer = pageRenderer;
   }
 
-  handleGetIndexPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.index);
+  async handleGetIndexPage(req, res) {
+    const topTags = await this.documentService.getTopDocumentTags({ maxCount: 5 });
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.index, { tags: topTags });
   }
 
   registerPages(router) {
