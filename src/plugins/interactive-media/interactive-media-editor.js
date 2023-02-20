@@ -44,6 +44,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const sourceDuration = mediaDuration.duration;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
+  const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
 
   const selectedChapterStartTimecode = useMemo(
     () => chapters[selectedChapterIndex].startPosition * playbackDuration,
@@ -238,7 +239,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             <MediaPlayer
               allowPartClick
               aspectRatio={aspectRatio}
-              parts={chapters}
+              parts={playerParts}
               playbackRange={playbackRange}
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenWidth={50}
