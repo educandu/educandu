@@ -9,6 +9,7 @@
 .HomePageTemplate-contentArea {
   .m-page-content;
   padding-bottom: 0;
+  padding-top: 2 * @edu-page-content-padding;
   flex: 1 0 0%;
   display: flex;
   align-items: center;
@@ -21,11 +22,10 @@
 
 .HomePageTemplate-content {
   height: 100%;
-  width: 100%;
-  max-width: @edu-content-width-narrow;
   display: grid;
+  gap: @edu-content-padding;
   grid-template-rows: 1.5fr auto 2fr;
-  grid-template-columns: 100%;
+  max-width: @edu-content-width-narrow;
 }
 
 .HomePageTemplate-logo {
