@@ -27,6 +27,7 @@ const RadioGroup = Radio.Group;
 
 const TABLE = {
   activeAccounts: 'active-accounts',
+  unconfirmedAccounts: 'unconfirmed-accounts',
   externalAccounts: 'external-accounts',
   accountsWithStorage: 'accounts-with-storage',
   closedAccounts: 'closed-accounts'
@@ -38,6 +39,7 @@ function createTableItemSubsets(users, externalAccounts, storagePlans) {
 
   const activeAccountsTableItems = [];
   const closedAccountsTableItems = [];
+  const unconfirmedAccountsTableItems = [];
   const externalAccountsTableItems = [];
   const accountsWithStorageTableItems = [];
 
@@ -50,6 +52,8 @@ function createTableItemSubsets(users, externalAccounts, storagePlans) {
 
     if (user.accountClosedOn) {
       closedAccountsTableItems.push(accountTableItem);
+    } else if (user.expiresOn) {
+      unconfirmedAccountsTableItems.push(accountTableItem);
     } else {
       activeAccountsTableItems.push(accountTableItem);
     }
@@ -74,6 +78,7 @@ function createTableItemSubsets(users, externalAccounts, storagePlans) {
   return {
     activeAccountsTableItems,
     closedAccountsTableItems,
+    unconfirmedAccountsTableItems,
     externalAccountsTableItems,
     accountsWithStorageTableItems
   };
@@ -110,7 +115,8 @@ function UserAccountsTab() {
   const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
 
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
-  const [activeAccountsTableItems, setInternalAccountsTableItems] = useState([]);
+  const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
+  const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
   const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
   const [accountsWithStorageTableItems, setAccountsWithStorageTableItems] = useState([]);
 
@@ -139,7 +145,8 @@ function UserAccountsTab() {
   useEffect(() => {
     setUsersById(new Map(users.map(user => [user._id, user])));
     const tableItemSubsets = createTableItemSubsets(users, externalAccounts, storagePlans);
-    setInternalAccountsTableItems(filterTableItems(tableItemSubsets.activeAccountsTableItems, filterText));
+    setActiveAccountsTableItems(filterTableItems(tableItemSubsets.activeAccountsTableItems, filterText));
+    setPendingAccountsTableItems(filterTableItems(tableItemSubsets.unconfirmedAccountsTableItems, filterText));
     setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
     setClosedAccountsTableItems(filterTableItems(tableItemSubsets.closedAccountsTableItems, filterText));
     setExternalAccountsTableItems(filterTableItems(tableItemSubsets.externalAccountsTableItems, filterText));
@@ -415,7 +422,7 @@ function UserAccountsTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
-  const internalAccountsTableColumns = [
+  const activeAccountsTableColumns = [
     {
       title: () => t('common:displayName'),
       dataIndex: 'displayName',
@@ -429,14 +436,6 @@ function UserAccountsTab() {
       key: 'email',
       render: renderEmail,
       sorter: by(x => x.email, { ignoreCase: true })
-    },
-    {
-      title: () => t('expiryDate'),
-      dataIndex: 'expiresOn',
-      key: 'expiresOn',
-      sorter: by(x => x.expiresOn || ''),
-      render: expiresOn => formatDate(expiresOn),
-      responsive: ['lg']
     },
     {
       title: () => t('lastLogin'),
@@ -466,7 +465,32 @@ function UserAccountsTab() {
       key: 'storage',
       render: renderStorage,
       sorter: by(x => x.storagePlan?.name || '', { ignoreCase: true }),
-      responsive: ['md']
+      responsive: ['lg']
+    }
+  ];
+
+  const unconfirmedAccountsTableColumns = [
+    {
+      title: () => t('common:displayName'),
+      dataIndex: 'displayName',
+      key: 'displayName',
+      sorter: by(x => x.displayName, { ignoreCase: true }),
+      render: renderDisplayName
+    },
+    {
+      title: () => t('common:email'),
+      dataIndex: 'email',
+      key: 'email',
+      render: renderEmail,
+      sorter: by(x => x.email, { ignoreCase: true })
+    },
+    {
+      title: () => t('expiryDate'),
+      dataIndex: 'expiresOn',
+      key: 'expiresOn',
+      sorter: by(x => x.expiresOn || ''),
+      render: expiresOn => formatDate(expiresOn),
+      responsive: ['lg']
     }
   ];
 
@@ -614,7 +638,12 @@ function UserAccountsTab() {
     {
       key: TABLE.activeAccounts,
       label: t('activeAccounts'),
-      tabContent: renderTabChildren(activeAccountsTableItems, internalAccountsTableColumns)
+      tabContent: renderTabChildren(activeAccountsTableItems, activeAccountsTableColumns)
+    },
+    {
+      key: TABLE.unconfirmedAccounts,
+      label: t('unconfirmedAccounts'),
+      tabContent: renderTabChildren(unconfirmedAccountsTableItems, unconfirmedAccountsTableColumns)
     },
     {
       key: TABLE.externalAccounts,

@@ -56,6 +56,28 @@ describe('permissions', () => {
       });
     });
 
+    describe('when user has role \'accreditedAuthor\'', () => {
+      beforeEach(() => {
+        const user = { roles: [ROLE.accreditedAuthor] };
+        result = getAllUserPermissions(user);
+      });
+      it('should return all user permissions', () => {
+        expect(result).toEqual([
+          permissions.EDIT_DOC,
+          permissions.VIEW_DOCS,
+          permissions.EDIT_FILE,
+          permissions.VIEW_FILES,
+          permissions.DELETE_OWN_FILES,
+          permissions.CREATE_FILE,
+          permissions.OWN_ROOMS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_ROOMS,
+          permissions.CREATE_DOCUMENT_COMMENTS,
+          permissions.PROTECT_OWN_DOC
+        ]);
+      });
+    });
+
     describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
         const user = { roles: [ROLE.maintainer] };
@@ -74,6 +96,7 @@ describe('permissions', () => {
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_ROOMS,
           permissions.CREATE_DOCUMENT_COMMENTS,
+          permissions.PROTECT_OWN_DOC,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEARCH_USERS,
@@ -82,7 +105,7 @@ describe('permissions', () => {
           permissions.ARCHIVE_DOC,
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
-          permissions.PROTECT_DOC,
+          permissions.PROTECT_ANY_DOC,
           permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.MANAGE_CONTENT,
           permissions.MANAGE_ACCREDITED_EDITORS
@@ -108,6 +131,7 @@ describe('permissions', () => {
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_ROOMS,
           permissions.CREATE_DOCUMENT_COMMENTS,
+          permissions.PROTECT_OWN_DOC,
           permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEARCH_USERS,
@@ -116,7 +140,7 @@ describe('permissions', () => {
           permissions.ARCHIVE_DOC,
           permissions.REVIEW_DOC,
           permissions.VERIFY_DOC,
-          permissions.PROTECT_DOC,
+          permissions.PROTECT_ANY_DOC,
           permissions.MANAGE_DOCUMENT_COMMENTS,
           permissions.MANAGE_CONTENT,
           permissions.MANAGE_ACCREDITED_EDITORS,
