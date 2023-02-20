@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
 import { useService } from '../container-context.js';
@@ -11,6 +10,7 @@ import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import { Button, Collapse, message, Spin, Tabs } from 'antd';
 import PluginRegistry from '../../plugins/plugin-registry.js';
+import AnnouncementSettings from './announcement-settings.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
@@ -52,8 +52,8 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     setSettings(prev => ({ ...prev, [key]: value }));
   }, [setSettings, setIsDirty]);
 
-  const handleHomepageInfoChange = useCallback(event => {
-    handleChange('homepageInfo', event.target.value);
+  const handleAnnouncementChange = useCallback(value => {
+    handleChange('announcement', value);
   }, [handleChange]);
 
   const handleConsentTextChange = useCallback(value => {
@@ -103,12 +103,8 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     <div className="AdminSettingsTab">
       <Spin size="large" spinning={isLoading} delay={500}>
         <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepageInfoHeader')} key="panel">
-            <MarkdownInput
-              preview
-              value={settings.homepageInfo || ''}
-              onChange={handleHomepageInfoChange}
-              />
+          <Collapse.Panel header={t('announcementHeader')} key="panel">
+            <AnnouncementSettings announcement={settings.announcement} onChange={handleAnnouncementChange} />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
@@ -172,10 +168,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('licenseHeader')} key="license">
-            <LicenseSettings
-              license={settings.license}
-              onChange={handleLicenseChange}
-              />
+            <LicenseSettings license={settings.license} onChange={handleLicenseChange} />
           </Collapse.Panel>
         </Collapse>
         <Button

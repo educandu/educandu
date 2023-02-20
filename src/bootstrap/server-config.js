@@ -39,6 +39,7 @@ const configSchema = joi.object({
   sessionDurationInMinutes: joi.number().min(1).default(60),
   consentCookieNamePrefix: joi.string().required(),
   uploadLiabilityCookieName: joi.string().required(),
+  announcementCookieNamePrefix: joi.string().required(),
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
   xRoomsAuthSecret: joi.string().allow(null).default(null),
   smtpOptions: joi.any().required(),
@@ -109,6 +110,7 @@ class ServerConfig {
       adminEmailAddress: this.adminEmailAddress,
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       uploadLiabilityCookieName: this.uploadLiabilityCookieName,
+      announcementCookieNamePrefix: this.announcementCookieNamePrefix,
       plugins: this.plugins
     };
   }

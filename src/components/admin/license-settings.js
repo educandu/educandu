@@ -3,6 +3,7 @@ import { Form, Input } from 'antd';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { settingsLicenseShape } from '../../ui/default-prop-types.js';
+import { ADMIN_PAGE_FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 
 function LicenseSettings({ license, onChange }) {
   const { t } = useTranslation();
@@ -20,10 +21,10 @@ function LicenseSettings({ license, onChange }) {
 
   return (
     <div>
-      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={t('common:name')}>
+      <Form.Item {...ADMIN_PAGE_FORM_ITEM_LAYOUT} label={t('common:name')}>
         <Input value={name} onChange={handleNameChange} />
       </Form.Item>
-      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={t('common:url')}>
+      <Form.Item {...ADMIN_PAGE_FORM_ITEM_LAYOUT} label={t('common:url')}>
         <Input value={url} onChange={handleUrlChange} />
       </Form.Item>
     </div>

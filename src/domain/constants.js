@@ -162,6 +162,11 @@ export const FORM_ITEM_LAYOUT_WITHOUT_LABEL = {
   }
 };
 
+export const ADMIN_PAGE_FORM_ITEM_LAYOUT = {
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 }
+};
+
 export const FORM_ITEM_LAYOUT_VERTICAL = {
   labelCol: { span: 24 },
   wrapperCol: { span: 24 }
