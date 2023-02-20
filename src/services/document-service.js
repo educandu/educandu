@@ -66,6 +66,31 @@ class DocumentService {
     return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
   }
 
+  async getTopDocumentTags({ maxCount = 0 } = { maxCount: 0 }) {
+    const conditions = [
+      { roomId: null },
+      { 'publicContext.archived': false }
+    ];
+
+    const tagMap = new Map();
+    const documentsTags = await this.documentStore.getDocumentsTagsByConditions(conditions);
+
+    for (const doc of documentsTags) {
+      for (const tag of doc.tags) {
+        const tagData = tagMap.get(tag) || { key: tag, frequency: 0 };
+        tagData.frequency += 1;
+        tagMap.set(tag, tagData);
+      }
+    }
+
+    const tagsData = [...tagMap.values()];
+
+    return tagsData
+      .sort(by(tagData => tagData.frequency, 'desc'))
+      .map(tagData => tagData.key)
+      .slice(0, maxCount);
+  }
+
   async getDocumentsMetadataBySlug(slug) {
     const documentsMetadata = await this.documentStore.getDocumentsMetadataBySlug(slug);
     return documentsMetadata.sort(by(doc => doc.createdOn, 'asc'));

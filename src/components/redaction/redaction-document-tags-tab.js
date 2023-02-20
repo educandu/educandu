@@ -24,16 +24,18 @@ function createTableRows(docs) {
   const rowMap = new Map();
 
   for (const doc of docs) {
-    for (const tag of doc.tags) {
-      const row = rowMap.get(tag) || createTableRow(tag);
-      row.documents = [...row.documents, doc];
-      row.frequency = row.documents.length;
-      for (const otherTag of doc.tags) {
-        if (tag !== otherTag) {
-          row.companionTagFrequencies[otherTag] = (row.companionTagFrequencies[otherTag] || 0) + 1;
+    if (doc.publicContext?.archived === false) {
+      for (const tag of doc.tags) {
+        const row = rowMap.get(tag) || createTableRow(tag);
+        row.documents = [...row.documents, doc];
+        row.frequency = row.documents.length;
+        for (const otherTag of doc.tags) {
+          if (tag !== otherTag) {
+            row.companionTagFrequencies[otherTag] = (row.companionTagFrequencies[otherTag] || 0) + 1;
+          }
         }
+        rowMap.set(tag, row);
       }
-      rowMap.set(tag, row);
     }
   }
 

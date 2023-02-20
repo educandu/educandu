@@ -1251,6 +1251,12 @@
       "de": "Dokument duplizieren"
     }
   },
+  "index": {
+    "recommendedSearches": {
+      "en": "Recommended searches",
+      "de": "Empfohlene Suchbegriffe"
+    }
+  },
   "redaction": {
     "documentsTabTitle": {
       "en": "Documents",
