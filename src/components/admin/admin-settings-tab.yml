@@ -1,7 +1,7 @@
 adminSettingsTab:
   announcementHeader:
-    en: Announcement
-    de: Benachrichtigung
+    en: Global announcement
+    de: Globale Ankündigung
   helpPageHeader:
     en: Help page
     de: Hilfe-Seite
