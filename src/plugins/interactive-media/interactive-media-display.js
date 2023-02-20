@@ -29,9 +29,7 @@ function InteractiveMediaDisplay({ content }) {
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
   const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(chapters.map(() => -1));
 
-  const parts = useMemo(() => chapters.map(chapter => ({
-    startPosition: chapter.startPosition
-  })), [chapters]);
+  const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
 
   const chapterCards = useMemo(() => chapters.map((chapter, index) => ({
     label: (index + 1).toString(),
@@ -144,7 +142,7 @@ function InteractiveMediaDisplay({ content }) {
           customScreenOverlay={renderInteractionOverlay()}
           initialVolume={initialVolume}
           mediaPlayerRef={mediaPlayerRef}
-          parts={parts}
+          parts={playerParts}
           playbackRange={playbackRange}
           posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
           screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
