@@ -7,6 +7,7 @@
   justify-content: center;
   position: relative;
   z-index: @edu-z-index-base-layer;
+  background-color: @edu-background-color-footer;
 }
 
 .DefaultPageFooter-linkWrapper {
@@ -14,5 +15,14 @@
 }
 
 .DefaultPageFooter-link {
-  .m-link;
+  text-decoration: none;
+}
+
+.DefaultPageFooter-linkDivider {
+  padding: 0 15px;
+  color: @edu-text-color-secondary;
+
+  &:last-of-type {
+    display: none;
+  }
 }

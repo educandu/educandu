@@ -620,28 +620,27 @@ function Doc({ initialState, PageTemplate }) {
             </section>
           )}
         </div>
-      </PageTemplate>
-      <div
-        ref={controlPanelsRef}
-        style={controPanelTopInPx !== null ? { top: `${controPanelTopInPx}px` } : {}}
-        className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
-        >
-        {!!showHistoryPanel && (
-          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
-            <HistoryControlPanel
-              revisions={historyRevisions}
-              selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-              canRestoreRevisions={userCanEditDoc}
-              startOpen={preSetView === VIEW.history}
-              onOpen={handleHistoryOpen}
-              onClose={handleHistoryClose}
-              onPermalinkRequest={handlePermalinkRequest}
-              onSelectedRevisionChange={handleSelectedRevisionChange}
-              onRestoreRevision={handleRestoreRevision}
-              />
-          </div>
-        )}
-        {!!showCommentsPanel && (
+        <div
+          ref={controlPanelsRef}
+          style={controPanelTopInPx !== null ? { top: `${controPanelTopInPx}px` } : {}}
+          className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
+          >
+          {!!showHistoryPanel && (
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
+              <HistoryControlPanel
+                revisions={historyRevisions}
+                selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+                canRestoreRevisions={userCanEditDoc}
+                startOpen={preSetView === VIEW.history}
+                onOpen={handleHistoryOpen}
+                onClose={handleHistoryClose}
+                onPermalinkRequest={handlePermalinkRequest}
+                onSelectedRevisionChange={handleSelectedRevisionChange}
+                onRestoreRevision={handleRestoreRevision}
+                />
+            </div>
+          )}
+          {!!showCommentsPanel && (
           <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.comments })}>
             <ControlPanel
               startOpen={preSetView === VIEW.comments}
@@ -652,22 +651,23 @@ function Doc({ initialState, PageTemplate }) {
               tooltipWhenClosed={t('commentsControlPanelTooltip')}
               />
           </div>
-        )}
-        {!!showEditPanel && (
-          <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
-            <EditControlPanel
-              isDirtyState={isDirty}
-              startOpen={preSetView === VIEW.edit}
-              disabled={!userCanEdit || !userCanEditDoc}
-              tooltipWhenDisabled={editDocRestrictionTooltip}
-              onOpen={handleEditOpen}
-              onMetadataOpen={handleEditMetadataOpen}
-              onSave={handleEditSave}
-              onClose={handleEditClose}
-              />
-          </div>
-        )}
-      </div>
+          )}
+          {!!showEditPanel && (
+            <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.edit })}>
+              <EditControlPanel
+                isDirtyState={isDirty}
+                startOpen={preSetView === VIEW.edit}
+                disabled={!userCanEdit || !userCanEditDoc}
+                tooltipWhenDisabled={editDocRestrictionTooltip}
+                onOpen={handleEditOpen}
+                onMetadataOpen={handleEditMetadataOpen}
+                onSave={handleEditSave}
+                onClose={handleEditClose}
+                />
+            </div>
+          )}
+        </div>
+      </PageTemplate>
 
       <DocumentMetadataModal
         {...documentMetadataModalState}
