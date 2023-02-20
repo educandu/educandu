@@ -28,8 +28,8 @@ function Index({ HomePageTemplate, initialState }) {
     <HomePageTemplate>
       <div className="IndexPage">
         <SearchBar onSearch={handleSearch} autoFocus />
-        <div className="IndexPage-popularSearches">
-          <div className="IndexPage-popularSearchesLabel">{t('popularSearches')}:</div>
+        <div className="IndexPage-searches">
+          <div className="IndexPage-searchesLabel">{t('recommendedSearches')}:</div>
           {initialState.tags.map(renderTag)}
         </div>
       </div>
