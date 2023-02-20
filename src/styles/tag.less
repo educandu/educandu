@@ -6,20 +6,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: @tag-padding;
-  border-radius: @tag-border-radius;
-  background-color: @edu-background-color-base;
+  padding: @tag-padding !important;
+  border-radius: @tag-border-radius !important;
+  background-color: @edu-background-color-base !important;
   font-size: @tag-font-size;
   margin: 3px @edu-control-spacing-base 3px 0;
-  border: none;
+  border: none !important;
 
   &:last-of-type {
     margin-right: 0;
   }
 
+  &.Tag--clickable {
+    &:hover {
+      cursor: pointer;
+      background-color: darken(@edu-background-color-base, 3%) !important;
+    }
+  }
+
   &.Tag--selected {
     color: @edu-white;
-    background-color: @edu-primary-color-light;
+    background-color: @edu-primary-color-light !important;
 
     & > .ant-tag-close-icon {
       color: @edu-white;

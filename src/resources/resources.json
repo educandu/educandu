@@ -1247,6 +1247,12 @@
       "de": "Dokument duplizieren"
     }
   },
+  "index": {
+    "popularSearches": {
+      "en": "Popular searches",
+      "de": "Beliebte Suchbegriffe"
+    }
+  },
   "redaction": {
     "documentsTabTitle": {
       "en": "Documents",
