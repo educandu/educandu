@@ -46,6 +46,7 @@ export async function setupTestEnvironment() {
     sessionCookieName: 'SESSION_ID',
     consentCookieNamePrefix: 'CONSENT',
     uploadLiabilityCookieName: 'LIABILITY',
+    announcementCookieNamePrefix: 'ANNOUNCEMENT',
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
     bundleConfig: {

@@ -1,8 +1,8 @@
 {
   "adminSettingsTab": {
-    "homepageInfoHeader": {
-      "en": "Homepage info",
-      "de": "Homepage-Info"
+    "announcementHeader": {
+      "en": "Global announcement",
+      "de": "Globale Ankündigung"
     },
     "helpPageHeader": {
       "en": "Help page",
@@ -31,6 +31,24 @@
     "pluginsHelpTextsHeader": {
       "en": "Help texts for plugins",
       "de": "Hilfetexte für Plugins"
+    }
+  },
+  "announcementSettings": {
+    "announcementType_success": {
+      "en": "success",
+      "de": "Erfolg"
+    },
+    "announcementType_info": {
+      "en": "info",
+      "de": "Info"
+    },
+    "announcementType_error": {
+      "en": "error",
+      "de": "Fehler"
+    },
+    "announcementType_warning": {
+      "en": "warning",
+      "de": "Warnung"
     }
   },
   "settingsDocumentsTable": {

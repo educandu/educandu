@@ -38,8 +38,9 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
  | sessionCookieSecure | The value of the cookie's "secure" flag. Note: When set to `true`, the cookie only gets set over an HTTPS connection | `boolean`, defaults to `false` | no |
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
- | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
+ | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | yes |
  | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
+ | announcementCookieNamePrefix | Prefix for the admin-set announcement cookie | `string` | yes |
  | xFrameOptions | Value for the `x-frame-options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
  | xRoomsAuthSecret | Value for the `x-rooms-auth-secret` header expected from `rooms-auth-lambda` authorization requests upon accessing rooms CDN resources | `string` | no, when not provided the effect of the request is an automatic session cookie invalidation/regeneration |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
@@ -94,6 +95,7 @@ educandu({
   sessionDurationInMinutes: 60,
   consentCookieNamePrefix: 'APP_CONSENT_COOKIE_NAME',
   uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME',
+  announcementCookieNamePrefix: 'APP_ANNOUNCEMENT_COOKIE_NAME',
   xFrameOptions: 'SAMEORIGIN',
   smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
   emailSenderAddress: 'educandu-test-app@test.com',

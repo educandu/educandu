@@ -94,6 +94,7 @@ const config = {
   sessionDurationInMinutes: Number(process.env.TEST_APP_SESSION_DURATION_IN_MINUTES) || 60,
   consentCookieNamePrefix: process.env.TEST_APP_CONSENT_COOKIE_NAME_PREFIX,
   uploadLiabilityCookieName: process.env.TEST_APP_UPLOAD_LIABILITY_COOKIE_NAME,
+  announcementCookieNamePrefix: process.env.TEST_APP_ANNOUNCEMENT_COOKIE_NAME_PREFIX,
   xFrameOptions: process.env.TEST_APP_X_FRAME_OPTIONS,
   xRoomsAuthSecret: process.env.TEST_APP_X_ROOMS_AUTH_SECRET,
   smtpOptions: process.env.TEST_APP_SMTP_OPTIONS,

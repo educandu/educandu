@@ -1,0 +1,13 @@
+announcementSettings:
+  announcementType_success:
+    en: success
+    de: Erfolg
+  announcementType_info:
+    en: info
+    de: Info
+  announcementType_error:
+    en: error
+    de: Fehler
+  announcementType_warning:
+    en: warning
+    de: Warnung

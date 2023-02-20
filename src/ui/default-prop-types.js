@@ -35,7 +35,8 @@ export const clientConfigProps = {
     cdnRootUrl: PropTypes.string.isRequired,
     disabledFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
     consentCookieNamePrefix: PropTypes.string.isRequired,
-    uploadLiabilityCookieName: PropTypes.string.isRequired
+    uploadLiabilityCookieName: PropTypes.string.isRequired,
+    announcementCookieNamePrefix: PropTypes.string.isRequired
   }).isRequired
 };
 
@@ -68,11 +69,19 @@ const settingsLicenseProps = {
 
 export const settingsLicenseShape = PropTypes.shape(settingsLicenseProps);
 
+const announcementProps = {
+  text: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired
+};
+
+export const announcementShape = PropTypes.shape(announcementProps);
+
 export const settingsShape = PropTypes.shape({
-  helpPage: PropTypes.objectOf(settingsDocumentShape),
-  termsPage: PropTypes.objectOf(settingsDocumentShape),
+  helpPage: settingsDocumentShape,
+  termsPage: settingsDocumentShape,
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
-  license: PropTypes.shape(settingsLicenseProps)
+  license: settingsLicenseShape,
+  announcement: announcementShape
 });
 
 export const settingsProps = {
