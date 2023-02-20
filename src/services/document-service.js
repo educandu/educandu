@@ -67,7 +67,10 @@ class DocumentService {
   }
 
   async getTopDocumentTags({ maxCount = 0 } = { maxCount: 0 }) {
-    const conditions = [{ roomId: null }];
+    const conditions = [
+      { roomId: null },
+      { 'publicContext.archived': false }
+    ];
 
     const tagMap = new Map();
     const documentsTags = await this.documentStore.getDocumentsTagsByConditions(conditions);
