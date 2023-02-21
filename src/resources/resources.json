@@ -834,7 +834,7 @@
       "en": "Popular documents",
       "de": "Popular documents"
     },
-    "tooltipPrefix": {
+    "contributorsTooltipPrefix": {
       "en": "Contributions by",
       "de": "Contributions by"
     }

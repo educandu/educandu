@@ -1,10 +1,12 @@
 import { Card, Tooltip } from 'antd';
+import routes from '../../utils/routes.js';
 import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import { useDateFormat } from '../locale-context.js';
+import FileIcon from '../icons/general/file-icon.js';
 import UsersIcon from '../icons/main-menu/users-icon.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -24,6 +26,10 @@ function HomePageDocumentCards() {
     })();
   }, [settings, documentApiClient]);
 
+  const handleNavigateClick = doc => {
+    window.location = routes.getDocUrl({ id: doc._id });
+  };
+
   const renderCardTitle = documentId => {
     return (
       <div className="HomePageDocumentCards-cardTitle">
@@ -40,9 +46,19 @@ function HomePageDocumentCards() {
     );
   };
 
+  const renderNavigateAction = doc => {
+    return (
+      <Tooltip key="users" title={t('common:viewDocument')}>
+        <div onClick={() => handleNavigateClick(doc)}>
+          <FileIcon />
+        </div>
+      </Tooltip>
+    );
+  };
+
   const renderAuthorsAction = doc => {
     const firstAndLastContributors = [...new Set([doc.createdBy.displayName, doc.updatedBy.displayName])];
-    const tooltipTitle = `${t('tooltipPrefix')}: ${firstAndLastContributors.join(', ')}`;
+    const tooltipTitle = `${t('contributorsTooltipPrefix')}: ${firstAndLastContributors.join(', ')}`;
 
     return (
       <Tooltip key="users" title={tooltipTitle}>
@@ -57,7 +73,11 @@ function HomePageDocumentCards() {
         key={index}
         title={renderCardTitle(doc.title)}
         className="HomePageDocumentCards-card"
-        actions={[renderFavoriteAction(doc), renderAuthorsAction(doc)]}
+        actions={[
+          renderFavoriteAction(doc),
+          renderAuthorsAction(doc),
+          renderNavigateAction(doc)
+        ]}
         >
         <div className="HomePageDocumentCards-cardContent">
           <div className="HomePageDocumentCards-cardContentDescription">
