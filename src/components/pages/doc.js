@@ -12,6 +12,7 @@ import uniqueId from '../../utils/unique-id.js';
 import CommentsPanel from '../comments-panel.js';
 import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';
+import { useIsMounted } from '../../ui/hooks.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
@@ -33,7 +34,6 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isTouchDevice, supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
-import { useIsMounted, useOnComponentMounted, useOnComponentUnmount } from '../../ui/hooks.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -152,17 +152,16 @@ function Doc({ initialState, PageTemplate }) {
     }
   }, [controlPanelsRef, view]);
 
-  useOnComponentMounted(() => {
+  useEffect(() => {
     ensureControlPanelPosition();
+
     // Ensure panel stays on the bottom when address bar is hidden on mobile
     window.addEventListener('resize', ensureControlPanelPosition);
-  });
 
-  useOnComponentUnmount(() => {
-    window.removeEventListener('resize', ensureControlPanelPosition);
-  });
-
-  useEffect(() => ensureControlPanelPosition(), [ensureControlPanelPosition]);
+    return () => {
+      window.removeEventListener('resize', ensureControlPanelPosition);
+    };
+  }, [ensureControlPanelPosition]);
 
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
