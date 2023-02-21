@@ -46,7 +46,7 @@ function AnnouncementSettings({ announcement, onChange }) {
         </RadioGroup>
       </FormItem>
       <FormItem {...ADMIN_PAGE_FORM_ITEM_LAYOUT} label={t('common:preview')}>
-        <Alert message={<Markdown>{text}</Markdown>} type={type} />
+        <Alert banner message={<Markdown>{text}</Markdown>} type={type} />
       </FormItem>
     </div>
   );
