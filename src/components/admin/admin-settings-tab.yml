@@ -4,22 +4,22 @@ adminSettingsTab:
     de: Globale Ankündigung
   announcementInfo:
     en: This announcement is shown under the website header on all pages. Users can close it and it will only appear again when the text or type are changed.
-    de: This announcement is shown under the website header on all pages. Users can close it and it will only appear again when the text or type are changed.
+    de: Diese Ankündigung wird auf allen Seiten unter dem Website-Header angezeigt. Benutzer können sie schließen, und sie wird erst wieder erscheinen, wenn sich der Text oder Typ geändert hat.
   consentHeader:
     en: Consent text
     de: Zustimmungstext
   homepageDocumentsHeader:
     en: Homepage documents pool
-    de: Homepage-Dokumente-Becken ))
+    de: Homepage-Dokumente-Fundus
   homepageDocumentsInfo:
-    en: 3 Documents from this list are randomly selected and displayed on the homepage.
-    de: 3 Documents from this list are randomly selected and displayed on the homepage.
+    en: From this list, 3 documents are randomly selected and displayed on the homepage.
+    de: Aus dieser Liste werden 3 zufällig ausgewählte Dokumente auf der Homepage angezeigt.
   homepageTagsHeader:
     en: Homepage recommended tags
-    de: Homepage empfohlene Tags
+    de: Empfohlene Tags auf der Homepage
   homepageTagsInfo:
     en: These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.
-    de: These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.
+    de: Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen.
   helpPageHeader:
     en: Help page
     de: Hilfe-Seite
