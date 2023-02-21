@@ -1418,10 +1418,6 @@
       "en": "{count, plural, =1 {# document} other {# documents}} found\n",
       "de": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n"
     },
-    "deselectTags": {
-      "en": "Remove all",
-      "de": "Alle löschen"
-    },
     "sorting": {
       "en": "Sorting",
       "de": "Sortierung"
@@ -3399,6 +3395,10 @@
     "rank": {
       "en": "Rank",
       "de": "Rang"
+    },
+    "removeAll": {
+      "en": "Remove all",
+      "de": "Alle löschen"
     }
   },
   "pageNames": {
