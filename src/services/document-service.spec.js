@@ -4,7 +4,7 @@ import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import { MEDIA_ASPECT_RATIO } from '../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, ROLE } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -32,13 +32,15 @@ describe('document-service', () => {
 
   let lockStore;
   let container;
+  let adminUser;
   let user;
   let sut;
   let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    user = await setupTestUser(container);
+    adminUser = await setupTestUser(container, { email: 'admin@test.com', roles: Object.values(ROLE) });
+    user = await setupTestUser(container, { email: 'user@test.com', roles: [ROLE.user] });
 
     lockStore = container.get(LockStore);
 
@@ -73,7 +75,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'releaseLock');
 
       createdRevision = null;
-      room = await createTestRoom(container);
+      room = await createTestRoom(container, { owner: user._id });
 
       data = {
         title: 'Title',
@@ -427,7 +429,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
 
-      room = await createTestRoom(container);
+      room = await createTestRoom(container, { owner: user._id });
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
@@ -713,7 +715,7 @@ describe('document-service', () => {
 
     describe('to true', () => {
       beforeEach(async () => {
-        initialDocument = await createTestDocument(container, user, {
+        initialDocument = await createTestDocument(container, adminUser, {
           title: 'Title',
           slug: 'my-doc',
           language: 'en',
@@ -728,7 +730,7 @@ describe('document-service', () => {
           }
         });
 
-        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: true });
+        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user: adminUser, archived: true });
       });
 
       it('should create a new revision', () => {
@@ -755,7 +757,7 @@ describe('document-service', () => {
 
     describe('to false', () => {
       beforeEach(async () => {
-        initialDocument = await createTestDocument(container, user, {
+        initialDocument = await createTestDocument(container, adminUser, {
           title: 'Title',
           slug: 'my-doc',
           language: 'en',
@@ -770,7 +772,7 @@ describe('document-service', () => {
           }
         });
 
-        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user, archived: false });
+        updatedDocument = await sut.updateArchivedState({ documentId: initialDocument._id, user: adminUser, archived: false });
       });
 
       it('should create a new revision', () => {
@@ -1030,7 +1032,7 @@ describe('document-service', () => {
     let doc3 = null;
 
     beforeEach(async () => {
-      doc1 = await createTestDocument(container, user, {
+      doc1 = await createTestDocument(container, adminUser, {
         title: 'Doc 1',
         description: 'Description 1',
         slug: 'doc-1',
@@ -1048,7 +1050,7 @@ describe('document-service', () => {
         }
       });
 
-      doc2 = await createTestDocument(container, user, {
+      doc2 = await createTestDocument(container, adminUser, {
         title: 'Doc 2',
         description: 'Description 2',
         slug: 'doc-2',
@@ -1066,7 +1068,7 @@ describe('document-service', () => {
         }
       });
 
-      doc3 = await createTestDocument(container, user, {
+      doc3 = await createTestDocument(container, adminUser, {
         title: 'Doc 3',
         description: 'Description 3',
         slug: 'doc-3',
@@ -1084,7 +1086,7 @@ describe('document-service', () => {
         }
       });
 
-      await createTestDocument(container, user, {
+      await createTestDocument(container, adminUser, {
         title: 'Doc 4',
         description: 'Description 4',
         slug: 'doc-4',
@@ -1102,8 +1104,8 @@ describe('document-service', () => {
         }
       });
 
-      const room = await createTestRoom(container);
-      await createTestDocument(container, user, {
+      const room = await createTestRoom(container, { owner: adminUser._id });
+      await createTestDocument(container, adminUser, {
         title: 'Doc 5',
         description: 'Description 5',
         slug: 'doc-5',
@@ -1329,11 +1331,12 @@ describe('document-service', () => {
 
     describe('when the user contributed on private documents or public documents that are now archived', () => {
       beforeEach(async () => {
-        const room = await createTestRoom(container);
+        const room = await createTestRoom(container, { owner: user._id });
         await createTestDocument(container, user, { title: 'Created doc 1', roomId: room._id });
 
         sandbox.clock.tick(1000);
-        await createTestDocument(container, user, { publicContext: { archived: true } });
+        const docToArchive = await createTestDocument(container, user, { title: 'Created doc 2' });
+        await updateTestDocument({ container, documentId: docToArchive._id, user: adminUser, data: { publicContext: { archived: true } } });
         result = await sut.getPublicNonArchivedDocumentsByContributingUser(user._id);
       });
 

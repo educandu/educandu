@@ -1,6 +1,7 @@
 import { createSandbox } from 'sinon';
 import AmbService from './amb-service.js';
 import Database from '../stores/database.js';
+import { ROLE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -47,23 +48,26 @@ describe('amb-service', () => {
   });
 
   describe('getDocumentsAmbMetadata', () => {
+    let adminUser;
     let creatorUser;
     let contributorUser;
     let document1;
     let document2;
 
     beforeEach(async () => {
-      creatorUser = await setupTestUser(container, { email: 'creator@educandu.dev', displayName: 'Document Creator' });
-      contributorUser = await setupTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor' });
+      adminUser = await setupTestUser(container, { email: 'admin@educandu.dev', displayName: 'Admin', roles: Object.values(ROLE) });
+      creatorUser = await setupTestUser(container, { email: 'creator@educandu.dev', displayName: 'Document Creator', roles: [ROLE.user] });
+      contributorUser = await setupTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor', roles: [ROLE.user] });
     });
 
     describe('when there are no unarchived public documents', () => {
       beforeEach(async () => {
         document1 = await createTestDocument(container, creatorUser, {
-          title: 'Archived document',
-          roomId: null,
-          publicContext: { archived: true }
+          title: 'Document that will be archived soon',
+          roomId: null
         });
+
+        await updateTestDocument({ container, documentId: document1._id, user: adminUser, data: { publicContext: { archived: true } } });
 
         result = await sut.getDocumentsAmbMetadata({ origin });
       });
@@ -92,7 +96,7 @@ describe('amb-service', () => {
           publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
-        const room = createTestRoom(container);
+        const room = createTestRoom(container, { owner: creatorUser._id });
         await createTestDocument(container, creatorUser, {
           title: 'Private closed-doors concert',
           description: 'Room document',
