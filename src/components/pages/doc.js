@@ -93,34 +93,17 @@ function getDocumentMetadataModalState({ t, doc, room, isCloning, isOpen = false
 
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
+  const pageRef = useRef(null);
   const request = useRequest();
   const isMounted = useIsMounted();
   const { t } = useTranslation('doc');
   const controlPanelsRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
-  const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
   const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const { room } = initialState;
-
-  const ensureControlPanelPosition = useCallback(() => {
-    if (isTouchDevice()) {
-      const windowHeight = Math.min(window.innerHeight, window.outerHeight);
-      setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
-    }
-  }, [controlPanelsRef]);
-
-  useOnComponentMounted(() => {
-    ensureControlPanelPosition();
-    // Ensure panel stays on the bottom when address bar is hidden on mobile
-    window.addEventListener('resize', ensureControlPanelPosition);
-  });
-
-  useOnComponentUnmount(() => {
-    window.removeEventListener('resize', ensureControlPanelPosition);
-  });
 
   const determineInitialViewState = () => {
     const requestView = Object.values(VIEW).find(v => v === request.query.view);
@@ -143,12 +126,43 @@ function Doc({ initialState, PageTemplate }) {
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState().view);
+  const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [controlPanelMarginRightInPx, setControlPanelMarginRightInPx] = useState(0);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState().preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
+
+  const ensureControlPanelPosition = useCallback(() => {
+    const isControlPanelOpen = view !== VIEW.display;
+
+    if (isTouchDevice()) {
+      const windowHeight = Math.min(window.innerHeight, window.outerHeight);
+      setControlPanelTopInPx(windowHeight - controlPanelsRef.current.getBoundingClientRect().height);
+    }
+
+    if (isControlPanelOpen) {
+      const windowWidth = Math.min(window.innerWidth, window.outerWidth);
+      const pageWidth = pageRef.current.getBoundingClientRect().width;
+      setControlPanelMarginRightInPx(-(windowWidth - pageWidth) / 2);
+    } else {
+      setControlPanelMarginRightInPx(0);
+    }
+  }, [controlPanelsRef, view]);
+
+  useOnComponentMounted(() => {
+    ensureControlPanelPosition();
+    // Ensure panel stays on the bottom when address bar is hidden on mobile
+    window.addEventListener('resize', ensureControlPanelPosition);
+  });
+
+  useOnComponentUnmount(() => {
+    window.removeEventListener('resize', ensureControlPanelPosition);
+  });
+
+  useEffect(() => ensureControlPanelPosition(), [ensureControlPanelPosition]);
 
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
@@ -552,14 +566,22 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  const showHistoryPanel = view === VIEW.display || view === VIEW.history;
-  const showCommentsPanel = view === VIEW.display || view === VIEW.comments;
-  const showEditPanel = view === VIEW.display || view === VIEW.edit;
+  const showHistoryPanel = !!isMounted.current && (view === VIEW.display || view === VIEW.history);
+  const showCommentsPanel = !!isMounted.current && (view === VIEW.display || view === VIEW.comments);
+  const showEditPanel = !!isMounted.current && (view === VIEW.display || view === VIEW.edit);
+
+  const controlPanelStyle = {};
+  if (controPanelTopInPx !== null) {
+    controlPanelStyle.top = `${controPanelTopInPx}px`;
+  }
+  if (controlPanelMarginRightInPx !== null) {
+    controlPanelStyle.marginRight = `${controlPanelMarginRightInPx}px`;
+  }
 
   return (
     <Fragment>
       <PageTemplate alerts={alerts}>
-        <div className="DocPage">
+        <div className="DocPage" ref={pageRef}>
           {!!room && (
             <Breadcrumb className="Breadcrumbs">
               <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
@@ -620,11 +642,7 @@ function Doc({ initialState, PageTemplate }) {
             </section>
           )}
         </div>
-        <div
-          ref={controlPanelsRef}
-          style={controPanelTopInPx !== null ? { top: `${controPanelTopInPx}px` } : {}}
-          className={classNames('DocPage-controlPanels', { 'is-panel-open': view !== VIEW.display })}
-          >
+        <div ref={controlPanelsRef} style={controlPanelStyle} className="DocPage-controlPanels" >
           {!!showHistoryPanel && (
             <div className={classNames('DocPage-controlPanelsItem', { 'is-open': view === VIEW.history })}>
               <HistoryControlPanel
