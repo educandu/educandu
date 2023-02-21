@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
+import HomepageTags from './homepage-tags.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
 import { useService } from '../container-context.js';
 import DocumentSelector from '../document-selector.js';
+import HomepageDocuments from './homepage-documents.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
@@ -14,7 +16,6 @@ import AnnouncementSettings from './announcement-settings.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
-import HomepageDocumentsTable from './homepage-documents-table.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
@@ -65,6 +66,10 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     handleChange('homepageDocuments', value);
   }, [handleChange]);
 
+  const handleHomepageTagsChange = useCallback(value => {
+    handleChange('homepageTags', value);
+  }, [handleChange]);
+
   const handleTemplateDocumentChange = useCallback(documentId => {
     handleChange('templateDocument', { documentId });
   }, [handleChange]);
@@ -109,6 +114,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
       <Spin size="large" spinning={isLoading} delay={500}>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('announcementHeader')} key="panel">
+            <div className="AdminSettingsTab-collapseInfo">{t('announcementInfo')}</div>
             <AnnouncementSettings announcement={settings.announcement} onChange={handleAnnouncementChange} />
           </Collapse.Panel>
         </Collapse>
@@ -122,7 +128,14 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageDocumentsHeader')} key="homepageDocuments">
-            <HomepageDocumentsTable documentIds={settings.homepageDocuments} onChange={handleHomepageDocumentsChange} />
+            <div className="AdminSettingsTab-collapseInfo">{t('homepageDocumentsInfo')}</div>
+            <HomepageDocuments documentIds={settings.homepageDocuments} onChange={handleHomepageDocumentsChange} />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
+            <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
+            <HomepageTags tags={settings.homepageTags} onChange={handleHomepageTagsChange} />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">

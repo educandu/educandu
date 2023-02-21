@@ -15,8 +15,8 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-function HomepageDocumentsTable({ documentIds, onChange }) {
-  const { t } = useTranslation('settingsDocumentsTable');
+function HomepageDocuments({ documentIds, onChange }) {
+  const { t } = useTranslation('homepageDocuments');
 
   const handleAddClick = () => {
     onChange([...documentIds, '']);
@@ -43,7 +43,12 @@ function HomepageDocumentsTable({ documentIds, onChange }) {
           </FormItem>
         ))}
         <div className="u-button">
-          <Button type="primary" icon={<PlusOutlined />} disabled={documentIds.length === MAX_DOCUMENTS_COUNT} onClick={() => handleAddClick()}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            disabled={documentIds.length === MAX_DOCUMENTS_COUNT}
+            onClick={() => handleAddClick()}
+            >
             {t('common:addDocument')}
           </Button>
         </div>
@@ -52,13 +57,13 @@ function HomepageDocumentsTable({ documentIds, onChange }) {
   );
 }
 
-HomepageDocumentsTable.propTypes = {
+HomepageDocuments.propTypes = {
   documentIds: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired
 };
 
-HomepageDocumentsTable.defaultProps = {
+HomepageDocuments.defaultProps = {
   documentIds: []
 };
 
-export default memo(HomepageDocumentsTable);
+export default memo(HomepageDocuments);
