@@ -25,6 +25,15 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getHomepageDocuments() {
+    return this.httpClient
+      .get(
+        '/api/v1/docs/homepage',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentRevisions(documentId) {
     return this.httpClient
       .get(

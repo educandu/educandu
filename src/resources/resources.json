@@ -829,6 +829,16 @@
       "de": "Dokumentversionen"
     }
   },
+  "homepageDocumentCards": {
+    "popularDocuments": {
+      "en": "Popular documents",
+      "de": "Popular documents"
+    },
+    "contributionsBy": {
+      "en": "Contributions by",
+      "de": "Contributions by"
+    }
+  },
   "imageEditor": {
     "zoomIn": {
       "en": "Zoom in",

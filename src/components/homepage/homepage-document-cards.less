@@ -1,0 +1,54 @@
+.HomepageDocumentCards {}
+
+.HomepageDocumentCards-headline {
+  font-size: @edu-heading-1-size;
+  font-weight: 300;
+  text-align: center;
+  padding-bottom: 40px;
+}
+
+.HomepageDocumentCards-cards {
+  display: flex;
+  .m-fake-flex-gap(15px);
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+
+.HomepageDocumentCards-card {
+  width: 300px;
+}
+
+.HomepageDocumentCards-cardTitle {
+  font-size: @edu-font-size-base;
+  font-weight: bold;
+  .m-overflow-ellipsis;
+}
+
+.HomepageDocumentCards-cardContent {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: @edu-font-size-sm;
+}
+
+.HomepageDocumentCards-cardContentDescription {
+  .m-line-clamp(3);
+}
+
+.HomepageDocumentCards-cardContentDate {
+  color: @edu-text-color-secondary;
+}
+
+.HomepageDocumentCards-cardFavoriteAction {
+  display: flex;
+  justify-content: center;
+}
+
+.HomepageDocumentCards-cardUserAction {
+  &:hover {
+    cursor: default;
+    color: @edu-text-color;
+  }
+}

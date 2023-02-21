@@ -1,10 +1,12 @@
 import { Rate } from 'antd';
 import PropTypes from 'prop-types';
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
+import { getCurrentUrl } from '../ui/browser-helper.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
@@ -25,11 +27,11 @@ function FavoriteStar({ type, id, disabled, onToggle }) {
     setIsSet(getIsSet(user, type, id));
   }, [user, type, id]);
 
-  if (!user) {
-    return null;
-  }
-
   const handleChange = async value => {
+    if (!user) {
+      window.location = routes.getLoginUrl(getCurrentUrl());
+    }
+
     const newIsSet = value === 1;
     setIsSet(newIsSet);
     try {
