@@ -1,12 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import Markdown from '../../../src/components/markdown.js';
 import MediaPlayer from '../../../src/components/media-player/media-player.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
+import HomePageProjectPresentation from '../../../src/components/home-page/home-page-project-presentation.js';
 
 function HomePagePresentation() {
-  const { t } = useTranslation('testApp');
-
   return (
     <div className="HomePagePresentation">
       <div className="HomePagePresentation-videoWrapper">
@@ -19,11 +16,11 @@ function HomePagePresentation() {
             />
         </div>
       </div>
-      <div className="HomePagePresentation-logo">
-        <DefaultHeaderLogo />
-      </div>
-      <div className="HomePagePresentation-description">
-        <Markdown>{t('homePage.presentationMarkdown')}</Markdown>
+      <div className="HomePagePresentation-details">
+        <div className="HomePagePresentation-logo">
+          <DefaultHeaderLogo />
+        </div>
+        <HomePageProjectPresentation />
       </div>
     </div>
   );

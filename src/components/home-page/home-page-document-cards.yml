@@ -1,7 +1,7 @@
-homepageDocumentCards:
-  popularDocuments:
+homePageDocumentCards:
+  headline:
     en: Popular documents
     de: Popular documents
-  contributionsBy:
+  tooltipPrefix:
     en: Contributions by
     de: Contributions by

@@ -7,7 +7,8 @@ import HomePagePresentation from './home-page-presentation.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
-import HomepageDocumentCards from '../../../src/components/homepage/homepage-document-cards.js';
+import HomePageDocumentCards from '../../../src/components/home-page/home-page-document-cards.js';
+import HomePageOerPresentation from '../../../src/components/home-page/home-page-oer-presentation.js';
 
 function HomePageTemplate({ children }) {
   const { t } = useTranslation('testApp');
@@ -31,14 +32,19 @@ function HomePageTemplate({ children }) {
           </div>
         </section>
         <section className="HomePageTemplate-underFold">
-          <div className="HomePageTemplate-underFoldStripe HomePageTemplate-underFoldStripe--documents">
+          <div className="HomePageTemplate-underFoldStripe HomePageTemplate-underFoldStripe--colorful">
             <div className="HomePageTemplate-underFoldStripeContent">
-              <HomepageDocumentCards />
+              <HomePageDocumentCards />
             </div>
           </div>
           <div className="HomePageTemplate-underFoldStripe">
             <div className="HomePageTemplate-underFoldStripeContent">
               <HomePagePresentation />
+            </div>
+          </div>
+          <div className="HomePageTemplate-underFoldStripe HomePageTemplate-underFoldStripe--colorful">
+            <div className="HomePageTemplate-underFoldStripeContent">
+              <HomePageOerPresentation />
             </div>
           </div>
         </section>

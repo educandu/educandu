@@ -9,10 +9,10 @@ import UsersIcon from '../icons/main-menu/users-icon.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 
-function HomepageDocumentCards() {
+function HomePageDocumentCards() {
   const settings = useSettings();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('homepageDocumentCards');
+  const { t } = useTranslation('homePageDocumentCards');
   const documentApiClient = useService(DocumentApiClient);
 
   const [documents, setDocuments] = useState([]);
@@ -26,7 +26,7 @@ function HomepageDocumentCards() {
 
   const renderCardTitle = documentId => {
     return (
-      <div className="HomepageDocumentCards-cardTitle">
+      <div className="HomePageDocumentCards-cardTitle">
         {documentId}
       </div>
     );
@@ -34,7 +34,7 @@ function HomepageDocumentCards() {
 
   const renderFavoriteAction = doc => {
     return (
-      <div className="HomepageDocumentCards-cardFavoriteAction" key="favorite">
+      <div className="HomePageDocumentCards-cardFavoriteAction" key="favorite">
         <FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />
       </div>
     );
@@ -42,11 +42,11 @@ function HomepageDocumentCards() {
 
   const renderAuthorsAction = doc => {
     const firstAndLastContributors = [...new Set([doc.createdBy.displayName, doc.updatedBy.displayName])];
-    const tooltipTitle = `${t('contributionsBy')}: ${firstAndLastContributors.join(', ')}`;
+    const tooltipTitle = `${t('tooltipPrefix')}: ${firstAndLastContributors.join(', ')}`;
 
     return (
       <Tooltip key="users" title={tooltipTitle}>
-        <div className="HomepageDocumentCards-cardUserAction"><UsersIcon /></div>
+        <div className="HomePageDocumentCards-cardUserAction"><UsersIcon /></div>
       </Tooltip>
     );
   };
@@ -56,14 +56,14 @@ function HomepageDocumentCards() {
       <Card
         key={index}
         title={renderCardTitle(doc.title)}
-        className="HomepageDocumentCards-card"
+        className="HomePageDocumentCards-card"
         actions={[renderFavoriteAction(doc), renderAuthorsAction(doc)]}
         >
-        <div className="HomepageDocumentCards-cardContent">
-          <div className="HomepageDocumentCards-cardContentDescription">
+        <div className="HomePageDocumentCards-cardContent">
+          <div className="HomePageDocumentCards-cardContentDescription">
             {doc.description}
           </div>
-          <div className="HomepageDocumentCards-cardContentDate">
+          <div className="HomePageDocumentCards-cardContentDate">
             {formatDate(doc.updatedOn)}
           </div>
         </div>
@@ -72,13 +72,13 @@ function HomepageDocumentCards() {
   };
 
   return (
-    <div className="HomepageDocumentCards">
-      <div className="HomepageDocumentCards-headline">{t('popularDocuments')}</div>
-      <div className="HomepageDocumentCards-cards">
+    <div className="HomePageDocumentCards">
+      <div className="HomePageDocumentCards-headline">{t('headline')}</div>
+      <div className="HomePageDocumentCards-cards">
         {documents.map(renderCard)}
       </div>
     </div>
   );
 }
 
-export default HomepageDocumentCards;
+export default HomePageDocumentCards;

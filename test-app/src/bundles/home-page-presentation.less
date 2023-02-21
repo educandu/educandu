@@ -1,8 +1,4 @@
-.HomePagePresentation {
-  display: grid;
-  grid-auto-flow: row;
-  place-items: center;
-}
+.HomePagePresentation {}
 
 .HomePagePresentation-videoWrapper {
   aspect-ratio: 16/9;
@@ -18,16 +14,13 @@
   max-width: 60%;
 }
 
+.HomePagePresentation-details {
+  .m-home-page-section;
+}
+
 .HomePagePresentation-logo {
   display: flex;
   justify-content: center;
   width: 80px;
   aspect-ratio: 1;
-}
-
-.HomePagePresentation-description {
-  max-width: @edu-content-width-narrow;
-  text-align: center;
-  margin: 50px 0;
-  line-height: 1.6 * @edu-font-size-base;
 }

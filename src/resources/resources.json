@@ -829,14 +829,42 @@
       "de": "Dokumentversionen"
     }
   },
-  "homepageDocumentCards": {
-    "popularDocuments": {
+  "homePageDocumentCards": {
+    "headline": {
       "en": "Popular documents",
       "de": "Popular documents"
     },
-    "contributionsBy": {
+    "tooltipPrefix": {
       "en": "Contributions by",
       "de": "Contributions by"
+    }
+  },
+  "homePageOerPresentation": {
+    "headline": {
+      "en": "Become part of the OER community!",
+      "de": "Werde Teil der OER-Community!"
+    },
+    "descriptionMarkdown": {
+      "en": "Our goal is to create a community project that is carried and supported by as many people around the world as possible.\nIf you are inspired by the idea of free learning and of an open learning platform, then join our community for **free**.\n",
+      "de": "Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.\nWenn du von der Idee des kostenlosen lernens und einer offenen Lernplattform begeistert bist uns selbst Inhalte generieren möchtest, trit unserer Community **kostenlos** bei.\n"
+    },
+    "signUp": {
+      "en": "Sign up for your free account",
+      "de": "Melde dich für dein kostenloses Konto an"
+    },
+    "logIn": {
+      "en": "Already have an account? Log in",
+      "de": "Du hast schon ein Konto? Anmelden"
+    }
+  },
+  "homePageProjectPresentation": {
+    "descriptionMarkdown": {
+      "en": "**Educandu** is an open platform for learning and teaching.\nAnd everyone can contribute and make their knowledge availabe as open educational resources (OER) under a Creative Commons license.\nSimple, intuitive and free, with features developed specifically for teaching:\n",
+      "de": "**Educandu**, ist eine Platform für digitales lernen und unerrichten.\nUnd jeder kann mitmachen und kann seine Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos mit speziell für unerrichten entwickelten Features:\n"
+    },
+    "learnMore": {
+      "en": "Learn more",
+      "de": "Mehr erfahren"
     }
   },
   "imageEditor": {
