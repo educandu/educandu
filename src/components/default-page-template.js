@@ -26,6 +26,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
 
     return (
       <Alert
+        banner
         key={index}
         type={alert.type}
         message={alert.message}

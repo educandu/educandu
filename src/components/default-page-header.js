@@ -48,6 +48,7 @@ function DefaultPageHeader() {
       {!!showAnnouncement && (
         <Alert
           closable
+          banner
           type={settings.announcement.type}
           message={<Markdown>{settings.announcement.text}</Markdown>}
           className="DefaultPageHeader-announcement"
