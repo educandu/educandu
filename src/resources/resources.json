@@ -829,7 +829,7 @@
       "de": "Dokumentversionen"
     }
   },
-  "homePageDocumentCards": {
+  "homepageDocumentCards": {
     "headline": {
       "en": "Popular documents",
       "de": "Popular documents"
@@ -839,7 +839,7 @@
       "de": "Contributions by"
     }
   },
-  "homePageOerPresentation": {
+  "homepageOerPresentation": {
     "headline": {
       "en": "Become part of the OER community!",
       "de": "Werde Teil der OER-Community!"
@@ -857,7 +857,7 @@
       "de": "Du hast schon ein Konto? Anmelden"
     }
   },
-  "homePageProjectPresentation": {
+  "homepageProjectPresentation": {
     "descriptionMarkdown": {
       "en": "**Educandu** is an open platform for learning and teaching.\nAnd everyone can contribute and make their knowledge availabe as open educational resources (OER) under a Creative Commons license.\nSimple, intuitive and free, with features developed specifically for teaching:\n",
       "de": "**Educandu**, ist eine Platform für digitales lernen und unerrichten.\nUnd jeder kann mitmachen und kann seine Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos mit speziell für unerrichten entwickelten Features:\n"

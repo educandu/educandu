@@ -11,10 +11,10 @@ import UsersIcon from '../icons/main-menu/users-icon.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 
-function HomePageDocumentCards() {
+function HomepageDocumentCards() {
   const settings = useSettings();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('homePageDocumentCards');
+  const { t } = useTranslation('homepageDocumentCards');
   const documentApiClient = useService(DocumentApiClient);
 
   const [documents, setDocuments] = useState([]);
@@ -32,7 +32,7 @@ function HomePageDocumentCards() {
 
   const renderCardTitle = documentId => {
     return (
-      <div className="HomePageDocumentCards-cardTitle">
+      <div className="HomepageDocumentCards-cardTitle">
         {documentId}
       </div>
     );
@@ -40,7 +40,7 @@ function HomePageDocumentCards() {
 
   const renderFavoriteAction = doc => {
     return (
-      <div className="HomePageDocumentCards-cardFavoriteAction" key="favorite">
+      <div className="HomepageDocumentCards-cardFavoriteAction" key="favorite">
         <FavoriteStar type={FAVORITE_TYPE.document} id={doc._id} />
       </div>
     );
@@ -62,7 +62,7 @@ function HomePageDocumentCards() {
 
     return (
       <Tooltip key="users" title={tooltipTitle}>
-        <div className="HomePageDocumentCards-cardUserAction"><UsersIcon /></div>
+        <div className="HomepageDocumentCards-cardUserAction"><UsersIcon /></div>
       </Tooltip>
     );
   };
@@ -72,18 +72,18 @@ function HomePageDocumentCards() {
       <Card
         key={index}
         title={renderCardTitle(doc.title)}
-        className="HomePageDocumentCards-card"
+        className="HomepageDocumentCards-card"
         actions={[
           renderFavoriteAction(doc),
           renderAuthorsAction(doc),
           renderNavigateAction(doc)
         ]}
         >
-        <div className="HomePageDocumentCards-cardContent">
-          <div className="HomePageDocumentCards-cardContentDescription">
+        <div className="HomepageDocumentCards-cardContent">
+          <div className="HomepageDocumentCards-cardContentDescription">
             {doc.description}
           </div>
-          <div className="HomePageDocumentCards-cardContentDate">
+          <div className="HomepageDocumentCards-cardContentDate">
             {formatDate(doc.updatedOn)}
           </div>
         </div>
@@ -92,13 +92,13 @@ function HomePageDocumentCards() {
   };
 
   return (
-    <div className="HomePageDocumentCards">
-      <div className="HomePageDocumentCards-headline">{t('headline')}</div>
-      <div className="HomePageDocumentCards-cards">
+    <div className="HomepageDocumentCards">
+      <div className="HomepageDocumentCards-headline">{t('headline')}</div>
+      <div className="HomepageDocumentCards-cards">
         {documents.map(renderCard)}
       </div>
     </div>
   );
 }
 
-export default HomePageDocumentCards;
+export default HomepageDocumentCards;

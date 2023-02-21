@@ -4,8 +4,8 @@ import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 
-function HomePageOerPresentation() {
-  const { t } = useTranslation('homePageOerPresentation');
+function HomepageOerPresentation() {
+  const { t } = useTranslation('homepageOerPresentation');
 
   const handleSignUpClick = () => {
     window.location = routes.getRegisterUrl();
@@ -14,14 +14,14 @@ function HomePageOerPresentation() {
   const logInUrl = routes.getLoginUrl();
 
   return (
-    <div className="HomePageOerPresentation">
-      <div className="HomePageOerPresentation-headline">
+    <div className="HomepageOerPresentation">
+      <div className="HomepageOerPresentation-headline">
         {t('headline')}
       </div>
-      <div className="HomePageOerPresentation-description">
+      <div className="HomepageOerPresentation-description">
         <Markdown>{t('descriptionMarkdown')}</Markdown>
       </div>
-      <div className="HomePageOerPresentation-button">
+      <div className="HomepageOerPresentation-button">
         <Button type="primary" size="large" onClick={handleSignUpClick}>{t('signUp')}</Button>
       </div>
       <a href={logInUrl}>{t('logIn')}</a>
@@ -29,4 +29,4 @@ function HomePageOerPresentation() {
   );
 }
 
-export default HomePageOerPresentation;
+export default HomepageOerPresentation;

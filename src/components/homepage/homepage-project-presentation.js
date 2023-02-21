@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { useSettings } from '../settings-context.js';
 
-function HomePageProjectPresentation() {
+function HomepageProjectPresentation() {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
-  const { t } = useTranslation('homePageProjectPresentation');
+  const { t } = useTranslation('homepageProjectPresentation');
 
   const helpPageDocument = settings?.helpPage?.[uiLanguage]?.documentId;
 
@@ -18,8 +18,8 @@ function HomePageProjectPresentation() {
   };
 
   return (
-    <div className="HomePageProjectPresentation">
-      <div className="HomePageProjectPresentation-description">
+    <div className="HomepageProjectPresentation">
+      <div className="HomepageProjectPresentation-description">
         <Markdown>{t('descriptionMarkdown')}</Markdown>
       </div>
       {!!helpPageDocument && (
@@ -29,4 +29,4 @@ function HomePageProjectPresentation() {
   );
 }
 
-export default HomePageProjectPresentation;
+export default HomepageProjectPresentation;

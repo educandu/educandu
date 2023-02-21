@@ -1,13 +1,13 @@
 import React from 'react';
 import MediaPlayer from '../../../src/components/media-player/media-player.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
-import HomePageProjectPresentation from '../../../src/components/home-page/home-page-project-presentation.js';
+import HomepageProjectPresentation from '../../../src/components/homepage/homepage-project-presentation.js';
 
-function HomePagePresentation() {
+function HomepagePresentation() {
   return (
-    <div className="HomePagePresentation">
-      <div className="HomePagePresentation-videoWrapper">
-        <div className="HomePagePresentation-video">
+    <div className="HomepagePresentation">
+      <div className="HomepagePresentation-videoWrapper">
+        <div className="HomepagePresentation-video">
           <MediaPlayer
             renderControls={() => null}
             renderProgressBar={() => null}
@@ -16,14 +16,14 @@ function HomePagePresentation() {
             />
         </div>
       </div>
-      <div className="HomePagePresentation-details">
-        <div className="HomePagePresentation-logo">
+      <div className="HomepagePresentation-details">
+        <div className="HomepagePresentation-logo">
           <DefaultHeaderLogo />
         </div>
-        <HomePageProjectPresentation />
+        <HomepageProjectPresentation />
       </div>
     </div>
   );
 }
 
-export default HomePagePresentation;
+export default HomepagePresentation;
