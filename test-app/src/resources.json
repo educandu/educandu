@@ -7,6 +7,10 @@
     "homePage.supportedBy": {
       "en": "Supported by:",
       "de": "Unterstütz durch:"
+    },
+    "homePage.presentationMarkdown": {
+      "en": "The **Open Music Academy** (or OMA for short) is an open platform for learning and teaching music. And everyone can contribute: musicians and music learners can make their knowledge availabe as open educational resources (OER) under a Creative Commons license. Simple, intuitive and free, with features developed specifically for music:",
+      "de": "Die **Open Music Academy**, kurz OMA, ist die Platform für digitales lernen und unerrichten von Musik. Und jeder kann mitmachen: Musiker:innen und Musiklehrende können ihr Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen. Einfach, intuitiv und kostenlos mit speziell für Musik entwickelten Features:"
     }
   }
 }

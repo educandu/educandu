@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SiteLogo from './site-logo.js';
 import { useTranslation } from 'react-i18next';
+import HomePageSponsors from './home-page-sponsors.js';
+import HomePagePresentation from './home-page-presentation.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
@@ -17,7 +19,7 @@ function HomePageTemplate({ children }) {
         <section className="HomePageTemplate-aboveFold">
           <div className="HomePageTemplate-aboveFoldContent">
             <div className="HomePageTemplate-pictogramSearch">
-              <img src="/images/pictogram-search.svg" />
+              <img src="/images/home-page-pictogram.svg" />
             </div>
             <div className="HomePageTemplate-logo" >
               <SiteLogo readonly />
@@ -29,23 +31,18 @@ function HomePageTemplate({ children }) {
           </div>
         </section>
         <section className="HomePageTemplate-underFold">
-          <div className="HomePageTemplate-underFoldDocumentsStripe">
-            <div className="HomePageTemplate-underFoldDocuments">
+          <div className="HomePageTemplate-underFoldStripe HomePageTemplate-underFoldStripe--documents">
+            <div className="HomePageTemplate-underFoldStripeContent">
               <HomepageDocumentCards />
             </div>
           </div>
-        </section>
-        <div className="HomePageTemplate-sponsorsFooter">
-          {t('homePage.supportedBy')}
-          <div className="HomePageTemplate-sponsors">
-            <a className="HomePageTemplate-sponsor" href="https://stiftung-hochschullehre.de/" target="_blank" rel="noreferrer">
-              <img src="/images/sih-logo.svg" />
-            </a>
-            <a className="HomePageTemplate-sponsor" href="https://www.hmtm.de/de/" target="_blank" rel="noreferrer">
-              <img src="/images/hmtm-logo.svg" />
-            </a>
+          <div className="HomePageTemplate-underFoldStripe">
+            <div className="HomePageTemplate-underFoldStripeContent">
+              <HomePagePresentation />
+            </div>
           </div>
-        </div>
+        </section>
+        <HomePageSponsors />
       </main>
       <DefaultPageFooter />
       <ConsentDialog />

@@ -50,43 +50,22 @@
   justify-content: center;
 }
 
-.HomePageTemplate-sponsorsFooter {
-  display: grid;
-  gap: 15px;
-  grid-auto-flow: row;
-  place-items: center;
-  padding: @edu-page-content-padding 0;
-  background-color: @custom-sponsors-homepage-footer-background-color;
-
-  @media @edu-media-phone {
-    padding: calc(@edu-page-content-padding / 2);
-  }
-}
-
-.HomePageTemplate-sponsors {
-  display: grid;
-  gap: 30px;
-  grid-auto-flow: column;
-  place-items: center;
-}
-
-.HomePageTemplate-sponsor {
-  width: 150px;
-}
-
 .HomePageTemplate-underFold {
   display: grid;
   grid-auto-flow: row;
   place-items: center;
 }
 
-.HomePageTemplate-underFoldDocumentsStripe {
+.HomePageTemplate-underFoldStripe {
   width: 100%;
   padding: 50px @edu-page-content-padding;
-  background-color: @edu-background-color-medium;
+
+  &.HomePageTemplate-underFoldStripe--documents {
+    background-color: @edu-background-color-medium;
+  }
 }
 
-.HomePageTemplate-underFoldDocuments {
+.HomePageTemplate-underFoldStripeContent {
   width: 100%;
   margin: 0 auto;
   max-width: @edu-content-width-wide;

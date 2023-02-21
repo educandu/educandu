@@ -1,0 +1,23 @@
+.HomePageSponsors {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
+  place-items: center;
+  padding: @edu-page-content-padding 0;
+  background-color: @custom-sponsors-homepage-footer-background-color;
+
+  @media @edu-media-phone {
+    padding: calc(@edu-page-content-padding / 2);
+  }
+}
+
+.HomePageSponsors-content {
+  display: grid;
+  gap: 30px;
+  grid-auto-flow: column;
+  place-items: center;
+}
+
+.HomePageSponsors-logo {
+  width: 150px;
+}

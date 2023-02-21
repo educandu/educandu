@@ -1,0 +1,33 @@
+.HomePagePresentation {
+  display: grid;
+  grid-auto-flow: row;
+  place-items: center;
+}
+
+.HomePagePresentation-videoWrapper {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/images/home-page-video-icons.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.HomePagePresentation-video {
+  max-width: 60%;
+}
+
+.HomePagePresentation-logo {
+  display: flex;
+  justify-content: center;
+  width: 80px;
+  aspect-ratio: 1;
+}
+
+.HomePagePresentation-description {
+  max-width: @edu-content-width-narrow;
+  text-align: center;
+  margin: 50px 0;
+  line-height: 1.6 * @edu-font-size-base;
+}
