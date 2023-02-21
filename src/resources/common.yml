@@ -200,6 +200,9 @@ common:
   invalidSlug:
     en: The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
     de: Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
+  tag:
+    en: Tag
+    de: Tag
   tags:
     en: Tags
     de: Tags
@@ -543,3 +546,9 @@ common:
   hello:
     en: Hello
     de: Hallo
+  addDocument:
+    en: Add document
+    de: Dokument hinzufügen
+  rank:
+    en: Rank
+    de: Rang

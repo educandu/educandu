@@ -4,6 +4,30 @@
       "en": "Global announcement",
       "de": "Globale Ankündigung"
     },
+    "announcementInfo": {
+      "en": "This announcement is shown under the website header on all pages. Users can close it and it will only appear again when the text or type are changed.",
+      "de": "Diese Ankündigung wird auf allen Seiten unter dem Website-Header angezeigt. Benutzer können sie schließen, und sie wird erst wieder erscheinen, wenn sich der Text oder Typ geändert hat."
+    },
+    "consentHeader": {
+      "en": "Consent text",
+      "de": "Zustimmungstext"
+    },
+    "homepageDocumentsHeader": {
+      "en": "Homepage documents pool",
+      "de": "Homepage-Dokumente-Fundus"
+    },
+    "homepageDocumentsInfo": {
+      "en": "From this list, 3 documents are randomly selected and displayed on the homepage.",
+      "de": "Aus dieser Liste werden 3 zufällig ausgewählte Dokumente auf der Homepage angezeigt."
+    },
+    "homepageTagsHeader": {
+      "en": "Homepage recommended tags",
+      "de": "Empfohlene Tags auf der Homepage"
+    },
+    "homepageTagsInfo": {
+      "en": "These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.",
+      "de": "Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen."
+    },
     "helpPageHeader": {
       "en": "Help page",
       "de": "Hilfe-Seite"
@@ -15,10 +39,6 @@
     "footerLinksHeader": {
       "en": "Footer links",
       "de": "Footer-Links"
-    },
-    "consentHeader": {
-      "en": "Consent text",
-      "de": "Zustimmungstext"
     },
     "templateDocumentHeader": {
       "en": "Template for new documents",
@@ -52,10 +72,6 @@
     }
   },
   "settingsDocumentsTable": {
-    "rank": {
-      "en": "Rank",
-      "de": "Rang"
-    },
     "linkTitle": {
       "en": "Link title",
       "de": "Link-Titel"
@@ -2928,6 +2944,10 @@
       "en": "The slug can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
       "de": "Der Slug darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden."
     },
+    "tag": {
+      "en": "Tag",
+      "de": "Tag"
+    },
     "tags": {
       "en": "Tags",
       "de": "Tags"
@@ -3371,6 +3391,14 @@
     "hello": {
       "en": "Hello",
       "de": "Hallo"
+    },
+    "addDocument": {
+      "en": "Add document",
+      "de": "Dokument hinzufügen"
+    },
+    "rank": {
+      "en": "Rank",
+      "de": "Rang"
     }
   },
   "pageNames": {
