@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SiteLogo from './site-logo.js';
 import { useTranslation } from 'react-i18next';
 import HomePageSponsors from './home-page-sponsors.js';
 import HomePagePresentation from './home-page-presentation.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
+import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
 import HomePageDocumentCards from '../../../src/components/home-page/home-page-document-cards.js';
@@ -23,7 +23,7 @@ function HomePageTemplate({ children }) {
               <img src="/images/home-page-pictogram.svg" />
             </div>
             <div className="HomePageTemplate-logo" >
-              <SiteLogo readonly />
+              <DefaultSiteLogo />
               <div className="HomePageTemplate-subtitle">{t('homePage.subtitle')}</div>
             </div>
             <div>
