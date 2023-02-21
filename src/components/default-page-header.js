@@ -37,7 +37,9 @@ function DefaultPageHeader() {
   return (
     <header className="DefaultPageHeader">
       <div className="DefaultPageHeader-content">
-        <DefaultHeaderLogo />
+        <div className="DefaultPageHeader-logo">
+          <DefaultHeaderLogo />
+        </div>
         <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
           <NavigationDesktop />
         </div>
