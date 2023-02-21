@@ -14,6 +14,7 @@ import AnnouncementSettings from './announcement-settings.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
+import HomepageDocumentsTable from './homepage-documents-table.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
@@ -58,6 +59,10 @@ function AdminSettingsTab({ onDirtyStateChange }) {
 
   const handleConsentTextChange = useCallback(value => {
     handleChange('consentText', value);
+  }, [handleChange]);
+
+  const handleHomepageDocumentsChange = useCallback(value => {
+    handleChange('homepageDocuments', value);
   }, [handleChange]);
 
   const handleTemplateDocumentChange = useCallback(documentId => {
@@ -113,6 +118,11 @@ function AdminSettingsTab({ onDirtyStateChange }) {
               settingValue={settings.consentText}
               onChange={handleConsentTextChange}
               />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('homepageDocumentsHeader')} key="homepageDocuments">
+            <HomepageDocumentsTable documentIds={settings.homepageDocuments} onChange={handleHomepageDocumentsChange} />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">

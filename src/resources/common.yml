@@ -543,3 +543,6 @@ common:
   hello:
     en: Hello
     de: Hallo
+  addDocument:
+    en: Add document
+    de: Dokument hinzufügen

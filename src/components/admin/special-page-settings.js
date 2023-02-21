@@ -59,7 +59,7 @@ function SpecialPageSettings({ settings, onChange }) {
   );
 
   const columns = [
-    { title: t('common:language'), key: 'language', dataIndex: 'language', render: renderLanguage },
+    { title: t('common:language'), key: 'language', dataIndex: 'language', width: '100px', render: renderLanguage },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
     { title: t('common:documentTitle'), key: 'documentId', dataIndex: 'documentId', ellipsis: true, render: renderDocumentId }
   ];

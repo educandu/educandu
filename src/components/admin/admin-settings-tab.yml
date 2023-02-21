@@ -2,6 +2,12 @@ adminSettingsTab:
   announcementHeader:
     en: Global announcement
     de: Globale Ankündigung
+  consentHeader:
+    en: Consent text
+    de: Zustimmungstext
+  homepageDocumentsHeader:
+    en: Homepage documents pool
+    de: Homepage-Dokumente-Becken ))
   helpPageHeader:
     en: Help page
     de: Hilfe-Seite
@@ -11,9 +17,6 @@ adminSettingsTab:
   footerLinksHeader:
     en: Footer links
     de: Footer-Links
-  consentHeader:
-    en: Consent text
-    de: Zustimmungstext
   templateDocumentHeader:
     en: Template for new documents
     de: Vorlage für neue Dokumente
