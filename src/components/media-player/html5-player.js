@@ -1,7 +1,7 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
 import { useService } from '../container-context.js';
-import PlayIcon from '../icons/media-player/play-icon.js';
+import { PlayCircleTwoTone } from '@ant-design/icons';
 import HttpClient from '../../api-clients/http-client.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { memoAndTransformProps } from '../../ui/react-helper.js';
@@ -261,7 +261,7 @@ function Htlm5Player({
       {!audioOnly && !isPlaying && (
         <div className="Html5Player-playOverlay" onClick={triggerPlay} >
           <div className="Html5Player-playOverlayIcon">
-            <PlayIcon />
+            <PlayCircleTwoTone twoToneColor="000000" />
           </div>
         </div>
       )}

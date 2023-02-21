@@ -1,6 +1,6 @@
 import Plyr from 'plyr';
 import PropTypes from 'prop-types';
-import PlayIcon from '../icons/media-player/play-icon.js';
+import { PlayCircleTwoTone } from '@ant-design/icons';
 import { memoAndTransformProps } from '../../ui/react-helper.js';
 import { useOnComponentUnmount, useStableCallback } from '../../ui/hooks.js';
 import { useMediaDurations, useYoutubeThumbnailUrl } from './media-hooks.js';
@@ -296,17 +296,14 @@ function YoutubePlayer({
   return (
     <div className="YoutubePlayer">
       <video ref={plyrRef} />
-      {!audioOnly && !!posterOrThumbnailImageUrl && !isPlaying && (
-        <div
-          onClick={triggerPlay}
-          className="YoutubePlayer-posterImage"
-          style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }}
-          >
-          {!!sourceDurationInMs && (
-            <div className="YoutubePlayer-playIcon">
-              <PlayIcon />
-            </div>
-          )}
+      {!audioOnly && !!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
+        <div className="YoutubePlayer-posterImage" style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }} />
+      )}
+      {!audioOnly && !isPlaying && !!sourceDurationInMs && (
+        <div className="YoutubePlayer-playOverlay" onClick={triggerPlay}>
+          <div className="YoutubePlayer-playIcon">
+            <PlayCircleTwoTone twoToneColor="000000" />
+          </div>
         </div>
       )}
     </div>
