@@ -6,12 +6,11 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { Button, Collapse, Drawer } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import UsersIcon from './icons/main-menu/users-icon.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
-import LogoutIcon from './icons/main-menu/logout-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
@@ -117,14 +116,14 @@ function NavigationMobile() {
     if (!user) {
       return (
         <div className="NavigationMobile-anonymousUserButtons">
-          <Button size="large" type="primary" icon={<UsersIcon />} onClick={handleLogInClick}>{t('common:logIn')}</Button>
-          <Button size="large" icon={<FormOutlined />} onClick={handleRegisterClick}>{t('common:register')}</Button>
+          <Button size="large" type="primary" onClick={handleLogInClick}>{t('common:logIn')}</Button>
+          <Button size="large" onClick={handleRegisterClick}>{t('common:register')}</Button>
         </div>
       );
     }
 
     return (
-      <Button size="large" icon={<LogoutIcon />} onClick={handleLogOutClick}>{t('common:logOut')}</Button>
+      <Button size="large" onClick={handleLogOutClick}>{t('common:logOut')}</Button>
     );
   };
 
