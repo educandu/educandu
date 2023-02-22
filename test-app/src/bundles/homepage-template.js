@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import HomepageSponsors from './homepage-sponsors.js';
-import HomepagePresentation from './homepage-presentation.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
 import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
 import HomepageDocumentCards from '../../../src/components/homepage/homepage-document-cards.js';
 import HomepageOerPresentation from '../../../src/components/homepage/homepage-oer-presentation.js';
+import HomepageProjectPresentation from '../../../src/components/homepage/homepage-project-presentation.js';
 
 function HomepageTemplate({ children }) {
   const { t } = useTranslation('testApp');
@@ -39,7 +39,13 @@ function HomepageTemplate({ children }) {
           </div>
           <div className="HomepageTemplate-underFoldStripe">
             <div className="HomepageTemplate-underFoldStripeContent">
-              <HomepagePresentation />
+              <HomepageProjectPresentation
+                logo={
+                  <div className="HomepageTemplate-presentationLogo">
+                    <DefaultSiteLogo />
+                  </div>
+                }
+                />
             </div>
           </div>
           <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--colorful">
