@@ -7,12 +7,14 @@ function DefaultPageFooter() {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
 
+  const links = (settings?.footerLinks?.[uiLanguage] || []).filter(link => link.linkTitle && link.documentId);
+
   return (
     <footer className="DefaultPageFooter">
-      {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
+      {links.map((link, index) => (
         <Fragment key={index.toString()}>
           <span className="DefaultPageFooter-linkWrapper">
-            <a className="DefaultPageFooter-link" href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
+            <a className="DefaultPageFooter-link" href={routes.getDocUrl({ id: link.documentId })}>{link.linkTitle}</a>
           </span>
           <div className="DefaultPageFooter-linkDivider"> | </div>
         </Fragment>
