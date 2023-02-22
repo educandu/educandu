@@ -6,6 +6,7 @@ import ConsentDialog from '../../../src/components/consent-dialog.js';
 import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
+import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
 import HomepageDocumentCards from '../../../src/components/homepage/homepage-document-cards.js';
 import HomepageOerPresentation from '../../../src/components/homepage/homepage-oer-presentation.js';
 import HomepageProjectPresentation from '../../../src/components/homepage/homepage-project-presentation.js';
@@ -42,7 +43,7 @@ function HomepageTemplate({ children }) {
               <HomepageProjectPresentation
                 logo={
                   <div className="HomepageTemplate-presentationLogo">
-                    <DefaultSiteLogo />
+                    <DefaultHeaderLogo />
                   </div>
                 }
                 />

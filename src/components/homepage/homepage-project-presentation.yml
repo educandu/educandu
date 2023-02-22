@@ -8,6 +8,36 @@ homepageProjectPresentation:
       **Educandu**, ist eine Platform für digitales lernen und unerrichten.
       Und jeder kann mitmachen und kann seine Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.
       Einfach, intuitiv und kostenlos mit speziell für unerrichten entwickelten Features:
+  mediaFeature:
+    en: Video and audio with interactive options
+    de: Video und Audio mit interaktiven Möglichkeiten
+  earTrainingFeature:
+    en: Online ear training tasks
+    de: Online Gehörbildungsaufgaben
+  multitrackFeature:
+    en: Multitrack music player
+    de: Mehrspur-Musikplayer
+  pdfFeature:
+    en: Embedded PDF viewer
+    de: Eingebauter PDF-Viewer
+  analysisFeature:
+    en: Music and movie analysis tool
+    de: Musik- und Filmanalysetool
+  textFeature:
+    en: Easy text editing and formatting
+    de: Einfache Texteingabe und- formatierung
+  imageFeature:
+    en: Images, galleries and slideshows
+    de: Bilder, Galerien und Slideshows
+  roomFeature:
+    en: Private rooms
+    de: Private Räume
+  notationFeature:
+    en: Online notation
+    de: Online-Notation
+  gamificationnFeature:
+    en: ...and of course a little gamification!
+    de: ...und natürlich ein wenig Gamification!
   learnMore:
     en: Learn more
     de: Mehr erfahren

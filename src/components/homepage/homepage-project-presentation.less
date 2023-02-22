@@ -1,6 +1,5 @@
-.HomepageProjectPresentation {
-  .m-homepage-section;
-}
+.HomepageProjectPresentation {}
+
 
 .HomepageProjectPresentation-description {
   .m-homepage-description;
@@ -31,4 +30,22 @@
   justify-content: center;
   width: 80px;
   aspect-ratio: 1;
+}
+
+.HomepageProjectPresentation-features {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+}
+
+.HomepageProjectPresentation-feature {
+  display: grid;
+  gap: @edu-content-padding;
+  grid-auto-flow: column;
+  align-items: center;
+}
+
+.HomepageProjectPresentation-featureIcon {
+  font-size: 2 * @edu-font-size-base;
 }
