@@ -253,13 +253,13 @@ function Htlm5Player({
   }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
-    <div className="Html5Player">
+    <div className="Html5Player" onClick={isPlaying ? triggerPause : triggerPlay}>
       <video ref={plyrRef} />
-      {!audioOnly && !!posterImageUrl && !wasPlayTriggeredOnce && (
-        <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
-      )}
       {!audioOnly && !isPlaying && (
-        <div className="Html5Player-playOverlay" onClick={triggerPlay} >
+        <div className="Html5Player-playOverlay" onClick={triggerPlay}>
+          {!wasPlayTriggeredOnce && (
+            <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
+          )}
           <div className="Html5Player-playOverlayIcon">
             <PlayCircleTwoTone twoToneColor="000000" />
           </div>

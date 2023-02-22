@@ -294,16 +294,18 @@ function YoutubePlayer({
   }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
-    <div className="YoutubePlayer">
+    <div className="YoutubePlayer" onClick={isPlaying ? triggerPause : triggerPlay}>
       <video ref={plyrRef} />
-      {!audioOnly && !!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
-        <div className="YoutubePlayer-posterImage" style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }} />
-      )}
-      {!audioOnly && !isPlaying && !!sourceDurationInMs && (
+      {!audioOnly && !isPlaying && (
         <div className="YoutubePlayer-playOverlay" onClick={triggerPlay}>
-          <div className="YoutubePlayer-playIcon">
-            <PlayCircleTwoTone twoToneColor="000000" />
-          </div>
+          {!!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
+            <div className="YoutubePlayer-posterImage" style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }} />
+          )}
+          {!!sourceDurationInMs && (
+            <div className="YoutubePlayer-playIcon">
+              <PlayCircleTwoTone twoToneColor="000000" />
+            </div>
+          )}
         </div>
       )}
     </div>
