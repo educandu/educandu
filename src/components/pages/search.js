@@ -164,7 +164,7 @@ function Search({ PageTemplate }) {
           {selectedTags.length > 1 && (
             <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
               <CloseIcon />
-              {t('deselectTags')}
+              {t('common:removeAll')}
             </a>
           )}
         </div>

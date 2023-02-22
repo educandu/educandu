@@ -7,9 +7,6 @@ search:
       {count, plural, =1 {# document} other {# documents}} found
     de: |
       {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
-  deselectTags:
-    en: Remove all
-    de: Alle löschen
   sorting:
     en: Sorting
     de: Sortierung

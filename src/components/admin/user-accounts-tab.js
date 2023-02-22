@@ -8,9 +8,11 @@ import FilterInput from '../filter-input.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
+import CloseIcon from '../icons/general/close-icon.js';
 import UserRoleTagEditor from './user-role-tag-editor.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import { Table, Tabs, Select, Radio, message } from 'antd';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
+import { Table, Tabs, Select, Radio, message, Tag } from 'antd';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -76,6 +78,7 @@ function createTableItemSubsets(users, externalAccounts, storagePlans) {
   }
 
   return {
+    accountTableItemsById,
     activeAccountsTableItems,
     closedAccountsTableItems,
     unconfirmedAccountsTableItems,
@@ -113,11 +116,12 @@ function UserAccountsTab() {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
-
+  const [accountTableItemsById, setAccountTableItemsById] = useState([]);
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
   const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
-  const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
+  const [selectedActiveAccountKeys, setSelectedActiveAccountKeys] = useState([]);
   const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
+  const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
   const [accountsWithStorageTableItems, setAccountsWithStorageTableItems] = useState([]);
 
   const refreshData = useCallback(async () => {
@@ -143,13 +147,16 @@ function UserAccountsTab() {
   }, [refreshData]);
 
   useEffect(() => {
-    setUsersById(new Map(users.map(user => [user._id, user])));
     const tableItemSubsets = createTableItemSubsets(users, externalAccounts, storagePlans);
+
+    setUsersById(new Map(users.map(user => [user._id, user])));
+    setAccountTableItemsById(tableItemSubsets.accountTableItemsById);
     setActiveAccountsTableItems(filterTableItems(tableItemSubsets.activeAccountsTableItems, filterText));
-    setPendingAccountsTableItems(filterTableItems(tableItemSubsets.unconfirmedAccountsTableItems, filterText));
-    setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
     setClosedAccountsTableItems(filterTableItems(tableItemSubsets.closedAccountsTableItems, filterText));
     setExternalAccountsTableItems(filterTableItems(tableItemSubsets.externalAccountsTableItems, filterText));
+    setPendingAccountsTableItems(filterTableItems(tableItemSubsets.unconfirmedAccountsTableItems, filterText));
+    setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
+    setSelectedActiveAccountKeys(oldKeys => oldKeys.filter(key => tableItemSubsets.accountTableItemsById.has(key)));
   }, [users, externalAccounts, storagePlans, filterText]);
 
   const handleUserRolesChange = async (userId, newRoles) => {
@@ -622,9 +629,37 @@ function UserAccountsTab() {
     }
   ];
 
-  const renderTabChildren = (dataSource, columns) => (
+  const activeAccountsRowSelection = {
+    selectedRowKeys: selectedActiveAccountKeys,
+    onChange: setSelectedActiveAccountKeys,
+    preserveSelectedRowKeys: true
+  };
+
+  const renderTabChildren = (dataSource, columns, rowSelection = null) => (
     <div className="Tabs-tabPane">
+      {!!rowSelection && (
+        <div className="UserAccountsTab-selectedItems">
+          {rowSelection.selectedRowKeys.map(key => (
+            <Tag
+              key={key}
+              closable
+              closeIcon={<CloseIcon />}
+              className="Tag Tag--selected"
+              onClose={() => rowSelection.onChange(ensureIsExcluded(rowSelection.selectedRowKeys, key))}
+              >
+              {accountTableItemsById.get(key).displayName}
+            </Tag>
+          ))}
+          {rowSelection.selectedRowKeys.length > 1 && (
+            <a className="UserAccountsTab-deselectItemsLink" onClick={() => rowSelection.onChange([])}>
+              <CloseIcon />
+              {t('common:removeAll')}
+            </a>
+          )}
+        </div>
+      )}
       <Table
+        rowSelection={rowSelection}
         dataSource={dataSource}
         columns={columns}
         size="middle"
@@ -638,7 +673,7 @@ function UserAccountsTab() {
     {
       key: TABLE.activeAccounts,
       label: t('activeAccounts'),
-      tabContent: renderTabChildren(activeAccountsTableItems, activeAccountsTableColumns)
+      tabContent: renderTabChildren(activeAccountsTableItems, activeAccountsTableColumns, activeAccountsRowSelection)
     },
     {
       key: TABLE.unconfirmedAccounts,

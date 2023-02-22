@@ -552,3 +552,6 @@ common:
   rank:
     en: Rank
     de: Rang
+  removeAll:
+    en: Remove all
+    de: Alle löschen
