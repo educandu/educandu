@@ -22,9 +22,6 @@ function HomepageTemplate({ children }) {
         <section className="HomepageTemplate-aboveFold">
           <DefaultPageHeader />
           <div className="HomepageTemplate-aboveFoldContent">
-            <div className="HomepageTemplate-pictogramSearch">
-              <img src="/images/homepage-pictogram.svg" />
-            </div>
             <div className="HomepageTemplate-logo" >
               <DefaultSiteLogo />
               <div className="HomepageTemplate-subtitle">{t('homepage.subtitle')}</div>
