@@ -20,13 +20,14 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
+import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 
 const logger = new Logger(import.meta.url);
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, Forbidden, NotFound } = httpErrors;
 
 class DocumentService {
   static get inject() {
@@ -193,6 +194,7 @@ class DocumentService {
   }
 
   async createDocument({ data, user }) {
+    let room = null;
     let roomLock;
     let documentLock;
     const documentId = uniqueId.create();
@@ -223,12 +225,21 @@ class DocumentService {
 
         newDocument = this._buildDocumentFromRevisions([newRevision]);
 
+        if (newDocument.roomId) {
+          room = await this.roomStore.getRoomById(newDocument.roomId, { session });
+          room.documents.push(newDocument._id);
+        }
+
+        try {
+          checkRevisionOnDocumentCreation({ newRevision, room, user });
+        } catch (error) {
+          logger.error(error);
+          throw new Forbidden(error.message);
+        }
+
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         await this.documentStore.saveDocument(newDocument, { session });
-
-        if (newDocument.roomId) {
-          const room = await this.roomStore.getRoomById(newDocument.roomId, { session });
-          room.documents.push(newDocument._id);
+        if (room) {
           await this.roomStore.saveRoom(room, { session });
         }
       });
@@ -248,10 +259,11 @@ class DocumentService {
   }
 
   async updateDocument({ documentId, data, user }) {
-    let lock;
+    let room = null;
+    let documentLock;
 
     try {
-      lock = await this.lockStore.takeDocumentLock(documentId);
+      documentLock = await this.lockStore.takeDocumentLock(documentId);
 
       let newDocument;
       await this.transactionRunner.run(async session => {
@@ -260,11 +272,11 @@ class DocumentService {
           throw new NotFound(`Could not find existing revisions for document ${documentId}`);
         }
 
-        const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
+        const previousRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
 
         const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
-          ...cloneDeep(ancestorRevision),
+          ...cloneDeep(previousRevision),
           ...data,
           _id: null,
           documentId,
@@ -273,12 +285,23 @@ class DocumentService {
           order: nextOrder,
           sections: data.sections?.map(section => createSectionRevision({
             section,
-            ancestorSection: ancestorRevision.sections.find(s => s.key === section.key) || null,
+            ancestorSection: previousRevision.sections.find(s => s.key === section.key) || null,
             isRestoreOperation: false
-          })) || cloneDeep(ancestorRevision.sections)
+          })) || cloneDeep(previousRevision.sections)
         });
 
         newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newRevision]);
+
+        if (newDocument.roomId) {
+          room = await this.roomStore.getRoomById(newDocument.roomId, { session });
+        }
+
+        try {
+          checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user });
+        } catch (error) {
+          logger.error(error);
+          throw new Forbidden(error.message);
+        }
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         await this.documentStore.saveDocument(newDocument, { session });
@@ -286,8 +309,8 @@ class DocumentService {
 
       return newDocument;
     } finally {
-      if (lock) {
-        await this.lockStore.releaseLock(lock);
+      if (documentLock) {
+        await this.lockStore.releaseLock(documentLock);
       }
     }
   }
