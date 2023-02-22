@@ -91,6 +91,10 @@ function HomepageDocumentCards() {
     );
   };
 
+  if (!documents.length) {
+    return null;
+  }
+
   return (
     <div className="HomepageDocumentCards">
       <div className="HomepageDocumentCards-headline">{t('headline')}</div>
