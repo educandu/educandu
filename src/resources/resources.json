@@ -12,6 +12,14 @@
       "en": "Consent text",
       "de": "Zustimmungstext"
     },
+    "homepageTagsHeader": {
+      "en": "Homepage recommended tags",
+      "de": "Empfohlene Tags auf der Homepage"
+    },
+    "homepageTagsInfo": {
+      "en": "These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.",
+      "de": "Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen."
+    },
     "homepageDocumentsHeader": {
       "en": "Homepage documents pool",
       "de": "Homepage-Dokumente-Fundus"
@@ -20,13 +28,9 @@
       "en": "From this list, 3 documents are randomly selected and displayed on the homepage.",
       "de": "Aus dieser Liste werden 3 zufällig ausgewählte Dokumente auf der Homepage angezeigt."
     },
-    "homepageTagsHeader": {
-      "en": "Homepage recommended tags",
-      "de": "Empfohlene Tags auf der Homepage"
-    },
-    "homepageTagsInfo": {
-      "en": "These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.",
-      "de": "Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen."
+    "homepagePresentationHeader": {
+      "en": "Homepage presentation",
+      "de": "Homepage-Präsentation"
     },
     "helpPageHeader": {
       "en": "Help page",
@@ -69,6 +73,16 @@
     "announcementType_warning": {
       "en": "warning",
       "de": "Warnung"
+    }
+  },
+  "homepagePresentationSettings": {
+    "videoSourceUrl": {
+      "en": "Video source",
+      "de": "Video-Quelle"
+    },
+    "aboutDocument": {
+      "en": "'About' document\n",
+      "de": "'Über' Dokument\n"
     }
   },
   "settingsDocumentsTable": {

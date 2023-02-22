@@ -1,0 +1,9 @@
+homepagePresentationSettings:
+  videoSourceUrl:
+    en: Video source
+    de: Video-Quelle
+  aboutDocument:
+    en: |
+      'About' document
+    de: |
+      'Über' Dokument

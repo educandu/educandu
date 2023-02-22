@@ -5,12 +5,15 @@ import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
+import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import DefaultSiteLogo from '../default-site-logo.js';
 import MediaPlayer from '../media-player/media-player.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import PdfIcon from '../icons/homepage-features/pdf-icon.js';
 import TextIcon from '../icons/homepage-features/text-icon.js';
 import RoomIcon from '../icons/homepage-features/room-icon.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import MediaIcon from '../icons/homepage-features/media-icon.js';
 import ImageIcon from '../icons/homepage-features/image-icon.js';
 import NotationIcon from '../icons/homepage-features/notation-icon.js';
@@ -22,14 +25,16 @@ import GamificationIcon from '../icons/homepage-features/gamification-icon.js';
 function HomepageProjectPresentation({ logo }) {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('homepageProjectPresentation');
 
-  const aboutPageDocumentId = settings?.aboutPage?.[uiLanguage]?.documentId || 'cTfhXcxtkgqYLE3k1P6JAR';
-  const videoSourceUrl = settings?.homepagePresentation?.[uiLanguage]?.video?.sourceUrl || 'https://cdn.openmusic.academy/document-media/cTfhXcxtkgqYLE3k1P6JAR/oma-explainer-vs1-0-pDjYtJexVC91WfrtWnu6hh.mp4';
-  const videoPosterImageUrl = settings?.homepagePresentation?.[uiLanguage]?.video?.posterImageUrl || 'https://cdn.openmusic.academy/document-media/cTfhXcxtkgqYLE3k1P6JAR/explainer-poster-4c1tzNXqJyFbSYwaBL5EDz.jpg';
+  const homepageSettings = settings?.homepagePresentation?.[uiLanguage];
+  const aboutDocumentUrl = homepageSettings?.aboutDocumentId && routes.getDocUrl({ id: homepageSettings.aboutDocumentId });
+  const videoSourceUrl = homepageSettings?.videoSourceUrl && getAccessibleUrl({ url: homepageSettings.videoSourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const videoPosterImageUrl = homepageSettings?.posterImageSourceUrl && getAccessibleUrl({ url: homepageSettings.posterImageSourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   const handleLearnMoreClick = () => {
-    window.location = routes.getDocUrl({ id: aboutPageDocumentId });
+    window.location = aboutDocumentUrl;
   };
 
   const features = [
@@ -81,7 +86,7 @@ function HomepageProjectPresentation({ logo }) {
           {features.map(renderFeature)}
         </div>
 
-        {!!aboutPageDocumentId && (
+        {!!aboutDocumentUrl && (
           <Button size="large" onClick={handleLearnMoreClick}>{t('learnMore')}</Button>
         )}
       </div>
