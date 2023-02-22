@@ -1,33 +1,40 @@
 .HomepageTemplate {
-  display: flex;
-  flex-direction: column;
-  min-width: @edu-min-page-width;
   width: 100vw;
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-width: @edu-min-page-width;
 }
 
 .HomepageTemplate-aboveFold {
-  .m-page-content;
+  position: relative;
+  width: 100vw;
   height: 100vh;
-  min-height: 100vh;
-  padding-bottom: 0;
-  padding-top: @edu-page-content-padding;
-  flex: 1 0 0%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+}
 
-  @media @edu-media-phone {
-    padding-bottom: 0;
-  }
+.HomepageTemplate-foldDividerTop {
+  position: absolute;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  background-color: @edu-background-color-medium;
 }
 
 .HomepageTemplate-aboveFoldContent {
-  height: 100%;
+  .m-page-content;
+  flex: 1 0 auto;
+  margin: 0 auto;
   width: 100%;
   display: grid;
   gap: @edu-content-padding;
   grid-template-rows: 1fr auto 2fr;
+  align-content: center;
   max-width: @edu-content-width-narrow;
+  padding-top: @edu-page-content-padding;
 }
 
 .HomepageTemplate-logo {
@@ -58,6 +65,7 @@
 }
 
 .HomepageTemplate-underFold {
+  width: 100vw;
   display: grid;
   grid-auto-flow: row;
   place-items: center;
@@ -65,11 +73,28 @@
 
 .HomepageTemplate-underFoldStripe {
   width: 100%;
-  padding: 70px @edu-page-content-padding;
+  position: relative;
+  padding: @edu-page-content-padding;
 
-  &.HomepageTemplate-underFoldStripe--colorful {
+  &.HomepageTemplate-underFoldStripe--documents {
     background-color: @edu-background-color-medium;
   }
+
+  &.HomepageTemplate-underFoldStripe--project {
+    padding-bottom: 3 * @edu-page-content-padding;
+  }
+
+  &.HomepageTemplate-underFoldStripe--oer {
+    padding-top: 3 * @edu-page-content-padding;
+    padding-bottom: 3 * @edu-page-content-padding;
+    background-color: @edu-background-color-medium;
+  }
+}
+
+.HomepageTemplate-foldDividerBottom {
+  position: absolute;
+  width: 100vw;
+  left: 0;
 }
 
 .HomepageTemplate-underFoldStripeContent {

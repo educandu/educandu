@@ -8,7 +8,9 @@ import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
 import HomepageDocumentCards from '../../../src/components/homepage/homepage-document-cards.js';
+import HomepageFoldDividerTop from '../../../src/components/homepage/homepage-fold-divider-top.js';
 import HomepageOerPresentation from '../../../src/components/homepage/homepage-oer-presentation.js';
+import HomepageFoldDividerBottom from '../../../src/components/homepage/homepage-fold-divider-bottom.js';
 import HomepageProjectPresentation from '../../../src/components/homepage/homepage-project-presentation.js';
 
 function HomepageTemplate({ children }) {
@@ -16,9 +18,9 @@ function HomepageTemplate({ children }) {
 
   return (
     <div className="HomepageTemplate">
-      <DefaultPageHeader />
       <main>
         <section className="HomepageTemplate-aboveFold">
+          <DefaultPageHeader />
           <div className="HomepageTemplate-aboveFoldContent">
             <div className="HomepageTemplate-pictogramSearch">
               <img src="/images/homepage-pictogram.svg" />
@@ -31,14 +33,20 @@ function HomepageTemplate({ children }) {
               {children}
             </div>
           </div>
+          <div className="HomepageTemplate-foldDividerTop">
+            <HomepageFoldDividerTop />
+          </div>
         </section>
         <section className="HomepageTemplate-underFold">
-          <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--colorful">
+          <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--documents">
             <div className="HomepageTemplate-underFoldStripeContent">
               <HomepageDocumentCards />
             </div>
+            <div className="HomepageTemplate-foldDividerBottom">
+              <HomepageFoldDividerBottom />
+            </div>
           </div>
-          <div className="HomepageTemplate-underFoldStripe">
+          <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--project">
             <div className="HomepageTemplate-underFoldStripeContent">
               <HomepageProjectPresentation
                 logo={
@@ -49,7 +57,7 @@ function HomepageTemplate({ children }) {
                 />
             </div>
           </div>
-          <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--colorful">
+          <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--oer">
             <div className="HomepageTemplate-underFoldStripeContent">
               <HomepageOerPresentation />
             </div>
