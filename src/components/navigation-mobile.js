@@ -12,9 +12,10 @@ import MenuIcon from './icons/main-menu/menu-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
+import LanguageIcon from './icons/main-menu/language-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
-import { CloseOutlined, FormOutlined, GlobalOutlined } from '@ant-design/icons';
+import { CloseOutlined, DownOutlined, UpOutlined, FormOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -27,6 +28,7 @@ function NavigationMobile() {
 
   const helpPage = settings?.helpPage?.[uiLanguage];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isLanguageMenuExpanded, setIsLanguageMenuExpanded] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(uiLanguage);
 
   const handleMenuClick = () => {
@@ -49,6 +51,10 @@ function NavigationMobile() {
     window.location = routes.getLogoutUrl();
   };
 
+  const handleLanguageCollapseChange = activeKeys => {
+    setIsLanguageMenuExpanded(!!activeKeys.length);
+  };
+
   const handleLanguageChange = languageCode => {
     i18n.changeLanguage(languageCode);
     setSelectedLanguageCode(languageCode);
@@ -69,10 +75,11 @@ function NavigationMobile() {
 
   const renderLanguageItem = () => {
     const languagesData = supportedUiLanguages.map(l => languageDataProvider.getLanguageData(l, l));
+    const renderExpandIcon = () => isLanguageMenuExpanded ? <UpOutlined /> : <DownOutlined />;
 
     return (
-      <Collapse ghost expandIconPosition="end" className="NavigationMobile-drawerLanguageItem">
-        <Panel header={<div className="NavigationMobile-drawerContentItem"><GlobalOutlined />{t('common:language')}</div>}>
+      <Collapse ghost expandIconPosition="end" expandIcon={renderExpandIcon} onChange={handleLanguageCollapseChange} className="NavigationMobile-drawerLanguageItem">
+        <Panel header={<div className="NavigationMobile-drawerContentItem"><LanguageIcon />{t('common:language')}</div>}>
           <div className="NavigationMobile-drawerContentItemChildren">
             {languagesData.map(languageData => (
               <div

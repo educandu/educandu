@@ -51,6 +51,20 @@
   grid-auto-flow: column;
 }
 
+.NavigationDesktop-menuButton {
+  gap: 10px;
+  display: grid;
+  cursor: pointer;
+  align-items: center;
+  grid-auto-flow: column;
+}
+
+.NavigationDesktop-menuChevron {
+  padding-right: 10px;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+}
+
 .NavigationDesktop-anonymousUser {
   display: grid;
   gap: 10px;
@@ -59,20 +73,4 @@
 
 .NavigationDesktop-anonymousUserLink {
   text-decoration: none;
-}
-
-.NavigationDesktop-authenticatedUser {
-  display: grid;
-  align-items: center;
-  place-content: start;
-  grid-auto-flow: column;
-}
-
-.NavigationDesktop-authenticatedUserMenuOption {
-  display: grid;
-  gap: 10px;
-  margin: 2px 0;
-  align-items: center;
-  place-content: start;
-  grid-auto-flow: column;
 }

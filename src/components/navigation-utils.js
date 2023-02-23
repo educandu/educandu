@@ -12,42 +12,42 @@ export const getCommonNavigationMenuItems = ({ t, user, helpPage }) => {
     {
       key: 'dashboard',
       label: t('pageNames:dashboard'),
-      icon: <DashboardIcon />,
+      icon: <div><DashboardIcon /></div>,
       onClick: () => { window.location = routes.getDashboardUrl(); },
       showWhen: !!user
     },
     {
       key: 'profile',
       label: t('pageNames:userProfile'),
-      icon: <UsersIcon />,
+      icon: <div><UsersIcon /></div>,
       onClick: () => { window.location = routes.getUserProfileUrl(user._id); },
       showWhen: !!user
     },
     {
       key: 'settings',
       label: t('common:settings'),
-      icon: <SettingsIcon />,
+      icon: <div><SettingsIcon /></div>,
       onClick: () => { window.location = routes.getDashboardUrl({ tab: 'settings' }); },
       showWhen: !!user
     },
     {
       key: 'redaction',
       label: t('pageNames:redaction'),
-      icon: <EditIcon />,
+      icon: <div><EditIcon /></div>,
       onClick: () => { window.location = routes.getRedactionUrl(); },
       showWhen: hasUserPermission(user, permissions.MANAGE_CONTENT)
     },
     {
       key: 'admin',
       label: t('pageNames:admin'),
-      icon: <ControlOutlined />,
+      icon: <div><ControlOutlined /></div>,
       onClick: () => { window.location = routes.getAdminUrl(); },
       showWhen: hasUserPermission(user, permissions.ADMIN)
     },
     {
       key: 'help',
       label: helpPage?.linkTitle,
-      icon: <QuestionOutlined />,
+      icon: <div><QuestionOutlined /></div>,
       onClick: () => { window.location = helpPage ? routes.getDocUrl({ id: helpPage.documentId }) : ''; },
       showWhen: !!helpPage?.documentId
     }
