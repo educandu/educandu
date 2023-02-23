@@ -32,7 +32,7 @@
 
 .NavigationMobile-drawerContentItems {
   display: grid;
-  gap: 25px;
+  gap: 10px;
   place-items: start;
   grid-auto-flow: row;
   margin-bottom: 15px;
@@ -40,10 +40,12 @@
 
 .NavigationMobile-drawerContentItem {
   display: grid;
+  width: 100%;
   align-items: center;
   place-content: start;
   grid-auto-flow: column;
   gap: @edu-content-padding;
+  padding: 10px 0;
 }
 
 .NavigationMobile-drawerLanguageItem {
@@ -55,16 +57,19 @@
 }
 
 .NavigationMobile-drawerContentItemChildren {
-  padding-top: 10px;
   display: grid;
   grid-auto-flow: row;
   place-items: start;
-  gap: 25px;
+  gap: 10px;
   padding-left: @edu-content-padding;
 }
 
 .NavigationMobile-languageMenuItem {
+  width: 100%;
+  padding: 10px;
+
   &.is-selected {
-    border-bottom: 1px solid @edu-border-color-base;
+    background-color: @edu-background-color-light;
+    border-radius: @edu-border-radius-base;
   }
 }
