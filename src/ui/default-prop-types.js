@@ -84,6 +84,12 @@ export const settingsShape = PropTypes.shape({
   announcement: announcementShape
 });
 
+export const settingsHomepagePresentationPerLanguageShape = PropTypes.shape({
+  videoSourceUrl: PropTypes.string,
+  posterImageSourceUrl: PropTypes.string,
+  aboutDocumentId: PropTypes.string
+});
+
 export const settingsProps = {
   settings: settingsShape.isRequired
 };

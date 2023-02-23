@@ -1,0 +1,102 @@
+.HomepageTemplate {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-width: @edu-min-page-width;
+}
+
+.HomepageTemplate-main {
+  width: 100%;
+}
+
+.HomepageTemplate-aboveFold {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.HomepageTemplate-foldDividerTop {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  background-color: @edu-background-color-medium;
+  z-index: @edu-z-index-background-layer;
+}
+
+.HomepageTemplate-aboveFoldContent {
+  .m-page-content;
+  flex: 1 0 auto;
+  width: 100%;
+  display: grid;
+  gap: @edu-content-padding;
+  grid-template-rows: auto 1fr;
+  align-content: center;
+  max-width: @edu-content-width-narrow;
+  margin: 10% auto 0 auto;
+}
+
+.HomepageTemplate-logo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+
+.HomepageTemplate-presentationLogo {
+  display: flex;
+  justify-content: center;
+  width: 80px;
+  aspect-ratio: 1;
+}
+
+.HomepageTemplate-subtitle {
+  font-size: @edu-font-size-xl;
+  font-weight: 300;
+  text-align: center;
+}
+
+.HomepageTemplate-underFold {
+  width: 100%;
+  display: grid;
+  grid-auto-flow: row;
+  place-items: center;
+  z-index: @edu-z-index-background-layer;
+}
+
+.HomepageTemplate-underFoldStripe {
+  width: 100%;
+  position: relative;
+  padding: @edu-page-content-padding;
+
+  &.HomepageTemplate-underFoldStripe--documents {
+    background-color: @edu-background-color-medium;
+  }
+
+  &.HomepageTemplate-underFoldStripe--project {
+    padding-bottom: 3 * @edu-page-content-padding;
+  }
+
+  &.HomepageTemplate-underFoldStripe--oer {
+    padding-top: 3 * @edu-page-content-padding;
+    padding-bottom: 3 * @edu-page-content-padding;
+    background-color: @edu-background-color-medium;
+  }
+}
+
+.HomepageTemplate-foldDividerBottom {
+  position: absolute;
+  width: 100%;
+  left: 0;
+}
+
+.HomepageTemplate-underFoldStripeContent {
+  width: 100%;
+  margin: 0 auto;
+  max-width: @edu-content-width-wide;
+}

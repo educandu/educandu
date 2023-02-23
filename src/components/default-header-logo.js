@@ -7,8 +7,6 @@ export default function DefaultHeaderLogo() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 354.33072 354.33072"
       version="1.1"
-      height="50"
-      width="50"
       >
       <g>
         <path

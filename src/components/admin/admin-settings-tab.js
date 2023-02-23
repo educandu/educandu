@@ -17,6 +17,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
+import HomepagePresentationSettings from './homepage-presentation-settings.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
 const logger = new Logger(import.meta.url);
@@ -62,12 +63,16 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     handleChange('consentText', value);
   }, [handleChange]);
 
+  const handleHomepageTagsChange = useCallback(value => {
+    handleChange('homepageTags', value);
+  }, [handleChange]);
+
   const handleHomepageDocumentsChange = useCallback(value => {
     handleChange('homepageDocuments', value);
   }, [handleChange]);
 
-  const handleHomepageTagsChange = useCallback(value => {
-    handleChange('homepageTags', value);
+  const handleHomepagePresentationChange = useCallback(value => {
+    handleChange('homepagePresentation', value);
   }, [handleChange]);
 
   const handleTemplateDocumentChange = useCallback(documentId => {
@@ -127,15 +132,20 @@ function AdminSettingsTab({ onDirtyStateChange }) {
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
+            <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
+            <HomepageTags tags={settings.homepageTags} onChange={handleHomepageTagsChange} />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageDocumentsHeader')} key="homepageDocuments">
             <div className="AdminSettingsTab-collapseInfo">{t('homepageDocumentsInfo')}</div>
             <HomepageDocuments documentIds={settings.homepageDocuments} onChange={handleHomepageDocumentsChange} />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
-            <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
-            <HomepageTags tags={settings.homepageTags} onChange={handleHomepageTagsChange} />
+          <Collapse.Panel header={t('homepagePresentationHeader')} key="homepagePresentation">
+            <HomepagePresentationSettings settings={settings.homepagePresentation} onChange={handleHomepagePresentationChange} />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">

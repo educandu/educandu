@@ -1,0 +1,17 @@
+homepageOerPresentation:
+  headline:
+    en: Become part of the OER community!
+    de: Werde Teil der OER-Community!
+  descriptionMarkdown:
+    en: |
+      Our goal is to create a community project that is carried and supported by as many people around the world as possible.
+      If you are inspired by the idea of free learning and of an open learning platform, then join our community for **free**.
+    de: |
+      Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.
+      Wenn du von der Idee des kostenlosen Lernens und einer offenen Lernplattform begeistert bist und selbst Inhalte generieren möchtest, tritt unserer Community **kostenlos** bei.
+  signUp:
+    en: Sign up for your free account
+    de: Jetzt kostenlos registrieren
+  logIn:
+    en: Already have an account? Log in
+    de: Du hast schon ein Konto? Anmelden

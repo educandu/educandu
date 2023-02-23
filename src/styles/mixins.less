@@ -414,12 +414,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  font-size: 25px;
+  font-size: 60px;
   color: @edu-white;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.4);
+  opacity: 0.9;
+}
+
+.m-video-play-overlay {
+  .m-mask;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .m-user-form-title {
@@ -446,4 +452,24 @@
   font-style: italic;
   font-size: @edu-font-size-sm;
   padding-bottom: 5px;
+}
+
+.m-homepage-section {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 50px;
+  place-items: center
+}
+
+.m-homepage-headline {
+  font-weight: 300;
+  text-align: center;
+  font-size: @edu-heading-1-size;
+  line-height: 160%;
+}
+
+.m-homepage-description {
+  max-width: @edu-content-width-narrow;
+  line-height: 160%;
+  text-align: center;
 }

@@ -18,7 +18,7 @@ function Index({ HomePageTemplate, initialState }) {
 
   const renderTag = tag => {
     return (
-      <div key={tag}>
+      <div key={tag} className="IndexPage-searchesTag">
         <Tag className="Tag Tag--clickable" onClick={() => handleTagClick(tag)}>{tag}</Tag>
       </div>
     );
@@ -29,9 +29,11 @@ function Index({ HomePageTemplate, initialState }) {
       <div className="IndexPage">
         <SearchBar onSearch={handleSearch} autoFocus />
         {!!initialState.tags?.length && (
-          <div className="IndexPage-searches">
+          <div className="IndexPage-searchesWrapper">
             <div className="IndexPage-searchesLabel">{t('recommendedSearches')}:</div>
-            {initialState.tags.map(renderTag)}
+            <div className="IndexPage-searches">
+              {initialState.tags.map(renderTag)}
+            </div>
           </div>
         )}
       </div>

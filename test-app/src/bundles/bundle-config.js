@@ -1,5 +1,5 @@
-import SiteLogo from './site-logo.js';
-import HomePageTemplate from './home-page-template.js';
+import HomepageTemplate from './homepage-template.js';
+import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import DefaultPageTemplate from '../../../src/components/default-page-template.js';
 
 export default {
@@ -7,9 +7,9 @@ export default {
     return DefaultPageTemplate;
   },
   getHomePageTemplateComponent() {
-    return HomePageTemplate;
+    return HomepageTemplate;
   },
   getSiteLogoComponent() {
-    return SiteLogo;
+    return DefaultSiteLogo;
   }
 };

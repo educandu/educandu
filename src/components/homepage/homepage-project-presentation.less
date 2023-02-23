@@ -1,0 +1,55 @@
+.HomepageProjectPresentation {}
+
+
+.HomepageProjectPresentation-description {
+  .m-homepage-description;
+}
+
+.HomepageProjectPresentation-videoWrapper {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/images/homepage-video-icons.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.HomepageProjectPresentation-video {
+  width: 60%;
+  border-radius: 15px;
+  border: 14px solid @edu-primary-color-light;
+}
+
+.HomepageProjectPresentation-details {
+  .m-homepage-section;
+}
+
+.HomepageProjectPresentation-logo {
+  display: flex;
+  justify-content: center;
+  width: 80px;
+  aspect-ratio: 1;
+}
+
+.HomepageProjectPresentation-features {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+}
+
+.HomepageProjectPresentation-feature {
+  display: grid;
+  gap: @edu-content-padding;
+  grid-auto-flow: column;
+  align-items: center;
+}
+
+.HomepageProjectPresentation-featureLabel {
+  .m-line-clamp(3);
+}
+
+.HomepageProjectPresentation-featureIcon {
+  font-size: 2 * @edu-font-size-base;
+}

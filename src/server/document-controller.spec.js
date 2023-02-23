@@ -14,6 +14,7 @@ describe('document-controller', () => {
 
   let clientDataMappingService;
   let documentService;
+  let settingService;
   let pageRenderer;
   let roomService;
 
@@ -42,6 +43,10 @@ describe('document-controller', () => {
       createProposedSections: sandbox.stub()
     };
 
+    settingService = {
+      getAllSettings: sandbox.stub()
+    };
+
     pageRenderer = {
       sendPage: sandbox.stub()
     };
@@ -58,7 +63,7 @@ describe('document-controller', () => {
       }
     };
 
-    sut = new DocumentController(documentService, roomService, clientDataMappingService, pageRenderer);
+    sut = new DocumentController(documentService, roomService, clientDataMappingService, settingService, pageRenderer);
   });
 
   afterEach(() => {

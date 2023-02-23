@@ -1,0 +1,52 @@
+.HomepageDocumentCards {
+  .m-homepage-section;
+}
+
+.HomepageDocumentCards-headline {
+  .m-homepage-headline;
+}
+
+.HomepageDocumentCards-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.HomepageDocumentCards-card {
+  width: 300px;
+  margin: 15px;
+}
+
+.HomepageDocumentCards-cardTitle {
+  font-size: @edu-font-size-base;
+  font-weight: bold;
+  .m-overflow-ellipsis;
+}
+
+.HomepageDocumentCards-cardContent {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: @edu-font-size-sm;
+}
+
+.HomepageDocumentCards-cardContentDescription {
+  .m-line-clamp(3);
+}
+
+.HomepageDocumentCards-cardContentDate {
+  color: @edu-text-color-secondary;
+}
+
+.HomepageDocumentCards-cardFavoriteAction {
+  display: flex;
+  justify-content: center;
+}
+
+.HomepageDocumentCards-cardUserAction {
+  &:hover {
+    cursor: default;
+    color: @edu-text-color;
+  }
+}

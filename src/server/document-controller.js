@@ -7,6 +7,8 @@ import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
+import { shuffleItems } from '../utils/array-utils.js';
+import SettingService from '../services/setting-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -33,9 +35,10 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer]; }
 
-  constructor(documentService, roomService, clientDataMappingService, pageRenderer) {
+  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer) {
+    this.settingService = settingService;
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
@@ -133,6 +136,21 @@ class DocumentController {
     const mappedDocumentsTitles = documentsMetadata.map(doc => ({ _id: doc._id, title: doc.title }));
 
     return res.send({ documents: mappedDocumentsTitles });
+  }
+
+  async handleGetDocsForHomepage(req, res) {
+    const settings = await this.settingService.getAllSettings();
+
+    const shuffledDocumentIds = shuffleItems(settings.homepageDocuments || []);
+    const idsOfDocumentsToShow = shuffledDocumentIds.slice(0, 3);
+    let mappedDocuments = [];
+
+    if (idsOfDocumentsToShow.length) {
+      const documents = await this.documentService.getDocumentsExtendedMetadataByIds(idsOfDocumentsToShow);
+      mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents);
+    }
+
+    return res.send({ documents: mappedDocuments });
   }
 
   async handleGetDocumentsByContributingUser(req, res) {
@@ -344,6 +362,11 @@ class DocumentController {
       '/api/v1/docs/titles',
       [needsPermission(permissions.VIEW_DOCS), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
       (req, res) => this.handleGetSearchableDocsTitles(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/homepage',
+      (req, res) => this.handleGetDocsForHomepage(req, res)
     );
 
     router.get(

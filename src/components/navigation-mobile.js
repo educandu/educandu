@@ -9,13 +9,11 @@ import { Button, Collapse, Drawer } from 'antd';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import UsersIcon from './icons/main-menu/users-icon.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
-import LogoutIcon from './icons/main-menu/logout-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
+import { CloseOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import LanguageDataProvider from '../localization/language-data-provider.js';
-import { CloseOutlined, DownOutlined, UpOutlined, FormOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -117,14 +115,14 @@ function NavigationMobile() {
     if (!user) {
       return (
         <div className="NavigationMobile-anonymousUserButtons">
-          <Button size="large" type="primary" icon={<UsersIcon />} onClick={handleLogInClick}>{t('common:logIn')}</Button>
-          <Button size="large" icon={<FormOutlined />} onClick={handleRegisterClick}>{t('common:register')}</Button>
+          <Button size="large" type="primary" onClick={handleLogInClick}>{t('common:logIn')}</Button>
+          <Button size="large" onClick={handleRegisterClick}>{t('common:register')}</Button>
         </div>
       );
     }
 
     return (
-      <Button size="large" icon={<LogoutIcon />} onClick={handleLogOutClick}>{t('common:logOut')}</Button>
+      <Button size="large" onClick={handleLogOutClick}>{t('common:logOut')}</Button>
     );
   };
 

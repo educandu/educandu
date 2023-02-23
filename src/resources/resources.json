@@ -12,6 +12,14 @@
       "en": "Consent text",
       "de": "Zustimmungstext"
     },
+    "homepageTagsHeader": {
+      "en": "Homepage recommended tags",
+      "de": "Empfohlene Tags auf der Homepage"
+    },
+    "homepageTagsInfo": {
+      "en": "These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.",
+      "de": "Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen."
+    },
     "homepageDocumentsHeader": {
       "en": "Homepage documents pool",
       "de": "Homepage-Dokumente-Fundus"
@@ -20,13 +28,9 @@
       "en": "From this list, 3 documents are randomly selected and displayed on the homepage.",
       "de": "Aus dieser Liste werden 3 zufällig ausgewählte Dokumente auf der Homepage angezeigt."
     },
-    "homepageTagsHeader": {
-      "en": "Homepage recommended tags",
-      "de": "Empfohlene Tags auf der Homepage"
-    },
-    "homepageTagsInfo": {
-      "en": "These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.",
-      "de": "Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen."
+    "homepagePresentationHeader": {
+      "en": "Homepage presentation",
+      "de": "Homepage-Präsentation"
     },
     "helpPageHeader": {
       "en": "Help page",
@@ -69,6 +73,16 @@
     "announcementType_warning": {
       "en": "warning",
       "de": "Warnung"
+    }
+  },
+  "homepagePresentationSettings": {
+    "videoSourceUrl": {
+      "en": "Video source",
+      "de": "Video-Quelle"
+    },
+    "aboutDocument": {
+      "en": "'About' document\n",
+      "de": "'Über' Dokument\n"
     }
   },
   "settingsDocumentsTable": {
@@ -857,6 +871,84 @@
     "tooltip": {
       "en": "Document versions",
       "de": "Dokumentversionen"
+    }
+  },
+  "homepageDocumentCards": {
+    "headline": {
+      "en": "Popular documents",
+      "de": "Beliebte Dokumente"
+    },
+    "contributorsTooltipPrefix": {
+      "en": "Contributions by",
+      "de": "Beiträge von"
+    }
+  },
+  "homepageOerPresentation": {
+    "headline": {
+      "en": "Become part of the OER community!",
+      "de": "Werde Teil der OER-Community!"
+    },
+    "descriptionMarkdown": {
+      "en": "Our goal is to create a community project that is carried and supported by as many people around the world as possible.\nIf you are inspired by the idea of free learning and of an open learning platform, then join our community for **free**.\n",
+      "de": "Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.\nWenn du von der Idee des kostenlosen Lernens und einer offenen Lernplattform begeistert bist und selbst Inhalte generieren möchtest, tritt unserer Community **kostenlos** bei.\n"
+    },
+    "signUp": {
+      "en": "Sign up for your free account",
+      "de": "Jetzt kostenlos registrieren"
+    },
+    "logIn": {
+      "en": "Already have an account? Log in",
+      "de": "Du hast schon ein Konto? Anmelden"
+    }
+  },
+  "homepageProjectPresentation": {
+    "descriptionMarkdown": {
+      "en": "**Educandu** is the open platform for learning and teaching.\nAnd everyone can contribute and make their knowledge availabe as open educational resources (OER) under a Creative Commons license.\nSimple, intuitive and free, with features developed specifically for teaching:\n",
+      "de": "**Educandu** ist die Platform für digitales Lernen und Unerrichten.\nUnd jeder kann mitmachen und kann sein Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos, mit speziell für das Unterrichten entwickelten Features:\n"
+    },
+    "mediaFeature": {
+      "en": "Video and audio with interactive options",
+      "de": "Video und Audio mit interaktiven Möglichkeiten"
+    },
+    "earTrainingFeature": {
+      "en": "Online ear training tasks",
+      "de": "Online-Gehörbildungsaufgaben"
+    },
+    "multitrackFeature": {
+      "en": "Multitrack music player",
+      "de": "Mehrspur-Musikplayer"
+    },
+    "pdfFeature": {
+      "en": "Embedded PDF viewer",
+      "de": "Eingebauter PDF-Viewer"
+    },
+    "analysisFeature": {
+      "en": "Music and movie analysis tool",
+      "de": "Musik- und Filmanalysetool"
+    },
+    "textFeature": {
+      "en": "Easy text editing and formatting",
+      "de": "Einfache Texteingabe und -formatierung"
+    },
+    "imageFeature": {
+      "en": "Images, galleries and slideshows",
+      "de": "Bilder, Galerien und Slideshows"
+    },
+    "roomFeature": {
+      "en": "Private rooms",
+      "de": "Private Räume"
+    },
+    "notationFeature": {
+      "en": "Online notation",
+      "de": "Online-Notation"
+    },
+    "gamificationnFeature": {
+      "en": "...and of course a little gamification!",
+      "de": "...und natürlich ein wenig Gamification!"
+    },
+    "learnMore": {
+      "en": "Learn more",
+      "de": "Mehr erfahren"
     }
   },
   "imageEditor": {
