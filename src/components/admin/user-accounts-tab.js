@@ -21,6 +21,7 @@ import { Table, Tabs, Select, Radio, message, Tag, Modal } from 'antd';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
+import { ROLE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -40,6 +41,7 @@ const BATCH_ACTION_TYPE = {
   assignStoragePlan: 'assign-storage-plan'
 };
 
+const DEFAULT_BATCH_ROLE = ROLE.user;
 const DEFAULT_BATCH_ACTION_TYPE = BATCH_ACTION_TYPE.assignRoles;
 
 function createTableItemSubsets(users, externalAccounts, storagePlans) {
@@ -121,7 +123,6 @@ function UserAccountsTab() {
   const [externalAccounts, setExternalAccounts] = useState([]);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const [currentBatchRoles, setCurrentBatchRoles] = useState([]);
   const [selectedAccountKeys, setSelectedAccountKeys] = useState([]);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
@@ -129,6 +130,7 @@ function UserAccountsTab() {
   const [currentBatchStoragePlan, setCurrentBatchStoragePlan] = useState(null);
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
   const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
+  const [currentBatchRoles, setCurrentBatchRoles] = useState([DEFAULT_BATCH_ROLE]);
   const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
   const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
   const [isBatchProcessingModalOpen, setIsBatchProcessingModalOpen] = useState(false);
@@ -353,7 +355,7 @@ function UserAccountsTab() {
 
   const handleProcessAllSelectedItems = () => {
     setCurrentBatchActionType(DEFAULT_BATCH_ACTION_TYPE);
-    setCurrentBatchRoles([]);
+    setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
     setCurrentBatchStoragePlan(null);
     setIsBatchProcessingModalOpen(true);
   };
@@ -364,7 +366,7 @@ function UserAccountsTab() {
     if (newBatchAction === BATCH_ACTION_TYPE.assignRoles) {
       setCurrentBatchStoragePlan(null);
     } else {
-      setCurrentBatchRoles([]);
+      setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
     }
   };
 

@@ -16,7 +16,9 @@ export const ROLES_SELECT_DISPLAY = {
 function RolesSelect({ display, value, onChange }) {
   const handleChange = (role, checked) => {
     const newRoles = checked ? ensureIsIncluded(value, role) : ensureIsExcluded(value, role);
-    onChange(newRoles);
+    if (newRoles.length) {
+      onChange(newRoles);
+    }
   };
 
   return (
