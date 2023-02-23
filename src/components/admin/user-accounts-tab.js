@@ -1,5 +1,4 @@
 import by from 'thenby';
-import prettyBytes from 'pretty-bytes';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
@@ -7,33 +6,43 @@ import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
-import { ROLE } from '../../domain/constants.js';
+import EditIcon from '../icons/general/edit-icon.js';
+import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import UserRoleTagEditor from './user-role-tag-editor.js';
+import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import { Table, Tabs, Select, Radio, message, Tag } from 'antd';
-import { useDateFormat, useLocale } from '../locale-context.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import RolesSelect, { ROLES_SELECT_DISPLAY } from './roles-select.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
+import { Table, Tabs, Select, Radio, message, Tag, Modal } from 'antd';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
+import { ROLE } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
-const { Option } = Select;
 const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 const TABLE = {
   activeAccounts: 'active-accounts',
-  unconfirmedAccounts: 'unconfirmed-accounts',
+  closedAccounts: 'closed-accounts',
   externalAccounts: 'external-accounts',
-  accountsWithStorage: 'accounts-with-storage',
-  closedAccounts: 'closed-accounts'
+  unconfirmedAccounts: 'unconfirmed-accounts',
+  accountsWithStorage: 'accounts-with-storage'
 };
+
+const BATCH_ACTION_TYPE = {
+  assignRoles: 'assign-roles',
+  assignStoragePlan: 'assign-storage-plan'
+};
+
+const DEFAULT_BATCH_ROLE = ROLE.user;
+const DEFAULT_BATCH_ACTION_TYPE = BATCH_ACTION_TYPE.assignRoles;
 
 function createTableItemSubsets(users, externalAccounts, storagePlans) {
   const accountTableItemsById = new Map();
@@ -101,7 +110,6 @@ const filterTableItems = (items, filterText) => {
 };
 
 function UserAccountsTab() {
-  const { locale } = useLocale();
   const executingUser = useUser();
   const { formatDate } = useDateFormat();
   const [users, setUsers] = useState([]);
@@ -111,18 +119,23 @@ function UserAccountsTab() {
   const [isLoading, setIsLoading] = useState(false);
   const [storagePlans, setStoragePlans] = useState([]);
   const [usersById, setUsersById] = useState(new Map());
+  const [isBatchSaving, setIsBatchSaving] = useState(false);
   const [externalAccounts, setExternalAccounts] = useState([]);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const [selectedAccountKeys, setSelectedAccountKeys] = useState([]);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
   const [accountTableItemsById, setAccountTableItemsById] = useState([]);
+  const [currentBatchStoragePlan, setCurrentBatchStoragePlan] = useState(null);
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
   const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
-  const [selectedActiveAccountKeys, setSelectedActiveAccountKeys] = useState([]);
+  const [currentBatchRoles, setCurrentBatchRoles] = useState([DEFAULT_BATCH_ROLE]);
   const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
   const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
+  const [isBatchProcessingModalOpen, setIsBatchProcessingModalOpen] = useState(false);
   const [accountsWithStorageTableItems, setAccountsWithStorageTableItems] = useState([]);
+  const [currentBatchActionType, setCurrentBatchActionType] = useState(DEFAULT_BATCH_ACTION_TYPE);
 
   const refreshData = useCallback(async () => {
     try {
@@ -154,24 +167,66 @@ function UserAccountsTab() {
     setActiveAccountsTableItems(filterTableItems(tableItemSubsets.activeAccountsTableItems, filterText));
     setClosedAccountsTableItems(filterTableItems(tableItemSubsets.closedAccountsTableItems, filterText));
     setExternalAccountsTableItems(filterTableItems(tableItemSubsets.externalAccountsTableItems, filterText));
+    setSelectedAccountKeys(oldKeys => oldKeys.filter(key => tableItemSubsets.accountTableItemsById.has(key)));
     setPendingAccountsTableItems(filterTableItems(tableItemSubsets.unconfirmedAccountsTableItems, filterText));
     setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
-    setSelectedActiveAccountKeys(oldKeys => oldKeys.filter(key => tableItemSubsets.accountTableItemsById.has(key)));
   }, [users, externalAccounts, storagePlans, filterText]);
 
-  const handleUserRolesChange = async (userId, newRoles) => {
+  const changeUserRole = async (userId, newRoles, isBatch) => {
     setIsSaving(true);
     setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, roles: newRoles } : user));
 
+    let errorThrown = null;
     try {
       await userApiClient.saveUserRoles({ userId, roles: newRoles });
-      message.success({ content: t('common:changesSavedSuccessfully') });
+      if (!isBatch) {
+        message.success({ content: t('common:changesSavedSuccessfully') });
+      }
     } catch (error) {
-      handleApiError({ error, logger, t });
-      refreshData();
+      errorThrown = error;
     } finally {
       setIsSaving(false);
     }
+
+    if (errorThrown) {
+      if (isBatch) {
+        throw errorThrown;
+      } else {
+        handleApiError({ error: errorThrown, logger, t });
+        refreshData();
+      }
+    }
+  };
+
+  const changeStoragePlan = async (userId, newStoragePlanId, isBatch) => {
+    setIsSaving(true);
+    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: { ...user.storage, plan: newStoragePlanId } } : user));
+
+    let errorThrown = null;
+    try {
+      const updatedStorage = await userApiClient.saveUserStoragePlan({ userId, storagePlanId: newStoragePlanId || null });
+      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
+      if (!isBatch) {
+        message.success({ content: t('common:changesSavedSuccessfully') });
+      }
+    } catch (error) {
+      errorThrown = error;
+    } finally {
+      setIsSaving(false);
+    }
+
+    if (errorThrown) {
+      if (isBatch) {
+        throw errorThrown;
+      } else {
+        handleApiError({ error: errorThrown, logger, t });
+        refreshData();
+      }
+    }
+  };
+
+  const handleUserRolesChange = (userId, newRoles) => {
+    return changeUserRole(userId, newRoles, false);
   };
 
   const handleUserAccountLockedOnChange = async (userId, newAccountLockedOn) => {
@@ -205,20 +260,8 @@ function UserAccountsTab() {
     }
   };
 
-  const handleStoragePlanChange = async (userId, newStoragePlanId) => {
-    setIsSaving(true);
-    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: { ...user.storage, plan: newStoragePlanId } } : user));
-
-    try {
-      const updatedStorage = await userApiClient.saveUserStoragePlan({ userId, storagePlanId: newStoragePlanId || null });
-      setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
-      message.success({ content: t('common:changesSavedSuccessfully') });
-    } catch (error) {
-      handleApiError({ error, logger, t });
-      refreshData();
-    } finally {
-      setIsSaving(false);
-    }
+  const handleStoragePlanChange = (userId, newStoragePlanId) => {
+    return changeStoragePlan(userId, newStoragePlanId);
   };
 
   const handleAddReminderClick = async userId => {
@@ -310,6 +353,55 @@ function UserAccountsTab() {
     });
   };
 
+  const handleProcessAllSelectedItems = () => {
+    setCurrentBatchActionType(DEFAULT_BATCH_ACTION_TYPE);
+    setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
+    setCurrentBatchStoragePlan(null);
+    setIsBatchProcessingModalOpen(true);
+  };
+
+  const handleCurrentBatchActionTypeChange = event => {
+    const newBatchAction = event.target.value;
+    setCurrentBatchActionType(newBatchAction);
+    if (newBatchAction === BATCH_ACTION_TYPE.assignRoles) {
+      setCurrentBatchStoragePlan(null);
+    } else {
+      setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
+    }
+  };
+
+  const handleBatchProcessingModalCancel = () => {
+    setIsBatchProcessingModalOpen(false);
+  };
+
+  const handleBatchProcessingModalOk = async () => {
+    let actionExecutor;
+    switch (currentBatchActionType) {
+      case BATCH_ACTION_TYPE.assignRoles:
+        actionExecutor = userId => changeUserRole(userId, currentBatchRoles, true);
+        break;
+      case BATCH_ACTION_TYPE.assignStoragePlan:
+        actionExecutor = userId => changeStoragePlan(userId, currentBatchStoragePlan, true);
+        break;
+      default:
+        throw new Error(`Invalid batch action type ${currentBatchActionType}`);
+    }
+
+    try {
+      setIsBatchSaving(true);
+      for (const userId of selectedAccountKeys) {
+        await actionExecutor(userId);
+      }
+      message.success({ content: t('common:changesSavedSuccessfully') });
+      setIsBatchProcessingModalOpen(false);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      refreshData();
+    } finally {
+      setIsBatchSaving(false);
+    }
+  };
+
   const renderDisplayName = (_, item) => {
     return <a href={routes.getUserProfileUrl(item.key)}>{item.displayName}</a>;
   };
@@ -325,18 +417,13 @@ function UserAccountsTab() {
   };
 
   const renderRoleTags = (_, item) => {
-    const userId = item.key;
-
-    return Object.values(ROLE).map(role => {
-      return (
-        <UserRoleTagEditor
-          key={role}
-          roleName={role}
-          userRoles={item.roles}
-          onRoleChange={newRoles => handleUserRolesChange(userId, newRoles)}
-          />
-      );
-    });
+    return (
+      <RolesSelect
+        display={ROLES_SELECT_DISPLAY.inline}
+        value={item.roles}
+        onChange={newRoles => handleUserRolesChange(item.key, newRoles)}
+        />
+    );
   };
 
   const renderAccountLockedOn = (_, item) => {
@@ -354,22 +441,11 @@ function UserAccountsTab() {
     const userId = item.key;
 
     return (
-      <Select
-        className="UserAccountsTab-storagePlanSelect"
-        placeholder={t('selectPlan')}
+      <StoragePlanSelect
+        storagePlans={storagePlans}
         value={item.storage.planId}
-        onChange={newStoragePlanId => handleStoragePlanChange(userId, newStoragePlanId)}
-        allowClear
-        >
-        {storagePlans.map(plan => (
-          <Option key={plan._id} value={plan._id} label={plan.name}>
-            <div className="UserAccountsTab-storagePlanOption">
-              <div>{plan.name}</div>
-              <div className="UserAccountsTab-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
-            </div>
-          </Option>
-        ))}
-      </Select>
+        onChange={newPlanId => handleStoragePlanChange(userId, newPlanId)}
+        />
     );
   };
 
@@ -629,71 +705,54 @@ function UserAccountsTab() {
     }
   ];
 
-  const activeAccountsRowSelection = {
-    selectedRowKeys: selectedActiveAccountKeys,
-    onChange: setSelectedActiveAccountKeys,
-    preserveSelectedRowKeys: true
-  };
+  const renderTable = (dataSource, columns, allowSelection) => {
+    const rowSelection = allowSelection
+      ? {
+        selectedRowKeys: selectedAccountKeys,
+        onChange: setSelectedAccountKeys,
+        preserveSelectedRowKeys: true
+      }
+      : null;
 
-  const renderTabChildren = (dataSource, columns, rowSelection = null) => (
-    <div className="Tabs-tabPane">
-      {!!rowSelection && (
-        <div className="UserAccountsTab-selectedItems">
-          {rowSelection.selectedRowKeys.map(key => (
-            <Tag
-              key={key}
-              closable
-              closeIcon={<CloseIcon />}
-              className="Tag Tag--selected"
-              onClose={() => rowSelection.onChange(ensureIsExcluded(rowSelection.selectedRowKeys, key))}
-              >
-              {accountTableItemsById.get(key).displayName}
-            </Tag>
-          ))}
-          {rowSelection.selectedRowKeys.length > 1 && (
-            <a className="UserAccountsTab-deselectItemsLink" onClick={() => rowSelection.onChange([])}>
-              <CloseIcon />
-              {t('common:removeAll')}
-            </a>
-          )}
-        </div>
-      )}
-      <Table
-        rowSelection={rowSelection}
-        dataSource={dataSource}
-        columns={columns}
-        size="middle"
-        loading={{ size: 'large', spinning: isLoading || isSaving, delay: 500 }}
-        bordered
-        />
-    </div>
-  );
+    return (
+      <div className="Tabs-tabPane">
+        <Table
+          rowSelection={rowSelection}
+          dataSource={dataSource}
+          columns={columns}
+          size="middle"
+          loading={{ size: 'large', spinning: isLoading || isSaving, delay: 500 }}
+          bordered
+          />
+      </div>
+    );
+  };
 
   const views = [
     {
       key: TABLE.activeAccounts,
       label: t('activeAccounts'),
-      tabContent: renderTabChildren(activeAccountsTableItems, activeAccountsTableColumns, activeAccountsRowSelection)
-    },
-    {
-      key: TABLE.unconfirmedAccounts,
-      label: t('unconfirmedAccounts'),
-      tabContent: renderTabChildren(unconfirmedAccountsTableItems, unconfirmedAccountsTableColumns)
-    },
-    {
-      key: TABLE.externalAccounts,
-      label: t('externalAccounts'),
-      tabContent: renderTabChildren(externalAccountsTableItems, externalAccountsTableColumns)
+      tabContent: renderTable(activeAccountsTableItems, activeAccountsTableColumns, true)
     },
     {
       key: TABLE.accountsWithStorage,
       label: t('accountsWithStorage'),
-      tabContent: renderTabChildren(accountsWithStorageTableItems, accountsWithStorageTableColumns)
+      tabContent: renderTable(accountsWithStorageTableItems, accountsWithStorageTableColumns, true)
+    },
+    {
+      key: TABLE.unconfirmedAccounts,
+      label: t('unconfirmedAccounts'),
+      tabContent: renderTable(unconfirmedAccountsTableItems, unconfirmedAccountsTableColumns, false)
     },
     {
       key: TABLE.closedAccounts,
       label: t('closedAccounts'),
-      tabContent: renderTabChildren(closedAccountsTableItems, closedAccountsTableColumns)
+      tabContent: renderTable(closedAccountsTableItems, closedAccountsTableColumns, false)
+    },
+    {
+      key: TABLE.externalAccounts,
+      label: t('externalAccounts'),
+      tabContent: renderTable(externalAccountsTableItems, externalAccountsTableColumns, false)
     }
   ];
 
@@ -702,7 +761,34 @@ function UserAccountsTab() {
 
   return (
     <div className="UserAccountsTab">
-      <div className="UserAccountsTab-header">
+      {!!selectedAccountKeys.length && (
+        <div className="UserAccountsTab-selectedItems">
+          {selectedAccountKeys.map(key => (
+            <Tag
+              key={key}
+              closable
+              closeIcon={<CloseIcon />}
+              className="Tag Tag--selected"
+              onClose={() => setSelectedAccountKeys(ensureIsExcluded(selectedAccountKeys, key))}
+              >
+              {accountTableItemsById.get(key).displayName}
+            </Tag>
+          ))}
+          {!!selectedAccountKeys.length && (
+          <a className="UserAccountsTab-selectedItemsLink" onClick={() => handleProcessAllSelectedItems()}>
+            <EditIcon />
+            <span>{t('processAll')}</span>
+          </a>
+          )}
+          {selectedAccountKeys.length > 1 && (
+          <a className="UserAccountsTab-selectedItemsLink" onClick={() => setSelectedAccountKeys([])}>
+            <CloseIcon />
+            <span>{t('common:removeAll')}</span>
+          </a>
+          )}
+        </div>
+      )}
+      <div className="UserAccountsTab-tableHeader">
         <RadioGroup
           className="UserAccountsTab-tableSwitcher UserAccountsTab-tableSwitcher--wide"
           options={options}
@@ -724,12 +810,61 @@ function UserAccountsTab() {
           />
       </div>
       <Tabs
-        className="Tabs Tabs--smallPadding"
+        className="Tabs Tabs--noPadding"
         activeKey={currentTable}
         disabled={isSaving}
         items={tabs}
         renderTabBar={() => null}
         />
+      <Modal
+        okText={t('processAll')}
+        open={isBatchProcessingModalOpen}
+        title={t('batchProcessingModalTitle')}
+        okButtonProps={{ loading: isBatchSaving }}
+        onOk={handleBatchProcessingModalOk}
+        onCancel={handleBatchProcessingModalCancel}
+        >
+        <div className="UserAccountsTab-batchProcessingModalContent">
+          <div className="UserAccountsTab-batchProcessingModalHeader">
+            {t('batchProcessingModalHeader', { selectedItemCount: selectedAccountKeys.length })}
+          </div>
+          <RadioGroup
+            className="UserAccountsTab-batchProcessingModalActionTypeRadioGroup"
+            value={currentBatchActionType}
+            onChange={handleCurrentBatchActionTypeChange}
+            >
+            <RadioButton value={BATCH_ACTION_TYPE.assignRoles}>{t('batchActionType_assignRoles')}</RadioButton>
+            <RadioButton value={BATCH_ACTION_TYPE.assignStoragePlan}>{t('batchActionType_assignStoragePlan')}</RadioButton>
+          </RadioGroup>
+          {currentBatchActionType === BATCH_ACTION_TYPE.assignRoles && (
+            <Fragment>
+              <div className="UserAccountsTab-batchProcessingModalSelectHeader">
+                {t('batchProcessingModalRolesSelectHeader', { selectedItemCount: selectedAccountKeys.length })}
+              </div>
+              <div className="UserAccountsTab-batchProcessingModalSelect">
+                <RolesSelect
+                  value={currentBatchRoles}
+                  onChange={setCurrentBatchRoles}
+                  />
+              </div>
+            </Fragment>
+          )}
+          {currentBatchActionType === BATCH_ACTION_TYPE.assignStoragePlan && (
+            <Fragment>
+              <div className="UserAccountsTab-batchProcessingModalSelectHeader">
+                {t('batchProcessingModalStoragePlanSelectHeader', { selectedItemCount: selectedAccountKeys.length })}
+              </div>
+              <div className="UserAccountsTab-batchProcessingModalSelect">
+                <StoragePlanSelect
+                  storagePlans={storagePlans}
+                  value={currentBatchStoragePlan}
+                  onChange={setCurrentBatchStoragePlan}
+                  />
+              </div>
+            </Fragment>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 }

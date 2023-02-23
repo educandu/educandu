@@ -1,6 +1,22 @@
 .UserAccountsTab {}
 
-.UserAccountsTab-header {
+.UserAccountsTab-selectedItems {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding-bottom: 2 * @edu-content-padding;
+}
+
+.UserAccountsTab-selectedItemsLink {
+  padding-left: 12px;
+  font-size: @edu-font-size-sm;
+  user-select: none;
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+}
+
+.UserAccountsTab-tableHeader {
   display: grid;
   justify-items: end;
   grid-template-rows: auto;
@@ -36,30 +52,6 @@
   max-width: 320px;
 }
 
-.UserAccountsTab-selectedItems {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  padding-top: @edu-content-padding;
-  padding-bottom: 2 * @edu-content-padding;
-}
-
-.UserAccountsTab-deselectItemsLink {
-  padding-left: 10px;
-  font-size: @edu-font-size-sm;
-  user-select: none;
-}
-
-.UserAccountsTab-storagePlanSelect {
-  width: 100%;
-}
-
-.UserAccountsTab-storagePlanOption {}
-
-.UserAccountsTab-storagePlanOptionSize {
-  font-size: 75%;
-}
-
 .UserAccountsTab-reminders {
   margin: 0;
   padding: 0;
@@ -70,4 +62,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.UserAccountsTab-batchProcessingModalContent {
+  margin: @edu-page-content-padding 0;
+}
+
+.UserAccountsTab-batchProcessingModalHeader {
+  margin-bottom: 10px;
+}
+
+.UserAccountsTab-batchProcessingModalActionTypeRadioGroup {
+  margin-top: 10px;
+}
+
+.UserAccountsTab-batchProcessingModalSelectHeader {
+  margin-top: 20px;
+}
+
+.UserAccountsTab-batchProcessingModalSelect {
+  margin-top: 10px;
 }
