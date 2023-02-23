@@ -846,11 +846,11 @@
   "homepageDocumentCards": {
     "headline": {
       "en": "Popular documents",
-      "de": "Popular documents"
+      "de": "Beliebte Dokumente"
     },
     "contributorsTooltipPrefix": {
       "en": "Contributions by",
-      "de": "Contributions by"
+      "de": "Beiträge von"
     }
   },
   "homepageOerPresentation": {
@@ -860,11 +860,11 @@
     },
     "descriptionMarkdown": {
       "en": "Our goal is to create a community project that is carried and supported by as many people around the world as possible.\nIf you are inspired by the idea of free learning and of an open learning platform, then join our community for **free**.\n",
-      "de": "Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.\nWenn du von der Idee des kostenlosen lernens und einer offenen Lernplattform begeistert bist uns selbst Inhalte generieren möchtest, trit unserer Community **kostenlos** bei.\n"
+      "de": "Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.\nWenn du von der Idee des kostenlosen Lernens und einer offenen Lernplattform begeistert bist und selbst Inhalte generieren möchtest, tritt unserer Community **kostenlos** bei.\n"
     },
     "signUp": {
       "en": "Sign up for your free account",
-      "de": "Melde dich für dein kostenloses Konto an"
+      "de": "Registriere dich für dein kostenloses Konto"
     },
     "logIn": {
       "en": "Already have an account? Log in",
@@ -874,7 +874,7 @@
   "homepageProjectPresentation": {
     "descriptionMarkdown": {
       "en": "**Educandu** is the open platform for learning and teaching.\nAnd everyone can contribute and make their knowledge availabe as open educational resources (OER) under a Creative Commons license.\nSimple, intuitive and free, with features developed specifically for teaching:\n",
-      "de": "**Educandu**, ist die Platform für digitales Lernen und Unerrichten.\nUnd jeder kann mitmachen und kann seine Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos mit speziell für unerrichten entwickelten Features:\n"
+      "de": "**Educandu** ist die Platform für digitales Lernen und Unerrichten.\nUnd jeder kann mitmachen und kann sein Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos, mit speziell für das Unterrichten entwickelten Features:\n"
     },
     "mediaFeature": {
       "en": "Video and audio with interactive options",
@@ -882,7 +882,7 @@
     },
     "earTrainingFeature": {
       "en": "Online ear training tasks",
-      "de": "Online Gehörbildungsaufgaben"
+      "de": "Online-Gehörbildungsaufgaben"
     },
     "multitrackFeature": {
       "en": "Multitrack music player",
@@ -898,7 +898,7 @@
     },
     "textFeature": {
       "en": "Easy text editing and formatting",
-      "de": "Einfache Texteingabe und- formatierung"
+      "de": "Einfache Texteingabe und -formatierung"
     },
     "imageFeature": {
       "en": "Images, galleries and slideshows",
