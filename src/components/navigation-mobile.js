@@ -6,15 +6,14 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { Button, Collapse, Drawer } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
+import { CloseOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import LanguageDataProvider from '../localization/language-data-provider.js';
-import { CloseOutlined, DownOutlined, UpOutlined, FormOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
