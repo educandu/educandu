@@ -24,7 +24,7 @@ import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-inf
 
 const logger = new Logger(import.meta.url);
 
-const defaultPluginInfoMap = [
+const builtInPluginInfos = [
   AudioInfo,
   VideoInfo,
   ImageInfo,
@@ -47,10 +47,7 @@ const defaultPluginInfoMap = [
   MultitrackMediaInfo,
   InteractiveMediaInfo,
   MarkdownWithImageInfo
-].reduce((map, type) => {
-  map.set(type.typeName, type);
-  return map;
-}, new Map());
+];
 
 class RegisteredPlugin {
   constructor(name, info) {
@@ -66,17 +63,13 @@ class RegisteredPlugin {
 }
 
 function createRegisteredPlugin(name, customResolvers, container) {
-  const type = customResolvers.resolvePluginInfo?.(name) || defaultPluginInfoMap.get(name);
+  const customPluginInfos = customResolvers.resolveCustomPluginInfos?.() || [];
+  const type = [...builtInPluginInfos, ...customPluginInfos].find(plugin => plugin.typeName === name);
   if (!type) {
     throw new Error(`Could not resolve plugin '${name}'`);
   }
 
-  if (type.typeName !== name) {
-    throw new Error(`Type name should be '${name}', but is '${type.typeName}'`);
-  }
-
   const info = container.get(type);
-
   return new RegisteredPlugin(name, info);
 }
 
@@ -104,25 +97,25 @@ class PluginRegistry {
     return [...this.pluginMap.values()].map(plugin => plugin.info);
   }
 
-  tryGetInfo(pluginType) {
-    return this.pluginMap.get(pluginType)?.info;
+  tryGetInfo(pluginName) {
+    return this.pluginMap.get(pluginName)?.info;
   }
 
-  getInfo(pluginType) {
-    const info = this.tryGetInfo(pluginType);
+  getInfo(pluginName) {
+    const info = this.tryGetInfo(pluginName);
     if (!info) {
-      throw new Error(`Plugin type "${pluginType}" is not registered`);
+      throw new Error(`Plugin type '${pluginName}' is not registered`);
     }
 
     return info;
   }
 
-  tryGetDisplayComponent(pluginType) {
-    return this.pluginMap.get(pluginType)?.displayComponent;
+  tryGetDisplayComponent(pluginName) {
+    return this.pluginMap.get(pluginName)?.displayComponent;
   }
 
-  tryGetEditorComponent(pluginType) {
-    return this.pluginMap.get(pluginType)?.editorComponent;
+  tryGetEditorComponent(pluginName) {
+    return this.pluginMap.get(pluginName)?.editorComponent;
   }
 }
 

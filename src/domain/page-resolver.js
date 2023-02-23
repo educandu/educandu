@@ -40,9 +40,9 @@ export default class PageResolver {
       SiteLogoComponent
     ] = await Promise.all([
       pageImporters[pageName](),
-      this.customResolvers.resolvePageTemplate?.(pageName) || DefaultPageTemplateComponent,
-      this.customResolvers.resolveHomePageTemplate?.(pageName) || DefaultPageTemplateComponent,
-      this.customResolvers.resolveSiteLogo?.(pageName) || DefaultSiteLogoComponent
+      this.customResolvers.resolveCustomPageTemplate?.(pageName) || DefaultPageTemplateComponent,
+      this.customResolvers.resolveCustomHomePageTemplate?.(pageName) || DefaultPageTemplateComponent,
+      this.customResolvers.resolveCustomSiteLogo?.(pageName) || DefaultSiteLogoComponent
     ]);
 
     return {

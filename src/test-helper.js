@@ -50,10 +50,10 @@ export async function setupTestEnvironment() {
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
     customResolvers: {
-      resolvePageTemplate: null,
-      resolveHomePageTemplate: null,
-      resolveSiteLogo: null,
-      resolvePluginInfo: null
+      resolveCustomPageTemplate: null,
+      resolveCustomHomePageTemplate: null,
+      resolveCustomSiteLogo: null,
+      resolveCustomPluginInfos: null
     },
     plugins: [
       'markdown',

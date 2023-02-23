@@ -27,7 +27,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | cdnSecretKey | The secret key of the AWS-hosted CDN | `string` | yes |
  | cdnBucketName | The name of the AWS S3 bucket storing the CDN data | `string` | yes |
  | cdnRootUrl | The root url of the CDN | `string` | yes |
- | customResolvers | The same object that is also used to hydrate the app on the client side | `{ resolvePageTemplate, resolveHomePageTemplate, resolveSiteLogo, resolvePluginInfo }` | yes, accepts `null` for either property and it will default to the internal setup
+ | customResolvers | The same object that is also used to hydrate the app on the client side | `{ resolveCustomPageTemplate, resolveCustomHomePageTemplate, resolveCustomSiteLogo, resolveCustomPluginInfos }` | yes, accepts `null` for either property and it will default to the internal setup
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | themeFile | URL to overrides of educandu LESS variables, through which the AntDesign theme is set | `string`  | no |
@@ -79,10 +79,10 @@ educandu({
   cdnBucketName: 'dev-educandu-cdn',
   cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
   customResolvers: {
-    resolvePageTemplate: null,
-    resolveHomePageTemplate: null,
-    resolveSiteLogo: null,
-    resolvePluginInfo: null
+    resolveCustomPageTemplate: null,
+    resolveCustomHomePageTemplate: null,
+    resolveCustomSiteLogo: null,
+    resolveCustomPluginInfos: null
   }).required(),
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),

@@ -23,10 +23,10 @@ const configSchema = joi.object({
   cdnBucketName: joi.string().required(),
   cdnRootUrl: joi.string().required(),
   customResolvers: joi.object({
-    resolvePageTemplate: joi.func().required().allow(null),
-    resolveHomePageTemplate: joi.func().required().allow(null),
-    resolveSiteLogo: joi.func().required().allow(null),
-    resolvePluginInfo: joi.func().required().allow(null)
+    resolveCustomPageTemplate: joi.func().required().allow(null),
+    resolveCustomHomePageTemplate: joi.func().required().allow(null),
+    resolveCustomSiteLogo: joi.func().required().allow(null),
+    resolveCustomPluginInfos: joi.func().required().allow(null)
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),
