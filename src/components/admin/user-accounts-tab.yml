@@ -35,9 +35,6 @@ userAccountsTab:
   closedAccounts:
     en: Closed accounts
     de: Geschlossene Konten
-  selectPlan:
-    en: Select plan
-    de: Plan auswählen
   addReminder:
     en: Add reminder
     de: Erinnerung hinzufügen
@@ -56,3 +53,28 @@ userAccountsTab:
   accountClosedOn:
     en: Account closing date
     de: Kontoschlussdatum
+  processAll:
+    en: Execute action for all
+    de: Aktion für alle ausführen
+  batchProcessingModalTitle:
+    en: Execute action for multiple user accounts
+    de: Aktion für mehrere Benutzerkonten ausführen
+  batchProcessingModalHeader:
+    en: "Which action do you want to execute for the {selectedItemCount, plural, =1 {selected user account} other {# selected user accounts}}?"
+    de: "Welche Aktion möchtest du für {selectedItemCount, plural, =1 {das ausgewählte Benutzerkonto} other {die # ausgewählten Benutzerkonten}} ausführen?"
+  batchActionType_assignRoles:
+    en: Assign roles
+    de: Rollen zuweisen
+  batchActionType_assignStoragePlan:
+    en: Assign storage plan
+    de: Speicherplan zuweisen
+  batchProcessingModalRolesSelectHeader:
+    en: Select the roles you want to assign. Unselected roles will be removed from the user {selectedItemCount, plural, =1 {account} other {accounts}}.
+    de: Wähle die Rollen aus, die du zuweisen möchtest. Abgewählte Rollen werden {selectedItemCount, plural, =1 {vom Benutzerkonto} other {von den Benutzerkonten}} entfernt.
+  batchProcessingModalStoragePlanSelectHeader:
+    en: |
+      Select the storage plan you want to assign. No selection means deletion of storage plans previously
+      assigned to the user {selectedItemCount, plural, =1 {account} other {accounts}}.
+    de: |
+      Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeuted
+      Löschung {selectedItemCount, plural, =1 {eines im Benutzerkonto vorhandenen Speicherplans} other {von in den Benutzerkonten vorhandenen Speicherplänen}}.
