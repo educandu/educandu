@@ -56,7 +56,9 @@ function HomepageProjectPresentation({ logo }) {
         <div className="HomepageProjectPresentation-featureIcon">
           {feature.icon}
         </div>
-        {feature.label}
+        <div className="HomepageProjectPresentation-featureLabel">
+          {feature.label}
+        </div>
       </div>
     );
   };

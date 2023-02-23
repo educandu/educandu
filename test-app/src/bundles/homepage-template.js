@@ -18,7 +18,7 @@ function HomepageTemplate({ children }) {
 
   return (
     <div className="HomepageTemplate">
-      <main>
+      <main className="HomepageTemplate-main">
         <section className="HomepageTemplate-aboveFold">
           <DefaultPageHeader />
           <div className="HomepageTemplate-aboveFoldContent">
@@ -51,7 +51,7 @@ function HomepageTemplate({ children }) {
                     <DefaultHeaderLogo />
                   </div>
                 }
-                />
+              />
             </div>
           </div>
           <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--oer">
