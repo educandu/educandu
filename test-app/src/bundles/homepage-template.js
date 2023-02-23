@@ -45,13 +45,7 @@ function HomepageTemplate({ children }) {
           </div>
           <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--project">
             <div className="HomepageTemplate-underFoldStripeContent">
-              <HomepageProjectPresentation
-                logo={
-                  <div className="HomepageTemplate-presentationLogo">
-                    <DefaultHeaderLogo />
-                  </div>
-                }
-              />
+              <HomepageProjectPresentation logo={(<div className="HomepageTemplate-presentationLogo"><DefaultHeaderLogo /></div>)} />
             </div>
           </div>
           <div className="HomepageTemplate-underFoldStripe HomepageTemplate-underFoldStripe--oer">
