@@ -73,19 +73,23 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Registering page resolver');
   const pageResolver = new PageResolver(serverConfig.bundleConfig);
-  await pageResolver.prefillCache();
   container.registerInstance(PageResolver, pageResolver);
 
   logger.info('Registering additional controllers');
   const controllerFactory = container.get(ControllerFactory);
   controllerFactory.registerAdditionalControllers(serverConfig.additionalControllers);
 
-  logger.info('Loading plugin editors');
-  const pluginRegistry = container.get(PluginRegistry);
-  await pluginRegistry.ensureAllEditorsAreLoaded();
+  logger.info('Registering plugins');
+  const pluginRegistry = new PluginRegistry();
+  pluginRegistry.setPlugins(container, clientConfig.plugins, serverConfig.bundleConfig);
+  container.registerInstance(PluginRegistry, pluginRegistry);
 
-  logger.info('Preload modules');
-  await ensurePreResolvedModulesAreLoaded();
+  logger.info('Preloading modules');
+  await Promise.all([
+    ensurePreResolvedModulesAreLoaded(),
+    pageResolver.ensureAllPagesAreCached(),
+    pluginRegistry.ensureAllEditorsAreLoaded()
+  ]);
 
   return container;
 }

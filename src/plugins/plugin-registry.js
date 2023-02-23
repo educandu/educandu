@@ -1,14 +1,11 @@
 import Logger from '../common/logger.js';
-import { Container } from '../common/di.js';
 import AudioInfo from './audio/audio-info.js';
 import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
-import { isBrowser } from '../ui/browser-helper.js';
 import MarkdownInfo from './markdown/markdown-info.js';
-import ClientConfig from '../bootstrap/client-config.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
 import DiagramNetInfo from './diagram-net/diagram-net-info.js';
@@ -27,7 +24,7 @@ import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-inf
 
 const logger = new Logger(import.meta.url);
 
-const allPossibleInfoTypes = [
+const defaultPluginInfoMap = [
   AudioInfo,
   VideoInfo,
   ImageInfo,
@@ -50,7 +47,10 @@ const allPossibleInfoTypes = [
   MultitrackMediaInfo,
   InteractiveMediaInfo,
   MarkdownWithImageInfo
-];
+].reduce((map, type) => {
+  map.set(type.typeName, type);
+  return map;
+}, new Map());
 
 class RegisteredPlugin {
   constructor(info) {
@@ -64,23 +64,34 @@ class RegisteredPlugin {
   }
 }
 
+function createRegisteredPlugin(name, bundleConfig, container) {
+  const type = bundleConfig.resolvePluginInfo?.(name) || defaultPluginInfoMap.get(name);
+  if (!type) {
+    throw new Error(`Could not resolve plugin '${name}'`);
+  }
+
+  if (type.typeName !== name) {
+    throw new Error(`Type name should be '${name}', but is '${type.typeName}'`);
+  }
+
+  const info = container.get(type);
+  if (info.type !== name) {
+    throw new Error(`Type should be '${name}', but is '${info.type}'`);
+  }
+
+  return new RegisteredPlugin(info);
+}
+
 class PluginRegistry {
-  static get inject() { return [Container, ClientConfig]; }
+  constructor() {
+    this.pluginMap = new Map();
+  }
 
-  constructor(container, clientConfig) {
-    this.pluginMap = clientConfig.plugins.reduce((map, typeName) => {
-      const infoType = allPossibleInfoTypes.find(type => type.typeName === typeName);
-      if (!infoType) {
-        throw new Error(`Plugin type "${typeName}" is not available`);
-      }
-
-      if (!isBrowser()) {
-        logger.info(`Registering plugin type ${infoType.typeName}`);
-      }
-
-      map.set(infoType.typeName, new RegisteredPlugin(container.get(infoType)));
-      return map;
-    }, new Map());
+  setPlugins(container, plugins, bundleConfig) {
+    for (const name of plugins) {
+      logger.info(`Registering plugin '${name}'`);
+      this.pluginMap.set(name, createRegisteredPlugin(name, bundleConfig, container));
+    }
   }
 
   ensureAllEditorsAreLoaded() {

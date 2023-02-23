@@ -25,7 +25,8 @@ const configSchema = joi.object({
   bundleConfig: joi.object({
     getPageTemplateComponent: joi.func().required().allow(null),
     getHomePageTemplateComponent: joi.func().required().allow(null),
-    getSiteLogoComponent: joi.func().required().allow(null)
+    getSiteLogoComponent: joi.func().required().allow(null),
+    resolvePluginInfo: joi.func().required().allow(null)
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),

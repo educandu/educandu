@@ -4,6 +4,7 @@ import parseBool from 'parseboolean';
 import educandu from '../../src/index.js';
 import bundleConfig from './bundles/bundle-config.js';
 import TestsController from '../../src/server/tests-controller.js';
+import ServerTimeController from './test-plugin/server-time-controller.js';
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -29,7 +30,8 @@ const plugins = [
   'media-slideshow',
   'interactive-media',
   'multitrack-media',
-  'media-analysis'
+  'media-analysis',
+  'test-plugin/server-time'
 ];
 
 const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
@@ -84,10 +86,10 @@ const config = {
   cdnRootUrl: process.env.TEST_APP_CDN_ROOT_URL,
   bundleConfig,
   publicFolders: ['../dist', '../static'].map(x => path.resolve(thisDir, x)),
-  resources: ['./resources.json'].map(x => path.resolve(thisDir, x)),
+  resources: ['./resources.json', './test-plugin/server-time.json'].map(x => path.resolve(thisDir, x)),
   themeFile: path.resolve(thisDir, './theme.less'),
   allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'CC-BY-NC-4.0', 'CC-BY-NC-SA-4.0', 'CC-BY-ND-4.0', 'CC-BY-NC-ND-4.0', 'MIT'],
-  additionalControllers: [TestsController],
+  additionalControllers: [TestsController, ServerTimeController],
   sessionSecret: process.env.TEST_APP_SESSION_SECRET,
   sessionCookieDomain: process.env.TEST_APP_SESSION_COOKIE_DOMAIN,
   sessionCookieName: process.env.TEST_APP_SESSION_COOKIE_NAME,

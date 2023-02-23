@@ -6,6 +6,7 @@ import ClientConfig from './client-config.js';
 import ReactDOMClient from 'react-dom/client';
 import PageResolver from '../domain/page-resolver.js';
 import ThemeManager from '../resources/theme-manager.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
@@ -15,7 +16,6 @@ const logger = new Logger(import.meta.url);
 export async function hydrateApp({ bundleConfig }) {
   logger.info('Starting application');
 
-  logger.info('Creating container');
   const container = new Container();
 
   const clientConfig = new ClientConfig(window.__clientconfig__);
@@ -36,16 +36,23 @@ export async function hydrateApp({ bundleConfig }) {
   const pageResolver = new PageResolver(bundleConfig);
   container.registerInstance(PageResolver, pageResolver);
 
-  logger.info('Resolving entry point');
+  const pluginRegistry = new PluginRegistry();
+  pluginRegistry.setPlugins(container, clientConfig.plugins, bundleConfig);
+  container.registerInstance(PluginRegistry, pluginRegistry);
+
+  logger.info('Preloading modules');
+  await Promise.all([
+    ensurePreResolvedModulesAreLoaded(),
+    pageResolver.ensurePageIsCached(window.__pageName__)
+    // pluginRegistry.ensureAllEditorsAreLoaded()
+  ]);
+
   const {
     PageComponent,
     PageTemplateComponent,
     HomePageTemplateComponent,
     SiteLogoComponent
-  } = await pageResolver.getPageComponentInfo(window.__pageName__);
-
-  logger.info('Preload modules');
-  await ensurePreResolvedModulesAreLoaded();
+  } = pageResolver.getCachedPageComponentInfo(window.__pageName__);
 
   const props = {
     user: window.__user__,

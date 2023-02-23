@@ -1,15 +1,17 @@
 import HomepageTemplate from './homepage-template.js';
-import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
-import DefaultPageTemplate from '../../../src/components/default-page-template.js';
+import ServerTimeInfo from '../test-plugin/server-time-info.js';
 
 export default {
   getPageTemplateComponent() {
-    return DefaultPageTemplate;
+    return null;
   },
   getHomePageTemplateComponent() {
     return HomepageTemplate;
   },
   getSiteLogoComponent() {
-    return DefaultSiteLogo;
+    return null;
+  },
+  resolvePluginInfo(name) {
+    return name === ServerTimeInfo.typeName ? ServerTimeInfo : null;
   }
 };

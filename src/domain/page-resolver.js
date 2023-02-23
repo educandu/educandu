@@ -40,16 +40,16 @@ export default class PageResolver {
       SiteLogoComponent
     ] = await Promise.all([
       pageImporters[pageName](),
-      this.bundleConfig.getPageTemplateComponent(pageName),
-      this.bundleConfig.getHomePageTemplateComponent(pageName),
-      this.bundleConfig.getSiteLogoComponent(pageName)
+      this.bundleConfig.getPageTemplateComponent?.(pageName) || DefaultPageTemplateComponent,
+      this.bundleConfig.getHomePageTemplateComponent?.(pageName) || DefaultPageTemplateComponent,
+      this.bundleConfig.getSiteLogoComponent?.(pageName) || DefaultSiteLogoComponent
     ]);
 
     return {
       PageComponent,
-      HomePageTemplateComponent: HomePageTemplateComponent || DefaultPageTemplateComponent,
-      PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent,
-      SiteLogoComponent: SiteLogoComponent || DefaultSiteLogoComponent
+      PageTemplateComponent,
+      HomePageTemplateComponent,
+      SiteLogoComponent
     };
   }
 
@@ -65,10 +65,17 @@ export default class PageResolver {
     return this.cache[pageName];
   }
 
-  async prefillCache() {
-    const allPageNames = Object.keys(pageImporters);
+  async _prefillCache(pageNames) {
     const getEntryFromPageName = async pageName => [pageName, await this.getPageComponentInfo(pageName)];
-    const allEntries = await Promise.all(allPageNames.map(pageName => getEntryFromPageName(pageName)));
+    const allEntries = await Promise.all(pageNames.map(pageName => getEntryFromPageName(pageName)));
     this.cache = Object.fromEntries(allEntries);
+  }
+
+  ensurePageIsCached(pageName) {
+    return this._prefillCache([pageName]);
+  }
+
+  ensureAllPagesAreCached() {
+    return this._prefillCache(Object.keys(pageImporters));
   }
 }

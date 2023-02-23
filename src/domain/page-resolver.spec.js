@@ -99,7 +99,7 @@ describe('page-resolver', () => {
             getHomePageTemplateComponent: () => null,
             getSiteLogoComponent: () => null
           });
-          await sut.prefillCache();
+          await sut.ensureAllPagesAreCached();
 
           const {
             PageComponent,
@@ -121,7 +121,7 @@ describe('page-resolver', () => {
           getHomePageTemplateComponent: () => null,
           getSiteLogoComponent: () => null
         });
-        await sut.prefillCache();
+        await sut.ensureAllPagesAreCached();
 
         const {
           PageTemplateComponent,
@@ -142,7 +142,7 @@ describe('page-resolver', () => {
           getHomePageTemplateComponent: () => Promise.resolve(MyHomePageTemplateComponent),
           getSiteLogoComponent: () => Promise.resolve(MySiteLogoComponent)
         });
-        await sut.prefillCache();
+        await sut.ensureAllPagesAreCached();
 
         const {
           PageTemplateComponent,
