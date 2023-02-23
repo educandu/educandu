@@ -7,16 +7,15 @@ import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class TableOfContentsInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'table-of-contents'; }
+  static typeName = 'table-of-contents';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'table-of-contents';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('tableOfContents:name');
   }
 

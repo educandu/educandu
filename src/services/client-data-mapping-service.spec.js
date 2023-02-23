@@ -543,7 +543,7 @@ describe('client-data-mapping-service', () => {
         deletedOn: null,
         deletedBy: null,
         deletedBecause: null,
-        type: MarkdownInfo.typeName,
+        type: 'markdown',
         content: { ...markdownInfo.getDefaultContent(), text: 'original' }
       };
 

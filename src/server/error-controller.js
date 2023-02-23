@@ -9,7 +9,7 @@ import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 const logger = new Logger(import.meta.url);
 
 class ErrorController {
-  static get inject() { return [ServerConfig, ErrorPageRenderer]; }
+  static dependencies = [ServerConfig, ErrorPageRenderer];
 
   constructor(serverConfig, errorPageRenderer) {
     this.errorPageRenderer = errorPageRenderer;

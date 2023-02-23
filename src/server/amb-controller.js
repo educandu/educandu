@@ -5,7 +5,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import needsApiKey from '../domain/needs-api-key-middleware.js';
 
 class AmbController {
-  static get inject() { return [ServerConfig, AmbService, Database]; }
+  static dependencies = [ServerConfig, AmbService, Database];
 
   constructor(serverConfig, ambService, database) {
     this.serverConfig = serverConfig;

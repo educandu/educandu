@@ -15,7 +15,7 @@ const xpathSelect = xpath.useNamespaces({
 });
 
 export default class SamlConfigService {
-  static get inject() { return [ServerConfig, HttpClient]; }
+  static dependencies = [ServerConfig, HttpClient];
 
   constructor(serverConfig, httpClient) {
     this.httpClient = httpClient;

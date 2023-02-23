@@ -1,7 +1,7 @@
 import Database from './database.js';
 
 export default class TransactionRunner {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(database) {
     this.database = database;

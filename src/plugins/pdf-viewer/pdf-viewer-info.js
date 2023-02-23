@@ -6,13 +6,9 @@ import PdfViewerDisplay from './pdf-viewer-display.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class PdfViewerInfo {
-  static get typeName() { return 'pdf-viewer'; }
+  static typeName = 'pdf-viewer';
 
-  constructor() {
-    this.type = 'pdf-viewer';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('pdfViewer:name');
   }
 

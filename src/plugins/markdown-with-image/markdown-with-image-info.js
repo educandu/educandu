@@ -8,16 +8,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class MarkdownWithImageInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'markdown-with-image'; }
+  static typeName = 'markdown-with-image';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'markdown-with-image';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('markdownWithImage:name');
   }
 

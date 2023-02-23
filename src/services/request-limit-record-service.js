@@ -1,9 +1,7 @@
 import RequestLimitRecordStore from '../stores/request-limit-record-store.js';
 
 export default class RequestLimitRecordService {
-  static get inject() {
-    return [RequestLimitRecordStore];
-  }
+  static dependencies = [RequestLimitRecordStore];
 
   constructor(requestLimitRecordStore) {
     this.requestLimitRecordStore = requestLimitRecordStore;

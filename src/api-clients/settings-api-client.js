@@ -1,7 +1,7 @@
 import HttpClient from './http-client.js';
 
 class SettingsApiClient {
-  static inject() { return [HttpClient]; }
+  static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;

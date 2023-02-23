@@ -8,7 +8,7 @@ import { saveSettingsBodySchema } from '../domain/schemas/settings-schemas.js';
 const jsonParser = express.json();
 
 class SettingsController {
-  static get inject() { return [SettingService]; }
+  static dependencies = [SettingService];
 
   constructor(settingService) {
     this.settingService = settingService;

@@ -13,7 +13,7 @@ const LOCK_TYPE = {
 };
 
 class LockStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.locks;

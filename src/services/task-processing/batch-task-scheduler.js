@@ -5,7 +5,7 @@ import ServerConfig from '../../bootstrap/server-config.js';
 const logger = new Logger(import.meta.url);
 
 export default class BatchTaskScheduler {
-  static get inject() { return [ServerConfig, BatchProcessor]; }
+  static dependencies = [ServerConfig, BatchProcessor];
 
   constructor(serverConfig, batchProcessor) {
     this.timeout = null;

@@ -9,16 +9,15 @@ import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source
 import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect } from './image-utils.js';
 
 class ImageInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'image'; }
+  static typeName = 'image';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'image';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('image:name');
   }
 

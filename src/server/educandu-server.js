@@ -23,7 +23,7 @@ const logger = new Logger(import.meta.url);
 const SYMBOL_MAINTENACE = Symbol('SYMBOL_MAINTENACE');
 
 export default class EducanduServer {
-  static get inject() { return [ServerConfig, ControllerFactory, Database]; }
+  static dependencies = [ServerConfig, ControllerFactory, Database];
 
   constructor(serverConfig, controllerFactory, database) {
     this.serverConfig = serverConfig;

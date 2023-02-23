@@ -3,7 +3,7 @@ import { validate } from '../domain/validation.js';
 import { documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 
 class DocumentRevisionStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.documentRevisions;

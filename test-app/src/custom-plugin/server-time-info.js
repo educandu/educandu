@@ -7,16 +7,15 @@ import { couldAccessUrlFromRoom } from '../../../src/utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../../src/common/github-flavored-markdown.js';
 
 class ServerTimeInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'custom-plugin/server-time'; }
+  static typeName = 'custom-plugin/server-time';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'custom-plugin/server-time';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('customPlugin/serverTime:name');
   }
 

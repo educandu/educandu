@@ -15,7 +15,6 @@ import PluginRegistry from '../../plugins/plugin-registry.js';
 import AnnouncementSettings from './announcement-settings.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import HomepagePresentationSettings from './homepage-presentation-settings.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
@@ -184,14 +183,14 @@ function AdminSettingsTab({ onDirtyStateChange }) {
             <Tabs
               type="line"
               size="small"
-              items={pluginRegistry.getAllInfos().map(pluginInfo => ({
-                key: pluginInfo.type,
-                label: t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`),
+              items={pluginRegistry.getAllRegisteredPlugins().map(plugin => ({
+                key: plugin.name,
+                label: plugin.info.getDisplayName(t),
                 children: (
                   <div className="AdminSettingsTab-collapseTabPane">
                     <MarkdownSettingInSupportedLanguages
-                      settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
-                      onChange={value => handlePluginHelpTextChange(pluginInfo.type, value)}
+                      settingValue={settings.pluginsHelpTexts?.[plugin.name]}
+                      onChange={value => handlePluginHelpTextChange(plugin.name, value)}
                       />
                   </div>
                 )

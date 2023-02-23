@@ -4,7 +4,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import { favoriteDBSchema, userDBSchema } from '../domain/schemas/user-schemas.js';
 
 class UserStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.users;

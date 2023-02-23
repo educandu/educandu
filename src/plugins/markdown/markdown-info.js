@@ -7,16 +7,15 @@ import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class MarkdownInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'markdown'; }
+  static typeName = 'markdown';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'markdown';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('markdown:name');
   }
 

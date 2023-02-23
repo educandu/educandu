@@ -54,7 +54,7 @@ const controllerTypes = [
 ];
 
 class ControllerFactory {
-  static get inject() { return [Container]; }
+  static dependencies = [Container];
 
   constructor(container) {
     this.container = container;

@@ -12,7 +12,7 @@ import { batchIdParamsSchema, batchTypeParamsSchema } from '../domain/schemas/ba
 const { NotFound } = httpErrors;
 
 class BatchController {
-  static get inject() { return [PageRenderer, BatchService, ClientDataMappingService]; }
+  static dependencies = [PageRenderer, BatchService, ClientDataMappingService];
 
   constructor(pageRenderer, batchService, clientDataMappingService) {
     this.batchService = batchService;

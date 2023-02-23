@@ -9,16 +9,15 @@ import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class QuickTesterInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'quick-tester'; }
+  static typeName = 'quick-tester';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'quick-tester';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('quickTester:name');
   }
 

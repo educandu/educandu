@@ -11,7 +11,7 @@ import {
   from '../domain/schemas/room-schemas.js';
 
 class RoomStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.rooms;

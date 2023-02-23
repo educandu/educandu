@@ -4,7 +4,7 @@ import { validate } from '../domain/validation.js';
 import { externalAccountDbSchema } from '../domain/schemas/external-account-schemas.js';
 
 class ExternalAccountStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.externalAccounts;

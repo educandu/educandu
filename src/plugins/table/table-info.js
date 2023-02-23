@@ -12,16 +12,15 @@ const DEFAULT_TABLE_ROW_COUNT = 3;
 const DEFAULT_TABLE_COLUMN_COUNT = 3;
 
 class TableInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'table'; }
+  static typeName = 'table';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'table';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('table:name');
   }
 

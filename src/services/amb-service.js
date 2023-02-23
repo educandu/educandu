@@ -38,7 +38,7 @@ const defaultMetadata = {
 };
 
 class AmbService {
-  static get inject() { return [ServerConfig, DocumentStore, UserStore, SettingStore]; }
+  static dependencies = [ServerConfig, DocumentStore, UserStore, SettingStore];
 
   constructor(serverConfig, documentStore, userStore, settingStore) {
     this.userStore = userStore;

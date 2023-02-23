@@ -8,9 +8,7 @@ const { BadRequest, NotFound } = httpErrors;
 const logger = new Logger(import.meta.url);
 
 export default class ExternalAccountService {
-  static get inject() {
-    return [ExternalAccountStore, ServerConfig];
-  }
+  static dependencies = [ExternalAccountStore, ServerConfig];
 
   constructor(externalAccountStore, serverConfig) {
     this.externalAccountStore = externalAccountStore;

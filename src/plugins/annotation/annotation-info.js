@@ -8,16 +8,15 @@ import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AnnotationInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'annotation'; }
+  static typeName = 'annotation';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'annotation';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('annotation:name');
   }
 

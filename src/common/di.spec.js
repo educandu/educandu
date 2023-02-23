@@ -7,7 +7,7 @@ class A {}
 class B {}
 
 class C {
-  static get inject() { return [B]; }
+  static dependencies = [B];
 
   constructor(b) {
     this.b = b;
@@ -30,19 +30,13 @@ class D {
   }
 }
 
-class E {
-  // eslint-disable-next-line no-use-before-define
-  static get inject() { return [F]; }
-}
-
-class F {
-  // eslint-disable-next-line no-use-before-define
-  static get inject() { return [G]; }
-}
-
-class G {
-  static get inject() { return [E]; }
-}
+// Circular dependencies:
+class E {}
+class F {}
+class G {}
+E.dependencies = [F];
+F.dependencies = [G];
+G.dependencies = [E];
 
 describe('di', () => {
   const sandbox = createSandbox();

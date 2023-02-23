@@ -7,16 +7,15 @@ import { createDefaultContent, validateContent } from './multitrack-media-utils.
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MultitrackMediaInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'multitrack-media'; }
+  static typeName = 'multitrack-media';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'multitrack-media';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('multitrackMedia:name');
   }
 

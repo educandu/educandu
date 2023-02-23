@@ -3,7 +3,7 @@ import urlUtils from '../utils/url-utils.js';
 import { WIKIMEDIA_API_FILE_TYPE, WIKIMEDIA_COMMONS_API_URL } from '../utils/wikimedia-utils.js';
 
 class WikimediaApiClient {
-  static inject() { return [HttpClient]; }
+  static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;

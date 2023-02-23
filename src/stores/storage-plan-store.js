@@ -3,7 +3,7 @@ import { validate } from '../domain/validation.js';
 import { storagePlanDBSchema } from '../domain/schemas/storage-schemas.js';
 
 class StoragePlanStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.storagePlans;

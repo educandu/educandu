@@ -1,7 +1,7 @@
 import SettingStore from '../stores/setting-store.js';
 
 class SettingService {
-  static get inject() { return [SettingStore]; }
+  static dependencies = [SettingStore];
 
   constructor(settingStore) {
     this.settingStore = settingStore;

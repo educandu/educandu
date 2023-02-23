@@ -1,7 +1,7 @@
 import Database from './database.js';
 
 class TaskStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.tasks;

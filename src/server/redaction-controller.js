@@ -6,7 +6,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class DashboardController {
-  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
+  static dependencies = [DocumentService, ClientDataMappingService, PageRenderer];
 
   constructor(documentService, clientDataMappingService, pageRenderer) {
     this.pageRenderer = pageRenderer;

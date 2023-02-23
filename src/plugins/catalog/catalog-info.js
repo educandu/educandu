@@ -6,13 +6,9 @@ import { createDefaultContent, validateContent } from './catalog-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 export default class Catalog {
-  static get typeName() { return 'catalog'; }
+  static typeName = 'catalog';
 
-  constructor() {
-    this.type = 'catalog';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('catalog:name');
   }
 

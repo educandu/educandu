@@ -25,21 +25,19 @@ const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
 
 export default class StorageService {
-  static get inject() {
-    return [
-      ServerConfig,
-      Cdn,
-      RoomStore,
-      RoomInvitationStore,
-      DocumentStore,
-      DocumentRevisionStore,
-      StoragePlanStore,
-      UserStore,
-      CommentStore,
-      LockStore,
-      TransactionRunner
-    ];
-  }
+  static dependencies = [
+    ServerConfig,
+    Cdn,
+    RoomStore,
+    RoomInvitationStore,
+    DocumentStore,
+    DocumentRevisionStore,
+    StoragePlanStore,
+    UserStore,
+    CommentStore,
+    LockStore,
+    TransactionRunner
+  ];
 
   constructor(
     serverConfig,

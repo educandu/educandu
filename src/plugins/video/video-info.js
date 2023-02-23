@@ -8,16 +8,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class VideoInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'video'; }
+  static typeName = 'video';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'video';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('video:name');
   }
 

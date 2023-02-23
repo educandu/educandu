@@ -9,16 +9,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class InteractiveMediaInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'interactive-media'; }
+  static typeName = 'interactive-media';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'interactive-media';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('interactiveMedia:name');
   }
 

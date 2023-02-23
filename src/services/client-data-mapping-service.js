@@ -12,7 +12,7 @@ import permissions, { getAllUserPermissions, hasUserPermission } from '../domain
 import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static get inject() { return [ServerConfig, UserStore, StoragePlanStore, RoomStore, PluginRegistry]; }
+  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, PluginRegistry];
 
   constructor(serverConfig, userStore, storagePlanStore, roomStore, pluginRegistry) {
     this.serverConfig = serverConfig;

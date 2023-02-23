@@ -2,7 +2,7 @@ import HttpClient from './http-client.js';
 import urlUtils from '../utils/url-utils.js';
 
 class MediaLibraryApiClient {
-  static inject() { return [HttpClient]; }
+  static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;

@@ -31,7 +31,7 @@ const logger = new Logger(import.meta.url);
 const completionFunction = Symbol('completion');
 
 class UserService {
-  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore, TransactionRunner]; }
+  static dependencies = [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore, TransactionRunner];
 
   constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lockStore, transactionRunner) {
     this.userStore = userStore;

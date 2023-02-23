@@ -9,16 +9,15 @@ import { createDefaultTile, getTilePairCountBySize } from './matching-cards-util
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class MatchingCardsInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'matching-cards'; }
+  static typeName = 'matching-cards';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'matching-cards';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('matchingCards:name');
   }
 

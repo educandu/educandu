@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import ServerConfig from '../bootstrap/server-config.js';
 
 class StaticController {
-  static get inject() { return [ServerConfig]; }
+  static dependencies = [ServerConfig];
 
   constructor(serverConfig) {
     this.serverConfig = serverConfig;

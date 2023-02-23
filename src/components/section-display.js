@@ -203,7 +203,7 @@ function SectionDisplay({
   );
 
   const renderSectionType = () => {
-    return pluginRegistry.tryGetInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`;
+    return pluginRegistry.tryGetInfo(section.type)?.getDisplayName(t) || `${t('common:unknown')} (${section.type})`;
   };
 
   const renderSectionRevision = () => {

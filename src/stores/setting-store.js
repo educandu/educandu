@@ -1,6 +1,6 @@
 import Database from './database.js';
 class SettingStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.settings;

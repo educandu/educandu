@@ -13,7 +13,7 @@ import ResourceManager from '../resources/resource-manager.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, LicenseManager, PageResolver]; }
+  static dependencies = [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, LicenseManager, PageResolver];
 
   constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, licenseManager, pageResolver) {
     super();

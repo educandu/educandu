@@ -7,16 +7,15 @@ import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AbcNotationInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'abc-notation'; }
+  static typeName = 'abc-notation';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'abc-notation';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('abcNotation:name');
   }
 

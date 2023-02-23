@@ -5,13 +5,9 @@ import DiagramNetIcon from './diagram-net-icon.js';
 import DiagramNetDisplay from './diagram-net-display.js';
 
 class DiagramNetInfo {
-  static get typeName() { return 'diagram-net'; }
+  static typeName = 'diagram-net';
 
-  constructor() {
-    this.type = 'diagram-net';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('diagramNet:name');
   }
 

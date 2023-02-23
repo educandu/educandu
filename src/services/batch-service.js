@@ -20,9 +20,7 @@ const mapBatchTypeToTaskType = batchType => {
 };
 
 class BatchService {
-  static get inject() {
-    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
-  }
+  static dependencies = [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
 
   constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore) {
     this.transactionRunner = transactionRunner;

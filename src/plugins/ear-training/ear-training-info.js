@@ -9,16 +9,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class EarTrainingInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'ear-training'; }
+  static typeName = 'ear-training';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'ear-training';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('earTraining:name');
   }
 

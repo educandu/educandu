@@ -50,21 +50,19 @@ const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
 const SYMBOL_REDIRECT_AFTER_SAML_LOGIN = Symbol('SYMBOL_REDIRECT_AFTER_SAML_LOGIN');
 
 class UserController {
-  static get inject() {
-    return [
-      ServerConfig,
-      UserService,
-      StorageService,
-      PasswordResetRequestService,
-      RequestLimitRecordService,
-      ExternalAccountService,
-      MailService,
-      ClientDataMappingService,
-      RoomService,
-      PageRenderer,
-      SamlConfigService
-    ];
-  }
+  static dependencies = [
+    ServerConfig,
+    UserService,
+    StorageService,
+    PasswordResetRequestService,
+    RequestLimitRecordService,
+    ExternalAccountService,
+    MailService,
+    ClientDataMappingService,
+    RoomService,
+    PageRenderer,
+    SamlConfigService
+  ];
 
   constructor(
     serverConfig,

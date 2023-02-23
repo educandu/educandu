@@ -4,7 +4,7 @@ import OrderStoreBase from '../stores/order-store-base.js';
 const DOCUMENT_ORDER_KEY = 'document-order';
 
 class DocumentOrderStore extends OrderStoreBase {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     super(db.documentOrders, DOCUMENT_ORDER_KEY);

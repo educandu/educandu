@@ -12,17 +12,15 @@ import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-crea
 const logger = new Logger(import.meta.url);
 
 export default class TaskProcessor {
-  static get inject() {
-    return [
-      TaskStore,
-      LockStore,
-      DocumentValidationTaskProcessor,
-      DocumentRegenerationTaskProcessor,
-      CdnResourcesConsolidationTaskProcessor,
-      CdnUploadDirectoryCreationTaskProcessor,
-      ServerConfig
-    ];
-  }
+  static dependencies = [
+    TaskStore,
+    LockStore,
+    DocumentValidationTaskProcessor,
+    DocumentRegenerationTaskProcessor,
+    CdnResourcesConsolidationTaskProcessor,
+    CdnUploadDirectoryCreationTaskProcessor,
+    ServerConfig
+  ];
 
   constructor(
     taskStore,

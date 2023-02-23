@@ -53,7 +53,8 @@ const defaultPluginInfoMap = [
 }, new Map());
 
 class RegisteredPlugin {
-  constructor(info) {
+  constructor(name, info) {
+    this.name = name;
     this.info = info;
     this.displayComponent = this.info.getDisplayComponent();
     this.editorComponent = null;
@@ -75,11 +76,8 @@ function createRegisteredPlugin(name, customResolvers, container) {
   }
 
   const info = container.get(type);
-  if (info.type !== name) {
-    throw new Error(`Type should be '${name}', but is '${info.type}'`);
-  }
 
-  return new RegisteredPlugin(info);
+  return new RegisteredPlugin(name, info);
 }
 
 class PluginRegistry {
@@ -96,6 +94,10 @@ class PluginRegistry {
 
   ensureAllEditorsAreLoaded() {
     return Promise.all([...this.pluginMap.values()].map(plugin => plugin.ensureEditorComponentIsResolved()));
+  }
+
+  getAllRegisteredPlugins() {
+    return [...this.pluginMap.values()];
   }
 
   getAllInfos() {

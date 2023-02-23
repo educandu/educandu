@@ -7,13 +7,9 @@ import { DEFAULT_ZOOM_VALUE, MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MusicXmlViewerInfo {
-  static get typeName() { return 'music-xml-viewer'; }
+  static typeName = 'music-xml-viewer';
 
-  constructor() {
-    this.type = 'music-xml-viewer';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('musicXmlViewer:name');
   }
 

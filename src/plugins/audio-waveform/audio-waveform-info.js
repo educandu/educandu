@@ -8,15 +8,9 @@ import AudioWaveformDisplay from './audio-waveform-display.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioWaveformInfo {
-  static get inject() { return []; }
+  static typeName = 'audio-waveform';
 
-  static get typeName() { return 'audio-waveform'; }
-
-  constructor() {
-    this.type = 'audio-waveform';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('audioWaveform:name');
   }
 

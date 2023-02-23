@@ -9,7 +9,7 @@ import { ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.
 import { getDocumentMediaDocumentPath, getRoomMediaRoomPath } from '../utils/storage-utils.js';
 
 class TestsController {
-  static get inject() { return [PageRenderer, DocumentService, RoomService, StorageService]; }
+  static dependencies = [PageRenderer, DocumentService, RoomService, StorageService];
 
   constructor(pageRenderer, documentService, roomService, storageService) {
     this.pageRenderer = pageRenderer;

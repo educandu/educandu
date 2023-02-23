@@ -9,16 +9,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MediaSlideshowInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'media-slideshow'; }
+  static typeName = 'media-slideshow';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'media-slideshow';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('mediaSlideshow:name');
   }
 

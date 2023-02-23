@@ -7,16 +7,15 @@ import { createDefaultContent, validateContent } from './media-analysis-utils.js
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MediaAnalysisInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'media-analysis'; }
+  static typeName = 'media-analysis';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'media-analysis';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('mediaAnalysis:name');
   }
 

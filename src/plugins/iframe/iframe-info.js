@@ -5,13 +5,9 @@ import IframeDisplay from './iframe-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 class IframeInfo {
-  static get typeName() { return 'iframe'; }
+  static typeName = 'iframe';
 
-  constructor() {
-    this.type = 'iframe';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('iframe:name');
   }
 

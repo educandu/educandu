@@ -7,16 +7,15 @@ import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'audio'; }
+  static typeName = 'audio';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'audio';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('audio:name');
   }
 
