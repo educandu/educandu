@@ -22,10 +22,10 @@ const configSchema = joi.object({
   cdnSecretKey: joi.string().required(),
   cdnBucketName: joi.string().required(),
   cdnRootUrl: joi.string().required(),
-  bundleConfig: joi.object({
-    getPageTemplateComponent: joi.func().required().allow(null),
-    getHomePageTemplateComponent: joi.func().required().allow(null),
-    getSiteLogoComponent: joi.func().required().allow(null),
+  customResolvers: joi.object({
+    resolvePageTemplate: joi.func().required().allow(null),
+    resolveHomePageTemplate: joi.func().required().allow(null),
+    resolveSiteLogo: joi.func().required().allow(null),
     resolvePluginInfo: joi.func().required().allow(null)
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),

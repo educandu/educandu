@@ -13,7 +13,7 @@ import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules
 
 const logger = new Logger(import.meta.url);
 
-export async function hydrateApp({ bundleConfig }) {
+export async function hydrateApp({ customResolvers }) {
   logger.info('Starting application');
 
   const container = new Container();
@@ -33,11 +33,11 @@ export async function hydrateApp({ bundleConfig }) {
   licenseManager.setLicenses(window.__licenses__);
   container.registerInstance(LicenseManager, licenseManager);
 
-  const pageResolver = new PageResolver(bundleConfig);
+  const pageResolver = new PageResolver(customResolvers);
   container.registerInstance(PageResolver, pageResolver);
 
   const pluginRegistry = new PluginRegistry();
-  pluginRegistry.setPlugins(container, clientConfig.plugins, bundleConfig);
+  pluginRegistry.setPlugins(container, clientConfig.plugins, customResolvers);
   container.registerInstance(PluginRegistry, pluginRegistry);
 
   logger.info('Preloading modules');

@@ -23,8 +23,8 @@ const pageImporters = {
 };
 
 export default class PageResolver {
-  constructor(bundleConfig) {
-    this.bundleConfig = bundleConfig;
+  constructor(customResolvers) {
+    this.customResolvers = customResolvers;
     this.cache = null;
   }
 
@@ -40,9 +40,9 @@ export default class PageResolver {
       SiteLogoComponent
     ] = await Promise.all([
       pageImporters[pageName](),
-      this.bundleConfig.getPageTemplateComponent?.(pageName) || DefaultPageTemplateComponent,
-      this.bundleConfig.getHomePageTemplateComponent?.(pageName) || DefaultPageTemplateComponent,
-      this.bundleConfig.getSiteLogoComponent?.(pageName) || DefaultSiteLogoComponent
+      this.customResolvers.resolvePageTemplate?.(pageName) || DefaultPageTemplateComponent,
+      this.customResolvers.resolveHomePageTemplate?.(pageName) || DefaultPageTemplateComponent,
+      this.customResolvers.resolveSiteLogo?.(pageName) || DefaultSiteLogoComponent
     ]);
 
     return {

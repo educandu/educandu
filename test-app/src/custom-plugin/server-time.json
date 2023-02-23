@@ -1,5 +1,5 @@
 {
-  "testPlugin/serverTime": {
+  "customPlugin/serverTime": {
     "name": {
       "en": "Server time",
       "de": "Serverzeit"

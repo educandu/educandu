@@ -64,8 +64,8 @@ class RegisteredPlugin {
   }
 }
 
-function createRegisteredPlugin(name, bundleConfig, container) {
-  const type = bundleConfig.resolvePluginInfo?.(name) || defaultPluginInfoMap.get(name);
+function createRegisteredPlugin(name, customResolvers, container) {
+  const type = customResolvers.resolvePluginInfo?.(name) || defaultPluginInfoMap.get(name);
   if (!type) {
     throw new Error(`Could not resolve plugin '${name}'`);
   }
@@ -87,10 +87,10 @@ class PluginRegistry {
     this.pluginMap = new Map();
   }
 
-  setPlugins(container, plugins, bundleConfig) {
+  setPlugins(container, plugins, customResolvers) {
     for (const name of plugins) {
       logger.info(`Registering plugin '${name}'`);
-      this.pluginMap.set(name, createRegisteredPlugin(name, bundleConfig, container));
+      this.pluginMap.set(name, createRegisteredPlugin(name, customResolvers, container));
     }
   }
 

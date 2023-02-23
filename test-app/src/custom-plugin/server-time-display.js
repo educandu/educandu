@@ -16,7 +16,7 @@ export default function ServerTimeDisplay({ content }) {
   const { formatDate } = useDateFormat();
   const httpClient = useService(HttpClient);
   const [serverTime, setServerTime] = useState(null);
-  const { t } = useTranslation('testPlugin/serverTime');
+  const { t } = useTranslation('customPlugin/serverTime');
 
   useEffect(() => {
     let nextTimeout = null;
@@ -24,7 +24,7 @@ export default function ServerTimeDisplay({ content }) {
     const getUpdate = async () => {
       try {
         const response = await httpClient.get(
-          '/api/v1/plugin/test-plugin/server-time/time',
+          '/api/v1/plugin/custom-plugin/server-time/time',
           { responseType: 'json' }
         );
 
@@ -45,12 +45,12 @@ export default function ServerTimeDisplay({ content }) {
   }, [httpClient, t]);
 
   return (
-    <div className="TestPluginServerTimeDisplay">
+    <div className="CustomPluginServerTimeDisplay">
       <Markdown renderAnchors>
         {content.text}
       </Markdown>
       {!!serverTime && (
-        <div className="TestPluginServerTimeDisplay-time">
+        <div className="CustomPluginServerTimeDisplay-time">
           {t('currentServerTime')}: {formatDate(serverTime)}
         </div>
       )}

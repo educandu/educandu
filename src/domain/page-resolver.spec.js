@@ -18,9 +18,9 @@ describe('page-resolver', () => {
       describe(`when called for page '${pageName}'`, () => {
         it('resolves the components', async () => {
           const sut = new PageResolver({
-            getPageTemplateComponent: () => null,
-            getHomePageTemplateComponent: () => null,
-            getSiteLogoComponent: () => null
+            resolvePageTemplate: () => null,
+            resolveHomePageTemplate: () => null,
+            resolveSiteLogo: () => null
           });
 
           const {
@@ -39,9 +39,9 @@ describe('page-resolver', () => {
     describe('when called for page with a bundle config that returns null for all components', () => {
       it('resolves the default components', async () => {
         const sut = new PageResolver({
-          getPageTemplateComponent: () => null,
-          getHomePageTemplateComponent: () => null,
-          getSiteLogoComponent: () => null
+          resolvePageTemplate: () => null,
+          resolveHomePageTemplate: () => null,
+          resolveSiteLogo: () => null
         });
 
         const {
@@ -59,9 +59,9 @@ describe('page-resolver', () => {
     describe('when called for page with a bundle config that returns components', () => {
       it('resolves the configured components', async () => {
         const sut = new PageResolver({
-          getPageTemplateComponent: () => Promise.resolve(MyTemplateComponent),
-          getHomePageTemplateComponent: () => Promise.resolve(MyHomePageTemplateComponent),
-          getSiteLogoComponent: () => Promise.resolve(MySiteLogoComponent)
+          resolvePageTemplate: () => Promise.resolve(MyTemplateComponent),
+          resolveHomePageTemplate: () => Promise.resolve(MyHomePageTemplateComponent),
+          resolveSiteLogo: () => Promise.resolve(MySiteLogoComponent)
         });
 
         const {
@@ -83,9 +83,9 @@ describe('page-resolver', () => {
     describe('when called without prefilling the cache upfront', () => {
       it('throws an error', () => {
         const sut = new PageResolver({
-          getPageTemplateComponent: () => null,
-          getHomePageTemplateComponent: () => null,
-          getSiteLogoComponent: () => null
+          resolvePageTemplate: () => null,
+          resolveHomePageTemplate: () => null,
+          resolveSiteLogo: () => null
         });
         expect(() => sut.getCachedPageComponentInfo(PAGE_NAME.index)).toThrow();
       });
@@ -95,9 +95,9 @@ describe('page-resolver', () => {
       describe(`when called for page '${pageName}'`, () => {
         it('resolves the components', async () => {
           const sut = new PageResolver({
-            getPageTemplateComponent: () => null,
-            getHomePageTemplateComponent: () => null,
-            getSiteLogoComponent: () => null
+            resolvePageTemplate: () => null,
+            resolveHomePageTemplate: () => null,
+            resolveSiteLogo: () => null
           });
           await sut.ensureAllPagesAreCached();
 
@@ -117,9 +117,9 @@ describe('page-resolver', () => {
     describe('when called for page with a bundle config that returns null for all components', () => {
       it('resolves the default components', async () => {
         const sut = new PageResolver({
-          getPageTemplateComponent: () => null,
-          getHomePageTemplateComponent: () => null,
-          getSiteLogoComponent: () => null
+          resolvePageTemplate: () => null,
+          resolveHomePageTemplate: () => null,
+          resolveSiteLogo: () => null
         });
         await sut.ensureAllPagesAreCached();
 
@@ -138,9 +138,9 @@ describe('page-resolver', () => {
     describe('when called for page with a bundle config that returns components', () => {
       it('resolves the configured components', async () => {
         const sut = new PageResolver({
-          getPageTemplateComponent: () => Promise.resolve(MyTemplateComponent),
-          getHomePageTemplateComponent: () => Promise.resolve(MyHomePageTemplateComponent),
-          getSiteLogoComponent: () => Promise.resolve(MySiteLogoComponent)
+          resolvePageTemplate: () => Promise.resolve(MyTemplateComponent),
+          resolveHomePageTemplate: () => Promise.resolve(MyHomePageTemplateComponent),
+          resolveSiteLogo: () => Promise.resolve(MySiteLogoComponent)
         });
         await sut.ensureAllPagesAreCached();
 

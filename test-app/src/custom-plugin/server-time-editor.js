@@ -8,7 +8,7 @@ import { sectionEditorProps } from '../../../src/ui/default-prop-types.js';
 import ObjectWidthSlider from '../../../src/components/object-width-slider.js';
 
 export default function ServerTimeEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('testPlugin/serverTime');
+  const { t } = useTranslation('customPlugin/serverTime');
   const { text, width } = content;
 
   const updateContent = newContentValues => {
@@ -24,7 +24,7 @@ export default function ServerTimeEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div className="TestPluginServerTimeEditor">
+    <div className="CustomPluginServerTimeEditor">
       <Form labelAlign="left">
         <Form.Item label={t('common:text')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={text} onChange={handleTextChanged} renderAnchors />

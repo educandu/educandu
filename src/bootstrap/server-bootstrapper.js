@@ -72,7 +72,7 @@ export async function createContainer(configValues = {}) {
   container.registerInstance(LicenseManager, licenseManager);
 
   logger.info('Registering page resolver');
-  const pageResolver = new PageResolver(serverConfig.bundleConfig);
+  const pageResolver = new PageResolver(serverConfig.customResolvers);
   container.registerInstance(PageResolver, pageResolver);
 
   logger.info('Registering additional controllers');
@@ -81,7 +81,7 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Registering plugins');
   const pluginRegistry = new PluginRegistry();
-  pluginRegistry.setPlugins(container, clientConfig.plugins, serverConfig.bundleConfig);
+  pluginRegistry.setPlugins(container, clientConfig.plugins, serverConfig.customResolvers);
   container.registerInstance(PluginRegistry, pluginRegistry);
 
   logger.info('Preloading modules');

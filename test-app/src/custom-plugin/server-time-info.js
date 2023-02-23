@@ -9,15 +9,15 @@ import GithubFlavoredMarkdown from '../../../src/common/github-flavored-markdown
 class ServerTimeInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
 
-  static get typeName() { return 'test-plugin/server-time'; }
+  static get typeName() { return 'custom-plugin/server-time'; }
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'test-plugin/server-time';
+    this.type = 'custom-plugin/server-time';
   }
 
   getName(t) {
-    return t('testPlugin/serverTime:name');
+    return t('customPlugin/serverTime:name');
   }
 
   getIcon() {

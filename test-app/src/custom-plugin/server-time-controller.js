@@ -5,7 +5,7 @@ class ServerTimeController {
 
   registerMiddleware(router) {
     router.get(
-      '/api/v1/plugin/test-plugin/server-time/time',
+      '/api/v1/plugin/custom-plugin/server-time/time',
       (req, res) => this.handleGetServerTime(req, res)
     );
   }
