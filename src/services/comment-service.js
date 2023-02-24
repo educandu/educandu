@@ -1,12 +1,16 @@
 import by from 'thenby';
 import uniqueId from '../utils/unique-id.js';
+import EventStore from '../stores/event-store.js';
 import CommentStore from '../stores/comment-store.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 
 class CommentService {
-  static dependencies = [CommentStore];
+  static dependencies = [CommentStore, EventStore, TransactionRunner];
 
-  constructor(commentStore) {
+  constructor(commentStore, eventStore, transactionRunner) {
     this.commentStore = commentStore;
+    this.eventStore = eventStore;
+    this.transactionRunner = transactionRunner;
   }
 
   getCommentById(commentId) {
@@ -19,10 +23,8 @@ class CommentService {
   }
 
   async createComment({ data, user }) {
-    const commentId = uniqueId.create();
-
     const newComment = {
-      _id: commentId,
+      _id: uniqueId.create(),
       documentId: data.documentId,
       createdOn: new Date(),
       createdBy: user._id,
@@ -32,7 +34,10 @@ class CommentService {
       text: data.text.trim()
     };
 
-    await this.commentStore.saveComment(newComment);
+    await this.transactionRunner.run(async session => {
+      await this.commentStore.saveComment(newComment, { session });
+      await this.eventStore.recordCommentCreatedEvent({ comment: newComment, user }, { session });
+    });
 
     return newComment;
   }

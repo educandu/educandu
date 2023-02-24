@@ -5,6 +5,11 @@ export const ROLE = {
   admin: 'admin'
 };
 
+export const EVENT_TYPE = {
+  revisionCreated: 'revision-created',
+  commentCreated: 'comment-created'
+};
+
 export const BATCH_TYPE = {
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',

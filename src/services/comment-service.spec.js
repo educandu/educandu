@@ -1,6 +1,7 @@
-import { createSandbox } from 'sinon';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import CommentService from './comment-service.js';
+import EventStore from '../stores/event-store.js';
 import CommentStore from '../stores/comment-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -10,6 +11,7 @@ describe('comment-service', () => {
   let user;
   let result;
   let container;
+  let eventStore;
   let commentStore;
 
   const now = new Date();
@@ -17,7 +19,7 @@ describe('comment-service', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-
+    eventStore = container.get(EventStore);
     commentStore = container.get(CommentStore);
 
     sut = container.get(CommentService);
@@ -43,6 +45,8 @@ describe('comment-service', () => {
 
     beforeEach(async () => {
       documentId = uniqueId.create();
+      sandbox.stub(eventStore, 'recordCommentCreatedEvent').resolves();
+
       result = await sut.createComment({
         data: {
           documentId,
@@ -69,6 +73,10 @@ describe('comment-service', () => {
     it('should write it to the database', async () => {
       const retrievedComment = await commentStore.getCommentById(result._id);
       expect(result).toEqual(retrievedComment);
+    });
+
+    it('should create an event', () => {
+      assert.calledOnce(eventStore.recordCommentCreatedEvent);
     });
   });
 

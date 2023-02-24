@@ -3,9 +3,10 @@ import Database from '../stores/database.js';
 import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
+import EventStore from '../stores/event-store.js';
 import DocumentService from './document-service.js';
-import { MEDIA_ASPECT_RATIO, ROLE } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
+import { MEDIA_ASPECT_RATIO, ROLE } from '../domain/constants.js';
 import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -30,6 +31,7 @@ describe('document-service', () => {
   const sandbox = createSandbox();
   const now = new Date();
 
+  let eventStore;
   let lockStore;
   let container;
   let adminUser;
@@ -42,8 +44,8 @@ describe('document-service', () => {
     adminUser = await setupTestUser(container, { email: 'admin@test.com', roles: Object.values(ROLE) });
     user = await setupTestUser(container, { email: 'user@test.com', roles: [ROLE.user] });
 
+    eventStore = container.get(EventStore);
     lockStore = container.get(LockStore);
-
     sut = container.get(DocumentService);
     db = container.get(Database);
   });
@@ -73,6 +75,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
       sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
+      sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
 
       createdRevision = null;
       room = await createTestRoom(container, { owner: user._id });
@@ -228,6 +231,10 @@ describe('document-service', () => {
     it('releases the lock on the room', () => {
       assert.calledWith(lockStore.releaseLock, roomLock);
     });
+
+    it('creates an event', () => {
+      assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+    });
   });
 
   describe('updateDocument', () => {
@@ -240,6 +247,8 @@ describe('document-service', () => {
     let persistedSecondRevision;
 
     beforeEach(async () => {
+      sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
+
       secondUser = await setupTestUser(container);
 
       data = {
@@ -335,7 +344,7 @@ describe('document-service', () => {
 
       secondTick = new Date(sandbox.clock.tick(1000));
 
-      updatedDocument = await sut.updateDocument({ documentId: initialDocument._id, data: updatedData, user: secondUser });
+      updatedDocument = await sut.updateDocument({ documentId: initialDocument._id, data: updatedData, user: secondUser, silentUpdate: true });
       persistedSecondRevision = await db.documentRevisions.findOne({ _id: updatedDocument.revision });
     });
 
@@ -415,6 +424,10 @@ describe('document-service', () => {
 
     it('saves all referenced cdn resources with the document', () => {
       expect(updatedDocument.cdnResources).toEqual(['cdn://document-media/image-1.png', 'cdn://document-media/image-2.png', 'cdn://document-media/video-1.mp4', 'cdn://document-media/video-2.mp4']);
+    });
+
+    it('creates an event', () => {
+      assert.calledOnce(eventStore.recordRevisionCreatedEvent);
     });
   });
 
@@ -514,6 +527,8 @@ describe('document-service', () => {
             sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text', width: 100 } }]
           }
         ]);
+
+        sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
       });
 
       describe('and no section has been hard-deleted', () => {
@@ -568,6 +583,10 @@ describe('document-service', () => {
 
           it('should assign a new section revision if the content has changed in between', () => {
             expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
+          });
+
+          it('should create an event', () => {
+            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
           });
         });
       });
@@ -636,6 +655,10 @@ describe('document-service', () => {
           it('should assign a new section revision for the "re-deleted" section', () => {
             expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
           });
+
+          it('should create an event', () => {
+            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+          });
         });
       });
 
@@ -702,6 +725,10 @@ describe('document-service', () => {
 
           it('should assign a new section revision for the "revived" section', () => {
             expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
+          });
+
+          it('should create an event', () => {
+            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
           });
         });
       });
@@ -799,7 +826,6 @@ describe('document-service', () => {
   });
 
   describe('hardDeleteSection', () => {
-
     describe('when a section has 3 revisions', () => {
       let documentRevisionsBeforeDeletion;
 
