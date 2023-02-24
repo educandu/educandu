@@ -102,8 +102,8 @@ class ClientDataMappingService {
   createProposedSections(docOrRevision, targetRoomId) {
     return docOrRevision.sections.reduce((proposedSections, section) => {
       if (!this._isDeletedSection(section)) {
-        const info = this.pluginRegistry.tryGetInfo(section.type);
-        const redactedContent = info?.redactContent?.(section.content, targetRoomId) || null;
+        const plugin = this.pluginRegistry.getRegisteredPlugin(section.type);
+        const redactedContent = plugin?.info.redactContent?.(section.content, targetRoomId) || null;
         if (redactedContent) {
           proposedSections.push({
             ...section,

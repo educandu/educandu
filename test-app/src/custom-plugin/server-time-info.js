@@ -1,6 +1,5 @@
 import joi from 'joi';
 import React from 'react';
-import MarkdownDisplay from './server-time-display.js';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import cloneDeep from '../../../src/utils/clone-deep.js';
 import { couldAccessUrlFromRoom } from '../../../src/utils/source-utils.js';
@@ -23,8 +22,8 @@ class ServerTimeInfo {
     return <ClockCircleOutlined />;
   }
 
-  getDisplayComponent() {
-    return MarkdownDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./server-time-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -16,6 +16,10 @@ const logger = new Logger(import.meta.url);
 export async function hydrateApp({ customResolvers }) {
   logger.info('Starting application');
 
+  const request = window.__request__;
+  const pageName = window.__pageName__;
+  const initialState = window.__initalState__;
+
   const container = new Container();
 
   const clientConfig = new ClientConfig(window.__clientconfig__);
@@ -43,8 +47,7 @@ export async function hydrateApp({ customResolvers }) {
   logger.info('Preloading modules');
   await Promise.all([
     ensurePreResolvedModulesAreLoaded(),
-    pageResolver.ensurePageIsCached(window.__pageName__)
-    // pluginRegistry.ensureAllEditorsAreLoaded()
+    pageResolver.ensurePageIsCached(pageName)
   ]);
 
   const {
@@ -52,18 +55,24 @@ export async function hydrateApp({ customResolvers }) {
     PageTemplateComponent,
     HomePageTemplateComponent,
     SiteLogoComponent
-  } = pageResolver.getCachedPageComponentInfo(window.__pageName__);
+  } = pageResolver.getCachedPageComponentInfo(pageName);
+
+  const PreloaderType = PageComponent.clientPreloader;
+  if (PreloaderType) {
+    const preloader = container.get(PreloaderType);
+    await preloader.preload({ initialState, request });
+  }
 
   const props = {
     user: window.__user__,
     storage: window.__storage__,
     storagePlan: window.__storagePlan__,
-    request: window.__request__,
+    request,
     uiLanguage: window.__uiLanguage__,
     settings: window.__settings__,
-    pageName: window.__pageName__,
+    pageName,
     container,
-    initialState: window.__initalState__,
+    initialState,
     theme: window.__theme__,
     PageComponent,
     PageTemplateComponent,

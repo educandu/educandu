@@ -3,7 +3,6 @@ import React from 'react';
 import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
-import AnnotationDisplay from './annotation-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -24,8 +23,8 @@ class AnnotationInfo {
     return <AnnotationIcon />;
   }
 
-  getDisplayComponent() {
-    return AnnotationDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./annotation-display.js')).default;
   }
 
   async resolveEditorComponent() {

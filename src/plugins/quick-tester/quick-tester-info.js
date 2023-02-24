@@ -4,7 +4,6 @@ import { TESTS_ORDER } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
-import QuickTesterDisplay from './quick-tester-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -25,8 +24,8 @@ class QuickTesterInfo {
     return <QuickTesterIcon />;
   }
 
-  getDisplayComponent() {
-    return QuickTesterDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./quick-tester-display.js')).default;
   }
 
   async resolveEditorComponent() {

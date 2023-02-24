@@ -4,7 +4,6 @@ import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
-import EarTrainingDisplay from './ear-training-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -25,8 +24,8 @@ class EarTrainingInfo {
     return <EarTrainingIcon />;
   }
 
-  getDisplayComponent() {
-    return EarTrainingDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./ear-training-display.js')).default;
   }
 
   async resolveEditorComponent() {

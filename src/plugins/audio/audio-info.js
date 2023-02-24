@@ -1,7 +1,6 @@
 import joi from 'joi';
 import React from 'react';
 import AudioIcon from './audio-icon.js';
-import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -23,8 +22,8 @@ class AudioInfo {
     return <AudioIcon />;
   }
 
-  getDisplayComponent() {
-    return AudioDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./audio-display.js')).default;
   }
 
   async resolveEditorComponent() {

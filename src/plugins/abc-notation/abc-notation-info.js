@@ -2,7 +2,6 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
-import AbcNotationDisplay from './abc-notation-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -23,8 +22,8 @@ class AbcNotationInfo {
     return <AbcNotationIcon />;
   }
 
-  getDisplayComponent() {
-    return AbcNotationDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./abc-notation-display.js')).default;
   }
 
   async resolveEditorComponent() {

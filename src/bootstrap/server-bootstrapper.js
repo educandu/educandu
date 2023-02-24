@@ -88,7 +88,7 @@ export async function createContainer(configValues = {}) {
   await Promise.all([
     ensurePreResolvedModulesAreLoaded(),
     pageResolver.ensureAllPagesAreCached(),
-    pluginRegistry.ensureAllEditorsAreLoaded()
+    pluginRegistry.ensureAllComponentsAreLoaded()
   ]);
 
   return container;

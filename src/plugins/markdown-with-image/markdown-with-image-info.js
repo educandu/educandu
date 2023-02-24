@@ -3,7 +3,6 @@ import React from 'react';
 import { IMAGE_POSITION } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MarkdownWithImageIcon from './markdown-with-image-icon.js';
-import MarkdownWithImageDisplay from './markdown-with-image-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
@@ -24,8 +23,8 @@ class MarkdownWithImageInfo {
     return <MarkdownWithImageIcon />;
   }
 
-  getDisplayComponent() {
-    return MarkdownWithImageDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./markdown-with-image-display.js')).default;
   }
 
   async resolveEditorComponent() {

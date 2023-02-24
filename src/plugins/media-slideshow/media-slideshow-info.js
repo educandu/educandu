@@ -4,7 +4,6 @@ import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
-import MediaSlideshowDisplay from './media-slideshow-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -25,8 +24,8 @@ class MediaSlideshowInfo {
     return <MediaSlideshowIcon />;
   }
 
-  getDisplayComponent() {
-    return MediaSlideshowDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./media-slideshow-display.js')).default;
   }
 
   async resolveEditorComponent() {

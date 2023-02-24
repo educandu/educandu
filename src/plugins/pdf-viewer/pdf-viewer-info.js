@@ -2,7 +2,6 @@ import joi from 'joi';
 import React from 'react';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import PdfViewerDisplay from './pdf-viewer-display.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class PdfViewerInfo {
@@ -16,8 +15,8 @@ class PdfViewerInfo {
     return <PdfViewerIcon />;
   }
 
-  getDisplayComponent() {
-    return PdfViewerDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./pdf-viewer-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -1,7 +1,6 @@
 import joi from 'joi';
 import React from 'react';
 import ImageIcon from './image-icon.js';
-import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -25,8 +24,8 @@ class ImageInfo {
     return <ImageIcon />;
   }
 
-  getDisplayComponent() {
-    return ImageDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./image-display.js')).default;
   }
 
   async resolveEditorComponent() {
