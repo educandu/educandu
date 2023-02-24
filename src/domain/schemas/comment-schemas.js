@@ -9,6 +9,7 @@ export const putCommentBodySchema = joi.object({
 });
 
 export const postCommentsTopicBodySchema = joi.object({
+  documentId: idOrKeySchema.required(),
   oldTopic: joi.string().required(),
   newTopic: joi.string().required()
 });

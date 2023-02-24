@@ -46,9 +46,9 @@ class CommentController {
   }
 
   async handlePostCommentsTopic(req, res) {
-    const { oldTopic, newTopic } = req.body;
+    const { documentId, oldTopic, newTopic } = req.body;
 
-    await this.commentService.updateCommentsTopic({ oldTopic, newTopic });
+    await this.commentService.updateCommentsTopic({ documentId, oldTopic, newTopic });
     return res.status(201).send();
   }
 

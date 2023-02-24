@@ -5,13 +5,14 @@ import { idOrKeySchema } from './shared-schemas.js';
 const revisionCreatedParamsSchema = joi.object({
   userId: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
-  revisionId: idOrKeySchema.required(),
-  roomId: idOrKeySchema.allow(null).required()
+  roomId: idOrKeySchema.allow(null).required(),
+  revisionId: idOrKeySchema.required()
 });
 
 const commentCreatedParamsSchema = joi.object({
   userId: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
+  roomId: idOrKeySchema.allow(null).required(),
   commentId: idOrKeySchema.required()
 });
 
