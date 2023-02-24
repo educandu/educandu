@@ -1,22 +1,20 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MediaAnalysisIcon from './media-analysis-icon.js';
-import MediaAnalysisDisplay from './media-analysis-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './media-analysis-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MediaAnalysisInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'media-analysis'; }
+  static typeName = 'media-analysis';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'media-analysis';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('mediaAnalysis:name');
   }
 
@@ -24,8 +22,8 @@ class MediaAnalysisInfo {
     return <MediaAnalysisIcon />;
   }
 
-  getDisplayComponent() {
-    return MediaAnalysisDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./media-analysis-display.js')).default;
   }
 
   async resolveEditorComponent() {

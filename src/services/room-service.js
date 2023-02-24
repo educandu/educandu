@@ -23,9 +23,7 @@ const { BadRequest, NotFound } = httpErrors;
 const logger = new Logger(import.meta.url);
 
 export default class RoomService {
-  static get inject() {
-    return [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, TransactionRunner];
-  }
+  static dependencies = [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, TransactionRunner];
 
   constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, documentStore, transactionRunner) {
     this.cdn = cdn;

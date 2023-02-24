@@ -2,21 +2,19 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import TableOfContentsIcon from './table-of-contents-icon.js';
-import TableOfContentsDisplay from './table-of-contents-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class TableOfContentsInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'table-of-contents'; }
+  static typeName = 'table-of-contents';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'table-of-contents';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('tableOfContents:name');
   }
 
@@ -24,8 +22,8 @@ class TableOfContentsInfo {
     return <TableOfContentsIcon />;
   }
 
-  getDisplayComponent() {
-    return TableOfContentsDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./table-of-contents-display.js')).default;
   }
 
   async resolveEditorComponent() {

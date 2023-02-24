@@ -1,17 +1,12 @@
 import joi from 'joi';
 import React from 'react';
 import IframeIcon from './iframe-icon.js';
-import IframeDisplay from './iframe-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 class IframeInfo {
-  static get typeName() { return 'iframe'; }
+  static typeName = 'iframe';
 
-  constructor() {
-    this.type = 'iframe';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('iframe:name');
   }
 
@@ -19,8 +14,8 @@ class IframeInfo {
     return <IframeIcon />;
   }
 
-  getDisplayComponent() {
-    return IframeDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./iframe-display.js')).default;
   }
 
   async resolveEditorComponent() {

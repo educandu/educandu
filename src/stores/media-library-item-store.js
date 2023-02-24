@@ -4,7 +4,7 @@ import { createTagsPipelineQuery } from '../utils/tag-utils.js';
 import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
 class MediaLibraryItemStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.mediaLibraryItems;

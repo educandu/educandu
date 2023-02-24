@@ -1,7 +1,7 @@
 import SamlConfigService from '../saml-config-service.js';
 
 export default class LoadSamlMetadataScheduledTask {
-  static get inject() { return [SamlConfigService]; }
+  static dependencies = [SamlConfigService];
 
   constructor(samlConfigService) {
     this.preventOverrun = true;

@@ -2,21 +2,19 @@ import joi from 'joi';
 import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import MarkdownDisplay from './markdown-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class MarkdownInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'markdown'; }
+  static typeName = 'markdown';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'markdown';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('markdown:name');
   }
 
@@ -24,8 +22,8 @@ class MarkdownInfo {
     return <MarkdownIcon />;
   }
 
-  getDisplayComponent() {
-    return MarkdownDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./markdown-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -4,7 +4,7 @@ import SettingService from '../services/setting-service.js';
 import DocumentService from '../services/document-service.js';
 
 class IndexController {
-  static get inject() { return [SettingService, DocumentService, PageRenderer]; }
+  static dependencies = [SettingService, DocumentService, PageRenderer];
 
   constructor(settingService, documentService, pageRenderer) {
     this.settingService = settingService;

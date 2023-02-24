@@ -10,7 +10,7 @@ const logger = new Logger(import.meta.url);
 const intervalTaskTypes = [LoadSamlMetadataScheduledTask];
 
 export default class IntervalTaskScheduler {
-  static get inject() { return [Container]; }
+  static dependencies = [Container];
 
   constructor(container) {
     this.container = container;

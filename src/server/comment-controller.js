@@ -13,7 +13,7 @@ const jsonParser = express.json();
 const { BadRequest, NotFound } = httpErrors;
 
 class CommentController {
-  static get inject() { return [CommentService, DocumentService, ClientDataMappingService]; }
+  static dependencies = [CommentService, DocumentService, ClientDataMappingService];
 
   constructor(commentService, documentService, clientDataMappingService) {
     this.commentService = commentService;

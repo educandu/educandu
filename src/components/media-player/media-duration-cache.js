@@ -8,8 +8,6 @@ const logger = new Logger(import.meta.url);
 const FAILED_ENTRIES_LIFETIME_IN_MS = 5000;
 
 class MediaDurationCache {
-  static get inject() { return []; }
-
   constructor() {
     this._isDisposed = false;
     this._entries = new Map();

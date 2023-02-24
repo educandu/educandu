@@ -1,7 +1,7 @@
 import HttpClient from './http-client.js';
 
 class CommentApiClient {
-  static inject() { return [HttpClient]; }
+  static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;

@@ -3,21 +3,19 @@ import React from 'react';
 import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
-import AnnotationDisplay from './annotation-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AnnotationInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'annotation'; }
+  static typeName = 'annotation';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'annotation';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('annotation:name');
   }
 
@@ -25,8 +23,8 @@ class AnnotationInfo {
     return <AnnotationIcon />;
   }
 
-  getDisplayComponent() {
-    return AnnotationDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./annotation-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -4,19 +4,12 @@ import { DISPLAY_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
 import { getDefaultContent } from './audio-waveform-utils.js';
-import AudioWaveformDisplay from './audio-waveform-display.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioWaveformInfo {
-  static get inject() { return []; }
+  static typeName = 'audio-waveform';
 
-  static get typeName() { return 'audio-waveform'; }
-
-  constructor() {
-    this.type = 'audio-waveform';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('audioWaveform:name');
   }
 
@@ -24,8 +17,8 @@ class AudioWaveformInfo {
     return <AudioWaveformIcon />;
   }
 
-  getDisplayComponent() {
-    return AudioWaveformDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./audio-waveform-display.js')).default;
   }
 
   async resolveEditorComponent() {

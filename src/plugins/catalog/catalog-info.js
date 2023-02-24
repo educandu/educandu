@@ -1,18 +1,13 @@
 import React from 'react';
 import CatalogIcon from './catalog-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import CatalogDisplay from './catalog-display.js';
 import { createDefaultContent, validateContent } from './catalog-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 export default class Catalog {
-  static get typeName() { return 'catalog'; }
+  static typeName = 'catalog';
 
-  constructor() {
-    this.type = 'catalog';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('catalog:name');
   }
 
@@ -20,8 +15,8 @@ export default class Catalog {
     return <CatalogIcon />;
   }
 
-  getDisplayComponent() {
-    return CatalogDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./catalog-display.js')).default;
   }
 
   async resolveEditorComponent() {

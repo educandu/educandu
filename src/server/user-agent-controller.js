@@ -4,7 +4,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 
 const logger = new Logger(import.meta.url);
 class UserAgentController {
-  static get inject() { return [PageRenderer]; }
+  static dependencies = [PageRenderer];
 
   constructor(pageRenderer) {
     this.pageRenderer = pageRenderer;

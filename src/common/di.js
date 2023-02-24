@@ -48,9 +48,8 @@ class ServiceResolver {
   }
 
   _getDependencies() {
-    const inject = this._ctor.inject;
-    const deps = typeof inject === 'function' ? inject() : inject;
-    return Array.isArray(deps) ? deps : [];
+    const dependencies = this._ctor.dependencies;
+    return Array.isArray(dependencies) ? dependencies : [];
   }
 
   _checkForCircularDependency(resolveChain) {

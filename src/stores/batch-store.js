@@ -1,7 +1,7 @@
 import Database from './database.js';
 
 class BatchStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.batches;

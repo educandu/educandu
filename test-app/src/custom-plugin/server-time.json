@@ -1,0 +1,12 @@
+{
+  "customPlugin/serverTime": {
+    "name": {
+      "en": "Server time",
+      "de": "Serverzeit"
+    },
+    "currentServerTime": {
+      "en": "Current server time",
+      "de": "Aktuelle Serverzeit"
+    }
+  }
+}

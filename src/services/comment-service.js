@@ -3,9 +3,7 @@ import uniqueId from '../utils/unique-id.js';
 import CommentStore from '../stores/comment-store.js';
 
 class CommentService {
-  static get inject() {
-    return [CommentStore];
-  }
+  static dependencies = [CommentStore];
 
   constructor(commentStore) {
     this.commentStore = commentStore;

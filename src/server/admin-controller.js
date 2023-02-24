@@ -5,7 +5,7 @@ import requestUtils from '../utils/request-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 
 class AdminController {
-  static get inject() { return [PageRenderer]; }
+  static dependencies = [PageRenderer];
 
   constructor(pageRenderer) {
     this.pageRenderer = pageRenderer;

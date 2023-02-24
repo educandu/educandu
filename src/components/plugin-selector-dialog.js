@@ -13,11 +13,11 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
   const pluginRegistry = useService(PluginRegistry);
 
   const pluginItems = useMemo(() => {
-    return pluginRegistry.getAllInfos()
-      .map(info => ({
-        key: info.type,
-        icon: info.getIcon?.(t) || <QuestionOutlined />,
-        label: info.getName(t)
+    return pluginRegistry.getAllRegisteredPlugins()
+      .map(plugin => ({
+        key: plugin.name,
+        icon: plugin.info.getIcon?.(t) || <QuestionOutlined />,
+        label: plugin.info.getDisplayName(t)
       }));
   }, [pluginRegistry, t]);
 

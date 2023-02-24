@@ -10,7 +10,7 @@ const roomInvitationMetadataProjection = {
 };
 
 class RoomInvitationStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.roomInvitations;

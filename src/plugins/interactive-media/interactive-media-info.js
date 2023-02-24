@@ -4,21 +4,19 @@ import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
-import InteractiveMediaDisplay from './interactive-media-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class InteractiveMediaInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'interactive-media'; }
+  static typeName = 'interactive-media';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'interactive-media';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('interactiveMedia:name');
   }
 
@@ -26,8 +24,8 @@ class InteractiveMediaInfo {
     return <InteractiveMediaIcon />;
   }
 
-  getDisplayComponent() {
-    return InteractiveMediaDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./interactive-media-display.js')).default;
   }
 
   async resolveEditorComponent() {

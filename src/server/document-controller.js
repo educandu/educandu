@@ -35,7 +35,7 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer]; }
+  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer];
 
   constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer) {
     this.settingService = settingService;

@@ -4,7 +4,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 class ErrorPageRenderer extends PageRendererBase {
-  static get inject() { return [ServerConfig, ResourceManager]; }
+  static dependencies = [ServerConfig, ResourceManager];
 
   constructor(serverConfig, resourceManager) {
     super();

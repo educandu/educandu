@@ -21,7 +21,7 @@ const TEXT_LANGUAGE_SEPARATOR = '\n\n';
 const MARKDOWN_LANGUAGE_SEPARATOR = '\n---\n';
 
 class MailService {
-  static get inject() { return [GithubFlavoredMarkdown, ServerConfig, UserStore, ResourceManager]; }
+  static dependencies = [GithubFlavoredMarkdown, ServerConfig, UserStore, ResourceManager];
 
   constructor(gfm, serverConfig, userStore, resourceManager) {
     this.gfm = gfm;

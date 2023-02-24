@@ -7,8 +7,6 @@ const logger = new Logger(import.meta.url);
 const MIN_WIDTH_HIGH_RESOLUTION_THUMBNAIL = 500;
 
 class YoutubeThumbnailUrlCache {
-  static get inject() { return []; }
-
   constructor() {
     this._isDisposed = false;
     this._entries = new Map();

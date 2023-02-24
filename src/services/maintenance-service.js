@@ -10,7 +10,7 @@ const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 const logger = new Logger(import.meta.url);
 
 export default class MaintenanceService {
-  static get inject() { return [Cdn, Database, LockStore]; }
+  static dependencies = [Cdn, Database, LockStore];
 
   constructor(cdn, database, lockStore) {
     this.cdn = cdn;

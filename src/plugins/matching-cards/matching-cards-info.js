@@ -3,22 +3,20 @@ import React from 'react';
 import { SIZE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MatchingCardsIcon from './matching-cards-icon.js';
-import MatchingCardsDisplay from './matching-cards-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultTile, getTilePairCountBySize } from './matching-cards-utils.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class MatchingCardsInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'matching-cards'; }
+  static typeName = 'matching-cards';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'matching-cards';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('matchingCards:name');
   }
 
@@ -26,8 +24,8 @@ class MatchingCardsInfo {
     return <MatchingCardsIcon />;
   }
 
-  getDisplayComponent() {
-    return MatchingCardsDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./matching-cards-display.js')).default;
   }
 
   async resolveEditorComponent() {

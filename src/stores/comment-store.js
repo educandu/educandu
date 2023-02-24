@@ -3,7 +3,7 @@ import { validate } from '../domain/validation.js';
 import { commentDBSchema } from '../domain/schemas/comment-schemas.js';
 
 class CommentStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.comments;

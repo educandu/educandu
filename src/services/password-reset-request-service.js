@@ -1,7 +1,7 @@
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 
 class PasswordResetRequestService {
-  static get inject() { return [PasswordResetRequestStore]; }
+  static dependencies = [PasswordResetRequestStore];
 
   constructor(passwordResetRequestStore) {
     this.passwordResetRequestStore = passwordResetRequestStore;

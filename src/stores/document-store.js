@@ -53,7 +53,7 @@ const documentExtendedMetadataProjection = {
 };
 
 class DocumentStore {
-  static get inject() { return [Database]; }
+  static dependencies = [Database];
 
   constructor(db) {
     this.collection = db.documents;

@@ -1,22 +1,20 @@
 import joi from 'joi';
 import React from 'react';
 import AudioIcon from './audio-icon.js';
-import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class AudioInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'audio'; }
+  static typeName = 'audio';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'audio';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('audio:name');
   }
 
@@ -24,8 +22,8 @@ class AudioInfo {
     return <AudioIcon />;
   }
 
-  getDisplayComponent() {
-    return AudioDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./audio-display.js')).default;
   }
 
   async resolveEditorComponent() {

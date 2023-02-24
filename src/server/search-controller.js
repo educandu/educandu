@@ -6,7 +6,7 @@ import { getSearchQuerySchema } from '../domain/schemas/search-schemas.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 export default class SearchController {
-  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
+  static dependencies = [DocumentService, ClientDataMappingService, PageRenderer];
 
   constructor(documentService, clientDataMappingService, pageRenderer) {
     this.pageRenderer = pageRenderer;

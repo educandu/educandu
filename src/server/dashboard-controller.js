@@ -3,7 +3,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 
 class DashboardController {
-  static get inject() { return [PageRenderer]; }
+  static dependencies = [PageRenderer];
 
   constructor(pageRenderer) {
     this.pageRenderer = pageRenderer;

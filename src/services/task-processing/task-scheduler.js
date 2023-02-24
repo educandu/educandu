@@ -6,7 +6,7 @@ import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
 const logger = new Logger(import.meta.url);
 
 export default class TaskScheduler {
-  static get inject() { return [BatchTaskScheduler, IntervalTaskScheduler]; }
+  static dependencies = [BatchTaskScheduler, IntervalTaskScheduler];
 
   constructor(batchTaskScheduler, scheduledTaskRunner) {
     this.batchTaskScheduler = batchTaskScheduler;

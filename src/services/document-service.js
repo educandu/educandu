@@ -20,9 +20,9 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
-import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 
 const logger = new Logger(import.meta.url);
@@ -30,20 +30,18 @@ const logger = new Logger(import.meta.url);
 const { BadRequest, Forbidden, NotFound } = httpErrors;
 
 class DocumentService {
-  static get inject() {
-    return [
-      Cdn,
-      DocumentRevisionStore,
-      DocumentOrderStore,
-      DocumentStore,
-      RoomStore,
-      BatchStore,
-      TaskStore,
-      LockStore,
-      TransactionRunner,
-      PluginRegistry
-    ];
-  }
+  static dependencies = [
+    Cdn,
+    DocumentRevisionStore,
+    DocumentOrderStore,
+    DocumentStore,
+    RoomStore,
+    BatchStore,
+    TaskStore,
+    LockStore,
+    TransactionRunner,
+    PluginRegistry
+  ];
 
   constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, roomStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
     this.cdn = cdn;

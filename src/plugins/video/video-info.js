@@ -1,23 +1,21 @@
 import joi from 'joi';
 import React from 'react';
 import VideoIcon from './video-icon.js';
-import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class VideoInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'video'; }
+  static typeName = 'video';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'video';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('video:name');
   }
 
@@ -25,8 +23,8 @@ class VideoInfo {
     return <VideoIcon />;
   }
 
-  getDisplayComponent() {
-    return VideoDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./video-display.js')).default;
   }
 
   async resolveEditorComponent() {

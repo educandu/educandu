@@ -12,9 +12,7 @@ import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
 
 class MediaLibraryService {
-  static get inject() {
-    return [Cdn, MediaLibraryItemStore];
-  }
+  static dependencies = [Cdn, MediaLibraryItemStore];
 
   constructor(cdn, mediaLibraryItemStore) {
     this.cdn = cdn;

@@ -1,7 +1,7 @@
 import HttpClient from './http-client.js';
 
 class DocumentApiClient {
-  static inject() { return [HttpClient]; }
+  static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;

@@ -1,22 +1,20 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import MultitrackMediaIcon from './multitrack-media-icon.js';
-import MultitrackMediaDisplay from './multitrack-media-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './multitrack-media-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MultitrackMediaInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'multitrack-media'; }
+  static typeName = 'multitrack-media';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'multitrack-media';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('multitrackMedia:name');
   }
 
@@ -24,8 +22,8 @@ class MultitrackMediaInfo {
     return <MultitrackMediaIcon />;
   }
 
-  getDisplayComponent() {
-    return MultitrackMediaDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./multitrack-media-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -993,6 +993,12 @@
       "de": "weniger anzeigen"
     }
   },
+  "loadingSection": {
+    "messageTitle": {
+      "en": "Loading plugin",
+      "de": "Plugin wird geladen"
+    }
+  },
   "loginForm": {
     "enterPassword": {
       "en": "Please enter your password",

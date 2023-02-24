@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
-import React, { Fragment, useState } from 'react';
+import LoadingSection from './loading-section.js';
 import { useStableCallback } from '../ui/hooks.js';
 import HelpIcon from './icons/general/help-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
@@ -19,12 +19,18 @@ import PluginRegistry from '../plugins/plugin-registry.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { getSectionElementDataAttributes } from '../utils/doc-utils.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+
+const createComponents = registeredPlugin => ({
+  editorComponent: registeredPlugin?.editorComponent || null,
+  displayComponent: registeredPlugin?.displayComponent || null
+});
 
 function SectionDisplay({
   section,
@@ -51,6 +57,29 @@ function SectionDisplay({
   const settings = useSettings();
   const { uiLanguage } = useLocale();
   const pluginRegistry = useService(PluginRegistry);
+
+  const registeredPlugin = pluginRegistry.getRegisteredPlugin(section.type);
+  const [components, setComponents] = useState(createComponents(registeredPlugin));
+
+  useEffect(() => {
+    setComponents(createComponents(registeredPlugin));
+  }, [registeredPlugin]);
+
+  useEffect(() => {
+    if (!registeredPlugin) {
+      return;
+    }
+
+    if (isEditing && !components.editorComponent) {
+      registeredPlugin.ensureEditorComponentIsLoaded()
+        .then(() => setComponents(createComponents(registeredPlugin)));
+    }
+
+    if (!isEditing && !components.displayComponent) {
+      registeredPlugin.ensureDisplayComponentIsLoaded()
+        .then(() => setComponents(createComponents(registeredPlugin)));
+    }
+  }, [registeredPlugin, components, isEditing]);
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
@@ -151,12 +180,20 @@ function SectionDisplay({
   ].filter(action => action.isVisible);
 
   const renderDisplayComponent = () => {
-    if (section.content) {
-      const DisplayComponent = pluginRegistry.tryGetDisplayComponent(section.type) || NotSupportedSection;
-      return <DisplayComponent content={section.content} />;
+    if (!section.content) {
+      return <DeletedSection section={section} />;
     }
 
-    return <DeletedSection section={section} />;
+    if (!registeredPlugin) {
+      return <NotSupportedSection />;
+    }
+
+    const DisplayComponent = components.displayComponent;
+    if (!DisplayComponent) {
+      return <LoadingSection />;
+    }
+
+    return <DisplayComponent content={section.content} />;
   };
 
   const handleContentChange = content => {
@@ -168,7 +205,15 @@ function SectionDisplay({
       throw new Error('Cannot edit a deleted section');
     }
 
-    const EditorComponent = pluginRegistry.tryGetEditorComponent(section.type) || NotSupportedSection;
+    if (!registeredPlugin) {
+      return <NotSupportedSection />;
+    }
+
+    const EditorComponent = components.editorComponent;
+    if (!EditorComponent) {
+      return <LoadingSection />;
+    }
+
     return (
       <EditorComponent
         content={section.content}
@@ -203,7 +248,7 @@ function SectionDisplay({
   );
 
   const renderSectionType = () => {
-    return pluginRegistry.tryGetInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`;
+    return registeredPlugin?.info.getDisplayName(t) || `${t('common:unknown')} (${section.type})`;
   };
 
   const renderSectionRevision = () => {

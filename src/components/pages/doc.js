@@ -48,6 +48,7 @@ import {
   getEditDocRestrictionTooltip,
   tryBringSectionIntoView
 } from '../../utils/doc-utils.js';
+import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -91,6 +92,32 @@ function getDocumentMetadataModalState({ t, doc, room, isCloning, isOpen = false
   };
 }
 
+const determineInitialViewState = request => {
+  const requestView = Object.values(VIEW).find(v => v === request.query.view);
+  if (!requestView) {
+    return { preSetView: null, view: VIEW.display };
+  }
+
+  return { preSetView: requestView, view: requestView };
+};
+
+class DocPreloader {
+  static dependencies = [PluginRegistry];
+
+  constructor(pluginRegistry) {
+    this.pluginRegistry = pluginRegistry;
+  }
+
+  preload({ initialState, request }) {
+    const startsInEditMode = determineInitialViewState(request).view === VIEW.edit;
+    return ensurePluginComponentAreLoadedForSections({
+      sections: [...initialState.doc.sections, ...initialState.templateSections],
+      pluginRegistry: this.pluginRegistry,
+      displayOnly: !startsInEditMode
+    });
+  }
+}
+
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const pageRef = useRef(null);
@@ -105,15 +132,6 @@ function Doc({ initialState, PageTemplate }) {
 
   const { room } = initialState;
 
-  const determineInitialViewState = () => {
-    const requestView = Object.values(VIEW).find(v => v === request.query.view);
-    if (!requestView) {
-      return { preSetView: null, view: VIEW.display };
-    }
-
-    return { preSetView: requestView, view: requestView };
-  };
-
   const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
   const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
   const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
@@ -125,12 +143,12 @@ function Doc({ initialState, PageTemplate }) {
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
-  const [view, setView] = useState(determineInitialViewState().view);
   const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
+  const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [controlPanelMarginRightInPx, setControlPanelMarginRightInPx] = useState(0);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
-  const [preSetView, setPreSetView] = useState(determineInitialViewState().preSetView);
+  const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -207,10 +225,6 @@ function Doc({ initialState, PageTemplate }) {
   }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
-    if (preSetView === VIEW.edit || view === VIEW.edit) {
-      pluginRegistry.ensureAllEditorsAreLoaded();
-    }
-
     if (preSetView === VIEW.history) {
       (async () => {
         try {
@@ -228,7 +242,7 @@ function Doc({ initialState, PageTemplate }) {
         await fetchComments();
       })();
     }
-  }, [preSetView, doc._id, view, t, pluginRegistry, documentApiClient, fetchComments]);
+  }, [preSetView, doc._id, view, t, documentApiClient, fetchComments]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -374,11 +388,11 @@ function Doc({ initialState, PageTemplate }) {
   }, [currentSections]);
 
   const handleSectionInsert = useCallback((pluginType, index) => {
-    const pluginInfo = pluginRegistry.getInfo(pluginType);
+    const plugin = pluginRegistry.getRegisteredPlugin(pluginType);
     const newSection = {
       key: uniqueId.create(),
-      type: pluginType,
-      content: pluginInfo.getDefaultContent(t)
+      type: plugin.name,
+      content: plugin.info.getDefaultContent(t)
     };
     const newSections = insertItemAt(currentSections, newSection, index);
     setCurrentSections(newSections);
@@ -703,5 +717,7 @@ Doc.propTypes = {
     room: roomShape
   }).isRequired
 };
+
+Doc.clientPreloader = DocPreloader;
 
 export default Doc;

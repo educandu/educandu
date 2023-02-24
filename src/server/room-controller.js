@@ -44,7 +44,7 @@ const jsonParser = express.json();
 const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, DocumentService, UserService, StorageService, MailService, ClientDataMappingService, PageRenderer]; }
+  static dependencies = [ServerConfig, RoomService, DocumentService, UserService, StorageService, MailService, ClientDataMappingService, PageRenderer];
 
   constructor(serverConfig, roomService, documentService, userService, storageService, mailService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;

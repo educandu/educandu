@@ -2,21 +2,19 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
-import AbcNotationDisplay from './abc-notation-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AbcNotationInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'abc-notation'; }
+  static typeName = 'abc-notation';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'abc-notation';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('abcNotation:name');
   }
 
@@ -24,8 +22,8 @@ class AbcNotationInfo {
     return <AbcNotationIcon />;
   }
 
-  getDisplayComponent() {
-    return AbcNotationDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./abc-notation-display.js')).default;
   }
 
   async resolveEditorComponent() {

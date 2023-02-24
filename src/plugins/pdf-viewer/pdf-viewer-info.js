@@ -2,17 +2,12 @@ import joi from 'joi';
 import React from 'react';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import PdfViewerDisplay from './pdf-viewer-display.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class PdfViewerInfo {
-  static get typeName() { return 'pdf-viewer'; }
+  static typeName = 'pdf-viewer';
 
-  constructor() {
-    this.type = 'pdf-viewer';
-  }
-
-  getName(t) {
+  getDisplayName(t) {
     return t('pdfViewer:name');
   }
 
@@ -20,8 +15,8 @@ class PdfViewerInfo {
     return <PdfViewerIcon />;
   }
 
-  getDisplayComponent() {
-    return PdfViewerDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./pdf-viewer-display.js')).default;
   }
 
   async resolveEditorComponent() {

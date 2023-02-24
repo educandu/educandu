@@ -6,16 +6,20 @@ import ClientConfig from './client-config.js';
 import ReactDOMClient from 'react-dom/client';
 import PageResolver from '../domain/page-resolver.js';
 import ThemeManager from '../resources/theme-manager.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
 
-export async function hydrateApp({ bundleConfig }) {
+export async function hydrateApp({ customResolvers }) {
   logger.info('Starting application');
 
-  logger.info('Creating container');
+  const request = window.__request__;
+  const pageName = window.__pageName__;
+  const initialState = window.__initalState__;
+
   const container = new Container();
 
   const clientConfig = new ClientConfig(window.__clientconfig__);
@@ -33,30 +37,42 @@ export async function hydrateApp({ bundleConfig }) {
   licenseManager.setLicenses(window.__licenses__);
   container.registerInstance(LicenseManager, licenseManager);
 
-  const pageResolver = new PageResolver(bundleConfig);
+  const pageResolver = new PageResolver(customResolvers);
   container.registerInstance(PageResolver, pageResolver);
 
-  logger.info('Resolving entry point');
+  const pluginRegistry = new PluginRegistry();
+  pluginRegistry.setPlugins(container, clientConfig.plugins, customResolvers);
+  container.registerInstance(PluginRegistry, pluginRegistry);
+
+  logger.info('Preloading modules');
+  await Promise.all([
+    ensurePreResolvedModulesAreLoaded(),
+    pageResolver.ensurePageIsCached(pageName)
+  ]);
+
   const {
     PageComponent,
     PageTemplateComponent,
     HomePageTemplateComponent,
     SiteLogoComponent
-  } = await pageResolver.getPageComponentInfo(window.__pageName__);
+  } = pageResolver.getCachedPageComponentInfo(pageName);
 
-  logger.info('Preload modules');
-  await ensurePreResolvedModulesAreLoaded();
+  const PreloaderType = PageComponent.clientPreloader;
+  if (PreloaderType) {
+    const preloader = container.get(PreloaderType);
+    await preloader.preload({ initialState, request });
+  }
 
   const props = {
     user: window.__user__,
     storage: window.__storage__,
     storagePlan: window.__storagePlan__,
-    request: window.__request__,
+    request,
     uiLanguage: window.__uiLanguage__,
     settings: window.__settings__,
-    pageName: window.__pageName__,
+    pageName,
     container,
-    initialState: window.__initalState__,
+    initialState,
     theme: window.__theme__,
     PageComponent,
     PageTemplateComponent,

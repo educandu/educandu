@@ -105,9 +105,9 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
 export function extractCdnResources(sections, pluginRegistry) {
   return [
     ...sections.reduce((cdnResources, section) => {
-      const info = pluginRegistry.tryGetInfo(section.type);
-      return info && section.content
-        ? [...cdnResources, ...info.getCdnResources(section.content).filter(resource => resource)]
+      const plugin = pluginRegistry.getRegisteredPlugin(section.type);
+      return plugin && section.content
+        ? [...cdnResources, ...plugin.info.getCdnResources(section.content).filter(resource => resource)]
         : cdnResources;
     }, new Set())
   ].sort();
@@ -115,8 +115,8 @@ export function extractCdnResources(sections, pluginRegistry) {
 
 export function validateSection(section, pluginRegistry) {
   if (section.content) {
-    const info = pluginRegistry.tryGetInfo(section.type);
-    info?.validateContent?.(section.content);
+    const plugin = pluginRegistry.getRegisteredPlugin(section.type);
+    plugin?.info?.validateContent?.(section.content);
   }
 }
 
@@ -166,8 +166,8 @@ export function createNewSectionFromClipboardText(clipboardText, origin) {
 }
 
 export function redactSectionContent({ section, pluginRegistry, targetRoomId }) {
-  const pluginInfo = pluginRegistry.getInfo(section.type);
-  return pluginInfo
-    ? { ...section, content: pluginInfo.redactContent(section.content, targetRoomId) }
+  const plugin = pluginRegistry.getRegisteredPlugin(section.type);
+  return plugin
+    ? { ...section, content: plugin.info.redactContent(section.content, targetRoomId) }
     : section;
 }

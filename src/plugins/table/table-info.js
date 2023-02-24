@@ -1,7 +1,6 @@
 import joi from 'joi';
 import React from 'react';
 import TableIcon from './table-icon.js';
-import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -12,16 +11,15 @@ const DEFAULT_TABLE_ROW_COUNT = 3;
 const DEFAULT_TABLE_COLUMN_COUNT = 3;
 
 class TableInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'table'; }
+  static typeName = 'table';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'table';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('table:name');
   }
 
@@ -29,8 +27,8 @@ class TableInfo {
     return <TableIcon />;
   }
 
-  getDisplayComponent() {
-    return TableDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./table-display.js')).default;
   }
 
   async resolveEditorComponent() {

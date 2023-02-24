@@ -49,10 +49,11 @@ export async function setupTestEnvironment() {
     announcementCookieNamePrefix: 'ANNOUNCEMENT',
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
-    bundleConfig: {
-      getPageTemplateComponent: () => Promise.resolve(null),
-      getHomePageTemplateComponent: () => Promise.resolve(null),
-      getSiteLogoComponent: () => Promise.resolve(null)
+    customResolvers: {
+      resolveCustomPageTemplate: null,
+      resolveCustomHomePageTemplate: null,
+      resolveCustomSiteLogo: null,
+      resolveCustomPluginInfos: null
     },
     plugins: [
       'markdown',

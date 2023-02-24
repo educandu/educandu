@@ -6,9 +6,7 @@ import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.
 const logger = new Logger(import.meta.url);
 
 class CdnUploadDirectoryCreationTaskProcessor {
-  static get inject() {
-    return [DocumentService, RoomService];
-  }
+  static dependencies = [DocumentService, RoomService];
 
   constructor(documentService, roomService) {
     this.documentService = documentService;

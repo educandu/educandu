@@ -4,9 +4,7 @@ import DocumentService from '../document-service.js';
 const logger = new Logger(import.meta.url);
 
 class DocumentValidationTaskProcessor {
-  static get inject() {
-    return [DocumentService];
-  }
+  static dependencies = [DocumentService];
 
   constructor(documentService) {
     this.documentService = documentService;

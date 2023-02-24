@@ -7,7 +7,7 @@ import BatchStore from '../../stores/batch-store.js';
 const logger = new Logger(import.meta.url);
 
 export default class BatchProcessor {
-  static get inject() { return [BatchStore, TaskStore, TaskProcessor]; }
+  static dependencies = [BatchStore, TaskStore, TaskProcessor];
 
   constructor(batchStore, taskStore, taskProcessor) {
     this.batchStore = batchStore;

@@ -22,7 +22,7 @@ const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 class MediaLibraryController {
-  static get inject() { return [Cdn, MediaLibraryService, ClientDataMappingService]; }
+  static dependencies = [Cdn, MediaLibraryService, ClientDataMappingService];
 
   constructor(cdn, mediaLibraryService, clientDataMappingService) {
     this.cdn = cdn;

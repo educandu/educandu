@@ -3,21 +3,19 @@ import React from 'react';
 import { IMAGE_POSITION } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MarkdownWithImageIcon from './markdown-with-image-icon.js';
-import MarkdownWithImageDisplay from './markdown-with-image-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class MarkdownWithImageInfo {
-  static get inject() { return [GithubFlavoredMarkdown]; }
+  static dependencies = [GithubFlavoredMarkdown];
 
-  static get typeName() { return 'markdown-with-image'; }
+  static typeName = 'markdown-with-image';
 
   constructor(gfm) {
     this.gfm = gfm;
-    this.type = 'markdown-with-image';
   }
 
-  getName(t) {
+  getDisplayName(t) {
     return t('markdownWithImage:name');
   }
 
@@ -25,8 +23,8 @@ class MarkdownWithImageInfo {
     return <MarkdownWithImageIcon />;
   }
 
-  getDisplayComponent() {
-    return MarkdownWithImageDisplay;
+  async resolveDisplayComponent() {
+    return (await import('./markdown-with-image-display.js')).default;
   }
 
   async resolveEditorComponent() {

@@ -9,7 +9,7 @@ import ClientDataMappingService from '../services/client-data-mapping-service.js
 const { NotFound, Forbidden } = httpErrors;
 
 class RevisionController {
-  static get inject() { return [DocumentService, RoomService, ClientDataMappingService, PageRenderer]; }
+  static dependencies = [DocumentService, RoomService, ClientDataMappingService, PageRenderer];
 
   constructor(documentService, roomService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;

@@ -29,7 +29,7 @@ const multipartParser = multer({ dest: os.tmpdir() });
 const { BadRequest, Unauthorized } = httpErrors;
 
 class StorageController {
-  static get inject() { return [StorageService, RoomService]; }
+  static dependencies = [StorageService, RoomService];
 
   constructor(storageService, roomService) {
     this.storageService = storageService;

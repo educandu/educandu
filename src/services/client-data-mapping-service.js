@@ -12,7 +12,7 @@ import permissions, { getAllUserPermissions, hasUserPermission } from '../domain
 import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static get inject() { return [ServerConfig, UserStore, StoragePlanStore, RoomStore, PluginRegistry]; }
+  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, PluginRegistry];
 
   constructor(serverConfig, userStore, storagePlanStore, roomStore, pluginRegistry) {
     this.serverConfig = serverConfig;
@@ -102,8 +102,8 @@ class ClientDataMappingService {
   createProposedSections(docOrRevision, targetRoomId) {
     return docOrRevision.sections.reduce((proposedSections, section) => {
       if (!this._isDeletedSection(section)) {
-        const info = this.pluginRegistry.tryGetInfo(section.type);
-        const redactedContent = info?.redactContent?.(section.content, targetRoomId) || null;
+        const plugin = this.pluginRegistry.getRegisteredPlugin(section.type);
+        const redactedContent = plugin?.info.redactContent?.(section.content, targetRoomId) || null;
         if (redactedContent) {
           proposedSections.push({
             ...section,
