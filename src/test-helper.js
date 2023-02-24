@@ -202,13 +202,14 @@ export function createTestDocument(container, user, data) {
         }
         : null
     },
-    user
+    user,
+    silentCreation: true
   });
 }
 
 export function updateTestDocument({ container, documentId, user, data }) {
   const documentService = container.get(DocumentService);
-  return documentService.updateDocument({ documentId, user, data });
+  return documentService.updateDocument({ documentId, user, data, silentUpdate: true });
 }
 
 export async function createTestRevisions(container, user, revisions) {
@@ -245,8 +246,8 @@ export async function createTestRevisions(container, user, revisions) {
     };
 
     lastCreatedDocument = lastCreatedDocument
-      ? await documentService.updateDocument({ documentId: lastCreatedDocument._id, data, user })
-      : await documentService.createDocument({ data, user });
+      ? await documentService.updateDocument({ documentId: lastCreatedDocument._id, data, user, silentUpdate: true })
+      : await documentService.createDocument({ data, user, silentCreation: true });
   }
 
   return lastCreatedDocument

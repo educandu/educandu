@@ -14,7 +14,7 @@ class CommentStore {
   }
 
   getAllCommentsByDocumentId(documentId, { session } = {}) {
-    return this.collection.find({ $and: [{ documentId }] }, { session }).toArray();
+    return this.collection.find({ documentId }, { session }).toArray();
   }
 
   deleteCommentById(commentId, { session } = {}) {
@@ -26,8 +26,8 @@ class CommentStore {
     return this.collection.replaceOne({ _id: comment._id }, comment, { session, upsert: true });
   }
 
-  updateCommentsTopic({ oldTopic, newTopic }, { session } = {}) {
-    return this.collection.updateMany({ topic: oldTopic }, { $set: { topic: newTopic } }, { session, upsert: true });
+  updateCommentsTopic({ documentId, oldTopic, newTopic }, { session } = {}) {
+    return this.collection.updateMany({ documentId, topic: oldTopic }, { $set: { topic: newTopic } }, { session, upsert: true });
   }
 
   deleteCommentsByDocumentIds(documentIds, { session } = {}) {

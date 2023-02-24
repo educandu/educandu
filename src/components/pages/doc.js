@@ -563,7 +563,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
     try {
-      await commentApiClient.updateCommentsTopic({ oldTopic, newTopic });
+      await commentApiClient.updateCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
       await fetchComments();
     } catch (error) {
       handleApiError({ error, logger, t });
