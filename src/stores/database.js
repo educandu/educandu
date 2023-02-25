@@ -1,9 +1,7 @@
-import md5 from 'md5';
 import glob from 'glob';
 import by from 'thenby';
 import url from 'node:url';
 import path from 'node:path';
-import memoizee from 'memoizee';
 import { promisify } from 'node:util';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
@@ -19,6 +17,7 @@ import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
 import storagePlansSpec from './collection-specs/storage-plans.js';
+import notificationsSpec from './collection-specs/notifications.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
@@ -45,6 +44,7 @@ const collectionSpecs = [
   sessionsSpec,
   documentsSpec,
   storagePlansSpec,
+  notificationsSpec,
   documentOrdersSpec,
   roomInvitationsSpec,
   externalAccountsSpec,
@@ -56,9 +56,9 @@ const collectionSpecs = [
 
 class Database {
   constructor(connectionString) {
+    this._db = null;
+    this._mongoClient = null;
     this._connectionString = connectionString;
-    this._getUmzug = memoizee(this._generateUmzug);
-    this.getSchemaHash = memoizee(this._generateSchemaHash);
   }
 
   async connect() {
@@ -125,16 +125,8 @@ class Database {
   }
 
   async runMigrationScripts() {
-    const umzug = await this._getUmzug();
+    const umzug = await this._generateUmzug();
     await umzug.up();
-    this.getSchemaHash.clear();
-  }
-
-  async _generateSchemaHash() {
-    const migrations = await this._db.collection('migrations').find({}).toArray();
-    const migrationNames = migrations.map(migration => migration.migrationName).sort().join();
-
-    return md5(migrationNames);
   }
 
   async _generateUmzug() {
