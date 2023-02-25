@@ -1,15 +1,17 @@
-import Logger from '../../common/logger.js';
+import Logger from '../../../common/logger.js';
 import { serializeError } from 'serialize-error';
-import LockStore from '../../stores/lock-store.js';
-import TaskStore from '../../stores/task-store.js';
-import { TASK_TYPE } from '../../domain/constants.js';
-import ServerConfig from '../../bootstrap/server-config.js';
+import LockStore from '../../../stores/lock-store.js';
+import TaskStore from '../../../stores/task-store.js';
+import { TASK_TYPE } from '../../../domain/constants.js';
+import ServerConfig from '../../../bootstrap/server-config.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
 import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-creation-task-processor.js';
 
 const logger = new Logger(import.meta.url);
+
+const MAX_TASK_PROCESSING_ATTEMPTS = 3;
 
 export default class TaskProcessor {
   static dependencies = [
@@ -43,7 +45,7 @@ export default class TaskProcessor {
     };
   }
 
-  async process(taskId, batchParams, ctx) {
+  async process(taskId, batchParams, context) {
     let lock;
     try {
       lock = await this.lockStore.takeTaskLock(taskId);
@@ -55,11 +57,10 @@ export default class TaskProcessor {
     try {
       const nextTask = await this.taskStore.getUnprocessedTaskById(taskId);
       if (!nextTask) {
-        logger.debug('Candidate has been already processed, will skip');
         return;
       }
 
-      if (ctx.cancellationRequested) {
+      if (context.cancellationRequested) {
         logger.debug('Cancellation requested, will not attempt processing the task');
         return;
       }
@@ -78,29 +79,19 @@ export default class TaskProcessor {
       }
 
       try {
-        logger.debug('Processing task');
-        await taskProcessor.process(nextTask, batchParams, ctx);
+        await taskProcessor.process(nextTask, batchParams, context);
       } catch (processingError) {
         hasFailedIrrecoverably = !!processingError.isIrrecoverable;
-        logger.debug(`Error processing task '${nextTask?._id}':`, processingError);
         currentAttempt.errors.push(serializeError(processingError));
       }
 
       currentAttempt.completedOn = new Date();
       nextTask.attempts.push(currentAttempt);
 
-      if (currentAttempt.errors.length === 0) {
-        logger.debug('Task succesfully processed: marking task as processed.');
-        nextTask.processed = true;
-      } else if (hasFailedIrrecoverably) {
-        logger.debug('An irrecoverable error happened: marking task as processed.');
-        nextTask.processed = true;
-      } else if (nextTask.attempts.length >= this.serverConfig.taskProcessing.maxAttempts) {
-        logger.debug('Maximum attempts exhausted: marking task as processed.');
-        nextTask.processed = true;
-      }
+      nextTask.processed = currentAttempt.errors.length === 0
+        || hasFailedIrrecoverably
+        || nextTask.attempts.length >= MAX_TASK_PROCESSING_ATTEMPTS;
 
-      logger.debug('Saving task');
       await this.taskStore.saveTask(nextTask);
     } finally {
       await this.lockStore.releaseLock(lock);

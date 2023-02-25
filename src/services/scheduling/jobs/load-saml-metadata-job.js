@@ -1,11 +1,11 @@
-import SamlConfigService from '../saml-config-service.js';
+import SamlConfigService from '../../saml-config-service.js';
 
-export default class LoadSamlMetadataScheduledTask {
+export default class LoadSamlMetadataJob {
   static dependencies = [SamlConfigService];
 
   constructor(samlConfigService) {
     this.preventOverrun = true;
-    this.key = 'load-saml-metadata';
+    this.name = 'load-saml-metadata';
     this.samlConfigService = samlConfigService;
     this.schedule = { minutes: 60, runImmediately: true };
   }

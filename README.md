@@ -52,7 +52,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | allowedLicenses | A list of SPDX license names that should be usable inside the app (defaults to the whole currently "known" list) | `string[]` | no |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
- | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
+ | disableScheduling | Whether or not to run job schedulers | `boolean` | no, defaults to `false` |
  | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }], about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}] }` | no, however if provided, `apiKey` is mandatory |
  | samlAuth | Configuration for SAML authentication | `{ decryption: { pvk: <string>, cert: <string> }, identityProviders: [{ key: <string>, displayName: <string>, entryPoint: <string>,  cert: <string>, logoUrl: <string>, expiryTimeoutInDays: <number> }] }` | no, however if provided, `decryption.pvk`, `decryption.cert`, `identityProviders.key`, `identityProviders.displayName`, `identityProviders.entryPoint` and `identityProviders.cert` are mandatory, while `identityProviders.logoUrl` defaults to null and `identityProviders.expiryTimeoutInDays` defaults to 180 days |
 
@@ -111,11 +111,7 @@ educandu({
   plugins: ['markdown', 'image', 'table', 'audio', 'video'],
   allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'MIT'],
   exposeErrorDetails: true,
-  taskProcessing: {
-    isEnabled: true,
-    idlePollIntervalInMs: 10000,
-    maxAttempts: 3
-  },
+  disableScheduling: false,
   ambConfig {
     apiKey: 'C36CAD3A805A11EDA1EB0242AC120002',
     image: './test-app/images/app-logo.png',

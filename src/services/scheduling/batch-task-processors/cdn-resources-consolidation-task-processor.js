@@ -1,5 +1,5 @@
-import Logger from '../../common/logger.js';
-import DocumentService from '../document-service.js';
+import Logger from '../../../common/logger.js';
+import DocumentService from '../../document-service.js';
 
 const logger = new Logger(import.meta.url);
 

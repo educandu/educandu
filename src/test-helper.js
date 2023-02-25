@@ -49,6 +49,7 @@ export async function setupTestEnvironment() {
     announcementCookieNamePrefix: 'ANNOUNCEMENT',
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+    disableScheduling: true,
     customResolvers: {
       resolveCustomPageTemplate: null,
       resolveCustomHomePageTemplate: null,

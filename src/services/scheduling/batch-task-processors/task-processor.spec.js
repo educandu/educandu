@@ -1,13 +1,12 @@
 import { assert, createSandbox } from 'sinon';
 import TaskProcessor from './task-processor.js';
 import { serializeError } from 'serialize-error';
-import LockStore from '../../stores/lock-store.js';
-import TaskStore from '../../stores/task-store.js';
-import { TASK_TYPE } from '../../domain/constants.js';
-import ServerConfig from '../../bootstrap/server-config.js';
+import LockStore from '../../../stores/lock-store.js';
+import TaskStore from '../../../stores/task-store.js';
+import { TASK_TYPE } from '../../../domain/constants.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../test-helper.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../../test-helper.js';
 
 describe('task-processor', () => {
 
@@ -19,14 +18,12 @@ describe('task-processor', () => {
   let container;
   let taskStore;
   let lockStore;
-  let serverConfig;
   let documentValidationTaskProcessor;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     taskStore = container.get(TaskStore);
     lockStore = container.get(LockStore);
-    serverConfig = container.get(ServerConfig);
     documentValidationTaskProcessor = container.get(DocumentValidationTaskProcessor);
     sut = container.get(TaskProcessor);
   });
@@ -38,7 +35,6 @@ describe('task-processor', () => {
     sandbox.stub(lockStore, 'takeTaskLock');
     sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(documentValidationTaskProcessor, 'process');
-    sandbox.stub(serverConfig, 'taskProcessing').value({ maxAttempts: 2 });
   });
 
   afterAll(async () => {
@@ -206,7 +202,7 @@ describe('task-processor', () => {
       });
     });
 
-    describe('when task processing fails for the first time (out of 2 maxAttempts)', () => {
+    describe('when task processing fails for the first time (out of 3 maxAttempts)', () => {
       let expectedError;
 
       beforeEach(async () => {
@@ -254,13 +250,18 @@ describe('task-processor', () => {
       });
     });
 
-    describe('when task processing fails for the second time (out of 2 maxAttempts)', () => {
-      let nextTick;
+    describe('when task processing fails for the third time (out of 3 maxAttempts)', () => {
+      let tick1;
+      let tick2;
+      let tick3;
       let expectedErrors;
 
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
-        expectedErrors = [new Error('Processing failure 1'), new Error('Processing failure 2')];
+        tick1 = new Date(sandbox.clock.tick(1000));
+        tick2 = new Date(sandbox.clock.tick(1000));
+        tick3 = new Date(sandbox.clock.tick(1000));
+        expectedErrors = [new Error('Processing failure 1'), new Error('Processing failure 2'), new Error('Processing failure 3')];
 
         nextTask = {
           _id: taskId,
@@ -268,17 +269,21 @@ describe('task-processor', () => {
           processed: false,
           attempts: [
             {
-              startedOn: now,
-              completedOn: now,
+              startedOn: tick1,
+              completedOn: tick1,
               errors: [serializeError(expectedErrors[0])]
+            },
+            {
+              startedOn: tick2,
+              completedOn: tick2,
+              errors: [serializeError(expectedErrors[1])]
             }
           ]
         };
-        nextTick = new Date(sandbox.clock.tick(1000));
 
         lockStore.takeTaskLock.resolves(lock);
         taskStore.getUnprocessedTaskById.resolves(nextTask);
-        documentValidationTaskProcessor.process.rejects(expectedErrors[1]);
+        documentValidationTaskProcessor.process.rejects(expectedErrors[2]);
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -302,14 +307,19 @@ describe('task-processor', () => {
           processed: true,
           attempts: [
             {
-              startedOn: now,
-              completedOn: now,
+              startedOn: tick1,
+              completedOn: tick1,
               errors: [serializeError(expectedErrors[0])]
             },
             {
-              startedOn: nextTick,
-              completedOn: nextTick,
+              startedOn: tick2,
+              completedOn: tick2,
               errors: [serializeError(expectedErrors[1])]
+            },
+            {
+              startedOn: tick3,
+              completedOn: tick3,
+              errors: [serializeError(expectedErrors[2])]
             }
           ]
         });

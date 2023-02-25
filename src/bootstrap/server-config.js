@@ -4,12 +4,6 @@ import spdxLicenseList from 'spdx-license-list';
 import { FEATURE_TOGGLES } from '../domain/constants.js';
 import { defaultValidationOptions, validate } from '../domain/validation.js';
 
-const defaultTaskProcessing = {
-  isEnabled: false,
-  idlePollIntervalInMs: 5000,
-  maxAttempts: 3
-};
-
 const configSchema = joi.object({
   appName: joi.string().required(),
   port: joi.number().min(1).default(80),
@@ -56,11 +50,7 @@ const configSchema = joi.object({
   allowedLicenses: joi.array().items(joi.string().valid(...Object.keys(spdxLicenseList))).default(Object.keys(spdxLicenseList)),
   disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   exposeErrorDetails: joi.boolean().default(false),
-  taskProcessing: joi.object({
-    isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
-    idlePollIntervalInMs: joi.number().min(1).default(defaultTaskProcessing.idlePollIntervalInMs),
-    maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
-  }).default(defaultTaskProcessing),
+  disableScheduling: joi.boolean().default(false),
   ambConfig: joi.object({
     apiKey: joi.string().required(),
     image: joi.string(),
