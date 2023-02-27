@@ -2,10 +2,10 @@ import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-const MIN_SEARCH_TEXT_LENGTH = 3;
+const DEFAULT_MIN_SEARCH_TEXT_LENGTH = 3;
 const DEFAULT_TOKEN_SEPARATORS = [' ', '\t'];
 
-function TagSelect({ initialValue, onSuggestionsNeeded, ...rest }) {
+function TagSelect({ initialValue, minSearchTextLength, onSuggestionsNeeded, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);
   const [tagOptions, setTagOptions] = useState([]);
   const [suggestedTags, setSuggestedTags] = useState([]);
@@ -17,7 +17,7 @@ function TagSelect({ initialValue, onSuggestionsNeeded, ...rest }) {
 
   const handleTagSearch = async searchText => {
     const trimmedSearchText = searchText.trim();
-    if (trimmedSearchText.length < MIN_SEARCH_TEXT_LENGTH) {
+    if (trimmedSearchText.length < minSearchTextLength) {
       setSuggestedTags([]);
     } else {
       setIsLoading(true);
@@ -42,11 +42,13 @@ function TagSelect({ initialValue, onSuggestionsNeeded, ...rest }) {
 
 TagSelect.propTypes = {
   initialValue: PropTypes.arrayOf(PropTypes.string),
+  minSearchTextLength: PropTypes.number,
   onSuggestionsNeeded: PropTypes.func.isRequired
 };
 
 TagSelect.defaultProps = {
-  initialValue: []
+  initialValue: [],
+  minSearchTextLength: DEFAULT_MIN_SEARCH_TEXT_LENGTH
 };
 
 export default TagSelect;
