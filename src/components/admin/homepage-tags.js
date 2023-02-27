@@ -26,6 +26,7 @@ function HomepageTags({ tags, onChange }) {
       <TagSelect
         mode="multiple"
         value={tags}
+        minSearchTextLength={1}
         onChange={onChange}
         onSuggestionsNeeded={handleTagSuggestionsNeeded}
         />
