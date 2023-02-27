@@ -99,7 +99,7 @@ function MultitrackMediaPlayer({
 
   useEffect(() => {
     const currentKeys = trackStates.map(trackState => trackState.key);
-    trackRefs.current = Object.fromEntries(Object.entries(trackRefs.current).filter(([key]) => currentKeys.contains(key)));
+    trackRefs.current = Object.fromEntries(Object.entries(trackRefs.current).filter(([key]) => currentKeys.includes(key)));
   }, [trackStates]);
 
   useEffect(() => {
