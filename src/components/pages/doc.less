@@ -2,7 +2,7 @@
 @import '../control-panel.less';
 
 // `has:` works in all modern browsers except Firefox
-*:has(> .DocPage-controlPanels) > *:first-child {
+*:has(> .DocPage-controlPanels) > .DocPage {
   min-height: %(~"calc(100vh - %s)", @control-panel-height);
 }
 
