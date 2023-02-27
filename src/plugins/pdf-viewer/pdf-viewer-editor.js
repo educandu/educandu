@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Form, InputNumber, Switch } from 'antd';
 import UrlInput from '../../components/url-input.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { ensureAreExcluded } from '../../utils/array-utils.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
@@ -39,7 +40,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
-  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia];
+  const allowedSourceTypes = ensureAreExcluded(Object.values(SOURCE_TYPE), [SOURCE_TYPE.youtube, SOURCE_TYPE.wikimedia]);
 
   return (
     <div className="PdfViewerEditor">
