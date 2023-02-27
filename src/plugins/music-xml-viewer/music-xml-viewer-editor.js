@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import StepSlider from '../../components/step-slider.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { ensureAreExcluded } from '../../utils/array-utils.js';
 import { MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -39,7 +40,7 @@ function MusicXmlViewerEditor({ content, onContentChanged }) {
     triggerContentChanged({ caption: event.target.value });
   };
 
-  const allowedSourceTypes = [SOURCE_TYPE.none, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia];
+  const allowedSourceTypes = ensureAreExcluded(Object.values(SOURCE_TYPE), [SOURCE_TYPE.youtube, SOURCE_TYPE.wikimedia]);
 
   return (
     <div className="MusicXmlViewerEditor">

@@ -62,12 +62,16 @@ export function replaceItem(items, newItem, keyToMatch = '_id') {
   return items.map(item => item[keyToMatch] === newItem[keyToMatch] ? newItem : item);
 }
 
-export function ensureIsIncluded(items, item) {
-  return items.includes(item) ? items : [...items, item];
+export function ensureIsIncluded(items, itemToInclude) {
+  return items.includes(itemToInclude) ? items : [...items, itemToInclude];
 }
 
-export function ensureIsExcluded(items, item) {
-  return items.includes(item) ? items.filter(i => i !== item) : items;
+export function ensureIsExcluded(items, itemToExclude) {
+  return items.includes(itemToExclude) ? items.filter(i => i !== itemToExclude) : items;
+}
+
+export function ensureAreExcluded(items, itemsToExclude) {
+  return items.filter(i => !itemsToExclude.includes(i));
 }
 
 export function shuffleItems(items) {
