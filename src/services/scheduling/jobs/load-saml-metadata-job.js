@@ -10,7 +10,7 @@ export default class LoadSamlMetadataJob {
     this.schedule = { minutes: 60, runImmediately: true };
   }
 
-  async process() {
-    await this.samlConfigService.resolveIdentityProviderMetadata();
+  process() {
+    return this.samlConfigService.resolveIdentityProviderMetadata();
   }
 }

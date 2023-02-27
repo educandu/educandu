@@ -1,7 +1,16 @@
 import joi from 'joi';
 import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
+import { idOrKeySchema, slugSchema } from './shared-schemas.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
-import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
+
+const sectionSchema = joi.object({
+  key: idOrKeySchema.required(),
+  type: joi.string().required(),
+  content: joi.alternatives().try(
+    joi.object().required(),
+    joi.any().valid(null).required()
+  ).required()
+});
 
 export const getSearchableDocumentsTitlesQuerySchema = joi.object({
   query: joi.string().allow('').required()

@@ -10,6 +10,13 @@ export const EVENT_TYPE = {
   commentCreated: 'comment-created'
 };
 
+export const NOTIFICATION_REASON = {
+  roomMembership: 'room-membership',
+  roomFavorite: 'room-favorite',
+  documentFavorite: 'document-favorite',
+  userFavorite: 'user-favorite'
+};
+
 export const BATCH_TYPE = {
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',

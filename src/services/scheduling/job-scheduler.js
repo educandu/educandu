@@ -1,4 +1,5 @@
 import Logger from '../../common/logger.js';
+import ProcessEventsJob from './jobs/process-events-job.js';
 import ProcessBatchesJob from './jobs/process-batches-job.js';
 import LoadSamlMetadataJob from './jobs/load-saml-metadata-job.js';
 import AlwaysRunningJobScheduler from './always-running-job-scheduler.js';
@@ -12,7 +13,7 @@ const jobs = {
   // * has to have an async `process(context)` function that resolves to truthy if there is more work, or to falsy if it can switch to idle
   // * has to have a unique `name` field in order for the scheduler to create a meaningful log message in case an error occurs
   // * has to have an `idlePollIntervalInMs` field to specify how long to wait for the next `process(context)` call when idle
-  alwaysRunning: [ProcessBatchesJob],
+  alwaysRunning: [ProcessEventsJob, ProcessBatchesJob],
 
   // An interval based job ...
   // * has to have an async `process(context)` function
