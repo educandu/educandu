@@ -17,15 +17,18 @@ import { useStoragePlan } from '../storage-plan-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
+import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 
 const TAB_KEYS = {
   activities: 'activities',
   favorites: 'favorites',
   documents: 'documents',
   rooms: 'rooms',
+  notifications: 'notifications',
   storage: 'storage',
   settings: 'settings'
 };
@@ -38,6 +41,7 @@ function Dashboard({ PageTemplate }) {
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.activities;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
@@ -51,9 +55,11 @@ function Dashboard({ PageTemplate }) {
   const [fetchingRooms, setFetchingRooms] = useState(true);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+  const [notificationGroups, setNotificationGroups] = useState([]);
   const [fetchingFavorites, setFetchingFavorites] = useState(true);
   const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [fetchingActivities, setFetchingActivities] = useState(true);
+  const [fetchingNotificationGroups, setFetchingNotificationGroups] = useState(true);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -64,6 +70,16 @@ function Dashboard({ PageTemplate }) {
       setFetchingActivities(false);
     }
   }, [userApiClient]);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      setFetchingNotificationGroups(true);
+      const response = await notificationsApiClient.getNotificationGroups();
+      setNotificationGroups(response.notificationGroups);
+    } finally {
+      setFetchingNotificationGroups(false);
+    }
+  }, [notificationsApiClient]);
 
   const fetchFavorites = useCallback(async () => {
     try {
@@ -115,11 +131,14 @@ function Dashboard({ PageTemplate }) {
         case TAB_KEYS.rooms:
           await fetchRooms();
           break;
+        case TAB_KEYS.notifications:
+          await fetchNotifications();
+          break;
         default:
           break;
       }
     })();
-  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms]);
+  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
@@ -171,6 +190,15 @@ function Dashboard({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
+        </div>
+      )
+    },
+    {
+      key: TAB_KEYS.notifications,
+      label: t('notificationsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <NotificationsTab notificationGroups={notificationGroups} loading={fetchingNotificationGroups} />
         </div>
       )
     }

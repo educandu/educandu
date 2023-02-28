@@ -537,6 +537,24 @@
       "de": "Deine Lieblingsdokumente ({count})"
     }
   },
+  "notificationsTab": {
+    "info": {
+      "en": "Here you can find your notifications.",
+      "de": "Hier findest du deine Benachrichtigungen."
+    },
+    "noNotifications": {
+      "en": "No notifications have been recorded so far.",
+      "de": "Bisher wurden keine Benachrichtigungen aufgezeichnet."
+    },
+    "revisionCreatedNotification": {
+      "en": "Document has been edited",
+      "de": "Dokument wurde bearbeitet"
+    },
+    "commentCreatedNotification": {
+      "en": "New comment on document",
+      "de": "Neuer Kommentar am Dokument"
+    }
+  },
   "roomsTab": {
     "info": {
       "en": "Here you find all the rooms you have created and the rooms that you are a member of.",
@@ -1339,6 +1357,10 @@
     "roomsTabTitle": {
       "en": "Rooms",
       "de": "Räume"
+    },
+    "notificationsTabTitle": {
+      "en": "Notifications",
+      "de": "Benachrichtigungen"
     },
     "storageTabTitle": {
       "en": "Your storage plan",

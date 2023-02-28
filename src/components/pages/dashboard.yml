@@ -11,6 +11,9 @@ dashboard:
   roomsTabTitle:
     en: Rooms
     de: Räume
+  notificationsTabTitle:
+    en: Notifications
+    de: Benachrichtigungen
   storageTabTitle:
     en: Your storage plan
     de: Dein Speicherplan

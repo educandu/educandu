@@ -1,0 +1,13 @@
+notificationsTab:
+  info:
+    en: Here you can find your notifications.
+    de: Hier findest du deine Benachrichtigungen.
+  noNotifications:
+    en: No notifications have been recorded so far.
+    de: Bisher wurden keine Benachrichtigungen aufgezeichnet.
+  revisionCreatedNotification:
+    en: Document has been edited
+    de: Dokument wurde bearbeitet
+  commentCreatedNotification:
+    en: New comment on document
+    de: Neuer Kommentar am Dokument

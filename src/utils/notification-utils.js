@@ -1,5 +1,6 @@
 import { isRoomOwnerOrInvitedMember } from './room-utils.js';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
+import cloneDeep from './clone-deep.js';
 
 function shouldProcessEvent({ event, revision, document, room, notifiedUser }) {
   // Never notify the user for deleted rooms/documents/revisions:
@@ -90,5 +91,39 @@ export function determineNotificationReasonsForCommentCreatedEvent({ event, docu
   collectFavoriteReasonsAfterDocumentEvent({ reasons, event, documentId: document._id, roomId: room?._id || null, notifiedUser });
 
   return [...reasons];
+}
 
+function _createGroupKey(notification) {
+  switch (notification.eventType) {
+    case EVENT_TYPE.revisionCreated:
+    case EVENT_TYPE.commentCreated:
+      return [notification.eventType, notification.eventParams.documentId].join('|');
+    default:
+      throw new Error(`Unsupported event type '${notification.eventType}'`);
+  }
+}
+
+export function groupNotifications(notifications) {
+  const groups = [];
+
+  let lastGroupKey = null;
+  for (const notification of notifications) {
+    const currentGroupKey = _createGroupKey(notification);
+    if (currentGroupKey === lastGroupKey) {
+      const lastItem = groups[groups.length - 1];
+      lastItem.notificationIds.push(notification._id);
+      lastItem.lastCreatedOn = notification.createdOn;
+    } else {
+      groups.push({
+        notificationIds: [notification._id],
+        eventType: notification.eventType,
+        eventParams: cloneDeep(notification.eventParams),
+        firstCreatedOn: notification.createdOn,
+        lastCreatedOn: notification.createdOn
+      });
+    }
+    lastGroupKey = currentGroupKey;
+  }
+
+  return groups;
 }

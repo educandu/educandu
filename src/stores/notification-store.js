@@ -12,7 +12,7 @@ class NotificationStore {
   getUnreadNotificationsByNotifiedUserId(notifiedUserId, { session } = {}) {
     return this.collection
       .find({ notifiedUserId, readOn: null }, { session })
-      .sort({ createdOn: -1 })
+      .sort({ createdOn: 1 })
       .limit(1000)
       .toArray();
   }

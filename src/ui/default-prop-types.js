@@ -8,7 +8,8 @@ import {
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE,
-  RESOURCE_TYPE
+  RESOURCE_TYPE,
+  EVENT_TYPE
 } from '../domain/constants.js';
 
 const File = isBrowser() ? window.File : class File {};
@@ -508,4 +509,18 @@ export const favoriteRoomShape = PropTypes.shape({
 
 export const favoriteDocumentShape = PropTypes.shape({
   ...contributedDocumentMetadataProps
+});
+
+// This fits both EVENT_TYPE.revisionCreated and EVENT_TYPE.commentCreated,
+// but we may need different params later
+const documentEventParamsShape = PropTypes.shape({
+  document: documentMetadataShape
+});
+
+export const notificationGroupShape = PropTypes.shape({
+  notificationIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  eventType: PropTypes.oneOf(Object.values(EVENT_TYPE)),
+  eventParams: PropTypes.oneOfType([documentEventParamsShape]).isRequired,
+  firstCreatedOn: PropTypes.string.isRequired,
+  lastCreatedOn: PropTypes.string.isRequired
 });

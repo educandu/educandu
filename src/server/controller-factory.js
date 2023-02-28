@@ -18,6 +18,7 @@ import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
 import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
+import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
 
 const setupControllers = [
@@ -42,7 +43,8 @@ const pageAndApiControllers = [
   AdminController,
   AmbController,
   CommentController,
-  RedactionController
+  RedactionController,
+  NotificationController
 ];
 
 const finalMiddlewareControllers = [ErrorController];
