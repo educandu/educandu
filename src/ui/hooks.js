@@ -130,6 +130,7 @@ export function useScrollTopOffset() {
   };
 
   useEffect(() => {
+    setTopOffset(document.documentElement.scrollTop);
     window.addEventListener('scroll', handleScroll);
 
     return () => {
