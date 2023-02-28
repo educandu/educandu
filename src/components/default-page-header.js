@@ -1,13 +1,15 @@
 import md5 from 'md5';
 import { Alert } from 'antd';
+import classNames from 'classnames';
 import Markdown from './markdown.js';
-import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
+import { useSettings } from './settings-context.js';
+import { useScrollTopOffset } from '../ui/hooks.js';
 import NavigationMobile from './navigation-mobile.js';
 import NavigationDesktop from './navigation-desktop.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import DefaultHeaderLogo from './default-header-logo.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 
 const generateCookieHash = textInAllLanguages => {
@@ -16,9 +18,14 @@ const generateCookieHash = textInAllLanguages => {
 
 function DefaultPageHeader() {
   const settings = useSettings();
+  const headerRef = useRef(null);
   const { announcementCookieNamePrefix } = useService(ClientConfig);
 
+  const topOffset = useScrollTopOffset();
   const [showAnnouncement, setShowAnnouncement] = useState(false);
+
+  const isScrolled = useMemo(() => topOffset > 0, [topOffset]);
+  const scrolledHeaderPadding = useMemo(() => isScrolled ? headerRef.current?.getBoundingClientRect()?.height : 0, [headerRef, isScrolled]);
 
   const announcementCookieName = `${announcementCookieNamePrefix}_${useMemo(() => generateCookieHash(JSON.stringify(settings.announcement)), [settings.announcement])}`;
 
@@ -35,28 +42,30 @@ function DefaultPageHeader() {
   };
 
   return (
-    <header className="DefaultPageHeader">
-      <div className="DefaultPageHeader-content">
-        <div className="DefaultPageHeader-logo">
-          <DefaultHeaderLogo />
+    <header className="DefaultPageHeader" ref={headerRef} style={{ paddingBottom: `${scrolledHeaderPadding}px` }}>
+      <div className={classNames('DefaultPageHeader-container', { 'is-sticky': isScrolled })}>
+        <div className="DefaultPageHeader-content">
+          <div className="DefaultPageHeader-logo">
+            <DefaultHeaderLogo />
+          </div>
+          <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
+            <NavigationDesktop />
+          </div>
+          <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--mobile">
+            <NavigationMobile />
+          </div>
         </div>
-        <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
-          <NavigationDesktop />
-        </div>
-        <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--mobile">
-          <NavigationMobile />
-        </div>
+        {!!showAnnouncement && (
+          <Alert
+            closable
+            banner
+            type={settings.announcement.type}
+            message={<Markdown>{settings.announcement.text}</Markdown>}
+            className="DefaultPageHeader-announcement"
+            onClose={handleAnnouncementClose}
+            />
+        )}
       </div>
-      {!!showAnnouncement && (
-        <Alert
-          closable
-          banner
-          type={settings.announcement.type}
-          message={<Markdown>{settings.announcement.text}</Markdown>}
-          className="DefaultPageHeader-announcement"
-          onClose={handleAnnouncementClose}
-          />
-      )}
     </header>
   );
 }
