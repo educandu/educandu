@@ -1,10 +1,18 @@
-.DefaultPageHeader {
-  .m-page-content;
-}
+.DefaultPageHeader {}
 
-.DefaultPageHeader-logo {
-  width: 50px;
-  aspect-ratio: 1;
+.DefaultPageHeader-container {
+  .m-page-content;
+  background-color: @edu-white;
+  z-index: @edu-z-index-sticky-content-layer;
+
+  &.is-sticky {
+    .m-box-shadow;
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
 .DefaultPageHeader-content {
@@ -13,6 +21,11 @@
   align-items: center;
   grid-template-columns: auto 1fr;
   background-color: @edu-white;
+}
+
+.DefaultPageHeader-logo {
+  width: 50px;
+  aspect-ratio: 1;
 }
 
 .DefaultPageHeader-navigation {

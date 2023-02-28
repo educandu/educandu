@@ -121,3 +121,21 @@ export function useStableCallback(callback) {
   callbackRef.current = callback;
   return useCallback((...args) => callbackRef.current?.(...args), [callbackRef]);
 }
+
+export function useScrollTopOffset() {
+  const [topOffset, setTopOffset] = useState(0);
+
+  const handleScroll = () => {
+    setTopOffset(document.documentElement.scrollTop);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  return topOffset;
+}
