@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import cloneDeep from '../../../utils/clone-deep.js';
-import { useService } from '../../container-context.js';
-import ClientConfig from '../../../bootstrap/client-config.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
@@ -27,7 +25,6 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const storage = useStorage();
   const setStorage = useSetStorage();
-  const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [files, setFiles] = useState([]);
@@ -129,12 +126,10 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   useEffect(() => {
-    if (!uploadQueue.length) {
-      return;
+    if (uploadQueue.length) {
+      pushScreen(SCREEN.upload);
     }
-
-    pushScreen(SCREEN.upload);
-  }, [uploadQueue, uploadLiabilityCookieName, t]);
+  }, [uploadQueue]);
 
   useEffect(() => {
     if (!highlightedFile || screen !== SCREEN.default) {

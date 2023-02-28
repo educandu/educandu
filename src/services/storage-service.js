@@ -17,8 +17,8 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
-import { createUniqueStorageFileName, getRoomMediaRoomPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 import { CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { createUniqueStorageFileName, getRoomMediaRoomPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
