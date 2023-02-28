@@ -15,6 +15,16 @@ class EventStore {
     return this.collection.findOne({ _id: eventId }, { session });
   }
 
+  async getOldestUnprocessedEventId({ session } = {}) {
+    const latestUnprocessedEvents = await this.collection
+      .find({ processedOn: null }, { projection: { _id: 1 }, session })
+      .sort({ createdOn: -1 })
+      .limit(1)
+      .toArray();
+
+    return latestUnprocessedEvents[0]?._id || null;
+  }
+
   recordRevisionCreatedEvent({ revision, user }, { session } = {}) {
     return this._recordEvent(
       EVENT_TYPE.revisionCreated,
@@ -37,7 +47,8 @@ class EventStore {
       type,
       params,
       createdOn: new Date(),
-      processedOn: null
+      processedOn: null,
+      processingErrors: []
     };
     await this.insertEvent(event, { session });
     return event;
@@ -47,6 +58,11 @@ class EventStore {
     validate(event, eventDbSchema);
     await this.collection.insertOne(event, { session });
     return event;
+  }
+
+  updateEvent(event, { session } = {}) {
+    validate(event, eventDbSchema);
+    return this.collection.replaceOne({ _id: event._id }, event, { session });
   }
 
   async setEventProcessedOn(eventId, processedOn, { session } = {}) {

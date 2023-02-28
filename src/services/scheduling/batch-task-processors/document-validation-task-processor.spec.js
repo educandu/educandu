@@ -1,11 +1,11 @@
 import { assert, createSandbox } from 'sinon';
-import uniqueId from '../../utils/unique-id.js';
-import DocumentService from '../document-service.js';
-import { setupTestEnvironment, destroyTestEnvironment } from '../../test-helper.js';
-import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
+import uniqueId from '../../../utils/unique-id.js';
+import DocumentService from '../../document-service.js';
+import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
+import { setupTestEnvironment, destroyTestEnvironment } from '../../../test-helper.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-describe('DocumentRegenerationTaskProcessor', () => {
+describe('DocumentValidationTaskProcessor', () => {
   let container;
   let documentService;
   const sandbox = createSandbox();
@@ -15,7 +15,7 @@ describe('DocumentRegenerationTaskProcessor', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     documentService = container.get(DocumentService);
-    sut = container.get(DocumentRegenerationTaskProcessor);
+    sut = container.get(DocumentValidationTaskProcessor);
   });
 
   afterAll(async () => {
@@ -23,7 +23,7 @@ describe('DocumentRegenerationTaskProcessor', () => {
   });
 
   beforeEach(() => {
-    sandbox.stub(documentService, 'regenerateDocument');
+    sandbox.stub(documentService, 'validateDocument');
   });
 
   afterEach(() => {
@@ -31,12 +31,12 @@ describe('DocumentRegenerationTaskProcessor', () => {
   });
 
   describe('process', () => {
-    it('should call regenerate document', async () => {
+    it('should call validate document', async () => {
       const documentId = uniqueId.create();
 
       await sut.process({ taskParams: { documentId } }, {});
 
-      assert.calledWith(documentService.regenerateDocument, documentId);
+      assert.calledWith(documentService.validateDocument, documentId);
     });
 
     it('should throw an error if a cancellation was requested', async () => {
@@ -45,14 +45,14 @@ describe('DocumentRegenerationTaskProcessor', () => {
       await expect(() => sut.process({ taskParams: { documentId } }, { cancellationRequested: true })).rejects.toThrow(Error);
     });
 
-    it('should not call regenerate document if a cancellation was requested', async () => {
+    it('should not call validate document if a cancellation was requested', async () => {
       const documentId = uniqueId.create();
 
       try {
         await sut.process({ taskParams: { documentId } }, { cancellationRequested: true });
         assert.fail('This code should not have been reached');
       } catch {
-        assert.notCalled(documentService.regenerateDocument);
+        assert.notCalled(documentService.validateDocument);
       }
     });
   });

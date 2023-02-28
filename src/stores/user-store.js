@@ -24,6 +24,10 @@ class UserStore {
     return this.collection.find({ $and: [{ accountClosedOn: null, $or: searchCriteria }] }, { session }).toArray();
   }
 
+  getActiveUsersIterator({ session } = {}) {
+    return this.collection.find({ accountClosedOn: null }, { session });
+  }
+
   findUserByVerificationCode(verificationCode, { session } = {}) {
     return this.collection.findOne({ verificationCode }, { session });
   }

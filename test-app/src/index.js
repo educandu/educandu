@@ -106,11 +106,6 @@ const config = {
   basicAuthUsers: JSON.parse(process.env.TEST_APP_BASIC_AUTH_USERS || '{}'),
   plugins,
   exposeErrorDetails: parseBool(process.env.TEST_APP_EXPOSE_ERROR_DETAILS || false.toString()),
-  taskProcessing: {
-    isEnabled: true,
-    idlePollIntervalInMs: 10000,
-    maxAttempts: 3
-  },
   ambConfig: {
     apiKey: process.env.TEST_APP_AMB_API_KEY,
     image: './images/educandu-logo-blue.png',

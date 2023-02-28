@@ -7,6 +7,7 @@ const LOCK_TYPE = {
   room: 'room',
   task: 'task',
   batch: 'batch',
+  event: 'event',
   document: 'document',
   storagePlan: 'storage-plan',
   maintenance: 'maintenance'
@@ -28,11 +29,15 @@ class LockStore {
   }
 
   takeTaskLock(key) {
-    return this._takeLock({ type: LOCK_TYPE.task, key, expirationTimeInMinutes: 10 });
+    return this._takeLock({ type: LOCK_TYPE.task, key, expirationTimeInMinutes: 1 });
   }
 
   takeBatchLock(key) {
     return this._takeLock({ type: LOCK_TYPE.batch, key, expirationTimeInMinutes: 1 });
+  }
+
+  takeEventLock(key) {
+    return this._takeLock({ type: LOCK_TYPE.event, key, expirationTimeInMinutes: 5 });
   }
 
   takeDocumentLock(key) {

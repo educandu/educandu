@@ -1,12 +1,12 @@
 import { assert, createSandbox } from 'sinon';
-import TaskProcessor from './task-processor.js';
-import BatchProcessor from './batch-processor.js';
-import TaskStore from '../../stores/task-store.js';
-import BatchStore from '../../stores/batch-store.js';
+import TaskStore from '../../../stores/task-store.js';
+import BatchStore from '../../../stores/batch-store.js';
+import ProcessBatchesJob from './process-batches-job.js';
+import TaskProcessor from '../batch-task-processors/task-processor.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../test-helper.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../../../test-helper.js';
 
-describe('batch-processor', () => {
+describe('process-batches-job', () => {
 
   const now = new Date();
   const sandbox = createSandbox();
@@ -24,7 +24,7 @@ describe('batch-processor', () => {
     taskStore = container.get(TaskStore);
     batchStore = container.get(BatchStore);
     taskProcessor = container.get(TaskProcessor);
-    sut = container.get(BatchProcessor);
+    sut = container.get(ProcessBatchesJob);
   });
 
   beforeEach(() => {

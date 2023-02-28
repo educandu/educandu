@@ -4,8 +4,8 @@ import { ROLE } from './domain/constants.js';
 import UserService from './services/user-service.js';
 import ServerConfig from './bootstrap/server-config.js';
 import EducanduServer from './server/educandu-server.js';
+import JobScheduler from './services/scheduling/job-scheduler.js';
 import MaintenanceService from './services/maintenance-service.js';
-import TaskScheduler from './services/task-processing/task-scheduler.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 const logger = new Logger(import.meta.url);
@@ -73,12 +73,10 @@ export default async function educandu(options) {
       }
     }
 
-    if (serverConfig.taskProcessing.isEnabled) {
-      logger.info('Starting task processor');
-      const taskScheduler = container.get(TaskScheduler);
-      taskScheduler.start();
-    } else {
-      logger.info('Task processing is disabled');
+    if (!serverConfig.disableScheduling) {
+      logger.info('Starting job scheduler');
+      const jobScheduler = container.get(JobScheduler);
+      jobScheduler.start();
     }
 
     if (runMaintenance) {
