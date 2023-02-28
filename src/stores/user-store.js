@@ -24,7 +24,7 @@ class UserStore {
     return this.collection.find({ $and: [{ accountClosedOn: null, $or: searchCriteria }] }, { session }).toArray();
   }
 
-  iterateAllActiveUsers({ session } = {}) {
+  getActiveUsersIterator({ session } = {}) {
     return this.collection.find({ accountClosedOn: null }, { session });
   }
 

@@ -25,6 +25,15 @@ describe('notification-utils', () => {
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
       {
+        description: 'when the notified user has marked the room as favorite but the room and its documents have been deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.revisionCreated, params: { userId: 'event-user-id' } },
+        revision: null,
+        document: null,
+        room: null,
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
         description: 'when the notified user has marked the document as favorite',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.revisionCreated, params: { userId: 'event-user-id' } },
         revision: { _id: 'revision-id', documentId: 'document-id' },
@@ -52,7 +61,7 @@ describe('notification-utils', () => {
         expectedReasons: [NOTIFICATION_REASON.documentFavorite, NOTIFICATION_REASON.userFavorite]
       },
       {
-        description: 'when the user has marked the document as favorite but the notified user is the same user as the event user',
+        description: 'when the notified user has marked the document as favorite but the notified user is the same user as the event user',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.revisionCreated, params: { userId: 'event-user-id' } },
         revision: { _id: 'revision-id', documentId: 'document-id' },
         document: { _id: 'document-id' },
@@ -61,7 +70,7 @@ describe('notification-utils', () => {
         expectedReasons: []
       },
       {
-        description: 'when the user is a room member or has marked the document or event user as favorite but the revision is in draft mode',
+        description: 'when the notified user is a room member or has marked the document or event user as favorite but the revision is in draft mode',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.revisionCreated, params: { userId: 'event-user-id' } },
         revision: { _id: 'revision-id', documentId: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
@@ -112,6 +121,14 @@ describe('notification-utils', () => {
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
       {
+        description: 'when the notified user has marked the room as favorite but the room and its documents have been deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.commentCreated, params: { userId: 'event-user-id' } },
+        document: null,
+        room: null,
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
         description: 'when the notified user has marked the document as favorite',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.commentCreated, params: { userId: 'event-user-id' } },
         document: { _id: 'document-id' },
@@ -136,7 +153,7 @@ describe('notification-utils', () => {
         expectedReasons: [NOTIFICATION_REASON.documentFavorite, NOTIFICATION_REASON.userFavorite]
       },
       {
-        description: 'when the user has marked the document as favorite but the notified user is the same user as the event user',
+        description: 'when the notified user has marked the document as favorite but the notified user is the same user as the event user',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.commentCreated, params: { userId: 'event-user-id' } },
         revision: { _id: 'revision-id', documentId: 'document-id' },
         document: { _id: 'document-id' },
@@ -145,7 +162,7 @@ describe('notification-utils', () => {
         expectedReasons: []
       },
       {
-        description: 'when the user is a room member or has marked the document or event user as favorite but the document is in draft mode',
+        description: 'when the notified user is a room member or has marked the document or event user as favorite but the document is in draft mode',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.commentCreated, params: { userId: 'event-user-id' } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
         room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },

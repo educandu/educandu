@@ -40,7 +40,7 @@ class EventService {
   }
 
   async _processRevisionCreatedEvent(event, session, context) {
-    const userIterator = this.userStore.iterateAllActiveUsers({ session });
+    const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
       const { revisionId, documentId, roomId } = event.params;
@@ -87,7 +87,7 @@ class EventService {
   }
 
   async _processCommentCreatedEvent(event, session, context) {
-    const userIterator = this.userStore.iterateAllActiveUsers({ session });
+    const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
       const { documentId, roomId } = event.params;
