@@ -71,7 +71,7 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
               <Button size="large" block onClick={handleAbortChoiceClick}>{t('choicesAbort')}</Button>
             </div>
             <div className="ConnectExternalAccountPage-infoBox">
-              <Alert message={t('infoBoxTitle')} description={t('infoBoxDescription', { appName: appNameCompound })} />
+              <Alert banner message={t('infoBoxTitle')} description={t('infoBoxDescription', { appName: appNameCompound })} />
             </div>
           </div>
         )}
