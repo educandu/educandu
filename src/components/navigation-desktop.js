@@ -1,14 +1,15 @@
 import gravatar from 'gravatar';
 import classNames from 'classnames';
-import { Avatar, Dropdown } from 'antd';
 import routes from '../utils/routes.js';
 import SearchBar from './search-bar.js';
-import React, { useState } from 'react';
+import { Avatar, Dropdown } from 'antd';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
-import { useSettings } from './settings-context.js';
+import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
+import { useSettings } from './settings-context.js';
+import { useScrollTopOffset } from '../ui/hooks.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
@@ -18,6 +19,7 @@ import LanguageDataProvider from '../localization/language-data-provider.js';
 function NavigationDesktop() {
   const user = useUser();
   const settings = useSettings();
+  const topOffset = useScrollTopOffset();
   const { t, i18n } = useTranslation('navigationDesktop');
   const { supportedUiLanguages, uiLanguage } = useLocale();
   const languageDataProvider = useService(LanguageDataProvider);
@@ -26,7 +28,24 @@ function NavigationDesktop() {
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const [previousTopOffset, setPreviousTopOffset] = useState(topOffset);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(uiLanguage);
+
+  useEffect(() => {
+    if (previousTopOffset === topOffset) {
+      return;
+    }
+
+    setPreviousTopOffset(topOffset);
+
+    if (isLanguageMenuOpen) {
+      setIsLanguageMenuOpen(false);
+    }
+
+    if (isMainMenuOpen) {
+      setIsMainMenuOpen(false);
+    }
+  }, [isLanguageMenuOpen, isMainMenuOpen, topOffset, previousTopOffset]);
 
   const handleLanguageMenuClick = ({ key }) => {
     i18n.changeLanguage(key);
@@ -36,6 +55,10 @@ function NavigationDesktop() {
 
   const handleLanguageMenuOpenChange = value => {
     setIsLanguageMenuOpen(value);
+  };
+
+  const handleLanguageMenuBlur = () => {
+    setIsLanguageMenuOpen(false);
   };
 
   const handleMainMenuOpenChange = value => {
@@ -81,6 +104,8 @@ function NavigationDesktop() {
         trigger={['click']}
         placement="bottomRight"
         menu={{ items, onClick: handleLanguageMenuClick }}
+        open={isLanguageMenuOpen}
+        onBlur={handleLanguageMenuBlur}
         onOpenChange={handleLanguageMenuOpenChange}
         >
         <div className="NavigationDesktop-menuButton">
@@ -111,6 +136,10 @@ function NavigationDesktop() {
       setIsMainMenuOpen(false);
     };
 
+    const handleMainMenuBlur = () => {
+      setIsMainMenuOpen(false);
+    };
+
     const items = actionableMenuitems.map(({ key, label, icon }) => ({ key, label, icon }));
 
     return (
@@ -118,6 +147,8 @@ function NavigationDesktop() {
         trigger={['click']}
         placement="bottomRight"
         menu={{ items, onClick: handleMainMenuClick }}
+        open={isMainMenuOpen}
+        onBlur={handleMainMenuBlur}
         onOpenChange={handleMainMenuOpenChange}
         >
         <div className="NavigationDesktop-menuButton">
