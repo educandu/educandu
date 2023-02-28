@@ -5,8 +5,8 @@ import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
 import UsedStorage from '../../used-storage.js';
+import { Button, Radio, Spin, Tooltip } from 'antd';
 import { useStorage } from '../../storage-context.js';
-import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
@@ -60,19 +60,16 @@ function RoomMediaDefaultScreen({
   };
 
   const renderStorageInfo = () => {
-    if (storage.usedBytes > 0 || storage.maxBytes > 0) {
-      const alertContent = (
-        <div className="RoomMediaDefaultScreen-alertPrivateStorage">
-          <span>{t('privateStorageMessage')}.</span>
-          <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
-            <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
-          </div>
-        </div>
-      );
-      return <Alert message={alertContent} type="warning" />;
+    if (!storage.usedBytes > 0 && !storage.maxBytes) {
+      return null;
     }
-
-    return null;
+    return (
+      <div className="RoomMediaDefaultScreen-alertPrivateStorage">
+        <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
+          <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
+        </div>
+      </div>
+    );
   };
 
   const getFilesViewerClasses = isDragActive => classNames({

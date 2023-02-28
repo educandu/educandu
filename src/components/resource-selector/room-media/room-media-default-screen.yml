@@ -5,9 +5,6 @@ roomMediaDefaultScreen:
   filesView_grid:
     en: Grid view
     de: Kachelansicht
-  privateStorageMessage:
-    en: Private directory
-    de: Privates Verzeichnis
   uploadFiles:
     en: Upload files
     de: Dateien hochladen

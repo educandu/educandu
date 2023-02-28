@@ -109,8 +109,8 @@ export const SOURCE_TYPE = {
   external: 'external',
   mediaLibrary: 'media-library',
   documentMedia: 'document-media',
-  roomMedia: 'room-media',
   wikimedia: 'wikimedia',
+  roomMedia: 'room-media',
   unsupported: 'unsupported'
 };
 
