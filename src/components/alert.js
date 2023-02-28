@@ -24,7 +24,7 @@ const renderIcon = type => {
   return <Icon className={`Alert-icon Alert-icon--${type}`} />;
 };
 
-function Alert({ className, message, description, type, closable, onClose, afterClose }) {
+function Alert({ className, message, description, type, closable, banner, onClose, afterClose }) {
   return (
     <AntdAlert
       className={classNames('Alert', `Alert--${type}`, { [className]: !!className })}
@@ -33,7 +33,7 @@ function Alert({ className, message, description, type, closable, onClose, after
       closable={closable}
       onClose={onClose}
       afterClose={afterClose}
-      banner={false}
+      banner={banner}
       type={type}
       icon={renderIcon(type)}
       showIcon
@@ -43,6 +43,7 @@ function Alert({ className, message, description, type, closable, onClose, after
 
 Alert.propTypes = {
   afterClose: PropTypes.func,
+  banner: PropTypes.bool,
   className: PropTypes.string,
   closable: PropTypes.bool,
   description: PropTypes.node,
@@ -53,6 +54,7 @@ Alert.propTypes = {
 
 Alert.defaultProps = {
   afterClose: () => {},
+  banner: false,
   className: null,
   closable: false,
   description: null,
