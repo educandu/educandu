@@ -1768,10 +1768,6 @@
       "en": "Private directory",
       "de": "Privates Verzeichnis"
     },
-    "publicStorageMessage": {
-      "en": "Public directory",
-      "de": "Öffentliches Verzeichnis"
-    },
     "uploadFiles": {
       "en": "Upload files",
       "de": "Dateien hochladen"

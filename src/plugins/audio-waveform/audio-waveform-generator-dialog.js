@@ -10,14 +10,13 @@ import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useStorage } from '../../components/storage-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { useService } from '../../components/container-context.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
+import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 import { createWaveformImageUrl, extractPeaks } from './audio-waveform-utils.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import ResourceSelectorDialog from '../../components/resource-selector/resource-selector-dialog.js';
-import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 import { DEFAULT_WAVEFORM_BACKGROUND_COLOR, DEFAULT_WAVEFORM_BASELINE_COLOR, DEFAULT_WAVEFORM_PEN_COLOR } from './constants.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -25,7 +24,6 @@ const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useD
 const logger = new Logger(import.meta.url);
 
 function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
-  const storage = useStorage();
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
   const [imageUrl, setImageUrl] = useState(null);
@@ -33,13 +31,11 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const [generatedPeaks, setGeneratedPeaks] = useState(null);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isGeneratingPeaks, setIsGeneratingPeaks] = useState(false);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [waveformPenColor, setWaveformPenColor] = useState(DEFAULT_WAVEFORM_PEN_COLOR);
   const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
   const [waveformBackgroundColor, setWaveformBackgroundColor] = useState(DEFAULT_WAVEFORM_BACKGROUND_COLOR);
-
-  const storagePath = storage.locations?.find(location => location.type === STORAGE_LOCATION_TYPE.documentMedia)?.path || null;
 
   useEffect(() => {
     if (!generatedPeaks) {
@@ -86,8 +82,14 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     try {
       const blob = await fetch(imageUrl).then(res => res.blob());
       const file = new File([blob], filename);
-      const result = await storageApiClient.uploadFiles([file], storagePath);
-      cdnUrl = result.uploadedFiles[filename].portableUrl;
+      const uploadedFile = await mediaLibraryApiClient.createMediaLibraryItem({
+        file,
+        description: '',
+        languages: [],
+        licenses: ['CC0-1.0'],
+        tags: ['waveform', 'audio']
+      });
+      cdnUrl = uploadedFile.portableUrl;
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {

@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import { SOURCE_TYPE } from '../../domain/constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
 import WikimediaScreens from './wikimedia/wikimedia-screens.js';
 import RoomMediaScreens from './room-media/room-media-screens.js';
 import MediaLibraryScreens from './media-library/media-library-screens.js';
-import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const possibleSourceTypes = [
   SOURCE_TYPE.mediaLibrary,
@@ -18,9 +18,9 @@ const possibleSourceTypes = [
 ];
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
+  const storage = useStorage();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('resourceSelector');
-  const { locations: availableStorageLocations } = useStorage();
   const [visibleSourceTypes, setVisibleSourceTypes] = useState([]);
   const [selectedSourceType, setSelectedSourceType] = useState(null);
 
@@ -28,7 +28,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
     const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
       switch (sourceType) {
         case SOURCE_TYPE.roomMedia:
-          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.roomMedia);
+          return !!storage;
         case SOURCE_TYPE.mediaLibrary:
           return possibleSourceTypes.includes(sourceType);
         default:
@@ -52,7 +52,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
       return newSourceTypePriorityList.filter(sourceType => newVisibleSourceTypes.includes(sourceType))[0] || null;
     });
-  }, [allowedSourceTypes, initialUrl, availableStorageLocations, clientConfig]);
+  }, [allowedSourceTypes, initialUrl, storage, clientConfig]);
 
   const handleSourceTypeTabChange = newSourceType => {
     setSelectedSourceType(newSourceType);

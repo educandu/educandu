@@ -5,13 +5,14 @@ import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
 import UsedStorage from '../../used-storage.js';
+import { useStorage } from '../../storage-context.js';
 import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
+import { cdnObjectShape } from '../../../ui/default-prop-types.js';
+import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { storageLocationShape, cdnObjectShape } from '../../../ui/default-prop-types.js';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -22,7 +23,6 @@ function RoomMediaDefaultScreen({
   isLoading,
   filterText,
   highlightedFile,
-  storageLocation,
   filesViewerDisplay,
   onSelectHighlightedFileClick,
   onFileClick,
@@ -37,6 +37,7 @@ function RoomMediaDefaultScreen({
   const { t } = useTranslation('roomMediaDefaultScreen');
 
   const dropzoneRef = useRef();
+  const storage = useStorage();
 
   const canAcceptFiles = !isLoading;
 
@@ -59,20 +60,16 @@ function RoomMediaDefaultScreen({
   };
 
   const renderStorageInfo = () => {
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
+    if (storage.usedBytes > 0 || storage.maxBytes > 0) {
       const alertContent = (
         <div className="RoomMediaDefaultScreen-alertPrivateStorage">
           <span>{t('privateStorageMessage')}.</span>
           <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
-            <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+            <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
           </div>
         </div>
       );
       return <Alert message={alertContent} type="warning" />;
-    }
-
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia) {
-      return <Alert message={t('publicStorageMessage')} type="warning" />;
     }
 
     return null;
@@ -122,7 +119,7 @@ function RoomMediaDefaultScreen({
               <FilesViewer
                 files={files}
                 selectedFileUrl={highlightedFile?.portableUrl || null}
-                canDelete={storageLocation.isDeletionEnabled}
+                canDelete={storage.isDeletionEnabled}
                 onFileClick={onFileClick}
                 onFileDoubleClick={onFileDoubleClick}
                 onDeleteFileClick={onDeleteFileClick}
@@ -163,7 +160,6 @@ RoomMediaDefaultScreen.propTypes = {
   highlightedFile: cdnObjectShape,
   isLoading: PropTypes.bool.isRequired,
   filterText: PropTypes.string,
-  storageLocation: storageLocationShape.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onDeleteFileClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,

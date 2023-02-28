@@ -6,16 +6,15 @@ import cloneDeep from '../../../utils/clone-deep.js';
 import { useService } from '../../container-context.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
-import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { getCookie, setSessionCookie } from '../../../common/cookie.js';
-import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import StorageApiClient from '../../../api-clients/storage-api-client.js';
-import { useSetStorageLocation, useStorage } from '../../storage-context.js';
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
-import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
+import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
+import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
+import { useSetStorage, useStorage } from '../../storage-context.js';
+import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
+import StorageApiClient from '../../../api-clients/storage-api-client.js';
+import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 const SCREEN = {
   default: 'default',
@@ -26,8 +25,8 @@ const SCREEN = {
 
 function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
-  const { locations } = useStorage();
-  const setStorageLocation = useSetStorageLocation();
+  const storage = useStorage();
+  const setStorage = useSetStorage();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
@@ -41,8 +40,6 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const storageLocation = locations[0];
-
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
@@ -52,13 +49,13 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   }, [filterText, files]);
 
   const fetchStorageContent = useCallback(async () => {
-    if (!storageLocation) {
+    if (!storage) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects({ parentPath: storageLocation.path });
+      const result = await storageApiClient.getCdnObjects({ parentPath: storage.path });
 
       setFiles(result.objects);
     } catch (err) {
@@ -66,7 +63,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     } finally {
       setIsLoading(false);
     }
-  }, [storageLocation, storageApiClient]);
+  }, [storage, storageApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -89,7 +86,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     confirmMediaFileHardDelete(t, file.displayName, async () => {
       const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
       setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-      setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
+      setStorage({ ...cloneDeep(storage), usedBytes });
     });
   };
 
@@ -132,37 +129,12 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   useEffect(() => {
-    const checkPreconditions = () => {
-      return storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia
-        ? new Promise(resolve => {
-          if (!getCookie(uploadLiabilityCookieName)) {
-            confirmPublicUploadLiability(t, () => {
-              setSessionCookie(uploadLiabilityCookieName, 'true');
-              resolve(true);
-            }, () => resolve(false));
-          } else {
-            resolve(true);
-          }
-        })
-        : true;
-    };
+    if (!uploadQueue.length) {
+      return;
+    }
 
-    const startUpload = async () => {
-      if (!uploadQueue.length) {
-        return;
-      }
-
-      const preMet = await checkPreconditions();
-      if (!preMet || !uploadQueue.length) {
-        return;
-      }
-
-      pushScreen(SCREEN.upload);
-    };
-
-    startUpload();
-
-  }, [uploadQueue, storageLocation.type, uploadLiabilityCookieName, t]);
+    pushScreen(SCREEN.upload);
+  }, [uploadQueue, uploadLiabilityCookieName, t]);
 
   useEffect(() => {
     if (!highlightedFile || screen !== SCREEN.default) {
@@ -192,7 +164,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     fetchStorageContent();
   }, [fetchStorageContent]);
 
-  if (!storageLocation) {
+  if (!storage) {
     return null;
   }
 
@@ -204,7 +176,6 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
           isLoading={isLoading}
           filterText={filterText}
           highlightedFile={highlightedFile}
-          storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
           onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
           onFileClick={handleFileClick}
@@ -230,7 +201,6 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.upload && (
         <RoomMediaUploadScreen
           uploadQueue={uploadQueue}
-          storageLocation={storageLocation}
           onCancelClick={onCancel}
           onEditFileClick={handleEditFileClick}
           onBackClick={handleFilesUploadScreenBackClick}

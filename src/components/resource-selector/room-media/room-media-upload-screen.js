@@ -10,14 +10,13 @@ import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
-import { useSetStorageLocation } from '../../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { storageLocationShape } from '../../../ui/default-prop-types.js';
+import { useStorage, useSetStorage } from '../../storage-context.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 
 const ITEM_STATUS = {
   pristine: 'pristine',
@@ -35,14 +34,14 @@ const STAGE = {
 
 function RoomMediaUploadScreen({
   uploadQueue,
-  storageLocation,
   onBackClick,
   onCancelClick,
   onEditFileClick,
   onSelectFileClick
 }) {
+  const storage = useStorage();
   const { uiLocale } = useLocale();
-  const setStorageLocation = useSetStorageLocation();
+  const setStorage = useSetStorage();
   const { t } = useTranslation('roomMediaUploadScreen');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
@@ -62,7 +61,7 @@ function RoomMediaUploadScreen({
     }
   }, [uploadItems]);
 
-  const ensureCanUpload = useCallback((file, locationToUpload) => {
+  const ensureCanUpload = useCallback(file => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
       throw new Error(t('uploadLimitExceeded', {
         uploadSize: prettyBytes(file.size, { locale: uiLocale }),
@@ -70,16 +69,14 @@ function RoomMediaUploadScreen({
       }));
     }
 
-    if (locationToUpload.type === STORAGE_LOCATION_TYPE.roomMedia) {
-      const availableBytes = Math.max(0, (locationToUpload.maxBytes || 0) - (locationToUpload.usedBytes || 0));
-      if (file.size > availableBytes) {
-        throw new Error(t('insufficientPrivateStorge'));
-      }
+    const availableBytes = Math.max(0, (storage.maxBytes || 0) - (storage.usedBytes || 0));
+    if (file.size > availableBytes) {
+      throw new Error(t('insufficientPrivateStorge'));
     }
-  }, [t, uiLocale]);
+  }, [t, uiLocale, storage]);
 
-  const uploadFiles = useCallback(async (itemsToUpload, uploadLocation) => {
-    let currentLocation = uploadLocation;
+  const uploadFiles = useCallback(async itemsToUpload => {
+    let currentStorage = storage;
 
     const result = {
       uploadedFiles: {},
@@ -96,16 +93,16 @@ function RoomMediaUploadScreen({
 
       let updatedItem;
       try {
-        ensureCanUpload(file, uploadLocation);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], uploadLocation.path);
+        ensureCanUpload(file);
+        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], storage.path);
         result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
           uploadedFile: Object.values(uploadedFiles)[0]
         };
-        currentLocation = { ...cloneDeep(currentLocation), usedBytes };
-        setStorageLocation(currentLocation);
+        currentStorage = { ...cloneDeep(currentStorage), usedBytes };
+        setStorage(currentStorage);
       } catch (error) {
         result.failedFiles = { ...result.failedFiles, [file.name]: file };
         updatedItem = {
@@ -120,11 +117,11 @@ function RoomMediaUploadScreen({
 
     return result;
 
-  }, [storageApiClient, ensureCanUpload, setStorageLocation, optimizeImages]);
+  }, [storageApiClient, ensureCanUpload, storage, setStorage, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    await uploadFiles(uploadItems, storageLocation);
+    await uploadFiles(uploadItems);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -233,9 +230,9 @@ function RoomMediaUploadScreen({
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
         <div className="RoomMediaUploadScreen">
-          {storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
+          {(storage.usedBytes > 0 || storage.maxBytes > 0) && (
             <div className="RoomMediaUploadScreen-usedStorage" >
-              <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+              <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
             </div>
           )}
           {renderUploadMessage()}
@@ -279,7 +276,6 @@ RoomMediaUploadScreen.propTypes = {
   onCancelClick: PropTypes.func,
   onEditFileClick: PropTypes.func,
   onSelectFileClick: PropTypes.func,
-  storageLocation: storageLocationShape.isRequired,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     isPristine: PropTypes.bool.isRequired
