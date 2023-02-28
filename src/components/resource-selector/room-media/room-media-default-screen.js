@@ -17,7 +17,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function DocumentOrRoomMediaDefaultScreen({
+function RoomMediaDefaultScreen({
   files,
   isLoading,
   filterText,
@@ -34,7 +34,7 @@ function DocumentOrRoomMediaDefaultScreen({
   onFilesViewerDisplayChange,
   onFilesDropped
 }) {
-  const { t } = useTranslation('documentOrRoomMediaDefaultScreen');
+  const { t } = useTranslation('roomMediaDefaultScreen');
 
   const dropzoneRef = useRef();
 
@@ -61,9 +61,9 @@ function DocumentOrRoomMediaDefaultScreen({
   const renderStorageInfo = () => {
     if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
       const alertContent = (
-        <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorage">
+        <div className="RoomMediaDefaultScreen-alertPrivateStorage">
           <span>{t('privateStorageMessage')}.</span>
-          <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorageUsage">
+          <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
             <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
           </div>
         </div>
@@ -79,7 +79,7 @@ function DocumentOrRoomMediaDefaultScreen({
   };
 
   const getFilesViewerClasses = isDragActive => classNames({
-    'DocumentOrRoomMediaDefaultScreen-filesViewer': true,
+    'RoomMediaDefaultScreen-filesViewer': true,
     'is-dropping': isDragActive && !isLoading,
     'is-drop-rejected': isDragActive && isLoading
   });
@@ -89,12 +89,12 @@ function DocumentOrRoomMediaDefaultScreen({
     : FilesListViewer;
 
   return (
-    <div className="DocumentOrRoomMediaDefaultScreen">
-      <div className="DocumentOrRoomMediaDefaultScreen-buttonsLine">
-        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem">
+    <div className="RoomMediaDefaultScreen">
+      <div className="RoomMediaDefaultScreen-buttonsLine">
+        <div className="RoomMediaDefaultScreen-buttonsLineItem">
           <FilterInput value={filterText} onChange={handleFilterTextChange} />
         </div>
-        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem DocumentOrRoomMediaDefaultScreen-buttonsLineItem--select">
+        <div className="RoomMediaDefaultScreen-buttonsLineItem RoomMediaDefaultScreen-buttonsLineItem--select">
           <RadioGroup value={filesViewerDisplay} onChange={handleFilesViewerDisplayChange}>
             <Tooltip title={t('filesView_list')}>
               <RadioButton value={FILES_VIEWER_DISPLAY.list}>
@@ -118,7 +118,7 @@ function DocumentOrRoomMediaDefaultScreen({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <div className="DocumentOrRoomMediaDefaultScreen-filesViewerContent">
+            <div className="RoomMediaDefaultScreen-filesViewerContent">
               <FilesViewer
                 files={files}
                 selectedFileUrl={highlightedFile?.portableUrl || null}
@@ -130,14 +130,14 @@ function DocumentOrRoomMediaDefaultScreen({
                 />
             </div>
             {!!isLoading && (
-              <div className={classNames('DocumentOrRoomMediaDefaultScreen-filesViewerOverlay')}>
+              <div className={classNames('RoomMediaDefaultScreen-filesViewerOverlay')}>
                 <Spin size="large" />
               </div>
             )}
           </div>
         )}
       </ReactDropzone>
-      <div className="DocumentOrRoomMediaDefaultScreen-locationInfo">
+      <div className="RoomMediaDefaultScreen-locationInfo">
         {renderStorageInfo()}
       </div>
       <div className="u-resource-selector-screen-footer">
@@ -157,7 +157,7 @@ function DocumentOrRoomMediaDefaultScreen({
   );
 }
 
-DocumentOrRoomMediaDefaultScreen.propTypes = {
+RoomMediaDefaultScreen.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
@@ -175,9 +175,9 @@ DocumentOrRoomMediaDefaultScreen.propTypes = {
   onSelectHighlightedFileClick: PropTypes.func.isRequired
 };
 
-DocumentOrRoomMediaDefaultScreen.defaultProps = {
+RoomMediaDefaultScreen.defaultProps = {
   highlightedFile: null,
   filterText: null
 };
 
-export default DocumentOrRoomMediaDefaultScreen;
+export default RoomMediaDefaultScreen;

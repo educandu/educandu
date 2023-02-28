@@ -12,8 +12,8 @@ import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { useSetStorageLocation, useStorage } from '../../storage-context.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import DocumentOrRoomMediaUploadScreen from './document-or-room-media-upload-screen.js';
-import DocumentOrRoomMediaDefaultScreen from './document-or-room-media-default-screen.js';
+import RoomMediaUploadScreen from './room-media-upload-screen.js';
+import RoomMediaDefaultScreen from './room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 
@@ -24,7 +24,7 @@ const SCREEN = {
   preview: 'preview'
 };
 
-function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
+function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
   const { locations } = useStorage();
   const setStorageLocation = useSetStorageLocation();
@@ -41,7 +41,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const storageLocation = locations.find(loc => loc.type === storageLocationType);
+  const storageLocation = locations[0];
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
@@ -199,7 +199,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   return (
     <Fragment>
       {screen === SCREEN.default && (
-        <DocumentOrRoomMediaDefaultScreen
+        <RoomMediaDefaultScreen
           files={displayedFiles}
           isLoading={isLoading}
           filterText={filterText}
@@ -228,7 +228,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
       )}
 
       {screen === SCREEN.upload && (
-        <DocumentOrRoomMediaUploadScreen
+        <RoomMediaUploadScreen
           uploadQueue={uploadQueue}
           storageLocation={storageLocation}
           onCancelClick={onCancel}
@@ -250,25 +250,16 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   );
 }
 
-DocumentOrRoomMediaScreens.propTypes = {
+RoomMediaScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
-  onSelect: PropTypes.func,
-  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
+  onSelect: PropTypes.func
 };
 
-DocumentOrRoomMediaScreens.defaultProps = {
+RoomMediaScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default DocumentOrRoomMediaScreens;
-
-export function DocumentMediaScreens({ ...props }) {
-  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.documentMedia} {...props} />;
-}
-
-export function RoomMediaScreens({ ...props }) {
-  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.roomMedia} {...props} />;
-}
+export default RoomMediaScreens;

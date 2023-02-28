@@ -7,14 +7,13 @@ import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
 import WikimediaScreens from './wikimedia/wikimedia-screens.js';
+import RoomMediaScreens from './room-media/room-media-screens.js';
 import MediaLibraryScreens from './media-library/media-library-screens.js';
-import { FEATURE_TOGGLES, SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
-import { DocumentMediaScreens, RoomMediaScreens } from './document-or-room-media/document-or-room-media-screens.js';
+import { SOURCE_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 const possibleSourceTypes = [
   SOURCE_TYPE.mediaLibrary,
   SOURCE_TYPE.roomMedia,
-  SOURCE_TYPE.documentMedia,
   SOURCE_TYPE.wikimedia
 ];
 
@@ -28,12 +27,10 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
   useEffect(() => {
     const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
       switch (sourceType) {
-        case SOURCE_TYPE.documentMedia:
-          return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.documentMedia);
         case SOURCE_TYPE.roomMedia:
           return availableStorageLocations.some(location => location.type === STORAGE_LOCATION_TYPE.roomMedia);
         case SOURCE_TYPE.mediaLibrary:
-          return possibleSourceTypes.includes(sourceType) && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.mediaLibrary);
+          return possibleSourceTypes.includes(sourceType);
         default:
           return possibleSourceTypes.includes(sourceType);
       }
@@ -67,9 +64,6 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
       case SOURCE_TYPE.mediaLibrary:
         Component = MediaLibraryScreens;
         break;
-      case SOURCE_TYPE.documentMedia:
-        Component = DocumentMediaScreens;
-        break;
       case SOURCE_TYPE.roomMedia:
         Component = RoomMediaScreens;
         break;
@@ -77,10 +71,11 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
         Component = WikimediaScreens;
         break;
       default:
-        throw new Error(`Invalid location type: ${sourceType}`);
+        Component = null;
+        break;
     }
 
-    return <Component initialUrl={initialUrl} onSelect={onSelect} onCancel={onCancel} />;
+    return !!Component && <Component initialUrl={initialUrl} onSelect={onSelect} onCancel={onCancel} />;
   };
 
   return (
