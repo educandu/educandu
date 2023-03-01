@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Spin } from 'antd';
+import { Button, Spin, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
-import { CommentOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
-import ItemEditedIcon from '../icons/user-activities/item-edited-icon.js';
+import CommentsIcon from '../icons/user-notifications/comments-icon.js';
+import { EditDocIconComponent } from '../icons/user-notifications/edit-doc-icon.js';
 
 function NotificationsTab({ notificationGroups, loading }) {
   const { formatDate } = useDateFormat();
@@ -28,12 +28,12 @@ function NotificationsTab({ notificationGroups, loading }) {
     let description;
 
     if (notificationGroup.eventType === EVENT_TYPE.revisionCreated) {
-      icon = <ItemEditedIcon />;
+      icon = <EditDocIconComponent />;
       description = notificationGroup.eventParams.document.roomId ? t('roomRevisionCreatedNotification') : t('publicRevisionCreatedNotification');
     }
 
     if (notificationGroup.eventType === EVENT_TYPE.commentCreated) {
-      icon = <CommentOutlined />;
+      icon = <CommentsIcon />;
       description = notificationGroup.eventParams.document.roomId ? t('roomCommentCreatedNotification') : t('publicCommentCreatedNotification');
     }
 
@@ -50,9 +50,11 @@ function NotificationsTab({ notificationGroups, loading }) {
             <span className="NotificationsTab-notificationContentTextSecondary">{formatDate(notificationGroup.lastCreatedOn)}</span>
           </div>
         </div>
-        <Button type="text" className="NotificationsTab-notificationDismissButton">
-          <CloseIcon />
-        </Button>
+        <Tooltip title={t('dismiss')}>
+          <Button type="text" className="NotificationsTab-notificationDismissButton">
+            <CloseIcon />
+          </Button>
+        </Tooltip>
       </div>
     );
   };
@@ -71,7 +73,7 @@ function NotificationsTab({ notificationGroups, loading }) {
         <div className="NotificationsTab-info">{t('info')}</div>
         <Button
           icon={<CloseIcon />}
-          className="NotificationsTab-dismissAllButton"
+          className="NotificationsTab-dismissAllNotificationsButton"
           onClick={handleDismissNotificationsClick}
           >
           {t('dismissAll')}

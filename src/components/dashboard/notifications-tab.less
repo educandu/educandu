@@ -19,6 +19,7 @@
   border-radius: @edu-border-radius-base;
   border: 1px solid @edu-border-color-light;
   border-left-width: 5px;
+  border-right-width: 5px;
 }
 
 .NotificationsTab-notificationContent {
@@ -30,6 +31,8 @@
 
 .NotificationsTab-notificationContentIcon {
   font-size: 30px;
+  display: flex;
+  align-items: center;
 }
 
 .NotificationsTab-notificationContentText {
@@ -65,19 +68,16 @@
 
 .NotificationsTab-notificationDismissButton {
   height: 100% !important;
-  aspect-ratio: 1 !important;
-  border-left: 1px solid @edu-border-color-light !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
   padding: @edu-content-padding;
 
-  @media @edu-media-phone {
-    width: auto !important;
-    aspect-ratio: unset !important;
+  &:hover {
+    background-color: @edu-background-color-light !important;
   }
 }
 
-.NotificationsTab-dismissAllButton {
+.NotificationsTab-dismissAllNotificationsButton {
   display: block !important;
   margin-left: auto;
   margin-bottom: @edu-page-content-padding;

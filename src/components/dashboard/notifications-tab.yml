@@ -20,6 +20,9 @@ notificationsTab:
   documentNotAvailable:
     en: Document no longer available
     de: Document no longer available
+  dismiss:
+    en: Dismiss
+    de: Verwerfen
   dismissAll:
     en: Dismiss all
-    de: Alle entfernen
+    de: Alle verwerfen
