@@ -536,7 +536,7 @@
     },
     "noNotifications": {
       "en": "There are no new notifications for you.",
-      "de": "Es gibt keine neue Benachrichtigungen für dich."
+      "de": "Es gibt keine neuen Benachrichtigungen für dich."
     },
     "publicRevisionCreatedNotification": {
       "en": "Public document has been edited",
@@ -558,13 +558,13 @@
       "en": "Document no longer available",
       "de": "Document no longer available"
     },
-    "dismiss": {
-      "en": "Dismiss",
-      "de": "Verwerfen"
+    "remove": {
+      "en": "Remove",
+      "de": "Entfernen"
     },
-    "dismissAll": {
-      "en": "Dismiss all",
-      "de": "Alle verwerfen"
+    "removeAll": {
+      "en": "Remove all",
+      "de": "Alle entfernen"
     }
   },
   "roomsTab": {

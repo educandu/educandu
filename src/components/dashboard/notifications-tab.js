@@ -10,13 +10,9 @@ import { notificationGroupShape } from '../../ui/default-prop-types.js';
 import CommentsIcon from '../icons/user-notifications/comments-icon.js';
 import { EditDocIconComponent } from '../icons/user-notifications/edit-doc-icon.js';
 
-function NotificationsTab({ notificationGroups, loading }) {
+function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('notificationsTab');
-
-  const handleDismissNotificationsClick = () => {
-
-  };
 
   const renderNotificationGroup = notificationGroup => {
     const isDeprecated = !notificationGroup.eventParams.document;
@@ -50,8 +46,12 @@ function NotificationsTab({ notificationGroups, loading }) {
             <span className="NotificationsTab-notificationContentTextSecondary">{formatDate(notificationGroup.lastCreatedOn)}</span>
           </div>
         </div>
-        <Tooltip title={t('dismiss')}>
-          <Button type="text" className="NotificationsTab-notificationDismissButton">
+        <Tooltip title={t('remove')}>
+          <Button
+            type="text"
+            className="NotificationsTab-notificationRemoveButton"
+            onClick={() => onRemoveNotificationGroup(notificationGroup)}
+            >
             <CloseIcon />
           </Button>
         </Tooltip>
@@ -73,10 +73,11 @@ function NotificationsTab({ notificationGroups, loading }) {
         <div className="NotificationsTab-info">{t('info')}</div>
         <Button
           icon={<CloseIcon />}
-          className="NotificationsTab-dismissAllNotificationsButton"
-          onClick={handleDismissNotificationsClick}
+          disabled={!notificationGroups.length}
+          className="NotificationsTab-removeAllNotificationsButton"
+          onClick={onRemoveNotifications}
           >
-          {t('dismissAll')}
+          {t('removeAll')}
         </Button>
         <div>
           {!!loading && <Spin className="u-spin" />}
@@ -89,8 +90,10 @@ function NotificationsTab({ notificationGroups, loading }) {
 }
 
 NotificationsTab.propTypes = {
+  loading: PropTypes.bool.isRequired,
   notificationGroups: PropTypes.arrayOf(notificationGroupShape).isRequired,
-  loading: PropTypes.bool.isRequired
+  onRemoveNotificationGroup: PropTypes.func.isRequired,
+  onRemoveNotifications: PropTypes.func.isRequired
 };
 
 export default NotificationsTab;

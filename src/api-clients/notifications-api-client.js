@@ -15,6 +15,27 @@ class NotificationsApiClient {
       )
       .then(res => res.data);
   }
+
+  removeNotificationGroup(notificationIds) {
+    return this.httpClient
+      .delete(
+        '/api/v1/notifications/group',
+        {
+          data: { notificationIds },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
+  removeNotifications() {
+    return this.httpClient
+      .delete(
+        '/api/v1/notifications',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default NotificationsApiClient;

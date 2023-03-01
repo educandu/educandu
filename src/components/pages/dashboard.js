@@ -19,10 +19,10 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { useNotificationsCount } from '../notification-context.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
+import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
 
 const TAB_KEYS = {
   activities: 'activities',
@@ -40,6 +40,7 @@ function Dashboard({ PageTemplate }) {
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
   const notificationsCount = useNotificationsCount();
+  const setNotificationsCount = useSetNotificationsCount();
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
@@ -152,6 +153,18 @@ function Dashboard({ PageTemplate }) {
     await fetchFavorites();
   };
 
+  const handleRemoveNotificationGroup = async notificationGroup => {
+    const response = await notificationsApiClient.removeNotificationGroup(notificationGroup.notificationIds);
+    setNotificationGroups(response.notificationGroups);
+    setNotificationsCount(response.notificationGroups.length);
+  };
+
+  const handleRemoveNotifications = async () => {
+    const response = await notificationsApiClient.removeNotifications();
+    setNotificationGroups(response.notificationGroups);
+    setNotificationsCount(response.notificationGroups.length);
+  };
+
   const items = [
     {
       key: TAB_KEYS.activities,
@@ -206,7 +219,12 @@ function Dashboard({ PageTemplate }) {
       ),
       children: (
         <div className="Tabs-tabPane">
-          <NotificationsTab notificationGroups={notificationGroups} loading={fetchingNotificationGroups} />
+          <NotificationsTab
+            loading={fetchingNotificationGroups}
+            notificationGroups={notificationGroups}
+            onRemoveNotificationGroup={handleRemoveNotificationGroup}
+            onRemoveNotifications={handleRemoveNotifications}
+            />
         </div>
       )
     }

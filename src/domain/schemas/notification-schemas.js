@@ -13,3 +13,7 @@ export const notificationDbSchema = joi.object({
   createdOn: joi.date().required(),
   expiresOn: joi.date().required()
 });
+
+export const deleteNotificationGroupBodySchema = joi.object({
+  notificationIds: joi.array().items(idOrKeySchema).required()
+});

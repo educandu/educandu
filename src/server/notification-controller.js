@@ -1,6 +1,11 @@
+import express from 'express';
+import { validateBody } from '../domain/validation-middleware.js';
 import NotificationService from '../services/notification-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
+import { deleteNotificationGroupBodySchema } from '../domain/schemas/notification-schemas.js';
+
+const jsonParser = express.json();
 
 class NotificationController {
   static dependencies = [NotificationService, ClientDataMappingService];
@@ -12,6 +17,25 @@ class NotificationController {
 
   async handleGetNotificationGroups(req, res) {
     const { user } = req;
+    const notificationGroups = await this.notificationService.getNotificationGroups({ user });
+    const mappedNotificationGroups = await this.clientDataMappingService.mapUserNotificationGroups(notificationGroups, user);
+    return res.send({ notificationGroups: mappedNotificationGroups });
+  }
+
+  async handleDeleteNotificationGroup(req, res) {
+    const { user } = req;
+    const { notificationIds } = req.body;
+
+    await this.notificationService.deleteUserNotificationsByIds({ user, notificationIds });
+    const notificationGroups = await this.notificationService.getNotificationGroups({ user });
+    const mappedNotificationGroups = await this.clientDataMappingService.mapUserNotificationGroups(notificationGroups, user);
+    return res.send({ notificationGroups: mappedNotificationGroups });
+  }
+
+  async handleDeleteNotifications(req, res) {
+    const { user } = req;
+
+    await this.notificationService.deleteUserNotifications({ user });
     const notificationGroups = await this.notificationService.getNotificationGroups({ user });
     const mappedNotificationGroups = await this.clientDataMappingService.mapUserNotificationGroups(notificationGroups, user);
     return res.send({ notificationGroups: mappedNotificationGroups });
@@ -42,6 +66,18 @@ class NotificationController {
       '/api/v1/notifications/groups',
       needsAuthentication(),
       (req, res) => this.handleGetNotificationGroups(req, res)
+    );
+
+    router.delete(
+      '/api/v1/notifications/group',
+      [needsAuthentication(), jsonParser, validateBody(deleteNotificationGroupBodySchema)],
+      (req, res) => this.handleDeleteNotificationGroup(req, res)
+    );
+
+    router.delete(
+      '/api/v1/notifications',
+      needsAuthentication(),
+      (req, res) => this.handleDeleteNotifications(req, res)
     );
   }
 
