@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Spin, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
+import { Button, Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';

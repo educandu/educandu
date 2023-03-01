@@ -531,8 +531,8 @@
   },
   "notificationsTab": {
     "info": {
-      "en": "Here you can find your notifications.",
-      "de": "Hier findest du deine Benachrichtigungen."
+      "en": "Here you can find your notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.",
+      "de": "Hier findest du deine Benachrichtigungen über Beiträge an deine Lieblingsdokumente, von deine Lieblingsnutzern oder an Dokumente in Räume, in denen du Mitglied bist."
     },
     "noNotifications": {
       "en": "There are no new notifications for you.",
