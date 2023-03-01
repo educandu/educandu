@@ -182,8 +182,9 @@ class ClientDataMappingService {
     }, new Map());
 
     const allowedDocumentsById = occurringDocuments.reduce((map, item) => {
-      // The room might be not accessible to the user anymore:
-      if (!item.roomId || allowedRoomsById.has(item.roomId)) {
+      const isPublicDocument = !item.roomId;
+      const isUserAccessibleRoomDocument = !!item.roomId && allowedRoomsById.has(item.roomId);
+      if (isPublicDocument || isUserAccessibleRoomDocument) {
         map.set(item._id, item);
       }
       return map;

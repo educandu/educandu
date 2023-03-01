@@ -1,6 +1,6 @@
+import cloneDeep from './clone-deep.js';
 import { isRoomOwnerOrInvitedMember } from './room-utils.js';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
-import cloneDeep from './clone-deep.js';
 
 function shouldProcessEvent({ event, revision, document, room, notifiedUser }) {
   // Never notify the user for deleted rooms/documents/revisions:
