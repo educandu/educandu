@@ -128,7 +128,7 @@ class StorageController {
     return res.send({});
   }
 
-  registerMiddleware(router) {
+  registerBeforePages(router) {
     router.use(async (req, _res, next) => {
       try {
         const { user } = req;

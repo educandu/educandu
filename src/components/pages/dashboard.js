@@ -1,7 +1,7 @@
 import by from 'thenby';
-import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
+import { Badge, Tabs, Tooltip } from 'antd';
 import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { useUnreadNotificationsCount } from '../notification-context.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 
@@ -40,6 +41,7 @@ function Dashboard({ PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const unreadNotificationsCount = useUnreadNotificationsCount();
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
@@ -195,7 +197,13 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.notifications,
-      label: t('notificationsTabTitle'),
+      label: (
+        <Tooltip title={unreadNotificationsCount ? t('common:unreadNotifications', { count: unreadNotificationsCount }) : null}>
+          <Badge dot title="" offset={[5, 0]} count={unreadNotificationsCount}>
+            {t('common:notifications')}
+          </Badge>
+        </Tooltip>
+      ),
       children: (
         <div className="Tabs-tabPane">
           <NotificationsTab notificationGroups={notificationGroups} loading={fetchingNotificationGroups} />
