@@ -1,11 +1,11 @@
-.DocumentOrRoomMediaDefaultScreen {
+.RoomMediaDefaultScreen {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   grid-template-columns: 100%;
 }
 
-.DocumentOrRoomMediaDefaultScreen-filesViewer {
+.RoomMediaDefaultScreen-filesViewer {
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
@@ -27,12 +27,12 @@
   }
 }
 
-.DocumentOrRoomMediaDefaultScreen-filesViewerContent {
+.RoomMediaDefaultScreen-filesViewerContent {
   height: 100%;
   overflow: auto;
 }
 
-.DocumentOrRoomMediaDefaultScreen-filesViewerOverlay {
+.RoomMediaDefaultScreen-filesViewerOverlay {
   .m-mask;
   display: grid;
   align-content: center;
@@ -40,32 +40,32 @@
   background-color: fade(@edu-background-color-light, 60%);
 }
 
-.DocumentOrRoomMediaDefaultScreen-buttonsLine {
+.RoomMediaDefaultScreen-buttonsLine {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
 
-.DocumentOrRoomMediaDefaultScreen-buttonsLineItem {
+.RoomMediaDefaultScreen-buttonsLineItem {
   margin-top: @edu-control-spacing-base;
 
-  &.DocumentOrRoomMediaDefaultScreen-buttonsLineItem--select {
+  &.RoomMediaDefaultScreen-buttonsLineItem--select {
     min-width: 100px;
   }
 }
 
-.DocumentOrRoomMediaDefaultScreen-locationInfo {
+.RoomMediaDefaultScreen-locationInfo {
   min-height: 40px;
   margin-bottom: 20px;
 }
 
-.DocumentOrRoomMediaDefaultScreen-alertPrivateStorage {
+.RoomMediaDefaultScreen-alertPrivateStorage {
   display: flex;
   flex-wrap: wrap;
 }
 
-.DocumentOrRoomMediaDefaultScreen-alertPrivateStorageUsage {
+.RoomMediaDefaultScreen-alertPrivateStorageUsage {
   flex-grow: 1;
   margin-left: 5px;
 }

@@ -1,0 +1,74 @@
+.RoomMediaUploadScreen {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto auto 1fr;
+}
+
+.RoomMediaUploadScreen-headline {
+  margin-bottom: 30px;
+}
+
+.RoomMediaUploadScreen-usedStorage {
+  margin-bottom: 20px;
+}
+
+.RoomMediaUploadScreen-fileStatus {
+  margin: 10px;
+}
+
+.RoomMediaUploadScreen-fileStatusRow {
+  .m-control-group-wide;
+}
+
+.RoomMediaUploadScreen-fileStatusError {
+  padding-left: 25px;
+  font-size: @edu-font-size-sm;
+  color: @edu-error-color;
+}
+
+.RoomMediaUploadScreen-fileStatusPreview {
+  margin-top: 25px;
+}
+
+.RoomMediaUploadScreen-message {
+  margin-bottom: 15px;
+}
+
+.RoomMediaUploadScreen-messageDetails {
+  padding: 5px 0 0 5px;
+  font-size: @edu-font-size-sm;
+}
+
+.RoomMediaUploadScreen-fileStatusContainer {
+  overflow: auto;
+}
+
+.RoomMediaUploadScreen-fileStatusIcon {
+  &.RoomMediaUploadScreen-fileStatusIcon--pristine {
+    color: @edu-success-color;
+  }
+
+  &.RoomMediaUploadScreen-fileStatusIcon--processed {
+    color: @edu-secondary-color-dark;
+  }
+
+  &.RoomMediaUploadScreen-fileStatusIcon--success {
+    color: @edu-success-color;
+  }
+
+  &.RoomMediaUploadScreen-fileStatusIcon--error {
+    color: @edu-error-color;
+  }
+}
+
+.RoomMediaUploadScreen-fileStatusMessage {
+  font-style: italic;
+  color: @edu-secondary-color-dark;
+}
+
+.RoomMediaUploadScreen-imageOptimizationCheckbox {
+  font-size: @edu-font-size-sm;
+  margin-left: auto;
+  margin-right: 0;
+}

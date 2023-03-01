@@ -3,19 +3,16 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import cloneDeep from '../../../utils/clone-deep.js';
-import { useService } from '../../container-context.js';
-import ClientConfig from '../../../bootstrap/client-config.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
+import RoomMediaUploadScreen from './room-media-upload-screen.js';
+import RoomMediaDefaultScreen from './room-media-default-screen.js';
+import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { getCookie, setSessionCookie } from '../../../common/cookie.js';
+import { useSetStorage, useStorage } from '../../storage-context.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
-import { useSetStorageLocation, useStorage } from '../../storage-context.js';
+import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import DocumentOrRoomMediaUploadScreen from './document-or-room-media-upload-screen.js';
-import DocumentOrRoomMediaDefaultScreen from './document-or-room-media-default-screen.js';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
-import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 
 const SCREEN = {
   default: 'default',
@@ -24,11 +21,10 @@ const SCREEN = {
   preview: 'preview'
 };
 
-function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect, onCancel }) {
+function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
-  const { locations } = useStorage();
-  const setStorageLocation = useSetStorageLocation();
-  const { uploadLiabilityCookieName } = useService(ClientConfig);
+  const storage = useStorage();
+  const setStorage = useSetStorage();
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [files, setFiles] = useState([]);
@@ -41,8 +37,6 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const storageLocation = locations.find(loc => loc.type === storageLocationType);
-
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
@@ -52,13 +46,13 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   }, [filterText, files]);
 
   const fetchStorageContent = useCallback(async () => {
-    if (!storageLocation) {
+    if (!storage) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects({ parentPath: storageLocation.path });
+      const result = await storageApiClient.getCdnObjects({ parentPath: storage.path });
 
       setFiles(result.objects);
     } catch (err) {
@@ -66,7 +60,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
     } finally {
       setIsLoading(false);
     }
-  }, [storageLocation, storageApiClient]);
+  }, [storage, storageApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -89,7 +83,7 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
     confirmMediaFileHardDelete(t, file.displayName, async () => {
       const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
       setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-      setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
+      setStorage({ ...cloneDeep(storage), usedBytes });
     });
   };
 
@@ -132,37 +126,10 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   };
 
   useEffect(() => {
-    const checkPreconditions = () => {
-      return storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia
-        ? new Promise(resolve => {
-          if (!getCookie(uploadLiabilityCookieName)) {
-            confirmPublicUploadLiability(t, () => {
-              setSessionCookie(uploadLiabilityCookieName, 'true');
-              resolve(true);
-            }, () => resolve(false));
-          } else {
-            resolve(true);
-          }
-        })
-        : true;
-    };
-
-    const startUpload = async () => {
-      if (!uploadQueue.length) {
-        return;
-      }
-
-      const preMet = await checkPreconditions();
-      if (!preMet || !uploadQueue.length) {
-        return;
-      }
-
+    if (uploadQueue.length) {
       pushScreen(SCREEN.upload);
-    };
-
-    startUpload();
-
-  }, [uploadQueue, storageLocation.type, uploadLiabilityCookieName, t]);
+    }
+  }, [uploadQueue]);
 
   useEffect(() => {
     if (!highlightedFile || screen !== SCREEN.default) {
@@ -192,19 +159,18 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
     fetchStorageContent();
   }, [fetchStorageContent]);
 
-  if (!storageLocation) {
+  if (!storage) {
     return null;
   }
 
   return (
     <Fragment>
       {screen === SCREEN.default && (
-        <DocumentOrRoomMediaDefaultScreen
+        <RoomMediaDefaultScreen
           files={displayedFiles}
           isLoading={isLoading}
           filterText={filterText}
           highlightedFile={highlightedFile}
-          storageLocation={storageLocation}
           filesViewerDisplay={filesViewerDisplay}
           onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
           onFileClick={handleFileClick}
@@ -228,9 +194,8 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
       )}
 
       {screen === SCREEN.upload && (
-        <DocumentOrRoomMediaUploadScreen
+        <RoomMediaUploadScreen
           uploadQueue={uploadQueue}
-          storageLocation={storageLocation}
           onCancelClick={onCancel}
           onEditFileClick={handleEditFileClick}
           onBackClick={handleFilesUploadScreenBackClick}
@@ -250,25 +215,16 @@ function DocumentOrRoomMediaScreens({ storageLocationType, initialUrl, onSelect,
   );
 }
 
-DocumentOrRoomMediaScreens.propTypes = {
+RoomMediaScreens.propTypes = {
   initialUrl: PropTypes.string,
   onCancel: PropTypes.func,
-  onSelect: PropTypes.func,
-  storageLocationType: PropTypes.oneOf([STORAGE_LOCATION_TYPE.roomMedia, STORAGE_LOCATION_TYPE.documentMedia]).isRequired
+  onSelect: PropTypes.func
 };
 
-DocumentOrRoomMediaScreens.defaultProps = {
+RoomMediaScreens.defaultProps = {
   initialUrl: null,
   onCancel: () => {},
   onSelect: () => {}
 };
 
-export default DocumentOrRoomMediaScreens;
-
-export function DocumentMediaScreens({ ...props }) {
-  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.documentMedia} {...props} />;
-}
-
-export function RoomMediaScreens({ ...props }) {
-  return <DocumentOrRoomMediaScreens storageLocationType={STORAGE_LOCATION_TYPE.roomMedia} {...props} />;
-}
+export default RoomMediaScreens;

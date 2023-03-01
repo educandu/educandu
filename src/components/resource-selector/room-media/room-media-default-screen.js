@@ -5,24 +5,24 @@ import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
 import UsedStorage from '../../used-storage.js';
-import { Alert, Button, Radio, Spin, Tooltip } from 'antd';
+import { Button, Radio, Spin, Tooltip } from 'antd';
+import { useStorage } from '../../storage-context.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
+import { cdnObjectShape } from '../../../ui/default-prop-types.js';
+import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
 import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { storageLocationShape, cdnObjectShape } from '../../../ui/default-prop-types.js';
-import { FILES_VIEWER_DISPLAY, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function DocumentOrRoomMediaDefaultScreen({
+function RoomMediaDefaultScreen({
   files,
   isLoading,
   filterText,
   highlightedFile,
-  storageLocation,
   filesViewerDisplay,
   onSelectHighlightedFileClick,
   onFileClick,
@@ -34,9 +34,10 @@ function DocumentOrRoomMediaDefaultScreen({
   onFilesViewerDisplayChange,
   onFilesDropped
 }) {
-  const { t } = useTranslation('documentOrRoomMediaDefaultScreen');
+  const { t } = useTranslation('roomMediaDefaultScreen');
 
   const dropzoneRef = useRef();
+  const storage = useStorage();
 
   const canAcceptFiles = !isLoading;
 
@@ -59,27 +60,20 @@ function DocumentOrRoomMediaDefaultScreen({
   };
 
   const renderStorageInfo = () => {
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)) {
-      const alertContent = (
-        <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorage">
-          <span>{t('privateStorageMessage')}.</span>
-          <div className="DocumentOrRoomMediaDefaultScreen-alertPrivateStorageUsage">
-            <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
-          </div>
+    if (!storage.usedBytes > 0 && !storage.maxBytes) {
+      return null;
+    }
+    return (
+      <div className="RoomMediaDefaultScreen-alertPrivateStorage">
+        <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
+          <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
         </div>
-      );
-      return <Alert message={alertContent} type="warning" />;
-    }
-
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.documentMedia) {
-      return <Alert message={t('publicStorageMessage')} type="warning" />;
-    }
-
-    return null;
+      </div>
+    );
   };
 
   const getFilesViewerClasses = isDragActive => classNames({
-    'DocumentOrRoomMediaDefaultScreen-filesViewer': true,
+    'RoomMediaDefaultScreen-filesViewer': true,
     'is-dropping': isDragActive && !isLoading,
     'is-drop-rejected': isDragActive && isLoading
   });
@@ -89,12 +83,12 @@ function DocumentOrRoomMediaDefaultScreen({
     : FilesListViewer;
 
   return (
-    <div className="DocumentOrRoomMediaDefaultScreen">
-      <div className="DocumentOrRoomMediaDefaultScreen-buttonsLine">
-        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem">
+    <div className="RoomMediaDefaultScreen">
+      <div className="RoomMediaDefaultScreen-buttonsLine">
+        <div className="RoomMediaDefaultScreen-buttonsLineItem">
           <FilterInput value={filterText} onChange={handleFilterTextChange} />
         </div>
-        <div className="DocumentOrRoomMediaDefaultScreen-buttonsLineItem DocumentOrRoomMediaDefaultScreen-buttonsLineItem--select">
+        <div className="RoomMediaDefaultScreen-buttonsLineItem RoomMediaDefaultScreen-buttonsLineItem--select">
           <RadioGroup value={filesViewerDisplay} onChange={handleFilesViewerDisplayChange}>
             <Tooltip title={t('filesView_list')}>
               <RadioButton value={FILES_VIEWER_DISPLAY.list}>
@@ -118,11 +112,11 @@ function DocumentOrRoomMediaDefaultScreen({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <div className="DocumentOrRoomMediaDefaultScreen-filesViewerContent">
+            <div className="RoomMediaDefaultScreen-filesViewerContent">
               <FilesViewer
                 files={files}
                 selectedFileUrl={highlightedFile?.portableUrl || null}
-                canDelete={storageLocation.isDeletionEnabled}
+                canDelete={storage.isDeletionEnabled}
                 onFileClick={onFileClick}
                 onFileDoubleClick={onFileDoubleClick}
                 onDeleteFileClick={onDeleteFileClick}
@@ -130,14 +124,14 @@ function DocumentOrRoomMediaDefaultScreen({
                 />
             </div>
             {!!isLoading && (
-              <div className={classNames('DocumentOrRoomMediaDefaultScreen-filesViewerOverlay')}>
+              <div className={classNames('RoomMediaDefaultScreen-filesViewerOverlay')}>
                 <Spin size="large" />
               </div>
             )}
           </div>
         )}
       </ReactDropzone>
-      <div className="DocumentOrRoomMediaDefaultScreen-locationInfo">
+      <div className="RoomMediaDefaultScreen-locationInfo">
         {renderStorageInfo()}
       </div>
       <div className="u-resource-selector-screen-footer">
@@ -157,13 +151,12 @@ function DocumentOrRoomMediaDefaultScreen({
   );
 }
 
-DocumentOrRoomMediaDefaultScreen.propTypes = {
+RoomMediaDefaultScreen.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
   highlightedFile: cdnObjectShape,
   isLoading: PropTypes.bool.isRequired,
   filterText: PropTypes.string,
-  storageLocation: storageLocationShape.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onDeleteFileClick: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
@@ -175,9 +168,9 @@ DocumentOrRoomMediaDefaultScreen.propTypes = {
   onSelectHighlightedFileClick: PropTypes.func.isRequired
 };
 
-DocumentOrRoomMediaDefaultScreen.defaultProps = {
+RoomMediaDefaultScreen.defaultProps = {
   highlightedFile: null,
   filterText: null
 };
 
-export default DocumentOrRoomMediaDefaultScreen;
+export default RoomMediaDefaultScreen;

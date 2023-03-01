@@ -17,7 +17,7 @@ import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
 function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sanitizeCdnUrls, value, onBlur, onChange, preview, embeddable, maxLength, ...rest }) {
-  const { locations } = useStorage();
+  const storage = useStorage();
   const inputContainerRef = useRef(null);
   const debouncedInputApiRef = useRef(null);
   const { t } = useTranslation('markdownInput');
@@ -126,9 +126,10 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
           { 'MarkdownInput-blockHelpContainer--embeddable': embeddable }
         )}
         >
-        {!!locations.length && !disabled
-          && (<Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>)}
-        {!!locations.length && !!disabled && renderResourceSelector()}
+        {!!storage && !disabled && (
+          <Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>
+        )}
+        {!!storage && !!disabled && renderResourceSelector()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
       {renderCount()}

@@ -37,7 +37,6 @@ export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  mediaLibrary: 'mediaLibrary'
 };
 
 export const ROOM_USER_ROLE = {
@@ -117,8 +116,8 @@ export const SOURCE_TYPE = {
   external: 'external',
   mediaLibrary: 'media-library',
   documentMedia: 'document-media',
-  roomMedia: 'room-media',
   wikimedia: 'wikimedia',
+  roomMedia: 'room-media',
   unsupported: 'unsupported'
 };
 

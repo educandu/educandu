@@ -133,10 +133,9 @@ class StorageController {
       try {
         const { user } = req;
         const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
-        const locations = await this.storageService.getStorageLocations({ user, documentId });
 
         // eslint-disable-next-line require-atomic-updates
-        req.storage = { locations };
+        req.storage = await this.storageService.getRoomStorage({ user, documentId });
 
         let storagePlan;
         if (user?.storage.planId) {

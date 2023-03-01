@@ -3,16 +3,19 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import { useIsMounted } from '../../../ui/hooks.js';
+import { useService } from '../../container-context.js';
 import { replaceItem } from '../../../utils/array-utils.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaLibraryEditScreen from './media-library-edit-screen.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibrarySearchScreen from './media-library-search-screen.js';
 import MediaLibraryUploadScreen from './media-library-upload-screen.js';
+import { getCookie, setSessionCookie } from '../../../common/cookie.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES } from '../../../utils/media-library-utils.js';
+import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 
 const SCREEN = {
   search: 'search',
@@ -28,6 +31,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   const [isLoading, setIsLoading] = useState(false);
   const [fileToUpload, setFileToUpload] = useState(null);
   const [highlightedFile, setHighlightedFile] = useState(null);
+  const { uploadLiabilityCookieName } = useService(ClientConfig);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
@@ -55,7 +59,25 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     }
   }, [mediaLibraryApiClient, isMounted]);
 
-  const handleFileDrop = file => {
+  const handleFileDrop = async file => {
+    const checkPreconditions = () => {
+      return new Promise(resolve => {
+        if (!getCookie(uploadLiabilityCookieName)) {
+          confirmPublicUploadLiability(t, () => {
+            setSessionCookie(uploadLiabilityCookieName, 'true');
+            resolve(true);
+          }, () => resolve(false));
+        } else {
+          resolve(true);
+        }
+      });
+    };
+
+    const preconditionsAreMet = await checkPreconditions();
+    if (!preconditionsAreMet || !file) {
+      return;
+    }
+
     setFileToUpload(file);
     pushScreen(SCREEN.upload);
   };

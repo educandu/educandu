@@ -10,14 +10,13 @@ import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
-import { useSetStorageLocation } from '../../storage-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { storageLocationShape } from '../../../ui/default-prop-types.js';
+import { useStorage, useSetStorage } from '../../storage-context.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../../../domain/constants.js';
 
 const ITEM_STATUS = {
   pristine: 'pristine',
@@ -33,17 +32,17 @@ const STAGE = {
   uploadFinished: 'uploadFinished'
 };
 
-function DocumentOrRoomMediaUploadScreen({
+function RoomMediaUploadScreen({
   uploadQueue,
-  storageLocation,
   onBackClick,
   onCancelClick,
   onEditFileClick,
   onSelectFileClick
 }) {
+  const storage = useStorage();
   const { uiLocale } = useLocale();
-  const setStorageLocation = useSetStorageLocation();
-  const { t } = useTranslation('documentOrRoomMediaUploadScreen');
+  const setStorage = useSetStorage();
+  const { t } = useTranslation('roomMediaUploadScreen');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [optimizeImages, setOptimizeImages] = useState(true);
@@ -62,7 +61,7 @@ function DocumentOrRoomMediaUploadScreen({
     }
   }, [uploadItems]);
 
-  const ensureCanUpload = useCallback((file, locationToUpload) => {
+  const ensureCanUpload = useCallback(file => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
       throw new Error(t('uploadLimitExceeded', {
         uploadSize: prettyBytes(file.size, { locale: uiLocale }),
@@ -70,16 +69,14 @@ function DocumentOrRoomMediaUploadScreen({
       }));
     }
 
-    if (locationToUpload.type === STORAGE_LOCATION_TYPE.roomMedia) {
-      const availableBytes = Math.max(0, (locationToUpload.maxBytes || 0) - (locationToUpload.usedBytes || 0));
-      if (file.size > availableBytes) {
-        throw new Error(t('insufficientPrivateStorge'));
-      }
+    const availableBytes = Math.max(0, (storage.maxBytes || 0) - (storage.usedBytes || 0));
+    if (file.size > availableBytes) {
+      throw new Error(t('insufficientPrivateStorge'));
     }
-  }, [t, uiLocale]);
+  }, [t, uiLocale, storage]);
 
-  const uploadFiles = useCallback(async (itemsToUpload, uploadLocation) => {
-    let currentLocation = uploadLocation;
+  const uploadFiles = useCallback(async itemsToUpload => {
+    let currentStorage = storage;
 
     const result = {
       uploadedFiles: {},
@@ -96,16 +93,16 @@ function DocumentOrRoomMediaUploadScreen({
 
       let updatedItem;
       try {
-        ensureCanUpload(file, uploadLocation);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], uploadLocation.path);
+        ensureCanUpload(file);
+        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], storage.path);
         result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
           uploadedFile: Object.values(uploadedFiles)[0]
         };
-        currentLocation = { ...cloneDeep(currentLocation), usedBytes };
-        setStorageLocation(currentLocation);
+        currentStorage = { ...cloneDeep(currentStorage), usedBytes };
+        setStorage(currentStorage);
       } catch (error) {
         result.failedFiles = { ...result.failedFiles, [file.name]: file };
         updatedItem = {
@@ -120,11 +117,11 @@ function DocumentOrRoomMediaUploadScreen({
 
     return result;
 
-  }, [storageApiClient, ensureCanUpload, setStorageLocation, optimizeImages]);
+  }, [storageApiClient, ensureCanUpload, storage, setStorage, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    await uploadFiles(uploadItems, storageLocation);
+    await uploadFiles(uploadItems);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -162,10 +159,10 @@ function DocumentOrRoomMediaUploadScreen({
     const shouldRenderMessageDetails = currentStage === STAGE.uploadNotStarted && uploadItems.some(item => item.isEditable);
 
     return (
-      <div className="DocumentOrRoomMediaUploadScreen-message">
+      <div className="RoomMediaUploadScreen-message">
         {getUploadMessage()}
         {!!shouldRenderMessageDetails && (
-          <div className="DocumentOrRoomMediaUploadScreen-messageDetails">
+          <div className="RoomMediaUploadScreen-messageDetails">
             <Info>{t('stageDetails_uploadNotStarted')}</Info>
           </div>
         )}
@@ -182,45 +179,45 @@ function DocumentOrRoomMediaUploadScreen({
 
   const renderUploadItem = (item, itemIndex) => {
     return (
-      <div className="DocumentOrRoomMediaUploadScreen-fileStatus">
-        <div className="DocumentOrRoomMediaUploadScreen-fileStatusRow">
+      <div className="RoomMediaUploadScreen-fileStatus">
+        <div className="RoomMediaUploadScreen-fileStatusRow">
           {item.status === ITEM_STATUS.pristine && !!item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
-              <EditIcon className="DocumentOrRoomMediaUploadScreen-fileStatusIcon DocumentOrRoomMediaUploadScreen-fileStatusIcon--pristine" />
+              <EditIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--pristine" />
             </a>
           </Tooltip>
           )}
           {item.status === ITEM_STATUS.pristine && !item.isEditable && (
-          <FileIcon className="DocumentOrRoomMediaUploadScreen-fileStatusIcon" />
+          <FileIcon className="RoomMediaUploadScreen-fileStatusIcon" />
           )}
           {item.status === ITEM_STATUS.preprocessed && !!item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)}>
-              <EditIcon className="DocumentOrRoomMediaUploadScreen-fileStatusIcon DocumentOrRoomMediaUploadScreen-fileStatusIcon--processed" />
+              <EditIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--processed" />
             </a>
           </Tooltip>
           )}
           {item.status === ITEM_STATUS.preprocessed && !item.isEditable && (
-            <FileIcon className="DocumentOrRoomMediaUploadScreen-fileStatusIcon DocumentOrRoomMediaUploadScreen-fileStatusIcon--processed" />
+            <FileIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--processed" />
           )}
           {item.status === ITEM_STATUS.uploading && (
-          <LoadingOutlined className="DocumentOrRoomMediaUploadScreen-fileStatusIcon" />
+          <LoadingOutlined className="RoomMediaUploadScreen-fileStatusIcon" />
           )}
           {item.status === ITEM_STATUS.succeeded && (
-          <CheckOutlined className="DocumentOrRoomMediaUploadScreen-fileStatusIcon DocumentOrRoomMediaUploadScreen-fileStatusIcon--success" />
+          <CheckOutlined className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--success" />
           )}
           {item.status === ITEM_STATUS.failed && (
-          <CloseOutlined className="DocumentOrRoomMediaUploadScreen-fileStatusIcon DocumentOrRoomMediaUploadScreen-fileStatusIcon--error" />
+          <CloseOutlined className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--error" />
           )}
           {renderUploadItemName(item, itemIndex)}
           {item.status === ITEM_STATUS.preprocessed && (
-          <span className="DocumentOrRoomMediaUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
+          <span className="RoomMediaUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
           )}
         </div>
-        {!!item.errorMessage && <div className="DocumentOrRoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
+        {!!item.errorMessage && <div className="RoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
-          <div className="DocumentOrRoomMediaUploadScreen-fileStatusPreview">
+          <div className="RoomMediaUploadScreen-fileStatusPreview">
             <ResourceDetails url={item.uploadedFile.url} size={item.uploadedFile.size} previewOnly />
           </div>
         )}
@@ -232,14 +229,14 @@ function DocumentOrRoomMediaUploadScreen({
     <div className="u-resource-selector-screen">
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
-        <div className="DocumentOrRoomMediaUploadScreen">
-          {storageLocation.type === STORAGE_LOCATION_TYPE.roomMedia && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0) && (
-            <div className="DocumentOrRoomMediaUploadScreen-usedStorage" >
-              <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
+        <div className="RoomMediaUploadScreen">
+          {(storage.usedBytes > 0 || storage.maxBytes > 0) && (
+            <div className="RoomMediaUploadScreen-usedStorage" >
+              <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
             </div>
           )}
           {renderUploadMessage()}
-          <div className="DocumentOrRoomMediaUploadScreen-fileStatusContainer">
+          <div className="RoomMediaUploadScreen-fileStatusContainer">
             {uploadItems.map((item, index) => (
               <div key={index.toString()}>
                 {renderUploadItem(item, index)}
@@ -253,7 +250,7 @@ function DocumentOrRoomMediaUploadScreen({
           checked={optimizeImages}
           onChange={handleImageOptimizationChange}
           disabled={currentStage === STAGE.uploading}
-          className="DocumentOrRoomMediaUploadScreen-imageOptimizationCheckbox"
+          className="RoomMediaUploadScreen-imageOptimizationCheckbox"
           >
           {t('optimizeImages')}
         </Checkbox>
@@ -274,23 +271,22 @@ function DocumentOrRoomMediaUploadScreen({
   );
 }
 
-DocumentOrRoomMediaUploadScreen.propTypes = {
+RoomMediaUploadScreen.propTypes = {
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
   onEditFileClick: PropTypes.func,
   onSelectFileClick: PropTypes.func,
-  storageLocation: storageLocationShape.isRequired,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     isPristine: PropTypes.bool.isRequired
   })).isRequired
 };
 
-DocumentOrRoomMediaUploadScreen.defaultProps = {
+RoomMediaUploadScreen.defaultProps = {
   onBackClick: () => {},
   onCancelClick: () => {},
   onEditFileClick: () => {},
   onSelectFileClick: () => {}
 };
 
-export default DocumentOrRoomMediaUploadScreen;
+export default RoomMediaUploadScreen;

@@ -5,7 +5,6 @@ import {
   BATCH_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   ROOM_DOCUMENTS_MODE,
-  STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE,
   RESOURCE_TYPE
@@ -243,14 +242,6 @@ export const documentRevisionShape = PropTypes.shape({
   publicContext: documentPublicContextShape
 });
 
-export const storageLocationShape = PropTypes.shape({
-  type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
-  usedBytes: PropTypes.number,
-  maxBytes: PropTypes.number,
-  path: PropTypes.string.isRequired,
-  isDeletionEnabled: PropTypes.bool.isRequired
-});
-
 const commonFileProps = {
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
@@ -302,8 +293,6 @@ export const wikimediaFileShape = PropTypes.shape({
   size: PropTypes.number.isRequired,
   mimeType: PropTypes.string.isRequired
 });
-
-export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
 const formItemDimensionShape = PropTypes.shape({
   span: PropTypes.number.isRequired,

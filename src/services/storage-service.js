@@ -16,10 +16,9 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { createUniqueStorageFileName, getRoomMediaRoomPath, getDocumentMediaDocumentPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { createUniqueStorageFileName, getRoomMediaRoomPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
@@ -141,11 +140,6 @@ export default class StorageService {
         throw new Error(`Invalid storage path '${parentPath}'`);
       }
 
-      if (storageLocationType === STORAGE_LOCATION_TYPE.documentMedia) {
-        uploadedFiles = await this._uploadFiles(files, parentPath);
-        return { uploadedFiles, usedBytes };
-      }
-
       if (!user.storage.planId) {
         throw new Error('Cannot upload to room-media storage without a storage plan');
       }
@@ -222,46 +216,33 @@ export default class StorageService {
     }
   }
 
-  async getStorageLocations({ user, documentId }) {
-    const locations = [];
-
-    if (!user) {
-      return locations;
+  async getRoomStorage({ user, documentId }) {
+    if (!user || !documentId) {
+      return null;
     }
 
-    if (documentId) {
-      locations.push({
-        type: STORAGE_LOCATION_TYPE.documentMedia,
-        path: getDocumentMediaDocumentPath(documentId),
-        isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
-      });
+    const doc = await this.documentStore.getDocumentById(documentId);
 
-      const doc = await this.documentStore.getDocumentById(documentId);
-      if (!doc) {
-        return [];
-      }
-
-      if (doc.roomId) {
-        const room = await this.roomStore.getRoomById(doc.roomId);
-        const isRoomOwner = user._id === room.owner;
-
-        const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
-
-        if (roomOwner.storage.planId) {
-          const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
-
-          locations.push({
-            type: STORAGE_LOCATION_TYPE.roomMedia,
-            usedBytes: roomOwner.storage.usedBytes,
-            maxBytes: roomOwnerStoragePlan.maxBytes,
-            path: getRoomMediaRoomPath(room._id),
-            isDeletionEnabled: isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })
-          });
-        }
-      }
+    if (!doc?.roomId) {
+      return null;
     }
 
-    return locations;
+    const room = await this.roomStore.getRoomById(doc.roomId);
+    const isRoomOwner = user._id === room.owner;
+    const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
+
+    if (!roomOwner.storage.planId) {
+      return null;
+    }
+
+    const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
+
+    return {
+      usedBytes: roomOwner.storage.usedBytes,
+      maxBytes: roomOwnerStoragePlan.maxBytes,
+      path: getRoomMediaRoomPath(room._id),
+      isDeletionEnabled: isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })
+    };
   }
 
   async updateUserUsedBytes(userId) {

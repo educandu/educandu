@@ -8,9 +8,9 @@ import { assert, createSandbox, match } from 'sinon';
 import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { ROLE, ROOM_DOCUMENTS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -159,106 +159,7 @@ describe('storage-service', () => {
       sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.domain.com');
     });
 
-    describe('when the storage type is unknown', () => {
-      beforeEach(async () => {
-        parentPath = 'other-path';
-        files = [{}];
-
-        try {
-          await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
-        } catch (error) {
-          result = error.message;
-        }
-      });
-
-      it('should take the lock on the user record', () => {
-        assert.calledWith(lockStore.takeUserLock, myUser._id);
-      });
-
-      it('should throw an error', () => {
-        expect(result).toBe(`Invalid storage path '${parentPath}'`);
-      });
-
-      it('should release the lock', () => {
-        assert.called(lockStore.releaseLock);
-      });
-    });
-
-    describe('when the storage type is document-media', () => {
-      const id = 'xyz';
-      const docId = uniqueId.create();
-
-      let filesAfterUpload;
-
-      beforeEach(async () => {
-        parentPath = `document-media/${docId}`;
-        files = [
-          { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
-          { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
-        ];
-
-        filesAfterUpload = [
-          { name: `document-media/${docId}/file1-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-          { name: `document-media/${docId}/file2-${id}.jpeg`, size: 3 * 1000 * 1000, lastModified: '2022-06-09T12:00:00.000Z' }
-        ];
-
-        cdn.listObjects.withArgs({ prefix: `document-media/${docId}/`, recursive: true }).resolves(filesAfterUpload);
-        cdn.listObjects.resolves([]);
-
-        cdn.uploadObject.resolves();
-
-        sandbox.stub(uniqueId, 'create').returns(id);
-        result = await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
-      });
-
-      it('should take the lock on the user record', () => {
-        assert.calledWith(lockStore.takeUserLock, myUser._id);
-      });
-
-      it('should call cdn.uploadObject for each file', () => {
-        assert.calledTwice(cdn.uploadObject);
-        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file1-${id}.jpeg`, files[0].path);
-        assert.calledWith(cdn.uploadObject, `document-media/${docId}/file2-${id}.jpeg`, files[1].path);
-      });
-
-      it('should release the lock', () => {
-        assert.calledWith(lockStore.releaseLock, lock);
-      });
-
-      it('should return zero used bytes', () => {
-        expect(result).toEqual({ uploadedFiles: expect.any(Object), usedBytes: 0 });
-      });
-
-      it('should return the uploaded files', () => {
-        expect(result).toEqual({
-          uploadedFiles: {
-            'file1.jpeg': {
-              displayName: `file1-${id}.jpeg`,
-              parentPath: `document-media/${docId}`,
-              path: `document-media/${docId}/file1-${id}.jpeg`,
-              url: `https://cdn.domain.com/document-media/${docId}/file1-${id}.jpeg`,
-              portableUrl: `cdn://document-media/${docId}/file1-${id}.jpeg`,
-              createdOn: '2022-06-09T12:00:00.000Z',
-              updatedOn: '2022-06-09T12:00:00.000Z',
-              size: 3000000
-            },
-            'file2.jpeg': {
-              displayName: `file2-${id}.jpeg`,
-              parentPath: `document-media/${docId}`,
-              path: `document-media/${docId}/file2-${id}.jpeg`,
-              url: `https://cdn.domain.com/document-media/${docId}/file2-${id}.jpeg`,
-              portableUrl: `cdn://document-media/${docId}/file2-${id}.jpeg`,
-              createdOn: '2022-06-09T12:00:00.000Z',
-              updatedOn: '2022-06-09T12:00:00.000Z',
-              size: 3000000
-            }
-          },
-          usedBytes: expect.any(Number)
-        });
-      });
-    });
-
-    describe('when the storage type is room-media but the user has no storage plan allocated', () => {
+    describe('when the user has no storage plan allocated', () => {
       beforeEach(async () => {
         parentPath = `room-media/${roomId}`;
         files = [
@@ -291,7 +192,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is room-media but the user has not enough storage space left', () => {
+    describe('when the user does not have enough storage space left', () => {
       beforeEach(async () => {
         parentPath = `room-media/${roomId}`;
         files = [
@@ -322,7 +223,7 @@ describe('storage-service', () => {
       });
     });
 
-    describe('when the storage type is room-media and the user has enough storage space left', () => {
+    describe('when the user has enough storage space left', () => {
       const id = 'xyz';
       const otherRoomId = uniqueId.create();
 
@@ -644,53 +545,27 @@ describe('storage-service', () => {
     });
   });
 
-  describe('getStorageLocations', () => {
+  describe('getRoomStorage', () => {
     let result;
 
     describe('when user is not provided', () => {
       beforeEach(async () => {
         documentStore.getDocumentById.resolves({});
-        result = await sut.getStorageLocations({ documentId: 'documentId' });
+        result = await sut.getRoomStorage({ documentId: 'documentId' });
       });
-      it('should return empty array', () => {
-        expect(result).toEqual([]);
+      it('should return null', () => {
+        expect(result).toEqual(null);
       });
     });
 
-    describe('when documentId is provided', () => {
-      describe(`and the user has ${ROLE.user} role`, () => {
-        beforeEach(async () => {
-          documentStore.getDocumentById.resolves({});
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
-        });
-
-        it('should return the document media storage location with deletion disabled', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: false
-            }
-          ]);
-        });
+    describe('when user is provided', () => {
+      beforeEach(async () => {
+        documentStore.getDocumentById.resolves({});
+        result = await sut.getRoomStorage({ user: myUser, documentId: 'documentId' });
       });
 
-      describe(`and the user has ${ROLE.admin} role`, () => {
-        beforeEach(async () => {
-          documentStore.getDocumentById.resolves({});
-          const myAdminUser = await setupTestUser(container, { roles: [ROLE.admin] });
-          result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'documentId' });
-        });
-
-        it('should return the document media storage location with deletion enabled', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: true
-            }
-          ]);
-        });
+      it('should return null', () => {
+        expect(result).toEqual(null);
       });
     });
 
@@ -702,17 +577,11 @@ describe('storage-service', () => {
 
           myUser.storage = { planId: null, usedBytes: 0, reminders: [] };
 
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
+          result = await sut.getRoomStorage({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the document media storage location', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: false
-            }
-          ]);
+        it('should return null', () => {
+          expect(result).toEqual(null);
         });
       });
 
@@ -723,24 +592,16 @@ describe('storage-service', () => {
 
           myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
 
-          result = await sut.getStorageLocations({ user: myUser, documentId: 'documentId' });
+          result = await sut.getRoomStorage({ user: myUser, documentId: 'documentId' });
         });
 
-        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: false
-            },
-            {
-              type: STORAGE_LOCATION_TYPE.roomMedia,
-              usedBytes: myUser.storage.usedBytes,
-              maxBytes: storagePlan.maxBytes,
-              path: 'room-media/room',
-              isDeletionEnabled: true
-            }
-          ]);
+        it('should return the room media storage, with deletion enabled', () => {
+          expect(result).toEqual({
+            usedBytes: myUser.storage.usedBytes,
+            maxBytes: storagePlan.maxBytes,
+            path: 'room-media/room',
+            isDeletionEnabled: true
+          });
         });
       });
 
@@ -763,17 +624,11 @@ describe('storage-service', () => {
             members: [{ userId: collaboratorUser._id }]
           });
 
-          result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
+          result = await sut.getRoomStorage({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the document media storage location', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: false
-            }
-          ]);
+        it('should return null', () => {
+          expect(result).toEqual(null);
         });
       });
 
@@ -799,24 +654,16 @@ describe('storage-service', () => {
             members: [{ userId: collaboratorUser._id }]
           });
 
-          result = await sut.getStorageLocations({ user: collaboratorUser, documentId: 'documentId' });
+          result = await sut.getRoomStorage({ user: collaboratorUser, documentId: 'documentId' });
         });
 
-        it('should return the document and room media storage locations, with room-media storage deletion enabled', () => {
-          expect(result).toEqual([
-            {
-              type: STORAGE_LOCATION_TYPE.documentMedia,
-              path: 'document-media/documentId',
-              isDeletionEnabled: false
-            },
-            {
-              type: STORAGE_LOCATION_TYPE.roomMedia,
-              usedBytes: ownerUser.storage.usedBytes,
-              maxBytes: storagePlan.maxBytes,
-              path: 'room-media/room',
-              isDeletionEnabled: true
-            }
-          ]);
+        it('should return the room media storage, with deletion enabled', () => {
+          expect(result).toEqual({
+            usedBytes: ownerUser.storage.usedBytes,
+            maxBytes: storagePlan.maxBytes,
+            path: 'room-media/room',
+            isDeletionEnabled: true
+          });
         });
       });
     });

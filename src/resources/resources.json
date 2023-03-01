@@ -1673,70 +1673,6 @@
       "de": "Du bist nun mit deinem neuen Konto angemeldet. Mit Klick auf den Button unten kannst du zu deinem persönlichen Dashboard navigieren."
     }
   },
-  "documentOrRoomMediaDefaultScreen": {
-    "filesView_list": {
-      "en": "List view",
-      "de": "Listenansicht"
-    },
-    "filesView_grid": {
-      "en": "Grid view",
-      "de": "Kachelansicht"
-    },
-    "privateStorageMessage": {
-      "en": "Private directory",
-      "de": "Privates Verzeichnis"
-    },
-    "publicStorageMessage": {
-      "en": "Public directory",
-      "de": "Öffentliches Verzeichnis"
-    },
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
-    }
-  },
-  "documentOrRoomMediaUploadScreen": {
-    "headline": {
-      "en": "Files upload",
-      "de": "Datei-Upload"
-    },
-    "uploadLimitExceeded": {
-      "en": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "de": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}."
-    },
-    "insufficientPrivateStorge": {
-      "en": "Not enough storage space available for file",
-      "de": "Nicht genügend Speicherplatz für die Datei verfügbar"
-    },
-    "startUpload": {
-      "en": "Start upload",
-      "de": "Upload starten"
-    },
-    "preprocessed": {
-      "en": "edited",
-      "de": "bearbeitet"
-    },
-    "stage_uploadNotStarted": {
-      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
-      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen."
-    },
-    "stageDetails_uploadNotStarted": {
-      "en": "You can edit images before upload by clicking on the pen icon.",
-      "de": "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
-    },
-    "stage_uploading": {
-      "en": "Uploading ...",
-      "de": "Hochladen ..."
-    },
-    "stage_uploadFinished": {
-      "en": "Upload finished.",
-      "de": "Upload beendet."
-    },
-    "optimizeImages": {
-      "en": "Optimize images for web display",
-      "de": "Bilder für Web optimieren"
-    }
-  },
   "mediaLibraryEditScreen": {
     "editHeadline": {
       "en": "File editor",
@@ -1817,6 +1753,62 @@
     "sourceType_wikimedia": {
       "en": "Wikimedia",
       "de": "Wikimedia"
+    }
+  },
+  "roomMediaDefaultScreen": {
+    "filesView_list": {
+      "en": "List view",
+      "de": "Listenansicht"
+    },
+    "filesView_grid": {
+      "en": "Grid view",
+      "de": "Kachelansicht"
+    },
+    "uploadFiles": {
+      "en": "Upload files",
+      "de": "Dateien hochladen"
+    }
+  },
+  "roomMediaUploadScreen": {
+    "headline": {
+      "en": "Files upload",
+      "de": "Datei-Upload"
+    },
+    "uploadLimitExceeded": {
+      "en": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
+      "de": "Uploadbegrenzung von {uploadLimit} ist überschritten. Deine Uploadgröße ist {uploadSize}."
+    },
+    "insufficientPrivateStorge": {
+      "en": "Not enough storage space available for file",
+      "de": "Nicht genügend Speicherplatz für die Datei verfügbar"
+    },
+    "startUpload": {
+      "en": "Start upload",
+      "de": "Upload starten"
+    },
+    "preprocessed": {
+      "en": "edited",
+      "de": "bearbeitet"
+    },
+    "stage_uploadNotStarted": {
+      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
+      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen."
+    },
+    "stageDetails_uploadNotStarted": {
+      "en": "You can edit images before upload by clicking on the pen icon.",
+      "de": "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
+    },
+    "stage_uploading": {
+      "en": "Uploading ...",
+      "de": "Hochladen ..."
+    },
+    "stage_uploadFinished": {
+      "en": "Upload finished.",
+      "de": "Upload beendet."
+    },
+    "optimizeImages": {
+      "en": "Optimize images for web display",
+      "de": "Bilder für Web optimieren"
     }
   },
   "fileEditorScreen": {
