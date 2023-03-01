@@ -12,11 +12,13 @@ import { PageNameProvider } from './page-name-context.js';
 import { useReloadPersistedWindow } from '../ui/hooks.js';
 import { ContainerProvider } from './container-context.js';
 import { StoragePlanProvider } from './storage-plan-context.js';
+import { NotificationProvider } from './notification-context.js';
 import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/default-prop-types.js';
 
 function Root({
   request,
   user,
+  unreadNotificationsCount,
   storage,
   storagePlan,
   container,
@@ -41,18 +43,20 @@ function Root({
             <SettingsProvider value={settings}>
               <RequestProvider value={request}>
                 <UserProvider value={user}>
-                  <StoragePlanProvider value={storagePlan}>
-                    <StorageProvider value={storage}>
-                      <DialogProvider>
-                        <PageComponent
-                          initialState={initialState}
-                          PageTemplate={PageTemplateComponent}
-                          HomePageTemplate={HomePageTemplateComponent}
-                          SiteLogo={SiteLogoComponent}
-                          />
-                      </DialogProvider>
-                    </StorageProvider>
-                  </StoragePlanProvider>
+                  <NotificationProvider value={unreadNotificationsCount}>
+                    <StoragePlanProvider value={storagePlan}>
+                      <StorageProvider value={storage}>
+                        <DialogProvider>
+                          <PageComponent
+                            initialState={initialState}
+                            PageTemplate={PageTemplateComponent}
+                            HomePageTemplate={HomePageTemplateComponent}
+                            SiteLogo={SiteLogoComponent}
+                            />
+                        </DialogProvider>
+                      </StorageProvider>
+                    </StoragePlanProvider>
+                  </NotificationProvider>
                 </UserProvider>
               </RequestProvider>
             </SettingsProvider>

@@ -1346,10 +1346,6 @@
       "en": "Rooms",
       "de": "Räume"
     },
-    "notificationsTabTitle": {
-      "en": "Notifications",
-      "de": "Benachrichtigungen"
-    },
     "storageTabTitle": {
       "en": "Your storage plan",
       "de": "Dein Speicherplan"
@@ -3529,6 +3525,14 @@
     "removeAll": {
       "en": "Remove all",
       "de": "Alle löschen"
+    },
+    "notifications": {
+      "en": "Notifications",
+      "de": "Benachrichtigungen"
+    },
+    "unreadNotifications": {
+      "en": "You {count, plural, =0 {don't have unread notifications} =1 {have # unread notification} other {have # unread notifications}}",
+      "de": "Du hast {count, plural, =0 {keine ungelesenen Benachrichtigungen} =1 {# ungelesene Benachrichtigung} other {# ungelesene Benachrichtigungen}}"
     }
   },
   "pageNames": {

@@ -63,17 +63,23 @@ export default class EducanduServer {
 
     logger.info('Registering controller middlewares');
     controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
+    controllers.filter(c => c.registerAfterMiddleware).forEach(c => c.registerAfterMiddleware(router));
 
     logger.info('Registering APIs');
+    controllers.filter(c => c.registerBeforeApi).forEach(c => c.registerBeforeApi(router));
     controllers.filter(c => c.registerApi).forEach(c => c.registerApi(router));
+    controllers.filter(c => c.registerAfterApi).forEach(c => c.registerAfterApi(router));
 
     logger.info('Registering basic auth middleware');
     this.registerBasicAuthMiddleware(router);
 
     logger.info('Registering  pages');
+    controllers.filter(c => c.registerBeforePages).forEach(c => c.registerBeforePages(router));
     controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
+    controllers.filter(c => c.registerAfterPages).forEach(c => c.registerAfterPages(router));
 
     logger.info('Registering error handlers');
+    controllers.filter(c => c.registerBeforeErrorHandler).forEach(c => c.registerBeforeErrorHandler(router));
     controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
   }
 

@@ -2,7 +2,6 @@ import gravatar from 'gravatar';
 import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import SearchBar from './search-bar.js';
-import { Avatar, Dropdown } from 'antd';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
@@ -11,10 +10,12 @@ import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { useScrollTopOffset } from '../ui/hooks.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
+import { Avatar, Badge, Dropdown, Tooltip } from 'antd';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
-import { DownOutlined, SearchOutlined, UpOutlined } from '@ant-design/icons';
+import { useUnreadNotificationsCount } from './notification-context.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
+import { BellOutlined, DownOutlined, SearchOutlined, UpOutlined } from '@ant-design/icons';
 
 function NavigationDesktop() {
   const user = useUser();
@@ -26,6 +27,7 @@ function NavigationDesktop() {
 
   const helpPage = settings?.helpPage?.[uiLanguage];
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
+  const unreadNotificationsCount = useUnreadNotificationsCount();
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [previousTopOffset, setPreviousTopOffset] = useState(topOffset);
@@ -89,6 +91,23 @@ function NavigationDesktop() {
     window.location = routes.getSearchUrl(searchText.trim());
   };
 
+  const renderNotificationsIndicator = () => (
+    <div className="NavigationDesktop-menuNotificationsIndicator">
+      <Tooltip title={t('common:unreadNotifications', { count: unreadNotificationsCount })}>
+        <a href={routes.getDashboardUrl({ tab: 'notifications' })}>
+          <Badge
+            dot
+            title=""
+            offset={[-2, 2]}
+            count={unreadNotificationsCount}
+            >
+            <BellOutlined />
+          </Badge>
+        </a>
+      </Tooltip>
+    </div>
+  );
+
   const renderLanguageMenu = () => {
     const items = supportedUiLanguages.map(languageCode => {
       const languageData = languageDataProvider.getLanguageData(languageCode, languageCode);
@@ -121,18 +140,19 @@ function NavigationDesktop() {
   const renderMainMenu = () => {
     const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
 
-    const actionableMenuitems = [
-      ...getCommonNavigationMenuItems({ t, user, helpPage }).filter(item => item.showWhen),
+    const actionableMenuItems = [
+      ...getCommonNavigationMenuItems({ t, user, unreadNotificationsCount, helpPage }).filter(item => item.showWhen),
       {
         key: 'logout',
         label: t('common:logOut'),
         icon: <LogoutIcon />,
+        badge: null,
         onClick: handleLogOutClick
       }
     ];
 
     const handleMainMenuClick = ({ key }) => {
-      actionableMenuitems.find(item => item.key === key).onClick();
+      actionableMenuItems.find(item => item.key === key).onClick();
       setIsMainMenuOpen(false);
     };
 
@@ -140,13 +160,22 @@ function NavigationDesktop() {
       setIsMainMenuOpen(false);
     };
 
-    const items = actionableMenuitems.map(({ key, label, icon }) => ({ key, label, icon }));
+    const menuItems = actionableMenuItems.map(({ key, label, icon, badge }) => ({
+      key,
+      icon,
+      label: (
+        <div className="NavigationDesktop-menuLabel">
+          <div>{label}</div>
+          {badge}
+        </div>
+      )
+    }));
 
     return (
       <Dropdown
         trigger={['click']}
         placement="bottomRight"
-        menu={{ items, onClick: handleMainMenuClick }}
+        menu={{ items: menuItems, onClick: handleMainMenuClick }}
         open={isMainMenuOpen}
         onBlur={handleMainMenuBlur}
         onOpenChange={handleMainMenuOpenChange}
@@ -183,6 +212,7 @@ function NavigationDesktop() {
         <div className="NavigationDesktop-searchBarMask"><SearchOutlined /></div>
       </div>
       <div className="NavigationDesktop-menu">
+        {!!user && renderNotificationsIndicator()}
         {renderLanguageMenu()}
         {user ? renderMainMenu() : renderAnonymousUserComponent()}
       </div>
