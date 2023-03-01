@@ -3185,6 +3185,11 @@ create-hmac@^1.1.0, create-hmac@^1.1.4, create-hmac@^1.1.7:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+croner@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/croner/-/croner-6.0.0.tgz#f1ae1ad524079f3b1a0711dc66d3e5b8d798aa18"
+  integrity sha512-4+TeqBIlRqqynl+/Q4gQqQJQXfjzKTfsqdGlm2zI6i+cC1FR3v7pk+MW7yOaZwHUJXQoDOMPOCgeTrxt5djbZQ==
+
 cropperjs@^1.5.13:
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.13.tgz#eb1682f01d17c70ed5244317091d745c9a249ef8"

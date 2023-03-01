@@ -3,7 +3,7 @@ import ToadSchedulerWrapper from './toad-scheduler-wrapper.js';
 
 const logger = new Logger(import.meta.url);
 
-export default class IntervalBasedJobScheduler {
+export default class CronJobScheduler {
   static dependencies = [ToadSchedulerWrapper];
 
   constructor(scheduler) {
@@ -22,9 +22,9 @@ export default class IntervalBasedJobScheduler {
     this.context = { cancellationRequested: false };
 
     for (const job of this.jobs) {
-      this.scheduler.addIntervalJob({
+      this.scheduler.addCronJob({
         name: job.name,
-        schedule: job.schedule,
+        cronExpression: job.cronExpression,
         preventOverrun: job.preventOverrun,
         onProcess: async () => {
           logger.debug(`Starting job '${job.name}'`);

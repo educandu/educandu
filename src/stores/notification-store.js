@@ -26,11 +26,6 @@ class NotificationStore {
   async setNotificationsReadOnByUserIdAndNotificationIds(notifiedUserId, notificationIds, readOn, { session } = {}) {
     await this.collection.updateMany({ _id: { $in: notificationIds }, notifiedUserId }, { readOn }, { session });
   }
-
-  async deleteNotificationsCreatedBefore(createdBefore, { session } = {}) {
-    const result = await this.collection.deleteMany({ createdOn: { $lt: createdBefore } }, { session });
-    return result.value;
-  }
 }
 
 export default NotificationStore;
