@@ -5,9 +5,9 @@ import { getStorageLocationTypeForPath, getRoomMediaRoomPath, tryGetRoomIdFromSt
 describe('storage-utils', () => {
   describe('getStorageLocationTypeForPath', () => {
     const testCases = [
-      { path: 'root/document-media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'root/media-library/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: 'mediatech/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
-      { path: 'document-media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.documentMedia },
+      { path: 'media-library/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.mediaLibrary },
       { path: '/root/room-media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: '/room-media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
       { path: '/root/room-media/roomId', expectedResult: STORAGE_LOCATION_TYPE.unknown },

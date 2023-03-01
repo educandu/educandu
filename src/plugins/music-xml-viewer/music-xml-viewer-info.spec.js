@@ -32,8 +32,8 @@ describe('music-xml-viewer-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://document-media/12345/some-song.xml' });
-      expect(result).toEqual(['cdn://document-media/12345/some-song.xml']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://media-library/some-song.xml' });
+      expect(result).toEqual(['cdn://media-library/some-song.xml']);
     });
 
     it('returns a list with the url for an internal room-media resource', () => {

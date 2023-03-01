@@ -37,8 +37,8 @@ import {
 
 const { Search, TextArea } = Input;
 
-const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/document-media/4WqqhJRDsogBFGVbZrfuaF/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
-const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/document-media/2Sss3iioh1dpoBnYPTq9Rn/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
+const IMAGE_URL_JPG = 'https://cdn.openmusic.academy/media-library/Banner_hGsJz5kf2pGsXygBX8ZJ97.jpg';
+const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media-library/Bossa%20Nova%20Groovetabelle_aWvhsm8RX9hXFRrF3hk4Pu.png';
 
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
@@ -109,8 +109,8 @@ function Tests({ PageTemplate }) {
   // MusicXmlDocument
   const mxdSources = [
     { title: '<empty>', url: '' },
-    { title: 'Bach - Praeludium in C-Dur', url: 'https://cdn.staging.openmusic.academy/document-media/j4VnRosMXE1mdX24fA4aPJ/johann-sebastian-bach-praeludium-in-c-dur-bwv-846-1-648QZxTSjXRPVB99ULym1Y.xml' },
-    { title: 'Beethoven - An die ferne Geliebte', url: 'https://cdn.staging.openmusic.academy/document-media/j4VnRosMXE1mdX24fA4aPJ/beethoven-an-die-ferne-geliebte-4hzPUSv3Xk51CcVjM8eJPc.xml' }
+    { title: 'Bach - Praeludium in C-Dur', url: 'https://cdn.staging.openmusic.academy/media-library/johann-sebastian-bach-praeludium-in-c-dur-bwv-846-1-648QZxTSjXRPVB99ULym1Y.xml' },
+    { title: 'Beethoven - An die ferne Geliebte', url: 'https://cdn.staging.openmusic.academy/media-library/beethoven-an-die-ferne-geliebte-4hzPUSv3Xk51CcVjM8eJPc.xml' }
   ];
   const [mxdUrl, setMxdUrl] = useState('');
   const [mxdZoom, setMxdZoom] = useState(1);
@@ -217,13 +217,13 @@ function Tests({ PageTemplate }) {
   const handleUrlInputCopyYoutubeClick = () => handleCopyToClipboard('https://www.youtube.com/watch?v=221F55VPp2M');
   const handleUrlInputCopyWikimediaClick = () => handleCopyToClipboard('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputCopyExternalClick = () => handleCopyToClipboard('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputCopyRoomMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/document-media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputCopyDocumentMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/document-media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputCopyRoomMediaCdnClick = () => handleCopyToClipboard('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputCopyMediaLibraryCdnClick = () => handleCopyToClipboard('http://localhost:10000/media-library/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputSetYoutubeClick = () => setUrlInputValue('https://www.youtube.com/watch?v=221F55VPp2M');
   const handleUrlInputSetWikimediaClick = () => setUrlInputValue('https://upload.wikimedia.org/wikipedia/commons/2/28/Cantaloupes.jpg');
   const handleUrlInputSetExternalClick = () => setUrlInputValue('https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2014%2F05%2Ffriends-a-apartment-bet_0.jpg&q=60');
-  const handleUrlInputSetRoomMediaCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/document-media/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
-  const handleUrlInputSetDocumentMediaCdnClick = () => setUrlInputValue('http://localhost:10000/document-media/7vgRduWGhBBD6HxWUnN1NV/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
+  const handleUrlInputSetRoomMediaCdnClick = () => setUrlInputValue('http://localhost:10000/rooms/vmQouBT6CqeWe35STsBvnj/pug-cfAdTfMQ3A9Pbsskv79Sms.jpeg');
+  const handleUrlInputSetMediaLibrareyCdnClick = () => setUrlInputValue('http://localhost:10000/media-library/dog-eAyeL9Z3QQXDXGMm4U636M.jpg');
   const handleUrlInputChange = url => setUrlInputValue(url);
 
   return (
@@ -246,7 +246,7 @@ function Tests({ PageTemplate }) {
                   <h3>Dialog Content</h3>
                   <div style={{ border: '2px solid silver', padding: '10px' }}>
                     <ResourceSelector
-                      allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.roomMedia, SOURCE_TYPE.documentMedia, SOURCE_TYPE.wikimedia]}
+                      allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.roomMedia, SOURCE_TYPE.MediaLibrary, SOURCE_TYPE.wikimedia]}
                       initialUrl={rsResourceUrl}
                       onSelect={setRsResourceUrl}
                       />
@@ -313,14 +313,14 @@ function Tests({ PageTemplate }) {
                     <Button onClick={handleUrlInputCopyWikimediaClick}>Copy Wikimedia URL</Button>
                     <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
                     <Button onClick={handleUrlInputCopyRoomMediaCdnClick}>Copy room-media CDN URL</Button>
-                    <Button onClick={handleUrlInputCopyDocumentMediaCdnClick}>Copy document-media CDN URL</Button>
+                    <Button onClick={handleUrlInputCopyMediaLibraryCdnClick}>Copy media-library CDN URL</Button>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                     <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
                     <Button onClick={handleUrlInputSetWikimediaClick}>Set Wikimedia URL</Button>
                     <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
                     <Button onClick={handleUrlInputSetRoomMediaCdnClick}>Set room-media CDN URL</Button>
-                    <Button onClick={handleUrlInputSetDocumentMediaCdnClick}>Set document-media CDN URL</Button>
+                    <Button onClick={handleUrlInputSetMediaLibrareyCdnClick}>Set media library CDN URL</Button>
                   </div>
                   <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
                 </div>

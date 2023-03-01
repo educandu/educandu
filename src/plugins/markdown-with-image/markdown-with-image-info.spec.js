@@ -33,14 +33,14 @@ describe('markdown-with-image-info', () => {
       const roomId = '12345';
 
       const result = sut.redactContent({
-        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://document-media/67890/file-2.pdf)`,
+        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://media-library/file-2.pdf)`,
         image: {
           sourceUrl: `cdn://room-media/${roomId}/image-1.jpeg`,
           copyrightNotice: `[Click here](cdn://room-media/${roomId}/file-3.pdf)`
         }
       }, roomId);
       expect(result).toStrictEqual({
-        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://document-media/67890/file-2.pdf)`,
+        text: `[Click here](cdn://room-media/${roomId}/file-1.pdf [and here](cdn://media-library/file-2.pdf)`,
         image: {
           sourceUrl: `cdn://room-media/${roomId}/image-1.jpeg`,
           copyrightNotice: `[Click here](cdn://room-media/${roomId}/file-3.pdf)`
@@ -52,17 +52,17 @@ describe('markdown-with-image-info', () => {
   describe('getCdnResources', () => {
     it('returns internal resources from text and copyrightNotice props', () => {
       const result = sut.getCdnResources({
-        text: '[Click here](cdn://room-media/12345/file-1.pdf) [and here](cdn://document-media/67890/file-2.pdf)',
+        text: '[Click here](cdn://room-media/12345/file-1.pdf) [and here](cdn://media-library/file-2.pdf)',
         image: {
-          sourceUrl: 'cdn://document-media/67890/image-1.jpeg',
+          sourceUrl: 'cdn://media-library/image-1.jpeg',
           copyrightNotice: '[Click here](cdn://room-media/12345/file-3.pdf)'
         }
       });
       expect(result).toStrictEqual([
         'cdn://room-media/12345/file-1.pdf',
-        'cdn://document-media/67890/file-2.pdf',
+        'cdn://media-library/file-2.pdf',
         'cdn://room-media/12345/file-3.pdf',
-        'cdn://document-media/67890/image-1.jpeg'
+        'cdn://media-library/image-1.jpeg'
       ]);
     });
 

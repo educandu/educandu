@@ -23,8 +23,8 @@ describe('matching-cards-info', () => {
               sourceUrl: `cdn://room-media/${roomId1}/image-1b.png`
             },
             {
-              text: '![link](cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)',
-              sourceUrl: 'cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png'
+              text: '![link](cdn://media-library/image-2a.png)',
+              sourceUrl: 'cdn://media-library/image-2b.png'
             }
           ],
           [
@@ -51,8 +51,8 @@ describe('matching-cards-info', () => {
         expect(result.tilePairs[0][0].sourceUrl).toEqual(`cdn://room-media/${roomId1}/image-1b.png`);
       });
       it('leaves non room-media resources intact', () => {
-        expect(result.tilePairs[0][1].text).toEqual('![link](cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)');
-        expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png');
+        expect(result.tilePairs[0][1].text).toEqual('![link](cdn://media-library/image-2a.png)');
+        expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://media-library/image-2b.png');
       });
       it('disregards empty text', () => {
         expect(result.tilePairs[1][0].text).toEqual('');
@@ -74,8 +74,8 @@ describe('matching-cards-info', () => {
         expect(result.tilePairs[0][0].sourceUrl).toEqual('');
       });
       it('leaves non room-media resources intact', () => {
-        expect(result.tilePairs[0][1].text).toEqual('![link](cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)');
-        expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png');
+        expect(result.tilePairs[0][1].text).toEqual('![link](cdn://media-library/image-2a.png)');
+        expect(result.tilePairs[0][1].sourceUrl).toEqual('cdn://media-library/image-2b.png');
       });
       it('disregards empty text', () => {
         expect(result.tilePairs[1][0].text).toEqual('');
@@ -98,14 +98,14 @@ describe('matching-cards-info', () => {
               sourceUrl: `cdn://room-media/${roomId1}/image-1b.png`
             },
             {
-              text: '![link](cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)',
-              sourceUrl: 'cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png'
+              text: '![link](cdn://media-library/image-2a.png)',
+              sourceUrl: 'cdn://media-library/image-2b.png'
             }
           ],
           [
             {
-              text: '![link](cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png)',
-              sourceUrl: 'cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png'
+              text: '![link](cdn://media-library/image-2a.png)',
+              sourceUrl: 'cdn://media-library/image-2b.png'
             },
             {
               text: '![link](http://somewhere.out.there/image-3a.png)',
@@ -116,12 +116,12 @@ describe('matching-cards-info', () => {
       };
       result = sut.getCdnResources(content);
     });
-    it('returns document-media and room-media CDN resources from the text, without duplicates', () => {
+    it('returns media-library and room-media CDN resources from the text, without duplicates', () => {
       expect(result).toStrictEqual([
         `cdn://room-media/${roomId1}/image-1a.png`,
-        'cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2a.png',
+        'cdn://media-library/image-2a.png',
         `cdn://room-media/${roomId1}/image-1b.png`,
-        'cdn://document-media/63cHjt3BAhGnNxzJGrTsN1/image-2b.png'
+        'cdn://media-library/image-2b.png'
       ]);
     });
   });

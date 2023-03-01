@@ -20,20 +20,13 @@ export const NOTIFICATION_REASON = {
 export const BATCH_TYPE = {
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation',
-  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation'
 };
 
 export const TASK_TYPE = {
   documentRegeneration: 'document-regeneration',
   documentValidation: 'document-validation',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation',
-  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
-};
-
-export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
-  room: 'room',
-  document: 'document'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation'
 };
 
 export const FEATURE_TOGGLES = {
@@ -115,7 +108,6 @@ export const SOURCE_TYPE = {
   youtube: 'youtube',
   external: 'external',
   mediaLibrary: 'media-library',
-  documentMedia: 'document-media',
   wikimedia: 'wikimedia',
   roomMedia: 'room-media',
   unsupported: 'unsupported'
@@ -124,7 +116,7 @@ export const SOURCE_TYPE = {
 export const STORAGE_LOCATION_TYPE = {
   unknown: 'unknown',
   roomMedia: 'room-media',
-  documentMedia: 'document-media'
+  mediaLibrary: 'media-library'
 };
 
 export const VERTICAL_ALIGNMENT = {
@@ -218,7 +210,6 @@ export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room ow
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';
 
 export const MEDIA_LIBRRY_STORAGE_PATH_PATTERN = /^media-library(\/.*)?$/;
-export const DOCUMENT_MEDIA_STORAGE_PATH_PATTERN = /^document-media(\/.*)?$/;
 export const ROOM_MEDIA_STORAGE_PATH_PATTERN = /^room-media\/([^/]+)(\/.*)?$/;
 
 export const DEFAULT_COLOR_SWATCHES = [

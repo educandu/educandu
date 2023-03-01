@@ -34,20 +34,20 @@ describe('audio-info', () => {
 
     it('leaves non room-media resources intact', () => {
       const result = sut.redactContent({
-        sourceUrl: 'cdn://document-media/12345/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://document-media/12345/some-doc.pdf)'
+        sourceUrl: 'cdn://media-library/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://media-library/some-doc.pdf)'
       }, '12345');
       expect(result).toStrictEqual({
-        sourceUrl: 'cdn://document-media/12345/some-sound.mp3',
-        copyrightNotice: '[Click here](cdn://document-media/12345/some-doc.pdf)'
+        sourceUrl: 'cdn://media-library/some-sound.mp3',
+        copyrightNotice: '[Click here](cdn://media-library/some-doc.pdf)'
       });
     });
   });
 
   describe('getCdnResources', () => {
     it('returns resources from the copyrightNotice', () => {
-      const result = sut.getCdnResources({ sourceUrl: null, copyrightNotice: '[Hyperlink](cdn://document-media/my-file.pdf)' });
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      const result = sut.getCdnResources({ sourceUrl: null, copyrightNotice: '[Hyperlink](cdn://media-library/my-file.pdf)' });
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
 
     it('returns empty list for an external resource', () => {
@@ -61,8 +61,8 @@ describe('audio-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://document-media/12345/some-sound.mp3', copyrightNotice: '' });
-      expect(result).toEqual(['cdn://document-media/12345/some-sound.mp3']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://media-library/some-sound.mp3', copyrightNotice: '' });
+      expect(result).toEqual(['cdn://media-library/some-sound.mp3']);
     });
 
     it('returns a list with the url for an internal room-media resource', () => {

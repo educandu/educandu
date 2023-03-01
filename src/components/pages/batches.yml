@@ -11,9 +11,6 @@ batches:
   batchTypeCdnResourcesConsolidation:
     en: Consolidation of resources within the internal storage
     de: Konsolidierung der Ressourcen auf dem internen Speicher
-  batchTypeCdnUploadDirectoryCreation:
-    en: Creation of upload directories within the internal storage
-    de: Erstellung der Upload-Verzichnisse auf dem internen Speicher
   errors:
     en: Errors
     de: Fehler

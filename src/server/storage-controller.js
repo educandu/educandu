@@ -96,7 +96,6 @@ class StorageController {
     }
 
     return {
-      storageLocationType,
       storageClaimingUserId
     };
   }

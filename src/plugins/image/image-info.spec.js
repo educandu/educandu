@@ -43,14 +43,14 @@ describe('image-info', () => {
     it('returns resources from all the copyrightNotice props', () => {
       const result = sut.getCdnResources({
         sourceUrl: null,
-        copyrightNotice: '[Hyperlink](cdn://document-media/my-file.pdf)',
-        hoverEffect: { copyrightNotice: '[Hyperlink](cdn://document-media/my-hover-file.pdf)' },
-        revealEffect: { copyrightNotice: '[Hyperlink](cdn://document-media/my-reveal-file.pdf)' }
+        copyrightNotice: '[Hyperlink](cdn://media-library/my-file.pdf)',
+        hoverEffect: { copyrightNotice: '[Hyperlink](cdn://media-library/my-hover-file.pdf)' },
+        revealEffect: { copyrightNotice: '[Hyperlink](cdn://media-library/my-reveal-file.pdf)' }
       });
       expect(result).toStrictEqual([
-        'cdn://document-media/my-file.pdf',
-        'cdn://document-media/my-hover-file.pdf',
-        'cdn://document-media/my-reveal-file.pdf'
+        'cdn://media-library/my-file.pdf',
+        'cdn://media-library/my-hover-file.pdf',
+        'cdn://media-library/my-reveal-file.pdf'
       ]);
     });
 
@@ -74,14 +74,14 @@ describe('image-info', () => {
 
     it('returns a list with the urls for internal resources', () => {
       const result = sut.getCdnResources({
-        sourceUrl: 'cdn://document-media/some-image.png',
-        hoverEffect: { sourceUrl: 'cdn://document-media/some-hover-image.png' },
-        revealEffect: { sourceUrl: 'cdn://document-media/some-reveal-image.png' }
+        sourceUrl: 'cdn://media-library/some-image.png',
+        hoverEffect: { sourceUrl: 'cdn://media-library/some-hover-image.png' },
+        revealEffect: { sourceUrl: 'cdn://media-library/some-reveal-image.png' }
       });
       expect(result).toEqual([
-        'cdn://document-media/some-image.png',
-        'cdn://document-media/some-hover-image.png',
-        'cdn://document-media/some-reveal-image.png'
+        'cdn://media-library/some-image.png',
+        'cdn://media-library/some-hover-image.png',
+        'cdn://media-library/some-reveal-image.png'
       ]);
     });
   });

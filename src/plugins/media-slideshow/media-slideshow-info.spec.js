@@ -79,13 +79,13 @@ describe('media-slideshow-info', () => {
     it('returns CDN resources from copyrightNotice', () => {
       content = {
         sourceUrl: '',
-        copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)',
+        copyrightNotice: 'This [hyperlink](cdn://media-library/my-file-1.pdf) and [another one](https://google.com)',
         chapters: [
           {
             type: CHAPTER_TYPE.image,
             image: {
               sourceUrl: '',
-              copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-2.pdf) and [another one](https://google.com)'
+              copyrightNotice: 'This [hyperlink](cdn://media-library/my-file-2.pdf) and [another one](https://google.com)'
             },
             text: ''
           }
@@ -93,8 +93,8 @@ describe('media-slideshow-info', () => {
       };
       result = sut.getCdnResources(content);
       expect(result).toStrictEqual([
-        'cdn://document-media/my-file-1.pdf',
-        'cdn://document-media/my-file-2.pdf'
+        'cdn://media-library/my-file-1.pdf',
+        'cdn://media-library/my-file-2.pdf'
       ]);
     });
 
@@ -157,13 +157,13 @@ describe('media-slideshow-info', () => {
 
     it('returns a list with the url for an internal public resource', () => {
       content = {
-        sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
+        sourceUrl: 'cdn://media-library/some-video-1.mp4',
         copyrightNotice: '',
         chapters: [
           {
             type: CHAPTER_TYPE.image,
             image: {
-              sourceUrl: 'cdn://document-media/12345/some-video-2.mp4',
+              sourceUrl: 'cdn://media-library/some-video-2.mp4',
               copyrightNotice: ''
             },
             text: ''
@@ -172,8 +172,8 @@ describe('media-slideshow-info', () => {
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
-        'cdn://document-media/12345/some-video-1.mp4',
-        'cdn://document-media/12345/some-video-2.mp4'
+        'cdn://media-library/some-video-1.mp4',
+        'cdn://media-library/some-video-2.mp4'
       ]);
     });
 

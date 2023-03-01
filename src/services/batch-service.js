@@ -5,8 +5,8 @@ import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import DocumentStore from '../stores/document-store.js';
+import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -14,8 +14,7 @@ const mapBatchTypeToTaskType = batchType => {
   return {
     [BATCH_TYPE.documentRegeneration]: TASK_TYPE.documentRegeneration,
     [BATCH_TYPE.documentValidation]: TASK_TYPE.documentValidation,
-    [BATCH_TYPE.cdnResourcesConsolidation]: TASK_TYPE.cdnResourcesConsolidation,
-    [BATCH_TYPE.cdnUploadDirectoryCreation]: TASK_TYPE.cdnUploadDirectoryCreation
+    [BATCH_TYPE.cdnResourcesConsolidation]: TASK_TYPE.cdnResourcesConsolidation
   }[batchType] || null;
 };
 
@@ -86,14 +85,6 @@ class BatchService {
         return this.documentStore.getAllDocumentIds().then(allDocumentIds => {
           return allDocumentIds.map(documentId => ({ documentId }));
         });
-      case TASK_TYPE.cdnUploadDirectoryCreation:
-        return Promise.all([
-          this.documentStore.getAllDocumentIds(),
-          this.roomStore.getAllRoomIds()
-        ]).then(([allDocumentIds, allRoomIds]) => [
-          ...allDocumentIds.map(documentId => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document, documentId })),
-          ...allRoomIds.map(id => ({ type: CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room, roomId: id }))
-        ]);
       default:
         throw new BadRequest(`Invalid task type: '${taskType}'`);
     }

@@ -6,7 +6,6 @@ import React, { useMemo, useState } from 'react';
 import DebouncedInput from './debounced-input.js';
 import { useService } from './container-context.js';
 import { SOURCE_TYPE } from '../domain/constants.js';
-import PublicIcon from './icons/general/public-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
@@ -37,8 +36,6 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
         return <WikimediaIcon />;
       case SOURCE_TYPE.mediaLibrary:
         return <BankOutlined />;
-      case SOURCE_TYPE.documentMedia:
-        return <PublicIcon />;
       case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:

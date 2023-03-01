@@ -4,17 +4,16 @@ import Logger from '../../common/logger.js';
 import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../locale-context.js';
+import { BATCH_TYPE } from '../../domain/constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
-import { BATCH_TYPE, CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../../domain/constants.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   documentValidationBatchDetailsShape,
   documentRegenerationBatchDetailsShape,
-  cdnResourcesConsolidationBatchDetailsShape,
-  cdnUploadDirectoryCreationBatchDetailsShape
+  cdnResourcesConsolidationBatchDetailsShape
 } from '../../ui/default-prop-types.js';
 
 const POLL_INTERVAL_IN_MS = 500;
@@ -155,8 +154,6 @@ function Batches({ initialState, PageTemplate }) {
         return t('batchTypeDocumentRegeneration');
       case BATCH_TYPE.cdnResourcesConsolidation:
         return t('batchTypeCdnResourcesConsolidation');
-      case BATCH_TYPE.cdnUploadDirectoryCreation:
-        return t('batchTypeCdnUploadDirectoryCreation');
       default:
         throw new Error(`Invalid batch type '${batchType}'`);
     }
@@ -208,36 +205,6 @@ function Batches({ initialState, PageTemplate }) {
     const text = taskParams.documentId;
 
     return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
-  };
-
-  const renderCdnUploadDirectoryCreationEntityId = taskParams => {
-    let url;
-    let text;
-    switch (taskParams.type) {
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
-        url = routes.getDocUrl({ id: taskParams.documentId });
-        text = taskParams.documentId;
-        break;
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
-        url = routes.getRoomUrl({ id: taskParams.roomId });
-        text = taskParams.roomId;
-        break;
-      default:
-        throw new Error(`Invalid task params type '${taskParams.type}'`);
-    }
-
-    return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
-  };
-
-  const renderCdnUploadDirectoryCreationTaskType = taskParams => {
-    switch (taskParams.type) {
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
-        return t('common:document');
-      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
-        return t('common:room');
-      default:
-        throw new Error(`Invalid task params type '${taskParams.type}'`);
-    }
   };
 
   const renderErrorCount = attempt => <span>{attempt.errors?.length || 0} {t('errors')}</span>;
@@ -292,20 +259,6 @@ function Batches({ initialState, PageTemplate }) {
         key: 'taskParamsType',
         dataIndex: 'taskParams',
         render: () => t('common:document')
-      });
-      break;
-    case BATCH_TYPE.cdnUploadDirectoryCreation:
-      taskTableColumns.push({
-        title: `${t('common:document')} / ${t('common:room')}`,
-        key: 'taskParamsTypeEntityId',
-        dataIndex: 'taskParams',
-        render: renderCdnUploadDirectoryCreationEntityId
-      });
-      taskTableColumns.push({
-        title: t('common:type'),
-        key: 'taskParamsType',
-        dataIndex: 'taskParams',
-        render: renderCdnUploadDirectoryCreationTaskType
       });
       break;
     default:
@@ -380,8 +333,7 @@ Batches.propTypes = {
     batch: PropTypes.oneOfType([
       documentValidationBatchDetailsShape,
       documentRegenerationBatchDetailsShape,
-      cdnResourcesConsolidationBatchDetailsShape,
-      cdnUploadDirectoryCreationBatchDetailsShape
+      cdnResourcesConsolidationBatchDetailsShape
     ]).isRequired
   }).isRequired
 };

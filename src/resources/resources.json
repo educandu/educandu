@@ -150,14 +150,6 @@
       "en": "Update the list of internal storage resources linked in documents and document versions. This task updates database data, possibly resulting in data corrections.",
       "de": "Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Versionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt."
     },
-    "batchSectionHeader_cdn-upload-directory-creation": {
-      "en": "Creation of upload directories within the internal storage",
-      "de": "Upload-Verzichnisse auf dem internen Speicher erstellen"
-    },
-    "batchSectionDescription_cdn-upload-directory-creation": {
-      "en": "Ensure the internal storage contains a public upload directory for each existing document (including private documents in rooms). This task updates the internal storage by adding the missing directories.",
-      "de": "Dieser Task stellt sicher, dass für jedes Dokument in der Datenbank (inclusive privater Dokumente) ein korrespondierendes öffentliches Verzeichnis im internen Speicher existiert. Fehlende Verzeichnisse werden hierbei neu angelegt."
-    },
     "lastExecution": {
       "en": "Last execution",
       "de": "Letzte Ausführung"
@@ -1203,10 +1195,6 @@
     "batchTypeCdnResourcesConsolidation": {
       "en": "Consolidation of resources within the internal storage",
       "de": "Konsolidierung der Ressourcen auf dem internen Speicher"
-    },
-    "batchTypeCdnUploadDirectoryCreation": {
-      "en": "Creation of upload directories within the internal storage",
-      "de": "Erstellung der Upload-Verzichnisse auf dem internen Speicher"
     },
     "errors": {
       "en": "Errors",
