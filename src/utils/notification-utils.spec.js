@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
-import { determineNotificationReasonsForRevisionCreatedEvent, determineNotificationReasonsForCommentCreatedEvent } from './notification-utils.js';
+import { determineNotificationReasonsForRevisionCreatedEvent, determineNotificationReasonsForCommentCreatedEvent, groupNotifications } from './notification-utils.js';
 
 describe('notification-utils', () => {
 
@@ -188,6 +188,135 @@ describe('notification-utils', () => {
         it(`should return ${JSON.stringify(expectedReasons)}`, () => {
           expect(result).toStrictEqual(expectedReasons);
         });
+      });
+    });
+  });
+
+  describe('groupNotifications', () => {
+    let result;
+    let notifications;
+
+    describe('when all notifications are considered distinct', () => {
+      beforeEach(() => {
+        notifications = [
+          { _id: 'notification-1', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-1' }, createdOn: new Date('2023-02-28T12:01:00Z') },
+          { _id: 'notification-2', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:02:00Z') },
+          { _id: 'notification-3', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-3' }, createdOn: new Date('2023-02-28T12:03:00Z') }
+        ];
+
+        result = groupNotifications(notifications);
+      });
+
+      it('should create a new group for each notification', () => {
+        expect(result).toStrictEqual([
+          {
+            notificationIds: ['notification-1'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-1' },
+            firstCreatedOn: new Date('2023-02-28T12:01:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:01:00Z')
+          },
+          {
+            notificationIds: ['notification-2'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-2' },
+            firstCreatedOn: new Date('2023-02-28T12:02:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:02:00Z')
+          },
+          {
+            notificationIds: ['notification-3'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-3' },
+            firstCreatedOn: new Date('2023-02-28T12:03:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:03:00Z')
+          }
+        ]);
+      });
+    });
+
+    describe('when there are contiguous notifications of the same type relating to the same document', () => {
+      beforeEach(() => {
+        notifications = [
+          { _id: 'notification-1', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-1' }, createdOn: new Date('2023-02-28T12:01:00Z') },
+          { _id: 'notification-2', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:02:00Z') },
+          { _id: 'notification-3', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:03:00Z') },
+          { _id: 'notification-4', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-3' }, createdOn: new Date('2023-02-28T12:04:00Z') }
+        ];
+
+        result = groupNotifications(notifications);
+      });
+
+      it('should group these notifications together', () => {
+        expect(result).toStrictEqual([
+          {
+            notificationIds: ['notification-1'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-1' },
+            firstCreatedOn: new Date('2023-02-28T12:01:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:01:00Z')
+          },
+          {
+            notificationIds: ['notification-2', 'notification-3'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-2' },
+            firstCreatedOn: new Date('2023-02-28T12:02:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:03:00Z')
+          },
+          {
+            notificationIds: ['notification-4'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-3' },
+            firstCreatedOn: new Date('2023-02-28T12:04:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:04:00Z')
+          }
+        ]);
+      });
+    });
+
+    describe('when a series of notifications of the same type relating to the same document is interrupted by a different type', () => {
+      beforeEach(() => {
+        notifications = [
+          { _id: 'notification-1', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-1' }, createdOn: new Date('2023-02-28T12:01:00Z') },
+          { _id: 'notification-2', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:02:00Z') },
+          { _id: 'notification-3', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:03:00Z') },
+          { _id: 'notification-4', eventType: EVENT_TYPE.commentCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:04:00Z') },
+          { _id: 'notification-5', eventType: EVENT_TYPE.revisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:05:00Z') }
+        ];
+
+        result = groupNotifications(notifications);
+      });
+
+      it('should start a new group each time', () => {
+        expect(result).toStrictEqual([
+          {
+            notificationIds: ['notification-1'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-1' },
+            firstCreatedOn: new Date('2023-02-28T12:01:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:01:00Z')
+          },
+          {
+            notificationIds: ['notification-2', 'notification-3'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-2' },
+            firstCreatedOn: new Date('2023-02-28T12:02:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:03:00Z')
+          },
+          {
+            notificationIds: ['notification-4'],
+            eventType: EVENT_TYPE.commentCreated,
+            eventParams: { documentId: 'document-2' },
+            firstCreatedOn: new Date('2023-02-28T12:04:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:04:00Z')
+          },
+          {
+            notificationIds: ['notification-5'],
+            eventType: EVENT_TYPE.revisionCreated,
+            eventParams: { documentId: 'document-2' },
+            firstCreatedOn: new Date('2023-02-28T12:05:00Z'),
+            lastCreatedOn: new Date('2023-02-28T12:05:00Z')
+          }
+        ]);
       });
     });
   });

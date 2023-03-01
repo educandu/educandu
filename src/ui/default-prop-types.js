@@ -7,7 +7,8 @@ import {
   ROOM_DOCUMENTS_MODE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE,
-  RESOURCE_TYPE
+  RESOURCE_TYPE,
+  EVENT_TYPE
 } from '../domain/constants.js';
 
 const File = isBrowser() ? window.File : class File {};
@@ -497,4 +498,16 @@ export const favoriteRoomShape = PropTypes.shape({
 
 export const favoriteDocumentShape = PropTypes.shape({
   ...contributedDocumentMetadataProps
+});
+
+const commonDocumentEventParamsShape = PropTypes.shape({
+  document: documentMetadataShape
+});
+
+export const notificationGroupShape = PropTypes.shape({
+  notificationIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  eventType: PropTypes.oneOf(Object.values(EVENT_TYPE)),
+  eventParams: PropTypes.oneOfType([commonDocumentEventParamsShape]).isRequired,
+  firstCreatedOn: PropTypes.string.isRequired,
+  lastCreatedOn: PropTypes.string.isRequired
 });

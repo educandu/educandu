@@ -113,6 +113,7 @@ class EventService {
             notifiedUserId: user._id,
             eventId: event._id,
             eventType: event.type,
+            eventParams: event.params,
             reasons,
             createdOn: event.createdOn,
             readOn: null

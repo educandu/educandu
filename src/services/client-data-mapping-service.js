@@ -3,21 +3,23 @@ import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
+import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
-import { BATCH_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getAllUserPermissions, hasUserPermission } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, PluginRegistry];
+  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, DocumentStore, PluginRegistry];
 
-  constructor(serverConfig, userStore, storagePlanStore, roomStore, pluginRegistry) {
+  constructor(serverConfig, userStore, storagePlanStore, roomStore, documentStore, pluginRegistry) {
     this.serverConfig = serverConfig;
     this.userStore = userStore;
     this.roomStore = roomStore;
+    this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
     this.pluginRegistry = pluginRegistry;
   }
@@ -152,6 +154,49 @@ class ClientDataMappingService {
         ? this._mapMediaLibraryItem(mediaLibraryItem, userMap, grantedPermissions)
         : mediaLibraryItem;
     });
+  }
+
+  _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById) {
+    switch (eventType) {
+      case EVENT_TYPE.revisionCreated:
+      case EVENT_TYPE.commentCreated:
+        return {
+          document: allowedDocumentsById.get(eventParams.documentId) || null
+        };
+      default:
+        throw new Error(`Unsupported event type '${eventType}'`);
+    }
+  }
+
+  async mapUserNotificationGroups(notificationGroups, user) {
+    const occurringDocumentIds = [...new Set(notificationGroups.map(g => g.eventParams.documentId).filter(x => x))];
+
+    const [occurringDocuments, allowedRooms] = await Promise.all([
+      this.documentStore.getDocumentsMetadataByIds(occurringDocumentIds),
+      this.roomStore.getRoomsOwnedOrJoinedByUser(user._id)
+    ]);
+
+    const allowedRoomsById = allowedRooms.reduce((map, item) => {
+      map.set(item._id, item);
+      return map;
+    }, new Map());
+
+    const allowedDocumentsById = occurringDocuments.reduce((map, item) => {
+      const isPublicDocument = !item.roomId;
+      const isUserAccessibleRoomDocument = !!item.roomId && allowedRoomsById.has(item.roomId);
+      if (isPublicDocument || isUserAccessibleRoomDocument) {
+        map.set(item._id, item);
+      }
+      return map;
+    }, new Map());
+
+    return notificationGroups.map(group => ({
+      notificationIds: group.notificationIds,
+      eventType: group.eventType,
+      eventParams: this._mapNotificationEventParams(group.eventType, group.eventParams, allowedDocumentsById),
+      firstCreatedOn: group.firstCreatedOn.toISOString(),
+      lastCreatedOn: group.lastCreatedOn.toISOString()
+    }));
   }
 
   async mapBatches(batches, user) {
