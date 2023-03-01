@@ -9,9 +9,9 @@ class NotificationStore {
     this.collection = db.notifications;
   }
 
-  getUnreadNotificationsByNotifiedUserId(notifiedUserId, { session } = {}) {
+  getNotificationsByNotifiedUserId(notifiedUserId, { session } = {}) {
     return this.collection
-      .find({ notifiedUserId, readOn: null }, { session })
+      .find({ notifiedUserId }, { session })
       .sort({ createdOn: 1 })
       .limit(1000)
       .toArray();
@@ -23,8 +23,8 @@ class NotificationStore {
     return notifications;
   }
 
-  async setNotificationsReadOnByUserIdAndNotificationIds(notifiedUserId, notificationIds, readOn, { session } = {}) {
-    await this.collection.updateMany({ _id: { $in: notificationIds }, notifiedUserId }, { readOn }, { session });
+  async deleteNotificationsByIds(notificationIds, { session } = {}) {
+    await this.collection.deleteMany({ _id: { $in: notificationIds } }, { session });
   }
 }
 

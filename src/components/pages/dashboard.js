@@ -19,8 +19,8 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { useNotificationsCount } from '../notification-context.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { useUnreadNotificationsCount } from '../notification-context.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 
@@ -39,9 +39,9 @@ function Dashboard({ PageTemplate }) {
   const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
+  const notificationsCount = useNotificationsCount();
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const unreadNotificationsCount = useUnreadNotificationsCount();
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
@@ -198,8 +198,8 @@ function Dashboard({ PageTemplate }) {
     {
       key: TAB_KEYS.notifications,
       label: (
-        <Tooltip title={unreadNotificationsCount ? t('common:unreadNotifications', { count: unreadNotificationsCount }) : null}>
-          <Badge dot title="" offset={[5, 0]} count={unreadNotificationsCount}>
+        <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
+          <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
             {t('common:notifications')}
           </Badge>
         </Tooltip>

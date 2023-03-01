@@ -18,21 +18,21 @@ class NotificationController {
   }
 
   async handleBeforePages(req, _res, next) {
-    let unreadNotificationsCount;
+    let notificationsCount;
     try {
       const { user } = req;
       if (user) {
         const notificationGroups = await this.notificationService.getNotificationGroups({ user });
-        unreadNotificationsCount = notificationGroups.length;
+        notificationsCount = notificationGroups.length;
       } else {
-        unreadNotificationsCount = 0;
+        notificationsCount = 0;
       }
     } catch (error) {
-      unreadNotificationsCount = 0;
+      notificationsCount = 0;
     }
 
     // eslint-disable-next-line require-atomic-updates
-    req.unreadNotificationsCount = unreadNotificationsCount;
+    req.notificationsCount = notificationsCount;
 
     next();
   }

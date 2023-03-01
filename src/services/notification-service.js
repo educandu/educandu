@@ -9,7 +9,7 @@ class EventService {
   }
 
   async getNotificationGroups({ user }) {
-    const notifications = await this.notificationStore.getUnreadNotificationsByNotifiedUserId(user._id);
+    const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
     return groupNotifications(notifications);
   }
 }

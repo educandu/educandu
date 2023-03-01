@@ -18,7 +18,7 @@ import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/def
 function Root({
   request,
   user,
-  unreadNotificationsCount,
+  notificationsCount,
   storage,
   storagePlan,
   container,
@@ -43,7 +43,7 @@ function Root({
             <SettingsProvider value={settings}>
               <RequestProvider value={request}>
                 <UserProvider value={user}>
-                  <NotificationProvider value={unreadNotificationsCount}>
+                  <NotificationProvider value={notificationsCount}>
                     <StoragePlanProvider value={storagePlan}>
                       <StorageProvider value={storage}>
                         <DialogProvider>
