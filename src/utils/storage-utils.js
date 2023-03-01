@@ -6,19 +6,15 @@ import {
   IMAGE_OPTIMIZATION_QUALITY,
   ROOM_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
-  DOCUMENT_MEDIA_STORAGE_PATH_PATTERN,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
-  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
+  IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES,
+  MEDIA_LIBRRY_STORAGE_PATH_PATTERN
 } from '../domain/constants.js';
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 export function getMediaLibraryPath() {
   return 'media-library';
-}
-
-export function getDocumentMediaDocumentPath(documentId) {
-  return `document-media/${documentId}`;
 }
 
 export function getRoomMediaRoomPath(roomId) {
@@ -86,8 +82,8 @@ export function processFilesBeforeUpload({ files, optimizeImages }) {
 }
 
 export function getStorageLocationTypeForPath(path) {
-  if (DOCUMENT_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
-    return STORAGE_LOCATION_TYPE.documentMedia;
+  if (MEDIA_LIBRRY_STORAGE_PATH_PATTERN.test(path)) {
+    return STORAGE_LOCATION_TYPE.mediaLibrary;
   }
   if (ROOM_MEDIA_STORAGE_PATH_PATTERN.test(path)) {
     return STORAGE_LOCATION_TYPE.roomMedia;

@@ -68,13 +68,13 @@ describe('interactive-media-info', () => {
     it('returns CDN resources from copyrightNotice', () => {
       content = {
         sourceUrl: '',
-        copyrightNotice: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)',
+        copyrightNotice: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)',
         posterImage: {
           sourceUrl: ''
         }
       };
       result = sut.getCdnResources(content);
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
 
     it('returns empty list for a YouTube resource', () => {
@@ -115,17 +115,17 @@ describe('interactive-media-info', () => {
 
     it('returns a list with the urls for an internal public resources', () => {
       content = {
-        sourceUrl: 'cdn://document-media/12345/some-video.mp4',
-        copyrightNotice: 'Notice ![](cdn://document-media/12345/some-document.pdf)',
+        sourceUrl: 'cdn://media-library/some-video.mp4',
+        copyrightNotice: 'Notice ![](cdn://media-library/some-document.pdf)',
         posterImage: {
-          sourceUrl: 'cdn://document-media/12345/some-image.jpg'
+          sourceUrl: 'cdn://media-library/some-image.jpg'
         }
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
-        'cdn://document-media/12345/some-document.pdf',
-        'cdn://document-media/12345/some-video.mp4',
-        'cdn://document-media/12345/some-image.jpg'
+        'cdn://media-library/some-document.pdf',
+        'cdn://media-library/some-video.mp4',
+        'cdn://media-library/some-image.jpg'
       ]);
     });
 

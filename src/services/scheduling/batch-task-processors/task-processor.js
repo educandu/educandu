@@ -7,7 +7,6 @@ import ServerConfig from '../../../bootstrap/server-config.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
-import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-creation-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -20,7 +19,6 @@ export default class TaskProcessor {
     DocumentValidationTaskProcessor,
     DocumentRegenerationTaskProcessor,
     CdnResourcesConsolidationTaskProcessor,
-    CdnUploadDirectoryCreationTaskProcessor,
     ServerConfig
   ];
 
@@ -30,7 +28,6 @@ export default class TaskProcessor {
     documentValidationTaskProcessor,
     documentRegenerationTaskProcessor,
     cdnResourcesConsolidationTaskProcessor,
-    cdnUploadDirectoryCreationTaskProcessor,
     serverConfig
   ) {
     this.taskStore = taskStore;
@@ -40,8 +37,7 @@ export default class TaskProcessor {
     this.taskProcessors = {
       [TASK_TYPE.documentValidation]: documentValidationTaskProcessor,
       [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor,
-      [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor,
-      [TASK_TYPE.cdnUploadDirectoryCreation]: cdnUploadDirectoryCreationTaskProcessor
+      [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor
     };
   }
 

@@ -99,11 +99,11 @@ describe('media-analysis-info', () => {
         tracks: [
           {
             sourceUrl: '',
-            copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-1.pdf) and [another one](https://google.com)'
+            copyrightNotice: 'This [hyperlink](cdn://media-library/my-file-1.pdf) and [another one](https://google.com)'
           },
           {
             sourceUrl: '',
-            copyrightNotice: 'This [hyperlink](cdn://document-media/my-file-2.pdf) and [another one](https://google.com)'
+            copyrightNotice: 'This [hyperlink](cdn://media-library/my-file-2.pdf) and [another one](https://google.com)'
           }
         ],
         posterImage: {
@@ -112,8 +112,8 @@ describe('media-analysis-info', () => {
       };
       result = sut.getCdnResources(content);
       expect(result).toStrictEqual([
-        'cdn://document-media/my-file-1.pdf',
-        'cdn://document-media/my-file-2.pdf'
+        'cdn://media-library/my-file-1.pdf',
+        'cdn://media-library/my-file-2.pdf'
       ]);
     });
 
@@ -181,23 +181,23 @@ describe('media-analysis-info', () => {
       content = {
         tracks: [
           {
-            sourceUrl: 'cdn://document-media/12345/some-video-1.mp4',
+            sourceUrl: 'cdn://media-library/some-video-1.mp4',
             copyrightNotice: ''
           },
           {
-            sourceUrl: 'cdn://document-media/12345/some-video-2.mp4',
+            sourceUrl: 'cdn://media-library/some-video-2.mp4',
             copyrightNotice: ''
           }
         ],
         posterImage: {
-          sourceUrl: 'cdn://document-media/12345/some-image.jpg'
+          sourceUrl: 'cdn://media-library/some-image.jpg'
         }
       };
       result = sut.getCdnResources(content);
       expect(result).toEqual([
-        'cdn://document-media/12345/some-video-1.mp4',
-        'cdn://document-media/12345/some-video-2.mp4',
-        'cdn://document-media/12345/some-image.jpg'
+        'cdn://media-library/some-video-1.mp4',
+        'cdn://media-library/some-video-2.mp4',
+        'cdn://media-library/some-image.jpg'
       ]);
     });
 

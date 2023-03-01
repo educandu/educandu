@@ -4,7 +4,6 @@ import httpErrors from 'http-errors';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import Cdn from '../repositories/cdn.js';
-import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
@@ -20,9 +19,8 @@ import { createTagSearchQuery } from '../utils/tag-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { getDocumentMediaDocumentPath } from '../utils/storage-utils.js';
+import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
-import { DOCUMENT_VERIFIED_RELEVANCE_POINTS, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
 
@@ -200,8 +198,6 @@ class DocumentService {
     let documentLock;
     const documentId = uniqueId.create();
 
-    await this.createUploadDirectoryMarkerForDocument(documentId);
-
     try {
       documentLock = await this.lockStore.takeDocumentLock(documentId);
       if (data.roomId) {
@@ -249,9 +245,6 @@ class DocumentService {
       });
 
       return newDocument;
-    } catch (error) {
-      await this.deleteUploadDirectoryMarkerForDocument(documentId);
-      throw error;
     } finally {
       if (documentLock) {
         await this.lockStore.releaseLock(documentLock);
@@ -586,18 +579,6 @@ class DocumentService {
         await this.lockStore.releaseLock(lock);
       }
     }
-  }
-
-  async createUploadDirectoryMarkerForDocument(documentId) {
-    const storagePath = getDocumentMediaDocumentPath(documentId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.uploadEmptyObject(directoryMarkerPath);
-  }
-
-  async deleteUploadDirectoryMarkerForDocument(documentId) {
-    const storagePath = getDocumentMediaDocumentPath(documentId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   _buildDocumentRevision(data) {

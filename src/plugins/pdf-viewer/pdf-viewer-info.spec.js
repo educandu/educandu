@@ -32,8 +32,8 @@ describe('pdf-viewer-info', () => {
     });
 
     it('returns a list with the url for an internal public resource', () => {
-      const result = sut.getCdnResources({ sourceUrl: 'cdn://document-media/12345/some-doc.pdf' });
-      expect(result).toEqual(['cdn://document-media/12345/some-doc.pdf']);
+      const result = sut.getCdnResources({ sourceUrl: 'cdn://media-library/some-doc.pdf' });
+      expect(result).toEqual(['cdn://media-library/some-doc.pdf']);
     });
 
     it('returns a list with the url for an internal room-media resource', () => {

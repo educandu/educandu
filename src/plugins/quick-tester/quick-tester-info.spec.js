@@ -69,42 +69,42 @@ describe('quick-tester-info', () => {
   describe('getCdnResources', () => {
     it('returns CDN resources from the title', () => {
       const result = sut.getCdnResources({
-        title: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)',
+        title: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)',
         teaser: '[Teaser]',
         tests: [],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
 
     it('returns CDN resources from the teaser', () => {
       const result = sut.getCdnResources({
         title: '[Title]',
-        teaser: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)',
+        teaser: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)',
         tests: [],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
 
     it('returns CDN resources from the questions', () => {
       const result = sut.getCdnResources({
         title: '[Title]',
         teaser: '[Teaser]',
-        tests: [{ question: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)', answer: '[Answer]' }],
+        tests: [{ question: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)', answer: '[Answer]' }],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
 
     it('returns CDN resources from the answers', () => {
       const result = sut.getCdnResources({
         title: '[Title]',
         teaser: '[Teaser]',
-        tests: [{ question: '[Question]', answer: 'This [hyperlink](cdn://document-media/my-file.pdf) and [another one](https://google.com)' }],
+        tests: [{ question: '[Question]', answer: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)' }],
         testsOrder: TESTS_ORDER.given
       });
-      expect(result).toStrictEqual(['cdn://document-media/my-file.pdf']);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
     });
   });
 });

@@ -30,25 +30,25 @@ describe('markdown-info', () => {
 
     it('leaves non room-media resources intact', () => {
       const result = sut.redactContent({
-        text: '![Some image](cdn://document-media/JgTaqob5vqosBiHsZZoh1/some-image.png)'
+        text: '![Some image](cdn://media-library/some-image.png)'
       }, 'rebhjf4MLq7yjeoCnYfn7E');
       expect(result).toStrictEqual({
-        text: '![Some image](cdn://document-media/JgTaqob5vqosBiHsZZoh1/some-image.png)'
+        text: '![Some image](cdn://media-library/some-image.png)'
       });
     });
   });
 
   describe('getCdnResources', () => {
-    it('returns document-media and room-media CDN resources from the text', () => {
+    it('returns media-library and room-media CDN resources from the text', () => {
       const result = sut.getCdnResources({
         text: [
-          '![Some image](cdn://document-media/JgTaqob5vqosBiHsZZoh1/some-image.png)',
+          '![Some image](cdn://media-library/some-image.png)',
           '![Some image](cdn://room-media/63cHjt3BAhGnNxzJGrTsN1/some-image.png)',
           '![Some image](https://external-domain.org/some-image.png)'
         ].join('\n')
       });
       expect(result).toStrictEqual([
-        'cdn://document-media/JgTaqob5vqosBiHsZZoh1/some-image.png',
+        'cdn://media-library/some-image.png',
         'cdn://room-media/63cHjt3BAhGnNxzJGrTsN1/some-image.png'
       ]);
     });

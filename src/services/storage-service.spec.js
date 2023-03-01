@@ -94,9 +94,9 @@ describe('storage-service', () => {
       roomStore.getRoomsByOwnerOrCollaboratorUser.resolves([]);
 
       cdn.listObjects.resolves([
-        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
-        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
-        { prefix: null, name: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
+        { prefix: null, name: 'media-library/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'media-library/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
+        { prefix: null, name: 'media-library/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
       ]);
       rooms = [];
       documents = [{ _id: '34q87zc95t9c287eh', title: 'Document title' }];
@@ -104,41 +104,41 @@ describe('storage-service', () => {
       roomStore.getRoomsByOwnerOrCollaboratorUser.withArgs({ userId: myUser._id }).resolves(rooms);
       documentStore.getDocumentsMetadataByConditions.withArgs([]).resolves(documents);
 
-      result = await sut.getObjects({ parentPath: 'document-media/34q87zc95t9c287eh' });
+      result = await sut.getObjects({ parentPath: 'media-library' });
     });
 
     it('should call the CDN', () => {
-      assert.calledWith(cdn.listObjects, { prefix: 'document-media/34q87zc95t9c287eh/', recursive: false });
+      assert.calledWith(cdn.listObjects, { prefix: 'media-library/', recursive: false });
     });
 
     it('should construct all paths and URLs correctly', () => {
       expect(result).toStrictEqual([
         {
           displayName: 'file-1.pdf',
-          parentPath: 'document-media/34q87zc95t9c287eh',
-          path: 'document-media/34q87zc95t9c287eh/file-1.pdf',
-          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-1.pdf',
-          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-1.pdf',
+          parentPath: 'media-library',
+          path: 'media-library/file-1.pdf',
+          url: 'https://cdn.domain.com/media-library/file-1.pdf',
+          portableUrl: 'cdn://media-library/file-1.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           updatedOn: '2022-06-09T12:00:00.000Z',
           size: 1000
         },
         {
           displayName: 'file-2 with spaces.pdf',
-          parentPath: 'document-media/34q87zc95t9c287eh',
-          path: 'document-media/34q87zc95t9c287eh/file-2 with spaces.pdf',
-          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
-          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+          parentPath: 'media-library',
+          path: 'media-library/file-2 with spaces.pdf',
+          url: 'https://cdn.domain.com/media-library/file-2%20with%20spaces.pdf',
+          portableUrl: 'cdn://media-library/file-2%20with%20spaces.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           updatedOn: '2022-06-09T12:00:00.000Z',
           size: 2000
         },
         {
           displayName: 'file-3 with weird &$#=.pdf',
-          parentPath: 'document-media/34q87zc95t9c287eh',
-          path: 'document-media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
-          url: 'https://cdn.domain.com/document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
-          portableUrl: 'cdn://document-media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          parentPath: 'media-library',
+          path: 'media-library/file-3 with weird &$#=.pdf',
+          url: 'https://cdn.domain.com/media-library/file-3%20with%20weird%20%26%24%23%3D.pdf',
+          portableUrl: 'cdn://media-library/file-3%20with%20weird%20%26%24%23%3D.pdf',
           createdOn: '2022-06-09T12:00:00.000Z',
           updatedOn: '2022-06-09T12:00:00.000Z',
           size: 3000
@@ -356,45 +356,6 @@ describe('storage-service', () => {
 
       it('should throw an error', () => {
         expect(result).toBe('Invalid storage path \'other-path/\'');
-      });
-
-      it('should release the lock', () => {
-        assert.called(lockStore.releaseLock);
-      });
-    });
-
-    describe('when the storage type is document-media', () => {
-      beforeEach(async () => {
-        path = 'document-media/file.jpeg';
-
-        myUser.storage = { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
-        await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
-
-        cdn.deleteObjects.resolves();
-        roomStore.getRoomIdsByOwnerId.resolves([]);
-
-        await sut.deleteObject({ path, storageClaimingUserId: myUser._id });
-      });
-
-      it('should take the lock on the user record', () => {
-        assert.calledWith(lockStore.takeUserLock, myUser._id);
-      });
-
-      it('should call cdn.deleteObjects', () => {
-        assert.calledWith(cdn.deleteObjects, [path]);
-      });
-
-      it('should not call roomStore.getRoomIdsByOwnerId', () => {
-        assert.notCalled(roomStore.getRoomIdsByOwnerId);
-      });
-
-      it('should not call cdn.listObjects', () => {
-        assert.notCalled(cdn.listObjects);
-      });
-
-      it('should not update the user\'s usedBytes', async () => {
-        const updatedUser = await db.users.findOne({ _id: myUser._id });
-        expect(updatedUser.storage.usedBytes).toBe(myUser.storage.usedBytes);
       });
 
       it('should release the lock', () => {
