@@ -72,8 +72,7 @@ class EventService {
             eventParams: event.params,
             reasons,
             createdOn: event.createdOn,
-            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate(),
-            readOn: null
+            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate()
           });
         }
       }
@@ -118,8 +117,7 @@ class EventService {
             eventParams: event.params,
             reasons,
             createdOn: event.createdOn,
-            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate(),
-            readOn: null
+            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate()
           });
         }
       }
