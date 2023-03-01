@@ -173,7 +173,7 @@ class ClientDataMappingService {
 
     const [occurringDocuments, allowedRooms] = await Promise.all([
       this.documentStore.getDocumentsMetadataByIds(occurringDocumentIds),
-      this.roomStore.getRoomsOwnedOrJoinedByUser(user)
+      this.roomStore.getRoomsOwnedOrJoinedByUser(user._id)
     ]);
 
     const allowedRoomsById = allowedRooms.reduce((map, item) => {
