@@ -535,8 +535,8 @@
       "de": "Hier findest du deine Benachrichtigungen."
     },
     "noNotifications": {
-      "en": "No notifications have been recorded so far.",
-      "de": "Bisher wurden keine Benachrichtigungen aufgezeichnet."
+      "en": "There are no new notifications for you.",
+      "de": "Es gibt keine neue Benachrichtigungen für dich."
     },
     "publicRevisionCreatedNotification": {
       "en": "Public document has been edited",
