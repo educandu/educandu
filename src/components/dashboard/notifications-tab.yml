@@ -5,9 +5,21 @@ notificationsTab:
   noNotifications:
     en: No notifications have been recorded so far.
     de: Bisher wurden keine Benachrichtigungen aufgezeichnet.
-  revisionCreatedNotification:
-    en: Document has been edited
-    de: Dokument wurde bearbeitet
-  commentCreatedNotification:
-    en: New comment on document
-    de: Neuer Kommentar am Dokument
+  publicRevisionCreatedNotification:
+    en: Public document has been edited
+    de: Öffentliches Dokument wurde bearbeitet
+  roomRevisionCreatedNotification:
+    en: Room document has been edited
+    de: Raum-Dokument wurde bearbeitet
+  publicCommentCreatedNotification:
+    en: New comment on public document
+    de: Neuer Kommentar am öffentliches Dokument
+  roomCommentCreatedNotification:
+    en: New comment on room document
+    de: Neuer Kommentar am Raum-Dokument
+  documentNotAvailable:
+    en: Document no longer available
+    de: Document no longer available
+  dismissAll:
+    en: Dismiss all
+    de: Alle entfernen
