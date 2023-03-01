@@ -213,6 +213,8 @@ export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 export const ANTI_BRUTE_FORCE_MAX_REQUESTS = 60;
 export const ANTI_BRUTE_FORCE_EXPIRES_IN_MS = 60 * 60 * 1000;
 
+export const NOTIFICATION_EXPIRATION_IN_MONTHS = 6;
+
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';

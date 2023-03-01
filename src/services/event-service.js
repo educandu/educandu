@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import LockStore from '../stores/lock-store.js';
@@ -5,11 +6,11 @@ import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import { serializeError } from 'serialize-error';
 import EventStore from '../stores/event-store.js';
-import { EVENT_TYPE } from '../domain/constants.js';
 import DocumentStore from '../stores/document-store.js';
 import NotificationStore from '../stores/notification-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { EVENT_TYPE, NOTIFICATION_EXPIRATION_IN_MONTHS } from '../domain/constants.js';
 import {
   determineNotificationReasonsForCommentCreatedEvent,
   determineNotificationReasonsForRevisionCreatedEvent
@@ -71,6 +72,7 @@ class EventService {
             eventParams: event.params,
             reasons,
             createdOn: event.createdOn,
+            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate(),
             readOn: null
           });
         }
@@ -116,6 +118,7 @@ class EventService {
             eventParams: event.params,
             reasons,
             createdOn: event.createdOn,
+            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate(),
             readOn: null
           });
         }

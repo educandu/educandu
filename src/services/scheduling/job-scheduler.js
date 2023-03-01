@@ -3,7 +3,6 @@ import CronJobScheduler from './cron-job-scheduler.js';
 import ProcessEventsJob from './jobs/process-events-job.js';
 import ProcessBatchesJob from './jobs/process-batches-job.js';
 import LoadSamlMetadataJob from './jobs/load-saml-metadata-job.js';
-import PruneNotificationsJob from './jobs/prune-notifications-job.js';
 import AlwaysRunningJobScheduler from './always-running-job-scheduler.js';
 import IntervalBasedJobScheduler from './interval-based-job-scheduler.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY, Container } from '../../common/di.js';
@@ -37,7 +36,7 @@ const jobs = {
   // │ │ │ │ │ │
   // * * * * * *
   // * has to have a `preventOverrun` boolean field that when set to true will prevent the next run from being fired up while the previous one is still executing
-  cron: [PruneNotificationsJob]
+  cron: []
 };
 
 export default class JobScheduler {
