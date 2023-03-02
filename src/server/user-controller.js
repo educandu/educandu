@@ -308,7 +308,7 @@ class UserController {
       throw new NotFound();
     }
 
-    res.status(201).send({ user: updatedUser });
+    res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
   }
 
   async handlePostUserNotificationSettings(req, res) {
@@ -320,7 +320,7 @@ class UserController {
       throw new NotFound();
     }
 
-    res.status(201).send({ user: updatedUser });
+    res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(updatedUser) });
   }
 
   async handlePostUserLogin(req, res, next) {
