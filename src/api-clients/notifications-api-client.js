@@ -16,23 +16,14 @@ class NotificationsApiClient {
       .then(res => res.data);
   }
 
-  removeNotificationGroup(notificationIds) {
+  removeNotifications(notificationIds) {
     return this.httpClient
       .delete(
-        '/api/v1/notifications/group',
+        '/api/v1/notifications',
         {
           data: { notificationIds },
           responseType: 'json'
         }
-      )
-      .then(res => res.data);
-  }
-
-  removeNotifications() {
-    return this.httpClient
-      .delete(
-        '/api/v1/notifications',
-        { responseType: 'json' }
       )
       .then(res => res.data);
   }

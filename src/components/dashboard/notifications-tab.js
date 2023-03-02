@@ -25,12 +25,20 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
     if (notificationGroup.eventType === EVENT_TYPE.revisionCreated) {
       icon = <EditDocIconComponent />;
-      description = notificationGroup.eventParams.document.roomId ? t('roomRevisionCreatedNotification') : t('publicRevisionCreatedNotification');
+      if (!notificationGroup.eventParams.document) {
+        description = t('revisionCreatedNotification');
+      } else {
+        description = notificationGroup.eventParams.document.roomId ? t('roomRevisionCreatedNotification') : t('publicRevisionCreatedNotification');
+      }
     }
 
     if (notificationGroup.eventType === EVENT_TYPE.commentCreated) {
       icon = <CommentsIcon />;
-      description = notificationGroup.eventParams.document.roomId ? t('roomCommentCreatedNotification') : t('publicCommentCreatedNotification');
+      if (!notificationGroup.eventParams.document) {
+        description = t('commentCreatedNotification');
+      } else {
+        description = notificationGroup.eventParams.document.roomId ? t('roomCommentCreatedNotification') : t('publicCommentCreatedNotification');
+      }
     }
 
     return (

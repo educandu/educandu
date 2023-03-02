@@ -154,13 +154,14 @@ function Dashboard({ PageTemplate }) {
   };
 
   const handleRemoveNotificationGroup = async notificationGroup => {
-    const response = await notificationsApiClient.removeNotificationGroup(notificationGroup.notificationIds);
+    const response = await notificationsApiClient.removeNotifications(notificationGroup.notificationIds);
     setNotificationGroups(response.notificationGroups);
     setNotificationsCount(response.notificationGroups.length);
   };
 
   const handleRemoveNotifications = async () => {
-    const response = await notificationsApiClient.removeNotifications();
+    const notificationIds = notificationGroups.map(group => group.notificationIds).flat();
+    const response = await notificationsApiClient.removeNotifications(notificationIds);
     setNotificationGroups(response.notificationGroups);
     setNotificationsCount(response.notificationGroups.length);
   };

@@ -5,12 +5,18 @@ notificationsTab:
   noNotifications:
     en: There are no new notifications for you.
     de: Es gibt keine neuen Benachrichtigungen für dich.
+  revisionCreatedNotification:
+    en: Document has been edited
+    de: Dokument wurde bearbeitet
   publicRevisionCreatedNotification:
     en: Public document has been edited
     de: Öffentliches Dokument wurde bearbeitet
   roomRevisionCreatedNotification:
     en: Room document has been edited
     de: Raum-Dokument wurde bearbeitet
+  commentCreatedNotification:
+    en: New comment on document
+    de: Neuer Kommentar am Dokument
   publicCommentCreatedNotification:
     en: New comment on public document
     de: Neuer Kommentar am öffentliches Dokument
