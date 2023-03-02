@@ -64,7 +64,8 @@ class ClientDataMappingService {
       favorites: user.favorites.map(favorite => ({
         ...favorite,
         setOn: favorite.setOn.toISOString()
-      }))
+      })),
+      emailNotificationFrequency: user.emailNotificationFrequency
     };
   }
 

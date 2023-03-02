@@ -9,7 +9,7 @@ import {
   destroyTestEnvironment,
   setupTestEnvironment,
   pruneTestEnvironment,
-  setupTestUser,
+  createTestUser,
   createTestRoom,
   createTestDocument,
   updateTestUser
@@ -43,8 +43,8 @@ describe('user-service', () => {
     sandbox.useFakeTimers(now);
 
     password = 'john-doe-12345$$$';
-    user = await setupTestUser(container, { email: 'john-doe@test.com', password, displayName: 'John Doe' });
-    executingUser = await setupTestUser(container, { email: 'emilia-watson@test.com', displayName: 'Emilia Watson' });
+    user = await createTestUser(container, { email: 'john-doe@test.com', password, displayName: 'John Doe' });
+    executingUser = await createTestUser(container, { email: 'emilia-watson@test.com', displayName: 'Emilia Watson' });
   });
 
   afterEach(async () => {
@@ -57,9 +57,9 @@ describe('user-service', () => {
 
     beforeEach(async () => {
       await Promise.all([
-        setupTestUser(container, { displayName: 'test-user-abc', password: '1234qwer', email: 'email1@test.com' }),
-        setupTestUser(container, { displayName: 'test-user', password: '1234qwer', email: 'abc@test.com' }),
-        setupTestUser(container, { displayName: 'abc', password: '1234qwer', email: 'email3@test.com' })
+        createTestUser(container, { displayName: 'test-user-abc', password: '1234qwer', email: 'email1@test.com' }),
+        createTestUser(container, { displayName: 'test-user', password: '1234qwer', email: 'abc@test.com' }),
+        createTestUser(container, { displayName: 'abc', password: '1234qwer', email: 'email3@test.com' })
       ]);
 
       result = await sut.getActiveUsersBySearch({ query: 'abc' });
@@ -428,7 +428,7 @@ describe('user-service', () => {
           publicContext: favoriteDocument.publicContext
         };
         favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
-        favoriteUser = await setupTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
+        favoriteUser = await createTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
 
         const favorites = [
           {
@@ -520,7 +520,7 @@ describe('user-service', () => {
     let otherUser;
 
     beforeEach(async () => {
-      otherUser = await setupTestUser(container, { email: 'other@test.com', displayName: 'Other user' });
+      otherUser = await createTestUser(container, { email: 'other@test.com', displayName: 'Other user' });
     });
 
     describe('when there are no activities', () => {
@@ -590,7 +590,7 @@ describe('user-service', () => {
 
         favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', owner: otherUser._id, createdBy: otherUser._id });
         favoriteDocument = await createTestDocument(container, otherUser, { title: 'Created popular document [other]' });
-        favoriteUser = await setupTestUser(container, { displayName: 'Popular user', email: 'popular-user@test.com' });
+        favoriteUser = await createTestUser(container, { displayName: 'Popular user', email: 'popular-user@test.com' });
         await db.users.updateOne({ _id: user._id }, {
           $set: {
             favorites: [

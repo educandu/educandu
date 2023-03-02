@@ -9,19 +9,20 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useSetUser, useUser } from '../user-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, Input, Avatar, Button, message } from 'antd';
-import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import DisplayNameFormItem from '../displayName-form-item.js';
 import { confirmCloseAccount } from '../confirmation-dialogs.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Form, Input, Avatar, Button, message, Radio } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
+import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
 import { maxUserIntroductionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 
 const AVATAR_SIZE = 110;
 
@@ -36,6 +37,7 @@ function SettingsTab() {
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const [isUserProfileFormDirty, setIsUserProfileFormDirty] = useState(false);
+  const [isNotificationSettingsFormDirty, setIsNotificationSettingsFormDirty] = useState(false);
   const [accountAccessFormState, setAccountAccessFormState] = useState({ isDirty: false, email: null, forbiddenEmails: [] });
 
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
@@ -44,6 +46,10 @@ function SettingsTab() {
   useEffect(() => {
     setAccountAccessFormState(prev => ({ ...prev, email: user.email, isDirty: false }));
   }, [user]);
+
+  const emailNotificationFrequencyOptions = useMemo(() => {
+    return Object.values(EMAIL_NOTIFICATION_FREQUENCY).map(value => ({ value, label: t(`emailNotificationFrequency_${value}`) }));
+  }, [t]);
 
   const renderInfo = () => (
     <Trans
@@ -97,12 +103,12 @@ function SettingsTab() {
     setIsUserProfileFormDirty(true);
   };
 
-  const handleUserProfileFormFinish = async values => {
+  const handleUserProfileFormFinish = async ({ displayName, organization, introduction }) => {
     try {
       const { user: updatedUser } = await userApiClient.saveUserProfile({
-        displayName: values.displayName,
-        organization: values.organization,
-        introduction: values.introduction
+        displayName,
+        organization,
+        introduction
       });
       setUser({ ...updatedUser });
       setIsUserProfileFormDirty(false);
@@ -118,6 +124,23 @@ function SettingsTab() {
 
   const handleAccountAccessFormFinish = ({ email }) => {
     dialogs.confirmWithPassword(user.email, () => saveAccountAccessData({ email }));
+  };
+
+  const handleNotificationSettingsFormValuesChange = () => {
+    setIsNotificationSettingsFormDirty(true);
+  };
+
+  const handleNotificationSettingsFormFinish = async ({ emailNotificationFrequency }) => {
+    try {
+      const { user: updatedUser } = await userApiClient.saveUserNotificationSettings({
+        emailNotificationFrequency
+      });
+      setUser({ ...updatedUser });
+      setIsNotificationSettingsFormDirty(false);
+      message.success(t('updateSuccessMessage'));
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
   };
 
   const handleCloseAccountClick = () => {
@@ -206,6 +229,26 @@ function SettingsTab() {
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!accountAccessFormState.isDirty}>{t('common:save')}</Button>
+          </FormItem>
+        </Form>
+      </section>
+
+      <div className="AccountSettingsTab-headline">{t('notificationSettingsHeadline')}</div>
+      <section className="AccountSettingsTab-section">
+        <Form
+          layout="vertical"
+          onValuesChange={handleNotificationSettingsFormValuesChange}
+          onFinish={handleNotificationSettingsFormFinish}
+          >
+          <FormItem
+            name="emailNotificationFrequency"
+            label={t('emailNotificationFrequency')}
+            initialValue={user.emailNotificationFrequency}
+            >
+            <RadioGroup options={emailNotificationFrequencyOptions} optionType="button" />
+          </FormItem>
+          <FormItem>
+            <Button type="primary" htmlType="submit" disabled={!isNotificationSettingsFormDirty}>{t('common:save')}</Button>
           </FormItem>
         </Form>
       </section>

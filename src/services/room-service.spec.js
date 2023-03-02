@@ -7,7 +7,7 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { INVALID_ROOM_INVITATION_REASON, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestDocument } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -44,8 +44,8 @@ describe('room-service', () => {
     sandbox.stub(lockStore, 'takeRoomLock');
     sandbox.stub(lockStore, 'releaseLock');
 
-    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
-    otherUser = await setupTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
+    myUser = await createTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
+    otherUser = await createTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
   });
 
   afterEach(async () => {

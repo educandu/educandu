@@ -5,9 +5,9 @@ import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
-import { BATCH_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
+import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
   const sandbox = createSandbox();
@@ -27,8 +27,8 @@ describe('client-data-mapping-service', () => {
   });
 
   beforeEach(async () => {
-    user1 = await setupTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
-    user2 = await setupTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
+    user1 = await createTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
+    user2 = await createTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
 
   afterEach(async () => {
@@ -176,7 +176,8 @@ describe('client-data-mapping-service', () => {
             id: '4589ct29nr76n4x9214',
             setOn: favoriteSetOnDate
           }
-        ]
+        ],
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       };
       result = sut.mapWebsiteUser(dbUser);
     });
@@ -199,7 +200,8 @@ describe('client-data-mapping-service', () => {
             id: '4589ct29nr76n4x9214',
             setOn: favoriteSetOnDate.toISOString()
           }
-        ]
+        ],
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       });
     });
   });

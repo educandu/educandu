@@ -17,7 +17,7 @@ import {
   destroyTestEnvironment,
   pruneTestEnvironment,
   setupTestEnvironment,
-  setupTestUser
+  createTestUser
 } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -41,8 +41,8 @@ describe('document-service', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    adminUser = await setupTestUser(container, { email: 'admin@test.com', roles: Object.values(ROLE) });
-    user = await setupTestUser(container, { email: 'user@test.com', roles: [ROLE.user] });
+    adminUser = await createTestUser(container, { email: 'admin@test.com', roles: Object.values(ROLE) });
+    user = await createTestUser(container, { email: 'user@test.com', roles: [ROLE.user] });
 
     eventStore = container.get(EventStore);
     lockStore = container.get(LockStore);
@@ -249,7 +249,7 @@ describe('document-service', () => {
     beforeEach(async () => {
       sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
 
-      secondUser = await setupTestUser(container);
+      secondUser = await createTestUser(container);
 
       data = {
         title: 'Title',
@@ -1342,7 +1342,7 @@ describe('document-service', () => {
     let otherUser;
 
     beforeEach(async () => {
-      otherUser = await setupTestUser(container);
+      otherUser = await createTestUser(container);
     });
 
     describe('when the user did not contribute to any documents', () => {

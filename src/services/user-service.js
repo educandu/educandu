@@ -8,6 +8,7 @@ import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -18,12 +19,14 @@ import {
   USER_ACTIVITY_TYPE,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES,
   PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES,
-  ERROR_CODES
+  ERROR_CODES,
+  EMAIL_NOTIFICATION_FREQUENCY
 } from '../domain/constants.js';
 
 const { BadRequest, NotFound, Unauthorized } = httpErrors;
 
-const DEFAULT_ROLE_NAME = ROLE.user;
+const DEFAULT_ROLES = [ROLE.user];
+const DEFAULT_EMAIL_NOTIFICATION_FREQUENCY = EMAIL_NOTIFICATION_FREQUENCY.weekly;
 const PASSWORD_SALT_ROUNDS = 1024;
 
 const logger = new Logger(import.meta.url);
@@ -114,12 +117,20 @@ class UserService {
     return updatedUser;
   }
 
-  async updateUserRoles(userId, newRoles) {
-    logger.info(`Updating roles for user with id ${userId}: ${newRoles}`);
+  async updateUserNotificationSettings({ userId, emailNotificationFrequency }) {
+    logger.info(`Updating notification settings for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    const roleSet = new Set(newRoles || []);
-    roleSet.add(DEFAULT_ROLE_NAME);
-    user.roles = Array.from(roleSet.values());
+    const updatedUser = { ...user, emailNotificationFrequency };
+
+    await this.userStore.saveUser(updatedUser);
+    return updatedUser;
+  }
+
+  async updateUserRoles(userId, newRoles) {
+    const finalNewRoles = ensureIsUnique([...DEFAULT_ROLES, ...newRoles]);
+    logger.info(`Updating roles for user with id ${userId}: ${finalNewRoles}`);
+    const user = await this.userStore.getUserById(userId);
+    user.roles = finalNewRoles;
     await this.userStore.saveUser(user);
     return user.roles;
   }
@@ -392,7 +403,7 @@ class UserService {
     }));
   }
 
-  async createUser({ email, password, displayName, roles = [DEFAULT_ROLE_NAME], verified = false }) {
+  async createUser({ email, password, displayName, roles = DEFAULT_ROLES, emailNotificationFrequency = DEFAULT_EMAIL_NOTIFICATION_FREQUENCY, verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
@@ -406,6 +417,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       displayName,
       roles,
+      emailNotificationFrequency,
       expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES, 'minutes').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
@@ -545,6 +557,7 @@ class UserService {
         reminders: []
       },
       favorites: [],
+      emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
       accountLockedOn: null,
       accountClosedOn: null,
       lastLoggedInOn: null

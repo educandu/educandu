@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
-import { FAVORITE_TYPE, ROLE } from '../constants.js';
+import { FAVORITE_TYPE, ROLE, EMAIL_NOTIFICATION_FREQUENCY } from '../constants.js';
 import {
   minUserPasswordLength,
   minUserDisplayNameLength,
@@ -37,6 +37,10 @@ export const postUserProfileBodySchema = joi.object({
   displayName: displayNameSchema.required(),
   organization: joi.string().allow(''),
   introduction: joi.string().allow('')
+});
+
+export const postUserNotificationSettingsBodySchema = joi.object({
+  emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required()
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({
@@ -106,6 +110,7 @@ export const userDBSchema = joi.object({
   verificationCode: joi.string().allow(null).required(),
   storage: storageDBSchema.required(),
   favorites: joi.array().required().items(favoriteDBSchema),
+  emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required(),
   accountLockedOn: joi.date().allow(null).required(),
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),

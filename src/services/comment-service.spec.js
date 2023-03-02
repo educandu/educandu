@@ -3,7 +3,7 @@ import CommentService from './comment-service.js';
 import EventStore from '../stores/event-store.js';
 import CommentStore from '../stores/comment-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestDocument } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument } from '../test-helper.js';
 
 describe('comment-service', () => {
   let sut;
@@ -29,7 +29,7 @@ describe('comment-service', () => {
 
   beforeEach(async () => {
     sandbox.useFakeTimers(now);
-    user = await setupTestUser(container, { email: 'test@test.com', displayName: 'Test' });
+    user = await createTestUser(container, { email: 'test@test.com', displayName: 'Test' });
   });
 
   afterEach(async () => {

@@ -1,10 +1,11 @@
 import Cdn from './repositories/cdn.js';
+import deepEqual from 'fast-deep-equal';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
-import { ROLE, ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
+import { ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 async function purgeDatabase(db) {
@@ -12,13 +13,11 @@ async function purgeDatabase(db) {
   await Promise.all(collections.map(col => col.deleteMany({})));
 }
 
-// If `bucketName` is undefined, it uses the
-// bucket associated with `cdn`!
-async function purgeBucket(cdn, bucketName) {
+async function purgeBucket(cdn, bucketNameOverride = null) {
   const s3Client = cdn.s3Client;
-  const bName = bucketName || cdn.bucketName;
-  const objects = await s3Client.listObjects(bName, '', true);
-  await s3Client.deleteObjects(bName, objects.map(obj => obj.name));
+  const finalBucketName = bucketNameOverride || cdn.bucketName;
+  const objects = await s3Client.listObjects(finalBucketName, '', true);
+  await s3Client.deleteObjects(finalBucketName, objects.map(obj => obj.name));
 }
 
 async function removeBucket(cdn) {
@@ -125,30 +124,28 @@ export async function destroyTestEnvironment(container) {
   await disposeContainer(container);
 }
 
-export async function setupTestUser(container, userValues) {
+export async function createTestUser(container, { email, password, displayName, ...otherUserValues } = {}) {
   const userStore = container.get(UserStore);
   const userService = container.get(UserService);
 
-  const email = userValues?.email || 'test@test@com';
-  const password = userValues?.password || 'test';
-  const displayName = userValues?.displayName || 'Testibus';
+  const { result, user } = await userService.createUser({
+    email: email || 'test@test@com',
+    password: password || 'test',
+    displayName: displayName || 'Testibus',
+    verified: true
+  });
 
-  const { result, user } = await userService.createUser({ email, password, displayName });
   if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, email, password, displayName }));
   }
 
-  const verifiedUser = await userService.verifyUser(user._id, user.verificationCode);
+  const updatedUser = { ...user, ...otherUserValues };
 
-  verifiedUser.roles = userValues?.roles || [ROLE.user];
-  verifiedUser.organization = userValues?.organization || '';
-  verifiedUser.introduction = userValues?.introduction || '';
-  verifiedUser.accountLockedOn = userValues?.accountLockedOn || null;
-  verifiedUser.accountClosedOn = userValues?.accountClosedOn || null;
-  verifiedUser.storage = userValues?.storage || { planId: null, usedBytes: 0, reminders: [] };
+  if (!deepEqual(updatedUser, user)) {
+    await userStore.saveUser(updatedUser);
+  }
 
-  await userStore.saveUser(verifiedUser);
-  return verifiedUser;
+  return updatedUser;
 }
 
 export async function updateTestUser(container, user) {

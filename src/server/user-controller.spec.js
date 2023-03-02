@@ -413,7 +413,7 @@ describe('user-controller', () => {
   describe('handlePostUserProfile', () => {
     let req;
     let res;
-    let updatedUser;
+    const mappedUser = { displayName: 'John Doe' };
 
     describe('with all data correctly provided', () => {
       const displayName = 'John Doe';
@@ -430,9 +430,9 @@ describe('user-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
         res.on('end', resolve);
-        updatedUser = { ...updatedUser };
 
-        userService.updateUserProfile.resolves(updatedUser);
+        userService.updateUserProfile.resolves({});
+        clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUserProfile(req, res).catch(reject);
       }));
@@ -447,7 +447,7 @@ describe('user-controller', () => {
 
       it('should return the result object', () => {
         const response = res._getData();
-        expect(response).toEqual({ user: updatedUser });
+        expect(response).toEqual({ user: mappedUser });
       });
     });
 
