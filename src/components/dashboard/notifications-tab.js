@@ -1,66 +1,77 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Spin, Timeline } from 'antd';
 import routes from '../../utils/routes.js';
+import { Button, Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { CommentOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
+import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
-import ItemEditedIcon from '../icons/user-activities/item-edited-icon.js';
+import CommentsIcon from '../icons/user-notifications/comments-icon.js';
+import { EditDocIconComponent } from '../icons/user-notifications/edit-doc-icon.js';
 
-const TimelineItem = Timeline.Item;
-
-function NotificationsTab({ notificationGroups, loading }) {
+function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('notificationsTab');
 
   const renderNotificationGroup = notificationGroup => {
     const isDeprecated = !notificationGroup.eventParams.document;
 
-    const title = isDeprecated
-      ? t('common:deletedDocument')
-      : notificationGroup.eventParams.document.title;
-
-    const href = isDeprecated
-      ? null
-      : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
+    const title = isDeprecated ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
+    const href = isDeprecated ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
     let icon;
     let description;
-    switch (notificationGroup.eventType) {
-      case EVENT_TYPE.revisionCreated:
-        icon = <ItemEditedIcon />;
+
+    if (notificationGroup.eventType === EVENT_TYPE.revisionCreated) {
+      icon = <EditDocIconComponent />;
+      if (!notificationGroup.eventParams.document) {
         description = t('revisionCreatedNotification');
-        break;
-      case EVENT_TYPE.commentCreated:
-        icon = <CommentOutlined />;
+      } else {
+        description = notificationGroup.eventParams.document.roomId ? t('roomRevisionCreatedNotification') : t('publicRevisionCreatedNotification');
+      }
+    }
+
+    if (notificationGroup.eventType === EVENT_TYPE.commentCreated) {
+      icon = <CommentsIcon />;
+      if (!notificationGroup.eventParams.document) {
         description = t('commentCreatedNotification');
-        break;
-      default:
-        throw new Error(`Unsupported event type '${notificationGroup.eventType}'`);
+      } else {
+        description = notificationGroup.eventParams.document.roomId ? t('roomCommentCreatedNotification') : t('publicCommentCreatedNotification');
+      }
     }
 
     return (
-      <TimelineItem
-        dot={icon}
-        key={notificationGroup.notificationIds[0]}
-        label={<span className="NotificationsTab-notificationLabel">{formatDate(notificationGroup.lastCreatedOn)}</span>}
-        >
-        <div className="NotificationsTab-notification">
-          <span className="NotificationsTab-notificationDescription">{description}: </span>
-          {!!isDeprecated && <span>[{title}]</span>}
-          {!isDeprecated && <span className="NotificationsTab-notificationLink"><a href={href}>{title}</a></span>}
+      <div className="NotificationsTab-notification" key={notificationGroup.notificationIds[0]} >
+        <div className="NotificationsTab-notificationContent">
+          <div className="NotificationsTab-notificationContentIcon">{icon}</div>
+          <div className="NotificationsTab-notificationContentText">
+            <div className="NotificationsTab-notificationContentTextMain">
+              <span className="NotificationsTab-notificationDescription">{description}:</span>
+              {!!isDeprecated && <span className="NotificationsTab-notificationTitle">[{ title }]</span>}
+              {!isDeprecated && <span className="NotificationsTab-notificationLink"><a href={href}>{title}</a></span>}
+            </div>
+            <span className="NotificationsTab-notificationContentTextSecondary">{formatDate(notificationGroup.lastCreatedOn)}</span>
+          </div>
         </div>
-      </TimelineItem>
+        <Tooltip title={t('remove')}>
+          <Button
+            type="text"
+            className="NotificationsTab-notificationRemoveButton"
+            onClick={() => onRemoveNotificationGroup(notificationGroup)}
+            >
+            <CloseIcon />
+          </Button>
+        </Tooltip>
+      </div>
     );
   };
 
   const renderNotificationGroups = () => {
     return (
-      <Timeline mode="left">
+      <div className="NotificationsTab-notifications">
         {notificationGroups.map(renderNotificationGroup)}
-      </Timeline>
+      </div>
     );
   };
 
@@ -68,7 +79,15 @@ function NotificationsTab({ notificationGroups, loading }) {
     <div>
       <section>
         <div className="NotificationsTab-info">{t('info')}</div>
-        <div className="NotificationsTab-timeline">
+        <Button
+          icon={<CloseIcon />}
+          disabled={!notificationGroups.length}
+          className="NotificationsTab-removeAllNotificationsButton"
+          onClick={onRemoveNotifications}
+          >
+          {t('removeAll')}
+        </Button>
+        <div>
           {!!loading && <Spin className="u-spin" />}
           {!loading && renderNotificationGroups()}
           {!loading && !notificationGroups.length && <span>{t('noNotifications')}</span>}
@@ -79,8 +98,10 @@ function NotificationsTab({ notificationGroups, loading }) {
 }
 
 NotificationsTab.propTypes = {
+  loading: PropTypes.bool.isRequired,
   notificationGroups: PropTypes.arrayOf(notificationGroupShape).isRequired,
-  loading: PropTypes.bool.isRequired
+  onRemoveNotificationGroup: PropTypes.func.isRequired,
+  onRemoveNotifications: PropTypes.func.isRequired
 };
 
 export default NotificationsTab;

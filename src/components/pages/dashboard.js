@@ -20,9 +20,9 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { useUnreadNotificationsCount } from '../notification-context.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
+import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
 
 const TAB_KEYS = {
   activities: 'activities',
@@ -39,9 +39,10 @@ function Dashboard({ PageTemplate }) {
   const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
+  const notificationsCount = useNotificationsCount();
+  const setNotificationsCount = useSetNotificationsCount();
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const unreadNotificationsCount = useUnreadNotificationsCount();
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
@@ -152,6 +153,19 @@ function Dashboard({ PageTemplate }) {
     await fetchFavorites();
   };
 
+  const handleRemoveNotificationGroup = async notificationGroup => {
+    const response = await notificationsApiClient.removeNotifications(notificationGroup.notificationIds);
+    setNotificationGroups(response.notificationGroups);
+    setNotificationsCount(response.notificationGroups.length);
+  };
+
+  const handleRemoveNotifications = async () => {
+    const notificationIds = notificationGroups.map(group => group.notificationIds).flat();
+    const response = await notificationsApiClient.removeNotifications(notificationIds);
+    setNotificationGroups(response.notificationGroups);
+    setNotificationsCount(response.notificationGroups.length);
+  };
+
   const items = [
     {
       key: TAB_KEYS.activities,
@@ -198,15 +212,20 @@ function Dashboard({ PageTemplate }) {
     {
       key: TAB_KEYS.notifications,
       label: (
-        <Tooltip title={unreadNotificationsCount ? t('common:unreadNotifications', { count: unreadNotificationsCount }) : null}>
-          <Badge dot title="" offset={[5, 0]} count={unreadNotificationsCount}>
+        <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
+          <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
             {t('common:notifications')}
           </Badge>
         </Tooltip>
       ),
       children: (
         <div className="Tabs-tabPane">
-          <NotificationsTab notificationGroups={notificationGroups} loading={fetchingNotificationGroups} />
+          <NotificationsTab
+            loading={fetchingNotificationGroups}
+            notificationGroups={notificationGroups}
+            onRemoveNotificationGroup={handleRemoveNotificationGroup}
+            onRemoveNotifications={handleRemoveNotifications}
+            />
         </div>
       )
     }

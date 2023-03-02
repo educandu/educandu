@@ -44,8 +44,8 @@ function ActivitiesTab({ activities, loading }) {
 
     return (
       <TimelineItem
-        dot={icon}
         key={timestamp}
+        dot={<div className="ActivitiesTab-activityIcon">{icon}</div>}
         label={<span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>}
         >
         <div className="ActivitiesTab-activity">

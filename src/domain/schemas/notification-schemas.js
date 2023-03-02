@@ -11,6 +11,9 @@ export const notificationDbSchema = joi.object({
   eventParams: createEventParamsSchema('eventType').required(),
   reasons: joi.array().items(joi.string().valid(...Object.values(NOTIFICATION_REASON))).required(),
   createdOn: joi.date().required(),
-  expiresOn: joi.date().required(),
-  readOn: joi.date().allow(null).required()
+  expiresOn: joi.date().required()
+});
+
+export const deleteNotificationsBodySchema = joi.object({
+  notificationIds: joi.array().items(idOrKeySchema).required()
 });

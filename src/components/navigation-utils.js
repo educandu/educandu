@@ -10,7 +10,7 @@ import RedactionIcon from './icons/main-menu/redaction-icon.js';
 import AdministrationIcon from './icons/main-menu/administration-icon.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 
-export const getCommonNavigationMenuItems = ({ t, user, unreadNotificationsCount, helpPage }) => {
+export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, helpPage }) => {
   return [
     {
       key: 'dashboard',
@@ -32,7 +32,7 @@ export const getCommonNavigationMenuItems = ({ t, user, unreadNotificationsCount
       key: 'notifications',
       label: t('common:notifications'),
       icon: <div><BellOutlined /></div>,
-      badge: <div><Badge size="small" count={unreadNotificationsCount} title="" /></div>,
+      badge: <div><Badge size="small" count={notificationsCount} title="" /></div>,
       onClick: () => { window.location = routes.getDashboardUrl({ tab: 'notifications' }); },
       showWhen: !!user
     },

@@ -1,13 +1,34 @@
 notificationsTab:
   info:
-    en: Here you can find your notifications.
-    de: Hier findest du deine Benachrichtigungen.
+    en: Here you can find notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.
+    de: Hier findest du Benachrichtigungen über Beiträge zu deinen Lieblingsdokumenten, von deine Lieblingsnutzern, oder zu Dokumenten in Räumen, in denen du Mitglied bist.
   noNotifications:
-    en: No notifications have been recorded so far.
-    de: Bisher wurden keine Benachrichtigungen aufgezeichnet.
+    en: There are no new notifications for you.
+    de: Es gibt keine neuen Benachrichtigungen für dich.
   revisionCreatedNotification:
     en: Document has been edited
     de: Dokument wurde bearbeitet
+  publicRevisionCreatedNotification:
+    en: Public document has been edited
+    de: Öffentliches Dokument wurde bearbeitet
+  roomRevisionCreatedNotification:
+    en: Room document has been edited
+    de: Raum-Dokument wurde bearbeitet
   commentCreatedNotification:
     en: New comment on document
     de: Neuer Kommentar am Dokument
+  publicCommentCreatedNotification:
+    en: New comment on public document
+    de: Neuer Kommentar am öffentliches Dokument
+  roomCommentCreatedNotification:
+    en: New comment on room document
+    de: Neuer Kommentar am Raum-Dokument
+  documentNotAvailable:
+    en: Document no longer available
+    de: Dokument nicht mehr verfügbar
+  remove:
+    en: Remove
+    de: Entfernen
+  removeAll:
+    en: Remove all
+    de: Alle entfernen

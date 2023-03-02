@@ -9,8 +9,16 @@ class EventService {
   }
 
   async getNotificationGroups({ user }) {
-    const notifications = await this.notificationStore.getUnreadNotificationsByNotifiedUserId(user._id);
+    const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
     return groupNotifications(notifications);
+  }
+
+  async deleteUserNotificationsByIds({ user, notificationIds }) {
+    await this.notificationStore.deleteNotificationsByNotifiedUserIdAndNotificationIds(user._id, notificationIds);
+  }
+
+  async deleteUserNotifications({ user }) {
+    await this.notificationStore.deleteNotificationsByNotifiedUserId(user._id);
   }
 }
 

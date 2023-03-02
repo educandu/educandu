@@ -3,54 +3,81 @@
 
 .NotificationsTab-info {
   .m-info-card;
+  margin-bottom: 20px;
 }
 
-.NotificationsTab-timeline {
-  .ant-timeline-item-last {
-    .ant-timeline-item-tail {
-      display: none;
-    }
-  }
-
-  .ant-timeline-item-label {
-    width: @activities-item-label-width !important;
-  }
-
-  .ant-timeline-item-tail,
-  .ant-timeline-item-head {
-    inset-inline-start: @activities-item-content-inset-inline-start !important;
-  }
-
-  .ant-timeline-item-content {
-    inset-inline-start: @activities-item-content-inset-inline-start !important;
-    width: 80% !important;
-  }
-
-  @media @edu-media-phone {
-    .ant-timeline-item-label {
-      display: none;
-    }
-
-    .ant-timeline-item-tail,
-    .ant-timeline-item-head,
-    .ant-timeline-item-content {
-      inset-inline-start: 0px !important;
-    }
-  }
+.NotificationsTab-notifications {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
 }
 
 .NotificationsTab-notification {
-  .m-overflow-ellipsis;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-light;
+  border-left-width: 5px;
+  border-right-width: 5px;
 }
 
-.NotificationsTab-notificationLabel {
-  font-style: italic;
+.NotificationsTab-notificationContent {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: column;
+  padding: @edu-content-padding;
+}
+
+.NotificationsTab-notificationContentIcon {
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.NotificationsTab-notificationContentText {
+  display: grid;
+  gap: 5px;
+  grid-auto-flow: row;
+}
+
+.NotificationsTab-notificationContentTextMain {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .NotificationsTab-notificationDescription {
-  margin-right: 5px;
+  padding-right: @edu-content-padding;
+}
+
+.NotificationsTab-notificationTitle {
+  font-style: italic;
+
 }
 
 .NotificationsTab-notificationLink {
   .m-link;
+  .m-line-clamp(1);
+}
+
+.NotificationsTab-notificationContentTextSecondary {
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+}
+
+.NotificationsTab-notificationRemoveButton {
+  height: 100% !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  padding: @edu-content-padding;
+
+  &:hover {
+    background-color: @edu-background-color-light !important;
+  }
+}
+
+.NotificationsTab-removeAllNotificationsButton {
+  display: block !important;
+  margin-left: auto;
+  margin-bottom: @edu-page-content-padding;
 }

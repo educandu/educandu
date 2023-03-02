@@ -12,8 +12,8 @@ import { useScrollTopOffset } from '../ui/hooks.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import { Avatar, Badge, Dropdown, Tooltip } from 'antd';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
+import { useNotificationsCount } from './notification-context.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
-import { useUnreadNotificationsCount } from './notification-context.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
 import { BellOutlined, DownOutlined, SearchOutlined, UpOutlined } from '@ant-design/icons';
 
@@ -26,8 +26,8 @@ function NavigationDesktop() {
   const languageDataProvider = useService(LanguageDataProvider);
 
   const helpPage = settings?.helpPage?.[uiLanguage];
+  const notificationsCount = useNotificationsCount();
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
-  const unreadNotificationsCount = useUnreadNotificationsCount();
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [previousTopOffset, setPreviousTopOffset] = useState(topOffset);
@@ -93,13 +93,13 @@ function NavigationDesktop() {
 
   const renderNotificationsIndicator = () => (
     <div className="NavigationDesktop-menuNotificationsIndicator">
-      <Tooltip title={t('common:unreadNotifications', { count: unreadNotificationsCount })}>
+      <Tooltip title={t('common:notificationsTooltip', { count: notificationsCount })}>
         <a href={routes.getDashboardUrl({ tab: 'notifications' })}>
           <Badge
             dot
             title=""
             offset={[-2, 2]}
-            count={unreadNotificationsCount}
+            count={notificationsCount}
             >
             <BellOutlined />
           </Badge>
@@ -141,7 +141,7 @@ function NavigationDesktop() {
     const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
 
     const actionableMenuItems = [
-      ...getCommonNavigationMenuItems({ t, user, unreadNotificationsCount, helpPage }).filter(item => item.showWhen),
+      ...getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage }).filter(item => item.showWhen),
       {
         key: 'logout',
         label: t('common:logOut'),

@@ -5,14 +5,14 @@ import React, { useState } from 'react';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
+import { Button, Collapse, Drawer } from 'antd';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import { Button, Collapse, Drawer } from 'antd';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
+import { useNotificationsCount } from './notification-context.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
-import { useUnreadNotificationsCount } from './notification-context.js';
 import { CloseOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import LanguageDataProvider from '../localization/language-data-provider.js';
 
@@ -21,10 +21,10 @@ const { Panel } = Collapse;
 function NavigationMobile() {
   const user = useUser();
   const settings = useSettings();
+  const notificationsCount = useNotificationsCount();
   const { t, i18n } = useTranslation('navigationMobile');
   const { supportedUiLanguages, uiLanguage } = useLocale();
   const languageDataProvider = useService(LanguageDataProvider);
-  const unreadNotificationsCount = useUnreadNotificationsCount();
 
   const helpPage = settings?.helpPage?.[uiLanguage];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -97,7 +97,7 @@ function NavigationMobile() {
   };
 
   const renderDrawerItems = () => {
-    const items = getCommonNavigationMenuItems({ t, user, unreadNotificationsCount, helpPage })
+    const items = getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage })
       .filter(item => item.showWhen)
       .map(({ key, label, icon, badge, onClick }) => {
         return (

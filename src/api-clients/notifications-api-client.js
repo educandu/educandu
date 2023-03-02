@@ -15,6 +15,18 @@ class NotificationsApiClient {
       )
       .then(res => res.data);
   }
+
+  removeNotifications(notificationIds) {
+    return this.httpClient
+      .delete(
+        '/api/v1/notifications',
+        {
+          data: { notificationIds },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default NotificationsApiClient;

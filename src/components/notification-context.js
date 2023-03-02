@@ -3,20 +3,20 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const NotificationContext = React.createContext();
 
-export function useUnreadNotificationsCount() {
-  const { unreadNotificationsCount } = useContext(NotificationContext);
-  return unreadNotificationsCount;
+export function useNotificationsCount() {
+  const { notificationsCount } = useContext(NotificationContext);
+  return notificationsCount;
 }
 
-export function useSetUnreadNotificationsCount() {
-  const { setUnreadNotificationsCount } = useContext(NotificationContext);
-  return setUnreadNotificationsCount;
+export function useSetNotificationsCount() {
+  const { setNotificationsCount } = useContext(NotificationContext);
+  return setNotificationsCount;
 }
 
 export function NotificationProvider({ value, children }) {
-  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(value);
-  useEffect(() => setUnreadNotificationsCount(value), [value]);
-  const contextValue = useMemo(() => ({ unreadNotificationsCount, setUnreadNotificationsCount }), [unreadNotificationsCount]);
+  const [notificationsCount, setNotificationsCount] = useState(value);
+  useEffect(() => setNotificationsCount(value), [value]);
+  const contextValue = useMemo(() => ({ notificationsCount, setNotificationsCount }), [notificationsCount]);
   return (
     <NotificationContext.Provider value={contextValue}>
       {children}
