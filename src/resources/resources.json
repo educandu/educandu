@@ -2230,13 +2230,17 @@
       "en": "Drag an audio file into this box",
       "de": "Ziehe eine Audio-Datei in diese Box"
     },
+    "dialogFilePickerButtonLabel": {
+      "en": "Select an audio file",
+      "de": "Audio-Datei auswählen"
+    },
     "dialogLocalFilePickerButtonText": {
-      "en": "Select an audio file from my machine",
-      "de": "Audio-Datei vom lokalen Computer auswählen"
+      "en": "from my machine",
+      "de": "vom lokalen Computer"
     },
     "dialogCdnFilePickerButtonText": {
-      "en": "Select an audio file from the internal storage",
-      "de": "Audio-Datei vom internen Speicher auswählen"
+      "en": "from the internal storage",
+      "de": "vom internen Speicher"
     }
   },
   "audio": {

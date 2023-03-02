@@ -37,6 +37,21 @@
   margin: @edu-control-spacing-wide auto 0 auto;
 }
 
+.AudioWaveformGeneratorDialog {
+  width: auto !important;
+}
+
+.AudioWaveformGeneratorDialog-content {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: 1.5fr 1fr;
+
+  @media @edu-media-phone {
+    grid-template-columns: auto;
+    grid-auto-flow: rows;
+  }
+}
+
 .AudioWaveformGeneratorDialog-dropzone {
   .m-control-border-base;
   padding: 10px;
@@ -63,7 +78,7 @@
 }
 
 .AudioWaveformGeneratorDialog-controls {
-  margin-top: @edu-content-padding;
+  margin-top: 30px;
   display: grid;
   gap: @edu-control-spacing-wide;
   grid-auto-flow: column;

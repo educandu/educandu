@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button, Modal, Spin } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { Button, Form, Modal, Spin } from 'antd';
 import { cssUrl } from '../../utils/css-utils.js';
 import * as reactDropzoneNs from 'react-dropzone';
 import HttpClient from '../../api-clients/http-client.js';
@@ -17,6 +17,7 @@ import { createWaveformImageUrl, extractPeaks } from './audio-waveform-utils.js'
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 import ResourceSelectorDialog from '../../components/resource-selector/resource-selector-dialog.js';
+import MediaLibraryMetadataForm from '../../components/resource-selector/media-library/media-library-metadata-form.js';
 import { DEFAULT_WAVEFORM_BACKGROUND_COLOR, DEFAULT_WAVEFORM_BASELINE_COLOR, DEFAULT_WAVEFORM_PEN_COLOR } from './constants.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
@@ -24,14 +25,16 @@ const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useD
 const logger = new Logger(import.meta.url);
 
 function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
+  const [metadataForm] = Form.useForm();
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
-  const [imageUrl, setImageUrl] = useState(null);
   const httpClient = useSessionAwareApiClient(HttpClient);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+
+  const [imageUrl, setImageUrl] = useState(null);
   const [generatedPeaks, setGeneratedPeaks] = useState(null);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isGeneratingPeaks, setIsGeneratingPeaks] = useState(false);
-  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [waveformPenColor, setWaveformPenColor] = useState(DEFAULT_WAVEFORM_PEN_COLOR);
   const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
   const [waveformBaselineColor, setWaveformBaselineColor] = useState(DEFAULT_WAVEFORM_BASELINE_COLOR);
@@ -69,12 +72,13 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
       setGeneratedPeaks(peaks);
     } catch (error) {
       handleApiError({ error, logger, t });
+      setGeneratedPeaks(null);
     } finally {
       setIsGeneratingPeaks(false);
     }
   };
 
-  const handleOk = async () => {
+  const uploadFileToMediaLibrary = async ({ description, languages, licenses, tags }) => {
     const filename = 'waveform.png';
 
     let cdnUrl = null;
@@ -82,13 +86,15 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     try {
       const blob = await fetch(imageUrl).then(res => res.blob());
       const file = new File([blob], filename);
+
       const uploadedFile = await mediaLibraryApiClient.createMediaLibraryItem({
         file,
-        description: '',
-        languages: [],
-        licenses: ['CC0-1.0'],
-        tags: ['waveform', 'audio']
+        description,
+        languages,
+        licenses,
+        tags
       });
+
       cdnUrl = uploadedFile.portableUrl;
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -140,6 +146,14 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     setIsResourceSelectorDialogOpen(false);
   };
 
+  const handleModalOk = () => {
+    metadataForm.submit();
+  };
+
+  const handleMetadataFormFinish = async metadata => {
+    await uploadFileToMediaLibrary(metadata);
+  };
+
   const segmentsDropzoneClasses = classNames({
     'AudioWaveformGeneratorDialog-dropzone': true,
     'is-dropping': dropzone.isDragAccept && !isGeneratingPeaks,
@@ -150,49 +164,52 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     <Fragment>
       <Modal
         centered
-        width="80%"
         open={isOpen}
-        onOk={handleOk}
+        onOk={handleModalOk}
         onCancel={onCancel}
         title={t('dialogTitle')}
         okText={t('common:apply')}
         className="AudioWaveformGeneratorDialog"
         okButtonProps={{ disabled: !imageUrl || isGeneratingPeaks, loading: isUploadingFile }}
         >
-        <div className="u-modal-body">
-          <Spin spinning={isGeneratingPeaks}>
-            <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
-              <input {...dropzone.getInputProps()} hidden />
-              <div
-                className="AudioWaveformGeneratorDialog-previewArea"
-                style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
-                >
-                {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+        <div className="AudioWaveformGeneratorDialog-content u-modal-body">
+          <div>
+            <Spin spinning={isGeneratingPeaks}>
+              <div {...dropzone.getRootProps({ className: segmentsDropzoneClasses })}>
+                <input {...dropzone.getInputProps()} hidden />
+                <div
+                  className="AudioWaveformGeneratorDialog-previewArea"
+                  style={{ backgroundImage: imageUrl ? cssUrl(imageUrl) : 'none' }}
+                  >
+                  {!imageUrl && !isGeneratingPeaks && t('dialogDropzoneInfo')}
+                </div>
+              </div>
+            </Spin>
+            <div className="AudioWaveformGeneratorDialog-controls">
+              <div>
+                <span>{t('penColor')}: </span>
+                <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
+              </div>
+              <div>
+                <span>{t('baselineColor')}: </span>
+                <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
+              </div>
+              <div>
+                <span>{t('backgroundColor')}: </span>
+                <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
               </div>
             </div>
-          </Spin>
-          <div className="AudioWaveformGeneratorDialog-controls">
-            <div>
-              <span>{t('penColor')}: </span>
-              <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
-            </div>
-            <div>
-              <span>{t('baselineColor')}: </span>
-              <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
-            </div>
-            <div>
-              <span>{t('backgroundColor')}: </span>
-              <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
+            <div className="AudioWaveformGeneratorDialog-controls">
+              <span>{t('dialogFilePickerButtonLabel')}</span>
+              <Button onClick={handleOpenLocalFilePickerClick}>
+                {t('dialogLocalFilePickerButtonText')}
+              </Button>
+              <Button onClick={handleOpenCdnFilePickerClick}>
+                {t('dialogCdnFilePickerButtonText')}
+              </Button>
             </div>
           </div>
-          <div className="AudioWaveformGeneratorDialog-controls">
-            <Button onClick={handleOpenLocalFilePickerClick}>
-              {t('dialogLocalFilePickerButtonText')}
-            </Button>
-            <Button onClick={handleOpenCdnFilePickerClick}>
-              {t('dialogCdnFilePickerButtonText')}
-            </Button>
-          </div>
+          <MediaLibraryMetadataForm form={metadataForm} onFinish={handleMetadataFormFinish} />
         </div>
       </Modal>
       <ResourceSelectorDialog
