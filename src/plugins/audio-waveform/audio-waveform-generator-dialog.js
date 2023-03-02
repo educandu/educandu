@@ -200,7 +200,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
 
   const renderGeneratingPeaks = () => {
     return (
-      <div className={classNames('AudioWaveformGeneratorDialog-spin')}>
+      <div className="AudioWaveformGeneratorDialog-generatingPeaksSpinner">
         <Spin size="large" />
       </div>
     );
