@@ -380,31 +380,13 @@ describe('room-service', () => {
       });
     });
 
-    describe('when the provided document ids is a reordered list of the ids of the non draft documents', () => {
-      beforeEach(async () => {
-        result = await sut.updateRoomDocumentsOrder(roomId, [document2._id, document1._id]);
-      });
-
-      it('should update the room documents order (having draft documents at the end)', () => {
-        expect(result.documents).toEqual([document2._id, document1._id, document3._id]);
-      });
-
-      it('should take a lock on the room', () => {
-        assert.calledWith(lockStore.takeRoomLock, roomId);
-      });
-
-      it('should release the lock on the room', () => {
-        assert.calledWith(lockStore.releaseLock, lock);
-      });
-    });
-
     describe('when the provided document ids is a reordered list of the ids of the draft and non draft documents', () => {
       beforeEach(async () => {
         result = await sut.updateRoomDocumentsOrder(roomId, [document3._id, document2._id, document1._id]);
       });
 
-      it('should update the room documents order (having draft documents at the end)', () => {
-        expect(result.documents).toEqual([document2._id, document1._id, document3._id]);
+      it('should update the room documents order', () => {
+        expect(result.documents).toEqual([document3._id, document2._id, document1._id]);
       });
 
       it('should take a lock on the room', () => {

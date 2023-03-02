@@ -718,7 +718,6 @@ describe('room-controller', () => {
       let documents;
       let viewingUser;
       let mappedInvitations;
-      let mappedNonDraftDocuments;
 
       beforeEach(async () => {
         viewingUser = { _id: 'member' };
@@ -731,7 +730,7 @@ describe('room-controller', () => {
           { _id: room.documents[0], roomContext: { draft: false } },
           { _id: room.documents[1], roomContext: { draft: true } }
         ];
-        mappedNonDraftDocuments = [cloneDeep(documents[0])];
+        mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
@@ -739,7 +738,7 @@ describe('room-controller', () => {
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
-        clientDataMappingService.mapDocsOrRevisions.returns(mappedNonDraftDocuments);
+        clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
         await sut.handleGetRoomPage(request, {});
@@ -761,8 +760,8 @@ describe('room-controller', () => {
         assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
       });
 
-      it('should call mapDocsOrRevisions with the non-draft documents returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [documents[0]]);
+      it('should call mapDocsOrRevisions with the documents returned by the service', () => {
+        assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents);
       });
 
       it('should call pageRenderer with the right parameters', () => {
@@ -771,7 +770,7 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedNonDraftDocuments, invitations: mappedInvitations }
+          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
         );
       });
     });
