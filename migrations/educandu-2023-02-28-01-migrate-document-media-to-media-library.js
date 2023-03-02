@@ -459,19 +459,21 @@ export default class Educandu_2023_02_28_01_migrate_document_media_to_media_libr
   async processSettingsCollection() {
     const homepagePresentation = await this.db.collection('settings').findOne({ _id: 'homepagePresentation' });
 
-    if (homepagePresentation) {
-      if (homepagePresentation.en?.videoSourceUrl) {
-        homepagePresentation.en.videoSourceUrl = redactUrl(homepagePresentation.en.videoSourceUrl);
-      }
-      if (homepagePresentation.en?.posterImageSourceUrl) {
-        homepagePresentation.en.posterImageSourceUrl = redactUrl(homepagePresentation.en.posterImageSourceUrl);
-      }
-      if (homepagePresentation.de?.videoSourceUrl) {
-        homepagePresentation.de.videoSourceUrl = redactUrl(homepagePresentation.de.videoSourceUrl);
-      }
-      if (homepagePresentation.de?.posterImageSourceUrl) {
-        homepagePresentation.de.posterImageSourceUrl = redactUrl(homepagePresentation.de.posterImageSourceUrl);
-      }
+    if (!homepagePresentation) {
+      return;
+    }
+
+    if (homepagePresentation.en?.videoSourceUrl) {
+      homepagePresentation.en.videoSourceUrl = redactUrl(homepagePresentation.en.videoSourceUrl);
+    }
+    if (homepagePresentation.en?.posterImageSourceUrl) {
+      homepagePresentation.en.posterImageSourceUrl = redactUrl(homepagePresentation.en.posterImageSourceUrl);
+    }
+    if (homepagePresentation.de?.videoSourceUrl) {
+      homepagePresentation.de.videoSourceUrl = redactUrl(homepagePresentation.de.videoSourceUrl);
+    }
+    if (homepagePresentation.de?.posterImageSourceUrl) {
+      homepagePresentation.de.posterImageSourceUrl = redactUrl(homepagePresentation.de.posterImageSourceUrl);
     }
 
     await this.db.collection('settings').replaceOne({ _id: 'homepagePresentation' }, homepagePresentation);
