@@ -2,6 +2,3 @@ wikimediaSearchScreen:
   searchInvitationHeader:
     en: Search in the Wikimedia database
     de: Suche in der Wikimedia-Datenbank
-  initialFilePreviewHeader:
-    en: Currently selected file
-    de: Momentan ausgewählte Datei
