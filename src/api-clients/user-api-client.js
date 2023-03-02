@@ -132,6 +132,16 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  saveUserNotificationSettings({ emailNotificationFrequency }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/notification-settings',
+        { emailNotificationFrequency },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   saveUserAccountLockedOnState({ userId, accountLockedOn }) {
     return this.httpClient
       .post(

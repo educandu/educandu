@@ -117,6 +117,15 @@ class UserService {
     return updatedUser;
   }
 
+  async updateUserNotificationSettings({ userId, emailNotificationFrequency }) {
+    logger.info(`Updating notification settings for user with id ${userId}`);
+    const user = await this.userStore.getUserById(userId);
+    const updatedUser = { ...user, emailNotificationFrequency };
+
+    await this.userStore.saveUser(updatedUser);
+    return updatedUser;
+  }
+
   async updateUserRoles(userId, newRoles) {
     const finalNewRoles = ensureIsUnique([...DEFAULT_ROLES, ...newRoles]);
     logger.info(`Updating roles for user with id ${userId}: ${finalNewRoles}`);

@@ -38,7 +38,8 @@ import {
   favoriteBodySchema,
   loginBodySchema,
   externalAccountIdParamsSchema,
-  getUsersBySearchQuerySchema
+  getUsersBySearchQuerySchema,
+  postUserNotificationSettingsBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -302,6 +303,18 @@ class UserController {
     const userId = req.user._id;
     const { displayName, organization, introduction } = req.body;
     const updatedUser = await this.userService.updateUserProfile({ userId, displayName, organization, introduction });
+
+    if (!updatedUser) {
+      throw new NotFound();
+    }
+
+    res.status(201).send({ user: updatedUser });
+  }
+
+  async handlePostUserNotificationSettings(req, res) {
+    const userId = req.user._id;
+    const { emailNotificationFrequency } = req.body;
+    const updatedUser = await this.userService.updateUserNotificationSettings({ userId, emailNotificationFrequency });
 
     if (!updatedUser) {
       throw new NotFound();
@@ -676,6 +689,14 @@ class UserController {
       jsonParser,
       validateBody(postUserProfileBodySchema),
       (req, res) => this.handlePostUserProfile(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/notification-settings',
+      needsAuthentication(),
+      jsonParser,
+      validateBody(postUserNotificationSettingsBodySchema),
+      (req, res) => this.handlePostUserNotificationSettings(req, res)
     );
 
     router.post(

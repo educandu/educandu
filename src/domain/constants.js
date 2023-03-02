@@ -78,10 +78,10 @@ export const USER_ACTIVITY_TYPE = {
 };
 
 export const EMAIL_NOTIFICATION_FREQUENCY = {
-  never: 'never',
   daily: 'daily',
   weekly: 'weekly',
-  monthly: 'monthly'
+  monthly: 'monthly',
+  never: 'never'
 };
 
 export const INVALID_ROOM_INVITATION_REASON = {

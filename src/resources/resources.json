@@ -634,6 +634,30 @@
       "en": "There was an error updating your account.",
       "de": "Fehler beim Aktualisieren deines Kontos."
     },
+    "notificationSettingsHeadline": {
+      "en": "Email notifications",
+      "de": "E-Mail-Benachrichtigungen"
+    },
+    "emailNotificationFrequency": {
+      "en": "Please specify in which intervals you want us to send you an email reminder in case you have received new notifications.",
+      "de": "Bitte gib an, in welchen Abständen du von uns eine Erinnerung per E-Mail bekommen möchtest, wenn du neue Benachrichtigungen erhalten hast."
+    },
+    "emailNotificationFrequency_daily": {
+      "en": "daily",
+      "de": "täglich"
+    },
+    "emailNotificationFrequency_weekly": {
+      "en": "weekly",
+      "de": "wöchentlich"
+    },
+    "emailNotificationFrequency_monthly": {
+      "en": "monthly",
+      "de": "monatlich"
+    },
+    "emailNotificationFrequency_never": {
+      "en": "never",
+      "de": "niemals"
+    },
     "closeAccountDetails": {
       "en": "All your public contributions (documents and files uploaded to the public storage) will remain on the website and your name will still be displayed as author or contributor. All other data (personal information, rooms you own and files uploaded to your private storage) will be removed. You will no longer be able to log into the website.",
       "de": "Alle deine öffentlichen Beiträge (Dokumente und Dateien, die du in den öffentlichen Speicher hochgeladen hast), bleiben auf der Website. Dein Anzeigename wird weiterhin als Autor oder Bearbeiter angezeigt. Alle anderen Daten (persönliche Informationen, Räume, die du besitzt, und Dateien, die du in den privaten Speicher hochgeladen hast), werden gelöscht. Du kannst dich dann nicht mehr auf der Website anmelden."

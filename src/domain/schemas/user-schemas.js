@@ -39,6 +39,10 @@ export const postUserProfileBodySchema = joi.object({
   introduction: joi.string().allow('')
 });
 
+export const postUserNotificationSettingsBodySchema = joi.object({
+  emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required()
+});
+
 export const postUserPasswordResetRequestBodySchema = joi.object({
   email: emailSchema.required(),
   password: passwordSchema.required()

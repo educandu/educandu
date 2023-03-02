@@ -5,8 +5,8 @@ import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
-import { BATCH_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
@@ -176,7 +176,8 @@ describe('client-data-mapping-service', () => {
             id: '4589ct29nr76n4x9214',
             setOn: favoriteSetOnDate
           }
-        ]
+        ],
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       };
       result = sut.mapWebsiteUser(dbUser);
     });
@@ -199,7 +200,8 @@ describe('client-data-mapping-service', () => {
             id: '4589ct29nr76n4x9214',
             setOn: favoriteSetOnDate.toISOString()
           }
-        ]
+        ],
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       });
     });
   });
