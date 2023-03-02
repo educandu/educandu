@@ -221,15 +221,15 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
   const renderColorPickers = () => {
     return (
       <div className="AudioWaveformGeneratorDialog-colorPickers">
-        <div>
+        <div className="AudioWaveformGeneratorDialog-colorPicker">
           <span>{t('penColor')}: </span>
           <ColorPicker color={waveformPenColor} onChange={setWaveformPenColor} inline />
         </div>
-        <div>
+        <div className="AudioWaveformGeneratorDialog-colorPicker">
           <span>{t('baselineColor')}: </span>
           <ColorPicker color={waveformBaselineColor} onChange={setWaveformBaselineColor} inline />
         </div>
-        <div>
+        <div className="AudioWaveformGeneratorDialog-colorPicker">
           <span>{t('backgroundColor')}: </span>
           <ColorPicker color={waveformBackgroundColor} onChange={setWaveformBackgroundColor} inline />
         </div>

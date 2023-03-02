@@ -110,11 +110,17 @@
   gap: @edu-control-spacing-wide;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
 
   @media @edu-media-phone {
     grid-auto-flow: row;
+    place-content: start;
   }
+}
+
+.AudioWaveformGeneratorDialog-colorPicker {
+  display: grid;
+  gap: 5px;
+  place-items: center;
+  grid-auto-flow: column;
+  place-content: space-between;
 }
