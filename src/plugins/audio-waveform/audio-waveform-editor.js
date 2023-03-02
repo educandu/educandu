@@ -13,25 +13,19 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
-import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_WITHOUT_LABEL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-
-const WAVEFORM_SOURCE_TYPE = {
-  image: 'image',
-  audio: 'audio'
-};
 
 function AudioWaveformEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
   const formatPercentage = usePercentageFormat();
 
-  const [waveformSourceType, setWaveformSourceType] = useState(WAVEFORM_SOURCE_TYPE.image);
   const [isWaveformGeneratorDialogOpen, setIsWaveformGeneratorDialogOpen] = useState(false);
 
   const { sourceUrl, width, displayMode, interactivityConfig } = content;
@@ -40,11 +34,6 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     onContentChanged(newContent);
-  };
-
-  const handleWaveformSourceTypeChange = event => {
-    const { value } = event.target;
-    setWaveformSourceType(value);
   };
 
   const handleSourceUrlChange = value => {
@@ -57,7 +46,6 @@ function AudioWaveformEditor({ content, onContentChanged }) {
 
   const handleWaveformGeneratorDialogSelect = selectedUrl => {
     setIsWaveformGeneratorDialogOpen(false);
-    setWaveformSourceType(WAVEFORM_SOURCE_TYPE.image);
     changeContent({ sourceUrl: getPortableUrl({ url: selectedUrl, cdnRootUrl: clientConfig.cdnRootUrl }) });
   };
 
@@ -95,26 +83,15 @@ function AudioWaveformEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal" labelAlign="left">
 
-        <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('common:waveformSourceTypeInfo')}>{t('common:source')}</Info>}>
-          <RadioGroup value={waveformSourceType} onChange={handleWaveformSourceTypeChange}>
-            <RadioButton value={WAVEFORM_SOURCE_TYPE.image}>{t('waveformSourceType_image')}</RadioButton>
-            <RadioButton value={WAVEFORM_SOURCE_TYPE.audio}>{t('waveformSourceType_audio')}</RadioButton>
-          </RadioGroup>
+        <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('createImageLabelInfo')}>{t('common:create')}</Info>}>
+          <Button type="primary" onClick={handleGenerateWaveform}>
+            {t('createImageButton')}
+          </Button>
         </FormItem>
 
-        {waveformSourceType === WAVEFORM_SOURCE_TYPE.image && (
-          <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
-            <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
-          </FormItem>
-        )}
-
-        {waveformSourceType === WAVEFORM_SOURCE_TYPE.audio && (
-          <FormItem {...FORM_ITEM_LAYOUT_WITHOUT_LABEL}>
-            <Button type="primary" onClick={handleGenerateWaveform}>
-              {t('generateWaveformImage')}
-            </Button>
-          </FormItem>
-        )}
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
+        </FormItem>
 
         <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('displayModeInfo')}>{t('common:displayMode')}</Info>}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>

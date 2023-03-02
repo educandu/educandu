@@ -244,7 +244,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
         open={isOpen}
         onOk={handleModalOk}
         onCancel={onCancel}
-        title={t('generateWaveformImage')}
+        title={t('dialogTitle')}
         okText={t('dialogOkText')}
         className="AudioWaveformGeneratorDialog"
         okButtonProps={{ disabled: !imageUrl || isGeneratingPeaks, loading: isUploadingFile }}

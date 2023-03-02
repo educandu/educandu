@@ -2166,25 +2166,17 @@
       "en": "Audio waveform",
       "de": "Audio-Wellenform"
     },
-    "waveformSourceTypeInfo": {
-      "en": "Use an exiting waveform image or generate and upload one from an audio file",
-      "de": "Use an exiting waveform image or generate and upload one from an audio file"
+    "createImageLabelInfo": {
+      "en": "Use an audio file to generate and upload the waveform image",
+      "de": "Use an audio file to generate and upload the waveform image"
     },
-    "waveformSourceType_image": {
-      "en": "ready-made image",
-      "de": "Vorgefertigtes Bild"
-    },
-    "waveformSourceType_audio": {
-      "en": "audio file",
-      "de": "Audio-Datei"
+    "createImageButton": {
+      "en": "Generate image from audio file",
+      "de": "Bild aus Audio-Datei erstellen"
     },
     "imageUrl": {
       "en": "Image URL",
       "de": "Bild-URL"
-    },
-    "generateWaveformImage": {
-      "en": "Generate waveform image",
-      "de": "Wellenform-Bild erstellen"
     },
     "displayModeInfo": {
       "en": "In interactive mode, users are be able to hand-draw a waveform, and then compare with the uploaded image.",
@@ -2226,9 +2218,13 @@
       "en": "Hide resolution",
       "de": "Auflösung ausblenden"
     },
+    "dialogTitle": {
+      "en": "Generate waveform image",
+      "de": "Wellenform-Bild erstellen"
+    },
     "dialogSearchFileInvitationHeader": {
       "en": "Search for audio file in all libraries",
-      "de": "Audio-Datei in alle Bibliotheken suchen"
+      "de": "Audio-Datei in allen Bibliotheken suchen"
     },
     "dialogDropFileInvitationHeader": {
       "en": "Drag an audio file here",
@@ -2239,8 +2235,8 @@
       "de": "Momentan generierte Wellenform"
     },
     "dialogRegenerateButton": {
-      "en": "Regenerate",
-      "de": "Erneut generieren"
+      "en": "Use a different audio file",
+      "de": "Andere Audio-Datei verwenden"
     },
     "dialogOkText": {
       "en": "Generate and select",
