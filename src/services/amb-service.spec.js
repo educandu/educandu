@@ -10,7 +10,7 @@ import {
   destroyTestEnvironment,
   pruneTestEnvironment,
   setupTestEnvironment,
-  setupTestUser,
+  createTestUser,
   updateTestDocument
 } from '../test-helper.js';
 
@@ -55,9 +55,9 @@ describe('amb-service', () => {
     let document2;
 
     beforeEach(async () => {
-      adminUser = await setupTestUser(container, { email: 'admin@educandu.dev', displayName: 'Admin', roles: Object.values(ROLE) });
-      creatorUser = await setupTestUser(container, { email: 'creator@educandu.dev', displayName: 'Document Creator', roles: [ROLE.user] });
-      contributorUser = await setupTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor', roles: [ROLE.user] });
+      adminUser = await createTestUser(container, { email: 'admin@educandu.dev', displayName: 'Admin', roles: Object.values(ROLE) });
+      creatorUser = await createTestUser(container, { email: 'creator@educandu.dev', displayName: 'Document Creator', roles: [ROLE.user] });
+      contributorUser = await createTestUser(container, { email: 'contributor@educandu.dev', displayName: 'Document Contributor', roles: [ROLE.user] });
     });
 
     describe('when there are no unarchived public documents', () => {

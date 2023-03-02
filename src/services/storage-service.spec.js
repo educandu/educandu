@@ -12,7 +12,7 @@ import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('storage-service', () => {
   const sandbox = createSandbox();
@@ -75,7 +75,7 @@ describe('storage-service', () => {
     storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10 * 1000 * 1000 };
     await db.storagePlans.insertOne(storagePlan);
 
-    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
+    myUser = await createTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
   });
 
   afterEach(async () => {
@@ -568,11 +568,11 @@ describe('storage-service', () => {
 
       describe('and the user is room collaborator and the room owner does not have a storage plan', () => {
         beforeEach(async () => {
-          const collaboratorUser = await setupTestUser(container, {
+          const collaboratorUser = await createTestUser(container, {
             email: 'collaborator@test.com',
             displayName: 'collaborator'
           });
-          const ownerUser = await setupTestUser(container, {
+          const ownerUser = await createTestUser(container, {
             email: 'owner@test.com',
             displayName: 'Owner'
           });
@@ -597,11 +597,11 @@ describe('storage-service', () => {
         let ownerUser;
 
         beforeEach(async () => {
-          const collaboratorUser = await setupTestUser(container, {
+          const collaboratorUser = await createTestUser(container, {
             email: 'collaborator@test.com',
             displayName: 'Collaborator'
           });
-          ownerUser = await setupTestUser(container, {
+          ownerUser = await createTestUser(container, {
             email: 'owner@test.com',
             displayName: 'Owner',
             storage: { planId: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }

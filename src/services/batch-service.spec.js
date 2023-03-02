@@ -5,7 +5,7 @@ import BatchService from './batch-service.js';
 import TaskStore from '../stores/task-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 const { BadRequest } = httpErrors;
 
@@ -26,7 +26,7 @@ describe('batch-service', () => {
     sut = container.get(BatchService);
     db = container.get(Database);
 
-    user = await setupTestUser(container);
+    user = await createTestUser(container);
   });
 
   afterAll(async () => {

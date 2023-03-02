@@ -1,7 +1,7 @@
 import UserStore from './user-store.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('user-store', () => {
   let sut;
@@ -15,7 +15,7 @@ describe('user-store', () => {
   });
 
   beforeEach(async () => {
-    user = await setupTestUser(container, { email: 'mark@markson.com', displayName: 'Mark' });
+    user = await createTestUser(container, { email: 'mark@markson.com', displayName: 'Mark' });
   });
 
   afterEach(async () => {
@@ -58,7 +58,7 @@ describe('user-store', () => {
 
     describe('when account is closed', () => {
       beforeEach(async () => {
-        const currentUser = await setupTestUser(container, { email: 'jim@jameson.com', displayName: 'Jim', accountClosedOn: new Date() });
+        const currentUser = await createTestUser(container, { email: 'jim@jameson.com', displayName: 'Jim', accountClosedOn: new Date() });
         result = await sut.findActiveUserByEmail(currentUser.email);
       });
       it('should return null', () => {

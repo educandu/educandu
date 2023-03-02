@@ -77,6 +77,13 @@ export const USER_ACTIVITY_TYPE = {
   userMarkedFavorite: 'user-marked-favorite'
 };
 
+export const EMAIL_NOTIFICATION_FREQUENCY = {
+  never: 'never',
+  daily: 'daily',
+  weekly: 'weekly',
+  monthly: 'monthly'
+};
+
 export const INVALID_ROOM_INVITATION_REASON = {
   token: 'token',
   room: 'room',
@@ -205,7 +212,7 @@ export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 export const ANTI_BRUTE_FORCE_MAX_REQUESTS = 60;
 export const ANTI_BRUTE_FORCE_EXPIRES_IN_MS = 60 * 60 * 1000;
 
-export const NOTIFICATION_EXPIRATION_IN_MONTHS = 6;
+export const NOTIFICATION_EXPIRATION_IN_MONTHS = 2;
 
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';

@@ -1,7 +1,7 @@
 import RoomStore from './room-store.js';
 import uniqueId from '../utils/unique-id.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestRoom } from '../test-helper.js';
 
 describe('room-store', () => {
   let sut;
@@ -20,9 +20,9 @@ describe('room-store', () => {
   });
 
   beforeEach(async () => {
-    myUser = await setupTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
-    otherUser = await setupTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
-    onlyJoiningUser = await setupTestUser(container, { email: 'dagobert@ducktown.com', displayName: 'Dagobert' });
+    myUser = await createTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
+    otherUser = await createTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
+    onlyJoiningUser = await createTestUser(container, { email: 'dagobert@ducktown.com', displayName: 'Dagobert' });
   });
 
   afterEach(async () => {
