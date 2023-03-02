@@ -36,13 +36,15 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const newDisableVideo = shouldDisableVideo(newContent.tracks[0].sourceUrl);
+    const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.sourceUrl);
+    const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.sourceUrl);
 
-    const reEnableVideo = !content.showVideo;
-    newContent.showVideo = newDisableVideo ? false : reEnableVideo || newContent.showVideo;
-    newContent.posterImage = newDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+    const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
+    const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
+    newContent.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.showVideo;
+    newContent.posterImage = autoDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
 
-    setDisableVideo(newDisableVideo);
+    setDisableVideo(autoDisableVideo);
     onContentChanged(newContent);
   };
 
