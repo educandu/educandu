@@ -96,6 +96,9 @@ export default function Room({ PageTemplate, initialState }) {
     return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
+  const showDraftDocuments = useMemo(() => viewMode === VIEW_MODE.owner, [viewMode]);
+  const visibleDocumentsCount = useMemo(() => documents.filter(doc => showDraftDocuments || !doc.roomContext.draft).length, [showDraftDocuments, documents]);
+
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
@@ -215,17 +218,41 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
-  const handleDocumentMoveUp = async index => {
-    const reorderedDocumentIds = swapItemsAt(room.documents, index, index - 1);
+  const handleDocumentMoveUp = async movedDocIndex => {
+    const idsOfVisibleDocumentsAbove = room.documents
+      .filter((docId, docIndex) => {
+        if (docIndex >= movedDocIndex) {
+          return false;
+        }
+
+        const documentIsNotDraft = !documents.find(d => d._id === docId).roomContext.draft;
+        return showDraftDocuments || documentIsNotDraft;
+      });
+
+    const indexOfClosestVisibleDocumentAbove = room.documents.indexOf(idsOfVisibleDocumentsAbove.slice(-1)[0]);
+    const reorderedDocumentIds = swapItemsAt(room.documents, movedDocIndex, indexOfClosestVisibleDocumentAbove);
+
     const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
+
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
     message.success(t('common:changesSavedSuccessfully'));
   };
 
-  const handleDocumentMoveDown = async index => {
-    const reorderedDocumentIds = swapItemsAt(room.documents, index, index + 1);
+  const handleDocumentMoveDown = async movedDocIndex => {
+    const idsOfVisibleDocumentsBelow = room.documents.filter((docId, docIndex) => {
+      if (docIndex <= movedDocIndex) {
+        return false;
+      }
+
+      const documentIsNotDraft = !documents.find(d => d._id === docId).roomContext.draft;
+      return showDraftDocuments || documentIsNotDraft;
+    });
+    const indexOfClosestVisibleDocumentBelow = room.documents.indexOf(idsOfVisibleDocumentsBelow[0]);
+    const reorderedDocumentIds = swapItemsAt(room.documents, movedDocIndex, indexOfClosestVisibleDocumentBelow);
+
     const response = await roomApiClient.updateRoomDocumentsOrder({ roomId: room._id, documentIds: reorderedDocumentIds });
+
     setRoom(response.room);
     setDocuments(getSortedDocuments(response.room, documents));
     message.success(t('common:changesSavedSuccessfully'));
@@ -277,19 +304,22 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderDocumentActionButtons = ({ doc, index, docsCount }) => {
+  const renderDocumentActionButtons = ({ doc, index, docs }) => {
+    const firstVisibleDocument = showDraftDocuments ? docs[0] : docs.filter(d => !d.roomContext.draft)[0];
+    const lastVisibleDocument = showDraftDocuments ? docs.slice(-1)[0] : docs.filter(d => !d.roomContext.draft).slice(-1)[0];
+
     const actionButtons = [
       {
         key: 'moveUp',
         title: t('common:moveUp'),
         icon: <MoveUpIcon />,
-        disabled: doc.roomContext.draft || index === 0
+        disabled: doc._id === firstVisibleDocument?._id
       },
       {
         key: 'moveDown',
         title: t('common:moveDown'),
         icon: <MoveDownIcon />,
-        disabled: doc.roomContext.draft || index === docsCount - 1
+        disabled: doc._id === lastVisibleDocument?._id
       },
       {
         key: 'clone',
@@ -325,9 +355,12 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderDocumentWithActionButtons = ({ doc, actionButtons, dragHandleProps, isDragged, isOtherDragged }) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+    const isHidden = !showDraftDocuments && !!doc.roomContext.draft;
+
     const classes = classNames(
       'RoomPage-document',
       { 'is-dragged': isDragged },
+      { 'is-hidden': isHidden },
       { 'is-other-dragged': isOtherDragged },
       { 'RoomPage-document--withActionButtons': !!actionButtons }
     );
@@ -346,13 +379,16 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderDocumentsAsReadOnly = () => {
-    if (!documents.length) {
+    if (!visibleDocumentsCount) {
       return null;
     }
 
+    const sortedVisibleDocumentIds = room.documents.filter(docId => documents.find(d => d._id === docId)?.roomContext.draft === false);
+    const sortedVisibleDocuments = sortedVisibleDocumentIds.map(docId => documents.find(d => d._id === docId));
+
     return (
       <div className="RoomPage-documents">
-        {documents.map(doc => {
+        {sortedVisibleDocuments.map(doc => {
           const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
 
           return (
@@ -367,18 +403,11 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderNonDraftDocumentsAsDraggable = () => {
-    const nonDraftDocuments = documents.filter(doc => !doc.roomContext.draft);
-    const docsCount = nonDraftDocuments.length;
-
-    if (!docsCount) {
-      return null;
-    }
-
-    const draggableItems = nonDraftDocuments.map((doc, index) => ({
+  const renderDocumentsAsDraggable = () => {
+    const draggableItems = documents.map((doc, index) => ({
       key: doc._id,
       render: ({ dragHandleProps, isDragged, isOtherDragged }) => {
-        const actionButtons = renderDocumentActionButtons({ doc, index, docsCount });
+        const actionButtons = renderDocumentActionButtons({ doc, index, docs: documents });
         return renderDocumentWithActionButtons({ doc, actionButtons, dragHandleProps, isDragged, isOtherDragged });
       }
     }));
@@ -389,24 +418,6 @@ export default function Room({ PageTemplate, initialState }) {
         items={draggableItems}
         onItemMove={handleDocumentMove}
         />
-    );
-  };
-
-  const renderDraftDocuments = () => {
-    const draftDocuments = documents.filter(doc => doc.roomContext.draft);
-    const docsCount = draftDocuments.length;
-
-    if (!docsCount) {
-      return null;
-    }
-
-    return (
-      <div className="RoomPage-documents">
-        {draftDocuments.map((doc, index) => {
-          const actionButtons = renderDocumentActionButtons({ doc, index, docsCount });
-          return renderDocumentWithActionButtons({ doc, actionButtons });
-        })}
-      </div>
     );
   };
 
@@ -485,9 +496,9 @@ export default function Room({ PageTemplate, initialState }) {
           <div className="RoomPage-documents RoomPage-documents--roomMemberView">
             {renderRoomDescription()}
             {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
-            {!documents.length && t('documentsPlaceholder')}
+            {!visibleDocumentsCount && t('documentsPlaceholder')}
             {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
-            {viewMode === VIEW_MODE.collaboratingMember && renderNonDraftDocumentsAsDraggable()}
+            {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
           </div>
         )}
 
@@ -500,14 +511,13 @@ export default function Room({ PageTemplate, initialState }) {
             items={[
               {
                 key: '1',
-                label: t('documentsTabTitle', { count: documents.length }),
+                label: t('documentsTabTitle', { count: visibleDocumentsCount }),
                 children: (
                   <div className="Tabs-tabPane">
                     {renderRoomDescription()}
                     {renderCreateDocumentButton()}
-                    {!documents.length && t('documentsPlaceholder')}
-                    {renderNonDraftDocumentsAsDraggable()}
-                    {renderDraftDocuments()}
+                    {!visibleDocumentsCount && t('documentsPlaceholder')}
+                    {renderDocumentsAsDraggable()}
                   </div>
                 )
               },

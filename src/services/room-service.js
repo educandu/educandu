@@ -127,27 +127,13 @@ export default class RoomService {
     try {
       lock = await this.lockStore.takeRoomLock(roomId);
       const room = await this.roomStore.getRoomById(roomId);
-      const roomDocuments = await this.documentStore.getDocumentsExtendedMetadataByIds(room.documents);
-      const draftDocumentIds = roomDocuments.filter(doc => doc.roomContext.draft).map(doc => doc._id);
-      const nonDraftDocumentIds = roomDocuments.filter(doc => !doc.roomContext.draft).map(doc => doc._id);
-
-      const allNonDraftDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, nonDraftDocumentIds).length === 0;
       const allDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, room.documents).length === 0;
 
-      if (!allNonDraftDocumentIdsCorrectlyProvided && !allDocumentIdsCorrectlyProvided) {
+      if (!allDocumentIdsCorrectlyProvided) {
         throw new BadRequest('Incorrect list of document ids was provided.');
       }
 
-      const reorderedNonDraftDocumentIds = documentIds.map(docId => {
-        const document = roomDocuments.find(doc => doc._id === docId);
-        return document.roomContext.draft ? null : document._id;
-      }).filter(doc => doc);
-      const reorderedDocumentIds = [
-        ...reorderedNonDraftDocumentIds,
-        ...draftDocumentIds
-      ];
-
-      await this.roomStore.updateRoomDocuments(roomId, reorderedDocumentIds);
+      await this.roomStore.updateRoomDocuments(roomId, documentIds);
     } finally {
       await this.lockStore.releaseLock(lock);
     }
