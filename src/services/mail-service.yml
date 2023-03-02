@@ -175,3 +175,40 @@ mailService:
       Hallo
 
       Der Benutzer **{ownerName}** hat deine Einladung zur Mitgliedschaft in dem Raum **{roomName}** zurückgezogen.
+  userNotificationEmail.subject:
+    en: You have new notifications on {appName}
+    de: Du hast neue Benachrichtigungen auf {appName}
+  userNotificationEmail.text:
+    en: |
+      Hello {userDisplayName}!
+
+      You have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on {appName}.
+      Open {notificationsLink} in your browser in order to read them.
+
+      In case you want to change your settings for this reminder email or if you do not want to get any further reminder emails,
+      you can open the address {settingsLink} in your browser in order to change to your personal notification settings.
+    de: |
+      Hallo {userDisplayName}!
+
+      Du hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf {appName}.
+      Öffne {notificationsLink} in deinem Browser, um sie abzurufen.
+
+      Falls du deine Einstellungen für diese Erinnerungsmail ändern oder keine Erinnerungsmails mehr bekommen möchtest, kannst du
+      die Adresse {settingsLink} in deinem Browser öffnen, um deine persönlichen Benachrichtigungseinstellungen zu ändern.
+  userNotificationEmail.markdown:
+    en: |
+      Hello {userDisplayName}!
+
+      You have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on **{appName}**.
+      Go to the [notifications]({notificationsLink}) on your dashboard in order to read them.
+
+      In case you want to change your settings for this reminder email or if you do not want to get any further reminder emails,
+      you can go to the [settings]({settingsLink}) on your dashboard in order to change to your personal notification settings.
+    de: |
+      Hallo {userDisplayName}!
+
+      Du hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf **{appName}**.
+      Gehe zu den [Benachrichtigungen]({notificationsLink}) auf deinem Dashboard, um sie abzurufen.
+
+      Falls du deine Einstellungen für diese Erinnerungsmail ändern oder keine Erinnerungsmails mehr bekommen möchtest, kannst du
+      zu den [Einstellungen]({settingsLink}) auf deinem Dashboard gehen, um deine persönlichen Benachrichtigungseinstellungen zu ändern.

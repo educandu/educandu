@@ -214,6 +214,10 @@ export const ANTI_BRUTE_FORCE_EXPIRES_IN_MS = 60 * 60 * 1000;
 
 export const NOTIFICATION_EXPIRATION_IN_MONTHS = 2;
 
+export const EMAIL_NOTIFICATION_SENDER_CRON_PATTERN = '0 20 * * *'; // every day at 8pm
+export const EMAIL_NOTIFICATION_DUE_DAY_OF_WEEK = 1;
+export const EMAIL_NOTIFICATION_DUE_DAY_OF_MONTH = 1;
+
 export const NOT_ROOM_OWNER_ERROR_MESSAGE = 'The user is not the room owner';
 export const NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE = 'The user is not a room owner or member';
 export const NOT_ROOM_OWNER_OR_COLLABORATOR_ERROR_MESSAGE = 'The user is not a room owner or collaborator';

@@ -6,6 +6,7 @@ import { defaultValidationOptions, validate } from '../domain/validation.js';
 
 const configSchema = joi.object({
   appName: joi.string().required(),
+  appRootUrl: joi.string().required(),
   port: joi.number().min(1).default(80),
   trustProxy: joi.alternatives(joi.boolean(), joi.number().integer().min(0)).default(false),
   mongoConnectionString: joi.string().required(),

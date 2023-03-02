@@ -5,7 +5,6 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
-import requestUtils from '../utils/request-utils.js';
 import RoomService from '../services/room-service.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
@@ -245,10 +244,9 @@ export default class RoomController {
   async handlePostRoomInvitations(req, res) {
     const { user } = req;
     const { roomId, emails } = req.body;
-    const { origin } = requestUtils.getHostInfo(req);
 
     const { room, owner, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, emails, user });
-    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: owner.displayName, origin });
+    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: owner.displayName });
 
     return res.status(201).send(invitations);
   }

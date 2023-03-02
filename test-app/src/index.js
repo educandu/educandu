@@ -74,6 +74,7 @@ const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
 
 const config = {
   appName: 'educandu',
+  appRootUrl: process.env.TEST_APP_APP_ROOT_URL,
   port: Number(process.env.TEST_APP_PORT) || 3000,
   trustProxy: true,
   mongoConnectionString: process.env.TEST_APP_WEB_CONNECTION_STRING,

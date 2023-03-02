@@ -562,8 +562,7 @@ describe('room-controller', () => {
         assert.calledWith(mailService.sendRoomInvitationEmails, {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
-          invitations: [invitation1, invitation2],
-          origin: 'https://educandu.dev'
+          invitations: [invitation1, invitation2]
         });
       });
     });
