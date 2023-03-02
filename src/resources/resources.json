@@ -1736,10 +1736,6 @@
       "en": "Search in the Media library",
       "de": "Suche in der Medien-Bibliothek"
     },
-    "initialFilePreviewHeader": {
-      "en": "Currently selected file",
-      "de": "Momentan ausgewählte Datei"
-    },
     "uploadFile": {
       "en": "Upload file",
       "de": "Datei hochladen"
@@ -1907,10 +1903,6 @@
     "searchInvitationHeader": {
       "en": "Search in the Wikimedia database",
       "de": "Suche in der Wikimedia-Datenbank"
-    },
-    "initialFilePreviewHeader": {
-      "en": "Currently selected file",
-      "de": "Momentan ausgewählte Datei"
     }
   },
   "roomCard": {
@@ -2174,29 +2166,37 @@
       "en": "Audio waveform",
       "de": "Audio-Wellenform"
     },
-    "chooseImageDividerText": {
-      "en": "Choose a ready-made image",
-      "de": "Wähle ein vorgefertigtes Bild aus"
+    "waveformSourceTypeInfo": {
+      "en": "Use an exiting waveform image or generate and upload one from an audio file",
+      "de": "Use an exiting waveform image or generate and upload one from an audio file"
     },
-    "generateImageDividerText": {
-      "en": "or generate an image from an audio file",
-      "de": "oder erstelle ein Bild aus einer Audio-Datei"
+    "waveformSourceType_image": {
+      "en": "ready-made image",
+      "de": "Vorgefertigtes Bild"
     },
-    "generalSettingsDividerText": {
-      "en": "General settings",
-      "de": "Generelle Einstellungen"
+    "waveformSourceType_audio": {
+      "en": "audio file",
+      "de": "Audio-Datei"
     },
-    "generateWaveformFromAudioFile": {
-      "en": "Generate waveform from audio file",
-      "de": "Wellenform aus Audio-Datei erstellen"
+    "imageUrl": {
+      "en": "Image URL",
+      "de": "Bild-URL"
+    },
+    "generateWaveformImage": {
+      "en": "Generate waveform image",
+      "de": "Wellenform-Bild erstellen"
+    },
+    "displayModeInfo": {
+      "en": "In interactive mode, users are be able to hand-draw a waveform, and then compare with the uploaded image.",
+      "de": "In interactive mode, users are be able to hand-draw a waveform, and then compare with the uploaded image."
     },
     "displayMode_static": {
       "en": "static",
-      "de": "statisch"
+      "de": "Statisch"
     },
     "displayMode_interactive": {
       "en": "interactive",
-      "de": "interaktiv"
+      "de": "Interaktiv"
     },
     "penColor": {
       "en": "Waveform color",
@@ -2214,6 +2214,10 @@
       "en": "Opacity (resolved)",
       "de": "Deckkraft (aufgelöst)"
     },
+    "opacityWhenResolvedInfo": {
+      "en": "The opacity of the hand-drawn waveform, when compared to the uploaded image.",
+      "de": "The opacity of the hand-drawn waveform, when compared to the uploaded image."
+    },
     "showResolution": {
       "en": "Show resolution",
       "de": "Auflösung anzeigen"
@@ -2222,25 +2226,25 @@
       "en": "Hide resolution",
       "de": "Auflösung ausblenden"
     },
-    "dialogTitle": {
-      "en": "Generate waveform image",
-      "de": "Wellenform-Bild erstellen"
+    "dialogSearchFileInvitationHeader": {
+      "en": "Search for audio file in all libraries",
+      "de": "Audio-Datei in alle Bibliotheken suchen"
     },
-    "dialogDropzoneInfo": {
-      "en": "Drag an audio file into this box",
-      "de": "Ziehe eine Audio-Datei in diese Box"
+    "dialogDropFileInvitationHeader": {
+      "en": "Drag an audio file here",
+      "de": "Ziehe eine Audio-Datei hierher"
     },
-    "dialogFilePickerButtonLabel": {
-      "en": "Select an audio file",
-      "de": "Audio-Datei auswählen"
+    "dialogGeneratedWafevormHeader": {
+      "en": "Current waveform",
+      "de": "Momentan generierte Wellenform"
     },
-    "dialogLocalFilePickerButtonText": {
-      "en": "from my machine",
-      "de": "vom lokalen Computer"
+    "dialogRegenerateButton": {
+      "en": "Regenerate",
+      "de": "Erneut generieren"
     },
-    "dialogCdnFilePickerButtonText": {
-      "en": "from the internal storage",
-      "de": "vom internen Speicher"
+    "dialogOkText": {
+      "en": "Generate and select",
+      "de": "Erstellen und auswählen"
     }
   },
   "audio": {
