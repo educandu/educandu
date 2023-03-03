@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import { LinkOutlined } from '@ant-design/icons';
 import DebouncedInput from './debounced-input.js';
-import { useStorage } from './storage-context.js';
 import { useService } from './container-context.js';
 import InputAndPreview from './input-and-preview.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -16,8 +15,22 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
-function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sanitizeCdnUrls, value, onBlur, onChange, preview, embeddable, maxLength, ...rest }) {
-  const storage = useStorage();
+function MarkdownInput({
+  minRows,
+  disabled,
+  inline,
+  debounced,
+  renderAnchors,
+  sanitizeCdnUrls,
+  value,
+  onBlur,
+  onChange,
+  preview,
+  embeddable,
+  maxLength,
+  useStorageSelector,
+  ...rest
+}) {
   const inputContainerRef = useRef(null);
   const debouncedInputApiRef = useRef(null);
   const { t } = useTranslation('markdownInput');
@@ -126,10 +139,10 @@ function MarkdownInput({ minRows, disabled, inline, debounced, renderAnchors, sa
           { 'MarkdownInput-blockHelpContainer--embeddable': embeddable }
         )}
         >
-        {!!storage && !disabled && (
+        {!!useStorageSelector && !disabled && (
           <Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>
         )}
-        {!!storage && !!disabled && renderResourceSelector()}
+        {!!useStorageSelector && !!disabled && renderResourceSelector()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
       {renderCount()}
@@ -172,7 +185,8 @@ MarkdownInput.propTypes = {
   preview: PropTypes.bool,
   renderAnchors: PropTypes.bool,
   sanitizeCdnUrls: PropTypes.bool,
-  value: PropTypes.string
+  value: PropTypes.string,
+  useStorageSelector: PropTypes.bool
 };
 
 MarkdownInput.defaultProps = {
@@ -187,7 +201,8 @@ MarkdownInput.defaultProps = {
   preview: false,
   renderAnchors: false,
   sanitizeCdnUrls: true,
-  value: ''
+  value: '',
+  useStorageSelector: true
 };
 
 export default MarkdownInput;

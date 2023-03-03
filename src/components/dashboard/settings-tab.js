@@ -202,7 +202,7 @@ function SettingsTab() {
             label={t('introduction')}
             initialValue={user.introduction || ''}
             >
-            <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} />
+            <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} useStorageSelector={false} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!isUserProfileFormDirty}>{t('common:save')}</Button>
