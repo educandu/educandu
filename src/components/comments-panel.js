@@ -232,6 +232,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
             readOnly={showAsLoading}
             placeholder={t('newCommentPlaceholder')}
             maxLength={maxDocumentCommentTextLength}
+            useStorageSelector={false}
             onChange={handleCurrentCommentChange}
             />
           <Button
