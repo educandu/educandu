@@ -37,22 +37,64 @@
   margin: @edu-control-spacing-wide auto 0 auto;
 }
 
+.AudioWaveformGeneratorDialog {
+  width: auto !important;
+}
+
+.AudioWaveformGeneratorDialog-body {
+  display: grid;
+  gap: 50px;
+  grid-template-columns: 1.5fr 1fr;
+
+  @media @edu-media-phone {
+    grid-template-columns: auto;
+    grid-auto-flow: rows;
+    gap: 15px;
+  }
+}
+
+.AudioWaveformGeneratorDialog-bodyColumn {
+  display: flex;
+  flex-direction: column;
+}
+
 .AudioWaveformGeneratorDialog-dropzone {
-  .m-control-border-base;
-  padding: 10px;
+  .m-dropzone;
+  flex: 1 0 auto;
+  display: grid;
 
   &.is-dropping {
-    .m-dropzone;
     .m-dropzone-active;
   }
 
   &.is-drop-rejected {
-    .m-dropzone;
     .m-dropzone-error;
   }
 }
 
-.AudioWaveformGeneratorDialog-previewArea {
+.AudioWaveformGeneratorDialog-dropzoneContent {
+  display: grid;
+  padding: @edu-content-padding;
+  align-content: space-around;
+}
+
+.AudioWaveformGeneratorDialog-dropzoneContentDivider {
+  min-width: 80%;
+}
+
+.AudioWaveformGeneratorDialog-generatingPeaksSpinner {
+  flex: 1 0 auto;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
+}
+
+.AudioWaveformGeneratorDialog-generatedWaveform {
+  flex: 1 0 auto;
+}
+
+.AudioWaveformGeneratorDialog-generatedWaveformImage {
   height: 250px;
   background-size: contain;
   background-position: center;
@@ -62,17 +104,23 @@
   justify-items: center;
 }
 
-.AudioWaveformGeneratorDialog-controls {
-  margin-top: @edu-content-padding;
+.AudioWaveformGeneratorDialog-colorPickers {
+  margin-top: 30px;
   display: grid;
   gap: @edu-control-spacing-wide;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
 
   @media @edu-media-phone {
     grid-auto-flow: row;
+    place-content: start;
   }
+}
+
+.AudioWaveformGeneratorDialog-colorPicker {
+  display: grid;
+  gap: 5px;
+  place-items: center;
+  grid-auto-flow: column;
+  place-content: space-between;
 }

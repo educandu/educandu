@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { Button, Form, Radio } from 'antd';
 import Info from '../../components/info.js';
 import { DISPLAY_MODE } from './constants.js';
 import { useTranslation } from 'react-i18next';
-import { Button, Divider, Form, Radio } from 'antd';
+import React, { Fragment, useState } from 'react';
 import UrlInput from '../../components/url-input.js';
 import StepSlider from '../../components/step-slider.js';
 import ColorPicker from '../../components/color-picker.js';
@@ -13,9 +13,9 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
+import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import { getDefaultInteractivityConfig } from './audio-waveform-utils.js';
 import AudioWaveformGeneratorDialog from './audio-waveform-generator-dialog.js';
-import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_WITHOUT_LABEL, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -25,6 +25,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audioWaveform');
   const clientConfig = useService(ClientConfig);
   const formatPercentage = usePercentageFormat();
+
   const [isWaveformGeneratorDialogOpen, setIsWaveformGeneratorDialogOpen] = useState(false);
 
   const { sourceUrl, width, displayMode, interactivityConfig } = content;
@@ -81,25 +82,26 @@ function AudioWaveformEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form layout="horizontal" labelAlign="left">
-        <Divider plain>{t('chooseImageDividerText')}</Divider>
-        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
-          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
-        </FormItem>
-        <Divider plain>{t('generateImageDividerText')}</Divider>
-        <FormItem {...FORM_ITEM_LAYOUT_WITHOUT_LABEL}>
+
+        <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('createImageLabelInfo')}>{t('common:create')}</Info>}>
           <Button type="primary" onClick={handleGenerateWaveform}>
-            {t('generateWaveformFromAudioFile')}
+            {t('createImageButton')}
           </Button>
         </FormItem>
-        <Divider plain>{t('generalSettingsDividerText')}</Divider>
-        <FormItem label={t('common:displayMode')} {...FORM_ITEM_LAYOUT}>
+
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
+          <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
+        </FormItem>
+
+        <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('displayModeInfo')}>{t('common:displayMode')}</Info>}>
           <RadioGroup value={displayMode} onChange={handleDisplayModeChange}>
             <RadioButton value={DISPLAY_MODE.static}>{t('displayMode_static')}</RadioButton>
             <RadioButton value={DISPLAY_MODE.interactive}>{t('displayMode_interactive')}</RadioButton>
           </RadioGroup>
         </FormItem>
+
         {displayMode === DISPLAY_MODE.interactive && (
-          <div className="u-panel">
+          <Fragment>
             <FormItem label={t('penColor')} {...FORM_ITEM_LAYOUT}>
               <ColorPicker color={penColor} onChange={handlePenColorChange} />
             </FormItem>
@@ -109,7 +111,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
             <FormItem label={t('backgroundColor')} {...FORM_ITEM_LAYOUT}>
               <ColorPicker color={backgroundColor} onChange={handleBackgroundColorChange} />
             </FormItem>
-            <FormItem label={t('opacityWhenResolved')} {...FORM_ITEM_LAYOUT}>
+            <FormItem {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('opacityWhenResolvedInfo')}>{t('opacityWhenResolved')}</Info>}>
               <StepSlider
                 min={0}
                 max={1}
@@ -120,12 +122,10 @@ function AudioWaveformEditor({ content, onContentChanged }) {
                 onChange={handleOpacityWhenResolvedChange}
                 />
             </FormItem>
-          </div>
+          </Fragment>
         )}
-        <Form.Item
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          {...FORM_ITEM_LAYOUT}
-          >
+
+        <Form.Item {...FORM_ITEM_LAYOUT} label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}>
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>

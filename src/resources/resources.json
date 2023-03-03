@@ -1760,10 +1760,6 @@
       "en": "Search in the Media library",
       "de": "Suche in der Medien-Bibliothek"
     },
-    "initialFilePreviewHeader": {
-      "en": "Currently selected file",
-      "de": "Momentan ausgewählte Datei"
-    },
     "uploadFile": {
       "en": "Upload file",
       "de": "Datei hochladen"
@@ -1931,10 +1927,6 @@
     "searchInvitationHeader": {
       "en": "Search in the Wikimedia database",
       "de": "Suche in der Wikimedia-Datenbank"
-    },
-    "initialFilePreviewHeader": {
-      "en": "Currently selected file",
-      "de": "Momentan ausgewählte Datei"
     }
   },
   "roomCard": {
@@ -2198,29 +2190,29 @@
       "en": "Audio waveform",
       "de": "Audio-Wellenform"
     },
-    "chooseImageDividerText": {
-      "en": "Choose a ready-made image",
-      "de": "Wähle ein vorgefertigtes Bild aus"
+    "createImageLabelInfo": {
+      "en": "Use an audio file to generate and upload the waveform image.",
+      "de": "Verwende eine Audio-Datei, um ein Wellenform-Bild zu erstellen und hochzuladen."
     },
-    "generateImageDividerText": {
-      "en": "or generate an image from an audio file",
-      "de": "oder erstelle ein Bild aus einer Audio-Datei"
+    "createImageButton": {
+      "en": "Generate image from audio file",
+      "de": "Bild aus Audio-Datei erstellen"
     },
-    "generalSettingsDividerText": {
-      "en": "General settings",
-      "de": "Generelle Einstellungen"
+    "imageUrl": {
+      "en": "Image URL",
+      "de": "Bild-URL"
     },
-    "generateWaveformFromAudioFile": {
-      "en": "Generate waveform from audio file",
-      "de": "Wellenform aus Audio-Datei erstellen"
+    "displayModeInfo": {
+      "en": "In interactive mode, users are able to hand-draw a waveform, and then compare with the uploaded image.",
+      "de": "Im interaktiven Modus können Benutzer eine Wellenform händisch zeichnen und mit dem hochgeladenen Bild vergleichen."
     },
     "displayMode_static": {
       "en": "static",
-      "de": "statisch"
+      "de": "Statisch"
     },
     "displayMode_interactive": {
       "en": "interactive",
-      "de": "interaktiv"
+      "de": "Interaktiv"
     },
     "penColor": {
       "en": "Waveform color",
@@ -2238,6 +2230,10 @@
       "en": "Opacity (resolved)",
       "de": "Deckkraft (aufgelöst)"
     },
+    "opacityWhenResolvedInfo": {
+      "en": "The opacity of the hand-drawn waveform, when comparing to the uploaded image.",
+      "de": "Die Deckkraft der händisch gezeichneten Wellenform beim Vergleich mit dem hochgeladenen Bild."
+    },
     "showResolution": {
       "en": "Show resolution",
       "de": "Auflösung anzeigen"
@@ -2250,17 +2246,21 @@
       "en": "Generate waveform image",
       "de": "Wellenform-Bild erstellen"
     },
-    "dialogDropzoneInfo": {
-      "en": "Drag an audio file into this box",
-      "de": "Ziehe eine Audio-Datei in diese Box"
+    "dialogSearchFileInvitationHeader": {
+      "en": "Search for audio file in all libraries",
+      "de": "Audio-Datei in allen Bibliotheken suchen"
     },
-    "dialogLocalFilePickerButtonText": {
-      "en": "Select an audio file from my machine",
-      "de": "Audio-Datei vom lokalen Computer auswählen"
+    "dialogDropFileInvitationHeader": {
+      "en": "Drag an audio file here",
+      "de": "Ziehe eine Audio-Datei hierher"
     },
-    "dialogCdnFilePickerButtonText": {
-      "en": "Select an audio file from the internal storage",
-      "de": "Audio-Datei vom internen Speicher auswählen"
+    "dialogRegenerateButton": {
+      "en": "Use different audio file",
+      "de": "Andere Audio-Datei verwenden"
+    },
+    "dialogOkText": {
+      "en": "Generate and select",
+      "de": "Erstellen und auswählen"
     }
   },
   "audio": {

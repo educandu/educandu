@@ -2,24 +2,24 @@ audioWaveform:
   name:
     en: Audio waveform
     de: Audio-Wellenform
-  chooseImageDividerText:
-    en: Choose a ready-made image
-    de: Wähle ein vorgefertigtes Bild aus
-  generateImageDividerText:
-    en: or generate an image from an audio file
-    de: oder erstelle ein Bild aus einer Audio-Datei
-  generalSettingsDividerText:
-    en: General settings
-    de: Generelle Einstellungen
-  generateWaveformFromAudioFile:
-    en: Generate waveform from audio file
-    de: Wellenform aus Audio-Datei erstellen
+  createImageLabelInfo:
+    en: Use an audio file to generate and upload the waveform image.
+    de: Verwende eine Audio-Datei, um ein Wellenform-Bild zu erstellen und hochzuladen.
+  createImageButton:
+    en: Generate image from audio file
+    de: Bild aus Audio-Datei erstellen
+  imageUrl:
+    en: Image URL
+    de: Bild-URL
+  displayModeInfo:
+    en: In interactive mode, users are able to hand-draw a waveform, and then compare with the uploaded image.
+    de: Im interaktiven Modus können Benutzer eine Wellenform händisch zeichnen und mit dem hochgeladenen Bild vergleichen.
   displayMode_static:
     en: static
-    de: statisch
+    de: Statisch
   displayMode_interactive:
     en: interactive
-    de: interaktiv
+    de: Interaktiv
   penColor:
     en: Waveform color
     de: Wellenformfarbe
@@ -32,6 +32,9 @@ audioWaveform:
   opacityWhenResolved:
     en: Opacity (resolved)
     de: Deckkraft (aufgelöst)
+  opacityWhenResolvedInfo:
+    en: The opacity of the hand-drawn waveform, when comparing to the uploaded image.
+    de: Die Deckkraft der händisch gezeichneten Wellenform beim Vergleich mit dem hochgeladenen Bild.
   showResolution:
     en: Show resolution
     de: Auflösung anzeigen
@@ -41,12 +44,15 @@ audioWaveform:
   dialogTitle:
     en: Generate waveform image
     de: Wellenform-Bild erstellen
-  dialogDropzoneInfo:
-    en: Drag an audio file into this box
-    de: Ziehe eine Audio-Datei in diese Box
-  dialogLocalFilePickerButtonText:
-    en: Select an audio file from my machine
-    de: Audio-Datei vom lokalen Computer auswählen
-  dialogCdnFilePickerButtonText:
-    en: Select an audio file from the internal storage
-    de: Audio-Datei vom internen Speicher auswählen
+  dialogSearchFileInvitationHeader:
+    en: Search for audio file in all libraries
+    de: Audio-Datei in allen Bibliotheken suchen
+  dialogDropFileInvitationHeader:
+    en: Drag an audio file here
+    de: Ziehe eine Audio-Datei hierher
+  dialogRegenerateButton:
+    en: Use different audio file
+    de: Andere Audio-Datei verwenden
+  dialogOkText:
+    en: Generate and select
+    de: Erstellen und auswählen
