@@ -5,6 +5,7 @@ import ProcessBatchesJob from './jobs/process-batches-job.js';
 import LoadSamlMetadataJob from './jobs/load-saml-metadata-job.js';
 import AlwaysRunningJobScheduler from './always-running-job-scheduler.js';
 import IntervalBasedJobScheduler from './interval-based-job-scheduler.js';
+import SendNotificationEmailsJob from './jobs/send-notification-emails-job.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY, Container } from '../../common/di.js';
 
 const logger = new Logger(import.meta.url);
@@ -32,11 +33,11 @@ const jobs = {
   // │ │ ┌──────────── hour (0 - 23)
   // │ │ │ ┌────────── day of month (1 - 31)
   // │ │ │ │ ┌──────── month (1 - 12, JAN-DEC)
-  // │ │ │ │ │ ┌────── day of week (0 - 6, SUN-Mon) (0 to 6 are Sunday to Saturday; 7 is Sunday, the same as 0)
+  // │ │ │ │ │ ┌────── day of week (0 - 6, SUN-MON) (0 to 6 are Sunday to Saturday; 7 is Sunday, the same as 0)
   // │ │ │ │ │ │
   // * * * * * *
   // * has to have a `preventOverrun` boolean field that when set to true will prevent the next run from being fired up while the previous one is still executing
-  cron: []
+  cron: [SendNotificationEmailsJob]
 };
 
 export default class JobScheduler {

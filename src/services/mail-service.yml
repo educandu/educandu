@@ -175,3 +175,39 @@ mailService:
       Hallo
 
       Der Benutzer **{ownerName}** hat deine Einladung zur Mitgliedschaft in dem Raum **{roomName}** zurückgezogen.
+  userNotificationEmail.subject:
+    en: You have new notifications on {appName}
+    de: Du hast neue Benachrichtigungen auf {appName}
+  userNotificationEmail.text:
+    en: |
+      Hello {userDisplayName}!
+
+      You have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on {appName}.
+      Open {notificationsLink} in your browser in order to read them.
+
+      If you would like to change your reminder email settings you can go to the settings area of your dashboard.
+      Open the address {settingsLink} in your browser.
+    de: |
+      Hallo {userDisplayName}!
+
+      Du hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf {appName}.
+      Öffne {notificationsLink} in deinem Browser, um sie abzurufen.
+
+      Falls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den Einstellungen auf
+      deinem Dashboard tun. Öffne dazu die Adresse {settingsLink} in deinem Browser.
+  userNotificationEmail.markdown:
+    en: |
+      Hello {userDisplayName}!
+
+      You have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on **{appName}**.
+      Go to the [notifications]({notificationsLink}) on your dashboard in order to read them.
+
+      If you would like to change your reminder email settings you can go to the [settings area]({settingsLink}) of your dashboard.
+    de: |
+      Hallo {userDisplayName}!
+
+      Du hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf **{appName}**.
+      Gehe zu den [Benachrichtigungen]({notificationsLink}) auf deinem Dashboard, um sie abzurufen.
+
+      Falls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den [Einstellungen]({settingsLink}) auf
+      deinem Dashboard tun.

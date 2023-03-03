@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
-import urlUtils from '../utils/url-utils.js';
 import UserStore from '../stores/user-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { escapeMarkdown } from '../utils/string-utils.js';
@@ -91,9 +90,12 @@ class MailService {
     return this._sendMail(message);
   }
 
-  async sendRoomInvitationEmails({ invitations, ownerName, roomName, origin }) {
+  async sendRoomInvitationEmails({ invitations, ownerName, roomName }) {
+    const origin = this.serverConfig.appRootUrl;
+
     await Promise.all(invitations.map(({ email, token }) => {
-      return this._sendRoomInvitationEmail({ ownerName, roomName, email, token, origin });
+      const invitationLink = new URL(routes.getRoomMembershipConfirmationUrl(token), origin).href;
+      return this._sendRoomInvitationEmail({ ownerName, roomName, email, invitationLink });
     }));
   }
 
@@ -104,6 +106,42 @@ class MailService {
     await Promise.all(users.map(({ email }) => {
       return this._sendRoomDeletionNotificationEmail({ email, roomName, ownerName });
     }));
+  }
+
+  sendNotificationReminderEmail({ user, notificationsCount }) {
+    logger.info(`Sending user notifications reminder to ${user.email}`);
+
+    const appName = this.serverConfig.appName;
+    const origin = this.serverConfig.appRootUrl;
+    const notificationsLink = new URL(routes.getDashboardUrl({ tab: 'notifications' }), origin).href;
+    const settingsLink = new URL(routes.getDashboardUrl({ tab: 'settings' }), origin).href;
+
+    const subject = this.translators
+      .map(t => t('mailService:userNotificationEmail.subject', { appName }))
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
+
+    const text = this.translators
+      .map(t => t('mailService:userNotificationEmail.text', {
+        appName,
+        userDisplayName: user.displayName,
+        notificationsCount,
+        notificationsLink,
+        settingsLink
+      }))
+      .join(TEXT_LANGUAGE_SEPARATOR);
+
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:userNotificationEmail.markdown', {
+        appName: escapeMarkdown(appName),
+        userDisplayName: escapeMarkdown(user.displayName),
+        notificationsCount: escapeMarkdown(notificationsCount),
+        notificationsLink: escapeMarkdown(notificationsLink),
+        settingsLink: escapeMarkdown(settingsLink)
+      }))
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
+
+    const message = { from: this.serverConfig.emailSenderAddress, to: user.email, subject, text, html };
+    return this._sendMail(message);
   }
 
   sendRoomMemberRemovalNotificationEmail({ roomName, ownerName, memberUser }) {
@@ -151,9 +189,7 @@ class MailService {
     return this._sendMail(message);
   }
 
-  _sendRoomInvitationEmail({ ownerName, roomName, email, token, origin }) {
-    const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(token));
-
+  _sendRoomInvitationEmail({ ownerName, roomName, email, invitationLink }) {
     logger.info(`Creating email with room invitation link ${invitationLink}`);
 
     const subject = this.translators

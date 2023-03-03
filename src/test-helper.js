@@ -34,6 +34,7 @@ export async function setupTestEnvironment() {
 
   const container = await createContainer({
     appName: 'test',
+    appRootUrl: 'http://localhost:3000',
     mongoConnectionString: `mongodb://root:rootpw@localhost:27017/test-educandu-db-${randomId}?replicaSet=educandurs&authSource=admin`,
     cdnEndpoint: 'http://localhost:9000',
     cdnRegion: region,

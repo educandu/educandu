@@ -26,10 +26,6 @@ class NotificationStore {
   async deleteNotificationsByNotifiedUserIdAndNotificationIds(notifiedUserId, notificationIds, { session } = {}) {
     await this.collection.deleteMany({ _id: { $in: notificationIds }, notifiedUserId }, { session });
   }
-
-  async deleteNotificationsByNotifiedUserId(notifiedUserId, { session } = {}) {
-    await this.collection.deleteMany({ notifiedUserId }, { session });
-  }
 }
 
 export default NotificationStore;

@@ -32,6 +32,7 @@ let currentCdnProxy = null;
 let currentAppBuildContext = null;
 
 const testAppEnv = {
+  TEST_APP_APP_ROOT_URL: 'http://localhost:3000',
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   TEST_APP_SKIP_MAINTENANCE: false.toString(),
   TEST_APP_CDN_ENDPOINT: 'http://localhost:9000',
