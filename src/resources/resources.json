@@ -2645,6 +2645,72 @@
       "de": "Mehrspur-Medien"
     }
   },
+  "musicLearningBlock": {
+    "name": {
+      "en": "Learning block",
+      "de": "Lern-Kasten"
+    },
+    "type_assignment": {
+      "en": "Assignment",
+      "de": "Aufgabe"
+    },
+    "type_harmony": {
+      "en": "Harmony",
+      "de": "Harmonie"
+    },
+    "type_hint": {
+      "en": "Hint",
+      "de": "Hinweis"
+    },
+    "type_melody": {
+      "en": "Melody",
+      "de": "Melodie"
+    },
+    "type_movement": {
+      "en": "Movement",
+      "de": "Bewegung"
+    },
+    "type_playing": {
+      "en": "Playing",
+      "de": "Musizieren"
+    },
+    "type_reading": {
+      "en": "Reading",
+      "de": "Lesen"
+    },
+    "type_research": {
+      "en": "Research",
+      "de": "Recherche"
+    },
+    "type_rhythm": {
+      "en": "Rhythm",
+      "de": "Rhythmus"
+    },
+    "type_standard-solution": {
+      "en": "Standard solution",
+      "de": "Musterlösung"
+    },
+    "colorScheme": {
+      "en": "Color scheme",
+      "de": "Farbschema"
+    },
+    "behavior": {
+      "en": "Behavior",
+      "de": "Verhalten"
+    },
+    "behavior_static": {
+      "en": "static",
+      "de": "statisch"
+    },
+    "behavior_collapsible": {
+      "en": "collapsible",
+      "de": "einklappbar"
+    },
+    "behavior_expandable": {
+      "en": "expandable",
+      "de": "ausklappbar"
+    }
+  },
   "musicXmlViewer": {
     "name": {
       "en": "MusicXML viewer",

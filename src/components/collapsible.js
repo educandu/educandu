@@ -10,7 +10,7 @@ export const COLLAPSIBLE_COLOR = {
   red: 'red'
 };
 
-export default function Collapsible({ title, icon, color, width, children, isCollapsible, isCollapsed }) {
+export default function Collapsible({ title, icon, color, width, children, isCollapsible, isCollapsed, headerClassName }) {
 
   const [isExpanded, setIsExpanded] = useState((isCollapsible && !isCollapsed) || !isCollapsed);
 
@@ -49,14 +49,15 @@ export default function Collapsible({ title, icon, color, width, children, isCol
     );
   };
 
-  const headerClasses = classNames({
-    'Collapsible-header': true,
-    'Collapsible-header--green': color === COLLAPSIBLE_COLOR.green,
-    'Collapsible-header--blue': color === COLLAPSIBLE_COLOR.blue,
-    'Collapsible-header--orange': color === COLLAPSIBLE_COLOR.orange,
-    'Collapsible-header--red': color === COLLAPSIBLE_COLOR.red,
-    'is-above-content': isExpanded || (!isCollapsible && title)
-  });
+  const headerClasses = classNames(
+    'Collapsible-header',
+    { 'Collapsible-header--green': color === COLLAPSIBLE_COLOR.green },
+    { 'Collapsible-header--blue': color === COLLAPSIBLE_COLOR.blue },
+    { 'Collapsible-header--orange': color === COLLAPSIBLE_COLOR.orange },
+    { 'Collapsible-header--red': color === COLLAPSIBLE_COLOR.red },
+    { 'is-above-content': isExpanded || (!isCollapsible && title) },
+    headerClassName
+  );
 
   return (
     <div className={`Collapsible u-width-${width}`}>
@@ -88,6 +89,7 @@ export default function Collapsible({ title, icon, color, width, children, isCol
 
 Collapsible.propTypes = {
   children: PropTypes.node,
+  headerClassName: PropTypes.string,
   color: PropTypes.oneOf(Object.values(COLLAPSIBLE_COLOR)),
   icon: PropTypes.node,
   isCollapsed: PropTypes.bool,
@@ -98,6 +100,7 @@ Collapsible.propTypes = {
 
 Collapsible.defaultProps = {
   children: null,
+  headerClassName: '',
   color: null,
   icon: null,
   isCollapsed: true,

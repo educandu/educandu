@@ -14,6 +14,7 @@ const plugins = [
   'image',
   'catalog',
   'annotation',
+  'music-learning-block',
   'audio',
   'video',
   'table',
