@@ -209,6 +209,9 @@ common:
   tagsPlaceholder:
     en: Enter keywords
     de: Stichwörter angeben
+  verified:
+    en: Verified
+    de: Überprüft
   protected:
     en: Protected
     de: Geschützt
@@ -307,7 +310,13 @@ common:
     de: Nach Benutzer sortiert
   sortedByArchived:
     en: Sorted by archived status
-    de: Nach Archivierungsstatus sortiert
+    de: Nach Archiviert-Status sortiert
+  sortedByProtected:
+    en: Sorted by protected status
+    de: Nach Geschützt-Status sortiert
+  sortedByVerified:
+    en: Sorted by verified status
+    de: Nach Überprüft-Status sortiert
   search:
     en: Search
     de: Suche

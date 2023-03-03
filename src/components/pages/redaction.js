@@ -4,13 +4,15 @@ import React, { useState } from 'react';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import RedactionDocumentTagsTab from '../redaction/redaction-document-tags-tab.js';
 import RedactionDocumentsTab from '../redaction/redaction-documents-tab.js';
-import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
+import RedactionDocumentTagsTab from '../redaction/redaction-document-tags-tab.js';
+import RedactionMediaLibraryTab from '../redaction/redaction-media-library-tab.js';
+import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 
 const TABS = {
   documents: 'documents',
-  documentTags: 'document-tags'
+  documentTags: 'document-tags',
+  mediaLibrary: 'media-library'
 };
 
 const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
@@ -20,6 +22,7 @@ function Redaction({ initialState, PageTemplate }) {
   const { t } = useTranslation('redaction');
   const [documents, setDocuments] = useState(initialState.documents);
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
+  const [mediaLibraryItems, setMediaLibraryItems] = useState(initialState.mediaLibraryItems);
 
   const changeTab = tab => {
     setCurrentTab(tab);
@@ -48,6 +51,15 @@ function Redaction({ initialState, PageTemplate }) {
           <RedactionDocumentTagsTab documents={documents} />
         </div>
       )
+    },
+    {
+      key: TABS.mediaLibrary,
+      label: t('mediaLibraryTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <RedactionMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
+        </div>
+      )
     }
   ];
 
@@ -72,7 +84,8 @@ function Redaction({ initialState, PageTemplate }) {
 Redaction.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+    mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
   }).isRequired
 };
 

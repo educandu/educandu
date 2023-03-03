@@ -1,22 +1,30 @@
 import by from 'thenby';
-import { Table, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
+import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
+import { useUser } from '../user-context.js';
+import { Switch, Table, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import EditIcon from '../icons/general/edit-icon.js';
+import cloneDeep from '../../utils/clone-deep.js';
 import SortingSelector from '../sorting-selector.js';
+import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
-import { replaceItem } from '../../utils/array-utils.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { InboxOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
+import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
+
+const logger = new Logger(import.meta.url);
 
 function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
   let initialDocumentMetadata;
@@ -64,28 +72,35 @@ function createTableRows(docs) {
   }));
 }
 
-function RedactionDocumentsTab({ documents, onDocumentsChange }) {
+function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
+  const user = useUser();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
   useEffect(() => {
-    setAllTableRows(createTableRows(documents));
-  }, [documents]);
+    setAllTableRows(createTableRows(mediaLibraryItems));
+  }, [mediaLibraryItems]);
 
-  const documentsSortingOptions = useMemo(() => [
-    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-    { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' },
-    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
-    { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
-    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: 'verified' }
-  ], [t]);
+  const documentsSortingOptions = useMemo(() => {
+    const options = [
+      { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+      { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+      { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
+      { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
+      { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' }
+    ];
+
+    if (hasUserPermission(user, permissions.ARCHIVE_DOC)) {
+      options.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
+    }
+
+    return options;
+  }, [user, t]);
 
   const tableSorters = useMemo(() => ({
     title: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.title, { direction, ignoreCase: true })),
@@ -93,9 +108,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
     language: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.language, direction)),
     user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
-    archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
-    protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
-    verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction))
+    archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction))
   }), []);
 
   useEffect(() => {
@@ -119,18 +132,8 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     setFilterText(newFilterText);
   };
 
-  const handleDocumentEditClick = row => {
-    const document = documents.find(d => d._id === row.documentId);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({
-      t,
-      mode: DOCUMENT_METADATA_MODAL_MODE.update,
-      document,
-      isOpen: true
-    }));
-  };
-
   const handleDocumentCloneClick = row => {
-    const document = documents.find(d => d._id === row.documentId);
+    const document = mediaLibraryItems.find(d => d._id === row.documentId);
     setDocumentMetadataModalState(getDocumentMetadataModalState({
       t,
       mode: DOCUMENT_METADATA_MODAL_MODE.clone,
@@ -139,23 +142,39 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     }));
   };
 
-  const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
+  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId, mode) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
 
-    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
-      window.location = routes.getDocUrl({
-        id: savedDocuments[0]._id,
-        slug: savedDocuments[0].slug,
-        view: DOC_VIEW_QUERY_PARAM.edit,
-        templateDocumentId
-      });
-    } else if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.update) {
-      onDocumentsChange(savedDocuments.reduce((all, doc) => replaceItem(all, doc), documents));
-    }
+    const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
+    window.location = routes.getDocUrl({
+      id: createdDocuments[0]._id,
+      slug: createdDocuments[0].slug,
+      view: DOC_VIEW_QUERY_PARAM.edit,
+      templateDocumentId: clonedOrTemplateDocumentId
+    });
   };
 
   const handleDocumentMetadataModalClose = () => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleDocumentArchivedSwitchChange = async (archived, row) => {
+    try {
+      const { doc } = archived
+        ? await documentApiClient.unarchiveDocument(row.documentId)
+        : await documentApiClient.archiveDocument(row.documentId);
+
+      const newDocuments = cloneDeep(mediaLibraryItems);
+      newDocuments
+        .filter(document => document._id === doc._id)
+        .forEach(document => {
+          document.publicContext.archived = doc.publicContext.archived;
+        });
+
+      onDocumentsChange(newDocuments);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
   };
 
   const renderDocumentLanguage = documentLanguage => {
@@ -163,7 +182,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   };
 
   const renderDocumentTitle = (_title, row) => {
-    const doc = documents.find(d => d._id === row.documentId);
+    const doc = mediaLibraryItems.find(d => d._id === row.documentId);
     if (!doc) {
       return null;
     }
@@ -180,12 +199,6 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       <div>
         <ActionButtonGroup>
           <ActionButton
-            title={t('common:edit')}
-            icon={<EditIcon />}
-            intent={ACTION_BUTTON_INTENT.default}
-            onClick={() => handleDocumentEditClick(row)}
-            />
-          <ActionButton
             title={t('common:duplicate')}
             icon={<DuplicateIcon />}
             intent={ACTION_BUTTON_INTENT.default}
@@ -196,14 +209,22 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     );
   };
 
+  const renderDocumentArchived = (archived, row) => {
+    return (
+      <Switch
+        size="small"
+        checked={row.archived}
+        unCheckedChildren={<CloseIcon />}
+        checkedChildren={<CheckOutlined />}
+        disabled={!hasUserPermission(user, permissions.ARCHIVE_DOC)}
+        onChange={() => handleDocumentArchivedSwitchChange(archived, row)}
+        />
+    );
+  };
+
   const renderDocumentBadges = (_, row) => {
     return (
       <div className="RedactionDocumentsTab-badges">
-        {!!row.archived && (
-          <Tooltip title={t('archivedDocumentBadge')}>
-            <InboxOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
             <LikeOutlined className="u-large-badge" />
@@ -255,6 +276,14 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       width: '140px'
     },
     {
+      title: t('common:archived'),
+      dataIndex: 'archived',
+      key: 'archived',
+      render: renderDocumentArchived,
+      responsive: ['lg'],
+      width: '100px'
+    },
+    {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
@@ -293,9 +322,9 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   );
 }
 
-RedactionDocumentsTab.propTypes = {
-  documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
-  onDocumentsChange: PropTypes.func.isRequired
+RedactionMediaLibraryTab.propTypes = {
+  mediaLibraryItems: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+  onMediaLibraryItemsChange: PropTypes.func.isRequired
 };
 
-export default RedactionDocumentsTab;
+export default RedactionMediaLibraryTab;

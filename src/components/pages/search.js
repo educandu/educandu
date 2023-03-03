@@ -1,5 +1,5 @@
 import by from 'thenby';
-import { Tag } from 'antd';
+import { Table, Tag } from 'antd';
 import PropTypes from 'prop-types';
 import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
@@ -7,7 +7,6 @@ import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
-import DocumentsTable from '../documents-table.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
@@ -174,7 +173,14 @@ function Search({ PageTemplate }) {
           {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
         </div>
 
-        <DocumentsTable key={searchText} dataSource={[...displayedRows]} columns={columns} loading={isSearching} />
+        <Table
+          key={searchText}
+          columns={columns}
+          loading={isSearching}
+          className="SearchPage-table"
+          dataSource={[...displayedRows]}
+          rowClassName={() => 'SearchPage-tableRow'}
+          />
       </div>
     </PageTemplate>
   );

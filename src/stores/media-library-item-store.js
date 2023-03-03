@@ -14,6 +14,10 @@ class MediaLibraryItemStore {
     return this.collection.findOne({ _id: mediaLibraryItemId }, { session });
   }
 
+  getAllMediaLibraryItems({ session } = {}) {
+    return this.collection.find({}, { session }).toArray();
+  }
+
   getMediaLibraryItemsByConditions(conditions, { session } = {}) {
     return this.collection.find({ $and: conditions }, { session }).toArray();
   }

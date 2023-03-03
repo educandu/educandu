@@ -1467,6 +1467,10 @@
     "documentTagsTabTitle": {
       "en": "Document tags",
       "de": "Dokument-Tags"
+    },
+    "mediaLibraryTabTitle": {
+      "en": "Media library",
+      "de": "Medienbibliothek"
     }
   },
   "resetPassword": {
@@ -1703,6 +1707,10 @@
     "badges": {
       "en": "Badges",
       "de": "Kennzeichen"
+    },
+    "archivedDocumentBadge": {
+      "en": "This document is archived",
+      "de": "Dieses Dokument ist archiviert"
     },
     "protectedDocumentBadge": {
       "en": "This document is protected",
@@ -3130,6 +3138,10 @@
       "en": "Enter keywords",
       "de": "Stichwörter angeben"
     },
+    "verified": {
+      "en": "Verified",
+      "de": "Überprüft"
+    },
     "protected": {
       "en": "Protected",
       "de": "Geschützt"
@@ -3260,7 +3272,15 @@
     },
     "sortedByArchived": {
       "en": "Sorted by archived status",
-      "de": "Nach Archivierungsstatus sortiert"
+      "de": "Nach Archiviert-Status sortiert"
+    },
+    "sortedByProtected": {
+      "en": "Sorted by protected status",
+      "de": "Nach Geschützt-Status sortiert"
+    },
+    "sortedByVerified": {
+      "en": "Sorted by verified status",
+      "de": "Nach Überprüft-Status sortiert"
     },
     "search": {
       "en": "Search",
@@ -3687,12 +3707,12 @@
       "de": "Du hast neue Benachrichtigungen auf {appName}"
     },
     "userNotificationEmail.text": {
-      "en": "Hello {userDisplayName}!\n\nYou have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on {appName}.\nOpen {notificationsLink} in your browser in order to read them.\n\nIn case you want to change your settings for this reminder email or if you do not want to get any further reminder emails,\nyou can open the address {settingsLink} in your browser in order to change to your personal notification settings.\n",
-      "de": "Hallo {userDisplayName}!\n\nDu hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf {appName}.\nÖffne {notificationsLink} in deinem Browser, um sie abzurufen.\n\nFalls du deine Einstellungen für diese Erinnerungsmail ändern oder keine Erinnerungsmails mehr bekommen möchtest, kannst du\ndie Adresse {settingsLink} in deinem Browser öffnen, um deine persönlichen Benachrichtigungseinstellungen zu ändern.\n"
+      "en": "Hello {userDisplayName}!\n\nYou have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on {appName}.\nOpen {notificationsLink} in your browser in order to read them.\n\nIf you would like to change your reminder email settings you can go to the settings area of your dashboard.\nOpen the address {settingsLink} in your browser.\n",
+      "de": "Hallo {userDisplayName}!\n\nDu hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf {appName}.\nÖffne {notificationsLink} in deinem Browser, um sie abzurufen.\n\nFalls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den Einstellungen auf\ndeinem Dashboard tun. Öffne dazu die Adresse {settingsLink} in deinem Browser.\n"
     },
     "userNotificationEmail.markdown": {
-      "en": "Hello {userDisplayName}!\n\nYou have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on **{appName}**.\nGo to the [notifications]({notificationsLink}) on your dashboard in order to read them.\n\nIn case you want to change your settings for this reminder email or if you do not want to get any further reminder emails,\nyou can go to the [settings]({settingsLink}) on your dashboard in order to change to your personal notification settings.\n",
-      "de": "Hallo {userDisplayName}!\n\nDu hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf **{appName}**.\nGehe zu den [Benachrichtigungen]({notificationsLink}) auf deinem Dashboard, um sie abzurufen.\n\nFalls du deine Einstellungen für diese Erinnerungsmail ändern oder keine Erinnerungsmails mehr bekommen möchtest, kannst du\nzu den [Einstellungen]({settingsLink}) auf deinem Dashboard gehen, um deine persönlichen Benachrichtigungseinstellungen zu ändern.\n"
+      "en": "Hello {userDisplayName}!\n\nYou have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on **{appName}**.\nGo to the [notifications]({notificationsLink}) on your dashboard in order to read them.\n\nIf you would like to change your reminder email settings you can go to the [settings area]({settingsLink}) of your dashboard.\n",
+      "de": "Hallo {userDisplayName}!\n\nDu hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf **{appName}**.\nGehe zu den [Benachrichtigungen]({notificationsLink}) auf deinem Dashboard, um sie abzurufen.\n\nFalls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den [Einstellungen]({settingsLink}) auf\ndeinem Dashboard tun.\n"
     }
   },
   "mimeTypeHelper": {

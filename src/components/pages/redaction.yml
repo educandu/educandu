@@ -5,3 +5,6 @@ redaction:
   documentTagsTabTitle:
     en: Document tags
     de: Dokument-Tags
+  mediaLibraryTabTitle:
+    en: Media library
+    de: Medienbibliothek

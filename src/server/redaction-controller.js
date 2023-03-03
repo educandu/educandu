@@ -1,26 +1,38 @@
 import PageRenderer from './page-renderer.js';
+import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import permissions, { hasUserPermission } from '../domain/permissions.js';
+import MediaLibraryService from '../services/media-library-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
-class DashboardController {
-  static dependencies = [DocumentService, ClientDataMappingService, PageRenderer];
+class RedactionController {
+  static dependencies = [DocumentService, MediaLibraryService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentService, clientDataMappingService, pageRenderer) {
+  constructor(documentService, mediaLibraryService, clientDataMappingService, pageRenderer) {
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
+    this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
   async handleGetRedactionPage(req, res) {
-    const includeArchived = hasUserPermission(req.user, permissions.ARCHIVE_DOC);
-    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived });
+    const { user } = req;
 
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, req.user);
+    const [documents, mediaLibraryItems] = await Promise.all([
+      this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true }),
+      this.mediaLibraryService.getAllMediaLibraryItems()
+    ]);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.redaction, { documents: mappedDocuments });
+    const [mappedDocuments, mappedMediaLibraryItems] = await Promise.all([
+      this.clientDataMappingService.mapDocsOrRevisions(documents, user),
+      this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user)
+    ]);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.redaction, {
+      documents: mappedDocuments,
+      mediaLibraryItems: mappedMediaLibraryItems
+    });
   }
 
   registerPages(router) {
@@ -32,4 +44,4 @@ class DashboardController {
   }
 }
 
-export default DashboardController;
+export default RedactionController;

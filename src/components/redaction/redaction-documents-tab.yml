@@ -8,6 +8,9 @@ redactionDocumentsTab:
   badges:
     en: Badges
     de: Kennzeichen
+  archivedDocumentBadge:
+    en: This document is archived
+    de: Dieses Dokument ist archiviert
   protectedDocumentBadge:
     en: This document is protected
     de: Dieses Dokument ist geschützt

@@ -19,6 +19,10 @@ class MediaLibraryService {
     this.mediaLibraryItemStore = mediaLibraryItemStore;
   }
 
+  getAllMediaLibraryItems() {
+    return this.mediaLibraryItemStore.getAllMediaLibraryItems();
+  }
+
   async getSearchableMediaLibraryItemsByTags({ query, resourceTypes }) {
     const tagQuery = createTagSearchQuery(query);
     if (!tagQuery.isValid) {
