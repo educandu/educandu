@@ -35,7 +35,7 @@ export default function AnnotationDisplay({ content }) {
 
   return (
     <Collapsible
-      title={<Markdown inline>{content.title}</Markdown>}
+      title={content.title ? <Markdown inline>{content.title}</Markdown> : null}
       icon={getIcon()}
       color={getColor()}
       width={width}

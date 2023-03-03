@@ -70,7 +70,7 @@
 }
 
 .Collapsible-icon {
-  font-size: @edu-font-size-lg;
+  font-size: 1.5em;
   display: flex;
 
   &.Collapsible-icon--standalone {
@@ -87,8 +87,13 @@
   border-top: none;
 
   &.Collapsible-content--standalone {
-    border-radius: @edu-border-radius-base;
+    display: grid;
+    gap: @edu-content-padding;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
     border: 1px solid @edu-border-color-light;
+    border-radius: @edu-border-radius-base;
 
     &.Collapsible-content--green {
       background-color: @collapsible-header-green-background-color;
