@@ -1,4 +1,3 @@
-
 const intentToColorSchemeMap = {
   neutral: 'khaki',
   confirm: 'green',
