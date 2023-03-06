@@ -16,8 +16,6 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-const isValidLinkListItem = item => [item.linkTitle, item.documentId].every(hasValue);
-
 const newLinkListItem = { linkTitle: '', documentId: '' };
 
 const settingsDocumentsToLinkList = settingsDocuments => {
@@ -31,29 +29,25 @@ const settingsDocumentsToLinkList = settingsDocuments => {
 function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   const { t } = useTranslation('settingsDocumentsTable');
 
-  const fireOnChange = updatedLinkList => {
-    onChange(updatedLinkList, { isValid: updatedLinkList.every(isValidLinkListItem) });
-  };
-
   const handleMoveClick = (index, offset) => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
-    fireOnChange(swapItemsAt(linkList, index, index + offset));
+    onChange(swapItemsAt(linkList, index, index + offset));
   };
 
   const handleAddClick = () => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
-    fireOnChange([...linkList, { ...newLinkListItem }]);
+    onChange([...linkList, { ...newLinkListItem }]);
   };
 
   const handleDeleteClick = index => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
-    fireOnChange(removeItemAt(linkList, index));
+    onChange(removeItemAt(linkList, index));
   };
 
   const handleChange = (index, key, value) => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
     const updatedLinkList = linkList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
-    fireOnChange(updatedLinkList);
+    onChange(updatedLinkList);
   };
 
   const renderRank = (text, record, index) => (
