@@ -17,7 +17,7 @@ export default function MusicLearningBlockDisplay({ content }) {
       title={t(`type_${type}`)}
       isCollapsible={behavior !== BEHAVIOR.static}
       isCollapsed={behavior === BEHAVIOR.expandable}
-      icon={<MusicLearningBlockIconRenderer type={type} className="MusicLearningBlockDisplay-typeIcon" />}
+      icon={<MusicLearningBlockIconRenderer type={type} />}
       className="MusicLearningBlockDisplay"
       headerClassName={`MusicLearningBlock-colorScheme MusicLearningBlock-colorScheme--${colorScheme}`}
       >
