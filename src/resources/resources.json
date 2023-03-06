@@ -2337,6 +2337,44 @@
       "de": "Diagramm"
     }
   },
+  "divider": {
+    "name": {
+      "en": "Divider",
+      "de": "Verteiler"
+    },
+    "titlePosition": {
+      "en": "Title position",
+      "de": "Titleposition"
+    },
+    "titlePosition_left": {
+      "en": "left",
+      "de": "Links"
+    },
+    "titlePosition_center": {
+      "en": "center",
+      "de": "Mitte"
+    },
+    "titlePosition_right": {
+      "en": "right",
+      "de": "Rechts"
+    },
+    "colorIntensity": {
+      "en": "Color intensity",
+      "de": "Farbintensität"
+    },
+    "colorIntensity_light": {
+      "en": "light",
+      "de": "Hell"
+    },
+    "colorIntensity_normal": {
+      "en": "normal",
+      "de": "Normal"
+    },
+    "colorIntensity_dark": {
+      "en": "dark",
+      "de": "Dunkel"
+    }
+  },
   "earTraining": {
     "name": {
       "en": "Ear training",

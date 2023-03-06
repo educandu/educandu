@@ -5,6 +5,7 @@ import ImageInfo from './image/image-info.js';
 import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
+import DividerInfo from './divider/divider-info.js';
 import RegisteredPlugin from './registered-plugin.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
@@ -32,6 +33,7 @@ const builtInPluginInfos = [
   TableInfo,
   IframeInfo,
   CatalogInfo,
+  DividerInfo,
   MarkdownInfo,
   PdfViewerInfo,
   AnnotationInfo,
