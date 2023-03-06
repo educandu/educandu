@@ -1,0 +1,106 @@
+@music-learning-block-color-scheme-red-background-color: #FFA1A1;
+@music-learning-block-color-scheme-red-border-color: #ED9191;
+@music-learning-block-color-scheme-orange-background-color: #FECEA8;
+@music-learning-block-color-scheme-orange-border-color: #EAB896;
+@music-learning-block-color-scheme-pink-background-color: #F4D6CC;
+@music-learning-block-color-scheme-pink-border-color: #E2BCB5;
+@music-learning-block-color-scheme-lila-background-color: #D9D4E8;
+@music-learning-block-color-scheme-lila-border-color: #CCC7DD;
+@music-learning-block-color-scheme-yellow-background-color: #F9ECB9;
+@music-learning-block-color-scheme-yellow-border-color: #EFDFB1;
+@music-learning-block-color-scheme-green-background-color: #DEE9BF;
+@music-learning-block-color-scheme-green-border-color: #D3DDB3;
+@music-learning-block-color-scheme-khaki-background-color: #D8D8D0;
+@music-learning-block-color-scheme-khaki-border-color: #CCCCC4;
+@music-learning-block-color-scheme-blue-background-color: #C5DCDD;
+@music-learning-block-color-scheme-blue-border-color: #BCD3D3;
+
+.MusicLearningBlockDisplay {}
+
+.MusicLearningBlockEditor {}
+
+.MusicLearningBlockEditor-radioGroup {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  place-items: start;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-columns: auto;
+  }
+}
+
+.MusicLearningBlockEditor-typeRadio {}
+
+.MusicLearningBlockEditor-typeRadioLabel {
+  display: grid;
+  gap: 10px;
+  padding-left: 5px;
+  align-items: center;
+  place-content: start;
+  grid-auto-flow: column;
+}
+
+.MusicLearningBlockEditor-typeRadioIcon {
+  min-width: 25px;
+  font-size: 1.5em;
+}
+
+.MusicLearningBlockEditor-colorSchemeRadio {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+}
+
+.MusicLearningBlock-colorScheme {
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-base;
+  background-color: @edu-background-color-base;
+
+  &.MusicLearningBlock-colorScheme--editor {
+    width: 100px;
+    height: 30px;
+    padding-left: 10px;
+  }
+
+  &.MusicLearningBlock-colorScheme--red {
+    background-color: @music-learning-block-color-scheme-red-background-color;
+    border-color: @music-learning-block-color-scheme-red-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--orange {
+    background-color: @music-learning-block-color-scheme-orange-background-color;
+    border-color: @music-learning-block-color-scheme-orange-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--pink {
+    background-color: @music-learning-block-color-scheme-pink-background-color;
+    border-color: @music-learning-block-color-scheme-pink-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--lila {
+    background-color: @music-learning-block-color-scheme-lila-background-color;
+    border-color: @music-learning-block-color-scheme-lila-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--yellow {
+    background-color: @music-learning-block-color-scheme-yellow-background-color;
+    border-color: @music-learning-block-color-scheme-yellow-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--green {
+    background-color: @music-learning-block-color-scheme-green-background-color;
+    border-color: @music-learning-block-color-scheme-green-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--khaki {
+    background-color: @music-learning-block-color-scheme-khaki-background-color;
+    border-color: @music-learning-block-color-scheme-khaki-border-color;
+  }
+
+  &.MusicLearningBlock-colorScheme--blue {
+    background-color: @music-learning-block-color-scheme-blue-background-color;
+    border-color: @music-learning-block-color-scheme-blue-border-color;
+  }
+}
