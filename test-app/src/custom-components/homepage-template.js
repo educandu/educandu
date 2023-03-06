@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import HomepageSponsors from './homepage-sponsors.js';
 import ConsentDialog from '../../../src/components/consent-dialog.js';
 import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import DefaultPageHeader from '../../../src/components/default-page-header.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
+import HomepageTrustFooter from '../../../src/components/homepage/homepage-trust-footer.js';
 import HomepageDocumentCards from '../../../src/components/homepage/homepage-document-cards.js';
 import HomepageFoldDividerTop from '../../../src/components/homepage/homepage-fold-divider-top.js';
 import HomepageOerPresentation from '../../../src/components/homepage/homepage-oer-presentation.js';
@@ -54,7 +54,7 @@ function HomepageTemplate({ children }) {
             </div>
           </div>
         </section>
-        <HomepageSponsors />
+        <HomepageTrustFooter />
       </main>
       <DefaultPageFooter />
       <ConsentDialog />

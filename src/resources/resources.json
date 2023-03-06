@@ -32,6 +32,14 @@
       "en": "Homepage presentation",
       "de": "Homepage-Präsentation"
     },
+    "homepageTrustLogosHeader": {
+      "en": "Homepage trust logos",
+      "de": "Homepage Vertrauens-Logos"
+    },
+    "homepageTrustLogosInfo": {
+      "en": "The logos of the trusted institutions are displayed in an extra footer on the homepage. Please provide SVGs with transparent background and links to the home pages of each institution.",
+      "de": "The logos of the trusted institutions are displayed in an extra footer on the homepage. Please provide SVGs with transparent background and links to the home pages of each institution."
+    },
     "helpPageHeader": {
       "en": "Help page",
       "de": "Hilfe-Seite"
@@ -83,6 +91,20 @@
     "aboutDocument": {
       "en": "'About' document\n",
       "de": "'Über' Dokument\n"
+    }
+  },
+  "homepageTrustLogosSettings": {
+    "institution": {
+      "en": "Institution",
+      "de": "Institution"
+    },
+    "logoUrl": {
+      "en": "Logo URL",
+      "de": "Logo-URL"
+    },
+    "institutionUrl": {
+      "en": "Institution URL",
+      "de": "Institution-URL"
     }
   },
   "settingsDocumentsTable": {
@@ -1011,6 +1033,12 @@
     "learnMore": {
       "en": "Learn more",
       "de": "Mehr erfahren"
+    }
+  },
+  "homepageTrustFooter": {
+    "supportedBy": {
+      "en": "Supported by:\n",
+      "de": "Unterstützt durch:\n"
     }
   },
   "imageEditor": {

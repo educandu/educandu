@@ -9,8 +9,8 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-function HomepageTags({ tags, onChange }) {
-  const { t } = useTranslation('homepageTags');
+function HomepageTagsSettings({ tags, onChange }) {
+  const { t } = useTranslation('homepageTagsSettings');
 
   const documentApiClient = useService(DocumentApiClient);
 
@@ -34,13 +34,13 @@ function HomepageTags({ tags, onChange }) {
   );
 }
 
-HomepageTags.propTypes = {
+HomepageTagsSettings.propTypes = {
   tags: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired
 };
 
-HomepageTags.defaultProps = {
+HomepageTagsSettings.defaultProps = {
   tags: []
 };
 
-export default memo(HomepageTags);
+export default memo(HomepageTagsSettings);

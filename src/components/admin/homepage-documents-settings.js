@@ -15,8 +15,8 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-function HomepageDocuments({ documentIds, onChange }) {
-  const { t } = useTranslation('homepageDocuments');
+function HomepageDocumentsSettings({ documentIds, onChange }) {
+  const { t } = useTranslation('homepageDocumentsSettings');
 
   const handleAddClick = () => {
     onChange([...documentIds, '']);
@@ -57,13 +57,13 @@ function HomepageDocuments({ documentIds, onChange }) {
   );
 }
 
-HomepageDocuments.propTypes = {
+HomepageDocumentsSettings.propTypes = {
   documentIds: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired
 };
 
-HomepageDocuments.defaultProps = {
+HomepageDocumentsSettings.defaultProps = {
   documentIds: []
 };
 
-export default memo(HomepageDocuments);
+export default memo(HomepageDocumentsSettings);

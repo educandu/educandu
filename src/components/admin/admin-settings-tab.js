@@ -1,21 +1,22 @@
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
-import HomepageTags from './homepage-tags.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
 import { useService } from '../container-context.js';
 import DocumentSelector from '../document-selector.js';
-import HomepageDocuments from './homepage-documents.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import { Button, Collapse, message, Spin, Tabs } from 'antd';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import AnnouncementSettings from './announcement-settings.js';
+import HomepageTagsSettings from './homepage-tags-settings.js';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
+import HomepageDocumentsSettings from './homepage-documents-settings.js';
+import HomepageTrustLogosSettings from './homepage-trust-logos-settings.js';
 import HomepagePresentationSettings from './homepage-presentation-settings.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
@@ -74,6 +75,10 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     handleChange('homepagePresentation', value);
   }, [handleChange]);
 
+  const handleHomepageTrustLogosChange = useCallback(value => {
+    handleChange('homepageTrustLogos', value);
+  }, [handleChange]);
+
   const handleTemplateDocumentChange = useCallback(documentId => {
     handleChange('templateDocument', { documentId });
   }, [handleChange]);
@@ -99,10 +104,30 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     handleChange('license', value);
   }, [handleChange]);
 
+  const cleanUpSettings = () => {
+    if (settings.announcement) {
+      settings.announcement.text = settings.announcement.text.trim();
+    }
+    if (settings.homepageDocuments) {
+      settings.homepageDocuments = settings.homepageDocuments.filter(documentId => !!documentId);
+    }
+    if (settings.homepageTrustLogos) {
+      settings.homepageTrustLogos = settings.homepageTrustLogos.filter(item => !!item.logoUrl.trim());
+    }
+    if (settings.footerLinks) {
+      for (const language of Object.keys(settings.footerLinks)) {
+        settings.footerLinks[language] = settings.footerLinks[language].filter(item => item.linkTitle.trim().length && item.documentId);
+      }
+    }
+
+    return settings;
+  };
+
   const handleSaveButtonClick = async () => {
     try {
       setIsSaving(true);
-      const res = await settingsApiClient.saveSettings({ settings });
+      const newSettings = cleanUpSettings();
+      const res = await settingsApiClient.saveSettings({ settings: newSettings });
       setIsDirty(false);
       setSettings(res.settings);
       message.success({ content: t('common:changesSavedSuccessfully') });
@@ -119,7 +144,10 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('announcementHeader')} key="panel">
             <div className="AdminSettingsTab-collapseInfo">{t('announcementInfo')}</div>
-            <AnnouncementSettings announcement={settings.announcement} onChange={handleAnnouncementChange} />
+            <AnnouncementSettings
+              announcement={settings.announcement}
+              onChange={handleAnnouncementChange}
+              />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
@@ -133,24 +161,45 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
             <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
-            <HomepageTags tags={settings.homepageTags} onChange={handleHomepageTagsChange} />
+            <HomepageTagsSettings
+              tags={settings.homepageTags}
+              onChange={handleHomepageTagsChange}
+              />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageDocumentsHeader')} key="homepageDocuments">
             <div className="AdminSettingsTab-collapseInfo">{t('homepageDocumentsInfo')}</div>
-            <HomepageDocuments documentIds={settings.homepageDocuments} onChange={handleHomepageDocumentsChange} />
+            <HomepageDocumentsSettings
+              documentIds={settings.homepageDocuments}
+              onChange={handleHomepageDocumentsChange}
+              />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepagePresentationHeader')} key="homepagePresentation">
-            <HomepagePresentationSettings settings={settings.homepagePresentation} onChange={handleHomepagePresentationChange} />
+            <HomepagePresentationSettings
+              settings={settings.homepagePresentation}
+              onChange={handleHomepagePresentationChange}
+              />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('homepageTrustLogosHeader')} key="homepageTrustLogos">
+            <div className="AdminSettingsTab-collapseInfo">{t('homepageTrustLogosInfo')}</div>
+            <HomepageTrustLogosSettings
+              settings={settings.homepageTrustLogos}
+              onChange={handleHomepageTrustLogosChange}
+              />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
             <div className="AdminSettingsTab-templateDocument" >
-              <DocumentSelector documentId={settings.templateDocument?.documentId} onChange={handleTemplateDocumentChange} />
+              <DocumentSelector
+                documentId={settings.templateDocument?.documentId}
+                onChange={handleTemplateDocumentChange}
+                />
             </div>
           </Collapse.Panel>
         </Collapse>
