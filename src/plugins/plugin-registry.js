@@ -7,6 +7,7 @@ import IframeInfo from './iframe/iframe-info.js';
 import CatalogInfo from './catalog/catalog-info.js';
 import RegisteredPlugin from './registered-plugin.js';
 import MarkdownInfo from './markdown/markdown-info.js';
+import SeparatorInfo from './separator/separator-info.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
 import DiagramNetInfo from './diagram-net/diagram-net-info.js';
@@ -35,6 +36,7 @@ const builtInPluginInfos = [
   CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,
+  SeparatorInfo,
   AnnotationInfo,
   DiagramNetInfo,
   QuickTesterInfo,

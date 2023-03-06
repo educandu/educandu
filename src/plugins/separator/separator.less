@@ -1,0 +1,38 @@
+.SeparatorDisplay {
+  margin: 0 auto;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto 1fr;
+
+  &.SeparatorDisplay--titleLeft {
+    grid-template-columns: 50px auto 1fr;
+  }
+
+  &.SeparatorDisplay--titleRight {
+    grid-template-columns: 1fr auto 50px;
+  }
+
+  &.SeparatorDisplay--noTitle {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.SeparatorDisplay-line {
+  height: 1px;
+  background-color: @edu-border-color-base;
+
+  &.SeparatorDisplay-line--light {
+    background-color: @edu-border-color-light;
+  }
+
+  &.SeparatorDisplay-line--dark {
+    background-color: @edu-border-color-dark;
+  }
+}
+
+.SeparatorDisplay-title {
+  margin: 0 10px;
+  color: @edu-text-color;
+}
+
+.SeparatorEditor {}

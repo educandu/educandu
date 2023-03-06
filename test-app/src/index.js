@@ -13,6 +13,7 @@ const plugins = [
   'markdown-with-image',
   'image',
   'catalog',
+  'separator',
   'annotation',
   'music-learning-block',
   'audio',
