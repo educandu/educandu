@@ -1,98 +1,76 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import routes from '../../utils/routes.js';
+import { message, Table, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
-import { Switch, Table, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../../utils/clone-deep.js';
+import ItemsExpander from '../items-expander.js';
+import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import CloseIcon from '../icons/general/close-icon.js';
-import DocumentInfoCell from '../document-info-cell.js';
+import ResourceInfoCell from '../resource-info-cell.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
+import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
+import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
-import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
+import MediaLibaryMetadataModal, { MEDIA_LIBRARY_METADATA_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
-  let initialDocumentMetadata;
-  switch (mode) {
-    case DOCUMENT_METADATA_MODAL_MODE.create:
-      initialDocumentMetadata = {};
-      break;
-    case DOCUMENT_METADATA_MODAL_MODE.update:
-      initialDocumentMetadata = { ...document };
-      break;
-    case DOCUMENT_METADATA_MODAL_MODE.clone:
-      initialDocumentMetadata = {
-        ...document,
-        title: `${document.title} ${t('common:copyTitleSuffix')}`,
-        slug: document.slug ? `${document.slug}-${t('common:copySlugSuffix')}` : ''
-      };
-      break;
-    default:
-      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
-  }
-  return {
-    mode,
-    allowMultiple: false,
-    isOpen,
-    documentToClone: document,
-    initialDocumentMetadata
-  };
+function getDocumentMetadataModalState({ mode = MEDIA_LIBRARY_METADATA_MODAL_MODE.preview, mediaLibraryItem = null, isOpen = false }) {
+  return { mode, isOpen, mediaLibraryItem };
 }
 
-function createTableRows(docs) {
-  return docs.map(doc => ({
-    key: doc._id,
-    _id: doc._id,
-    documentId: doc._id,
-    title: doc.title,
-    createdOn: doc.createdOn,
-    updatedOn: doc.updatedOn,
-    createdBy: doc.createdBy,
-    language: doc.language,
-    user: doc.user,
-    accreditedEditors: doc.publicContext.accreditedEditors,
-    protected: doc.publicContext.protected,
-    archived: doc.publicContext.archived,
-    verified: doc.publicContext.verified
+function createTableRows(mediaLibraryItems, t) {
+  return mediaLibraryItems.map(item => ({
+    ...item,
+    key: item._id,
+    translatedResourceType: getResourceTypeTranslation({ resourceType: item.resourceType, t })
   }));
+}
+
+function filterRow(row, lowerCasedFilterText) {
+  return row.displayName.toLowerCase().includes(lowerCasedFilterText)
+    || row.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilterText))
+    || row.licenses.some(license => license.toLowerCase().includes(lowerCasedFilterText))
+    || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilterText)
+    || row.updatedBy.displayName.toLowerCase().includes(lowerCasedFilterText);
+}
+
+function filterRows(rows, filterText) {
+  const lowerCasedFilterText = filterText.toLowerCase().trim();
+  return lowerCasedFilterText ? rows.filter(row => filterRow(row, lowerCasedFilterText)) : rows;
 }
 
 function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const user = useUser();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
-  const { t } = useTranslation('redactionDocumentsTab');
+  const { t } = useTranslation('redactionMediaLibraryTab');
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
+  const [resourceMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({}));
 
   useEffect(() => {
-    setAllTableRows(createTableRows(mediaLibraryItems));
-  }, [mediaLibraryItems]);
+    setAllTableRows(createTableRows(mediaLibraryItems, t));
+  }, [mediaLibraryItems, t]);
 
-  const documentsSortingOptions = useMemo(() => {
+  const sortingOptions = useMemo(() => {
     const options = [
-      { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+      { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'name' },
       { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
       { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-      { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-      { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' }
+      { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: 'user' },
+      { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: 'size' },
+      { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
     ];
 
     if (hasUserPermission(user, permissions.ARCHIVE_DOC)) {
@@ -103,23 +81,18 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   }, [user, t]);
 
   const tableSorters = useMemo(() => ({
-    title: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.title, { direction, ignoreCase: true })),
+    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.displayName, { direction, ignoreCase: true })),
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
-    language: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.language, direction)),
     user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
-    archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction))
+    size: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.size, direction)),
+    type: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.translatedResourceType, { direction, ignoreCase: true }))
   }), []);
 
   useEffect(() => {
-    const filter = filterText.toLowerCase();
-    const filteredRows = filterText
-      ? allTableRows.filter(row => row.title.toLowerCase().includes(filter) || row.createdBy.displayName.toLowerCase().includes(filter))
-      : allTableRows;
-
+    const filteredRows = filterRows(allTableRows, filterText);
     const sorter = tableSorters[currentTableSorting.value];
     const sortedRows = sorter ? sorter(filteredRows, currentTableSorting.direction) : filteredRows;
-
     setDisplayedTableRows(sortedRows);
   }, [allTableRows, filterText, currentTableSorting, tableSorters]);
 
@@ -132,172 +105,123 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     setFilterText(newFilterText);
   };
 
-  const handleDocumentCloneClick = row => {
-    const document = mediaLibraryItems.find(d => d._id === row.documentId);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({
-      t,
-      mode: DOCUMENT_METADATA_MODAL_MODE.clone,
-      document,
-      isOpen: true
-    }));
+  const handleInfoCellClick = row => {
+    const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ mode: MEDIA_LIBRARY_METADATA_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
 
-  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId, mode) => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+  const handleDocumentEditClick = row => {
+    const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ mode: MEDIA_LIBRARY_METADATA_MODAL_MODE.edit, mediaLibraryItem, isOpen: true }));
+  };
 
-    const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
-    window.location = routes.getDocUrl({
-      id: createdDocuments[0]._id,
-      slug: createdDocuments[0].slug,
-      view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentId: clonedOrTemplateDocumentId
+  const handleDocumentDeleteClick = row => {
+    const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
+    confirmMediaFileHardDelete(t, mediaLibraryItem.displayName, async () => {
+      try {
+        await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItem._id });
+        onMediaLibraryItemsChange(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
+        message.success(t('common:changesSavedSuccessfully'));
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      }
     });
   };
 
+  const handleDocumentMetadataModalSave = savedItem => {
+    setDocumentMetadataModalState(previousState => ({ ...previousState, isOpen: false }));
+    onMediaLibraryItemsChange(oldItems => replaceItem(oldItems, savedItem));
+  };
+
   const handleDocumentMetadataModalClose = () => {
-    setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+    setDocumentMetadataModalState(previousState => ({ ...previousState, isOpen: false }));
   };
 
-  const handleDocumentArchivedSwitchChange = async (archived, row) => {
-    try {
-      const { doc } = archived
-        ? await documentApiClient.unarchiveDocument(row.documentId)
-        : await documentApiClient.archiveDocument(row.documentId);
-
-      const newDocuments = cloneDeep(mediaLibraryItems);
-      newDocuments
-        .filter(document => document._id === doc._id)
-        .forEach(document => {
-          document.publicContext.archived = doc.publicContext.archived;
-        });
-
-      onDocumentsChange(newDocuments);
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    }
+  const renderName = (_, row) => {
+    return (
+      <ResourceInfoCell
+        url={row.url}
+        title={row.displayName}
+        createdOn={row.createdOn}
+        updatedOn={row.updatedOn}
+        createdBy={row.createdBy}
+        updatedBy={row.updatedBy}
+        description={row.description}
+        onClick={() => handleInfoCellClick(row)}
+        />
+    );
   };
 
-  const renderDocumentLanguage = documentLanguage => {
-    return <LanguageIcon language={documentLanguage} />;
-  };
+  const renderTagsOrLicenses = tagsOrLicenses => (
+    <div>
+      <ItemsExpander
+        className="RedactionMediaLibraryTab-cellTags"
+        expandLinkClassName="RedactionMediaLibraryTab-cellTagsExpandLink"
+        items={tagsOrLicenses}
+        renderItem={tagOrLicense => <Tag className="Tag" key={tagOrLicense}>{tagOrLicense}</Tag>}
+        />
+    </div>
+  );
 
-  const renderDocumentTitle = (_title, row) => {
-    const doc = mediaLibraryItems.find(d => d._id === row.documentId);
-    if (!doc) {
-      return null;
-    }
-
-    return <DocumentInfoCell doc={doc} />;
-  };
-
-  const renderDocumentCreatedBy = (_user, row) => {
-    return <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
-  };
-
-  const renderDocumentActions = (_actions, row) => {
+  const renderActions = (_actions, row) => {
     return (
       <div>
         <ActionButtonGroup>
           <ActionButton
-            title={t('common:duplicate')}
-            icon={<DuplicateIcon />}
+            title={t('common:edit')}
+            icon={<EditIcon />}
             intent={ACTION_BUTTON_INTENT.default}
-            onClick={() => handleDocumentCloneClick(row)}
+            onClick={() => handleDocumentEditClick(row)}
+            />
+          <ActionButton
+            title={t('common:delete')}
+            icon={<DeleteIcon />}
+            intent={ACTION_BUTTON_INTENT.error}
+            onClick={() => handleDocumentDeleteClick(row)}
             />
         </ActionButtonGroup>
       </div>
     );
   };
 
-  const renderDocumentArchived = (archived, row) => {
-    return (
-      <Switch
-        size="small"
-        checked={row.archived}
-        unCheckedChildren={<CloseIcon />}
-        checkedChildren={<CheckOutlined />}
-        disabled={!hasUserPermission(user, permissions.ARCHIVE_DOC)}
-        onChange={() => handleDocumentArchivedSwitchChange(archived, row)}
-        />
-    );
-  };
-
-  const renderDocumentBadges = (_, row) => {
-    return (
-      <div className="RedactionDocumentsTab-badges">
-        {!!row.verified && (
-          <Tooltip title={t('common:verifiedDocumentBadge')}>
-            <LikeOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-        {!!row.protected && (
-          <Tooltip title={t('protectedDocumentBadge')}>
-            <SafetyCertificateOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-        {!!row.accreditedEditors.length && (
-          <Tooltip title={t('accreditedEditorsBadge')}>
-            <TeamOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-      </div>
-    );
-  };
-
-  const documentsTableColumns = [
+  const tableColumns = [
     {
-      title: t('common:title'),
-      dataIndex: 'title',
-      key: 'title',
-      render: renderDocumentTitle
+      title: t('common:name'),
+      dataIndex: 'name',
+      key: 'name',
+      render: renderName
     },
     {
-      title: t('common:language'),
-      dataIndex: 'language',
-      key: 'language',
-      render: renderDocumentLanguage,
-      responsive: ['sm'],
-      width: '100px'
-    },
-    {
-      title: t('initialAuthor'),
-      dataIndex: 'user',
-      key: 'user',
-      render: renderDocumentCreatedBy,
+      title: t('common:tags'),
+      dataIndex: 'tags',
+      key: 'tags',
+      render: renderTagsOrLicenses,
       responsive: ['md'],
       width: '200px'
     },
     {
-      title: t('badges'),
-      dataIndex: 'badges',
-      key: 'badges',
-      render: renderDocumentBadges,
-      responsive: ['lg'],
-      width: '140px'
-    },
-    {
-      title: t('common:archived'),
-      dataIndex: 'archived',
-      key: 'archived',
-      render: renderDocumentArchived,
-      responsive: ['lg'],
-      width: '100px'
+      title: t('common:licenses'),
+      dataIndex: 'licenses',
+      key: 'licenses',
+      render: renderTagsOrLicenses,
+      responsive: ['md'],
+      width: '150px'
     },
     {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderDocumentActions,
+      render: renderActions,
       width: '100px'
     }
   ];
 
   return (
-    <div className="RedactionDocumentsTab">
-      <div className="RedactionDocumentsTab-controls">
+    <div className="RedactionMediaLibraryTab">
+      <div className="RedactionMediaLibraryTab-controls">
         <FilterInput
           size="large"
-          className="RedactionDocumentsTab-filter"
+          className="RedactionMediaLibraryTab-filter"
           value={filterText}
           onChange={handleFilterTextChange}
           placeholder={t('filterPlaceholder')}
@@ -305,16 +229,16 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         <SortingSelector
           size="large"
           sorting={currentTableSorting}
-          options={documentsSortingOptions}
+          options={sortingOptions}
           onChange={handleCurrentTableSortingChange}
           />
       </div>
       <Table
         dataSource={[...displayedTableRows]}
-        columns={documentsTableColumns}
+        columns={tableColumns}
         />
-      <DocumentMetadataModal
-        {...documentMetadataModalState}
+      <MediaLibaryMetadataModal
+        {...resourceMetadataModalState}
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
         />
@@ -323,7 +247,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
 }
 
 RedactionMediaLibraryTab.propTypes = {
-  mediaLibraryItems: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+  mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired,
   onMediaLibraryItemsChange: PropTypes.func.isRequired
 };
 

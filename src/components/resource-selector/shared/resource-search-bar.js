@@ -4,6 +4,7 @@ import { Button, Checkbox, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
+import { getResourceTypeTranslation } from '../../../utils/resource-utils.js';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -18,7 +19,7 @@ const OVERALL_POSSIBLE_RESOURCE_TYPES = [
 ];
 
 const createResourceTypeOptions = (allowedResourceTypes, t) => {
-  return allowedResourceTypes.map(resourceType => ({ label: t(`resourceType_${resourceType}`), value: resourceType }));
+  return allowedResourceTypes.map(resourceType => ({ label: getResourceTypeTranslation({ resourceType, t }), value: resourceType }));
 };
 
 function ResourceSearchBar({ isLoading, allowedResourceTypes, initialSearchParams, onSearch }) {

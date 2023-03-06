@@ -63,3 +63,7 @@ export const getResourceIcon = ({ url, filled }) => {
       return filled ? FileUnknownFilledIcon : FileUnknownIcon;
   }
 };
+
+export const getResourceTypeTranslation = ({ resourceType, t }) => {
+  return t(`common:resourceType_${resourceType}`);
+};

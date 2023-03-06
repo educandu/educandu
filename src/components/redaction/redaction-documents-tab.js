@@ -1,12 +1,12 @@
 import by from 'thenby';
-import { Table, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
+import { Table, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import DocumentInfoCell from '../document-info-cell.js';
+import ResourceInfoCell from '../resource-info-cell.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -81,7 +81,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
     { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-    { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' },
+    { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: 'creator' },
     { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
     { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
     { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: 'verified' }
@@ -92,7 +92,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
     language: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.language, direction)),
-    user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
+    creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
     archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
     protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
     verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction))
@@ -168,7 +168,15 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       return null;
     }
 
-    return <DocumentInfoCell doc={doc} />;
+    return (
+      <ResourceInfoCell
+        title={doc.title}
+        createdOn={doc.createdOn}
+        updatedOn={doc.updatedOn}
+        description={doc.description}
+        url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
+        />
+    );
   };
 
   const renderDocumentCreatedBy = (_user, row) => {
@@ -239,7 +247,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       width: '100px'
     },
     {
-      title: t('initialAuthor'),
+      title: t('common:creator'),
       dataIndex: 'user',
       key: 'user',
       render: renderDocumentCreatedBy,
