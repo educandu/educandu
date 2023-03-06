@@ -1,7 +1,7 @@
-divider:
+separator:
   name:
-    en: Divider
-    de: Verteiler
+    en: Separator
+    de: Trennlinie
   titlePosition:
     en: Title position
     de: Titleposition

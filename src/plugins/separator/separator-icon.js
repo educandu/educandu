@@ -3,16 +3,16 @@ import iconNs, { LineOutlined } from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function IframeIconComponent() {
+export function SeparatorIconComponent() {
   return (
     <LineOutlined />
   );
 }
 
-function IframeIcon() {
+function SeparatorIcon() {
   return (
-    <Icon component={IframeIconComponent} />
+    <Icon component={SeparatorIconComponent} />
   );
 }
 
-export default IframeIcon;
+export default SeparatorIcon;

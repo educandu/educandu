@@ -1,38 +1,38 @@
-.DividerDisplay {
+.SeparatorDisplay {
   margin: 0 auto;
   display: grid;
   align-items: center;
   grid-template-columns: 1fr auto 1fr;
 
-  &.DividerDisplay--titleLeft {
+  &.SeparatorDisplay--titleLeft {
     grid-template-columns: 50px auto 1fr;
   }
 
-  &.DividerDisplay--titleRight {
+  &.SeparatorDisplay--titleRight {
     grid-template-columns: 1fr auto 50px;
   }
 
-  &.DividerDisplay--noTitle {
+  &.SeparatorDisplay--noTitle {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-.DividerDisplay-line {
+.SeparatorDisplay-line {
   height: 1px;
   background-color: @edu-border-color-base;
 
-  &.DividerDisplay-line--light {
+  &.SeparatorDisplay-line--light {
     background-color: @edu-border-color-light;
   }
 
-  &.DividerDisplay-line--dark {
+  &.SeparatorDisplay-line--dark {
     background-color: @edu-border-color-dark;
   }
 }
 
-.DividerDisplay-title {
+.SeparatorDisplay-title {
   margin: 0 10px;
   color: @edu-text-color;
 }
 
-.DividerEditor {}
+.SeparatorEditor {}

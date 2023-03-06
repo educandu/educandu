@@ -12,8 +12,8 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function DividerEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('divider');
+function SeparatorEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('separator');
   const { title, titlePosition, colorIntensity, width } = content;
 
   const updateContent = newContentValues => {
@@ -37,7 +37,7 @@ function DividerEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div className="DividerEditor">
+    <div className="SeparatorEditor">
       <Form labelAlign="left">
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={title} onChange={handleTitleChange} inline />
@@ -67,8 +67,8 @@ function DividerEditor({ content, onContentChanged }) {
   );
 }
 
-DividerEditor.propTypes = {
+SeparatorEditor.propTypes = {
   ...sectionEditorProps
 };
 
-export default DividerEditor;
+export default SeparatorEditor;

@@ -1,34 +1,34 @@
 import joi from 'joi';
 import React from 'react';
-import DividerIcon from './divider-icon.js';
+import SeparatorIcon from './separator-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { COLOR_INTENSITY, TITLE_POSITION } from './constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
-class DividerInfo {
+class SeparatorInfo {
   static dependencies = [GithubFlavoredMarkdown];
 
-  static typeName = 'divider';
+  static typeName = 'separator';
 
   constructor(gfm) {
     this.gfm = gfm;
   }
 
   getDisplayName(t) {
-    return t('divider:name');
+    return t('separator:name');
   }
 
   getIcon() {
-    return <DividerIcon />;
+    return <SeparatorIcon />;
   }
 
   async resolveDisplayComponent() {
-    return (await import('./divider-display.js')).default;
+    return (await import('./separator-display.js')).default;
   }
 
   async resolveEditorComponent() {
-    return (await import('./divider-editor.js')).default;
+    return (await import('./separator-editor.js')).default;
   }
 
   getDefaultContent() {
@@ -75,4 +75,4 @@ class DividerInfo {
   }
 }
 
-export default DividerInfo;
+export default SeparatorInfo;
