@@ -133,26 +133,6 @@ class DocumentApiClient {
       )
       .then(res => res.data);
   }
-
-  archiveDocument(documentId) {
-    return this.httpClient
-      .patch(
-        `/api/v1/docs/${encodeURIComponent(documentId)}/archive`,
-        null,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  unarchiveDocument(documentId) {
-    return this.httpClient
-      .patch(
-        `/api/v1/docs/${encodeURIComponent(documentId)}/unarchive`,
-        null,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
 }
 
 export default DocumentApiClient;

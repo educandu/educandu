@@ -446,7 +446,7 @@ describe('document-service', () => {
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
-      await sut.hardDeleteDocument(documentToDelete._id);
+      await sut.hardDeleteDocument({ documentId: documentToDelete._id, user });
     });
 
     it('takes a lock on the document', () => {
@@ -539,7 +539,7 @@ describe('document-service', () => {
             result = await sut.restoreDocumentRevision({
               documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
-              user
+              user: adminUser
             });
           });
 
@@ -599,7 +599,7 @@ describe('document-service', () => {
             sectionRevision: initialDocumentRevisions[1].sections[1].revision,
             reason: 'This is a test',
             deleteAllRevisions: false,
-            user
+            user: adminUser
           });
         });
 
@@ -610,7 +610,7 @@ describe('document-service', () => {
             result = await sut.restoreDocumentRevision({
               documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
-              user
+              user: adminUser
             });
           });
 
@@ -670,7 +670,7 @@ describe('document-service', () => {
             sectionRevision: initialDocumentRevisions[2].sections[1].revision,
             reason: 'This is a test',
             deleteAllRevisions: false,
-            user
+            user: adminUser
           });
         });
 
@@ -681,7 +681,7 @@ describe('document-service', () => {
             result = await sut.restoreDocumentRevision({
               documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
-              user
+              user: adminUser
             });
           });
 
@@ -908,7 +908,7 @@ describe('document-service', () => {
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
             deleteAllRevisions: false,
-            user
+            user: adminUser
           });
 
           documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
@@ -917,19 +917,19 @@ describe('document-service', () => {
         it('deletes all earlier and later occurrences of that section revision', () => {
           expect(documentRevisionsAfterDeletion[1].sections[1]).toMatchObject({
             deletedOn: expect.any(Date),
-            deletedBy: user._id,
+            deletedBy: adminUser._id,
             deletedBecause: 'My reason',
             content: null
           });
           expect(documentRevisionsAfterDeletion[2].sections[1]).toMatchObject({
             deletedOn: expect.any(Date),
-            deletedBy: user._id,
+            deletedBy: adminUser._id,
             deletedBecause: 'My reason',
             content: null
           });
           expect(documentRevisionsAfterDeletion[3].sections[1]).toMatchObject({
             deletedOn: expect.any(Date),
-            deletedBy: user._id,
+            deletedBy: adminUser._id,
             deletedBecause: 'My reason',
             content: null
           });
@@ -967,7 +967,7 @@ describe('document-service', () => {
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
             deleteAllRevisions: true,
-            user
+            user: adminUser
           });
 
           documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
@@ -977,7 +977,7 @@ describe('document-service', () => {
           documentRevisionsAfterDeletion.forEach(revision => {
             expect(revision.sections[1]).toMatchObject({
               deletedOn: expect.any(Date),
-              deletedBy: user._id,
+              deletedBy: adminUser._id,
               deletedBecause: 'My reason',
               content: null
             });
@@ -1001,7 +1001,7 @@ describe('document-service', () => {
             sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
             reason: 'My old reason',
             deleteAllRevisions: false,
-            user
+            user: adminUser
           });
 
           await sut.hardDeleteSection({
@@ -1010,7 +1010,7 @@ describe('document-service', () => {
             sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
             reason: 'My reason',
             deleteAllRevisions: true,
-            user
+            user: adminUser
           });
 
           documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);
@@ -1019,7 +1019,7 @@ describe('document-service', () => {
         it('does not modify the already hard-deleted revision', () => {
           expect(documentRevisionsAfterDeletion[4].sections[1]).toMatchObject({
             deletedOn: expect.any(Date),
-            deletedBy: user._id,
+            deletedBy: adminUser._id,
             deletedBecause: 'My old reason',
             content: null
           });
@@ -1036,7 +1036,7 @@ describe('document-service', () => {
             sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
             reason: 'My reason',
             deleteAllRevisions: false,
-            user
+            user: adminUser
           });
 
           documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByDocumentId(documentRevisionsBeforeDeletion[0].documentId);

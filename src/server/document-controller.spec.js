@@ -7,7 +7,7 @@ import DocumentController from './document-controller.js';
 import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = createSandbox();
@@ -651,48 +651,6 @@ describe('document-controller', () => {
   });
 
   describe('handlePostDocument', () => {
-    describe('when the roomId is unknown', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-
-        roomService.getRoomById.withArgs(room._id).resolves(null);
-      });
-
-      it('should throw BadRequest', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(BadRequest);
-      });
-    });
-
-    describe('when the user neither owns nor is not a collaborator of the room to contain the document', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        room.members = [{ userId: uniqueId.create() }];
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the user is a member of the (exclusive) room to contain the document', () => {
-      beforeEach(() => {
-        req = { user, body: { roomId: room._id } };
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
-        room.members = [{ userId: user._id }];
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
     describe('when the user owns the room to contain the document', () => {
       let newDoc;
       let mappedDoc;
@@ -798,25 +756,6 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the user is a collaborator of the room to contain the draft document', () => {
-      beforeEach(() => {
-        room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-        room.members = [{ userId: user._id }];
-
-        doc.roomId = room._id;
-        doc.roomContext = { draft: true };
-
-        req = { user, body: doc };
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handlePostDocument(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
     describe('when the document does not belong to a room', () => {
       let newDoc;
       let mappedDoc;
@@ -848,47 +787,6 @@ describe('document-controller', () => {
   });
 
   describe('handleDeleteDoc', () => {
-    describe('when the documentId is unknown', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        documentService.getDocumentById.withArgs(doc._id).resolves(null);
-      });
-
-      it('should throw NotFound', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(NotFound);
-      });
-    });
-
-    describe('when the document is public (does not belong to a room)', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the document belongs to a room of which the user is not owner or collaborator', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        doc.roomId = room._id;
-        room.owner = uniqueId.create();
-        room.members = [{ userId: uniqueId.create() }];
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
-      });
-    });
-
     describe('when the document belongs to a room of which the user is owner', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         req = { user, body: { documentId: doc._id } };
@@ -908,26 +806,7 @@ describe('document-controller', () => {
       }));
 
       it('should call documentService.hardDeleteDocument', () => {
-        assert.calledWith(documentService.hardDeleteDocument, doc._id);
-      });
-    });
-
-    describe('when the document belongs to a room of which the user is collaborator', () => {
-      beforeEach(() => {
-        req = { user, body: { documentId: doc._id } };
-
-        doc.roomId = room._id;
-
-        room.owner = uniqueId.create();
-        room.members = [{ userId: user._id }];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
-
-        roomService.getRoomById.withArgs(room._id).resolves(room);
-        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-      });
-
-      it('should throw Forbidden', async () => {
-        await expect(sut.handleDeleteDoc(req, res)).rejects.toThrow(Forbidden);
+        assert.calledWith(documentService.hardDeleteDocument, { documentId: doc._id, user });
       });
     });
   });
