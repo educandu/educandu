@@ -637,6 +637,10 @@
     "noMemberRooms": {
       "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
       "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
+    },
+    "noMatchingRooms": {
+      "en": "No matching rooms",
+      "de": "Keine passenden Räume"
     }
   },
   "settingsTab": {
@@ -1951,10 +1955,6 @@
     "documentsMode": {
       "en": "Mode",
       "de": "Modus"
-    },
-    "created": {
-      "en": "Created",
-      "de": "Erstellt"
     },
     "updated": {
       "en": "Updated",

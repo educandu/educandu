@@ -3,7 +3,7 @@
   position: relative;
   display: grid;
   gap: 10px;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 55px auto auto;
   padding: @edu-content-padding;
   border-radius: @edu-border-radius-base;
   background-color: @edu-background-color-base;
@@ -19,7 +19,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 48px;
 }
 
 .RoomCard-divider {
@@ -47,7 +46,7 @@
 }
 
 .RoomCard-divider {
-  margin: 15px 0 !important;
+  margin: 0 !important;
 }
 
 .RoomCard-infoRow {
@@ -59,10 +58,6 @@
 
   &:last-of-type {
     padding-bottom: 0;
-  }
-
-  &.RoomCard-infoRow--textBlock {
-    margin-top: 5px;
   }
 }
 
