@@ -1,5 +1,6 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import routes from '../../utils/routes.js';
 import { message, Table, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
@@ -8,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
+import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -51,6 +53,7 @@ function filterRows(rows, filterText) {
 
 function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const user = useUser();
+  const { formatDate } = useDateFormat();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionMediaLibraryTab');
@@ -105,7 +108,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     setFilterText(newFilterText);
   };
 
-  const handleInfoCellClick = row => {
+  const handleInfoCellTitleClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     setDocumentMetadataModalState(getDocumentMetadataModalState({ mode: MEDIA_LIBRARY_METADATA_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
@@ -142,12 +145,20 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       <ResourceInfoCell
         url={row.url}
         title={row.displayName}
-        createdOn={row.createdOn}
-        updatedOn={row.updatedOn}
-        createdBy={row.createdBy}
-        updatedBy={row.updatedBy}
         description={row.description}
-        onClick={() => handleInfoCellClick(row)}
+        subtext={
+          <div className="RedactionDocumentsTab-titleSubtext">
+            <div>
+              <span>{`${t('common:createdOnBy', { date: formatDate(row.createdOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>
+            </div>
+            <div>
+              <span>{`${t('common:updatedOnBy', { date: formatDate(row.updatedOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(row.updatedBy._id)}>{row.updatedBy.displayName}</a>
+            </div>
+          </div>
+        }
+        onTitleClick={() => handleInfoCellTitleClick(row)}
         />
     );
   };

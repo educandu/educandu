@@ -1629,6 +1629,14 @@
     "sorting": {
       "en": "Sorting",
       "de": "Sortierung"
+    },
+    "created": {
+      "en": "Created",
+      "de": "Erstellt"
+    },
+    "lastUpdate": {
+      "en": "Last update",
+      "de": "Letzte Änderung"
     }
   },
   "userProfile": {
@@ -1944,13 +1952,21 @@
       "en": "Mode",
       "de": "Modus"
     },
-    "joinButton": {
-      "en": "Accept invitation",
-      "de": "Einladung annehmen"
+    "created": {
+      "en": "Created",
+      "de": "Erstellt"
+    },
+    "updated": {
+      "en": "Updated",
+      "de": "Aktualisiert"
     },
     "joined": {
       "en": "Joined",
       "de": "Eingetreten"
+    },
+    "joinButton": {
+      "en": "Accept invitation",
+      "de": "Einladung annehmen"
     },
     "invited": {
       "en": "Invited",
@@ -3152,37 +3168,25 @@
       "en": "Sign up",
       "de": "Registrieren"
     },
-    "created": {
-      "en": "Created",
-      "de": "Erstellt"
-    },
-    "createdBy": {
-      "en": "Created by",
-      "de": "Erstellt von"
-    },
     "createdOn": {
       "en": "Creation date",
       "de": "Erstellungsdatum"
+    },
+    "createdOnBy": {
+      "en": "Created on {date} by",
+      "de": "Erstellt am {date} von"
     },
     "completedOn": {
       "en": "Completion date",
       "de": "Abgeschlossen am"
     },
-    "updated": {
-      "en": "Updated",
-      "de": "Aktualisiert"
-    },
-    "updatedBy": {
-      "en": "Updated by",
-      "de": "Aktualisiert von"
-    },
     "updatedOn": {
       "en": "Update date",
       "de": "Änderungsdatum"
     },
-    "lastUpdate": {
-      "en": "Last update",
-      "de": "Letzte Änderung"
+    "updatedOnBy": {
+      "en": "Updated on {date} by",
+      "de": "Geändert am {date} von"
     },
     "startedOn": {
       "en": "Started on",

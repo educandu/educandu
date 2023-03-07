@@ -59,13 +59,13 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         )}
         {!!room?.createdOn && (
         <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('common:created')}:</span>
+          <span className="RoomCard-infoLabel">{t('created')}:</span>
           <div>{formatDate(room.createdOn)}</div>
         </div>
         )}
         {!!room?.updatedOn && (
         <div className="RoomCard-infoRow">
-          <span className="RoomCard-infoLabel">{t('common:updated')}:</span>
+          <span className="RoomCard-infoLabel">{t('updated')}:</span>
           <div>{formatDate(room.updatedOn)}</div>
         </div>
         )}

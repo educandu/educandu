@@ -136,30 +136,21 @@ common:
   register:
     en: Sign up
     de: Registrieren
-  created:
-    en: Created
-    de: Erstellt
-  createdBy:
-    en: Created by
-    de: Erstellt von
   createdOn:
     en: Creation date
     de: Erstellungsdatum
+  createdOnBy:
+    en: Created on {date} by
+    de: Erstellt am {date} von
   completedOn:
     en: Completion date
     de: Abgeschlossen am
-  updated:
-    en: Updated
-    de: Aktualisiert
-  updatedBy:
-    en: Updated by
-    de: Aktualisiert von
   updatedOn:
     en: Update date
     de: Änderungsdatum
-  lastUpdate:
-    en: Last update
-    de: Letzte Änderung
+  updatedOnBy:
+    en: Updated on {date} by
+    de: Geändert am {date} von
   startedOn:
     en: Started on
     de: Gestartet am

@@ -2,12 +2,18 @@ roomCard:
   documentsMode:
     en: Mode
     de: Modus
-  joinButton:
-    en: Accept invitation
-    de: Einladung annehmen
+  created:
+    en: Created
+    de: Erstellt
+  updated:
+    en: Updated
+    de: Aktualisiert
   joined:
     en: Joined
     de: Eingetreten
+  joinButton:
+    en: Accept invitation
+    de: Einladung annehmen
   invited:
     en: Invited
     de: Eingeladen

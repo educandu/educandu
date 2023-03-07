@@ -10,3 +10,9 @@ search:
   sorting:
     en: Sorting
     de: Sortierung
+  created:
+    en: Created
+    de: Erstellt
+  lastUpdate:
+    en: Last update
+    de: Letzte Änderung

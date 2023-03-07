@@ -6,10 +6,11 @@ import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
+import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { replaceItem } from '../../utils/array-utils.js';
-import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
+import LanguageIcon from '../localization/language-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -65,6 +66,7 @@ function createTableRows(docs) {
 }
 
 function RedactionDocumentsTab({ documents, onDocumentsChange }) {
+  const { formatDate } = useDateFormat();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
@@ -171,9 +173,19 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     return (
       <ResourceInfoCell
         title={doc.title}
-        createdOn={doc.createdOn}
-        updatedOn={doc.updatedOn}
         description={doc.description}
+        subtext={
+          <div className="RedactionDocumentsTab-titleSubtext">
+            <div>
+              <span>{`${t('common:createdOnBy', { date: formatDate(doc.createdOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
+            </div>
+            <div>
+              <span>{`${t('common:updatedOnBy', { date: formatDate(doc.updatedOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.updatedBy.displayName}</a>
+            </div>
+          </div>
+        }
         url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
         />
     );
