@@ -21,21 +21,23 @@ export default function TableOfContentsDisplay({ content }) {
 
   return (
     <div className="TableOfContentsDisplay">
-      {!!text && (
-        <Markdown className="TableOfContentsDisplay-text">{text}</Markdown>
-      )}
-      {!!nodes.length && (
-        <ul className="TableOfContentsDisplay-nodeList">
-          {nodes.map(node => (
-            <li
-              key={node.id}
-              className={`TableOfContentsDisplay-node TableOfContentsDisplay-node--indent${node.level - minLevel}`}
-              >
-              <a href={`#${node.id}`}>{node.text}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="TableOfContentsDisplay-content">
+        {!!text && (
+          <Markdown className="TableOfContentsDisplay-text">{text}</Markdown>
+        )}
+        {!!nodes.length && (
+          <ul role="list" className="TableOfContentsDisplay-nodeList">
+            {nodes.map(node => (
+              <li
+                key={node.id}
+                className={`TableOfContentsDisplay-node TableOfContentsDisplay-node--indent${node.level - minLevel}`}
+                >
+                <a href={`#${node.id}`}>{node.text}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

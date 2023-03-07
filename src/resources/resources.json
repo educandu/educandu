@@ -2839,8 +2839,8 @@
       "de": "Inhalts­verzeichnis"
     },
     "defaultTextMarkdown": {
-      "en": "# Table of contents",
-      "de": "# Inhaltsverzeichnis"
+      "en": "**Content**",
+      "de": "**Inhalt**"
     },
     "levelRange": {
       "en": "Level range",
