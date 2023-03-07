@@ -57,10 +57,15 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionMediaLibraryTab');
+  const [currentPagination, setCurrentPagination] = useState(1);
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [resourceMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({}));
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [currentPagination]);
 
   useEffect(() => {
     setAllTableRows(createTableRows(mediaLibraryItems, t));
@@ -98,6 +103,10 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     const sortedRows = sorter ? sorter(filteredRows, currentTableSorting.direction) : filteredRows;
     setDisplayedTableRows(sortedRows);
   }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setCurrentPagination([current, pageSize].join());
+  };
 
   const handleCurrentTableSortingChange = ({ value, direction }) => {
     setCurrentTableSorting({ value, direction });
@@ -247,6 +256,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       <Table
         dataSource={[...displayedTableRows]}
         columns={tableColumns}
+        onChange={handleTableChange}
         />
       <MediaLibaryMetadataModal
         {...resourceMetadataModalState}
