@@ -33,6 +33,7 @@ function Search({ PageTemplate }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [unselectedTags, setUnselectedTags] = useState([]);
+  const [currentPagination, setCurrentPagination] = useState(1);
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
@@ -51,6 +52,10 @@ function Search({ PageTemplate }) {
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction)),
     language: rowsToSort => rowsToSort.sort(by(row => row.document.language, sorting.direction))
   }), [sorting.direction]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [currentPagination]);
 
   useEffect(() => {
     (async () => {
@@ -95,6 +100,7 @@ function Search({ PageTemplate }) {
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
+  const handleResultTableChange = ({ current, pageSize }) => setCurrentPagination([current, pageSize].join());
 
   const renderLanguage = (_, row) => (
     <LanguageIcon language={row.document.language} />
@@ -194,6 +200,7 @@ function Search({ PageTemplate }) {
           className="SearchPage-table"
           dataSource={[...displayedRows]}
           rowClassName={() => 'SearchPage-tableRow'}
+          onChange={handleResultTableChange}
           />
       </div>
     </PageTemplate>
