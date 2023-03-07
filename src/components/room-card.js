@@ -45,13 +45,13 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
 
   return (
     <div className="RoomCard">
+      <div className="RoomCard-header">
+        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
+        {!!showOwner && !isDeletedRoom && renderOwner()}
+      </div>
+      <Divider className="RoomCard-divider" />
       <div className="RoomCard-content">
-        <div className="RoomCard-header">
-          <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
-          {!!showOwner && !isDeletedRoom && renderOwner()}
-        </div>
-        <Divider className="RoomCard-divider" />
-        {!!room?.documentsMode && (
+        {!invitation && !!room?.documentsMode && (
           <div className="RoomCard-infoRow">
             <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
             <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
@@ -81,12 +81,12 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
             <div>{formatDate(invitation.sentOn)}</div>
           </div>
         )}
+        {!!invitation?.expiresOn && (
+          <div className="RoomCard-infoRow">
+            <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
+          </div>
+        )}
       </div>
-      {!!invitation?.expiresOn && (
-        <div className="RoomCard-infoRow RoomCard-infoRow--textBlock">
-          <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
-        </div>
-      )}
       {!invitation && (
         <Button className="RoomCard-button" type="primary" disabled={!!isDeletedRoom} onClick={handleEnterButtonClick}>
           <RoomJoinedIcon />
