@@ -75,7 +75,8 @@ function RoomsTab({ rooms, invitations, loading }) {
       <section className="RoomsTab-roomsGroup">
         {!!loading && <Spin className="u-spin" />}
         {!loading && displayedOwnedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
-        {!loading && !displayedOwnedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noOwnedRooms')}</div>}
+        {!loading && !filterText && !displayedOwnedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noOwnedRooms')}</div>}
+        {!loading && !!filterText && !displayedOwnedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noMatchingRooms')}</div>}
       </section>
 
       <div className="RoomsTab-roomsGroupHeadline">{t('memberRoomsHeadline')}</div>
@@ -83,7 +84,8 @@ function RoomsTab({ rooms, invitations, loading }) {
         {!!loading && <Spin className="u-spin" />}
         {!loading && displayedMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
         {!loading && displayedInvitations.map(invitation => <RoomCard key={invitation._id} room={invitation.room} invitation={invitation} />)}
-        {!loading && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
+        {!loading && !filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
+        {!loading && !!filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMatchingRooms')}</div>}
       </section>
 
       <RoomCreationModal isOpen={isRoomCreationModalOpen} onClose={handleRoomCreationModalClose} />
