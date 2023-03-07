@@ -1,14 +1,15 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import { Table, Tooltip } from 'antd';
+import { Table, Tag, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
+import ItemsExpander from '../items-expander.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
+import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { replaceItem } from '../../utils/array-utils.js';
-import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
@@ -55,16 +56,17 @@ function createTableRows(docs) {
     createdOn: doc.createdOn,
     updatedOn: doc.updatedOn,
     createdBy: doc.createdBy,
-    language: doc.language,
     user: doc.user,
     accreditedEditors: doc.publicContext.accreditedEditors,
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
-    verified: doc.publicContext.verified
+    verified: doc.publicContext.verified,
+    tags: doc.tags
   }));
 }
 
 function RedactionDocumentsTab({ documents, onDocumentsChange }) {
+  const { formatDate } = useDateFormat();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
@@ -80,7 +82,6 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
     { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: 'creator' },
     { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
     { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
@@ -91,7 +92,6 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     title: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.title, { direction, ignoreCase: true })),
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
-    language: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.language, direction)),
     creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
     archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
     protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
@@ -158,10 +158,6 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const renderDocumentLanguage = documentLanguage => {
-    return <LanguageIcon language={documentLanguage} />;
-  };
-
   const renderDocumentTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
     if (!doc) {
@@ -171,17 +167,34 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     return (
       <ResourceInfoCell
         title={doc.title}
-        createdOn={doc.createdOn}
-        updatedOn={doc.updatedOn}
         description={doc.description}
+        subtext={
+          <div className="RedactionDocumentsTab-titleSubtext">
+            <div>
+              <span>{`${t('common:createdOnBy', { date: formatDate(doc.createdOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
+            </div>
+            <div>
+              <span>{`${t('common:updatedOnBy', { date: formatDate(doc.updatedOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.updatedBy.displayName}</a>
+            </div>
+          </div>
+        }
         url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
         />
     );
   };
 
-  const renderDocumentCreatedBy = (_user, row) => {
-    return <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>;
-  };
+  const renderCellTags = (_, row) => (
+    <div>
+      <ItemsExpander
+        className="RedactionDocumentsTab-tags"
+        expandLinkClassName="RedactionDocumentsTab-tagsExpandLink"
+        items={row.tags}
+        renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
+        />
+    </div>
+  );
 
   const renderDocumentActions = (_actions, row) => {
     return (
@@ -239,27 +252,18 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       render: renderDocumentTitle
     },
     {
-      title: t('common:language'),
-      dataIndex: 'language',
-      key: 'language',
-      render: renderDocumentLanguage,
-      responsive: ['sm'],
-      width: '100px'
-    },
-    {
-      title: t('common:creator'),
-      dataIndex: 'user',
-      key: 'user',
-      render: renderDocumentCreatedBy,
-      responsive: ['md'],
-      width: '200px'
+      title: t('common:tags'),
+      key: 'tags',
+      render: renderCellTags,
+      responsive: ['lg'],
+      width: '300px'
     },
     {
       title: t('badges'),
       dataIndex: 'badges',
       key: 'badges',
       render: renderDocumentBadges,
-      responsive: ['lg'],
+      responsive: ['md'],
       width: '140px'
     },
     {

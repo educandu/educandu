@@ -9,11 +9,12 @@ import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
+import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
+import LanguageIcon from '../localization/language-icon.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -23,6 +24,7 @@ const logger = new Logger(import.meta.url);
 function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
+  const { formatDate } = useDateFormat();
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
   const [allTags, setAllTags] = useState([]);
@@ -98,15 +100,21 @@ function Search({ PageTemplate }) {
     <LanguageIcon language={row.document.language} />
   );
 
-  const renderTitle = (_, row) => (
-    <ResourceInfoCell
-      title={row.document.title}
-      createdOn={row.document.createdOn}
-      updatedOn={row.document.updatedOn}
-      description={row.document.description}
-      url={routes.getDocUrl({ id: row.document._id, slug: row.document.slug })}
-      />
-  );
+  const renderTitle = (_, row) => {
+    const subtext = [
+      `${t('created')}: ${formatDate(row.document.createdOn)}`,
+      `${t('lastUpdate')}: ${formatDate(row.document.updatedOn)}`
+    ].join(' | ');
+
+    return (
+      <ResourceInfoCell
+        title={row.document.title}
+        description={row.document.description}
+        subtext={subtext}
+        url={routes.getDocUrl({ id: row.document._id, slug: row.document.slug })}
+        />
+    );
+  };
 
   const renderCellTags = (_, row) => (
     <div>
