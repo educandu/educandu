@@ -50,7 +50,7 @@ class EventService {
         if (isDueDayForUser) {
           const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
 
-          if (notifications) {
+          if (notifications.length) {
             const groupedNotifications = groupNotifications(notifications);
             emailNotifications.push({ user, notificationsCount: groupedNotifications.length });
           }
