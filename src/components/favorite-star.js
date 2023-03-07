@@ -75,7 +75,7 @@ FavoriteStar.propTypes = {
 FavoriteStar.defaultProps = {
   disabled: false,
   submitChange: true,
-  onToggle: null
+  onToggle: () => {}
 };
 
 export default FavoriteStar;

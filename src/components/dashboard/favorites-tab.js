@@ -120,15 +120,21 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
       {!loading && !favoriteUsersStates.length && !favoriteRoomsStates.length && !favoriteDocumentsStates.length && (
         <span>{t('noFavorites')}</span>
       )}
-      <div className="FavoriteTab-headline">{t('favoriteUsers', { count: favoriteUsersStates.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteUsers', { count: favoriteUsersStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteUsersStates.map(renderFavoriteUserState)}
       </section>
-      <div className="FavoriteTab-headline">{t('favoriteRooms', { count: favoriteRoomsStates.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteRooms', { count: favoriteRoomsStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteRoomsStates.map(renderFavoriteRoomState)}
       </section>
-      <div className="FavoriteTab-headline">{t('favoriteDocuments', { count: favoriteDocumentsStates.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteDocuments', { count: favoriteDocumentsStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--wide">
         {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
       </section>
