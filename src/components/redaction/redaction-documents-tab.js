@@ -1,46 +1,48 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import { Switch, Tooltip } from 'antd';
+import { Table, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
-import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import cloneDeep from '../../utils/clone-deep.js';
-import DocumentsTable from '../documents-table.js';
+import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import CloseIcon from '../icons/general/close-icon.js';
-import DocumentInfoCell from '../document-info-cell.js';
-import { handleApiError } from '../../ui/error-helper.js';
+import ResourceInfoCell from '../resource-info-cell.js';
+import { replaceItem } from '../../utils/array-utils.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { CheckOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
+import { InboxOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
 
-const logger = new Logger(import.meta.url);
-
-function getDocumentMetadataModalState({ t, documentToClone = null, isOpen = false }) {
+function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
+  let initialDocumentMetadata;
+  switch (mode) {
+    case DOCUMENT_METADATA_MODAL_MODE.create:
+      initialDocumentMetadata = {};
+      break;
+    case DOCUMENT_METADATA_MODAL_MODE.update:
+      initialDocumentMetadata = { ...document };
+      break;
+    case DOCUMENT_METADATA_MODAL_MODE.clone:
+      initialDocumentMetadata = {
+        ...document,
+        title: `${document.title} ${t('common:copyTitleSuffix')}`,
+        slug: document.slug ? `${document.slug}-${t('common:copySlugSuffix')}` : ''
+      };
+      break;
+    default:
+      throw new Error(`Invalid document metadata modal mode: '${mode}'`);
+  }
   return {
-    mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
+    mode,
     allowMultiple: false,
     isOpen,
-    documentToClone,
-    initialDocumentMetadata: documentToClone
-      ? {
-        ...documentToClone,
-        title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
-        slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
-        tags: [...documentToClone.tags]
-      }
-      : {}
+    documentToClone: document,
+    initialDocumentMetadata
   };
 }
 
@@ -62,13 +64,11 @@ function createTableRows(docs) {
   }));
 }
 
-function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
-  const user = useUser();
+function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
@@ -76,29 +76,26 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
     setAllTableRows(createTableRows(documents));
   }, [documents]);
 
-  const documentsSortingOptions = useMemo(() => {
-    const options = [
-      { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-      { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-      { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-      { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-      { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' }
-    ];
-
-    if (hasUserPermission(user, permissions.ARCHIVE_DOC)) {
-      options.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
-    }
-
-    return options;
-  }, [user, t]);
+  const documentsSortingOptions = useMemo(() => [
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
+    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
+    { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: 'creator' },
+    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
+    { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
+    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: 'verified' }
+  ], [t]);
 
   const tableSorters = useMemo(() => ({
     title: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.title, { direction, ignoreCase: true })),
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
     language: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.language, direction)),
-    user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
-    archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction))
+    creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
+    archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
+    protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
+    verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction))
   }), []);
 
   useEffect(() => {
@@ -122,44 +119,43 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
     setFilterText(newFilterText);
   };
 
-  const handleDocumentCloneClick = row => {
-    const documentToClone = documents.find(d => d._id === row.documentId);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, documentToClone, isOpen: true }));
+  const handleDocumentEditClick = row => {
+    const document = documents.find(d => d._id === row.documentId);
+    setDocumentMetadataModalState(getDocumentMetadataModalState({
+      t,
+      mode: DOCUMENT_METADATA_MODAL_MODE.update,
+      document,
+      isOpen: true
+    }));
   };
 
-  const handleDocumentMetadataModalSave = (createdDocuments, templateDocumentId) => {
+  const handleDocumentCloneClick = row => {
+    const document = documents.find(d => d._id === row.documentId);
+    setDocumentMetadataModalState(getDocumentMetadataModalState({
+      t,
+      mode: DOCUMENT_METADATA_MODAL_MODE.clone,
+      document,
+      isOpen: true
+    }));
+  };
+
+  const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
 
-    const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
-    window.location = routes.getDocUrl({
-      id: createdDocuments[0]._id,
-      slug: createdDocuments[0].slug,
-      view: DOC_VIEW_QUERY_PARAM.edit,
-      templateDocumentId: clonedOrTemplateDocumentId
-    });
+    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
+      window.location = routes.getDocUrl({
+        id: savedDocuments[0]._id,
+        slug: savedDocuments[0].slug,
+        view: DOC_VIEW_QUERY_PARAM.edit,
+        templateDocumentId
+      });
+    } else if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.update) {
+      onDocumentsChange(savedDocuments.reduce((all, doc) => replaceItem(all, doc), documents));
+    }
   };
 
   const handleDocumentMetadataModalClose = () => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
-  };
-
-  const handleDocumentArchivedSwitchChange = async (archived, row) => {
-    try {
-      const { doc } = archived
-        ? await documentApiClient.unarchiveDocument(row.documentId)
-        : await documentApiClient.archiveDocument(row.documentId);
-
-      const newDocuments = cloneDeep(documents);
-      newDocuments
-        .filter(document => document._id === doc._id)
-        .forEach(document => {
-          document.publicContext.archived = doc.publicContext.archived;
-        });
-
-      onDocumentsChange(newDocuments);
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    }
   };
 
   const renderDocumentLanguage = documentLanguage => {
@@ -172,7 +168,15 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       return null;
     }
 
-    return <DocumentInfoCell doc={doc} />;
+    return (
+      <ResourceInfoCell
+        title={doc.title}
+        createdOn={doc.createdOn}
+        updatedOn={doc.updatedOn}
+        description={doc.description}
+        url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
+        />
+    );
   };
 
   const renderDocumentCreatedBy = (_user, row) => {
@@ -184,6 +188,12 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       <div>
         <ActionButtonGroup>
           <ActionButton
+            title={t('common:edit')}
+            icon={<EditIcon />}
+            intent={ACTION_BUTTON_INTENT.default}
+            onClick={() => handleDocumentEditClick(row)}
+            />
+          <ActionButton
             title={t('common:duplicate')}
             icon={<DuplicateIcon />}
             intent={ACTION_BUTTON_INTENT.default}
@@ -194,21 +204,14 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
     );
   };
 
-  const renderDocumentArchived = (archived, row) => {
-    return (
-      <Switch
-        size="small"
-        checked={row.archived}
-        checkedChildren={<CheckOutlined />}
-        unCheckedChildren={<CloseIcon />}
-        onChange={() => handleDocumentArchivedSwitchChange(archived, row)}
-        />
-    );
-  };
-
   const renderDocumentBadges = (_, row) => {
     return (
       <div className="RedactionDocumentsTab-badges">
+        {!!row.archived && (
+          <Tooltip title={t('archivedDocumentBadge')}>
+            <InboxOutlined className="u-large-badge" />
+          </Tooltip>
+        )}
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
             <LikeOutlined className="u-large-badge" />
@@ -244,7 +247,7 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       width: '100px'
     },
     {
-      title: t('initialAuthor'),
+      title: t('common:creator'),
       dataIndex: 'user',
       key: 'user',
       render: renderDocumentCreatedBy,
@@ -260,22 +263,13 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
       width: '140px'
     },
     {
-      title: t('common:archived'),
-      dataIndex: 'archived',
-      key: 'archived',
-      render: renderDocumentArchived,
-      responsive: ['lg'],
-      needsPermission: permissions.ARCHIVE_DOC,
-      width: '100px'
-    },
-    {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
       render: renderDocumentActions,
       width: '100px'
     }
-  ].filter(column => !column.needsPermission || hasUserPermission(user, column.needsPermission));
+  ];
 
   return (
     <div className="RedactionDocumentsTab">
@@ -294,7 +288,7 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
           onChange={handleCurrentTableSortingChange}
           />
       </div>
-      <DocumentsTable
+      <Table
         dataSource={[...displayedTableRows]}
         columns={documentsTableColumns}
         />
@@ -307,9 +301,9 @@ function RedactionRedactionDocumentsTab({ documents, onDocumentsChange }) {
   );
 }
 
-RedactionRedactionDocumentsTab.propTypes = {
+RedactionDocumentsTab.propTypes = {
   documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
   onDocumentsChange: PropTypes.func.isRequired
 };
 
-export default RedactionRedactionDocumentsTab;
+export default RedactionDocumentsTab;

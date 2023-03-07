@@ -1,0 +1,31 @@
+.RedactionMediaLibraryTab {}
+
+.RedactionMediaLibraryTab-controls {
+  margin-bottom: 40px;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: 2fr 1fr;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+.RedactionMediaLibraryTab-filter {
+  width: 100%;
+}
+
+.RedactionMediaLibraryTab-cellTags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.RedactionMediaLibraryTab-cellTagsExpandLink {
+  font-size: 0.9em;
+  display: inline-block;
+  height: 20px;
+  padding: 3px;
+  margin: 3px 3px 3px 12px;
+}

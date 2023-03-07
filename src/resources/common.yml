@@ -139,6 +139,9 @@ common:
   created:
     en: Created
     de: Erstellt
+  createdBy:
+    en: Created by
+    de: Erstellt von
   createdOn:
     en: Creation date
     de: Erstellungsdatum
@@ -148,9 +151,15 @@ common:
   updated:
     en: Updated
     de: Aktualisiert
+  updatedBy:
+    en: Updated by
+    de: Aktualisiert von
   updatedOn:
     en: Update date
     de: Änderungsdatum
+  lastUpdate:
+    en: Last update
+    de: Letzte Änderung
   startedOn:
     en: Started on
     de: Gestartet am
@@ -209,6 +218,9 @@ common:
   tagsPlaceholder:
     en: Enter keywords
     de: Stichwörter angeben
+  verified:
+    en: Verified
+    de: Überprüft
   protected:
     en: Protected
     de: Geschützt
@@ -302,12 +314,18 @@ common:
   sortedByType:
     en: Sorted by type
     de: Nach Typ sortiert
-  sortedByUser:
-    en: Sorted by user
-    de: Nach Benutzer sortiert
+  sortedByCreator:
+    en: Sorted by creator
+    de: Nach Ersteller sortiert
   sortedByArchived:
     en: Sorted by archived status
-    de: Nach Archivierungsstatus sortiert
+    de: Nach Archiviert-Status sortiert
+  sortedByProtected:
+    en: Sorted by protected status
+    de: Nach Geschützt-Status sortiert
+  sortedByVerified:
+    en: Sorted by verified status
+    de: Nach Überprüft-Status sortiert
   search:
     en: Search
     de: Suche
@@ -561,3 +579,24 @@ common:
   notificationsTooltip:
     en: "You {count, plural, =0 {don't have any notifications} =1 {have # notification} other {have # notifications}}"
     de: "Du hast {count, plural, =0 {keine Benachrichtigungen} =1 {# Benachrichtigung} other {# Benachrichtigungen}}"
+  resourceType_none:
+    en: (not available)
+    de: (nicht verfügbar)
+  resourceType_unknown:
+    en: Other
+    de: Andere
+  resourceType_audio:
+    en: Audio
+    de: Audio
+  resourceType_video:
+    en: Video
+    de: Video
+  resourceType_image:
+    en: Image
+    de: Bild
+  resourceType_pdf:
+    en: PDF
+    de: PDF
+  creator:
+    en: Creator
+    de: Ersteller

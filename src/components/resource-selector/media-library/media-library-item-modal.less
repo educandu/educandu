@@ -1,0 +1,28 @@
+.MediaLibaryMetadataModal {}
+
+.MediaLibaryMetadataModal-displayName {
+  .m-overflow-ellipsis;
+  text-align: center;
+  font-size: @edu-font-size-lg;
+  margin-bottom: 25px;
+}
+
+.MediaLibaryMetadataModal-url {
+  .m-overflow-ellipsis;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.MediaLibaryMetadataModal-splitView {
+  display: grid;
+  gap: 20px;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto;
+  }
+}

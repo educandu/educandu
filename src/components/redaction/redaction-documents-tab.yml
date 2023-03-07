@@ -1,13 +1,13 @@
 redactionDocumentsTab:
-  initialAuthor:
-    en: Initial author
-    de: Erstautor
   filterPlaceholder:
-    en: Filter by title or initial author
-    de: Nach Titel oder Erstautor filtern
+    en: Filter by title or creator
+    de: Nach Titel oder Ersteller filtern
   badges:
     en: Badges
     de: Kennzeichen
+  archivedDocumentBadge:
+    en: This document is archived
+    de: Dieses Dokument ist archiviert
   protectedDocumentBadge:
     en: This document is protected
     de: Dieses Dokument ist geschützt

@@ -1,5 +1,5 @@
 import by from 'thenby';
-import { Tag } from 'antd';
+import { Table, Tag } from 'antd';
 import PropTypes from 'prop-types';
 import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
@@ -7,11 +7,10 @@ import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
-import DocumentsTable from '../documents-table.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import DocumentInfoCell from '../document-info-cell.js';
+import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -100,7 +99,13 @@ function Search({ PageTemplate }) {
   );
 
   const renderTitle = (_, row) => (
-    <DocumentInfoCell doc={row.document} />
+    <ResourceInfoCell
+      title={row.document.title}
+      createdOn={row.document.createdOn}
+      updatedOn={row.document.updatedOn}
+      description={row.document.description}
+      url={routes.getDocUrl({ id: row.document._id, slug: row.document.slug })}
+      />
   );
 
   const renderCellTags = (_, row) => (
@@ -174,7 +179,14 @@ function Search({ PageTemplate }) {
           {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
         </div>
 
-        <DocumentsTable key={searchText} dataSource={[...displayedRows]} columns={columns} loading={isSearching} />
+        <Table
+          key={searchText}
+          columns={columns}
+          loading={isSearching}
+          className="SearchPage-table"
+          dataSource={[...displayedRows]}
+          rowClassName={() => 'SearchPage-tableRow'}
+          />
       </div>
     </PageTemplate>
   );

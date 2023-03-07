@@ -2,18 +2,3 @@ resourceSearchBar:
   searchTerm:
     en: Search term
     de: Suchbegriff
-  resourceType_unknown:
-    en: Other
-    de: Andere
-  resourceType_audio:
-    en: Audio
-    de: Audio
-  resourceType_video:
-    en: Video
-    de: Video
-  resourceType_image:
-    en: Image
-    de: Bild
-  resourceType_pdf:
-    en: PDF
-    de: PDF
