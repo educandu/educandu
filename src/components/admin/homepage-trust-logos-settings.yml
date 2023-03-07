@@ -1,0 +1,10 @@
+homepageTrustLogosSettings:
+  institution:
+    en: Institution
+    de: Institution
+  logoUrl:
+    en: Logo URL
+    de: Logo-URL
+  institutionUrl:
+    en: Institution URL
+    de: Institutions-URL

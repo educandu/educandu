@@ -1,0 +1,34 @@
+.HomepageTrustFooter {
+  width: 100%;
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
+  place-items: center;
+  background-color: @edu-background-color-footer;
+  padding-top: @edu-page-content-padding;
+
+  @media @edu-media-phone {
+    padding: calc(@edu-page-content-padding / 2);
+  }
+}
+
+.HomepageTrustFooter-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.HomepageTrustFooter-logo {
+  width: 150px;
+  height: 60px;
+  margin: 0 15px;
+}
+
+.HomepageTrustFooter-logoImage {
+  height: 100%;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}

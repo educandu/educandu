@@ -23,6 +23,12 @@ adminSettingsTab:
   homepagePresentationHeader:
     en: Homepage presentation
     de: Homepage-Präsentation
+  homepageTrustLogosHeader:
+    en: Homepage trust logos
+    de: Homepage-Vertrauens-Logos
+  homepageTrustLogosInfo:
+    en: The logos of the trusted institutions are displayed in an extra footer on the homepage. Please provide SVGs with transparent background and links to the home pages of each institution.
+    de: Die Vertrauens-Logos werden in einem Extra-Footer auf der Homepage angezeigt. Bitte gib hier SVGs mit transparentem Hintergrund und Links zur Startseite der jeweiligen Institution an.
   helpPageHeader:
     en: Help page
     de: Hilfe-Seite

@@ -89,6 +89,11 @@ export const settingsHomepagePresentationPerLanguageShape = PropTypes.shape({
   aboutDocumentId: PropTypes.string
 });
 
+export const settingsHomepageTrustLogoShape = PropTypes.shape({
+  logoUrl: PropTypes.string,
+  institutionUrl: PropTypes.string
+});
+
 export const settingsProps = {
   settings: settingsShape.isRequired
 };
