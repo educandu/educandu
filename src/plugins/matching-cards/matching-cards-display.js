@@ -77,6 +77,7 @@ function MatchingCardsDisplay({ content }) {
   const renderTile = (tile, index) => {
     const elementsToRender = [];
     const isFlipped = currentlyFlippedTiles.includes(tile);
+    const isLastFlipped = currentlyFlippedTiles[currentlyFlippedTiles.length - 1] === tile;
     const isSingleFlipped = isFlipped && currentlyFlippedTiles.length === 1;
     const wasMatched = matchedTilePairKeys.includes(tile.pairKey);
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
@@ -99,7 +100,7 @@ function MatchingCardsDisplay({ content }) {
             text={tile.text}
             sourceUrl={tile.sourceUrl}
             playbackRange={tile.playbackRange}
-            playMedia={isFlipped ? !wasMatched : null}
+            playMedia={isLastFlipped ? !wasMatched : null}
             />
         }
         onClick={() => handleTileClick(tile)}
