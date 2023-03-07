@@ -207,7 +207,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       dataIndex: 'tags',
       key: 'tags',
       render: renderTagsOrLicenses,
-      responsive: ['md'],
+      responsive: ['lg'],
       width: '200px'
     },
     {
