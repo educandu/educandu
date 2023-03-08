@@ -1,59 +1,114 @@
-import React from 'react';
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import RoomCard from '../room-card.js';
 import UserCard from '../user-card.js';
-import { Button, Spin, Tooltip } from 'antd';
+import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
-import CloseIcon from '../icons/general/close-icon.js';
+import cloneDeep from '../../utils/clone-deep.js';
+import React, { useEffect, useState } from 'react';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
-function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading, onRemoveFavorite }) {
+function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading, onAddFavorite, onRemoveFavorite }) {
   const { t } = useTranslation('favoritesTab');
+  const [favoriteUsersStates, setFavoriteUsersStates] = useState([]);
+  const [favoriteRoomsStates, setFavoriteRoomsStates] = useState([]);
+  const [favoriteDocumentsStates, setFavoriteDocumentsStates] = useState([]);
 
-  const renderRemoveFavoriteButton = (type, id) => {
+  const toggleFavoriteState = (prevState, id, isFavorite) => {
+    const newState = cloneDeep(prevState);
+    const toggledItem = newState.find(item => item.id === id);
+    toggledItem.isFavorite = isFavorite;
+    return newState;
+  };
+
+  const handleToggleFavoriteUser = (id, isFavorite) => {
+    setFavoriteUsersStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
+    if (isFavorite) {
+      onAddFavorite(FAVORITE_TYPE.user, id);
+    } else {
+      onRemoveFavorite(FAVORITE_TYPE.user, id);
+    }
+  };
+
+  const handleToggleFavoriteRoom = (id, isFavorite) => {
+    setFavoriteRoomsStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
+    if (isFavorite) {
+      onAddFavorite(FAVORITE_TYPE.room, id);
+    } else {
+      onRemoveFavorite(FAVORITE_TYPE.room, id);
+    }
+  };
+
+  const handleToggleFavoriteDocument = (id, isFavorite) => {
+    setFavoriteDocumentsStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
+    if (isFavorite) {
+      onAddFavorite(FAVORITE_TYPE.document, id);
+    } else {
+      onRemoveFavorite(FAVORITE_TYPE.document, id);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      setFavoriteUsersStates(favoriteUsers.map(item => ({ ...item, isFavorite: true })));
+      setFavoriteRoomsStates(favoriteRooms.map(item => ({ ...item, isFavorite: true })));
+      setFavoriteDocumentsStates(favoriteDocuments.map(item => ({ ...item, isFavorite: true })));
+    }
+  }, [loading, favoriteUsers, favoriteRooms, favoriteDocuments]);
+
+  const renderFavoriteUserState = favoriteUserState => {
     return (
-      <Tooltip title={t('common:removeFavorite')}>
-        <div className="FavoritesTab-cardRemoveButton">
-          <Button
-            size="small"
-            type="secondary"
-            icon={<CloseIcon />}
-            onClick={() => onRemoveFavorite(type, id)}
+      <div className="FavoritesTab-cardWrapper" key={favoriteUserState.id}>
+        <UserCard
+          userId={favoriteUserState.id}
+          displayName={favoriteUserState.data.displayName}
+          avatarUrl={favoriteUserState.data.avatarUrl}
+          />
+        {!favoriteUserState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
+        <div className="FavoritesTab-favoriteStart" >
+          <FavoriteStar
+            type={FAVORITE_TYPE.user}
+            id={favoriteUserState.id}
+            submitChange={false}
+            onToggle={isFavorite => handleToggleFavoriteUser(favoriteUserState.id, isFavorite)}
             />
         </div>
-      </Tooltip>
-    );
-  };
-
-  const renderFavoriteUser = favoriteUser => {
-    return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteUser.id}>
-        <UserCard
-          userId={favoriteUser.id}
-          displayName={favoriteUser.data.displayName}
-          avatarUrl={favoriteUser.data.avatarUrl}
-          />
-        {renderRemoveFavoriteButton(FAVORITE_TYPE.user, favoriteUser.id)}
       </div>
     );
   };
 
-  const renderFavoriteRoom = favoriteRoom => {
+  const renderFavoriteRoomState = favoriteRoomState => {
     return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteRoom.id}>
-        <RoomCard room={favoriteRoom.data} alwaysRenderOwner />
-        {renderRemoveFavoriteButton(FAVORITE_TYPE.room, favoriteRoom.id)}
+      <div className="FavoritesTab-cardWrapper" key={favoriteRoomState.id}>
+        <RoomCard room={favoriteRoomState.data} alwaysRenderOwner />
+        {!favoriteRoomState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
+        <div className="FavoritesTab-favoriteStart" >
+          <FavoriteStar
+            type={FAVORITE_TYPE.room}
+            id={favoriteRoomState.id}
+            submitChange={false}
+            onToggle={isFavorite => handleToggleFavoriteRoom(favoriteRoomState.id, isFavorite)}
+            />
+        </div>
       </div>
     );
   };
 
-  const renderFavoriteDocument = favoriteDocument => {
+  const renderFavoriteDocumentState = favoriteDocumentState => {
     return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteDocument.id}>
-        <DocumentCard doc={favoriteDocument.data} />
-        {renderRemoveFavoriteButton(FAVORITE_TYPE.document, favoriteDocument.id)}
+      <div className="FavoritesTab-cardWrapper" key={favoriteDocumentState.id}>
+        <DocumentCard doc={favoriteDocumentState.data} />
+        {!favoriteDocumentState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
+        <div className="FavoritesTab-favoriteStart" >
+          <FavoriteStar
+            type={FAVORITE_TYPE.document}
+            id={favoriteDocumentState.id}
+            submitChange={false}
+            onToggle={isFavorite => handleToggleFavoriteDocument(favoriteDocumentState.id, isFavorite)}
+            />
+        </div>
       </div>
     );
   };
@@ -62,20 +117,26 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     <div className="FavoritesTab">
       <div className="FavoritesTab-info">{t('info')}</div>
       {!!loading && <Spin className="u-spin" /> }
-      {!loading && !favoriteUsers.length && !favoriteRooms.length && !favoriteDocuments.length && (
+      {!loading && !favoriteUsersStates.length && !favoriteRoomsStates.length && !favoriteDocumentsStates.length && (
         <span>{t('noFavorites')}</span>
       )}
-      <div className="FavoriteTab-headline">{t('favoriteUsers', { count: favoriteUsers.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteUsers', { count: favoriteUsersStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
-        {favoriteUsers.map(renderFavoriteUser)}
+        {favoriteUsersStates.map(renderFavoriteUserState)}
       </section>
-      <div className="FavoriteTab-headline">{t('favoriteRooms', { count: favoriteRooms.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteRooms', { count: favoriteRoomsStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
-        {favoriteRooms.map(renderFavoriteRoom)}
+        {favoriteRoomsStates.map(renderFavoriteRoomState)}
       </section>
-      <div className="FavoriteTab-headline">{t('favoriteDocuments', { count: favoriteDocuments.length })}</div>
+      <div className="FavoriteTab-headline">
+        {t('favoriteDocuments', { count: favoriteDocumentsStates.filter(item => item.isFavorite).length })}
+      </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--wide">
-        {favoriteDocuments.map(renderFavoriteDocument)}
+        {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
       </section>
     </div>
   );
@@ -101,6 +162,7 @@ FavoritesTab.propTypes = {
     data: favoriteDocumentShape.isRequired
   })).isRequired,
   loading: PropTypes.bool.isRequired,
+  onAddFavorite: PropTypes.func.isRequired,
   onRemoveFavorite: PropTypes.func.isRequired
 };
 

@@ -16,7 +16,7 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteStar({ type, id, disabled, onToggle }) {
+function FavoriteStar({ type, id, disabled, onToggle, submitChange }) {
   const user = useUser();
   const setUser = useSetUser();
   const { t } = useTranslation('favoriteStar');
@@ -35,11 +35,14 @@ function FavoriteStar({ type, id, disabled, onToggle }) {
     const newIsSet = value === 1;
     setIsSet(newIsSet);
     try {
-      const newUser = newIsSet
-        ? await userApiClient.addFavorite({ type, id })
-        : await userApiClient.removeFavorite({ type, id });
+      if (submitChange) {
+        const newUser = newIsSet
+          ? await userApiClient.addFavorite({ type, id })
+          : await userApiClient.removeFavorite({ type, id });
 
-      setUser(newUser);
+        setUser(newUser);
+      }
+
       onToggle(newIsSet);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -64,12 +67,14 @@ function FavoriteStar({ type, id, disabled, onToggle }) {
 FavoriteStar.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  onToggle: PropTypes.func,
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
+  submitChange: PropTypes.bool,
+  onToggle: PropTypes.func
 };
 
 FavoriteStar.defaultProps = {
   disabled: false,
+  submitChange: true,
   onToggle: () => {}
 };
 
