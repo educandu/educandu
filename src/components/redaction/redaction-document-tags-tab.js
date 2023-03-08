@@ -56,8 +56,13 @@ function RedactionDocumentTagsTab({ documents }) {
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentTagsTab');
+  const [currentPagination, setCurrentPagination] = useState(1);
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'name', direction: 'asc' });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [currentPagination]);
 
   useEffect(() => {
     setAllTableRows(createTableRows(documents));
@@ -86,6 +91,10 @@ function RedactionDocumentTagsTab({ documents }) {
 
     setDisplayedTableRows(sortedRows);
   }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setCurrentPagination([current, pageSize].join());
+  };
 
   const handleCurrentTableSortingChange = newSorting => {
     setCurrentTableSorting(newSorting);
@@ -158,6 +167,7 @@ function RedactionDocumentTagsTab({ documents }) {
         columns={tableColumns}
         dataSource={displayedTableRows}
         expandable={{ expandedRowRender: renderExpandedRow }}
+        onChange={handleTableChange}
         />
     </div>
   );

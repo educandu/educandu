@@ -70,9 +70,14 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
+  const [currentPagination, setCurrentPagination] = useState(1);
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [currentPagination]);
 
   useEffect(() => {
     setAllTableRows(createTableRows(documents));
@@ -109,6 +114,10 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
 
     setDisplayedTableRows(sortedRows);
   }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setCurrentPagination([current, pageSize].join());
+  };
 
   const handleCurrentTableSortingChange = ({ value, direction }) => {
     setCurrentTableSorting({ value, direction });
@@ -295,6 +304,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       <Table
         dataSource={[...displayedTableRows]}
         columns={documentsTableColumns}
+        onChange={handleTableChange}
         />
       <DocumentMetadataModal
         {...documentMetadataModalState}
