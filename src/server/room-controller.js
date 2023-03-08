@@ -12,6 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
@@ -393,7 +394,8 @@ export default class RoomController {
 
     router.get(
       '/api/v1/rooms/:roomId/authorize-resources-access',
-      [needsPermission(permissions.VIEW_CONTENT), validateParams(getAuthorizeResourcesAccessParamsSchema)],
+      needsPermission(permissions.ACCESS_STORAGE),
+      validateParams(getAuthorizeResourcesAccessParamsSchema),
       (req, res) => this.handleAuthorizeResourcesAccess(req, res)
     );
   }
@@ -407,7 +409,8 @@ export default class RoomController {
 
     router.get(
       '/room-membership-confirmation/:token',
-      [needsPermission(permissions.VIEW_CONTENT), validateParams(getRoomMembershipConfirmationParamsSchema)],
+      needsAuthentication(),
+      validateParams(getRoomMembershipConfirmationParamsSchema),
       (req, res) => this.handleGetRoomMembershipConfirmationPage(req, res)
     );
   }

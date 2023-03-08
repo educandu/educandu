@@ -6,6 +6,7 @@ import Cdn from '../repositories/cdn.js';
 import permissions from '../domain/permissions.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -86,7 +87,7 @@ class MediaLibraryController {
   registerApi(router) {
     router.get(
       '/api/v1/media-library/items',
-      needsPermission(permissions.VIEW_CONTENT),
+      needsAuthentication(),
       validateQuery(mediaLibrarySearchQuerySchema),
       (req, res) => this.handleQueryMediaLibraryItems(req, res)
     );
@@ -108,8 +109,8 @@ class MediaLibraryController {
 
     router.patch(
       '/api/v1/media-library/items/:mediaLibraryItemId',
-      needsPermission(permissions.CREATE_CONTENT),
       jsonParser,
+      needsPermission(permissions.CREATE_CONTENT),
       validateParams(mediaLibraryItemIdParamsSchema),
       validateBody(mediaLibraryItemMetadataBodySchema),
       (req, res) => this.handleUpdateMediaLibraryItem(req, res)
@@ -124,7 +125,7 @@ class MediaLibraryController {
 
     router.get(
       '/api/v1/media-library/tags',
-      needsPermission(permissions.VIEW_CONTENT),
+      needsPermission(permissions.ACCESS_STORAGE),
       validateQuery(mediaLibraryTagSearchQuerySchema),
       (req, res) => this.handleGetMediaLibraryTagSuggestions(req, res)
     );

@@ -154,8 +154,8 @@ class StorageController {
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
-      needsPermission(permissions.VIEW_CONTENT),
       jsonParser,
+      needsPermission(permissions.ACCESS_STORAGE),
       validateQuery(getCdnObjectsQuerySchema),
       (req, res) => this.handleGetCdnObjects(req, res)
     );

@@ -122,7 +122,7 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  hardDeleteDocument(documentId) {
+  hardDeletePrivateDocument(documentId) {
     return this.httpClient
       .delete(
         '/api/v1/docs',

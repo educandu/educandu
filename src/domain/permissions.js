@@ -1,10 +1,10 @@
 import { ROLE } from './constants.js';
 
 const VIEW_USERS = 'view-users';
-const VIEW_CONTENT = 'view-content';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_SETUP = 'manage-setup';
 const CREATE_CONTENT = 'create-content';
+const ACCESS_STORAGE = 'access-storage';
 const BATCH_PROCESS_DATA = 'batch-process-data';
 const MANAGE_PUBLIC_CONTENT = 'manage-public-content';
 const PROTECT_OWN_PUBLIC_CONTENT = 'protect-own-public-content';
@@ -13,8 +13,8 @@ const DELETE_ANY_PRIVATE_CONTENT = 'delete-any-private-content';
 const MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT = 'manage-protectors-of-own-public-content';
 
 const userPermissions = [
-  VIEW_CONTENT,
   CREATE_CONTENT,
+  ACCESS_STORAGE,
   DELETE_OWN_PRIVATE_CONTENT
 ];
 
@@ -62,8 +62,8 @@ export function getAllUserPermissions(user) {
 }
 
 export default {
-  VIEW_CONTENT,
   CREATE_CONTENT,
+  ACCESS_STORAGE,
   DELETE_OWN_PRIVATE_CONTENT,
   PROTECT_OWN_PUBLIC_CONTENT,
   VIEW_USERS,

@@ -19,7 +19,7 @@ import {
   documentIdParamsOrQuerySchema,
   updateDocumentMetadataBodySchema,
   hardDeleteSectionBodySchema,
-  hardDeleteDocumentBodySchema,
+  hardDeletePrivateDocumentBodySchema,
   restoreRevisionBodySchema,
   getDocumentParamsSchema,
   getDocumentQuerySchema,
@@ -234,10 +234,10 @@ class DocumentController {
     return res.send({ document: mappedDocument });
   }
 
-  async handleDeleteDoc(req, res) {
+  async handleDeletePrivateDoc(req, res) {
     const { user } = req;
     const { documentId } = req.body;
-    await this.documentService.hardDeleteDocument({ documentId, user });
+    await this.documentService.hardDeletePrivateDocument({ documentId, user });
     return res.send({});
   }
 
@@ -264,13 +264,13 @@ class DocumentController {
   registerApi(router) {
     router.get(
       '/api/v1/docs',
-      [validateQuery(documentIdParamsOrQuerySchema)],
+      validateQuery(documentIdParamsOrQuerySchema),
       (req, res) => this.handleGetDocs(req, res)
     );
 
     router.get(
       '/api/v1/docs/titles',
-      [needsPermission(permissions.VIEW_CONTENT), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
+      validateQuery(getSearchableDocumentsTitlesQuerySchema),
       (req, res) => this.handleGetSearchableDocsTitles(req, res)
     );
 
@@ -281,13 +281,13 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs/:documentId',
-      [needsPermission(permissions.VIEW_CONTENT), validateParams(documentIdParamsOrQuerySchema)],
+      validateParams(documentIdParamsOrQuerySchema),
       (req, res) => this.handleGetDoc(req, res)
     );
 
     router.get(
       '/api/v1/docs/users/:userId',
-      [validateParams(getPublicNonArchivedDocumentsByContributingUserParams)],
+      validateParams(getPublicNonArchivedDocumentsByContributingUserParams),
       (req, res) => this.handleGetDocumentsByContributingUser(req, res)
     );
 
@@ -333,14 +333,18 @@ class DocumentController {
 
     router.delete(
       '/api/v1/docs/sections',
-      [needsPermission(permissions.MANAGE_PUBLIC_CONTENT), jsonParser, validateBody(hardDeleteSectionBodySchema)],
+      jsonParser,
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      validateBody(hardDeleteSectionBodySchema),
       (req, res) => this.handleDeleteDocSection(req, res)
     );
 
     router.delete(
       '/api/v1/docs',
-      [needsPermission(permissions.VIEW_CONTENT), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
-      (req, res) => this.handleDeleteDoc(req, res)
+      jsonParser,
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
+      validateBody(hardDeletePrivateDocumentBodySchema),
+      (req, res) => this.handleDeletePrivateDoc(req, res)
     );
   }
 }

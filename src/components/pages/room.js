@@ -197,7 +197,7 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleDeleteDocumentClick = doc => {
     confirmDocumentDelete(t, doc.title, async () => {
-      await documentApiClient.hardDeleteDocument(doc._id);
+      await documentApiClient.hardDeletePrivateDocument(doc._id);
       const response = await roomApiClient.getRoom({ roomId: room._id });
       setRoom(response.room);
       setDocuments(getSortedDocuments(response.room, ensureIsExcluded(documents, doc)));
