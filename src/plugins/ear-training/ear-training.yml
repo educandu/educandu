@@ -12,8 +12,8 @@ earTraining:
     en: Use MIDI (auto)
     de: MIDI benutzen (auto)
   testsOrder:
-    en: Display order
-    de: Anzeigereihenfolge
+    en: Order
+    de: Reihenfolge
   testsOrderGiven:
     en: as specified
     de: wie angegeben
