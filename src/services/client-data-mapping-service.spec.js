@@ -105,7 +105,7 @@ describe('client-data-mapping-service', () => {
       });
     });
 
-    describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
+    describe(`when the viewing user does not have '${permissions.VIEW_USERS}' permission`, () => {
       beforeEach(() => {
         viewingUser = { roles: [ROLE.user] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
@@ -123,7 +123,7 @@ describe('client-data-mapping-service', () => {
       });
     });
 
-    describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
+    describe(`when the viewing user has '${permissions.VIEW_USERS}' permission`, () => {
       beforeEach(() => {
         viewingUser = { roles: [ROLE.user, ROLE.maintainer] };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });

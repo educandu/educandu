@@ -38,7 +38,7 @@ class TestsController {
         path: getRoomMediaRoomPath(room._id),
         usedBytes: roomOwner.storage.usedBytes,
         maxBytes: roomOwnerStoragePlan?.maxBytes,
-        isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator
+        isDeletionEnabled: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT) || isRoomOwner || isRoomCollaborator
       };
     }
 
@@ -51,7 +51,7 @@ class TestsController {
   registerPages(router) {
     router.get(
       '/tests',
-      needsPermission(permissions.ADMIN),
+      needsPermission(permissions.MANAGE_SETUP),
       (req, res) => this.handleGetTestsPage(req, res)
     );
   }

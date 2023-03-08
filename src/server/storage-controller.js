@@ -154,7 +154,7 @@ class StorageController {
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
-      needsPermission(permissions.VIEW_FILES),
+      needsPermission(permissions.VIEW_CONTENT),
       jsonParser,
       validateQuery(getCdnObjectsQuerySchema),
       (req, res) => this.handleGetCdnObjects(req, res)
@@ -162,14 +162,14 @@ class StorageController {
 
     router.delete(
       '/api/v1/storage/objects',
-      needsPermission(permissions.DELETE_OWN_FILES),
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
       validateQuery(deleteCdnObjectQuerySchema),
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
       '/api/v1/storage/objects',
-      needsPermission(permissions.CREATE_FILE),
+      needsPermission(permissions.CREATE_CONTENT),
       uploadLimitExceededMiddleware(),
       multipartParser.array('files'),
       validateBody(postCdnObjectsBodySchema),
@@ -178,14 +178,14 @@ class StorageController {
 
     router.get(
       '/api/v1/storage/plans',
-      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      needsPermission(permissions.MANAGE_SETUP),
       validateQuery(getStoragePlansQuerySchema),
       (req, res) => this.handleGetStoragePlans(req, res)
     );
 
     router.post(
       '/api/v1/storage/plans',
-      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      needsPermission(permissions.MANAGE_SETUP),
       jsonParser,
       validateBody(postStoragePlanBodySchema),
       (req, res) => this.handlePostStoragePlan(req, res)
@@ -193,7 +193,7 @@ class StorageController {
 
     router.patch(
       '/api/v1/storage/plans/:storagePlanId',
-      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      needsPermission(permissions.MANAGE_SETUP),
       jsonParser,
       validateParams(patchStoragePlanParamsSchema),
       validateBody(patchStoragePlanBodySchema),
@@ -202,7 +202,7 @@ class StorageController {
 
     router.delete(
       '/api/v1/storage/plans/:storagePlanId',
-      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      needsPermission(permissions.MANAGE_SETUP),
       validateParams(deleteStoragePlanParamsSchema),
       (req, res) => this.handleDeleteStoragePlan(req, res)
     );

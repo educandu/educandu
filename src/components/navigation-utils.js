@@ -50,7 +50,7 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       icon: <div><RedactionIcon /></div>,
       badge: null,
       onClick: () => { window.location = routes.getRedactionUrl(); },
-      showWhen: hasUserPermission(user, permissions.MANAGE_CONTENT)
+      showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     },
     {
       key: 'admin',
@@ -58,7 +58,7 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       icon: <div><AdministrationIcon /></div>,
       badge: null,
       onClick: () => { window.location = routes.getAdminUrl(); },
-      showWhen: hasUserPermission(user, permissions.ADMIN)
+      showWhen: hasUserPermission(user, permissions.MANAGE_SETUP)
     },
     {
       key: 'help',

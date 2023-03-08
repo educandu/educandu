@@ -627,7 +627,7 @@ class UserController {
 
     router.get(
       '/api/v1/users/search',
-      needsPermission(permissions.SEARCH_USERS),
+      needsPermission(permissions.VIEW_USERS),
       validateQuery(getUsersBySearchQuerySchema),
       (req, res) => this.handleGetUsersBySearch(req, res)
     );

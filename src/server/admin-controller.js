@@ -22,7 +22,7 @@ class AdminController {
   registerPages(router) {
     router.get(
       '/admin',
-      needsPermission(permissions.ADMIN),
+      needsPermission(permissions.MANAGE_SETUP),
       (req, res) => this.handleGetAdminPage(req, res)
     );
   }
@@ -30,7 +30,7 @@ class AdminController {
   registerApi(router) {
     router.get(
       '/api/v1/admin/request-info',
-      needsPermission(permissions.ADMIN),
+      needsPermission(permissions.MANAGE_SETUP),
       (req, res) => this.handleGetRequestInfoRequest(req, res)
     );
   }

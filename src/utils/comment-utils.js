@@ -15,7 +15,7 @@ export function groupCommentsByTopic(comments) {
 }
 
 export function checkPermissionsOnCommentCreation({ document, room, user }) {
-  if (!hasUserPermission(user, permissions.CREATE_DOCUMENT_COMMENTS)) {
+  if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
     throw new Error('User is not allowed to create comments');
   }
 

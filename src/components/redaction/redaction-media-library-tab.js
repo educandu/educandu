@@ -81,7 +81,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
     ];
 
-    if (hasUserPermission(user, permissions.ARCHIVE_DOC)) {
+    if (hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       options.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
     }
 

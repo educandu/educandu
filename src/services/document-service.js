@@ -367,7 +367,7 @@ class DocumentService {
   async hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.HARD_DELETE_SECTION)) {
+    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       throw new Forbidden('User is not allowed to delete document sections');
     }
 
@@ -428,7 +428,7 @@ class DocumentService {
   async restoreDocumentRevision({ documentId, revisionId, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.RESTORE_DOC_REVISIONS)) {
+    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       throw new Forbidden('User is not allowed to restore document revisions');
     }
 

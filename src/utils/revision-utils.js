@@ -3,7 +3,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 
 export function checkRevisionOnDocumentCreation({ newRevision, room, user }) {
-  if (!hasUserPermission(user, permissions.EDIT_DOC)) {
+  if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
     throw new Error('User is not allowed to create documents');
   }
 
@@ -23,47 +23,43 @@ export function checkRevisionOnDocumentCreation({ newRevision, room, user }) {
   }
 
   if (!room) {
-    const userCanAssignAnyAccreditedEditor = hasUserPermission(user, permissions.MANAGE_ACCREDITED_EDITORS);
-    const userCanAssignSelfAsAccreditedEditor = hasUserPermission(user, permissions.PROTECT_OWN_DOC);
-    const userCanProtectOwnNewDoc = hasUserPermission(user, permissions.PROTECT_OWN_DOC);
-    const userCanProtectAnyDoc = hasUserPermission(user, permissions.PROTECT_ANY_DOC);
-    const userCanArchiveDoc = hasUserPermission(user, permissions.ARCHIVE_DOC);
-    const userCanVerifyDoc = hasUserPermission(user, permissions.VERIFY_DOC);
-    const userCanReviewDoc = hasUserPermission(user, permissions.REVIEW_DOC);
-
     const { accreditedEditors } = publicContext;
+    const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT);
+    const userCanDecideWhoCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT);
+
     if (accreditedEditors.length) {
       const userIsOnlyAccreditedEditor = accreditedEditors.length === 1 && accreditedEditors[0] === user._id;
 
-      if (!userIsOnlyAccreditedEditor && !userCanAssignAnyAccreditedEditor) {
+      if (!userIsOnlyAccreditedEditor && !userCanDecideWhoCanProtectOwnDocWhenCreating) {
         throw new Error('User is not allowed to assign accredited editors');
       }
 
-      if (userIsOnlyAccreditedEditor && !userCanAssignAnyAccreditedEditor && !userCanAssignSelfAsAccreditedEditor) {
+      if (userIsOnlyAccreditedEditor && !userCanDecideWhoCanProtectOwnDocWhenCreating && !userCanProtectOwnDocWhenCreating) {
         throw new Error('User is not allowed to assign themselves as accredited editor');
       }
     }
 
-    if (publicContext.protected && !userCanProtectAnyDoc && !userCanProtectOwnNewDoc) {
+    if (publicContext.protected && !userCanManagePublicContext && !userCanProtectOwnDocWhenCreating) {
       throw new Error('User is not allowed to create a protected document');
     }
 
-    if (publicContext.archived && !userCanArchiveDoc) {
+    if (publicContext.archived && !userCanManagePublicContext) {
       throw new Error('User is not allowed to create an archived document');
     }
 
-    if (publicContext.verified && !userCanVerifyDoc) {
+    if (publicContext.verified && !userCanManagePublicContext) {
       throw new Error('User is not allowed to create a verified document');
     }
 
-    if (publicContext.review && !userCanReviewDoc) {
+    if (publicContext.review && !userCanManagePublicContext) {
       throw new Error('User is not allowed to create a document with review');
     }
   }
 }
 
 export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user }) {
-  if (!hasUserPermission(user, permissions.EDIT_DOC)) {
+  if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
     throw new Error('User is not allowed to update documents');
   }
 
@@ -89,12 +85,12 @@ export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, r
 
   if (!room) {
     const userIsAccreditedEditorForThisDocument = previousPublicContext.accreditedEditors.includes(user._id);
-    const userCanAssignAnyAccreditedEditor = hasUserPermission(user, permissions.MANAGE_ACCREDITED_EDITORS);
-    const userCanManageAnyContent = hasUserPermission(user, permissions.MANAGE_CONTENT);
-    const userCanProtectAnyDoc = hasUserPermission(user, permissions.PROTECT_ANY_DOC);
-    const userCanArchiveDoc = hasUserPermission(user, permissions.ARCHIVE_DOC);
-    const userCanVerifyDoc = hasUserPermission(user, permissions.VERIFY_DOC);
-    const userCanReviewDoc = hasUserPermission(user, permissions.REVIEW_DOC);
+    const userCanDecideWhoCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT);
+    const userCanManageAnyContent = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanProtectAnyDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanArchiveDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanVerifyDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanReviewDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
 
     if (previousPublicContext.protected && !userCanManageAnyContent && !userIsAccreditedEditorForThisDocument) {
       throw new Error('User is not allowed to update a protected document');
@@ -102,7 +98,7 @@ export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, r
 
     const { accreditedEditors: previousAccreditedEditors } = previousPublicContext;
     const { accreditedEditors: newAccreditedEditors } = newPublicContext;
-    if (!deepEqual(previousAccreditedEditors, newAccreditedEditors) && !userCanAssignAnyAccreditedEditor) {
+    if (!deepEqual(previousAccreditedEditors, newAccreditedEditors) && !userCanDecideWhoCanProtectOwnDocWhenCreating) {
       throw new Error('User is not allowed to update accredited editors');
     }
 

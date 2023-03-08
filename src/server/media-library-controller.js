@@ -86,14 +86,14 @@ class MediaLibraryController {
   registerApi(router) {
     router.get(
       '/api/v1/media-library/items',
-      needsPermission(permissions.VIEW_FILES),
+      needsPermission(permissions.VIEW_CONTENT),
       validateQuery(mediaLibrarySearchQuerySchema),
       (req, res) => this.handleQueryMediaLibraryItems(req, res)
     );
 
     router.post(
       '/api/v1/media-library/items',
-      needsPermission(permissions.CREATE_FILE),
+      needsPermission(permissions.CREATE_CONTENT),
       uploadLimitExceededMiddleware(),
       multipartParser.single('file'),
       (req, res, next) => {
@@ -108,7 +108,7 @@ class MediaLibraryController {
 
     router.patch(
       '/api/v1/media-library/items/:mediaLibraryItemId',
-      needsPermission(permissions.EDIT_FILE),
+      needsPermission(permissions.CREATE_CONTENT),
       jsonParser,
       validateParams(mediaLibraryItemIdParamsSchema),
       validateBody(mediaLibraryItemMetadataBodySchema),
@@ -117,14 +117,14 @@ class MediaLibraryController {
 
     router.delete(
       '/api/v1/media-library/items/:mediaLibraryItemId',
-      needsPermission(permissions.DELETE_ANY_STORAGE_FILE),
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       validateParams(mediaLibraryItemIdParamsSchema),
       (req, res) => this.handleDeleteMediaLibraryItem(req, res)
     );
 
     router.get(
       '/api/v1/media-library/tags',
-      needsPermission(permissions.VIEW_FILES),
+      needsPermission(permissions.VIEW_CONTENT),
       validateQuery(mediaLibraryTagSearchQuerySchema),
       (req, res) => this.handleGetMediaLibraryTagSuggestions(req, res)
     );

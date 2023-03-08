@@ -132,8 +132,8 @@ function Doc({ initialState, PageTemplate }) {
 
   const { room } = initialState;
 
-  const userCanHardDelete = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
-  const userCanEdit = hasUserPermission(user, permissions.EDIT_DOC);
+  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 

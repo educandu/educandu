@@ -254,7 +254,7 @@ class DocumentController {
       validateParams(getDocumentParamsSchema),
       validateQuery(getDocumentQuerySchema),
       needsPermission({
-        value: permissions.EDIT_DOC,
+        value: permissions.CREATE_CONTENT,
         condition: req => Object.values(DOC_VIEW_QUERY_PARAM).includes(req.query.view)
       }),
       (req, res) => this.handleGetDocPage(req, res)
@@ -270,7 +270,7 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs/titles',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
+      [needsPermission(permissions.VIEW_CONTENT), validateQuery(getSearchableDocumentsTitlesQuerySchema)],
       (req, res) => this.handleGetSearchableDocsTitles(req, res)
     );
 
@@ -281,7 +281,7 @@ class DocumentController {
 
     router.get(
       '/api/v1/docs/:documentId',
-      [needsPermission(permissions.VIEW_DOCS), validateParams(documentIdParamsOrQuerySchema)],
+      [needsPermission(permissions.VIEW_CONTENT), validateParams(documentIdParamsOrQuerySchema)],
       (req, res) => this.handleGetDoc(req, res)
     );
 
@@ -299,7 +299,7 @@ class DocumentController {
     router.post(
       '/api/v1/docs',
       jsonParserLargePayload,
-      needsPermission(permissions.EDIT_DOC),
+      needsPermission(permissions.CREATE_CONTENT),
       validateBody(createDocumentDataBodySchema),
       (req, res) => this.handlePostDocument(req, res)
     );
@@ -307,7 +307,7 @@ class DocumentController {
     router.patch(
       '/api/v1/docs/:documentId/metadata',
       jsonParser,
-      needsPermission(permissions.EDIT_DOC),
+      needsPermission(permissions.CREATE_CONTENT),
       validateParams(documentIdParamsOrQuerySchema),
       validateBody(updateDocumentMetadataBodySchema),
       (req, res) => this.handlePatchDocumentMetadata(req, res)
@@ -316,7 +316,7 @@ class DocumentController {
     router.patch(
       '/api/v1/docs/:documentId/sections',
       jsonParserLargePayload,
-      needsPermission(permissions.EDIT_DOC),
+      needsPermission(permissions.CREATE_CONTENT),
       validateParams(documentIdParamsOrQuerySchema),
       validateBody(patchDocSectionsBodySchema),
       (req, res) => this.handlePatchDocumentSections(req, res)
@@ -325,7 +325,7 @@ class DocumentController {
     router.patch(
       '/api/v1/docs/:documentId/restore',
       jsonParser,
-      needsPermission(permissions.EDIT_DOC),
+      needsPermission(permissions.CREATE_CONTENT),
       validateParams(documentIdParamsOrQuerySchema),
       validateBody(restoreRevisionBodySchema),
       (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
@@ -333,13 +333,13 @@ class DocumentController {
 
     router.delete(
       '/api/v1/docs/sections',
-      [needsPermission(permissions.HARD_DELETE_SECTION), jsonParser, validateBody(hardDeleteSectionBodySchema)],
+      [needsPermission(permissions.MANAGE_PUBLIC_CONTENT), jsonParser, validateBody(hardDeleteSectionBodySchema)],
       (req, res) => this.handleDeleteDocSection(req, res)
     );
 
     router.delete(
       '/api/v1/docs',
-      [needsPermission(permissions.VIEW_DOCS), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
+      [needsPermission(permissions.VIEW_CONTENT), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
       (req, res) => this.handleDeleteDoc(req, res)
     );
   }
