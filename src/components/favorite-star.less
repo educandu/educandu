@@ -2,8 +2,14 @@
   display: flex;
   height: 20px !important;
   align-items: center;
-}
 
-.FavoriteStar-rate {
-  color: @edu-secondary-color-dark !important;
+  .anticon {
+    color: @edu-disabled-color !important;
+  }
+
+  &.is-set {
+    .anticon {
+      color: @edu-secondary-color-dark !important;
+    }
+  }
 }

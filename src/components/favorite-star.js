@@ -1,5 +1,6 @@
 import { Rate } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -50,10 +51,14 @@ function FavoriteStar({ type, id, disabled, onToggle, submitChange }) {
     }
   };
 
+  const classes = classNames(
+    'FavoriteStar',
+    { 'is-set': isSet }
+  );
+
   return (
-    <div className="FavoriteStar">
+    <div className={classes}>
       <Rate
-        className="FavoriteStar-rate"
         count={1}
         value={isSet ? 1 : 0}
         onChange={handleChange}

@@ -480,8 +480,8 @@ export default function Room({ PageTemplate, initialState }) {
           <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
         </Breadcrumb>
         <div className="RoomPage-title">
-          <h1 className="RoomPage-titleText">{room.name}</h1>
-          <div className="RoomPage-titleExtra">
+          <div>{room.name}</div>
+          <div className="RoomPage-titleStar">
             <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
           </div>
         </div>

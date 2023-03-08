@@ -2,13 +2,11 @@ import PropTypes from 'prop-types';
 import { Button, Spin } from 'antd';
 import Markdown from '../markdown.js';
 import { useTranslation } from 'react-i18next';
-import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';
 import ProfileHeader from '../profile-header.js';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
-import { FAVORITE_TYPE } from '../../domain/constants.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 
@@ -55,14 +53,13 @@ export default function UserProfile({ PageTemplate, initialState }) {
           <div className="UserProfilePage-headerProfile">
             <ProfileHeader
               includeMailTo
+              includeFavoriteStar
+              userId={user._id}
               email={user.email}
               avatarUrl={user.avatarUrl}
               displayName={user.displayName}
               organization={user.organization}
               />
-          </div>
-          <div className="UserProfilePage-headerStar">
-            <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
           </div>
         </div>
 
