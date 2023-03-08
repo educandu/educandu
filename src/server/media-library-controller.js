@@ -6,7 +6,6 @@ import Cdn from '../repositories/cdn.js';
 import permissions from '../domain/permissions.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -87,7 +86,7 @@ class MediaLibraryController {
   registerApi(router) {
     router.get(
       '/api/v1/media-library/items',
-      needsAuthentication(),
+      needsPermission(permissions.ACCESS_STORAGE),
       validateQuery(mediaLibrarySearchQuerySchema),
       (req, res) => this.handleQueryMediaLibraryItems(req, res)
     );

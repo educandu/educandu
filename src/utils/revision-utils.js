@@ -84,37 +84,34 @@ export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, r
   }
 
   if (!room) {
+    const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
     const userIsAccreditedEditorForThisDocument = previousPublicContext.accreditedEditors.includes(user._id);
     const userCanDecideWhoCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT);
-    const userCanManageAnyContent = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-    const userCanProtectAnyDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-    const userCanArchiveDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-    const userCanVerifyDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-    const userCanReviewDoc = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
 
-    if (previousPublicContext.protected && !userCanManageAnyContent && !userIsAccreditedEditorForThisDocument) {
+    if (previousPublicContext.protected && !userCanManagePublicContext && !userIsAccreditedEditorForThisDocument) {
       throw new Error('User is not allowed to update a protected document');
     }
 
     const { accreditedEditors: previousAccreditedEditors } = previousPublicContext;
     const { accreditedEditors: newAccreditedEditors } = newPublicContext;
+
     if (!deepEqual(previousAccreditedEditors, newAccreditedEditors) && !userCanDecideWhoCanProtectOwnDocWhenCreating) {
       throw new Error('User is not allowed to update accredited editors');
     }
 
-    if (previousPublicContext.protected !== newPublicContext.protected && !userCanProtectAnyDoc) {
+    if (previousPublicContext.protected !== newPublicContext.protected && !userCanManagePublicContext) {
       throw new Error('User is not allowed to change the protected state of a document');
     }
 
-    if (previousPublicContext.archived !== newPublicContext.archived && !userCanArchiveDoc) {
+    if (previousPublicContext.archived !== newPublicContext.archived && !userCanManagePublicContext) {
       throw new Error('User is not allowed to change the archived state of a document');
     }
 
-    if (previousPublicContext.verified !== newPublicContext.verified && !userCanVerifyDoc) {
+    if (previousPublicContext.verified !== newPublicContext.verified && !userCanManagePublicContext) {
       throw new Error('User is not allowed to change the verified state of a document');
     }
 
-    if (previousPublicContext.review !== newPublicContext.review && !userCanReviewDoc) {
+    if (previousPublicContext.review !== newPublicContext.review && !userCanManagePublicContext) {
       throw new Error('User is not allowed to update the review of a document');
     }
   }
