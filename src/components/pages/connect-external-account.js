@@ -72,7 +72,6 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
             </div>
             <div className="ConnectExternalAccountPage-infoBox">
               <CustomAlert
-                banner
                 message={t('infoBoxTitle')}
                 description={t('infoBoxDescription', { appName: appNameCompound })}
                 />
