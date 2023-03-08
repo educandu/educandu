@@ -26,8 +26,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
   const renderOwner = () => {
     return (
       <span className="RoomCard-owner">
-        {`${t('common:owner')}: `}
-        <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
+        {t('common:by')} <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
       </span>
     );
   };

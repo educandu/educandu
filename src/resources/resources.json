@@ -3196,9 +3196,9 @@
       "en": "Relevance",
       "de": "Relevanz"
     },
-    "owner": {
-      "en": "Owner",
-      "de": "Eigentümer"
+    "by": {
+      "en": "By",
+      "de": "Von"
     },
     "email": {
       "en": "Email",

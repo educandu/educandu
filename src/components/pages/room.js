@@ -286,12 +286,6 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const renderOwnerLink = () => (
-    <Fragment>
-      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
-    </Fragment>
-  );
-
   const renderRoomDescription = () => {
     return !!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>;
   };
@@ -486,7 +480,9 @@ export default function Room({ PageTemplate, initialState }) {
           </div>
         </div>
         <div className="RoomPage-subtitle">
-          <div>{documentsModeText} | {renderOwnerLink()}</div>
+          <div>
+            {t('common:by')} <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
+          </div>
           {viewMode !== VIEW_MODE.owner && (
             <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
           )}
