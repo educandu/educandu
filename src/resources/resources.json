@@ -599,36 +599,16 @@
   },
   "roomsTab": {
     "info": {
-      "en": "Here you find all the rooms you have created and the rooms that you are a member of.",
-      "de": "Hier findest du alle Räume, die du erstellt hast und in denen du Mitglied bist."
-    },
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
-    },
-    "role": {
-      "en": "Role",
-      "de": "Rolle"
-    },
-    "member": {
-      "en": "Member",
-      "de": "Mitglied"
-    },
-    "sortedByOwner": {
-      "en": "Sorted by owner",
-      "de": "Nach Eigentümer sortiert"
-    },
-    "sortedByRole": {
-      "en": "Sorted by role",
-      "de": "Nach Rolle sortiert"
+      "en": "Here you find all the rooms you have created and the rooms that were invited to.",
+      "de": "Hier findest du alle Räume, die du erstellt hast und in denen du eingeladen wurdest."
     },
     "ownedRoomsHeadline": {
       "en": "Rooms that you created",
       "de": "Räume, die du erstellt hast"
     },
     "memberRoomsHeadline": {
-      "en": "Rooms that you are a member of",
-      "de": "Räume, in denen du Mitglied bist"
+      "en": "Rooms that you were invited to",
+      "de": "Räume, in denen du eingeladen wurdest"
     },
     "noOwnedRooms": {
       "en": "You have not created any rooms yet.",
@@ -1548,21 +1528,9 @@
     }
   },
   "room": {
-    "exclusiveDocumentsSubtitle": {
-      "en": "Exclusive documents",
-      "de": "exklusive Dokumente"
-    },
-    "collaborativeDocumentsSubtitle": {
-      "en": "Collaborative documents",
-      "de": "kollaborative Dokumente"
-    },
     "documentsTabTitle": {
       "en": "Documents ({count})",
       "de": "Dokumente ({count})"
-    },
-    "membersTabTitle": {
-      "en": "Members ({count})",
-      "de": "Mitglieder ({count})"
     },
     "documentsPlaceholder": {
       "en": "The room does not contain any documents",
@@ -1608,13 +1576,13 @@
       "en": "Expires on",
       "de": "Läuft ab am"
     },
-    "memberSince": {
-      "en": "Member since",
-      "de": "Mitglied seit"
-    },
     "inviteMembersButton": {
       "en": "Invite members",
       "de": "Mitglieder einladen"
+    },
+    "inviteCollaboratorsButton": {
+      "en": "Invite collaborators",
+      "de": "Mitarbeiter einladen"
     },
     "pendingInvitation": {
       "en": "Pending invitation",
@@ -1956,13 +1924,13 @@
       "en": "Mode",
       "de": "Modus"
     },
+    "role": {
+      "en": "Role",
+      "de": "Rolle"
+    },
     "updated": {
       "en": "Updated",
       "de": "Aktualisiert"
-    },
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
     },
     "joinButton": {
       "en": "Accept invitation",
@@ -1971,10 +1939,6 @@
     "invited": {
       "en": "Invited",
       "de": "Eingeladen"
-    },
-    "members": {
-      "en": "Members",
-      "de": "Mitglieder"
     },
     "acceptInvitation": {
       "en": "The invitation is valid until **{date}**.",
@@ -2014,9 +1978,13 @@
       "en": "Please specify a room name",
       "de": "Bitte gib einen Raumnamen an"
     },
-    "documentsModeInfo": {
-      "en": "In exclusive rooms documents can be managed only by the owner. In collaborative rooms all room members can add and modify documents, however only the owner can delete them.",
-      "de": "In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden. In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen."
+    "isCollaborative": {
+      "en": "Is collaborative",
+      "de": "Ist kollaborativ"
+    },
+    "isCollaborativeInfo": {
+      "en": "In collaborative rooms all room members can add and modify documents, however only the owner can delete them.",
+      "de": "In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen."
     }
   },
   "searchBar": {
@@ -3216,18 +3184,6 @@
       "en": "Type",
       "de": "Typ"
     },
-    "documentsMode": {
-      "en": "Documents handling mode",
-      "de": "Dokumente-Bearbeitungsmodus"
-    },
-    "documentsMode_exclusive": {
-      "en": "exclusive",
-      "de": "exklusiv"
-    },
-    "documentsMode_collaborative": {
-      "en": "collaborative",
-      "de": "kollaborativ"
-    },
     "documentTitle": {
       "en": "Document title",
       "de": "Dokument-Titel"
@@ -3651,6 +3607,26 @@
     "enterRoom": {
       "en": "Enter room",
       "de": "Raum betreten"
+    },
+    "member": {
+      "en": "Member",
+      "de": "Mitglied"
+    },
+    "members": {
+      "en": "Members",
+      "de": "Mitglieder"
+    },
+    "collaborator": {
+      "en": "Collaborator",
+      "de": "Mitarbeiter"
+    },
+    "collaborators": {
+      "en": "Collaborators",
+      "de": "Mitarbeiter"
+    },
+    "joined": {
+      "en": "Joined",
+      "de": "Eingetreten"
     },
     "changesSavedSuccessfully": {
       "en": "Your changes have been saved",

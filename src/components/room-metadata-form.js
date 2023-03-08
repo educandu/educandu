@@ -1,7 +1,7 @@
 import React from 'react';
 import Info from './info.js';
 import PropTypes from 'prop-types';
-import { Form, Input, Radio } from 'antd';
+import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
@@ -9,8 +9,6 @@ import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 
 const editModeFormInputLayouts = {
   labelCol: { xs: { span: 12 }, sm: { span: 12 } },
@@ -38,8 +36,8 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, documentsMode, description }) => {
-    await onSubmit({ name, slug, documentsMode, description });
+  const handleFinish = async ({ name, slug, isCollaborative, description }) => {
+    await onSubmit({ name, slug, documentsMode: isCollaborative ? ROOM_DOCUMENTS_MODE.collaborative : ROOM_DOCUMENTS_MODE.exclusive, description });
   };
 
   const handleFieldsChange = async (...args) => {
@@ -65,14 +63,15 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         <Input />
       </FormItem>
       <FormItem
-        name="documentsMode"
-        initialValue={room.documentsMode}
-        label={<Info tooltip={t('documentsModeInfo')} iconAfterContent>{t('common:documentsMode')}</Info>}
+        name="isCollaborative"
+        valuePropName="checked"
+        initialValue={room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative}
         >
-        <RadioGroup>
-          <RadioButton value={ROOM_DOCUMENTS_MODE.exclusive}>{t('common:documentsMode_exclusive')}</RadioButton>
-          <RadioButton value={ROOM_DOCUMENTS_MODE.collaborative}>{t('common:documentsMode_collaborative')}</RadioButton>
-        </RadioGroup>
+        <Checkbox>
+          <Info tooltip={t('isCollaborativeInfo')} iconAfterContent>
+            <span className="u-label">{t('isCollaborative')}</span>
+          </Info>
+        </Checkbox>
       </FormItem>
       {!!editMode && (
         <FormItem label={t('common:description')} name="description" initialValue={room.description}>
