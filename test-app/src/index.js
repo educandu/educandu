@@ -105,6 +105,7 @@ const config = {
   smtpOptions: process.env.TEST_APP_SMTP_OPTIONS,
   emailSenderAddress: process.env.TEST_APP_EMAIL_SENDER_ADDRESS,
   adminEmailAddress: process.env.TEST_APP_ADMIN_EMAIL_ADDRESS,
+  emailAddressIgnorePattern: null,
   initialUser: process.env.TEST_APP_INITIAL_USER ? JSON.parse(process.env.TEST_APP_INITIAL_USER) : null,
   basicAuthUsers: JSON.parse(process.env.TEST_APP_BASIC_AUTH_USERS || '{}'),
   plugins,

@@ -41,6 +41,7 @@ const configSchema = joi.object({
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
   adminEmailAddress: joi.string().allow(null).default(null),
+  emailAddressIgnorePattern: joi.string().allow(null).default('^.+@test\\.com$'),
   initialUser: joi.object({
     email: joi.string().required(),
     password: joi.string().required(),

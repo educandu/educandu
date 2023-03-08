@@ -28,8 +28,8 @@ class MailService {
     this.userStore = userStore;
     this.resourceManager = resourceManager;
     this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
-
     this.translators = SUPPORTED_UI_LANGUAGES.map(language => this.resourceManager.createI18n(language).t);
+    this.emailAddressIgnorePattern = serverConfig.emailAddressIgnorePattern ? new RegExp(serverConfig.emailAddressIgnorePattern, 'i') : null;
   }
 
   sendRegistrationVerificationEmail({ email, displayName, verificationCode }) {
@@ -240,9 +240,14 @@ class MailService {
     return this._sendMail(message);
   }
 
-  _sendMail(message) {
+  async _sendMail(message) {
+    if (this.emailAddressIgnorePattern?.test(message.to)) {
+      logger.info(`Skipping sending email with subject "${message.subject}" due to ignore pattern`);
+      return;
+    }
+
     logger.info(`Sending email with subject "${message.subject}"`);
-    return this.transport.sendMail(message);
+    await this.transport.sendMail(message);
   }
 }
 
