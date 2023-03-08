@@ -1,9 +1,9 @@
 import { Button } from 'antd';
-import Alert from '../alert.js';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import LoginForm from '../login-form.js';
 import routes from '../../utils/routes.js';
+import CustomAlert from '../custom-alert.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { useRequest } from '../request-context.js';
@@ -71,7 +71,10 @@ function ConnectExternalAccount({ PageTemplate, SiteLogo }) {
               <Button size="large" block onClick={handleAbortChoiceClick}>{t('choicesAbort')}</Button>
             </div>
             <div className="ConnectExternalAccountPage-infoBox">
-              <Alert banner message={t('infoBoxTitle')} description={t('infoBoxDescription', { appName: appNameCompound })} />
+              <CustomAlert
+                message={t('infoBoxTitle')}
+                description={t('infoBoxDescription', { appName: appNameCompound })}
+                />
             </div>
           </div>
         )}

@@ -6,8 +6,8 @@ quickTester:
     en: Teaser
     de: Teaser
   testsOrder:
-    en: Display order
-    de: Anzeigereihenfolge
+    en: Order
+    de: Reihenfolge
   testsOrderGiven:
     en: as specified
     de: wie angegeben

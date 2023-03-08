@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { ALERT_TYPE } from '../alert.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -9,6 +8,7 @@ import ControlPanel from '../control-panel.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
+import { ALERT_TYPE } from '../custom-alert.js';
 import CommentsPanel from '../comments-panel.js';
 import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';

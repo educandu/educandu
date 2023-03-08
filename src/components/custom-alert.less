@@ -1,0 +1,41 @@
+.CustomAlert {
+  padding: @edu-content-padding;
+  border-radius: @edu-border-radius-base;
+  border: none;
+  min-height: 50px;
+  color: @edu-text-color !important;
+
+  & + & {
+    margin-top: 12px;
+  }
+
+  &.CustomAlert--success {
+    background-color: @edu-banner-green-background-color;
+    border-color: @edu-banner-green-border-color;
+  }
+
+  &.CustomAlert--info {
+    background-color: @edu-banner-blue-background-color;
+    border-color: @edu-banner-blue-border-color;
+  }
+
+  &.CustomAlert--warning {
+    background-color: @edu-banner-orange-background-color;
+    border-color: @edu-banner-orange-border-color;
+  }
+
+  &.CustomAlert--error {
+    background-color: @edu-banner-red-background-color;
+    border-color: @edu-banner-red-border-color;
+  }
+
+  &.CustomAlert--banner {
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.CustomAlert-icon {
+  font-size: 1.5em;
+  color: @edu-text-color !important;
+}
