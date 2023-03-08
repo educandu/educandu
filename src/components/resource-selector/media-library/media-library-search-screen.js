@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactDropzoneNs from 'react-dropzone';
+import { Button, Divider, Spin } from 'antd';
+import CustomAlert from '../../custom-alert.js';
 import { useUser } from '../../user-context.js';
 import React, { useRef, useState } from 'react';
-import { Alert, Button, Divider, Spin } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
@@ -81,13 +82,13 @@ function MediaLibrarySearchScreen({
 
   const renderSearchInfo = () => {
     if (isLoading) {
-      return <Alert type="info" message={t('common:searchOngoing')} showIcon />;
+      return <CustomAlert message={t('common:searchOngoing')} />;
     }
 
     if (searchParams.searchTerm) {
       const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
       const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
-      return <Alert type="info" message={message} showIcon />;
+      return <CustomAlert message={message} />;
     }
 
     return null;

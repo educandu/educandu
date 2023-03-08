@@ -1,6 +1,7 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Alert, Button } from 'antd';
+import CustomAlert from '../../custom-alert.js';
 import React, { Fragment, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { Trans, useTranslation } from 'react-i18next';
@@ -69,13 +70,13 @@ function WikimediaSearchScreen({
 
   const renderSearchInfo = () => {
     if (isLoading) {
-      return <Alert type="info" message={t('common:searchOngoing')} showIcon />;
+      return <CustomAlert message={t('common:searchOngoing')} />;
     }
 
     if (searchParams.searchTerm) {
       const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
       const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
-      return <Alert type="info" message={message} showIcon />;
+      return <CustomAlert message={message} />;
     }
 
     return null;

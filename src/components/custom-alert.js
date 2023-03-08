@@ -2,46 +2,63 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Alert as AntdAlert } from 'antd';
+import AlertIcon from './icons/general/alert-icon.js';
 import WarningIcon from './icons/general/warning-icon.js';
 import InformationIcon from './icons/general/information-icon.js';
+import ConfirmationIcon from './icons/general/confirmation-icon.js';
 
 export const ALERT_TYPE = {
+  success: 'success',
   info: 'info',
-  warning: 'warning'
+  warning: 'warning',
+  error: 'error'
 };
 
 const renderIcon = type => {
   let Icon;
   switch (type) {
+    case ALERT_TYPE.success:
+      Icon = ConfirmationIcon;
+      break;
     case ALERT_TYPE.warning:
       Icon = WarningIcon;
+      break;
+    case ALERT_TYPE.error:
+      Icon = AlertIcon;
       break;
     case ALERT_TYPE.info:
     default:
       Icon = InformationIcon;
       break;
   }
-  return <Icon className={`Alert-icon Alert-icon--${type}`} />;
+
+  return <Icon className="CustomAlert-icon" />;
 };
 
-function Alert({ className, message, description, type, closable, banner, onClose, afterClose }) {
+function CustomAlert({ className, message, description, type, closable, banner, onClose, afterClose }) {
+  const classes = classNames(
+    'CustomAlert',
+    `CustomAlert--${type}`,
+    { 'CustomAlert--banner': !!banner },
+    { [className]: !!className }
+  );
+
   return (
     <AntdAlert
-      className={classNames('Alert', `Alert--${type}`, { [className]: !!className })}
+      className={classes}
       message={message}
       description={description}
       closable={closable}
       onClose={onClose}
       afterClose={afterClose}
       banner={banner}
-      type={type}
       icon={renderIcon(type)}
       showIcon
       />
   );
 }
 
-Alert.propTypes = {
+CustomAlert.propTypes = {
   afterClose: PropTypes.func,
   banner: PropTypes.bool,
   className: PropTypes.string,
@@ -52,7 +69,7 @@ Alert.propTypes = {
   type: PropTypes.oneOf(Object.values(ALERT_TYPE))
 };
 
-Alert.defaultProps = {
+CustomAlert.defaultProps = {
   afterClose: () => {},
   banner: false,
   className: null,
@@ -62,4 +79,4 @@ Alert.defaultProps = {
   type: ALERT_TYPE.info
 };
 
-export default Alert;
+export default CustomAlert;

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
+import { Form, Radio } from 'antd';
 import React, { memo } from 'react';
 import Markdown from '../markdown.js';
-import { Alert, Form, Radio } from 'antd';
+import CustomAlert from '../custom-alert.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import { announcementShape } from '../../ui/default-prop-types.js';
@@ -41,12 +42,12 @@ function AnnouncementSettings({ announcement, onChange }) {
         <RadioGroup value={type} onChange={handleTypeChange}>
           <RadioButton value={ANNOUNCEMENT_TYPE.success}>{t(`announcementType_${ANNOUNCEMENT_TYPE.success}`)}</RadioButton>
           <RadioButton value={ANNOUNCEMENT_TYPE.info}>{t(`announcementType_${ANNOUNCEMENT_TYPE.info}`)}</RadioButton>
-          <RadioButton value={ANNOUNCEMENT_TYPE.error}>{t(`announcementType_${ANNOUNCEMENT_TYPE.error}`)}</RadioButton>
           <RadioButton value={ANNOUNCEMENT_TYPE.warning}>{t(`announcementType_${ANNOUNCEMENT_TYPE.warning}`)}</RadioButton>
+          <RadioButton value={ANNOUNCEMENT_TYPE.error}>{t(`announcementType_${ANNOUNCEMENT_TYPE.error}`)}</RadioButton>
         </RadioGroup>
       </FormItem>
       <FormItem {...ADMIN_PAGE_FORM_ITEM_LAYOUT} label={t('common:preview')}>
-        <Alert banner message={<Markdown>{text}</Markdown>} type={type} />
+        <CustomAlert banner message={<Markdown>{text}</Markdown>} type={type} />
       </FormItem>
     </div>
   );

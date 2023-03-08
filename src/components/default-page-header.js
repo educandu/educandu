@@ -1,7 +1,7 @@
 import md5 from 'md5';
-import { Alert } from 'antd';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
+import CustomAlert from './custom-alert.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import { useScrollTopOffset } from '../ui/hooks.js';
@@ -56,7 +56,7 @@ function DefaultPageHeader() {
           </div>
         </div>
         {!!showAnnouncement && (
-          <Alert
+          <CustomAlert
             closable
             banner
             type={settings.announcement.type}

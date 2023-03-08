@@ -1,7 +1,7 @@
 import React from 'react';
-import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import CustomAlert from './custom-alert.js';
 import ConsentDialog from './consent-dialog.js';
 import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
@@ -25,7 +25,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
     }
 
     return (
-      <Alert
+      <CustomAlert
         banner
         key={index}
         type={alert.type}
