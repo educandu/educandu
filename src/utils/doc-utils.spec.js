@@ -1,7 +1,7 @@
 import uniqueId from './unique-id.js';
 import { canEditDoc } from './doc-utils.js';
+import { ROLE } from '../domain/constants.js';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 
 describe('doc-utils', () => {
   let doc;
@@ -32,7 +32,7 @@ describe('doc-utils', () => {
 
     describe('if the document is in a room', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: uniqueId.create(), members: [], documentsMode: ROOM_DOCUMENTS_MODE.exclusive };
+        room = { _id: uniqueId.create(), owner: uniqueId.create(), members: [], isCollaborative: false };
         doc.roomContext = { draft: false };
         doc.roomId = room._id;
       });
@@ -43,27 +43,27 @@ describe('doc-utils', () => {
 
       it('should return true when the user is collaborator of the room and the document is not a draft', () => {
         room.members = [{ userId: user._id }];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
+        room.isCollaborative = true;
         expect(canEditDoc({ user, doc, room })).toBe(true);
       });
 
       it('should return false when the user is collaborator of the room and the document is a draft', () => {
         doc.roomContext.draft = true;
         room.members = [{ userId: user._id }];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
+        room.isCollaborative = true;
         expect(canEditDoc({ user, doc, room })).toBe(false);
       });
 
       it('should return true when the user is owner of the room and the document is a draft', () => {
         doc.roomContext.draft = true;
         room.owner = user._id;
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
+        room.isCollaborative = true;
         expect(canEditDoc({ user, doc, room })).toBe(true);
       });
 
       it('should return false when the user is only a member of the room', () => {
         room.member = [{ userId: user._id }];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.isCollaborative = false;
         expect(canEditDoc({ user, doc, room })).toBe(false);
       });
     });

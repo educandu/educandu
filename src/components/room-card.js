@@ -8,7 +8,6 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from './locale-context.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
@@ -55,11 +54,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
           <div className="RoomCard-infoRow">
             <span className="RoomCard-infoLabel">{t('role')}:</span>
             <div>
-              {
-                room?.documentsMode === ROOM_DOCUMENTS_MODE.collaborative
-                  ? t('common:collaborator')
-                  : t('common:member')
-              }
+              { room?.isCollaborative ? t('common:collaborator') : t('common:member') }
             </div>
           </div>
         )}
@@ -72,11 +67,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         {!userAsMember && !!room?.members && (
           <div className="RoomCard-infoRow">
             <span className="RoomCard-infoLabel">
-              {
-                room?.documentsMode === ROOM_DOCUMENTS_MODE.collaborative
-                  ? `${t('common:collaborators')}:`
-                  : `${t('common:members')}:`
-              }
+              { room?.isCollaborative ? `${t('common:collaborators')}:` : `${t('common:members')}:`}
             </span>
             <div>{room.members.length}</div>
           </div>

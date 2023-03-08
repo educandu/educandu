@@ -110,8 +110,8 @@ export default class RoomController {
 
   async handlePostRoom(req, res) {
     const { user } = req;
-    const { name, slug, documentsMode } = req.body;
-    const newRoom = await this.roomService.createRoom({ name, slug, documentsMode, user });
+    const { name, slug, isCollaborative } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, slug, isCollaborative, user });
 
     return res.status(201).send(newRoom);
   }
@@ -119,7 +119,7 @@ export default class RoomController {
   async handlePatchRoomMetadata(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { name, slug, documentsMode, description } = req.body;
+    const { name, slug, isCollaborative, description } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -131,7 +131,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
-    const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, documentsMode, description });
+    const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, isCollaborative, description });
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
 
     return res.status(201).send({ room: mappedRoom });

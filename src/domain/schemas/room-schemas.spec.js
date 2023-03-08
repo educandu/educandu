@@ -1,6 +1,5 @@
 import { validate } from '../validation.js';
 import { describe, expect, it } from 'vitest';
-import { ROOM_DOCUMENTS_MODE } from '../constants.js';
 import { postRoomBodySchema, patchRoomMetadataBodySchema, postRoomInvitationsBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
@@ -9,7 +8,7 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
     });
@@ -19,7 +18,7 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -30,7 +29,7 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -42,7 +41,7 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -56,7 +55,7 @@ describe('patchRoomMetadataBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
       expect(() => validate(body, patchRoomMetadataBodySchema)).not.toThrow();
     });
@@ -66,7 +65,7 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
@@ -77,7 +76,7 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+        isCollaborative: false
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
@@ -95,7 +94,7 @@ describe('patchRoomMetadataBodySchema', () => {
     });
   });
 
-  describe('when the body does not contain the documentsMode', () => {
+  describe('when the body does not contain isCollaborative', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',

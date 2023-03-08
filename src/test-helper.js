@@ -4,8 +4,8 @@ import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
+import { SAVE_USER_RESULT } from './domain/constants.js';
 import DocumentService from './services/document-service.js';
-import { ROOM_DOCUMENTS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 async function purgeDatabase(db) {
@@ -163,7 +163,7 @@ export async function createTestRoom(container, roomValues = {}) {
     slug: roomValues.slug || '',
     name: roomValues.name || 'my-room',
     description: roomValues.description || '',
-    documentsMode: roomValues.documentsMode || ROOM_DOCUMENTS_MODE.exclusive,
+    isCollaborative: roomValues.isCollaborative || false,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),

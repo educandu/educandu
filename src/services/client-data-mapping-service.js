@@ -230,7 +230,7 @@ class ClientDataMappingService {
       room: {
         _id: room._id,
         name: room.name,
-        documentsMode: room.documentsMode,
+        isCollaborative: room.isCollaborative,
         owner: {
           _id: owner._id,
           displayName: owner.displayName

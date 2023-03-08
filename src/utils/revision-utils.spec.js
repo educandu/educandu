@@ -1,8 +1,8 @@
 import uniqueId from './unique-id.js';
 import { createSandbox } from 'sinon';
 import cloneDeep from './clone-deep.js';
+import { ROLE } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
-import { ROLE, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from './revision-utils.js';
@@ -47,7 +47,7 @@ describe('revision-utils', () => {
 
     describe('when the document is a room document', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
+        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], isCollaborative: true };
         newRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
       });
 
@@ -62,7 +62,7 @@ describe('revision-utils', () => {
       it('should throw if the user is not a collaborator', () => {
         room.owner = uniqueId.create();
         room.members = [user._id];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.isCollaborative = false;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user }))
           .toThrow('Only room owners or collaborators can create a room document');
       });
@@ -173,7 +173,7 @@ describe('revision-utils', () => {
 
     describe('when the document is a room document', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], documentsMode: ROOM_DOCUMENTS_MODE.collaborative };
+        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], isCollaborative: true };
         previousRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
       });
@@ -189,7 +189,7 @@ describe('revision-utils', () => {
       it('should throw if the user is not a collaborator', () => {
         room.owner = uniqueId.create();
         room.members = [user._id];
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.isCollaborative = false;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user }))
           .toThrow('Only room owners or collaborators can update a room document');
       });

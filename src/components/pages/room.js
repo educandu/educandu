@@ -27,10 +27,10 @@ import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
-import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM, ROOM_DOCUMENTS_MODE } from '../../domain/constants.js';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
@@ -179,9 +179,9 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, documentsMode, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, isCollaborative, description }) => {
     try {
-      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, documentsMode, description });
+      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, isCollaborative, description });
 
       setRoom(response.room);
       setIsRoomUpdateButtonDisabled(true);
@@ -464,11 +464,11 @@ export default function Room({ PageTemplate, initialState }) {
     ? `${room.members.length}/${room.members.length + invitations.length}`
     : room.members.length;
 
-  const membersTabTitle = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative
+  const membersTabTitle = room.isCollaborative
     ? `${t('common:collaborators')} (${membersTabCount})`
     : `${t('common:members')} (${membersTabCount}) `;
 
-  const inviteMemberButtonText = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative
+  const inviteMemberButtonText = room.isCollaborative
     ? t('inviteCollaboratorsButton')
     : t('inviteMembersButton');
 

@@ -1920,10 +1920,6 @@
     }
   },
   "roomCard": {
-    "documentsMode": {
-      "en": "Mode",
-      "de": "Modus"
-    },
     "role": {
       "en": "Role",
       "de": "Rolle"

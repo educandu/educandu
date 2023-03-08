@@ -5,7 +5,6 @@ import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
@@ -37,7 +36,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
   ];
 
   const handleFinish = async ({ name, slug, isCollaborative, description }) => {
-    await onSubmit({ name, slug, documentsMode: isCollaborative ? ROOM_DOCUMENTS_MODE.collaborative : ROOM_DOCUMENTS_MODE.exclusive, description });
+    await onSubmit({ name, slug, isCollaborative, description });
   };
 
   const handleFieldsChange = async (...args) => {
@@ -56,17 +55,11 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         name="slug"
         initialValue={room.slug}
         rules={slugValidationRules}
-        label={
-          <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
-        }
+        label={<Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>}
         >
         <Input />
       </FormItem>
-      <FormItem
-        name="isCollaborative"
-        valuePropName="checked"
-        initialValue={room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative}
-        >
+      <FormItem name="isCollaborative" valuePropName="checked" initialValue={room.isCollaborative}>
         <Checkbox>
           <Info tooltip={t('isCollaborativeInfo')} iconAfterContent>
             <span className="u-label">{t('isCollaborative')}</span>
