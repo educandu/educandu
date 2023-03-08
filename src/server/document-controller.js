@@ -9,12 +9,12 @@ import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import SettingService from '../services/setting-service.js';
+import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { DOC_VIEW_QUERY_PARAM, NOT_ROOM_OWNER_ERROR_MESSAGE } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   documentIdParamsOrQuerySchema,
   updateDocumentMetadataBodySchema,
@@ -29,7 +29,7 @@ import {
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -166,22 +166,6 @@ class DocumentController {
     const { user } = req;
     const data = req.body;
 
-    if (data.roomId) {
-      const room = await this.roomService.getRoomById(data.roomId);
-
-      if (!room) {
-        throw new BadRequest(`Unknown room id '${data.roomId}'`);
-      }
-
-      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
-        throw new Forbidden();
-      }
-
-      if (data.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
-        throw new Forbidden();
-      }
-    }
-
     const newDocument = await this.documentService.createDocument({ data, user });
     const mappedNewDocument = await this.clientDataMappingService.mapDocOrRevision(newDocument, user);
     return res.status(201).send(mappedNewDocument);
@@ -192,8 +176,6 @@ class DocumentController {
     const metadata = req.body;
     const { documentId } = req.params;
 
-    await this._authorizeDocumentWriteAccess(req);
-
     const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
     return res.status(201).send(mappedUpdatedDocument);
@@ -203,8 +185,6 @@ class DocumentController {
     const { user } = req;
     const { sections } = req.body;
     const { documentId } = req.params;
-
-    await this._authorizeDocumentWriteAccess(req);
 
     const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
@@ -226,30 +206,6 @@ class DocumentController {
     const mappedDocumentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(documentRevisions, user);
 
     return res.status(201).send({ document: mappedDocument, documentRevisions: mappedDocumentRevisions });
-  }
-
-  async handlePatchDocArchive(req, res) {
-    const { documentId } = req.params;
-
-    const updatedDocument = await this.documentService.updateArchivedState({ documentId, user: req.user, archived: true });
-    if (!updatedDocument) {
-      throw new NotFound();
-    }
-
-    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, req.user);
-    return res.send({ doc: mappedDocument });
-  }
-
-  async handlePatchDocUnarchive(req, res) {
-    const { documentId } = req.params;
-
-    const updatedDocument = await this.documentService.updateArchivedState({ documentId, user: req.user, archived: false });
-    if (!updatedDocument) {
-      throw new NotFound();
-    }
-
-    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, req.user);
-    return res.send({ doc: mappedDocument });
   }
 
   async handleGetDocs(req, res) {
@@ -281,24 +237,7 @@ class DocumentController {
   async handleDeleteDoc(req, res) {
     const { user } = req;
     const { documentId } = req.body;
-
-    const document = await this.documentService.getDocumentById(documentId);
-
-    if (!document) {
-      throw new NotFound();
-    }
-
-    if (!document.roomId) {
-      throw new Forbidden('Public documents can not be deleted');
-    }
-
-    const room = await this.roomService.getRoomById(document.roomId);
-    if (!isRoomOwner({ room, userId: user._id })) {
-      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
-    }
-
-    await this.documentService.hardDeleteDocument(documentId);
-
+    await this.documentService.hardDeleteDocument({ documentId, user });
     return res.send({});
   }
 
@@ -307,35 +246,6 @@ class DocumentController {
 
     const result = await this.documentService.getDocumentTagsMatchingText(searchString);
     return res.send(result.length ? result[0].uniqueTags : []);
-  }
-
-  async _authorizeDocumentWriteAccess(req) {
-    const { user } = req;
-    const { documentId } = req.params;
-
-    if (!user) {
-      throw new Forbidden();
-    }
-
-    const doc = await this.documentService.getDocumentById(documentId);
-
-    if (!doc) {
-      throw new NotFound();
-    }
-
-    let room;
-    if (doc.roomId) {
-      room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
-      if (!room) {
-        throw new NotFound();
-      }
-    } else {
-      room = null;
-    }
-
-    if (!canEditDoc({ user, doc, room })) {
-      throw new Forbidden();
-    }
   }
 
   registerPages(router) {
@@ -419,18 +329,6 @@ class DocumentController {
       validateParams(documentIdParamsOrQuerySchema),
       validateBody(restoreRevisionBodySchema),
       (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
-    );
-
-    router.patch(
-      '/api/v1/docs/:documentId/archive',
-      [needsPermission(permissions.ARCHIVE_DOC), validateParams(documentIdParamsOrQuerySchema)],
-      (req, res) => this.handlePatchDocArchive(req, res)
-    );
-
-    router.patch(
-      '/api/v1/docs/:documentId/unarchive',
-      [needsPermission(permissions.ARCHIVE_DOC), validateParams(documentIdParamsOrQuerySchema)],
-      (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 
     router.delete(

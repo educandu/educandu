@@ -11,15 +11,17 @@ import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import EventStore from '../stores/event-store.js';
+import { isRoomOwner } from '../utils/room-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
-import { ensureIsExcluded } from '../utils/array-utils.js';
 import { createTagSearchQuery } from '../utils/tag-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
+import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
@@ -193,7 +195,6 @@ class DocumentService {
   }
 
   async createDocument({ data, user, silentCreation = false }) {
-    let room = null;
     let roomLock;
     let documentLock;
     const documentId = uniqueId.create();
@@ -211,20 +212,19 @@ class DocumentService {
           throw new BadRequest(`Found unexpected existing revisions for document ${documentId}`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
           ...data,
           _id: null,
           documentId,
-          createdBy: user._id,
-          order: nextOrder
+          createdBy: user._id
         });
 
-        newDocument = this._buildDocumentFromRevisions([newRevision]);
-
-        if (newDocument.roomId) {
-          room = await this.roomStore.getRoomById(newDocument.roomId, { session });
-          room.documents.push(newDocument._id);
+        let room;
+        if (newRevision.roomId) {
+          room = await this.roomStore.getRoomById(newRevision.roomId, { session });
+          room.documents = ensureIsIncluded(room.documents, documentId);
+        } else {
+          room = null;
         }
 
         try {
@@ -233,6 +233,9 @@ class DocumentService {
           logger.error(error);
           throw new Forbidden(error.message);
         }
+
+        newRevision.order = await this.documentOrderStore.getNextOrder();
+        newDocument = this._buildDocumentFromRevisions([newRevision]);
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         if (!silentCreation) {
@@ -256,7 +259,6 @@ class DocumentService {
   }
 
   async updateDocument({ documentId, data, user, silentUpdate = false }) {
-    let room = null;
     let documentLock;
 
     try {
@@ -271,7 +273,6 @@ class DocumentService {
 
         const previousRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
         const newRevision = this._buildDocumentRevision({
           ...cloneDeep(previousRevision),
           ...data,
@@ -279,7 +280,6 @@ class DocumentService {
           documentId,
           createdOn: null,
           createdBy: user._id,
-          order: nextOrder,
           sections: data.sections?.map(section => createSectionRevision({
             section,
             ancestorSection: previousRevision.sections.find(s => s.key === section.key) || null,
@@ -287,11 +287,7 @@ class DocumentService {
           })) || cloneDeep(previousRevision.sections)
         });
 
-        newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newRevision]);
-
-        if (newDocument.roomId) {
-          room = await this.roomStore.getRoomById(newDocument.roomId, { session });
-        }
+        const room = newRevision.roomId ? await this.roomStore.getRoomById(newRevision.roomId, { session }) : null;
 
         try {
           checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user });
@@ -299,6 +295,9 @@ class DocumentService {
           logger.error(error);
           throw new Forbidden(error.message);
         }
+
+        newRevision.order = await this.documentOrderStore.getNextOrder();
+        newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newRevision]);
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         if (!silentUpdate) {
@@ -329,7 +328,7 @@ class DocumentService {
     return this.updateDocument({ documentId, data, user, silentUpdate: true });
   }
 
-  async hardDeleteDocument(documentId) {
+  async hardDeleteDocument({ documentId, user }) {
     let roomLock;
     let documentLock;
 
@@ -340,14 +339,18 @@ class DocumentService {
 
       await this.transactionRunner.run(async session => {
         const doc = await this.documentStore.getDocumentById(documentId, { session });
-
-        if (doc.roomId) {
-          roomLock = await this.lockStore.takeRoomLock(doc.roomId);
-          const room = await this.roomStore.getRoomById(doc.roomId, { session });
-          room.documents = ensureIsExcluded(room.documents, doc._id);
-          await this.roomStore.saveRoom(room, { session });
+        if (!doc.roomId) {
+          throw new Forbidden('Cannot delete public documents');
         }
 
+        roomLock = await this.lockStore.takeRoomLock(doc.roomId);
+        const room = await this.roomStore.getRoomById(doc.roomId, { session });
+        if (!isRoomOwner({ room, userId: user._id })) {
+          throw new Forbidden('Only room owners can delete documents');
+        }
+
+        room.documents = ensureIsExcluded(room.documents, doc._id);
+        await this.roomStore.saveRoom(room, { session });
         await this.documentStore.deleteDocumentById(documentId, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
       });
@@ -363,6 +366,11 @@ class DocumentService {
 
   async hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     let lock;
+
+    if (!hasUserPermission(user, permissions.HARD_DELETE_SECTION)) {
+      throw new Forbidden('User is not allowed to delete document sections');
+    }
+
     try {
       lock = await this.lockStore.takeDocumentLock(documentId);
 
@@ -420,6 +428,10 @@ class DocumentService {
   async restoreDocumentRevision({ documentId, revisionId, user }) {
     let lock;
 
+    if (!hasUserPermission(user, permissions.RESTORE_DOC_REVISIONS)) {
+      throw new Forbidden('User is not allowed to restore document revisions');
+    }
+
     try {
       lock = await this.lockStore.takeDocumentLock(documentId);
 
@@ -431,14 +443,14 @@ class DocumentService {
           throw new Error(`Revision ${revisionId} is not valid`);
         }
 
-        const ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
+        const previousRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
 
-        if (revisionToRestore._id === ancestorRevision._id) {
+        if (revisionToRestore._id === previousRevision._id) {
           throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
         }
 
-        const nextOrder = await this.documentOrderStore.getNextOrder();
         const clonedRevision = cloneDeep(revisionToRestore);
+
         const newRevision = this._buildDocumentRevision({
           ...clonedRevision,
           _id: null,
@@ -446,14 +458,23 @@ class DocumentService {
           createdOn: null,
           createdBy: user._id,
           restoredFrom: revisionToRestore._id,
-          order: nextOrder,
           sections: clonedRevision.sections.map(section => createSectionRevision({
             section,
-            ancestorSection: ancestorRevision.sections.find(s => s.key === section.key) || null,
+            ancestorSection: previousRevision.sections.find(s => s.key === section.key) || null,
             isRestoreOperation: true
           }))
         });
 
+        const room = newRevision.roomId ? await this.roomStore.getRoomById(newRevision.roomId, { session }) : null;
+
+        try {
+          checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user });
+        } catch (error) {
+          logger.error(error);
+          throw new Forbidden(error.message);
+        }
+
+        newRevision.order = await this.documentOrderStore.getNextOrder();
         const newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newRevision]);
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
