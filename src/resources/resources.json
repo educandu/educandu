@@ -1974,9 +1974,9 @@
       "en": "Please specify a room name",
       "de": "Bitte gib einen Raumnamen an"
     },
-    "isCollaborative": {
-      "en": "Is collaborative",
-      "de": "Ist kollaborativ"
+    "isCollaborativeLabel": {
+      "en": "Collaborative mode",
+      "de": "Kollaborativer Modus"
     },
     "isCollaborativeInfo": {
       "en": "In collaborative rooms all room members can add and modify documents, however only the owner can delete them.",

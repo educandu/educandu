@@ -62,7 +62,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       <FormItem name="isCollaborative" valuePropName="checked" initialValue={room.isCollaborative}>
         <Checkbox>
           <Info tooltip={t('isCollaborativeInfo')} iconAfterContent>
-            <span className="u-label">{t('isCollaborative')}</span>
+            <span className="u-label">{t('isCollaborativeLabel')}</span>
           </Info>
         </Checkbox>
       </FormItem>
