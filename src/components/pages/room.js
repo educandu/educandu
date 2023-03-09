@@ -513,7 +513,7 @@ export default function Room({ PageTemplate, initialState }) {
             items={[
               {
                 key: '1',
-                label: t('documentsTabTitle', { count: visibleDocumentsCount }),
+                label: t('roomViewTitle'),
                 children: (
                   <div className="Tabs-tabPane">
                     {renderRoomDescription()}

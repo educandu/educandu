@@ -1,13 +1,13 @@
 roomsTab:
   info:
     en: Here you find all the rooms you have created and the rooms that were invited to.
-    de: Hier findest du alle Räume, die du erstellt hast und in denen du eingeladen wurdest.
+    de: Hier findest du alle Räume, die du erstellt hast und in die du eingeladen wurdest.
   ownedRoomsHeadline:
     en: Rooms that you created
     de: Räume, die du erstellt hast
   memberRoomsHeadline:
     en: Rooms that you were invited to
-    de: Räume, in denen du eingeladen wurdest
+    de: Räume, in die du eingeladen wurdest
   noOwnedRooms:
     en: You have not created any rooms yet.
     de: Du hast noch keine Räume erstellt.

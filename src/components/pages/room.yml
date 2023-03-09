@@ -1,7 +1,7 @@
 room:
-  documentsTabTitle:
-    en: Documents ({count})
-    de: Dokumente ({count})
+  roomViewTitle:
+    en: Room view
+    de: Raum-Ansicht
   documentsPlaceholder:
     en: The room does not contain any documents
     de: Der Raum enthält keine Dokumente
