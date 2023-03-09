@@ -1,10 +1,10 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import { Table, Tag, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
+import { Button, Table, Tag, Tooltip } from 'antd';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
@@ -148,18 +148,30 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     }));
   };
 
+  const handleCreateDocumentClick = () => {
+    setDocumentMetadataModalState(getDocumentMetadataModalState({
+      mode: DOCUMENT_METADATA_MODAL_MODE.create,
+      isOpen: true
+    }));
+  };
+
   const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
-
-    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.clone) {
-      window.location = routes.getDocUrl({
-        id: savedDocuments[0]._id,
-        slug: savedDocuments[0].slug,
-        view: DOC_VIEW_QUERY_PARAM.edit,
-        templateDocumentId
-      });
-    } else if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.update) {
-      onDocumentsChange(savedDocuments.reduce((all, doc) => replaceItem(all, doc), documents));
+    switch (documentMetadataModalState.mode) {
+      case DOCUMENT_METADATA_MODAL_MODE.create:
+      case DOCUMENT_METADATA_MODAL_MODE.clone:
+        window.location = routes.getDocUrl({
+          id: savedDocuments[0]._id,
+          slug: savedDocuments[0].slug,
+          view: DOC_VIEW_QUERY_PARAM.edit,
+          templateDocumentId
+        });
+        break;
+      case DOCUMENT_METADATA_MODAL_MODE.update:
+        onDocumentsChange(savedDocuments.reduce((all, doc) => replaceItem(all, doc), documents));
+        break;
+      default:
+        throw new Error(`Invalid document metadata modal mode: '${documentMetadataModalState.mode}'`);
     }
   };
 
@@ -300,6 +312,9 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
           options={documentsSortingOptions}
           onChange={handleCurrentTableSortingChange}
           />
+        <Button type="primary" onClick={handleCreateDocumentClick}>
+          {t('common:create')}
+        </Button>
       </div>
       <Table
         dataSource={[...displayedTableRows]}
