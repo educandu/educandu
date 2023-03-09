@@ -51,7 +51,7 @@ describe('client-data-mapping-service', () => {
         displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
-        roles: ['user', 'admin'],
+        role: 'admin',
         expiresOn: null,
         verificationCode: null,
         organization: 'Educandu',
@@ -86,7 +86,7 @@ describe('client-data-mapping-service', () => {
       const accountClosedOn = new Date();
 
       beforeEach(() => {
-        viewingUser = { roles: [ROLE.user] };
+        viewingUser = { role: ROLE.user };
         viewedUser.accountClosedOn = accountClosedOn;
 
         urlUtils.getGravatarUrl.withArgs(null).returns('www://avatar.domain/placeholder');
@@ -107,7 +107,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user does not have '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { roles: [ROLE.user] };
+        viewingUser = { role: ROLE.user };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 
@@ -125,7 +125,7 @@ describe('client-data-mapping-service', () => {
 
     describe(`when the viewing user has '${permissions.SEE_USER_EMAIL}' permission`, () => {
       beforeEach(() => {
-        viewingUser = { roles: [ROLE.user, ROLE.maintainer] };
+        viewingUser = { role: ROLE.maintainer };
         result = sut.mapWebsitePublicUser({ viewedUser, viewingUser });
       });
 
@@ -154,7 +154,7 @@ describe('client-data-mapping-service', () => {
         displayName: 'Test user',
         passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
         email: 'test@test.com',
-        roles: ['user', 'admin'],
+        role: 'admin',
         expiresOn: null,
         verificationCode: null,
         accountLockedOn: null,
@@ -187,7 +187,7 @@ describe('client-data-mapping-service', () => {
         _id: 'k991UQneLdmDGrAgqR7s6q',
         displayName: 'Test user',
         email: 'test@test.com',
-        roles: ['user', 'admin'],
+        role: 'admin',
         organization: 'Educandu',
         introduction: 'Educandu test user',
         storage: {
@@ -364,7 +364,7 @@ describe('client-data-mapping-service', () => {
 
     describe('when the viewingUser is the room owner', () => {
       beforeEach(async () => {
-        result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, roles: [ROLE.admin] } });
+        result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, role: ROLE.admin } });
       });
 
       it('should call getUserById with "owner"', () => {

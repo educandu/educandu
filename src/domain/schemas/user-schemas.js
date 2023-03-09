@@ -53,8 +53,8 @@ export const postUserPasswordResetCompletionBodySchema = joi.object({
   verificationCode: idOrKeySchema.required()
 });
 
-export const postUserRolesBodySchema = joi.object({
-  roles: joi.array().items(joi.string().valid(...Object.values(ROLE))).min(1).required()
+export const postUserRoleBodySchema = joi.object({
+  role: joi.string().valid(...Object.values(ROLE)).required()
 });
 
 export const postUserAccountLockedOnBodySchema = joi.object({
@@ -105,7 +105,7 @@ export const userDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
-  roles: joi.array().required().items(joi.string()),
+  role: joi.string().required(),
   expiresOn: joi.date().allow(null).required(),
   verificationCode: joi.string().allow(null).required(),
   storage: storageDBSchema.required(),

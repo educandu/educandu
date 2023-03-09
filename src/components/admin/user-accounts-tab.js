@@ -12,16 +12,15 @@ import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import RolesSelect, { ROLES_SELECT_DISPLAY } from './roles-select.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import { Table, Tabs, Select, Radio, message, Tag, Modal } from 'antd';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
-import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
+import { Table, Tabs, Select, Radio, message, Tag, Modal, Segmented } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
@@ -37,12 +36,14 @@ const TABLE = {
 };
 
 const BATCH_ACTION_TYPE = {
-  assignRoles: 'assign-roles',
+  assignRole: 'assign-role',
   assignStoragePlan: 'assign-storage-plan'
 };
 
+const ALL_ROLES = Object.values(ROLE);
+
 const DEFAULT_BATCH_ROLE = ROLE.user;
-const DEFAULT_BATCH_ACTION_TYPE = BATCH_ACTION_TYPE.assignRoles;
+const DEFAULT_BATCH_ACTION_TYPE = BATCH_ACTION_TYPE.assignRole;
 
 function createTableItemSubsets(users, externalAccounts, storagePlans) {
   const accountTableItemsById = new Map();
@@ -130,7 +131,7 @@ function UserAccountsTab() {
   const [currentBatchStoragePlan, setCurrentBatchStoragePlan] = useState(null);
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
   const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
-  const [currentBatchRoles, setCurrentBatchRoles] = useState([DEFAULT_BATCH_ROLE]);
+  const [currentBatchRole, setCurrentBatchRole] = useState(DEFAULT_BATCH_ROLE);
   const [externalAccountsTableItems, setExternalAccountsTableItems] = useState([]);
   const [unconfirmedAccountsTableItems, setPendingAccountsTableItems] = useState([]);
   const [isBatchProcessingModalOpen, setIsBatchProcessingModalOpen] = useState(false);
@@ -172,13 +173,13 @@ function UserAccountsTab() {
     setAccountsWithStorageTableItems(filterTableItems(tableItemSubsets.accountsWithStorageTableItems, filterText));
   }, [users, externalAccounts, storagePlans, filterText]);
 
-  const changeUserRole = async (userId, newRoles, isBatch) => {
+  const changeUserRole = async (userId, newRole, isBatch) => {
     setIsSaving(true);
-    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, roles: newRoles } : user));
+    setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, role: newRole } : user));
 
     let errorThrown = null;
     try {
-      await userApiClient.saveUserRoles({ userId, roles: newRoles });
+      await userApiClient.saveUserRole({ userId, role: newRole });
       if (!isBatch) {
         message.success({ content: t('common:changesSavedSuccessfully') });
       }
@@ -225,8 +226,8 @@ function UserAccountsTab() {
     }
   };
 
-  const handleUserRolesChange = (userId, newRoles) => {
-    return changeUserRole(userId, newRoles, false);
+  const handleUserRoleChange = (userId, newRole) => {
+    return changeUserRole(userId, newRole, false);
   };
 
   const handleUserAccountLockedOnChange = async (userId, newAccountLockedOn) => {
@@ -355,7 +356,7 @@ function UserAccountsTab() {
 
   const handleProcessAllSelectedItems = () => {
     setCurrentBatchActionType(DEFAULT_BATCH_ACTION_TYPE);
-    setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
+    setCurrentBatchRole(DEFAULT_BATCH_ROLE);
     setCurrentBatchStoragePlan(null);
     setIsBatchProcessingModalOpen(true);
   };
@@ -363,10 +364,10 @@ function UserAccountsTab() {
   const handleCurrentBatchActionTypeChange = event => {
     const newBatchAction = event.target.value;
     setCurrentBatchActionType(newBatchAction);
-    if (newBatchAction === BATCH_ACTION_TYPE.assignRoles) {
+    if (newBatchAction === BATCH_ACTION_TYPE.assignRole) {
       setCurrentBatchStoragePlan(null);
     } else {
-      setCurrentBatchRoles([DEFAULT_BATCH_ROLE]);
+      setCurrentBatchRole(DEFAULT_BATCH_ROLE);
     }
   };
 
@@ -377,13 +378,11 @@ function UserAccountsTab() {
   const handleBatchProcessingModalOk = async () => {
     let actionExecutor;
     switch (currentBatchActionType) {
-      case BATCH_ACTION_TYPE.assignRoles:
+      case BATCH_ACTION_TYPE.assignRole:
         actionExecutor = userId => {
-          let newUserRoles = [...currentBatchRoles];
-          if (userId === executingUser._id) {
-            newUserRoles = ensureIsIncluded(newUserRoles, ROLE.admin);
+          if (userId !== executingUser._id) {
+            changeUserRole(userId, currentBatchRole, true);
           }
-          changeUserRole(userId, newUserRoles, true);
         };
         break;
       case BATCH_ACTION_TYPE.assignStoragePlan:
@@ -422,13 +421,13 @@ function UserAccountsTab() {
     return <a href={`mailto:${encodeURI(email)}`}>{email}</a>;
   };
 
-  const renderRoleTags = (_, item) => {
+  const renderRole = (_, item) => {
     return (
-      <RolesSelect
-        userId={item._id}
-        value={item.roles}
-        display={ROLES_SELECT_DISPLAY.inline}
-        onChange={newRoles => handleUserRolesChange(item.key, newRoles)}
+      <Segmented
+        options={ALL_ROLES}
+        value={item.role}
+        disabled={item._id === executingUser._id}
+        onChange={handleUserRoleChange}
         />
     );
   };
@@ -544,10 +543,10 @@ function UserAccountsTab() {
       responsive: ['md']
     },
     {
-      title: () => t('roles'),
-      dataIndex: 'roles',
-      key: 'roles',
-      render: renderRoleTags
+      title: () => t('role'),
+      dataIndex: 'role',
+      key: 'role',
+      render: renderRole
     },
     {
       title: () => t('common:storage'),
@@ -840,18 +839,19 @@ function UserAccountsTab() {
             value={currentBatchActionType}
             onChange={handleCurrentBatchActionTypeChange}
             >
-            <RadioButton value={BATCH_ACTION_TYPE.assignRoles}>{t('batchActionType_assignRoles')}</RadioButton>
+            <RadioButton value={BATCH_ACTION_TYPE.assignRole}>{t('batchActionType_assignRole')}</RadioButton>
             <RadioButton value={BATCH_ACTION_TYPE.assignStoragePlan}>{t('batchActionType_assignStoragePlan')}</RadioButton>
           </RadioGroup>
-          {currentBatchActionType === BATCH_ACTION_TYPE.assignRoles && (
+          {currentBatchActionType === BATCH_ACTION_TYPE.assignRole && (
             <Fragment>
               <div className="UserAccountsTab-batchProcessingModalSelectHeader">
-                {t('batchProcessingModalRolesSelectHeader', { selectedItemCount: selectedAccountKeys.length })}
+                {t('batchProcessingModalRoleSelectHeader', { selectedItemCount: selectedAccountKeys.length })}
               </div>
               <div className="UserAccountsTab-batchProcessingModalSelect">
-                <RolesSelect
-                  value={currentBatchRoles}
-                  onChange={setCurrentBatchRoles}
+                <Segmented
+                  options={ALL_ROLES}
+                  value={currentBatchRole}
+                  onChange={setCurrentBatchRole}
                   />
               </div>
             </Fragment>

@@ -33,7 +33,7 @@ describe('revision-utils', () => {
     let room;
 
     beforeEach(() => {
-      user = { _id: uniqueId.create(), roles: [ROLE.user] };
+      user = { _id: uniqueId.create(), role: ROLE.user };
       newRevision = null;
       room = null;
     });
@@ -88,7 +88,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document contains the user as the only accredited editor and the user is in the accredited author role', () => {
-        user.roles = [ROLE.accreditedAuthor];
+        user.role = ROLE.accreditedAuthor;
         newRevision.publicContext.accreditedEditors = [user._id];
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
@@ -100,7 +100,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document is protected and the user is in the accredited author role', () => {
-        user.roles = [ROLE.accreditedAuthor];
+        user.role = ROLE.accreditedAuthor;
         newRevision.publicContext.protected = true;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
@@ -112,7 +112,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document is archived and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         newRevision.publicContext.archived = true;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
@@ -124,7 +124,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document is verified and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         newRevision.publicContext.verified = true;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
@@ -136,7 +136,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document contains a review and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         newRevision.publicContext.review = 'Very good document!';
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
@@ -151,7 +151,7 @@ describe('revision-utils', () => {
     let room;
 
     beforeEach(() => {
-      user = { _id: uniqueId.create(), roles: [ROLE.user] };
+      user = { _id: uniqueId.create(), role: ROLE.user };
       newRevision = null;
       room = null;
     });
@@ -210,7 +210,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document is protected and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.protected = true;
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
@@ -231,7 +231,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the document contains accredited editors and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.accreditedEditors = [uniqueId.create(), uniqueId.create()];
         newRevision.publicContext.accreditedEditors = [...previousRevision.publicContext.accreditedEditors, uniqueId.create()];
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
@@ -245,7 +245,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the revisions have different protected states and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.protected = false;
         newRevision.publicContext.protected = true;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
@@ -259,7 +259,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the revisions have different archived states and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.archived = false;
         newRevision.publicContext.archived = true;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
@@ -273,7 +273,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the revisions have different verified states and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.verified = false;
         newRevision.publicContext.verified = true;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
@@ -287,7 +287,7 @@ describe('revision-utils', () => {
       });
 
       it('should not throw if the revisions contain different reviews and the user is in the maintainer role', () => {
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         previousRevision.publicContext.review = 'Very bad document!';
         newRevision.publicContext.review = 'Very good document!';
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();

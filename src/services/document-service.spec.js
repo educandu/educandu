@@ -41,8 +41,8 @@ describe('document-service', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    adminUser = await createTestUser(container, { email: 'admin@test.com', roles: Object.values(ROLE) });
-    user = await createTestUser(container, { email: 'user@test.com', roles: [ROLE.user] });
+    adminUser = await createTestUser(container, { email: 'admin@test.com', role: ROLE.admin });
+    user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
 
     eventStore = container.get(EventStore);
     lockStore = container.get(LockStore);

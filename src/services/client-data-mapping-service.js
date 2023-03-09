@@ -9,7 +9,7 @@ import PluginRegistry from '../plugins/plugin-registry.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
 import { BATCH_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
-import permissions, { getAllUserPermissions, hasUserPermission } from '../domain/permissions.js';
+import permissions, { getUserPermissions, hasUserPermission } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
@@ -54,7 +54,7 @@ class ClientDataMappingService {
       _id: user._id,
       displayName: user.displayName,
       email: user.email,
-      roles: user.roles,
+      role: user.role,
       organization: user.organization,
       introduction: user.introduction,
       storage: {
@@ -122,14 +122,14 @@ class ClientDataMappingService {
   }
 
   async mapDocOrRevision(docOrRevision, user) {
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions([docOrRevision]);
 
     return this._mapDocOrRevision(docOrRevision, userMap, grantedPermissions);
   }
 
   async mapDocsOrRevisions(docsOrRevisions, user) {
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions(docsOrRevisions.filter(x => !!x));
 
     return docsOrRevisions.map(docOrRevision => {
@@ -140,14 +140,14 @@ class ClientDataMappingService {
   }
 
   async mapMediaLibraryItem(mediaLibraryItem, user) {
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getUserPermissions(user);
     const userMap = await this._getUserMapForMediaLibraryItems([mediaLibraryItem]);
 
     return this._mapMediaLibraryItem(mediaLibraryItem, userMap, grantedPermissions);
   }
 
   async mapMediaLibraryItems(mediaLibraryItems, user) {
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getUserPermissions(user);
     const userMap = await this._getUserMapForMediaLibraryItems(mediaLibraryItems.filter(x => !!x));
 
     return mediaLibraryItems.map(mediaLibraryItem => {
@@ -201,7 +201,7 @@ class ClientDataMappingService {
   }
 
   async mapBatches(batches, user) {
-    const grantedPermissions = getAllUserPermissions(user);
+    const grantedPermissions = getUserPermissions(user);
     const userIdSet = new Set(batches.map(batch => batch.createdBy));
     const users = await this.userStore.getUsersByIds(Array.from(userIdSet));
 
@@ -241,7 +241,7 @@ class ClientDataMappingService {
 
   async mapRoom({ room, viewingUser }) {
     const mappedRoom = cloneDeep(room);
-    const grantedPermissions = getAllUserPermissions(viewingUser);
+    const grantedPermissions = getUserPermissions(viewingUser);
     const viewingUserIsRoomOwner = viewingUser?._id === room.owner;
 
     const owner = await this.userStore.getUserById(room.owner);
