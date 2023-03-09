@@ -40,7 +40,14 @@ const BATCH_ACTION_TYPE = {
   assignStoragePlan: 'assign-storage-plan'
 };
 
-const ALL_ROLES = Object.values(ROLE);
+const getRoleOptions = t => {
+  return Object.values(ROLE).map(role => ({
+    label: (
+      <div className="UserAccountsTab-roleSegmentOption">{t(`role_${role}`)}</div>
+    ),
+    value: role
+  }));
+};
 
 const DEFAULT_BATCH_ROLE = ROLE.user;
 const DEFAULT_BATCH_ACTION_TYPE = BATCH_ACTION_TYPE.assignRole;
@@ -424,9 +431,8 @@ function UserAccountsTab() {
   const renderRole = (_, item) => {
     return (
       <Segmented
-        size="small"
-        options={ALL_ROLES}
         value={item.role}
+        options={getRoleOptions(t)}
         disabled={item._id === executingUser._id}
         onChange={newRole => handleUserRoleChange(item._id, newRole)}
         />
@@ -850,8 +856,7 @@ function UserAccountsTab() {
               </div>
               <div className="UserAccountsTab-batchProcessingModalSelect">
                 <Segmented
-                  size="small"
-                  options={ALL_ROLES}
+                  options={getRoleOptions(t)}
                   value={currentBatchRole}
                   onChange={setCurrentBatchRole}
                   />

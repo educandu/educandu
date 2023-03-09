@@ -1,4 +1,9 @@
-.UserAccountsTab {}
+.UserAccountsTab {
+  .ant-segmented-item-selected {
+    color: @edu-white !important;
+    background-color: @edu-primary-color-light !important;
+  }
+}
 
 .UserAccountsTab-selectedItems {
   display: flex;
@@ -50,6 +55,12 @@
   grid-row: 1;
   grid-column: 2;
   max-width: 320px;
+}
+
+.UserAccountsTab-roleSegmentOption {
+  display: grid;
+  grid-auto-flow: row;
+  font-size: @edu-font-size-sm;
 }
 
 .UserAccountsTab-reminders {

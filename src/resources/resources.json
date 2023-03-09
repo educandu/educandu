@@ -214,6 +214,22 @@
       "en": "Active accounts",
       "de": "Aktive Konten"
     },
+    "role_user": {
+      "en": "user",
+      "de": "Benutzer"
+    },
+    "role_accredited-author": {
+      "en": "accredited author",
+      "de": "Akkred. Autor"
+    },
+    "role_maintainer": {
+      "en": "maintainer",
+      "de": "Maintainer"
+    },
+    "role_admin": {
+      "en": "admin",
+      "de": "Admin"
+    },
     "unconfirmedAccounts": {
       "en": "Unconfirmed accounts",
       "de": "Unbestätigte Konten"
