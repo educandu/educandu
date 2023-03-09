@@ -1745,6 +1745,12 @@
       "de": "Datei-Editor"
     }
   },
+  "mediaLibraryFileDropzone": {
+    "fileWillBeAddedToMediaLibrary": {
+      "en": "This file will be added to the media library",
+      "de": "Diese Datei wird der Medien-Bibliothek hinzugefügt"
+    }
+  },
   "mediaLibraryMetadataDisplay": {
     "missingDataPlaceholder": {
       "en": "not provided",
@@ -1771,7 +1777,7 @@
   },
   "mediaLibrarySearchScreen": {
     "searchInvitationHeader": {
-      "en": "Search in the Media library",
+      "en": "Search in the media library",
       "de": "Suche in der Medien-Bibliothek"
     },
     "uploadFile": {
@@ -1799,10 +1805,6 @@
     "stage_uploadFinished": {
       "en": "Upload finished.",
       "de": "Upload beendet."
-    },
-    "fileWillBeAddedToMediaLibrary": {
-      "en": "This file will be added to the Media library",
-      "de": "Diese Datei wird der Medien-Bibliothek hinzugefügt"
     }
   },
   "resourceSelector": {

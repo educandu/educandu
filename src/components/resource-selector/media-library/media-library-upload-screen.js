@@ -1,23 +1,18 @@
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import reactDropzoneNs from 'react-dropzone';
-import { Button, Divider, Form } from 'antd';
+import { Button, Form } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef, useState } from 'react';
 import { handleApiError } from '../../../ui/error-helper.js';
-import ActionInvitation from '../shared/action-invitation.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
+import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import { ArrowLeftOutlined, CloudUploadOutlined } from '@ant-design/icons';
-import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
-
-const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
 const logger = new Logger(import.meta.url);
 
@@ -52,10 +47,6 @@ function MediaLibraryUploadScreen({
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
   const canEditImage = fileInfo && isEditableImageFile(fileInfo.file);
-
-  const handleUploadButtonClick = () => {
-    dropzoneRef.current.open();
-  };
 
   const handleFileDrop = ([newFile]) => {
     if (!isCurrentlyUploading && newFile) {
@@ -109,12 +100,6 @@ function MediaLibraryUploadScreen({
     setCurrentScreen(SCREEN.enterData);
   };
 
-  const getPreviewAreaClasses = isDragActive => classNames(
-    'MediaLibraryUploadScreen-previewArea',
-    { 'is-dropping': !isCurrentlyUploading && isDragActive },
-    { 'is-drop-rejected': isCurrentlyUploading && isDragActive }
-  );
-
   if (currentScreen === SCREEN.editImage) {
     return (
       <FileEditorScreen
@@ -139,53 +124,17 @@ function MediaLibraryUploadScreen({
   }
 
   return (
-    <div className="MediaLibraryUploadScreen u-resource-selector-screen">
+    <div className="u-resource-selector-screen">
       <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
       <div className="u-overflow-auto">
         <div className="u-resource-selector-screen-content-split">
-
-          <ReactDropzone ref={dropzoneRef} onDrop={handleFileDrop} noKeyboard noClick>
-            {({ getRootProps, getInputProps, isDragActive }) => (
-              <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
-                <div className="MediaLibraryUploadScreen-previewAreaContent">
-                  <input {...getInputProps()} hidden />
-                  {!!fileInfo && (
-                    <Fragment>
-                      <SelectedResourceDisplay
-                        urlOrFile={fileInfo.file}
-                        footer={(
-                          <Fragment>
-                            <div>{t('fileWillBeAddedToMediaLibrary')}</div>
-                            {!!canEditImage && (
-                            <div>
-                              <Button type="primary" onClick={handleEditImageClick}>
-                                {t('common:edit')}
-                              </Button>
-                            </div>
-                            )}
-                          </Fragment>
-                        )}
-                        />
-                      <div className="MediaLibraryUploadScreen-divider">
-                        <Divider plain>{t('common:or')}</Divider>
-                      </div>
-                    </Fragment>
-                  )}
-
-                  <ActionInvitation
-                    icon={<CloudUploadOutlined />}
-                    title={t('common:dropDifferentFileInvitation')}
-                    subtitle={(
-                      <Button type="primary" onClick={handleUploadButtonClick}>
-                        {t('common:browseFilesButtonLabel')}
-                      </Button>
-                    )}
-                    />
-                </div>
-              </div>
-            )}
-          </ReactDropzone>
-
+          <MediaLibraryFileDropzone
+            dropzoneRef={dropzoneRef}
+            file={fileInfo?.file || null}
+            canAcceptFile={!isCurrentlyUploading}
+            onFileDrop={handleFileDrop}
+            onEditImageClick={handleEditImageClick}
+            />
           <MediaLibraryMetadataForm form={form} disableOptimizeImage={!canEditImage} onFinish={handleMetadataFormFinish} />
         </div>
       </div>
