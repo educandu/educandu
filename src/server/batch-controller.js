@@ -65,7 +65,7 @@ class BatchController {
   registerPages(app) {
     app.get(
       '/batches/:batchId',
-      needsPermission(permissions.MANAGE_BATCHES),
+      needsPermission(permissions.BATCH_PROCESS_DATA),
       validateParams(batchIdParamsSchema),
       (req, res) => this.handleGetBatchPage(req, res)
     );
@@ -74,20 +74,20 @@ class BatchController {
   registerApi(router) {
     router.get(
       '/api/v1/batches/:batchId',
-      needsPermission(permissions.MANAGE_BATCHES),
+      needsPermission(permissions.BATCH_PROCESS_DATA),
       validateParams(batchIdParamsSchema),
       (req, res) => this.handleGetBatch(req, res)
     );
 
     router.get(
       '/api/v1/latest-batches',
-      needsPermission(permissions.MANAGE_BATCHES),
+      needsPermission(permissions.BATCH_PROCESS_DATA),
       (req, res) => this.handleGetLatestBatches(req, res)
     );
 
     router.post(
       '/api/v1/batch-request/:batchType',
-      needsPermission(permissions.MANAGE_BATCHES),
+      needsPermission(permissions.BATCH_PROCESS_DATA),
       validateParams(batchTypeParamsSchema),
       (req, res) => this.handlePostBatchRequest(req, res)
     );

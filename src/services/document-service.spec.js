@@ -431,7 +431,7 @@ describe('document-service', () => {
     });
   });
 
-  describe('hardDeleteDocument', () => {
+  describe('hardDeletePrivateDocument', () => {
     let room;
     let documentToDelete;
     const roomLock = { _id: uniqueId.create() };
@@ -446,7 +446,7 @@ describe('document-service', () => {
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
-      await sut.hardDeleteDocument({ documentId: documentToDelete._id, user });
+      await sut.hardDeletePrivateDocument({ documentId: documentToDelete._id, user });
     });
 
     it('takes a lock on the document', () => {

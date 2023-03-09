@@ -12,6 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
@@ -327,73 +328,74 @@ export default class RoomController {
   registerApi(router) {
     router.get(
       '/api/v1/rooms',
-      [needsPermission(permissions.OWN_ROOMS), validateQuery(getRoomsQuerySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), validateQuery(getRoomsQuerySchema)],
       (req, res) => this.handleGetRooms(req, res)
     );
 
     router.get(
       '/api/v1/rooms/:roomId',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
+      [needsPermission(permissions.CREATE_CONTENT), validateParams(getRoomParamsSchema)],
       (req, res) => this.handleGetRoom(req, res)
     );
 
     router.post(
       '/api/v1/rooms',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomBodySchema)],
       (req, res) => this.handlePostRoom(req, res)
     );
 
     router.patch(
       '/api/v1/rooms/:roomId/metadata',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomMetadataBodySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomMetadataBodySchema)],
       (req, res) => this.handlePatchRoomMetadata(req, res)
     );
 
     router.patch(
       '/api/v1/rooms/:roomId/documents',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomDocumentsBodySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomDocumentsBodySchema)],
       (req, res) => this.handlePatchRoomDocuments(req, res)
     );
 
     router.delete(
       '/api/v1/rooms',
-      [needsPermission(permissions.DELETE_FOREIGN_ROOMS), validateQuery(deleteRoomsQuerySchema)],
+      [needsPermission(permissions.DELETE_ANY_PRIVATE_CONTENT), validateQuery(deleteRoomsQuerySchema)],
       (req, res) => this.handleDeleteRoomsForUser(req, res)
     );
 
     router.delete(
       '/api/v1/rooms/:roomId',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomParamsSchema)],
+      [needsPermission(permissions.CREATE_CONTENT), validateParams(deleteRoomParamsSchema)],
       (req, res) => this.handleDeleteOwnRoom(req, res)
     );
 
     router.delete(
       '/api/v1/rooms/:roomId/members/:memberUserId',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomMemberParamsSchema)],
+      [needsPermission(permissions.CREATE_CONTENT), validateParams(deleteRoomMemberParamsSchema)],
       (req, res) => this.handleDeleteRoomMember(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationsBodySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomInvitationsBodySchema)],
       (req, res) => this.handlePostRoomInvitations(req, res)
     );
 
     router.delete(
       '/api/v1/room-invitations/:invitationId',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomInvitationParamsSchema)],
+      [needsPermission(permissions.CREATE_CONTENT), validateParams(deleteRoomInvitationParamsSchema)],
       (req, res) => this.handleDeleteRoomInvitation(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations/confirm',
-      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
       (req, res) => this.handlePostRoomInvitationConfirm(req, res)
     );
 
     router.get(
       '/api/v1/rooms/:roomId/authorize-resources-access',
-      [needsPermission(permissions.AUTORIZE_ROOMS_RESOURCES), validateParams(getAuthorizeResourcesAccessParamsSchema)],
+      needsAuthentication(),
+      validateParams(getAuthorizeResourcesAccessParamsSchema),
       (req, res) => this.handleAuthorizeResourcesAccess(req, res)
     );
   }
@@ -407,7 +409,8 @@ export default class RoomController {
 
     router.get(
       '/room-membership-confirmation/:token',
-      [needsPermission(permissions.JOIN_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
+      needsAuthentication(),
+      validateParams(getRoomMembershipConfirmationParamsSchema),
       (req, res) => this.handleGetRoomMembershipConfirmationPage(req, res)
     );
   }

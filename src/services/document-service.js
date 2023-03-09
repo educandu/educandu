@@ -328,7 +328,7 @@ class DocumentService {
     return this.updateDocument({ documentId, data, user, silentUpdate: true });
   }
 
-  async hardDeleteDocument({ documentId, user }) {
+  async hardDeletePrivateDocument({ documentId, user }) {
     let roomLock;
     let documentLock;
 
@@ -346,7 +346,7 @@ class DocumentService {
         roomLock = await this.lockStore.takeRoomLock(doc.roomId);
         const room = await this.roomStore.getRoomById(doc.roomId, { session });
         if (!isRoomOwner({ room, userId: user._id })) {
-          throw new Forbidden('Only room owners can delete documents');
+          throw new Forbidden('Only room owners can delete room documents');
         }
 
         room.documents = ensureIsExcluded(room.documents, doc._id);
@@ -367,7 +367,7 @@ class DocumentService {
   async hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.HARD_DELETE_SECTION)) {
+    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       throw new Forbidden('User is not allowed to delete document sections');
     }
 
@@ -428,7 +428,7 @@ class DocumentService {
   async restoreDocumentRevision({ documentId, revisionId, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.RESTORE_DOC_REVISIONS)) {
+    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       throw new Forbidden('User is not allowed to restore document revisions');
     }
 

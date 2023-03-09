@@ -42,16 +42,9 @@ describe('permissions', () => {
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          permissions.EDIT_DOC,
-          permissions.VIEW_DOCS,
-          permissions.EDIT_FILE,
-          permissions.VIEW_FILES,
-          permissions.DELETE_OWN_FILES,
-          permissions.CREATE_FILE,
-          permissions.OWN_ROOMS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENTS
+          permissions.CREATE_CONTENT,
+          permissions.BROWSE_STORAGE,
+          permissions.DELETE_OWN_PRIVATE_CONTENT
         ]);
       });
     });
@@ -63,17 +56,10 @@ describe('permissions', () => {
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          permissions.EDIT_DOC,
-          permissions.VIEW_DOCS,
-          permissions.EDIT_FILE,
-          permissions.VIEW_FILES,
-          permissions.DELETE_OWN_FILES,
-          permissions.CREATE_FILE,
-          permissions.OWN_ROOMS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENTS,
-          permissions.PROTECT_OWN_DOC
+          permissions.CREATE_CONTENT,
+          permissions.BROWSE_STORAGE,
+          permissions.DELETE_OWN_PRIVATE_CONTENT,
+          permissions.PROTECT_OWN_PUBLIC_CONTENT
         ]);
       });
     });
@@ -86,29 +72,12 @@ describe('permissions', () => {
 
       it('should return all maintainer permissions', () => {
         expect(result).toEqual([
-          permissions.EDIT_DOC,
-          permissions.VIEW_DOCS,
-          permissions.EDIT_FILE,
-          permissions.VIEW_FILES,
-          permissions.DELETE_OWN_FILES,
-          permissions.CREATE_FILE,
-          permissions.OWN_ROOMS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENTS,
-          permissions.PROTECT_OWN_DOC,
-          permissions.HARD_DELETE_SECTION,
-          permissions.DELETE_ANY_STORAGE_FILE,
-          permissions.SEARCH_USERS,
-          permissions.SEE_USER_EMAIL,
-          permissions.RESTORE_DOC_REVISIONS,
-          permissions.ARCHIVE_DOC,
-          permissions.REVIEW_DOC,
-          permissions.VERIFY_DOC,
-          permissions.PROTECT_ANY_DOC,
-          permissions.MANAGE_DOCUMENT_COMMENTS,
-          permissions.MANAGE_CONTENT,
-          permissions.MANAGE_ACCREDITED_EDITORS
+          permissions.CREATE_CONTENT,
+          permissions.BROWSE_STORAGE,
+          permissions.DELETE_OWN_PRIVATE_CONTENT,
+          permissions.PROTECT_OWN_PUBLIC_CONTENT,
+          permissions.VIEW_USERS,
+          permissions.MANAGE_PUBLIC_CONTENT
         ]);
       });
     });
@@ -121,36 +90,16 @@ describe('permissions', () => {
 
       it('should return all user permissions', () => {
         expect(result).toEqual([
-          permissions.EDIT_DOC,
-          permissions.VIEW_DOCS,
-          permissions.EDIT_FILE,
-          permissions.VIEW_FILES,
-          permissions.DELETE_OWN_FILES,
-          permissions.CREATE_FILE,
-          permissions.OWN_ROOMS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_ROOMS,
-          permissions.CREATE_DOCUMENT_COMMENTS,
-          permissions.PROTECT_OWN_DOC,
-          permissions.HARD_DELETE_SECTION,
-          permissions.DELETE_ANY_STORAGE_FILE,
-          permissions.SEARCH_USERS,
-          permissions.SEE_USER_EMAIL,
-          permissions.RESTORE_DOC_REVISIONS,
-          permissions.ARCHIVE_DOC,
-          permissions.REVIEW_DOC,
-          permissions.VERIFY_DOC,
-          permissions.PROTECT_ANY_DOC,
-          permissions.MANAGE_DOCUMENT_COMMENTS,
-          permissions.MANAGE_CONTENT,
-          permissions.MANAGE_ACCREDITED_EDITORS,
-          permissions.ADMIN,
+          permissions.CREATE_CONTENT,
+          permissions.BROWSE_STORAGE,
+          permissions.DELETE_OWN_PRIVATE_CONTENT,
+          permissions.PROTECT_OWN_PUBLIC_CONTENT,
+          permissions.VIEW_USERS,
+          permissions.MANAGE_PUBLIC_CONTENT,
           permissions.MANAGE_USERS,
-          permissions.MANAGE_BATCHES,
-          permissions.MIGRATE_DATA,
-          permissions.MANAGE_SETTINGS,
-          permissions.MANAGE_STORAGE_PLANS,
-          permissions.DELETE_FOREIGN_ROOMS
+          permissions.MANAGE_SETUP,
+          permissions.BATCH_PROCESS_DATA,
+          permissions.DELETE_ANY_PRIVATE_CONTENT
         ]);
       });
     });

@@ -18,7 +18,7 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
 import {
@@ -98,12 +98,8 @@ function DocumentMetadataModal({
   }), [mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId]);
 
   const publicContextPermissions = {
-    canAssignAccreditedEditors: hasUserPermission(user, permissions.MANAGE_ACCREDITED_EDITORS),
-    canProtectOwnDocWhenCreating: hasUserPermission(user, permissions.PROTECT_OWN_DOC),
-    canProtect: hasUserPermission(user, permissions.PROTECT_ANY_DOC),
-    canArchive: hasUserPermission(user, permissions.ARCHIVE_DOC),
-    canVerify: hasUserPermission(user, permissions.VERIFY_DOC),
-    canReview: hasUserPermission(user, permissions.REVIEW_DOC)
+    canManagePublicContext: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT),
+    canProtectOwnDocWhenCreating: hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT)
   };
   const hasPublicContextPermissions = Object.values(publicContextPermissions).some(value => value);
 
@@ -241,7 +237,7 @@ function DocumentMetadataModal({
       const newProtected = event.target.checked;
 
       let newAccreditedEditors = prevState.accreditedEditors;
-      if (!publicContextPermissions.canProtect
+      if (!publicContextPermissions.canManagePublicContext
         && publicContextPermissions.canProtectOwnDocWhenCreating
         && mode !== DOCUMENT_METADATA_MODAL_MODE.update
       ) {
@@ -429,44 +425,40 @@ function DocumentMetadataModal({
         {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
-              {!!publicContextPermissions.canAssignAccreditedEditors && (
+              {!!publicContextPermissions.canManagePublicContext && (
                 <FormItem label={<Info tooltip={t('accreditedEditorsInfo')} iconAfterContent>{t('accreditedEditors')}</Info>}>
                   <UserSelect value={publicContext.accreditedEditors} onChange={handleAccreditedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
                 </FormItem>
               )}
-              {(!!publicContextPermissions.canProtect || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
+              {(!!publicContextPermissions.canManagePublicContext || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
                 <FormItem>
                   <Checkbox
                     checked={publicContext.protected}
                     onChange={handleProtectedChange}
-                    disabled={!publicContextPermissions.canProtect && mode === DOCUMENT_METADATA_MODAL_MODE.update}
+                    disabled={
+                      !!publicContextPermissions.canProtectOwnDocWhenCreating && mode === DOCUMENT_METADATA_MODAL_MODE.update
+                    }
                     >
                     <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
                   </Checkbox>
                 </FormItem>
               )}
-              {!!publicContextPermissions.canArchive && (
-                <FormItem>
-                  <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
-                    <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
-                  </Checkbox>
-                </FormItem>
-              )}
-              {!!publicContextPermissions.canVerify && (
-                <FormItem>
-                  <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
-                    <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
-                  </Checkbox>
-                </FormItem>
-              )}
-              {!!publicContextPermissions.canReview && (
-                <FormItem
-                  label={
-                    <Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>
-                  }
-                  >
-                  <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
-                </FormItem>
+              {!!publicContextPermissions.canManagePublicContext && (
+                <Fragment>
+                  <FormItem>
+                    <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
+                      <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
+                    </Checkbox>
+                  </FormItem>
+                  <FormItem>
+                    <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
+                      <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
+                    </Checkbox>
+                  </FormItem>
+                  <FormItem label={<Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>}>
+                    <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
+                  </FormItem>
+                </Fragment>
               )}
             </CollapsePanel>
           </Collapse>

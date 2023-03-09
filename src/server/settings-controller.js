@@ -39,12 +39,12 @@ class SettingsController {
   registerApi(app) {
     app.get(
       '/api/v1/settings',
-      [needsPermission(permissions.MANAGE_SETTINGS)],
+      [needsPermission(permissions.MANAGE_SETUP)],
       (req, res) => this.handleGetSettings(req, res)
     );
     app.post(
       '/api/v1/settings',
-      [needsPermission(permissions.MANAGE_SETTINGS), jsonParser, validateBody(saveSettingsBodySchema)],
+      [needsPermission(permissions.MANAGE_SETUP), jsonParser, validateBody(saveSettingsBodySchema)],
       (req, res) => this.handlePostSettings(req, res)
     );
   }

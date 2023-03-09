@@ -48,7 +48,7 @@ function getEditDocRestrictionReason({ user, doc, room }) {
 
   if (
     doc.publicContext.protected
-    && !hasUserPermission(user, permissions.MANAGE_CONTENT)
+    && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     && !userIsAccreditedEditor({ user, doc })
   ) {
     return DOCUMENT_EDIT_RESTRICTION_REASON.protected;

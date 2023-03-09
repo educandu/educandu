@@ -93,10 +93,9 @@ function Admin({ PageTemplate }) {
         <h1>{t('pageNames:admin')}</h1>
         <Restricted
           to={[
-            permissions.MANAGE_SETTINGS,
             permissions.MANAGE_USERS,
-            permissions.MANAGE_STORAGE_PLANS,
-            permissions.MANAGE_BATCHES
+            permissions.MANAGE_SETUP,
+            permissions.BATCH_PROCESS_DATA
           ]}
           >
           <Tabs

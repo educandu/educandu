@@ -38,7 +38,7 @@ class RedactionController {
   registerPages(router) {
     router.get(
       '/redaction',
-      needsPermission(permissions.MANAGE_CONTENT),
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       (req, res) => this.handleGetRedactionPage(req, res)
     );
   }

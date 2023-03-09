@@ -151,7 +151,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
             {t('commentDeleted')}
           </div>
         )}
-        <Restricted to={permissions.MANAGE_DOCUMENT_COMMENTS}>
+        <Restricted to={permissions.MANAGE_PUBLIC_CONTENT}>
           <div className="CommentsPanel-commentDeleteButton">
             <DeleteButton onClick={() => handleDeleteCommentClick(comment)} disabled={comment.deletedOn} />
           </div>
@@ -183,7 +183,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
   };
 
   const renderEditTopicButton = topic => {
-    if (!hasUserPermission(user, permissions.MANAGE_DOCUMENT_COMMENTS)) {
+    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       return null;
     }
 
@@ -224,7 +224,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
     const isPostingDisabled = currentComment.trim().length === 0 || needsNewTopic;
     const showAsLoading = !isPostingDisabled && isSavingComment;
     return (
-      <Restricted to={permissions.CREATE_DOCUMENT_COMMENTS}>
+      <Restricted to={permissions.CREATE_CONTENT}>
         <div className="CommentsPanel-comment">
           <MarkdownInput
             preview
@@ -264,7 +264,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
   };
 
   const renderNewTopicPanel = () => {
-    if (!hasUserPermission(user, permissions.CREATE_DOCUMENT_COMMENTS)) {
+    if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
       return null;
     }
     const isPostingDisabled = currentComment.trim().length === 0 || newTopic.trim().length === 0;
@@ -297,7 +297,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
 
   const topics = Object.keys(commentGroups);
   const shouldShowNewTopicPanel = expandedTopic === NEW_TOPIC_PANEL_KEY;
-  const userCanWriteComments = hasUserPermission(user, permissions.CREATE_DOCUMENT_COMMENTS);
+  const userCanWriteComments = hasUserPermission(user, permissions.CREATE_CONTENT);
 
   if (isLoading) {
     return (

@@ -28,7 +28,7 @@ describe('document-controller', () => {
     documentService = {
       createDocument: sandbox.stub(),
       getDocumentById: sandbox.stub(),
-      hardDeleteDocument: sandbox.stub()
+      hardDeletePrivateDocument: sandbox.stub()
     };
 
     roomService = {
@@ -785,7 +785,7 @@ describe('document-controller', () => {
     });
   });
 
-  describe('handleDeleteDoc', () => {
+  describe('handleDeletePrivateDoc', () => {
     describe('when the document belongs to a room of which the user is owner', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         req = { user, body: { documentId: doc._id } };
@@ -799,13 +799,13 @@ describe('document-controller', () => {
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
-        documentService.hardDeleteDocument.resolves();
+        documentService.hardDeletePrivateDocument.resolves();
 
-        sut.handleDeleteDoc(req, res).catch(reject);
+        sut.handleDeletePrivateDoc(req, res).catch(reject);
       }));
 
-      it('should call documentService.hardDeleteDocument', () => {
-        assert.calledWith(documentService.hardDeleteDocument, { documentId: doc._id, user });
+      it('should call documentService.hardDeletePrivateDocument', () => {
+        assert.calledWith(documentService.hardDeletePrivateDocument, { documentId: doc._id, user });
       });
     });
   });
