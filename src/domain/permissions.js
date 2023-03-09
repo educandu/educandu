@@ -51,12 +51,11 @@ const permissionsPerRole = {
 };
 
 export function hasUserPermission(user, permission) {
-  return (user?.roles || []).some(role => permissionsPerRole[role].includes(permission));
+  return permissionsPerRole[user?.role]?.includes(permission);
 }
 
-export function getAllUserPermissions(user) {
-  const permissionsFromAllRoles = (user?.roles || []).map(role => [...permissionsPerRole[role]]).flat();
-  return [...new Set([...permissionsFromAllRoles])];
+export function getUserPermissions(user) {
+  return permissionsPerRole[user?.role] || [];
 }
 
 export default {

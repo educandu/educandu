@@ -102,11 +102,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserRoles({ userId, roles }) {
+  saveUserRole({ userId, role }) {
     return this.httpClient
       .post(
-        `/api/v1/users/${encodeURIComponent(userId)}/roles`,
-        { roles },
+        `/api/v1/users/${encodeURIComponent(userId)}/role`,
+        { role },
         { responseType: 'json' }
       )
       .then(res => res.data);

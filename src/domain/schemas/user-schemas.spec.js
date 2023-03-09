@@ -8,7 +8,7 @@ import {
   postUserAccountBodySchema,
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
-  postUserRolesBodySchema,
+  postUserRoleBodySchema,
   postUserProfileBodySchema
 } from './user-schemas.js';
 
@@ -238,28 +238,22 @@ describe('postUserProfileBodySchema', () => {
   });
 });
 
-describe('postUserRolesBodySchema', () => {
-  describe('when body contains one role', () => {
+describe('postUserRoleBodySchema', () => {
+  describe('when body contains a role', () => {
     it('should pass validation', () => {
-      expect(() => validate({ roles: [ROLE.user] }, postUserRolesBodySchema)).not.toThrow();
+      expect(() => validate({ role: ROLE.user }, postUserRoleBodySchema)).not.toThrow();
     });
   });
 
-  describe('when body contains all roles', () => {
-    it('should pass validation', () => {
-      expect(() => validate({ roles: Object.values(ROLE) }, postUserRolesBodySchema)).not.toThrow();
-    });
-  });
-
-  describe('when body contains no roles', () => {
+  describe('when body contains no role', () => {
     it('should fail validation', () => {
-      expect(() => validate({ roles: [] }, postUserRolesBodySchema)).toThrow();
+      expect(() => validate({ role: '' }, postUserRoleBodySchema)).toThrow();
     });
   });
 
   describe('when body contains unknown role', () => {
     it('should fail validation', () => {
-      expect(() => validate({ roles: ['unknown'] }, postUserRolesBodySchema)).toThrow();
+      expect(() => validate({ role: 'unknown' }, postUserRoleBodySchema)).toThrow();
     });
   });
 });

@@ -31,7 +31,7 @@ import {
   postUserProfileBodySchema,
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
-  postUserRolesBodySchema,
+  postUserRoleBodySchema,
   postUserAccountLockedOnBodySchema,
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
@@ -404,11 +404,11 @@ class UserController {
     });
   }
 
-  async handlePostUserRoles(req, res) {
+  async handlePostUserRole(req, res) {
     const { userId } = req.params;
-    const { roles } = req.body;
-    const newRoles = await this.userService.updateUserRoles(userId, roles);
-    return res.status(201).send({ roles: newRoles });
+    const { role } = req.body;
+    const newRole = await this.userService.updateUserRole(userId, role);
+    return res.status(201).send({ role: newRole });
   }
 
   async handlePostUserAccountLockedOn(req, res) {
@@ -713,12 +713,12 @@ class UserController {
     );
 
     router.post(
-      '/api/v1/users/:userId/roles',
+      '/api/v1/users/:userId/role',
       needsPermission(permissions.MANAGE_USERS),
       jsonParser,
       validateParams(userIdParamsSchema),
-      validateBody(postUserRolesBodySchema),
-      (req, res) => this.handlePostUserRoles(req, res)
+      validateBody(postUserRoleBodySchema),
+      (req, res) => this.handlePostUserRole(req, res)
     );
 
     router.post(

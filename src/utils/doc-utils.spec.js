@@ -12,7 +12,7 @@ describe('doc-utils', () => {
     beforeEach(() => {
       doc = {};
       room = null;
-      user = { _id: uniqueId.create(), roles: [] };
+      user = { _id: uniqueId.create(), role: '' };
     });
 
     it('should throw when no document is not provided', () => {
@@ -80,13 +80,13 @@ describe('doc-utils', () => {
 
       it(`should return false when the public document does not allow editing but the user is a ${ROLE.maintainer}`, () => {
         doc.publicContext.protected = true;
-        user.roles = [ROLE.maintainer];
+        user.role = ROLE.maintainer;
         expect(canEditDoc({ user, doc, room: null })).toBe(true);
       });
 
       it(`should return false when the public document does not allow editing but the user is an ${ROLE.admin}`, () => {
         doc.publicContext.protected = true;
-        user.roles = [ROLE.admin];
+        user.role = ROLE.admin;
         expect(canEditDoc({ user, doc, room: null })).toBe(true);
       });
 

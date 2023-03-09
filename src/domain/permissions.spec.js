@@ -1,6 +1,6 @@
 import { ROLE } from './constants.js';
 import { beforeEach, describe, expect, it } from 'vitest';
-import permissions, { hasUserPermission, getAllUserPermissions } from './permissions.js';
+import permissions, { hasUserPermission, getUserPermissions } from './permissions.js';
 
 describe('permissions', () => {
 
@@ -9,7 +9,7 @@ describe('permissions', () => {
     let expected;
 
     describe('when user has role "admin"', () => {
-      const adminUser = { roles: [ROLE.admin] };
+      const adminUser = { role: [ROLE.admin] };
 
       Object.values(permissions).forEach(permission => {
         beforeEach(() => {
@@ -22,13 +22,13 @@ describe('permissions', () => {
     });
   });
 
-  describe('getAllUserPermissions', () => {
+  describe('getUserPermissions', () => {
     let result;
 
-    describe('when user has no direct permissions or roles', () => {
+    describe('when user has no direct permissions or role', () => {
       beforeEach(() => {
-        const user = { permissions: [], roles: [] };
-        result = getAllUserPermissions(user);
+        const user = { permissions: [], role: '' };
+        result = getUserPermissions(user);
       });
       it('should return an empty array', () => {
         expect(result).toEqual([]);
@@ -37,8 +37,8 @@ describe('permissions', () => {
 
     describe('when user has role \'user\'', () => {
       beforeEach(() => {
-        const user = { roles: [ROLE.user] };
-        result = getAllUserPermissions(user);
+        const user = { role: ROLE.user };
+        result = getUserPermissions(user);
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
@@ -51,8 +51,8 @@ describe('permissions', () => {
 
     describe('when user has role \'accreditedAuthor\'', () => {
       beforeEach(() => {
-        const user = { roles: [ROLE.accreditedAuthor] };
-        result = getAllUserPermissions(user);
+        const user = { role: ROLE.accreditedAuthor };
+        result = getUserPermissions(user);
       });
       it('should return all user permissions', () => {
         expect(result).toEqual([
@@ -66,8 +66,8 @@ describe('permissions', () => {
 
     describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
-        const user = { roles: [ROLE.maintainer] };
-        result = getAllUserPermissions(user);
+        const user = { role: ROLE.maintainer };
+        result = getUserPermissions(user);
       });
 
       it('should return all maintainer permissions', () => {
@@ -84,8 +84,8 @@ describe('permissions', () => {
 
     describe('when user has role \'admin\'', () => {
       beforeEach(() => {
-        const user = { roles: [ROLE.admin] };
-        result = getAllUserPermissions(user);
+        const user = { role: ROLE.admin };
+        result = getUserPermissions(user);
       });
 
       it('should return all user permissions', () => {

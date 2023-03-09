@@ -8,9 +8,9 @@ userAccountsTab:
   accountLocked:
     en: Locked
     de: Gesperrt
-  roles:
-    en: Roles
-    de: Rollen
+  role:
+    en: Role
+    de: Rolle
   providerKey:
     en: Provider key
     de: Provider-Schlüssel
@@ -23,6 +23,18 @@ userAccountsTab:
   activeAccounts:
     en: Active accounts
     de: Aktive Konten
+  role_user:
+    en: user
+    de: Benutzer
+  role_accredited-author:
+    en: accredited author
+    de: Akkred. Autor
+  role_maintainer:
+    en: maintainer
+    de: Maintainer
+  role_admin:
+    en: admin
+    de: Admin
   unconfirmedAccounts:
     en: Unconfirmed accounts
     de: Unbestätigte Konten
@@ -62,15 +74,15 @@ userAccountsTab:
   batchProcessingModalHeader:
     en: "Which action do you want to execute for the {selectedItemCount, plural, =1 {selected user account} other {# selected user accounts}}?"
     de: "Welche Aktion möchtest du für {selectedItemCount, plural, =1 {das ausgewählte Benutzerkonto} other {die # ausgewählten Benutzerkonten}} ausführen?"
-  batchActionType_assignRoles:
-    en: Assign roles
-    de: Rollen zuweisen
+  batchActionType_assignRole:
+    en: Assign role
+    de: Rolle zuweisen
   batchActionType_assignStoragePlan:
     en: Assign storage plan
     de: Speicherplan zuweisen
-  batchProcessingModalRolesSelectHeader:
-    en: Select the roles you want to assign. Unselected roles will be removed from the user {selectedItemCount, plural, =1 {account} other {accounts}}.
-    de: Wähle die Rollen aus, die du zuweisen möchtest. Abgewählte Rollen werden {selectedItemCount, plural, =1 {vom Benutzerkonto} other {von den Benutzerkonten}} entfernt.
+  batchProcessingModalRoleSelectHeader:
+    en: Select the role you want to assign.
+    de: Wähle die Rolle aus, die du zuweisen möchtest.
   batchProcessingModalStoragePlanSelectHeader:
     en: |
       Select the storage plan you want to assign. No selection means deletion of storage plans previously

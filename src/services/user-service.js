@@ -8,7 +8,6 @@ import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
-import { ensureIsUnique } from '../utils/array-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -25,7 +24,7 @@ import {
 
 const { BadRequest, NotFound, Unauthorized } = httpErrors;
 
-const DEFAULT_ROLES = [ROLE.user];
+const DEFAULT_ROLE = ROLE.user;
 const DEFAULT_EMAIL_NOTIFICATION_FREQUENCY = EMAIL_NOTIFICATION_FREQUENCY.weekly;
 const PASSWORD_SALT_ROUNDS = 1024;
 
@@ -126,13 +125,12 @@ class UserService {
     return updatedUser;
   }
 
-  async updateUserRoles(userId, newRoles) {
-    const finalNewRoles = ensureIsUnique([...DEFAULT_ROLES, ...newRoles]);
-    logger.info(`Updating roles for user with id ${userId}: ${finalNewRoles}`);
+  async updateUserRole(userId, newRole) {
+    logger.info(`Updating role for user with id ${userId}: ${newRole}`);
     const user = await this.userStore.getUserById(userId);
-    user.roles = finalNewRoles;
+    user.role = newRole;
     await this.userStore.saveUser(user);
-    return user.roles;
+    return user.role;
   }
 
   async updateUserAccountLockedOn(userId, accountLockedOn) {
@@ -403,7 +401,7 @@ class UserService {
     }));
   }
 
-  async createUser({ email, password, displayName, roles = DEFAULT_ROLES, emailNotificationFrequency = DEFAULT_EMAIL_NOTIFICATION_FREQUENCY, verified = false }) {
+  async createUser({ email, password, displayName, role = DEFAULT_ROLE, emailNotificationFrequency = DEFAULT_EMAIL_NOTIFICATION_FREQUENCY, verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
@@ -416,7 +414,7 @@ class UserService {
       email: lowerCasedEmail,
       passwordHash: await this._hashPassword(password),
       displayName,
-      roles,
+      role,
       emailNotificationFrequency,
       expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES, 'minutes').toDate(),
       verificationCode: verified ? null : uniqueId.create()
@@ -548,7 +546,7 @@ class UserService {
       displayName: null,
       organization: '',
       introduction: '',
-      roles: [],
+      role: '',
       expiresOn: null,
       verificationCode: null,
       storage: {

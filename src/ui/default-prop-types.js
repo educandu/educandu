@@ -124,7 +124,7 @@ export const userShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
   introduction: PropTypes.string,
-  roles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  role: PropTypes.string.isRequired,
   expiresOn: PropTypes.string,
   accountLockedOn: PropTypes.string,
   lastLoggedInOn: PropTypes.string,
