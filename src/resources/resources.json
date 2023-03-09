@@ -1466,13 +1466,13 @@
       "en": "Documents",
       "de": "Dokumente"
     },
-    "documentTagsTabTitle": {
-      "en": "Document tags",
-      "de": "Dokument-Tags"
-    },
     "mediaLibraryTabTitle": {
       "en": "Media library",
       "de": "Medienbibliothek"
+    },
+    "tagsTabTitle": {
+      "en": "Tags",
+      "de": "Tags"
     }
   },
   "resetPassword": {
@@ -1659,7 +1659,35 @@
       "de": "Abschnitt hinzufügen"
     }
   },
-  "redactionDocumentTagsTab": {
+  "redactionDocumentsTab": {
+    "filterPlaceholder": {
+      "en": "Filter by title or creator",
+      "de": "Nach Titel oder Ersteller filtern"
+    },
+    "badges": {
+      "en": "Badges",
+      "de": "Kennzeichen"
+    },
+    "archivedDocumentBadge": {
+      "en": "This document is archived",
+      "de": "Dieses Dokument ist archiviert"
+    },
+    "protectedDocumentBadge": {
+      "en": "This document is protected",
+      "de": "Dieses Dokument ist geschützt"
+    },
+    "accreditedEditorsBadge": {
+      "en": "This document has accredited editors",
+      "de": "Dieses Dokument hat akkreditierte Bearbeiter"
+    }
+  },
+  "redactionMediaLibraryTab": {
+    "filterPlaceholder": {
+      "en": "Filter by title, tag, license or user",
+      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
+    }
+  },
+  "redactionTagsTab": {
     "filterPlaceholder": {
       "en": "Filter by name",
       "de": "Nach Name filtern"
@@ -1688,37 +1716,25 @@
       "en": "Documents",
       "de": "Dokumente"
     },
+    "mediaLibraryItems": {
+      "en": "Media library entries",
+      "de": "Medienbibliothek-Einträge"
+    },
     "companionTags": {
       "en": "Companion tags",
       "de": "Begleit-Tags"
-    }
-  },
-  "redactionDocumentsTab": {
-    "filterPlaceholder": {
-      "en": "Filter by title or creator",
-      "de": "Nach Titel oder Ersteller filtern"
     },
-    "badges": {
-      "en": "Badges",
-      "de": "Kennzeichen"
+    "tagCategoryFilter_documentsAndMedia": {
+      "en": "Documents and media",
+      "de": "Dokumente und Medien"
     },
-    "archivedDocumentBadge": {
-      "en": "This document is archived",
-      "de": "Dieses Dokument ist archiviert"
+    "tagCategoryFilter_documentsOnly": {
+      "en": "Documents only",
+      "de": "Nur Dokumente"
     },
-    "protectedDocumentBadge": {
-      "en": "This document is protected",
-      "de": "Dieses Dokument ist geschützt"
-    },
-    "accreditedEditorsBadge": {
-      "en": "This document has accredited editors",
-      "de": "Dieses Dokument hat akkreditierte Bearbeiter"
-    }
-  },
-  "redactionMediaLibraryTab": {
-    "filterPlaceholder": {
-      "en": "Filter by title, tag, license or user",
-      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
+    "tagCategoryFilter_mediaOnly": {
+      "en": "Media only",
+      "de": "Nur Medien"
     }
   },
   "registrationForm": {
