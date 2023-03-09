@@ -2,9 +2,9 @@ redaction:
   documentsTabTitle:
     en: Documents
     de: Dokumente
-  documentTagsTabTitle:
-    en: Document tags
-    de: Dokument-Tags
   mediaLibraryTabTitle:
     en: Media library
     de: Medienbibliothek
+  tagsTabTitle:
+    en: Tags
+    de: Tags

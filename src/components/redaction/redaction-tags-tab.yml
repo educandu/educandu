@@ -1,4 +1,4 @@
-redactionDocumentTagsTab:
+redactionTagsTab:
   filterPlaceholder:
     en: Filter by name
     de: Nach Name filtern
@@ -20,6 +20,18 @@ redactionDocumentTagsTab:
   documents:
     en: Documents
     de: Dokumente
+  mediaLibraryItems:
+    en: Media library entries
+    de: Medienbibliothek-Einträge
   companionTags:
     en: Companion tags
     de: Begleit-Tags
+  tagCategoryFilter_documentsAndMedia:
+    en: Documents and media
+    de: Dokumente und Medien
+  tagCategoryFilter_documentsOnly:
+    en: Documents only
+    de: Nur Dokumente
+  tagCategoryFilter_mediaOnly:
+    en: Media only
+    de: Nur Medien

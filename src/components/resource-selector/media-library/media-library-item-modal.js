@@ -267,11 +267,12 @@ MediaLibaryItemModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   mediaLibraryItem: mediaLibraryItemShape,
   onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired
+  onSave: PropTypes.func
 };
 
 MediaLibaryItemModal.defaultProps = {
-  mediaLibraryItem: null
+  mediaLibraryItem: null,
+  onSave: () => {}
 };
 
 export default MediaLibaryItemModal;
