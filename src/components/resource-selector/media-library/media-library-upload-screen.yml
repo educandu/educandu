@@ -14,6 +14,3 @@ mediaLibraryUploadScreen:
   stage_uploadFinished:
     en: Upload finished.
     de: Upload beendet.
-  fileWillBeAddedToMediaLibrary:
-    en: This file will be added to the Media library
-    de: Diese Datei wird der Medien-Bibliothek hinzugefügt

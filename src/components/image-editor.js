@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import DimensionsProvider from './dimensions-provider.js';
-import { IMAGE_OPTIMIZATION_QUALITY } from '../domain/constants.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../domain/constants.js';
 import {
   ColumnHeightOutlined,
   ColumnWidthOutlined,
@@ -27,7 +27,7 @@ function ImageEditor({ file, editorRef, onCrop }) {
   const [cropperModule, setCropperModule] = useState(null);
 
   editorRef.current = {
-    getCroppedFile: async (maxWidth = Infinity, quality = IMAGE_OPTIMIZATION_QUALITY) => {
+    getCroppedFile: async (maxWidth = IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, quality = IMAGE_OPTIMIZATION_QUALITY) => {
       const canvas = cropperInstanceRef.current.getCroppedCanvas({
         maxWidth,
         imageSmoothingEnabled: true,

@@ -16,19 +16,20 @@ const TextArea = Input.TextArea;
 
 const logger = new Logger(import.meta.url);
 
-const getDefaultFormValues = () => ({
-  description: '',
-  languages: [],
-  licenses: [],
-  tags: [],
-  optimizeImage: true
-});
-
 function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimizeImage, onFinish }) {
   const { t } = useTranslation('mediaLibraryMetadataForm');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
-  const initialFormValues = useMemo(() => file || getDefaultFormValues(), [file]);
+  const initialFormValues = useMemo(() => {
+    return {
+      description: '',
+      languages: [],
+      licenses: [],
+      tags: [],
+      optimizeImage: true,
+      ...file
+    };
+  }, [file]);
 
   const handleMediaLibraryTagSuggestionsNeeded = searchText => {
     return mediaLibraryApiClient.getMediaLibraryTagSuggestions(searchText).catch(error => {

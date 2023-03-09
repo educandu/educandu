@@ -5,7 +5,6 @@ import ImageEditor from '../../image-editor.js';
 import React, { useRef, useState } from 'react';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { confirmExitFileEditor } from '../../confirmation-dialogs.js';
-import { IMAGE_OPTIMIZATION_QUALITY, IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../../domain/constants.js';
 
 function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   const { t } = useTranslation('fileEditorScreen');
@@ -17,7 +16,7 @@ function FileEditorScreen({ file, onBackClick, onCancelClick, onApplyClick }) {
   };
 
   const handleApplyChanges = async () => {
-    const newFile = await imageEditorRef.current.getCroppedFile(IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, IMAGE_OPTIMIZATION_QUALITY);
+    const newFile = await imageEditorRef.current.getCroppedFile();
     onApplyClick(newFile);
   };
 

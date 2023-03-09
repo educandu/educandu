@@ -1,19 +1,19 @@
-.MediaLibaryMetadataModal {}
+.MediaLibaryItemModal {}
 
-.MediaLibaryMetadataModal-displayName {
+.MediaLibaryItemModal-displayName {
   .m-overflow-ellipsis;
   text-align: center;
   font-size: @edu-font-size-lg;
   margin-bottom: 25px;
 }
 
-.MediaLibaryMetadataModal-url {
+.MediaLibaryItemModal-url {
   .m-overflow-ellipsis;
   text-align: center;
   margin-top: 25px;
 }
 
-.MediaLibaryMetadataModal-splitView {
+.MediaLibaryItemModal-splitView {
   display: grid;
   gap: 20px;
   grid-auto-flow: column;
@@ -24,5 +24,28 @@
     grid-auto-flow: row;
     grid-template-rows: repeat(2, auto);
     grid-template-columns: auto;
+  }
+}
+
+.MediaLibaryItemModal-imageEditor {
+  display: grid;
+  min-height: 600px;
+}
+
+.MediaLibaryItemModal-footer {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: auto 1fr auto;
+}
+
+.MediaLibaryItemModal-footerButtons {
+  &.MediaLibaryItemModal-footerButtons--extra {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  &.MediaLibaryItemModal-footerButtons--default {
+    grid-row: 1;
+    grid-column: 3;
   }
 }

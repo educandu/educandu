@@ -1,12 +1,12 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
-import { message, Table, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
+import { Button, message, Table, Tag } from 'antd';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
@@ -18,15 +18,15 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
-import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import MediaLibaryMetadataModal, { MEDIA_LIBRARY_METADATA_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
+import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
+import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
 
-function getDocumentMetadataModalState({ mode = MEDIA_LIBRARY_METADATA_MODAL_MODE.preview, mediaLibraryItem = null, isOpen = false }) {
+function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem = null, isOpen = false }) {
   return { mode, isOpen, mediaLibraryItem };
 }
 
@@ -61,7 +61,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
-  const [resourceMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({}));
+  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -119,15 +119,19 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
 
   const handleInfoCellTitleClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ mode: MEDIA_LIBRARY_METADATA_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
+    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
 
-  const handleDocumentEditClick = row => {
+  const handleCreateItemClick = () => {
+    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem: null, isOpen: true }));
+  };
+
+  const handleEditItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ mode: MEDIA_LIBRARY_METADATA_MODAL_MODE.edit, mediaLibraryItem, isOpen: true }));
+    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.update, mediaLibraryItem, isOpen: true }));
   };
 
-  const handleDocumentDeleteClick = row => {
+  const handleDeleteItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     confirmMediaFileHardDelete(t, mediaLibraryItem.displayName, async () => {
       try {
@@ -140,13 +144,14 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     });
   };
 
-  const handleDocumentMetadataModalSave = savedItem => {
-    setDocumentMetadataModalState(previousState => ({ ...previousState, isOpen: false }));
-    onMediaLibraryItemsChange(oldItems => replaceItem(oldItems, savedItem));
+  const handleMediaLibraryItemModalSave = savedItem => {
+    const isNewItem = mediaLibraryItemModalState.mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.create;
+    setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
+    onMediaLibraryItemsChange(oldItems => isNewItem ? ensureIsIncluded(oldItems, savedItem) : replaceItem(oldItems, savedItem));
   };
 
-  const handleDocumentMetadataModalClose = () => {
-    setDocumentMetadataModalState(previousState => ({ ...previousState, isOpen: false }));
+  const handleMediaLibraryItemModalClose = () => {
+    setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
   };
 
   const renderName = (_, row) => {
@@ -191,13 +196,13 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
             title={t('common:edit')}
             icon={<EditIcon />}
             intent={ACTION_BUTTON_INTENT.default}
-            onClick={() => handleDocumentEditClick(row)}
+            onClick={() => handleEditItemClick(row)}
             />
           <ActionButton
             title={t('common:delete')}
             icon={<DeleteIcon />}
             intent={ACTION_BUTTON_INTENT.error}
-            onClick={() => handleDocumentDeleteClick(row)}
+            onClick={() => handleDeleteItemClick(row)}
             />
         </ActionButtonGroup>
       </div>
@@ -252,16 +257,19 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
           options={sortingOptions}
           onChange={handleCurrentTableSortingChange}
           />
+        <Button type="primary" onClick={handleCreateItemClick}>
+          {t('common:create')}
+        </Button>
       </div>
       <Table
         dataSource={[...displayedTableRows]}
         columns={tableColumns}
         onChange={handleTableChange}
         />
-      <MediaLibaryMetadataModal
-        {...resourceMetadataModalState}
-        onSave={handleDocumentMetadataModalSave}
-        onClose={handleDocumentMetadataModalClose}
+      <MediaLibaryItemModal
+        {...mediaLibraryItemModalState}
+        onSave={handleMediaLibraryItemModalSave}
+        onClose={handleMediaLibraryItemModalClose}
         />
     </div>
   );
