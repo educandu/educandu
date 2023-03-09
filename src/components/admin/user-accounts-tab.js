@@ -6,12 +6,12 @@ import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import { ROLE } from '../../domain/constants.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import { ensureIsExcluded } from '../../utils/array-utils.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -21,7 +21,7 @@ import { Table, Tabs, Select, Radio, message, Tag, Modal } from 'antd';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
-import { ROLE } from '../../domain/constants.js';
+import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -378,7 +378,13 @@ function UserAccountsTab() {
     let actionExecutor;
     switch (currentBatchActionType) {
       case BATCH_ACTION_TYPE.assignRoles:
-        actionExecutor = userId => changeUserRole(userId, currentBatchRoles, true);
+        actionExecutor = userId => {
+          let newUserRoles = [...currentBatchRoles];
+          if (userId === executingUser._id) {
+            newUserRoles = ensureIsIncluded(newUserRoles, ROLE.admin);
+          }
+          changeUserRole(userId, newUserRoles, true);
+        };
         break;
       case BATCH_ACTION_TYPE.assignStoragePlan:
         actionExecutor = userId => changeStoragePlan(userId, currentBatchStoragePlan, true);
@@ -419,8 +425,9 @@ function UserAccountsTab() {
   const renderRoleTags = (_, item) => {
     return (
       <RolesSelect
-        display={ROLES_SELECT_DISPLAY.inline}
+        userId={item._id}
         value={item.roles}
+        display={ROLES_SELECT_DISPLAY.inline}
         onChange={newRoles => handleUserRolesChange(item.key, newRoles)}
         />
     );
