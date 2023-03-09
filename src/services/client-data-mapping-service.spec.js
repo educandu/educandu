@@ -488,7 +488,7 @@ describe('client-data-mapping-service', () => {
         room: {
           _id: room._id,
           name: room.name,
-          documentsMode: room.documentsMode,
+          isCollaborative: room.isCollaborative,
           owner: {
             _id: user1._id,
             displayName: user1.displayName

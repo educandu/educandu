@@ -5,8 +5,8 @@ import Database from '../stores/database.js';
 import { assert, createSandbox } from 'sinon';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
+import { INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { INVALID_ROOM_INVITATION_REASON, ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -60,7 +60,7 @@ describe('room-service', () => {
       createdRoom = await sut.createRoom({
         name: 'my room',
         slug: '  my-room  ',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         user: myUser
       });
     });
@@ -71,7 +71,7 @@ describe('room-service', () => {
         name: 'my room',
         slug: 'my-room',
         owner: myUser._id,
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         description: '',
         createdOn: now,
         createdBy: myUser._id,
@@ -93,7 +93,7 @@ describe('room-service', () => {
     beforeEach(async () => {
       room = await sut.createRoom({
         name: 'my room',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         user: myUser
       });
     });
@@ -138,7 +138,7 @@ describe('room-service', () => {
       testRoom = await sut.createRoom({
         name: 'room-name',
         slug: 'room-slug',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         user: myUser
       });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
@@ -177,7 +177,7 @@ describe('room-service', () => {
     beforeEach(async () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         user: myUser
       });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
@@ -268,7 +268,7 @@ describe('room-service', () => {
     beforeEach(async () => {
       testRoom = await sut.createRoom({
         name: 'test-room',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         user: myUser
       });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
@@ -293,7 +293,7 @@ describe('room-service', () => {
         name: 'my room',
         slug: 'my-slug',
         description: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         createdBy: myUser._id,
         createdOn: new Date(),
         updatedOn: new Date(),
@@ -339,7 +339,7 @@ describe('room-service', () => {
         name: 'my room',
         slug: 'my-slug',
         description: '',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         createdBy: myUser._id,
         createdOn: new Date(),
         updatedOn: new Date(),

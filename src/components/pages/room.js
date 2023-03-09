@@ -24,13 +24,13 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { Button, Tabs, message, Tooltip, Breadcrumb } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
-import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
@@ -179,9 +179,9 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, documentsMode, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, isCollaborative, description }) => {
     try {
-      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, documentsMode, description });
+      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, isCollaborative, description });
 
       setRoom(response.room);
       setIsRoomUpdateButtonDisabled(true);
@@ -285,12 +285,6 @@ export default function Room({ PageTemplate, initialState }) {
         return null;
     }
   };
-
-  const renderOwnerLink = () => (
-    <Fragment>
-      {t('common:owner')}: <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
-    </Fragment>
-  );
 
   const renderRoomDescription = () => {
     return !!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>;
@@ -431,7 +425,7 @@ export default function Room({ PageTemplate, initialState }) {
           avatarUrl={member.avatarUrl}
           detail={
             <div className="RoomPage-memberDetails">
-              {`${t('memberSince')}: ${formatDate(member.joinedOn)}`}
+              {`${t('common:joined')}: ${formatDate(member.joinedOn)}`}
             </div>
           }
           />
@@ -466,11 +460,17 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const documentsModeText = t(`${room.documentsMode}DocumentsSubtitle`);
-
   const membersTabCount = invitations.length
     ? `${room.members.length}/${room.members.length + invitations.length}`
     : room.members.length;
+
+  const membersTabTitle = room.isCollaborative
+    ? `${t('common:collaborators')} (${membersTabCount})`
+    : `${t('common:members')} (${membersTabCount}) `;
+
+  const inviteMemberButtonText = room.isCollaborative
+    ? t('inviteCollaboratorsButton')
+    : t('inviteMembersButton');
 
   return (
     <PageTemplate>
@@ -480,13 +480,15 @@ export default function Room({ PageTemplate, initialState }) {
           <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
         </Breadcrumb>
         <div className="RoomPage-title">
-          <h1 className="RoomPage-titleText">{room.name}</h1>
-          <div className="RoomPage-titleExtra">
+          <div>{room.name}</div>
+          <div className="RoomPage-titleStar">
             <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
           </div>
         </div>
         <div className="RoomPage-subtitle">
-          <div>{documentsModeText} | {renderOwnerLink()}</div>
+          <div>
+            {t('common:by')} <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
+          </div>
           {viewMode !== VIEW_MODE.owner && (
             <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
           )}
@@ -511,7 +513,7 @@ export default function Room({ PageTemplate, initialState }) {
             items={[
               {
                 key: '1',
-                label: t('documentsTabTitle', { count: visibleDocumentsCount }),
+                label: t('roomViewTitle'),
                 children: (
                   <div className="Tabs-tabPane">
                     {renderRoomDescription()}
@@ -523,7 +525,7 @@ export default function Room({ PageTemplate, initialState }) {
               },
               {
                 key: '2',
-                label: t('membersTabTitle', { count: membersTabCount }),
+                label: membersTabTitle,
                 children: (
                   <div className="Tabs-tabPane">
                     <Button
@@ -532,7 +534,7 @@ export default function Room({ PageTemplate, initialState }) {
                       className="RoomPage-tabCreateItemButton"
                       onClick={handleCreateInvitationButtonClick}
                       >
-                      {t('inviteMembersButton')}
+                      {inviteMemberButtonText}
                     </Button>
                     <div className="RoomPage-members">
                       {room.members.map(renderRoomMember)}

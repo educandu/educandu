@@ -3,7 +3,6 @@ import { isBrowser } from './browser-helper.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
   BATCH_TYPE,
-  ROOM_DOCUMENTS_MODE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE,
   RESOURCE_TYPE,
@@ -404,7 +403,7 @@ export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
   createdOn: PropTypes.string,
-  documentsMode: PropTypes.oneOf(Object.values(ROOM_DOCUMENTS_MODE)).isRequired,
+  isCollaborative: PropTypes.bool.isRequired,
   description: PropTypes.string
 };
 

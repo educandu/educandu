@@ -26,8 +26,7 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
   const renderOwner = () => {
     return (
       <span className="RoomCard-owner">
-        {`${t('common:owner')}: `}
-        <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
+        {t('common:by')} <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
       </span>
     );
   };
@@ -51,10 +50,12 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
       </div>
       <Divider className="RoomCard-divider" />
       <div className="RoomCard-content">
-        {!invitation && !!room?.documentsMode && (
+        {!invitation && !!userAsMember && (
           <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('documentsMode')}:</span>
-            <div>{t(`common:documentsMode_${room.documentsMode}`)}</div>
+            <span className="RoomCard-infoLabel">{t('role')}:</span>
+            <div>
+              { room?.isCollaborative ? t('common:collaborator') : t('common:member') }
+            </div>
           </div>
         )}
         {!!room?.updatedOn && (
@@ -65,13 +66,15 @@ function RoomCard({ room, invitation, alwaysRenderOwner }) {
         )}
         {!userAsMember && !!room?.members && (
           <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('members')}:</span>
+            <span className="RoomCard-infoLabel">
+              { room?.isCollaborative ? `${t('common:collaborators')}:` : `${t('common:members')}:`}
+            </span>
             <div>{room.members.length}</div>
           </div>
         )}
         {!!userAsMember && (
           <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('joined')}:</span>
+            <span className="RoomCard-infoLabel">{t('common:joined')}:</span>
             <div>{formatDate(userAsMember.joinedOn)}</div>
           </div>
         )}

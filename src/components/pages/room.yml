@@ -1,16 +1,7 @@
 room:
-  exclusiveDocumentsSubtitle:
-    en: Exclusive documents
-    de: exklusive Dokumente
-  collaborativeDocumentsSubtitle:
-    en: Collaborative documents
-    de: kollaborative Dokumente
-  documentsTabTitle:
-    en: Documents ({count})
-    de: Dokumente ({count})
-  membersTabTitle:
-    en: Members ({count})
-    de: Mitglieder ({count})
+  roomViewTitle:
+    en: Room view
+    de: Raum-Ansicht
   documentsPlaceholder:
     en: The room does not contain any documents
     de: Der Raum enthält keine Dokumente
@@ -44,12 +35,12 @@ room:
   expiresOn:
     en: Expires on
     de: Läuft ab am
-  memberSince:
-    en: Member since
-    de: Mitglied seit
   inviteMembersButton:
     en: Invite members
     de: Mitglieder einladen
+  inviteCollaboratorsButton:
+    en: Invite collaborators
+    de: Mitarbeiter einladen
   pendingInvitation:
     en: Pending invitation
     de: Ausstehende Einladung

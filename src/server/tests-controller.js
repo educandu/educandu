@@ -2,7 +2,6 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -29,7 +28,7 @@ class TestsController {
 
     if (room) {
       const isRoomOwner = user._id === room.owner;
-      const isRoomCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && room.members.some(m => m.userId === user._id);
+      const isRoomCollaborator = room.isCollaborative && room.members.some(m => m.userId === user._id);
 
       const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
       const roomOwnerStoragePlan = roomOwner.storage.plan ? await this.storageService.getStoragePlanById(roomOwner.storage.plan) : null;

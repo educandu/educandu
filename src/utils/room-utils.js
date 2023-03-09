@@ -1,5 +1,3 @@
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
-
 const getRoomOwnerId = room => {
   const isClientDataMappedOwner = typeof room.owner === 'object';
   return isClientDataMappedOwner ? room.owner._id : room.owner;
@@ -19,12 +17,12 @@ export const isRoomOwnerOrInvitedMember = ({ room, userId }) => {
 
 export const isRoomOwnerOrInvitedCollaborator = ({ room, userId }) => {
   const isOwner = isRoomOwner({ room, userId });
-  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && isInvitedRoomMember({ room, userId });
+  const isCollaborator = room.isCollaborative && isInvitedRoomMember({ room, userId });
   return isOwner || isCollaborator;
 };
 
 export const isRoomInvitedCollaborator = ({ room, userId }) => {
   const isOwner = isRoomOwner({ room, userId });
-  const isCollaborator = room.documentsMode === ROOM_DOCUMENTS_MODE.collaborative && isInvitedRoomMember({ room, userId });
+  const isCollaborator = room.isCollaborative && isInvitedRoomMember({ room, userId });
   return !isOwner && isCollaborator;
 };

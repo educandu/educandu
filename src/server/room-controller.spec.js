@@ -6,8 +6,8 @@ import { assert, createSandbox } from 'sinon';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { ROOM_USER_ROLE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -182,7 +182,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.collaborative, owner: user._id, members: [] };
+        const room = { _id: roomId, isCollaborative: true, owner: user._id, members: [] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -210,7 +210,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.collaborative, owner: 'some-other-user', members: [{ userId: user._id }] };
+        const room = { _id: roomId, isCollaborative: true, owner: 'some-other-user', members: [{ userId: user._id }] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -238,7 +238,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, documentsMode: ROOM_DOCUMENTS_MODE.exclusive, owner: 'some-other-user', members: [{ userId: user._id }] };
+        const room = { _id: roomId, isCollaborative: false, owner: 'some-other-user', members: [{ userId: user._id }] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -286,7 +286,7 @@ describe('room-controller', () => {
 
         req = {
           user,
-          body: { name: 'name', slug: 'slug', documentsMode: ROOM_DOCUMENTS_MODE.exclusive }
+          body: { name: 'name', slug: 'slug', isCollaborative: false }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
@@ -318,14 +318,14 @@ describe('room-controller', () => {
           owner: user._id,
           name: 'name',
           slug: 'slug',
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+          isCollaborative: false,
           description: 'description'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
           description: 'new description',
-          documentsMode: ROOM_DOCUMENTS_MODE.collaborative
+          isCollaborative: true
         };
         updatedRoom = {
           ...room,
@@ -383,7 +383,7 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive
+          isCollaborative: false
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -412,7 +412,7 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
+          isCollaborative: true,
           description: 'description',
           members: [{ userId: user._id }],
           documents: []
@@ -476,7 +476,7 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+          isCollaborative: false,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -498,7 +498,7 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          documentsMode: ROOM_DOCUMENTS_MODE.collaborative,
+          isCollaborative: true,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -624,7 +624,7 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        documentsMode: ROOM_DOCUMENTS_MODE.exclusive,
+        isCollaborative: false,
         documents: [uniqueId.create(), uniqueId.create()]
       };
       mappedRoom = { ...room };

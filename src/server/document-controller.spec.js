@@ -4,7 +4,6 @@ import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
@@ -657,7 +656,7 @@ describe('document-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.isCollaborative = false;
         room.members = [{ userId: uniqueId.create() }];
 
         doc.roomId = room._id;
@@ -692,7 +691,7 @@ describe('document-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
-        room.documentsMode = ROOM_DOCUMENTS_MODE.exclusive;
+        room.isCollaborative = false;
         room.members = [{ userId: uniqueId.create() }];
 
         doc.roomId = room._id;
@@ -727,7 +726,7 @@ describe('document-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
-        room.documentsMode = ROOM_DOCUMENTS_MODE.collaborative;
+        room.isCollaborative = true;
         room.members = [{ userId: user._id }];
 
         doc.roomId = room._id;

@@ -2,6 +2,9 @@ roomMetadataForm:
   roomNameRequired:
     en: Please specify a room name
     de: Bitte gib einen Raumnamen an
-  documentsModeInfo:
-    en: In exclusive rooms documents can be managed only by the owner. In collaborative rooms all room members can add and modify documents, however only the owner can delete them.
-    de: In exklusiven Räumen können Dokumente nur von den Besitzern verwaltet werden. In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen.
+  isCollaborativeLabel:
+    en: Collaborative mode
+    de: Kollaborativer Modus
+  isCollaborativeInfo:
+    en: In collaborative rooms all room members can add and modify documents, however only the owner can delete them.
+    de: In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen.

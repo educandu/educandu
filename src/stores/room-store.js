@@ -1,6 +1,5 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { ROOM_DOCUMENTS_MODE } from '../domain/constants.js';
 import {
   roomDBSchema,
   roomMemberDBSchema,
@@ -64,7 +63,7 @@ class RoomStore {
         { owner: userId },
         {
           $and: [
-            { documentsMode: ROOM_DOCUMENTS_MODE.collaborative },
+            { isCollaborative: true },
             { 'members.userId': userId }
           ]
         }

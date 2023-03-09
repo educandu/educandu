@@ -64,7 +64,7 @@ export default class RoomService {
     return !!room;
   }
 
-  async createRoom({ name, slug, documentsMode, user }) {
+  async createRoom({ name, slug, isCollaborative, user }) {
     const roomId = uniqueId.create();
 
     await this.createUploadDirectoryMarkerForRoom(roomId);
@@ -73,7 +73,7 @@ export default class RoomService {
       _id: roomId,
       name,
       slug: slug?.trim() || '',
-      documentsMode,
+      isCollaborative,
       description: '',
       owner: user._id,
       createdBy: user._id,
@@ -105,13 +105,13 @@ export default class RoomService {
     await this.cdn.deleteObject(directoryMarkerPath);
   }
 
-  async updateRoomMetadata(roomId, { name, slug, documentsMode, description }) {
+  async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {
     await this.roomStore.updateRoomMetadata(
       roomId,
       {
         name: name.trim(),
         slug: (slug || '').trim(),
-        documentsMode,
+        isCollaborative,
         description: (description || '').trim(),
         updatedOn: new Date()
       }

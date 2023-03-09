@@ -38,11 +38,6 @@ export const ROOM_USER_ROLE = {
   ownerOrCollaborator: 'ownerOrCollaborator'
 };
 
-export const ROOM_DOCUMENTS_MODE = {
-  exclusive: 'exclusive',
-  collaborative: 'collaborative'
-};
-
 export const SAVE_USER_RESULT = {
   success: 'success',
   duplicateEmail: 'duplicate-email'

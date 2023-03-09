@@ -157,9 +157,9 @@ common:
   relevance:
     en: Relevance
     de: Relevanz
-  owner:
-    en: Owner
-    de: Eigentümer
+  by:
+    en: By
+    de: Von
   email:
     en: Email
     de: E-Mail
@@ -172,15 +172,6 @@ common:
   type:
     en: Type
     de: Typ
-  documentsMode:
-    en: Documents handling mode
-    de: Dokumente-Bearbeitungsmodus
-  documentsMode_exclusive:
-    en: exclusive
-    de: exklusiv
-  documentsMode_collaborative:
-    en: collaborative
-    de: kollaborativ
   documentTitle:
     en: Document title
     de: Dokument-Titel
@@ -513,6 +504,21 @@ common:
   enterRoom:
     en: Enter room
     de: Raum betreten
+  member:
+    en: Member
+    de: Mitglied
+  members:
+    en: Members
+    de: Mitglieder
+  collaborator:
+    en: Collaborator
+    de: Mitarbeiter
+  collaborators:
+    en: Collaborators
+    de: Mitarbeiter
+  joined:
+    en: Joined
+    de: Eingetreten
   changesSavedSuccessfully:
     en: Your changes have been saved
     de: Deine Änderungen wurden gespeichert

@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { ROOM_DOCUMENTS_MODE, ROOM_USER_ROLE } from '../constants.js';
+import { ROOM_USER_ROLE } from '../constants.js';
 import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
@@ -13,7 +13,7 @@ export const getRoomsQuerySchema = joi.object({
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
   slug: slugSchema.required(),
-  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
+  isCollaborative: joi.boolean().required()
 });
 
 export const postRoomInvitationsBodySchema = joi.object({
@@ -40,7 +40,7 @@ export const patchRoomParamsSchema = joi.object({
 export const patchRoomMetadataBodySchema = joi.object({
   name: joi.string().required(),
   slug: slugSchema.required(),
-  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required(),
+  isCollaborative: joi.boolean().required(),
   description: joi.string().allow('')
 });
 
@@ -79,7 +79,7 @@ const roomMetadataDBProps = {
   slug: slugSchema.required(),
   description: joi.string().allow('').required(),
   updatedOn: joi.date().required(),
-  documentsMode: joi.string().valid(...Object.values(ROOM_DOCUMENTS_MODE)).required()
+  isCollaborative: joi.boolean().required()
 };
 
 const roomMembersDBProps = {
