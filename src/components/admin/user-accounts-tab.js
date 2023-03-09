@@ -424,10 +424,11 @@ function UserAccountsTab() {
   const renderRole = (_, item) => {
     return (
       <Segmented
+        size="small"
         options={ALL_ROLES}
         value={item.role}
         disabled={item._id === executingUser._id}
-        onChange={handleUserRoleChange}
+        onChange={newRole => handleUserRoleChange(item._id, newRole)}
         />
     );
   };
@@ -849,6 +850,7 @@ function UserAccountsTab() {
               </div>
               <div className="UserAccountsTab-batchProcessingModalSelect">
                 <Segmented
+                  size="small"
                   options={ALL_ROLES}
                   value={currentBatchRole}
                   onChange={setCurrentBatchRole}
