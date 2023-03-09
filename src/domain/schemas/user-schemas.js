@@ -105,7 +105,7 @@ export const userDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
-  role: joi.string().required(),
+  role: joi.string().valid(...Object.values(ROLE)).required(),
   expiresOn: joi.date().allow(null).required(),
   verificationCode: joi.string().allow(null).required(),
   storage: storageDBSchema.required(),
