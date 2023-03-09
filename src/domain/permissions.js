@@ -4,17 +4,16 @@ const VIEW_USERS = 'view-users';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_SETUP = 'manage-setup';
 const CREATE_CONTENT = 'create-content';
-const ACCESS_STORAGE = 'access-storage';
+const BROWSE_STORAGE = 'browse-storage';
 const BATCH_PROCESS_DATA = 'batch-process-data';
 const MANAGE_PUBLIC_CONTENT = 'manage-public-content';
 const PROTECT_OWN_PUBLIC_CONTENT = 'protect-own-public-content';
 const DELETE_OWN_PRIVATE_CONTENT = 'delete-own-private-content';
 const DELETE_ANY_PRIVATE_CONTENT = 'delete-any-private-content';
-const MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT = 'manage-protectors-of-own-public-content';
 
 const userPermissions = [
   CREATE_CONTENT,
-  ACCESS_STORAGE,
+  BROWSE_STORAGE,
   DELETE_OWN_PRIVATE_CONTENT
 ];
 
@@ -28,8 +27,7 @@ const maintainerPermissions = [
     ...userPermissions,
     ...accreditedAuthorPermissions,
     VIEW_USERS,
-    MANAGE_PUBLIC_CONTENT,
-    MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT
+    MANAGE_PUBLIC_CONTENT
   ])
 ];
 
@@ -63,12 +61,11 @@ export function getAllUserPermissions(user) {
 
 export default {
   CREATE_CONTENT,
-  ACCESS_STORAGE,
+  BROWSE_STORAGE,
   DELETE_OWN_PRIVATE_CONTENT,
   PROTECT_OWN_PUBLIC_CONTENT,
   VIEW_USERS,
   MANAGE_PUBLIC_CONTENT,
-  MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT,
   MANAGE_USERS,
   MANAGE_SETUP,
   BATCH_PROCESS_DATA,

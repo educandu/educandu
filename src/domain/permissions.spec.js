@@ -43,7 +43,7 @@ describe('permissions', () => {
       it('should return all user permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
-          permissions.ACCESS_STORAGE,
+          permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT
         ]);
       });
@@ -57,7 +57,7 @@ describe('permissions', () => {
       it('should return all user permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
-          permissions.ACCESS_STORAGE,
+          permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT
         ]);
@@ -73,12 +73,11 @@ describe('permissions', () => {
       it('should return all maintainer permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
-          permissions.ACCESS_STORAGE,
+          permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
-          permissions.MANAGE_PUBLIC_CONTENT,
-          permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT
+          permissions.MANAGE_PUBLIC_CONTENT
         ]);
       });
     });
@@ -92,12 +91,11 @@ describe('permissions', () => {
       it('should return all user permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
-          permissions.ACCESS_STORAGE,
+          permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
           permissions.MANAGE_PUBLIC_CONTENT,
-          permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT,
           permissions.MANAGE_USERS,
           permissions.MANAGE_SETUP,
           permissions.BATCH_PROCESS_DATA,

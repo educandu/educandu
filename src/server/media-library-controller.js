@@ -86,7 +86,7 @@ class MediaLibraryController {
   registerApi(router) {
     router.get(
       '/api/v1/media-library/items',
-      needsPermission(permissions.ACCESS_STORAGE),
+      needsPermission(permissions.BROWSE_STORAGE),
       validateQuery(mediaLibrarySearchQuerySchema),
       (req, res) => this.handleQueryMediaLibraryItems(req, res)
     );
@@ -124,7 +124,7 @@ class MediaLibraryController {
 
     router.get(
       '/api/v1/media-library/tags',
-      needsPermission(permissions.ACCESS_STORAGE),
+      needsPermission(permissions.BROWSE_STORAGE),
       validateQuery(mediaLibraryTagSearchQuerySchema),
       (req, res) => this.handleGetMediaLibraryTagSuggestions(req, res)
     );

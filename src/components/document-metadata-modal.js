@@ -99,8 +99,7 @@ function DocumentMetadataModal({
 
   const publicContextPermissions = {
     canManagePublicContext: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT),
-    canProtectOwnDocWhenCreating: hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT),
-    canDecideWhoCanProtectOwnDocWhenCreating: hasUserPermission(user, permissions.MANAGE_PROTECTORS_OF_OWN_PUBLIC_CONTENT)
+    canProtectOwnDocWhenCreating: hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT)
   };
   const hasPublicContextPermissions = Object.values(publicContextPermissions).some(value => value);
 
@@ -426,7 +425,7 @@ function DocumentMetadataModal({
         {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
-              {!!publicContextPermissions.canDecideWhoCanProtectOwnDocWhenCreating && (
+              {!!publicContextPermissions.canManagePublicContext && (
                 <FormItem label={<Info tooltip={t('accreditedEditorsInfo')} iconAfterContent>{t('accreditedEditors')}</Info>}>
                   <UserSelect value={publicContext.accreditedEditors} onChange={handleAccreditedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
                 </FormItem>

@@ -394,7 +394,7 @@ export default class RoomController {
 
     router.get(
       '/api/v1/rooms/:roomId/authorize-resources-access',
-      needsPermission(permissions.ACCESS_STORAGE),
+      needsAuthentication(),
       validateParams(getAuthorizeResourcesAccessParamsSchema),
       (req, res) => this.handleAuthorizeResourcesAccess(req, res)
     );
