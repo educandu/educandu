@@ -81,12 +81,8 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
     ];
 
-    if (hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
-      options.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
-    }
-
     return options;
-  }, [user, t]);
+  }, [t]);
 
   const tableSorters = useMemo(() => ({
     name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.displayName, { direction, ignoreCase: true })),
@@ -258,7 +254,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
           onChange={handleCurrentTableSortingChange}
           />
         <Button type="primary" onClick={handleCreateItemClick}>
-          {t('common:create')}
+          {t('common:upload')}
         </Button>
       </div>
       <Table
