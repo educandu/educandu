@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { Button, message, Table, Tag } from 'antd';
@@ -18,7 +17,6 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
@@ -52,7 +50,6 @@ function filterRows(rows, filterText) {
 }
 
 function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
-  const user = useUser();
   const { formatDate } = useDateFormat();
   const [filterText, setFilterText] = useState('');
   const [allTableRows, setAllTableRows] = useState([]);
