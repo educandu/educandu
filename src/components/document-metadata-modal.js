@@ -217,6 +217,7 @@ function DocumentMetadataModal({
   const handleGenerateSequenceChange = event => {
     const { checked } = event.target;
     setGenerateSequence(checked);
+    setUseTemplateDocument(false);
   };
 
   const handleSequenceCountChange = value => {
@@ -416,7 +417,7 @@ function DocumentMetadataModal({
               <Info tooltip={t('contentInfo')} iconAfterContent>{t('content')}</Info>
             }
             >
-            <RadioGroup value={useTemplateDocument} onChange={handleUseTemplateDocumentChange}>
+            <RadioGroup value={useTemplateDocument} disabled={!!generateSequence} onChange={handleUseTemplateDocumentChange}>
               <RadioButton value={false}>{t('contentEmpty')}</RadioButton>
               <RadioButton value={Boolean('true')}>{t('contentFromTemplate')}</RadioButton>
             </RadioGroup>
