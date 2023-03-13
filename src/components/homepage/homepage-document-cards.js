@@ -6,9 +6,9 @@ import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import { useDateFormat } from '../locale-context.js';
-import FileIcon from '../icons/general/file-icon.js';
 import UsersIcon from '../icons/main-menu/users-icon.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
+import PreviewIcon from '../icons/general/preview-icon.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 
 function HomepageDocumentCards() {
@@ -48,9 +48,9 @@ function HomepageDocumentCards() {
 
   const renderNavigateAction = doc => {
     return (
-      <Tooltip key="users" title={t('common:viewDocument')}>
+      <Tooltip key="users" title={t('common:viewDocument')} className="HomepageDocumentCards-cardNavigateAction">
         <div onClick={() => handleNavigateClick(doc)}>
-          <FileIcon />
+          <PreviewIcon />
         </div>
       </Tooltip>
     );
