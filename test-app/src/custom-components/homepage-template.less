@@ -12,32 +12,45 @@
 }
 
 .HomepageTemplate-aboveFold {
-  position: relative;
   width: 100%;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
-.HomepageTemplate-foldDividerTop {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  background-color: @edu-background-color-medium;
-  z-index: @edu-z-index-background-layer;
+.HomepageTemplate-aboveFoldContentWrapper {
+  background:
+    url('./images/homepage-hero-transition.svg') bottom left no-repeat,
+    url('./images/homepage-hero-right.svg') right top no-repeat,
+    url('./images/homepage-hero-left.svg') left top no-repeat;
+  background-size: 100% auto, auto 100%, auto 100%;
+  background-color: @edu-primary-color-light;
+
+  @media @edu-media-phone {
+    background:
+      url('./images/homepage-hero-transition.svg') bottom left no-repeat,
+      url('./images/homepage-hero-right.svg') right top no-repeat;
+    background-size: 100% auto, auto 100%;
+    background-color: @edu-primary-color-light;
+  }
 }
 
 .HomepageTemplate-aboveFoldContent {
   .m-page-content;
-  flex: 1 0 auto;
   width: 100%;
+  height: 100%;
   display: grid;
   gap: @edu-content-padding;
-  grid-template-rows: auto 1fr;
-  align-content: center;
+  place-content: start;
+  grid-auto-flow: row;
+  margin: 15% auto 0 auto;
   max-width: @edu-content-width-narrow;
-  margin: 10% auto 0 auto;
+}
+
+.HomepageTemplate-foldDividerTop {
+  width: 100%;
+  color: @edu-background-color-medium;
+  background-color: @edu-background-color-medium;
 }
 
 .HomepageTemplate-logo {
@@ -45,7 +58,7 @@
   align-items: center;
   flex-direction: column;
   margin-top: auto;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .HomepageTemplate-presentationLogo {
@@ -59,6 +72,16 @@
   font-size: @edu-font-size-xl;
   font-weight: 300;
   text-align: center;
+  color: @edu-white;
+  margin-top: 10px;
+
+  @media @edu-media-phone {
+    font-size: @edu-font-size-lg;
+  }
+}
+
+.HomepageTemplate-children {
+  color: @edu-white;
 }
 
 .HomepageTemplate-underFold {
@@ -71,7 +94,6 @@
 
 .HomepageTemplate-underFoldStripe {
   width: 100%;
-  position: relative;
   padding: @edu-page-content-padding;
 
   &.HomepageTemplate-underFoldStripe--documents {
@@ -80,6 +102,8 @@
 
   &.HomepageTemplate-underFoldStripe--project {
     padding-bottom: 3 * @edu-page-content-padding;
+    background: url('./images/homepage-documents-transition.svg') top left no-repeat;
+    background-size: 100% auto;
   }
 
   &.HomepageTemplate-underFoldStripe--oer {
@@ -87,12 +111,6 @@
     padding-bottom: 3 * @edu-page-content-padding;
     background-color: @test-app-oer-presentation-background-color;
   }
-}
-
-.HomepageTemplate-foldDividerBottom {
-  position: absolute;
-  width: 100%;
-  left: 0;
 }
 
 .HomepageTemplate-underFoldStripeContent {

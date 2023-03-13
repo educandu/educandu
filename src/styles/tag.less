@@ -24,6 +24,16 @@
     }
   }
 
+  &.Tag--clickableInverted {
+    color: @edu-white;
+    background-color: lighten(@edu-primary-color-light, 10%) !important;
+
+    &:hover {
+      cursor: pointer;
+      background-color: lighten(@edu-primary-color-light, 15%) !important;
+    }
+  }
+
   &.Tag--selected {
     color: @edu-white;
     background-color: @edu-primary-color-light !important;
