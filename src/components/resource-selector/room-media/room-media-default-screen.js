@@ -72,7 +72,7 @@ function RoomMediaDefaultScreen({
       </div>
       <div className="u-resource-selector-screen-footer">
         <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={isLoading}>
-          {t('uploadFiles')}
+          {t('common:uploadFiles')}
         </Button>
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>

@@ -1,20 +1,25 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
+import { Button, Select, Spin } from 'antd';
 import UsedStorage from '../used-storage.js';
-import { message, Select, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { StorageProvider } from '../storage-context.js';
+import UploadIcon from '../icons/general/upload-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
 import RoomMediaPreviewModal from '../resource-selector/room-media/room-media-preview-modal.js';
 
 const logger = new Logger(import.meta.url);
 
+const createUploadModalProps = ({ isOpen = false, files = [] }) => ({ isOpen, files });
 const createPreviewModalProps = ({ isOpen = false, file = null }) => ({ isOpen, file });
 
 function StorageTab({ storage, loading, onStorageChange }) {
@@ -26,8 +31,16 @@ function StorageTab({ storage, loading, onStorageChange }) {
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const [uploadModalProps, setUploadModalProps] = useState(createUploadModalProps({}));
+  const [previewModalProps, setPreviewModalProps] = useState(createPreviewModalProps({}));
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
-  const [previewDialogProps, setPreviewDialogProps] = useState(createPreviewModalProps({}));
+
+  const storageProviderStorage = useMemo(() => ({
+    usedBytes: storage?.usedBytes || 0,
+    maxBytes: storage?.storagePlan?.maxBytes || 0,
+    path: selectedRoomId ? getRoomMediaRoomPath(selectedRoomId) : 'invalid',
+    isDeletionEnabled: true
+  }), [storage, selectedRoomId]);
 
   useEffect(() => {
     if (!storage) {
@@ -58,8 +71,8 @@ function StorageTab({ storage, loading, onStorageChange }) {
     setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
   };
 
-  const handleFilesDropped = () => {
-    message.warning('File uploading is not yet supported!');
+  const handleFilesDropped = filesToUpload => {
+    setUploadModalProps(createUploadModalProps({ files: filesToUpload, isOpen: true }));
   };
 
   const handleDeleteFileClick = file => {
@@ -79,52 +92,81 @@ function StorageTab({ storage, loading, onStorageChange }) {
 
   const handleFileDoubleClick = newHighlightedFile => {
     setHighlightedFile(newHighlightedFile);
-    setPreviewDialogProps(createPreviewModalProps({ isOpen: true, file: newHighlightedFile }));
+    setPreviewModalProps(createPreviewModalProps({ isOpen: true, file: newHighlightedFile }));
   };
 
   const handlePreviewFileClick = () => {
-    setPreviewDialogProps(createPreviewModalProps({ isOpen: true, file: highlightedFile }));
+    setPreviewModalProps(createPreviewModalProps({ isOpen: true, file: highlightedFile }));
   };
 
   const handlePreviewModalClose = () => {
-    setPreviewDialogProps(createPreviewModalProps({ isOpen: false }));
+    setPreviewModalProps(createPreviewModalProps({ isOpen: false }));
+  };
+
+  const handleUploadModalOk = async () => {
+    setUploadModalProps(oldProps => ({ ...oldProps, isOpen: false }));
+    try {
+      setIsUpdating(true);
+      const newOverview = await storageApiClient.getRoomMediaOverview();
+      onStorageChange(newOverview);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleUploadModalCancel = () => {
+    setUploadModalProps(oldProps => ({ ...oldProps, isOpen: false }));
+  };
+
+  const handleUploadButtonClick = () => {
+    filesViewerApiRef.current.open();
   };
 
   return (
     <div className="StorageTab">
-      <div className="StorageTab-tabInfo">{t('info')}</div>
-      <section className="StorageTab-content">
-        {!storage?.storagePlan && !!loading && <Spin className="u-spin" />}
-        {!storage?.storagePlan && !loading && t('noStoragePlan')}
-        {!!storage?.storagePlan && (
-          <Fragment>
-            <div className="StorageTab-planName">
-              {t('storagePlanName')}: <b>{storage.storagePlan.name}</b>
-            </div>
-            <div className="StorageTab-usedStorage">
-              <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.storagePlan.maxBytes} showLabel />
-            </div>
-            <div className="StorageTab-fileViewer">
-              <RoomMediaFilesViewer
-                canDelete
-                files={files}
-                customFilter={<Select options={roomOptions} value={selectedRoomId} onChange={setSelectedRoomId} />}
-                isLoading={isUpdating}
-                apiRef={filesViewerApiRef}
-                highlightedFile={highlightedFile}
-                filesViewerDisplay={filesViewerDisplay}
-                onFileClick={handleFileClick}
-                onFilesDropped={handleFilesDropped}
-                onDeleteFileClick={handleDeleteFileClick}
-                onFileDoubleClick={handleFileDoubleClick}
-                onPreviewFileClick={handlePreviewFileClick}
-                onFilesViewerDisplayChange={setFilesViewerDisplay}
-                />
-            </div>
-          </Fragment>
-        )}
-      </section>
-      <RoomMediaPreviewModal {...previewDialogProps} onClose={handlePreviewModalClose} />
+      <StorageProvider value={storageProviderStorage}>
+        <div className="StorageTab-tabInfo">{t('info')}</div>
+        <section className="StorageTab-content">
+          {!storage?.storagePlan && !!loading && <Spin className="u-spin" />}
+          {!storage?.storagePlan && !loading && t('noStoragePlan')}
+          {!!storage?.storagePlan && (
+            <Fragment>
+              <div className="StorageTab-planName">
+                {t('storagePlanName')}: <b>{storage.storagePlan.name}</b>
+              </div>
+              <div className="StorageTab-usedStorage">
+                <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.storagePlan.maxBytes} showLabel />
+              </div>
+              <div className="StorageTab-fileViewer">
+                <RoomMediaFilesViewer
+                  canDelete
+                  files={files}
+                  customFilter={<Select options={roomOptions} value={selectedRoomId} onChange={setSelectedRoomId} />}
+                  isLoading={isUpdating}
+                  apiRef={filesViewerApiRef}
+                  highlightedFile={highlightedFile}
+                  filesViewerDisplay={filesViewerDisplay}
+                  onFileClick={handleFileClick}
+                  onFilesDropped={handleFilesDropped}
+                  onDeleteFileClick={handleDeleteFileClick}
+                  onFileDoubleClick={handleFileDoubleClick}
+                  onPreviewFileClick={handlePreviewFileClick}
+                  onFilesViewerDisplayChange={setFilesViewerDisplay}
+                  />
+              </div>
+              <div>
+                <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
+                  {t('common:uploadFiles')}
+                </Button>
+              </div>
+            </Fragment>
+          )}
+        </section>
+        <RoomMediaPreviewModal {...previewModalProps} onClose={handlePreviewModalClose} />
+        <RoomMediaUploadModal {...uploadModalProps} onOk={handleUploadModalOk} onCancel={handleUploadModalCancel} />
+      </StorageProvider>
     </div>
   );
 }

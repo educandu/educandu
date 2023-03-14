@@ -1859,12 +1859,6 @@
       "de": "Wikimedia"
     }
   },
-  "roomMediaDefaultScreen": {
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
-    }
-  },
   "roomMediaFilesViewer": {
     "filesView_list": {
       "en": "List view",
@@ -3769,6 +3763,10 @@
     "creator": {
       "en": "Creator",
       "de": "Ersteller"
+    },
+    "uploadFiles": {
+      "en": "Upload files",
+      "de": "Dateien hochladen"
     }
   },
   "pageNames": {
