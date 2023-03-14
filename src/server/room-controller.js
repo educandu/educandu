@@ -29,11 +29,13 @@ import {
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
   deleteRoomsQuerySchema,
+  postRoomMessageBodySchema,
   getRoomWithSlugParamsSchema,
   patchRoomMetadataBodySchema,
   deleteRoomMemberParamsSchema,
-  postRoomInvitationsBodySchema,
   patchRoomDocumentsBodySchema,
+  postRoomInvitationsBodySchema,
+  deleteRoomMessageParamsSchema,
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
@@ -260,6 +262,37 @@ export default class RoomController {
     return res.status(201).end();
   }
 
+  async handlePostRoomMessage(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+    const { text, emailNotification } = req.body;
+
+    const room = await this.roomService.getRoomById(roomId);
+    if (room.owner !== user._id) {
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
+    }
+
+    const updatedRoom = await this.roomService.createRoomMessage({ room, text, emailNotification });
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
+
+    return res.status(201).send({ room: mappedRoom });
+  }
+
+  async handleDeleteRoomMessage(req, res) {
+    const { user } = req;
+    const { roomId, messageKey } = req.params;
+
+    const room = await this.roomService.getRoomById(roomId);
+    if (room.owner !== user._id) {
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
+    }
+
+    const updatedRoom = await this.roomService.deleteRoomMessage({ room, messageKey });
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
+
+    return res.send({ room: mappedRoom });
+  }
+
   async handleGetRoomPage(req, res) {
     const { user } = req;
     const { roomId } = req.params;
@@ -390,6 +423,18 @@ export default class RoomController {
       '/api/v1/room-invitations/confirm',
       [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
       (req, res) => this.handlePostRoomInvitationConfirm(req, res)
+    );
+
+    router.post(
+      '/api/v1/rooms/:roomId/message',
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomMessageBodySchema)],
+      (req, res) => this.handlePostRoomMessage(req, res)
+    );
+
+    router.delete(
+      '/api/v1/rooms/:roomId/messages/:messageKey',
+      [needsPermission(permissions.CREATE_CONTENT), validateParams(deleteRoomMessageParamsSchema)],
+      (req, res) => this.handleDeleteRoomMessage(req, res)
     );
 
     router.get(

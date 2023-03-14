@@ -7,7 +7,14 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import { INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument } from '../test-helper.js';
+import {
+  destroyTestEnvironment,
+  setupTestEnvironment,
+  pruneTestEnvironment,
+  createTestUser,
+  createTestRoom,
+  createTestDocument
+} from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -77,6 +84,7 @@ describe('room-service', () => {
         createdBy: myUser._id,
         updatedOn: now,
         members: [],
+        messages: [],
         documents: []
       });
     });
@@ -304,6 +312,7 @@ describe('room-service', () => {
             joinedOn: new Date()
           }
         ],
+        messages: [],
         documents: []
       });
     });
@@ -345,6 +354,7 @@ describe('room-service', () => {
         updatedOn: new Date(),
         owner: myUser._id,
         members: [],
+        messages: [],
         documents: []
       };
 
@@ -395,6 +405,93 @@ describe('room-service', () => {
 
       it('should release the lock on the room', () => {
         assert.calledWith(lockStore.releaseLock, lock);
+      });
+    });
+  });
+
+  describe('createRoomMessage', () => {
+    let room;
+
+    beforeEach(async () => {
+      room = await createTestRoom(container, { name: 'room', owner: myUser._id, createdBy: myUser._id });
+      result = await sut.createRoomMessage({ room, text: 'message', emailNotification: true });
+    });
+
+    it('should return the updated room', () => {
+      expect(result).toEqual({
+        _id: expect.stringMatching(/\w+/),
+        name: 'room',
+        slug: '',
+        owner: myUser._id,
+        isCollaborative: false,
+        description: '',
+        createdOn: now,
+        createdBy: myUser._id,
+        updatedOn: now,
+        members: [],
+        messages: [
+          {
+            key: expect.stringMatching(/\w+/),
+            text: 'message',
+            emailNotification: true,
+            createdOn: now
+          }
+        ],
+        documents: []
+      });
+    });
+  });
+
+  describe('deleteRoomMessage', () => {
+    let room;
+
+    beforeEach(async () => {
+      room = await createTestRoom(
+        container,
+        {
+          name: 'room',
+          owner: myUser._id,
+          createdBy: myUser._id,
+          messages: [
+            {
+              key: uniqueId.create(),
+              text: 'message 1',
+              emailNotification: true,
+              createdOn: now
+            },
+            {
+              key: uniqueId.create(),
+              text: 'message 2',
+              emailNotification: true,
+              createdOn: now
+            }
+          ]
+        }
+      );
+      result = await sut.deleteRoomMessage({ room, messageKey: room.messages[0].key });
+    });
+
+    it('should return the updated room', () => {
+      expect(result).toEqual({
+        _id: expect.stringMatching(/\w+/),
+        name: 'room',
+        slug: '',
+        owner: myUser._id,
+        isCollaborative: false,
+        description: '',
+        createdOn: now,
+        createdBy: myUser._id,
+        updatedOn: now,
+        members: [],
+        messages: [
+          {
+            key: room.messages[1].key,
+            text: 'message 2',
+            emailNotification: true,
+            createdOn: now
+          }
+        ],
+        documents: []
       });
     });
   });

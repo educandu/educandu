@@ -265,6 +265,11 @@ class ClientDataMappingService {
       return result;
     });
 
+    mappedRoom.messages = room.messages.map(message => ({
+      ...message,
+      createdOn: message.createdOn.toISOString()
+    }));
+
     return {
       ...mappedRoom,
       createdOn: mappedRoom.createdOn.toISOString(),

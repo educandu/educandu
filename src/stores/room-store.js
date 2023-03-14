@@ -5,9 +5,9 @@ import {
   roomMemberDBSchema,
   roomMembersDBSchema,
   roomMetadataDBSchema,
+  roomMessagesDBSchema,
   roomDocumentsDBSchema
-}
-  from '../domain/schemas/room-schemas.js';
+} from '../domain/schemas/room-schemas.js';
 
 class RoomStore {
   static dependencies = [Database];
@@ -106,6 +106,11 @@ class RoomStore {
   updateRoomMembers(roomId, members, { session } = {}) {
     validate({ members }, roomMembersDBSchema);
     return this.collection.updateOne({ _id: roomId }, { $set: { members } }, { session });
+  }
+
+  updateRoomMessages(roomId, messages, { session } = {}) {
+    validate({ messages }, roomMessagesDBSchema);
+    return this.collection.updateOne({ _id: roomId }, { $set: { messages } }, { session });
   }
 
   saveRoom(room, { session } = {}) {
