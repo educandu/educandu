@@ -437,7 +437,7 @@ function DocumentMetadataModal({
                     checked={publicContext.protected}
                     onChange={handleProtectedChange}
                     disabled={
-                      !!publicContextPermissions.canProtectOwnDocWhenCreating && mode === DOCUMENT_METADATA_MODAL_MODE.update
+                      !publicContextPermissions.canManagePublicContext && mode === DOCUMENT_METADATA_MODAL_MODE.update
                     }
                     >
                     <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
