@@ -112,7 +112,7 @@ const config = {
   exposeErrorDetails: parseBool(process.env.TEST_APP_EXPOSE_ERROR_DETAILS || false.toString()),
   ambConfig: {
     apiKey: process.env.TEST_APP_AMB_API_KEY,
-    image: './images/educandu-logo-blue.png?v=2',
+    image: './images/educandu-logo-blue.png',
     publisher: [
       {
         type: 'Organization',
