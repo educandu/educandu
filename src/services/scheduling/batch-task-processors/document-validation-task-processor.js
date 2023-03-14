@@ -17,7 +17,7 @@ class DocumentValidationTaskProcessor {
       throw new Error('Cancellation requested');
     }
 
-    logger.info(`Regenerating document with id ${documentId}`);
+    logger.info(`Validating document with id ${documentId}`);
     await this.documentService.validateDocument(documentId);
   }
 }

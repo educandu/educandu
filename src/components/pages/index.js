@@ -19,7 +19,7 @@ function Index({ HomePageTemplate, initialState }) {
   const renderTag = tag => {
     return (
       <div key={tag} className="IndexPage-searchesTag">
-        <Tag className="Tag Tag--clickable" onClick={() => handleTagClick(tag)}>{tag}</Tag>
+        <Tag className="Tag Tag--clickableInverted" onClick={() => handleTagClick(tag)}>{tag}</Tag>
       </div>
     );
   };
