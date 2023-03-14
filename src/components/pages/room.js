@@ -605,10 +605,17 @@ export default function Room({ PageTemplate, initialState }) {
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate>
         <div className="RoomPage">
-          <Breadcrumb className="Breadcrumbs">
-            <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-            <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb
+            className="Breadcrumbs"
+            items={[
+              {
+                title: t('common:roomsBreadcrumbPart'),
+                href: routes.getDashboardUrl({ tab: 'rooms' })
+              }, {
+                title: room.name
+              }
+            ]}
+            />
           <div className="RoomPage-title">
             <div>{room.name}</div>
             <div className="RoomPage-titleStar">

@@ -14,13 +14,11 @@ import RoomMarkedFavoriteIcon from '../icons/user-activities/room-marked-favorit
 import UserMarkedFavoriteIcon from '../icons/user-activities/user-marked-favorite-icon.js';
 import DocumentMarkedFavoriteIcon from '../icons/user-activities/document-marked-favorite-icon.js';
 
-const TimelineItem = Timeline.Item;
-
 function ActivitiesTab({ activities, loading }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('activitiesTab');
 
-  const renderActivity = ({ type, icon, timestamp, description, title, href, isDeprecated }) => {
+  const getActivityItem = ({ type, icon, timestamp, description, title, href, isDeprecated }) => {
     let deprecatedTitle;
     if (isDeprecated) {
       switch (type) {
@@ -43,22 +41,26 @@ function ActivitiesTab({ activities, loading }) {
     }
 
     return (
-      <TimelineItem
-        key={timestamp}
-        dot={<div className="ActivitiesTab-activityIcon">{icon}</div>}
-        label={<span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>}
-        >
-        <div className="ActivitiesTab-activity">
-          <span className="ActivitiesTab-activityDescription">{description}: </span>
-          {!!isDeprecated && <span className="ActivitiesTab-activityDeprecatedTitle">{deprecatedTitle}</span>}
-          {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}
-        </div>
-      </TimelineItem>
+      {
+        label: (
+          <span className="ActivitiesTab-activityLabel">{formatDate(timestamp)}</span>
+        ),
+        dot: (
+          <div className="ActivitiesTab-activityIcon">{icon}</div>
+        ),
+        children: (
+          <div className="ActivitiesTab-activity">
+            <span className="ActivitiesTab-activityDescription">{description}: </span>
+            {!!isDeprecated && <span className="ActivitiesTab-activityDeprecatedTitle">{deprecatedTitle}</span>}
+            {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}
+          </div>
+        )
+      }
     );
   };
 
-  const renderDocumentCreatedActivity = activity => {
-    return renderActivity({
+  const getDocumentCreatedActivityItem = activity => {
+    return getActivityItem({
       icon: <DocumentCreatedIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -69,8 +71,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderDocumentUpdatedActivity = activity => {
-    return renderActivity({
+  const getDocumentUpdatedActivityItem = activity => {
+    return getActivityItem({
       icon: <ItemEditedIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -81,8 +83,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderDocumentMarkedFavoriteActivity = activity => {
-    return renderActivity({
+  const getDocumentMarkedFavoriteActivityItem = activity => {
+    return getActivityItem({
       icon: <DocumentMarkedFavoriteIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -93,8 +95,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderRoomCreatedActivity = activity => {
-    return renderActivity({
+  const getRoomCreatedActivityItem = activity => {
+    return getActivityItem({
       icon: <RoomCreatedIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -105,8 +107,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderRoomUpdatedActivity = activity => {
-    return renderActivity({
+  const getRoomUpdatedActivityItem = activity => {
+    return getActivityItem({
       icon: <ItemEditedIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -117,8 +119,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderRoomMarkedFavoriteActivity = activity => {
-    return renderActivity({
+  const getRoomMarkedFavoriteActivityItem = activity => {
+    return getActivityItem({
       icon: <RoomMarkedFavoriteIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -129,8 +131,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderRoomJoinedActivity = activity => {
-    return renderActivity({
+  const getRoomJoinedActivityItem = activity => {
+    return getActivityItem({
       icon: <RoomJoinedIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -141,8 +143,8 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderUserMarkedFavoriteActivity = activity => {
-    return renderActivity({
+  const getUserMarkedFavoriteActivityItem = activity => {
+    return getActivityItem({
       icon: <UserMarkedFavoriteIcon />,
       type: activity.type,
       timestamp: activity.timestamp,
@@ -153,36 +155,30 @@ function ActivitiesTab({ activities, loading }) {
     });
   };
 
-  const renderActivityByType = activity => {
+  const getActivityItemByType = activity => {
     switch (activity.type) {
       case USER_ACTIVITY_TYPE.documentCreated:
-        return renderDocumentCreatedActivity(activity);
+        return getDocumentCreatedActivityItem(activity);
       case USER_ACTIVITY_TYPE.documentUpdated:
-        return renderDocumentUpdatedActivity(activity);
+        return getDocumentUpdatedActivityItem(activity);
       case USER_ACTIVITY_TYPE.documentMarkedFavorite:
-        return renderDocumentMarkedFavoriteActivity(activity);
+        return getDocumentMarkedFavoriteActivityItem(activity);
       case USER_ACTIVITY_TYPE.roomCreated:
-        return renderRoomCreatedActivity(activity);
+        return getRoomCreatedActivityItem(activity);
       case USER_ACTIVITY_TYPE.roomUpdated:
-        return renderRoomUpdatedActivity(activity);
+        return getRoomUpdatedActivityItem(activity);
       case USER_ACTIVITY_TYPE.roomMarkedFavorite:
-        return renderRoomMarkedFavoriteActivity(activity);
+        return getRoomMarkedFavoriteActivityItem(activity);
       case USER_ACTIVITY_TYPE.roomJoined:
-        return renderRoomJoinedActivity(activity);
+        return getRoomJoinedActivityItem(activity);
       case USER_ACTIVITY_TYPE.userMarkedFavorite:
-        return renderUserMarkedFavoriteActivity(activity);
+        return getUserMarkedFavoriteActivityItem(activity);
       default:
         return null;
     }
   };
 
-  const renderActivities = () => {
-    return (
-      <Timeline mode="left">
-        {activities.map(renderActivityByType).filter(activity => activity)}
-      </Timeline>
-    );
-  };
+  const timelineItems = activities.map(getActivityItemByType).filter(activity => activity);
 
   return (
     <div>
@@ -190,7 +186,7 @@ function ActivitiesTab({ activities, loading }) {
         <div className="ActivitiesTab-info">{t('info')}</div>
         <div className="ActivitiesTab-timeline">
           {!!loading && <Spin className="u-spin" />}
-          {!loading && renderActivities()}
+          {!loading && <Timeline mode="left" items={timelineItems} />}
           {!loading && !activities.length && <span>{t('noActivities')}</span>}
         </div>
       </section>

@@ -685,11 +685,20 @@ function Document({ initialState, PageTemplate }) {
         <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
           <div className="DocumentPage-document">
             {!!room && (
-              <Breadcrumb className="Breadcrumbs">
-                <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-                <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
-                <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
-              </Breadcrumb>
+              <Breadcrumb
+                className="Breadcrumbs"
+                items={[
+                  {
+                    title: t('common:roomsBreadcrumbPart'),
+                    href: routes.getDashboardUrl({ tab: 'rooms' })
+                  }, {
+                    title: room.name,
+                    href: routes.getRoomUrl(room._id, room.slug)
+                  }, {
+                    title: doc.title
+                  }
+                ]}
+                />
             )}
 
             <div>
