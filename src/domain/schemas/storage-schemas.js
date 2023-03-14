@@ -40,3 +40,8 @@ export const storagePlanDBSchema = joi.object({
   name: joi.string().required(),
   maxBytes: joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required()
 });
+
+export const deleteRoomMediaParamsSchema = joi.object({
+  roomId: idOrKeySchema.required(),
+  name: joi.string().required()
+});

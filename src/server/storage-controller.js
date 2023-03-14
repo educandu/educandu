@@ -20,7 +20,8 @@ import {
   postStoragePlanBodySchema,
   patchStoragePlanParamsSchema,
   deleteStoragePlanParamsSchema,
-  patchStoragePlanBodySchema
+  patchStoragePlanBodySchema,
+  deleteRoomMediaParamsSchema
 } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
@@ -127,6 +128,19 @@ class StorageController {
     return res.send({});
   }
 
+  async handleGetRoomMediaOverview(req, res) {
+    const { user } = req;
+    const roomMediaOverview = await this.storageService.getRoomMediaOverview({ user });
+    return res.send(roomMediaOverview);
+  }
+
+  async handleDeleteRoomMedia(req, res) {
+    const { user } = req;
+    const { roomId, name } = req.params;
+    const roomMedia = await this.storageService.deleteRoomMedia({ user, roomId, name });
+    return res.send(roomMedia);
+  }
+
   registerBeforePages(router) {
     router.use(async (req, _res, next) => {
       try {
@@ -205,6 +219,19 @@ class StorageController {
       needsPermission(permissions.MANAGE_SETUP),
       validateParams(deleteStoragePlanParamsSchema),
       (req, res) => this.handleDeleteStoragePlan(req, res)
+    );
+
+    router.get(
+      '/api/v1/storage/room-media-overview',
+      needsPermission(permissions.BROWSE_STORAGE),
+      (req, res) => this.handleGetRoomMediaOverview(req, res)
+    );
+
+    router.delete(
+      '/api/v1/storage/room-media/:roomId/:name',
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
+      validateParams(deleteRoomMediaParamsSchema),
+      (req, res) => this.handleDeleteRoomMedia(req, res)
     );
   }
 }

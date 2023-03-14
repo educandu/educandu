@@ -74,6 +74,17 @@ class UserStore {
     return value;
   }
 
+  async updateUserUsedBytes({ userId, usedBytes }, { session } = {}) {
+    const filter = { _id: userId };
+    const update = { $set: { 'storage.usedBytes': usedBytes } };
+    const options = { session, returnDocument: 'after' };
+
+    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+
+    validate(value, userDBSchema);
+    return value;
+  }
+
   addToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {
     const favorite = { type: favoriteType, id: favoriteId, setOn: favoriteSetOn };
     validate(favorite, favoriteDBSchema);

@@ -1,0 +1,70 @@
+.RoomMediaFilesViewer {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 100%;
+  overflow: hidden;
+}
+
+.RoomMediaFilesViewer-filesViewer {
+  margin: 20px 0;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+  overflow: hidden;
+  position: relative;
+
+  & .ant-table-placeholder .ant-table-cell {
+    border: none;
+  }
+
+  &.is-dropping {
+    .m-dropzone;
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone;
+    .m-dropzone-error;
+  }
+}
+
+.RoomMediaFilesViewer-filesViewerContent {
+  height: 100%;
+
+  &.RoomMediaFilesViewer-filesViewerContent--gridView {
+    overflow: auto;
+  }
+}
+
+.RoomMediaFilesViewer-filesViewerOverlay {
+  .m-mask;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  background-color: fade(@edu-background-color-light, 60%);
+}
+
+.RoomMediaFilesViewer-buttonsLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.RoomMediaFilesViewer-buttonsLineItem {
+  margin-top: @edu-control-spacing-base;
+
+  &.RoomMediaFilesViewer-buttonsLineItem--select {
+    min-width: 100px;
+  }
+}
+
+.RoomMediaFilesViewer-alertPrivateStorage {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.RoomMediaFilesViewer-alertPrivateStorageUsage {
+  flex-grow: 1;
+  margin-left: 5px;
+}

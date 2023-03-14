@@ -1,10 +1,4 @@
 roomMediaDefaultScreen:
-  filesView_list:
-    en: List view
-    de: Listenansicht
-  filesView_grid:
-    en: Grid view
-    de: Kachelansicht
   uploadFiles:
     en: Upload files
     de: Dateien hochladen

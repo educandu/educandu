@@ -1,0 +1,10 @@
+storageTab:
+  info:
+    en: Here you can find details about your storage plan and current space status.
+    de: Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.
+  storagePlanName:
+    en: Your storage plan
+    de: Dein Speicherplan
+  noStoragePlan:
+    en: There is no storage plan associated with your account.
+    de: Mit deinem Konto ist kein Speicherplan verbunden.
