@@ -12,8 +12,8 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, NOTIFICATION_EXPIRATION_IN_MONTHS } from '../domain/constants.js';
 import {
-  determineNotificationReasonsForCommentCreatedEvent,
-  determineNotificationReasonsForRevisionCreatedEvent
+  determineNotificationReasonsForDocumentCommentCreatedEvent,
+  determineNotificationReasonsForDocumentRevisionCreatedEvent
 } from '../utils/notification-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -40,7 +40,7 @@ class EventService {
     this.transactionRunner = transactionRunner;
   }
 
-  async _processRevisionCreatedEvent(event, session, context) {
+  async _processDocumentRevisionCreatedEvent(event, session, context) {
     const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
@@ -55,7 +55,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForRevisionCreatedEvent({
+        const reasons = determineNotificationReasonsForDocumentRevisionCreatedEvent({
           event,
           revision,
           document,
@@ -87,7 +87,7 @@ class EventService {
     }
   }
 
-  async _processCommentCreatedEvent(event, session, context) {
+  async _processDocumentCommentCreatedEvent(event, session, context) {
     const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
@@ -101,7 +101,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForCommentCreatedEvent({
+        const reasons = determineNotificationReasonsForDocumentCommentCreatedEvent({
           event,
           document,
           room,
@@ -153,11 +153,11 @@ class EventService {
         let processingResult;
         try {
           switch (event.type) {
-            case EVENT_TYPE.revisionCreated:
-              processingResult = await this._processRevisionCreatedEvent(event, session, context);
+            case EVENT_TYPE.documentRevisionCreated:
+              processingResult = await this._processDocumentRevisionCreatedEvent(event, session, context);
               break;
-            case EVENT_TYPE.commentCreated:
-              processingResult = await this._processCommentCreatedEvent(event, session, context);
+            case EVENT_TYPE.documentCommentCreated:
+              processingResult = await this._processDocumentCommentCreatedEvent(event, session, context);
               break;
             default:
               throw new Error(`Event type ${event.type} is unknown`);

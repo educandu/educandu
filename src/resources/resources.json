@@ -580,27 +580,27 @@
       "en": "There are no new notifications for you.",
       "de": "Es gibt keine neuen Benachrichtigungen für dich."
     },
-    "revisionCreatedNotification": {
+    "documentRevisionCreatedNotification": {
       "en": "Document has been edited",
       "de": "Dokument wurde bearbeitet"
     },
-    "publicRevisionCreatedNotification": {
+    "publicDocumentRevisionCreatedNotification": {
       "en": "Public document has been edited",
       "de": "Öffentliches Dokument wurde bearbeitet"
     },
-    "roomRevisionCreatedNotification": {
+    "roomDocumentRevisionCreatedNotification": {
       "en": "Room document has been edited",
       "de": "Raum-Dokument wurde bearbeitet"
     },
-    "commentCreatedNotification": {
+    "documentCommentCreatedNotification": {
       "en": "New comment on document",
       "de": "Neuer Kommentar am Dokument"
     },
-    "publicCommentCreatedNotification": {
+    "publicDocumentCommentCreatedNotification": {
       "en": "New comment on public document",
       "de": "Neuer Kommentar am öffentliches Dokument"
     },
-    "roomCommentCreatedNotification": {
+    "roomDocumentCommentCreatedNotification": {
       "en": "New comment on room document",
       "de": "Neuer Kommentar am Raum-Dokument"
     },

@@ -67,7 +67,7 @@ class CommentService {
 
       await this.commentStore.saveComment(newComment, { session });
       if (!silentCreation) {
-        await this.eventStore.recordCommentCreatedEvent({ comment: newComment, document, user }, { session });
+        await this.eventStore.recordDocumentCommentCreatedEvent({ comment: newComment, document, user }, { session });
       }
     });
 

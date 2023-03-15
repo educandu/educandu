@@ -255,7 +255,7 @@ class DocumentService {
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         if (!silentCreation) {
-          await this.eventStore.recordRevisionCreatedEvent({ revision: newRevision, user }, { session });
+          await this.eventStore.recordDocumentRevisionCreatedEvent({ revision: newRevision, user }, { session });
         }
         await this.documentStore.saveDocument(newDocument, { session });
         if (room) {
@@ -317,7 +317,7 @@ class DocumentService {
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
         if (!silentUpdate) {
-          await this.eventStore.recordRevisionCreatedEvent({ revision: newRevision, user }, { session });
+          await this.eventStore.recordDocumentRevisionCreatedEvent({ revision: newRevision, user }, { session });
         }
         await this.documentStore.saveDocument(newDocument, { session });
       });
@@ -495,7 +495,7 @@ class DocumentService {
         const newDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newRevision]);
 
         await this.documentRevisionStore.saveDocumentRevision(newRevision, { session });
-        await this.eventStore.recordRevisionCreatedEvent({ revision: newRevision, user }, { session });
+        await this.eventStore.recordDocumentRevisionCreatedEvent({ revision: newRevision, user }, { session });
         await this.documentStore.saveDocument(newDocument, { session });
       });
 

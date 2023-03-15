@@ -4,7 +4,7 @@ import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/consta
 
 function shouldProcessEvent({ event, revision, document, room, notifiedUser }) {
   // Never notify the user for deleted rooms/documents/revisions:
-  if (!document || (document.roomId && !room) || (room && !document.roomId) || (event.type === EVENT_TYPE.revisionCreated && !revision)) {
+  if (!document || (document.roomId && !room) || (room && !document.roomId) || (event.type === EVENT_TYPE.documentRevisionCreated && !revision)) {
     return false;
   }
 
@@ -21,10 +21,10 @@ function shouldProcessEvent({ event, revision, document, room, notifiedUser }) {
   if (room) {
     let roomContext;
     switch (event.type) {
-      case EVENT_TYPE.revisionCreated:
+      case EVENT_TYPE.documentRevisionCreated:
         roomContext = revision.roomContext;
         break;
-      case EVENT_TYPE.commentCreated:
+      case EVENT_TYPE.documentCommentCreated:
         roomContext = document.roomContext;
         break;
       default:
@@ -67,7 +67,7 @@ function collectFavoriteReasonsAfterDocumentEvent({ reasons, event, documentId, 
   }
 }
 
-export function determineNotificationReasonsForRevisionCreatedEvent({ event, revision, document, room, notifiedUser }) {
+export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, revision, document, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, revision, document, room, notifiedUser })) {
     return [];
   }
@@ -80,7 +80,7 @@ export function determineNotificationReasonsForRevisionCreatedEvent({ event, rev
   return [...reasons];
 }
 
-export function determineNotificationReasonsForCommentCreatedEvent({ event, document, room, notifiedUser }) {
+export function determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, revision: null, document, room, notifiedUser })) {
     return [];
   }
@@ -95,8 +95,8 @@ export function determineNotificationReasonsForCommentCreatedEvent({ event, docu
 
 function _createGroupKey(notification) {
   switch (notification.eventType) {
-    case EVENT_TYPE.revisionCreated:
-    case EVENT_TYPE.commentCreated:
+    case EVENT_TYPE.documentRevisionCreated:
+    case EVENT_TYPE.documentCommentCreated:
       return [notification.eventType, notification.eventParams.documentId].join('|');
     default:
       throw new Error(`Unsupported event type '${notification.eventType}'`);

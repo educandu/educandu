@@ -6,8 +6,8 @@ export const ROLE = {
 };
 
 export const EVENT_TYPE = {
-  revisionCreated: 'revision-created',
-  commentCreated: 'comment-created'
+  documentRevisionCreated: 'document-revision-created',
+  documentCommentCreated: 'document-comment-created'
 };
 
 export const NOTIFICATION_REASON = {

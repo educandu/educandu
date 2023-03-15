@@ -159,8 +159,8 @@ class ClientDataMappingService {
 
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById) {
     switch (eventType) {
-      case EVENT_TYPE.revisionCreated:
-      case EVENT_TYPE.commentCreated:
+      case EVENT_TYPE.documentRevisionCreated:
+      case EVENT_TYPE.documentCommentCreated:
         return {
           document: allowedDocumentsById.get(eventParams.documentId) || null
         };
