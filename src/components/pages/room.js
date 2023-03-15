@@ -322,7 +322,7 @@ export default function Room({ PageTemplate, initialState }) {
     setNewMessageEmailNotification(checked);
   };
 
-  const handleDeleteMessageClick = async msg => {
+  const handleDeleteMessageClick = msg => {
     confirmRoomMessageDelete(t, formatDate(msg.createdOn), async () => {
       const response = await roomApiClient.deleteRoomMessage({ roomId: room._id, messageKey: msg.key });
       setRoom(response.room);
@@ -466,10 +466,17 @@ export default function Room({ PageTemplate, initialState }) {
         {sortedMessages.map(msg => (
           <div key={msg.key} className="RoomPage-messageBoardMessageWrapper">
             <div key={msg.key} className="RoomPage-messageBoardMessage">
-              <div className="RoomPage-messageBoardMessageDate">{formatDate(msg.createdOn)}</div>
+              {!!msg.emailNotification && (
+                <div className="RoomPage-messageBoardMessageIcon">
+                  <Tooltip title={t('messageEmailNotificationIconTooltip')}>
+                    <MailOutlined />
+                  </Tooltip>
+                </div>
+              )}
               <div className="RoomPage-messageBoardMessageText">
                 <Markdown>{msg.text}</Markdown>
               </div>
+              <div className="RoomPage-messageBoardMessageDate">{formatDate(msg.createdOn)}</div>
             </div>
             {viewMode === VIEW_MODE.owner && (
               <DeleteButton onClick={() => handleDeleteMessageClick(msg)} />

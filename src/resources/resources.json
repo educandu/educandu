@@ -1623,6 +1623,10 @@
     "postMessageCheckboxInfo": {
       "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board",
       "de": "Eine E-Mail wird sofort an alle Raummitglieder geschickt, notifying them that there is new information on the room message board"
+    },
+    "messageEmailNotificationIconTooltip": {
+      "en": "An email was sent to all room members when this message was posted",
+      "de": "An email was sent to all room members when this message was posted"
     }
   },
   "search": {
