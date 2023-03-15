@@ -385,8 +385,8 @@
       "de": "Möchtest du die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?"
     },
     "deleteRoomMessageConfirmation": {
-      "en": "Do you really want to delete the message from \"{timestamp}\"?",
-      "de": "Möchtest du die Nachricht von \"{timestamp}\" wirklich löschen?"
+      "en": "Do you really want to delete the message posted on \"{timestamp}\"?",
+      "de": "Möchtest du die Nachricht geschrieben am \"{timestamp}\" wirklich löschen?"
     },
     "leaveRoomConfirmation": {
       "en": "Do you really want to cancel your membership in room \"{roomName}\"?",
