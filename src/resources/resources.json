@@ -3907,6 +3907,18 @@
     "userNotificationEmail.markdown": {
       "en": "Hello {userDisplayName}!\n\nYou have {notificationsCount, plural, =1 {a new notification} other {# new notifications}} on **{appName}**.\nGo to the [notifications]({notificationsLink}) on your dashboard in order to read them.\n\nIf you would like to change your reminder email settings you can go to the [settings area]({settingsLink}) of your dashboard.\n",
       "de": "Hallo {userDisplayName}!\n\nDu hast {notificationsCount, plural, =1 {eine neue Benachrichtigung} other {# neue Benachrichtigungen}} auf **{appName}**.\nGehe zu den [Benachrichtigungen]({notificationsLink}) auf deinem Dashboard, um sie abzurufen.\n\nFalls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den [Einstellungen]({settingsLink}) auf\ndeinem Dashboard tun.\n"
+    },
+    "roomMessageEmail.subject": {
+      "en": "New message in {appName} room",
+      "de": "Neue Nachricht im {appName}-Raum"
+    },
+    "roomMessageEmail.text": {
+      "en": "Hello {userDisplayName}!\n\nA new message was just posted in this {appName} room: \"{roomName}\".\nOpen {roomLink} in your browser in order to read it.\n",
+      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht war in diesem {appName}-Raum geschrieben: \"{roomName}\".\nÖffne {roomLink} in deinem Browser, um sie abzurufen.\n"
+    },
+    "roomMessageEmail.markdown": {
+      "en": "Hello {userDisplayName}!\n\nA new message was just posted in this {appName} room: [{roomName}]({roomLink}).\n",
+      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht war in diesem {appName}-Raum geschrieben: [{roomName}]({roomLink}).\n"
     }
   },
   "mimeTypeHelper": {

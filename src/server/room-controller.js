@@ -275,6 +275,10 @@ export default class RoomController {
     const updatedRoom = await this.roomService.createRoomMessage({ room, text, emailNotification });
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
 
+    if (emailNotification) {
+      await this.mailService.sendRoomMessageEmailsToMembers({ room });
+    }
+
     return res.status(201).send({ room: mappedRoom });
   }
 
