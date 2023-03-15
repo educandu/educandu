@@ -29,7 +29,7 @@ function ErrorPage({ error, settings, uiLanguage, i18n }) {
       </main>
       <footer className="ErrorPage-footer">
         <div className="ErrorPage-footerContent">
-          {(settings.footerLinks?.[uiLanguage] || []).map((fl, index) => (
+          {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
             <span key={index.toString()} className="ErrorPage-footerLink">
               <a href={routes.getDocUrl({ id: fl.documentId })}>{fl.linkTitle}</a>
             </span>
