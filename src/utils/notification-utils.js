@@ -2,50 +2,56 @@ import cloneDeep from './clone-deep.js';
 import { isRoomOwnerOrInvitedMember } from './room-utils.js';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
 
-function shouldProcessEvent({ event, revision, document, room, notifiedUser }) {
-  // Never notify the user for deleted rooms/documents/revisions:
-  if (!document || (document.roomId && !room) || (room && !document.roomId) || (event.type === EVENT_TYPE.documentRevisionCreated && !revision)) {
+function shouldProcessEvent({ event, documentRevision, document, room, notifiedUser }) {
+  let dataEntryWasDeleted = false;
+
+  switch (event.type) {
+    case EVENT_TYPE.documentRevisionCreated:
+      dataEntryWasDeleted = !document || (document.roomId && !room) || (room && !document.roomId) || !documentRevision;
+      break;
+    case EVENT_TYPE.documentCommentCreated:
+      dataEntryWasDeleted = !document || (document.roomId && !room) || (room && !document.roomId);
+      break;
+    case EVENT_TYPE.roomMessageCreated:
+      dataEntryWasDeleted = !room || !room.messages.find(message => message.key === event.params.roomMessageKey);
+      break;
+    default:
+      throw new Error(`Unexpected event type '${event.type}'`);
+  }
+
+  if (dataEntryWasDeleted) {
     return false;
   }
 
-  // Never notify the user for events created before they joined:
-  if (notifiedUser.createdOn > event.createdOn) {
+  const eventCreatedBeforeUserRegistration = notifiedUser.createdOn > event.createdOn;
+  if (eventCreatedBeforeUserRegistration) {
     return false;
   }
 
-  // Never notify the user that triggered the event:
-  if (notifiedUser._id === event.params.userId) {
+  const eventTriggeredByNotifiedUser = event.params.userId === notifiedUser._id;
+  if (eventTriggeredByNotifiedUser) {
     return false;
   }
 
-  if (room) {
-    let roomContext;
-    switch (event.type) {
-      case EVENT_TYPE.documentRevisionCreated:
-        roomContext = revision.roomContext;
-        break;
-      case EVENT_TYPE.documentCommentCreated:
-        roomContext = document.roomContext;
-        break;
-      default:
-        throw new Error(`Unexpected event type '${event.type}'`);
-    }
+  const draftRoomDocument = documentRevision?.roomContext?.draft || document?.roomContext?.draft;
+  if (draftRoomDocument) {
+    return false;
+  }
 
-    // Never notify for draft revisions:
-    if (roomContext.draft) {
-      return false;
-    }
-
-    // Never notify outsiders for room-bound events:
-    if (room && !isRoomOwnerOrInvitedMember({ room, userId: notifiedUser._id })) {
-      return false;
-    }
+  if (room && !isRoomOwnerOrInvitedMember({ room, userId: notifiedUser._id })) {
+    return false;
   }
 
   return true;
 }
 
 function collectRoomMembershipReasonsAfterDocumentEvent({ reasons, room, notifiedUser }) {
+  if (room && isRoomOwnerOrInvitedMember({ room, userId: notifiedUser._id })) {
+    reasons.add(NOTIFICATION_REASON.roomMembership);
+  }
+}
+
+function collectRoomMembershipReasonsAfterRoomEvent({ reasons, room, notifiedUser }) {
   if (room && isRoomOwnerOrInvitedMember({ room, userId: notifiedUser._id })) {
     reasons.add(NOTIFICATION_REASON.roomMembership);
   }
@@ -67,8 +73,16 @@ function collectFavoriteReasonsAfterDocumentEvent({ reasons, event, documentId, 
   }
 }
 
-export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, revision, document, room, notifiedUser }) {
-  if (!shouldProcessEvent({ event, revision, document, room, notifiedUser })) {
+function collectFavoriteReasonsAfterRoomEvent({ reasons, roomId, notifiedUser }) {
+  for (const favorite of notifiedUser.favorites) {
+    if (roomId && favorite.type === FAVORITE_TYPE.room && favorite.id === roomId) {
+      reasons.add(NOTIFICATION_REASON.roomFavorite);
+    }
+  }
+}
+
+export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser }) {
+  if (!shouldProcessEvent({ event, documentRevision, document, room, notifiedUser })) {
     return [];
   }
 
@@ -81,7 +95,7 @@ export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ ev
 }
 
 export function determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser }) {
-  if (!shouldProcessEvent({ event, revision: null, document, room, notifiedUser })) {
+  if (!shouldProcessEvent({ event, documentRevision: null, document, room, notifiedUser })) {
     return [];
   }
 
@@ -93,11 +107,26 @@ export function determineNotificationReasonsForDocumentCommentCreatedEvent({ eve
   return [...reasons];
 }
 
+export function determineNotificationReasonsForRoomMessageCreatedEvent({ event, room, notifiedUser }) {
+  if (!shouldProcessEvent({ event, room, notifiedUser })) {
+    return [];
+  }
+
+  const reasons = new Set();
+
+  collectRoomMembershipReasonsAfterRoomEvent({ reasons, room, notifiedUser });
+  collectFavoriteReasonsAfterRoomEvent({ reasons, roomId: room._id, notifiedUser });
+
+  return [...reasons];
+}
+
 function _createGroupKey(notification) {
   switch (notification.eventType) {
     case EVENT_TYPE.documentRevisionCreated:
     case EVENT_TYPE.documentCommentCreated:
       return [notification.eventType, notification.eventParams.documentId].join('|');
+    case EVENT_TYPE.roomMessageCreated:
+      return [notification.eventType, notification.eventParams.roomId, notification.eventParams.roomMessageKey].join('|');
     default:
       throw new Error(`Unsupported event type '${notification.eventType}'`);
   }

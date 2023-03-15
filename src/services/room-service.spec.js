@@ -414,7 +414,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       room = await createTestRoom(container, { name: 'room', owner: myUser._id, createdBy: myUser._id });
-      result = await sut.createRoomMessage({ room, text: 'message', emailNotification: true });
+      result = await sut.createRoomMessage({ room, text: 'message', emailNotification: true, silentCreation: true });
     });
 
     it('should return the updated room', () => {

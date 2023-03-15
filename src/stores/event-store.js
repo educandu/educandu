@@ -25,10 +25,10 @@ class EventStore {
     return latestUnprocessedEvents[0]?._id || null;
   }
 
-  recordDocumentRevisionCreatedEvent({ revision, user }, { session } = {}) {
+  recordDocumentRevisionCreatedEvent({ documentRevision, user }, { session } = {}) {
     return this._recordEvent(
       EVENT_TYPE.documentRevisionCreated,
-      { userId: user._id, documentId: revision.documentId, revisionId: revision._id, roomId: revision.roomId },
+      { userId: user._id, documentId: documentRevision.documentId, documentRevisionId: documentRevision._id, roomId: documentRevision.roomId },
       { session }
     );
   }
@@ -37,6 +37,14 @@ class EventStore {
     return this._recordEvent(
       EVENT_TYPE.documentCommentCreated,
       { userId: user._id, documentId: comment.documentId, commentId: comment._id, roomId: document.roomId },
+      { session }
+    );
+  }
+
+  recordRoomMessageCreatedEvent({ userId, roomId, roomMessageKey }, { session } = {}) {
+    return this._recordEvent(
+      EVENT_TYPE.roomMessageCreated,
+      { userId, roomId, roomMessageKey },
       { session }
     );
   }

@@ -8,6 +8,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
+import EventStore from '../stores/event-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
@@ -24,13 +25,14 @@ const { BadRequest, NotFound } = httpErrors;
 const logger = new Logger(import.meta.url);
 
 export default class RoomService {
-  static dependencies = [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, TransactionRunner];
+  static dependencies = [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, EventStore, TransactionRunner];
 
-  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, documentStore, transactionRunner) {
+  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, documentStore, eventStore, transactionRunner) {
     this.cdn = cdn;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
+    this.eventStore = eventStore;
     this.documentStore = documentStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
@@ -95,16 +97,22 @@ export default class RoomService {
     return newRoom;
   }
 
-  async createRoomMessage({ room, text, emailNotification }) {
+  async createRoomMessage({ room, text, emailNotification, silentCreation = false }) {
     const messages = cloneDeep(room.messages);
-    messages.push({
+    const newMessage = {
       key: uniqueId.create(),
       text,
       emailNotification,
       createdOn: new Date()
-    });
+    };
+
+    messages.push(newMessage);
 
     await this.roomStore.updateRoomMessages(room._id, messages);
+
+    if (!silentCreation) {
+      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key });
+    }
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 

@@ -604,9 +604,17 @@
       "en": "New comment on room document",
       "de": "Neuer Kommentar am Raum-Dokument"
     },
+    "roomMessageCreatedNotification": {
+      "en": "New message in room",
+      "de": "Neue Nachricht im Raum"
+    },
     "documentNotAvailable": {
       "en": "Document no longer available",
       "de": "Dokument nicht mehr verfügbar"
+    },
+    "roomNotAvailable": {
+      "en": "Room no longer available",
+      "de": "Raum nicht mehr verfügbar"
     },
     "remove": {
       "en": "Remove",
