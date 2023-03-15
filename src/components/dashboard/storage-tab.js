@@ -11,6 +11,7 @@ import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
+import { roomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
@@ -22,7 +23,7 @@ const logger = new Logger(import.meta.url);
 const createUploadModalProps = ({ isOpen = false, files = [] }) => ({ isOpen, files });
 const createPreviewModalProps = ({ isOpen = false, file = null }) => ({ isOpen, file });
 
-function StorageTab({ storage, loading, onStorageChange }) {
+function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
   const filesViewerApiRef = useRef(null);
   const [files, setFiles] = useState([]);
   const { t } = useTranslation('storageTab');
@@ -36,21 +37,21 @@ function StorageTab({ storage, loading, onStorageChange }) {
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
   const storageProviderStorage = useMemo(() => ({
-    usedBytes: storage?.usedBytes || 0,
-    maxBytes: storage?.storagePlan?.maxBytes || 0,
+    usedBytes: roomMediaOverview?.usedBytes || 0,
+    maxBytes: roomMediaOverview?.storagePlan?.maxBytes || 0,
     path: selectedRoomId ? getRoomMediaRoomPath(selectedRoomId) : 'invalid',
     isDeletionEnabled: true
-  }), [storage, selectedRoomId]);
+  }), [roomMediaOverview, selectedRoomId]);
 
   useEffect(() => {
-    if (!storage) {
+    if (!roomMediaOverview) {
       setRoomOptions([]);
       setSelectedRoomId(null);
       return;
     }
 
-    const newRoomOptions = storage.rooms
-      .map(room => ({ value: room.roomId, label: room.roomName }))
+    const newRoomOptions = roomMediaOverview.roomStorageList
+      .map(roomStorage => ({ value: roomStorage.roomId, label: roomStorage.roomName }))
       .sort(by(option => option.label));
 
     setRoomOptions(newRoomOptions);
@@ -59,13 +60,13 @@ function StorageTab({ storage, loading, onStorageChange }) {
         ? oldSelectedRoomId
         : newRoomOptions[0]?.value || null;
     });
-  }, [storage]);
+  }, [roomMediaOverview]);
 
   useEffect(() => {
-    const newFiles = storage?.rooms.find(room => room.roomId === selectedRoomId)?.objects || [];
+    const newFiles = roomMediaOverview?.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)?.objects || [];
     setFiles(newFiles);
     setHighlightedFile(oldFile => newFiles.find(file => file.url === oldFile?.url) || null);
-  }, [selectedRoomId, storage]);
+  }, [selectedRoomId, roomMediaOverview]);
 
   const handleFileClick = newFile => {
     setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
@@ -80,8 +81,8 @@ function StorageTab({ storage, loading, onStorageChange }) {
       try {
         setIsUpdating(true);
         await storageApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.displayName });
-        const newOverview = await storageApiClient.getRoomMediaOverview();
-        onStorageChange(newOverview);
+        const overview = await storageApiClient.getRoomMediaOverview();
+        onRoomMediaOverviewChange(overview);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -107,8 +108,8 @@ function StorageTab({ storage, loading, onStorageChange }) {
     setUploadModalProps(oldProps => ({ ...oldProps, isOpen: false }));
     try {
       setIsUpdating(true);
-      const newOverview = await storageApiClient.getRoomMediaOverview();
-      onStorageChange(newOverview);
+      const overview = await storageApiClient.getRoomMediaOverview();
+      onRoomMediaOverviewChange(overview);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -142,15 +143,15 @@ function StorageTab({ storage, loading, onStorageChange }) {
       <StorageProvider value={storageProviderStorage}>
         <div className="StorageTab-tabInfo">{t('info')}</div>
         <section className="StorageTab-content">
-          {!storage?.storagePlan && !!loading && <Spin className="u-spin" />}
-          {!storage?.storagePlan && !loading && t('noStoragePlan')}
-          {!!storage?.storagePlan && (
+          {!roomMediaOverview?.storagePlan && !!loading && <Spin className="u-spin" />}
+          {!roomMediaOverview?.storagePlan && !loading && t('noStoragePlan')}
+          {!!roomMediaOverview?.storagePlan && (
             <Fragment>
               <div className="StorageTab-planName">
-                {t('storagePlanName')}: <b>{storage.storagePlan.name}</b>
+                {t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b>
               </div>
               <div className="StorageTab-usedStorage">
-                <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.storagePlan.maxBytes} showLabel />
+                <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan.maxBytes} showLabel />
               </div>
               <div className="StorageTab-fileViewer">
                 <RoomMediaFilesViewer
@@ -185,15 +186,15 @@ function StorageTab({ storage, loading, onStorageChange }) {
 }
 
 StorageTab.propTypes = {
-  storage: PropTypes.object,
   loading: PropTypes.bool,
-  onStorageChange: PropTypes.func
+  roomMediaOverview: roomMediaOverviewShape,
+  onRoomMediaOverviewChange: PropTypes.func
 };
 
 StorageTab.defaultProps = {
-  storage: null,
   loading: false,
-  onStorageChange: () => {}
+  roomMediaOverview: null,
+  onRoomMediaOverviewChange: () => {}
 };
 
 export default StorageTab;

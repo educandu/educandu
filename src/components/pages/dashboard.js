@@ -52,18 +52,18 @@ function Dashboard({ PageTemplate }) {
   const [rooms, setRooms] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [ownStorage, setOwnStorage] = useState(null);
   const [invitations, setInvitations] = useState([]);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
   const [favoriteRooms, setFavoriteRooms] = useState([]);
   const [fetchingRooms, setFetchingRooms] = useState(true);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+  const [roomMediaOverview, setRoomMediaOverview] = useState(null);
   const [notificationGroups, setNotificationGroups] = useState([]);
   const [fetchingFavorites, setFetchingFavorites] = useState(true);
   const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [fetchingActivities, setFetchingActivities] = useState(true);
-  const [fetchingOwnStorage, setFetchingOwnStorage] = useState(true);
+  const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useState(true);
   const [fetchingNotificationGroups, setFetchingNotificationGroups] = useState(true);
 
   const fetchActivities = useCallback(async () => {
@@ -121,13 +121,13 @@ function Dashboard({ PageTemplate }) {
     }
   }, [roomApiClient, userApiClient]);
 
-  const fetchOwnStorage = useCallback(async () => {
+  const fetchRoomMediaOverview = useCallback(async () => {
     try {
-      setFetchingOwnStorage(true);
-      const response = await storageApiClient.getRoomMediaOverview();
-      setOwnStorage(response);
+      setFetchingRoomMediaOverview(true);
+      const overview = await storageApiClient.getRoomMediaOverview();
+      setRoomMediaOverview(overview);
     } finally {
-      setFetchingOwnStorage(false);
+      setFetchingRoomMediaOverview(false);
     }
   }, [storageApiClient]);
 
@@ -150,13 +150,13 @@ function Dashboard({ PageTemplate }) {
           await fetchNotifications();
           break;
         case TAB_KEYS.storage:
-          await fetchOwnStorage();
+          await fetchRoomMediaOverview();
           break;
         default:
           break;
       }
     })();
-  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications, fetchOwnStorage]);
+  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications, fetchRoomMediaOverview]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
@@ -184,8 +184,8 @@ function Dashboard({ PageTemplate }) {
     setNotificationsCount(response.notificationGroups.length);
   };
 
-  const handleStorageChange = newStorage => {
-    setOwnStorage(newStorage);
+  const handleRoomMediaOverviewChange = newStorage => {
+    setRoomMediaOverview(newStorage);
   };
 
   const items = [
@@ -257,7 +257,11 @@ function Dashboard({ PageTemplate }) {
       label: t('common:storage'),
       children: (
         <div className="Tabs-tabPane">
-          <StorageTab storage={ownStorage} loading={fetchingOwnStorage} onStorageChange={handleStorageChange} />
+          <StorageTab
+            loading={fetchingRoomMediaOverview}
+            roomMediaOverview={roomMediaOverview}
+            onRoomMediaOverviewChange={handleRoomMediaOverviewChange}
+            />
         </div>
       )
     },

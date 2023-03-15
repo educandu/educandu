@@ -230,7 +230,7 @@ export default class StorageService {
       storagePlan: storagePlan || null,
       usedBytes: totalUsedBytes,
       unusedBytes: Math.max(0, (storagePlan?.maxBytes || 0) - totalUsedBytes),
-      rooms: roomsAndObjects.map(({ room, objects, usedBytes }) => ({
+      roomStorageList: roomsAndObjects.map(({ room, objects, usedBytes }) => ({
         roomId: room._id,
         roomName: room.name,
         objects,
@@ -266,7 +266,7 @@ export default class StorageService {
         storagePlan: newOverview.storagePlan,
         usedBytes: newOverview.usedBytes,
         unusedBytes: newOverview.unusedBytes,
-        room: newOverview.rooms.find(r => r._id === roomId)
+        roomStorage: newOverview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
       };
     } finally {
       await this.lockStore.releaseLock(lock);
