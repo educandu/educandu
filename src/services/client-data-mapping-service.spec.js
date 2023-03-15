@@ -352,7 +352,16 @@ describe('client-data-mapping-service', () => {
             userId: 'member2',
             joinedOn: new Date()
           }
-        ]
+        ],
+        messages: [
+          {
+            key: 'messageKey',
+            text: 'message',
+            emailNotification: true,
+            createdOn: new Date()
+          }
+        ],
+        documents: ['documentId1']
       };
 
       sandbox.stub(userStore, 'getUserById').resolves(owner);
@@ -400,7 +409,16 @@ describe('client-data-mapping-service', () => {
               joinedOn: room.members[1].joinedOn.toISOString(),
               avatarUrl: 'www://avatar.domain/member2@test.com'
             }
-          ]
+          ],
+          messages: [
+            {
+              key: room.messages[0].key,
+              text: room.messages[0].text,
+              emailNotification: room.messages[0].emailNotification,
+              createdOn: room.messages[0].createdOn.toISOString()
+            }
+          ],
+          documents: ['documentId1']
         });
       });
     });
@@ -440,7 +458,16 @@ describe('client-data-mapping-service', () => {
               joinedOn: room.members[1].joinedOn.toISOString(),
               avatarUrl: 'www://avatar.domain/member2@test.com'
             }
-          ]
+          ],
+          messages: [
+            {
+              key: room.messages[0].key,
+              text: room.messages[0].text,
+              emailNotification: room.messages[0].emailNotification,
+              createdOn: room.messages[0].createdOn.toISOString()
+            }
+          ],
+          documents: ['documentId1']
         });
       });
     });

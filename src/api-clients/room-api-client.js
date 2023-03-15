@@ -76,6 +76,16 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
+  addRoomMessage({ roomId, text, emailNotification }) {
+    return this.httpClient
+      .post(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/message`,
+        { text, emailNotification },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   deleteAllRoomsForUser({ ownerId }) {
     return this.httpClient
       .delete(
@@ -98,6 +108,15 @@ class RoomApiClient {
     return this.httpClient
       .delete(
         `/api/v1/rooms/${encodeURIComponent(roomId)}/members/${encodeURIComponent(memberUserId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoomMessage({ roomId, messageKey }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/messages/${encodeURIComponent(messageKey)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

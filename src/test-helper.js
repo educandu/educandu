@@ -169,6 +169,7 @@ export async function createTestRoom(container, roomValues = {}) {
     createdOn: roomValues.createdOn || new Date(),
     updatedOn: roomValues.updatedOn || new Date(),
     members: roomValues.members || [],
+    messages: roomValues.messages || [],
     documents: roomValues.documents || []
   };
   await db.rooms.insertOne(room);

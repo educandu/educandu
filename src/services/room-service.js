@@ -4,6 +4,7 @@ import Logger from '../common/logger.js';
 import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
+import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
@@ -80,6 +81,7 @@ export default class RoomService {
       createdOn: new Date(),
       updatedOn: new Date(),
       members: [],
+      messages: [],
       documents: []
     };
 
@@ -91,6 +93,32 @@ export default class RoomService {
     }
 
     return newRoom;
+  }
+
+  async createRoomMessage({ room, text, emailNotification }) {
+    const messages = cloneDeep(room.messages);
+    messages.push({
+      key: uniqueId.create(),
+      text,
+      emailNotification,
+      createdOn: new Date()
+    });
+
+    await this.roomStore.updateRoomMessages(room._id, messages);
+
+    const updatedRoom = await this.roomStore.getRoomById(room._id);
+
+    return updatedRoom;
+  }
+
+  async deleteRoomMessage({ room, messageKey }) {
+    const message = room.messages.find(m => m.key === messageKey);
+    const remainingMessages = ensureIsExcluded(room.messages, message);
+    await this.roomStore.updateRoomMessages(room._id, remainingMessages);
+
+    const updatedRoom = await this.roomStore.getRoomById(room._id);
+
+    return updatedRoom;
   }
 
   async createUploadDirectoryMarkerForRoom(roomId) {

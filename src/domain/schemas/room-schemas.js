@@ -25,6 +25,16 @@ export const postRoomInvitationConfirmBodySchema = joi.object({
   token: idOrKeySchema.required()
 });
 
+export const postRoomMessageBodySchema = joi.object({
+  text: joi.string().required(),
+  emailNotification: joi.boolean().required()
+});
+
+export const deleteRoomMessageParamsSchema = joi.object({
+  roomId: idOrKeySchema.required(),
+  messageKey: idOrKeySchema.required()
+});
+
 export const getRoomWithSlugParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 }).unknown(true);
@@ -74,6 +84,13 @@ export const roomMemberDBSchema = joi.object({
   joinedOn: joi.date().required()
 });
 
+export const roomMessageDBSchema = joi.object({
+  key: idOrKeySchema.required(),
+  createdOn: joi.date().required(),
+  text: joi.string().required(),
+  emailNotification: joi.boolean().required()
+});
+
 const roomMetadataDBProps = {
   name: joi.string().required(),
   slug: slugSchema.required(),
@@ -86,20 +103,31 @@ const roomMembersDBProps = {
   members: joi.array().required().items(roomMemberDBSchema)
 };
 
+const roomMessagesDBProps = {
+  messages: joi.array().required().items(roomMessageDBSchema)
+};
+
+const roomDocumentsDBProps = {
+  documents: joi.array().required().items(idOrKeySchema)
+};
+
 export const roomMetadataDBSchema = joi.object(roomMetadataDBProps);
 
 export const roomMembersDBSchema = joi.object(roomMembersDBProps);
+
+export const roomMessagesDBSchema = joi.object(roomMessagesDBProps);
 
 export const roomDocumentsDBSchema = joi.array().required().items(idOrKeySchema);
 
 export const roomDBSchema = joi.object({
   ...roomMetadataDBProps,
   ...roomMembersDBProps,
+  ...roomMessagesDBProps,
+  ...roomDocumentsDBProps,
   _id: idOrKeySchema.required(),
   owner: idOrKeySchema.required(),
   createdBy: idOrKeySchema.required(),
-  createdOn: joi.date().required(),
-  documents: joi.array().required().items(idOrKeySchema)
+  createdOn: joi.date().required()
 });
 
 export const roomInvitationDBSchema = joi.object({

@@ -42,7 +42,9 @@ describe('room-controller', () => {
       updateRoomMetadata: sandbox.stub(),
       updateRoomDocumentsOrder: sandbox.stub(),
       removeRoomMember: sandbox.stub(),
-      deleteRoomInvitation: sandbox.stub()
+      deleteRoomInvitation: sandbox.stub(),
+      createRoomMessage: sandbox.stub(),
+      deleteRoomMessage: sandbox.stub()
     };
     documentService = {
       getDocumentsExtendedMetadataByIds: sandbox.stub()
@@ -1294,6 +1296,176 @@ describe('room-controller', () => {
           ownerName: 'dagobert-the-third',
           email: 'max.mustermann@gtest.com'
         });
+      });
+    });
+  });
+
+  describe('handlePostRoomMessage', () => {
+    let room;
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Raum',
+          slug: 'room-slug',
+          owner: 'other-user',
+          isCollaborative: false,
+          members: [],
+          messages: [],
+          documents: []
+        };
+
+        roomService.getRoomById.resolves(room);
+
+        req = {
+          user,
+          params: { roomId: room._id },
+          body: { text: 'message text', emailNotification: false }
+        };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePostRoomMessage(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the request is valid', () => {
+      let updatedRoom;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Raum',
+          slug: 'room-slug',
+          owner: user._id,
+          isCollaborative: false,
+          members: [],
+          messages: [],
+          documents: []
+        };
+        updatedRoom = cloneDeep(room);
+        mappedRoom = cloneDeep(updatedRoom);
+
+        roomService.getRoomById.resolves(room);
+        roomService.createRoomMessage.resolves(updatedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+
+        req = {
+          user,
+          params: { roomId: room._id },
+          body: { text: 'message text', emailNotification: false }
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handlePostRoomMessage(req, res).catch(reject);
+      }));
+
+      it('should call roomService.createRoomMessage', () => {
+        assert.calledWith(roomService.createRoomMessage, { room, ...req.body });
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
+      });
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should respond with the mapped updated room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+    });
+  });
+
+  describe('handleDeleteRoomMessage', () => {
+    let room;
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Raum',
+          slug: 'room-slug',
+          owner: 'other-user',
+          isCollaborative: false,
+          members: [],
+          messages: [
+            {
+              key: uniqueId.create()
+            }
+          ],
+          documents: []
+        };
+
+        roomService.getRoomById.resolves(room);
+
+        req = {
+          user,
+          params: { roomId: room._id, messageKey: room.messages[0].key }
+        };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleDeleteRoomMessage(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the request is valid', () => {
+      let updatedRoom;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Raum',
+          slug: 'room-slug',
+          owner: user._id,
+          isCollaborative: false,
+          members: [],
+          messages: [
+            {
+              key: uniqueId.create()
+            }
+          ],
+          documents: []
+        };
+        updatedRoom = cloneDeep(room);
+        mappedRoom = cloneDeep(updatedRoom);
+
+        roomService.getRoomById.resolves(room);
+        roomService.deleteRoomMessage.resolves(updatedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+
+        req = {
+          user,
+          params: { roomId: room._id, messageKey: room.messages[0].key }
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handleDeleteRoomMessage(req, res).catch(reject);
+      }));
+
+      it('should call roomService.deleteRoomMessage', () => {
+        assert.calledWith(roomService.deleteRoomMessage, { room, messageKey: req.params.messageKey });
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
+      });
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should respond with the mapped updated room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
       });
     });
   });
