@@ -26,6 +26,9 @@ confirmationDialogs:
   deleteRoomInvitationConfirmation:
     en: Do you really want to revoke the room invitation sent to "{invitationEmail}"?
     de: Möchtest du die Raumeinladung für "{invitationEmail}" wirklich widerrufen?
+  deleteRoomMessageConfirmation:
+    en: Do you really want to delete the message from "{timestamp}"?
+    de: Möchtest du die Nachricht von "{timestamp}" wirklich löschen?
   leaveRoomConfirmation:
     en: Do you really want to cancel your membership in room "{roomName}"?
     de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?

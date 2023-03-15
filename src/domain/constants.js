@@ -30,7 +30,6 @@ export const TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  roomsMessageBoard: 'rooms-message-board'
 };
 
 export const ROOM_USER_ROLE = {
