@@ -5,6 +5,7 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import { SAVE_USER_RESULT } from './domain/constants.js';
+import CommentService from './services/comment-service.js';
 import DocumentService from './services/document-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
@@ -174,6 +175,20 @@ export async function createTestRoom(container, roomValues = {}) {
   };
   await db.rooms.insertOne(room);
   return room;
+}
+
+export function createTestComment(container, user, data) {
+  const documentService = container.get(CommentService);
+
+  return documentService.createComment({
+    data: {
+      documentId: uniqueId.create(),
+      topic: 'Test comment topic',
+      text: 'Test comment text',
+      ...data
+    },
+    user
+  });
 }
 
 export function createTestDocument(container, user, data) {
