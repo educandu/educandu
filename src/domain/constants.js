@@ -247,3 +247,5 @@ export const HTTP_STATUS = {
 };
 
 export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
+
+export const LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS = 1000;

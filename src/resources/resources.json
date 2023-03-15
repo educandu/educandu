@@ -384,6 +384,10 @@
       "en": "Do you really want to revoke the room invitation sent to \"{invitationEmail}\"?",
       "de": "Möchtest du die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?"
     },
+    "deleteRoomMessageConfirmation": {
+      "en": "Do you really want to delete the message from \"{timestamp}\"?",
+      "de": "Möchtest du die Nachricht von \"{timestamp}\" wirklich löschen?"
+    },
     "leaveRoomConfirmation": {
       "en": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "de": "Möchtest du deine Mitgliedschaft im Raum \"{roomName}\" wirklich beenden?"
@@ -1603,6 +1607,22 @@
     "pendingInvitation": {
       "en": "Pending invitation",
       "de": "Ausstehende Einladung"
+    },
+    "messageBoardSectionHeadline": {
+      "en": "Message board",
+      "de": "Message board"
+    },
+    "postMessageButtonText": {
+      "en": "Post message",
+      "de": "Nachricht abschicken"
+    },
+    "postMessageCheckboxText": {
+      "en": "Send email to members",
+      "de": "E-Mail an Mitglieder schicken"
+    },
+    "postMessageCheckboxInfo": {
+      "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board",
+      "de": "Eine E-Mail wird sofort an alle Raummitglieder geschickt, notifying them that there is new information on the room message board"
     }
   },
   "search": {

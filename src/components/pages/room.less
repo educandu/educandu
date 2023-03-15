@@ -88,6 +88,53 @@
   font-style: italic;
 }
 
+.RoomPage-messageBoard {
+  margin-top: 40px;
+}
+
+.RoomPage-messageBoardHeadline {
+  .m-content-headline;
+}
+
+.RoomPage-messageBoardPostingSection {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
+}
+
+.RoomPage-messageBoardPostingSectionControls {
+  margin-left: auto;
+}
+
+.RoomPage-messageBoardMessages {
+  margin-top: 40px;
+  display: grid;
+  gap: 30px;
+  grid-auto-flow: row;
+}
+
+.RoomPage-messageBoardMessageWrapper {
+  display: grid;
+  gap: 5px;
+  align-items: end;
+  grid-template-columns: 1fr auto;
+}
+
+.RoomPage-messageBoardMessage {
+  padding: @edu-content-padding;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-background-color-light;
+}
+
+.RoomPage-messageBoardMessageDate {
+  font-style: italic;
+  font-size: @edu-font-size-sm;
+}
+
+.RoomPage-messageBoardMessageText {
+  padding: @edu-content-padding 0;
+}
+
 .RoomPage-members {
   .m-card-wrapper;
 }

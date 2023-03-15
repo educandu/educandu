@@ -44,3 +44,15 @@ room:
   pendingInvitation:
     en: Pending invitation
     de: Ausstehende Einladung
+  messageBoardSectionHeadline:
+    en: Message board
+    de: Message board
+  postMessageButtonText:
+    en: Post message
+    de: Nachricht abschicken
+  postMessageCheckboxText:
+    en: Send email to members
+    de: E-Mail an Mitglieder schicken
+  postMessageCheckboxInfo:
+    en: An email will be immediately sent to all room members, notifying them that there is new information on the room message board
+    de: Eine E-Mail wird sofort an alle Raummitglieder geschickt, notifying them that there is new information on the room message board
