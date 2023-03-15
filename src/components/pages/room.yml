@@ -46,7 +46,7 @@ room:
     de: Ausstehende Einladung
   messageBoardSectionHeadline:
     en: Message board
-    de: Message board
+    de: Message-Board
   postMessageButtonText:
     en: Post message
     de: Nachricht abschicken
@@ -54,8 +54,8 @@ room:
     en: Send email to members
     de: E-Mail an Mitglieder schicken
   postMessageCheckboxInfo:
-    en: An email will be immediately sent to all room members, notifying them that there is new information on the room message board
-    de: Eine E-Mail wird sofort an alle Raummitglieder geschickt, notifying them that there is new information on the room message board
+    en: An email will be immediately sent to all room members, notifying them that there is new information on the room message board.
+    de: Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt.
   messageEmailNotificationIconTooltip:
-    en: An email was sent to all room members when this message was posted
-    de: An email was sent to all room members when this message was posted
+    en: An email was sent to all room members when this message was posted.
+    de: Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde.
