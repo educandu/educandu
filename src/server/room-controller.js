@@ -15,7 +15,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
-import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   NOT_ROOM_OWNER_ERROR_MESSAGE,
   NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE,
@@ -130,7 +130,7 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (room.owner !== user._id) {
+    if (!isRoomOwner({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
@@ -191,7 +191,7 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (room.owner !== user._id) {
+    if (!isRoomOwner({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
@@ -233,7 +233,7 @@ export default class RoomController {
     }
 
     const room = await this.roomService.getRoomById(invitation.roomId);
-    if (room.owner !== user._id) {
+    if (!isRoomOwner({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
@@ -268,7 +268,7 @@ export default class RoomController {
     const { text, emailNotification } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
-    if (room.owner !== user._id) {
+    if (!isRoomOwner({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
@@ -283,7 +283,7 @@ export default class RoomController {
     const { roomId, messageKey } = req.params;
 
     const room = await this.roomService.getRoomById(roomId);
-    if (room.owner !== user._id) {
+    if (!isRoomOwner({ room, userId: user._id })) {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
@@ -319,8 +319,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
-    const isRoomOwner = room.owner === user._id;
-    if (isRoomOwner) {
+    if (isRoomOwner({ room, userId: user._id })) {
       invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
