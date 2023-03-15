@@ -16,12 +16,12 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import { CDN_URL_PREFIX, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { createUniqueStorageFileName, getRoomMediaRoomPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 export default class StorageService {
   static dependencies = [
@@ -216,6 +216,63 @@ export default class StorageService {
     }
   }
 
+  async getRoomMediaOverview({ user }) {
+    const storagePlan = user.storage.planId ? await this.getStoragePlanById(user.storage.planId) : null;
+    const rooms = await this.roomStore.getRoomsByOwnerId(user._id);
+    const roomsAndObjects = await Promise.all(rooms.map(async room => {
+      const objects = await this.getObjects({ parentPath: getRoomMediaRoomPath(room._id) });
+      return { room, objects, usedBytes: objects.reduce((accu, obj) => accu + obj.size, 0) };
+    }));
+
+    const totalUsedBytes = roomsAndObjects.reduce((accu, { usedBytes }) => accu + usedBytes, 0);
+
+    return {
+      storagePlan: storagePlan || null,
+      usedBytes: totalUsedBytes,
+      unusedBytes: Math.max(0, (storagePlan?.maxBytes || 0) - totalUsedBytes),
+      roomStorageList: roomsAndObjects.map(({ room, objects, usedBytes }) => ({
+        roomId: room._id,
+        roomName: room.name,
+        objects,
+        usedBytes
+      }))
+    };
+  }
+
+  async deleteOwnRoomMedia({ user, roomId, name }) {
+    let lock;
+    try {
+      lock = await this.lockStore.takeUserLock(user._id);
+
+      const room = await this.roomStore.getRoomById(roomId);
+      if (!isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden(`User is not authorized to access room '${roomId}'`);
+      }
+
+      const objects = await this.getObjects({ parentPath: getRoomMediaRoomPath(roomId) });
+      const itemToDelete = objects.find(obj => obj.displayName === name);
+      if (!itemToDelete) {
+        throw new NotFound(`Object '${name}' could not be found`);
+      }
+
+      await this._deleteObjects([itemToDelete.path]);
+
+      const newOverview = await this.getRoomMediaOverview({ user });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: user._id, usedBytes: newOverview.usedBytes });
+
+      Object.assign(user, updatedUser);
+
+      return {
+        storagePlan: newOverview.storagePlan,
+        usedBytes: newOverview.usedBytes,
+        unusedBytes: newOverview.unusedBytes,
+        roomStorage: newOverview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
+      };
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+  }
+
   async getRoomStorage({ user, documentId }) {
     if (!user || !documentId) {
       return null;
@@ -228,8 +285,7 @@ export default class StorageService {
     }
 
     const room = await this.roomStore.getRoomById(doc.roomId);
-    const isRoomOwner = user._id === room.owner;
-    const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
+    const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.getUserById(room.owner);
 
     if (!roomOwner.storage.planId) {
       return null;

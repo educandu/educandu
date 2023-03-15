@@ -717,6 +717,20 @@
       "de": "Konto schließen"
     }
   },
+  "storageTab": {
+    "info": {
+      "en": "Here you can find details about your storage plan and current space status.",
+      "de": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung."
+    },
+    "storagePlanName": {
+      "en": "Your storage plan",
+      "de": "Dein Speicherplan"
+    },
+    "noStoragePlan": {
+      "en": "There is no storage plan associated with your account.",
+      "de": "Mit deinem Konto ist kein Speicherplan verbunden."
+    }
+  },
   "deletedSection": {
     "messageTitle": {
       "en": "This content has been deleted",
@@ -1415,18 +1429,6 @@
     "roomsTabTitle": {
       "en": "Rooms",
       "de": "Räume"
-    },
-    "storageTabTitle": {
-      "en": "Your storage plan",
-      "de": "Dein Speicherplan"
-    },
-    "storageTabInfo": {
-      "en": "Here you can find details about your storage plan and current space status.",
-      "de": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung."
-    },
-    "noStoragePlan": {
-      "en": "There is no storage plan associated with your account.",
-      "de": "Mit deinem Konto ist kein Speicherplan verbunden."
     }
   },
   "doc": {
@@ -1857,7 +1859,7 @@
       "de": "Wikimedia"
     }
   },
-  "roomMediaDefaultScreen": {
+  "roomMediaFilesViewer": {
     "filesView_list": {
       "en": "List view",
       "de": "Listenansicht"
@@ -3761,6 +3763,10 @@
     "creator": {
       "en": "Creator",
       "de": "Ersteller"
+    },
+    "uploadFiles": {
+      "en": "Upload files",
+      "de": "Dateien hochladen"
     }
   },
   "pageNames": {

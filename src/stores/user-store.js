@@ -69,8 +69,15 @@ class UserStore {
     const options = { session, returnDocument: 'after' };
 
     const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    return value;
+  }
 
-    validate(value, userDBSchema);
+  async updateUserUsedBytes({ userId, usedBytes }, { session } = {}) {
+    const filter = { _id: userId };
+    const update = { $set: { 'storage.usedBytes': usedBytes } };
+    const options = { session, returnDocument: 'after' };
+
+    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
     return value;
   }
 

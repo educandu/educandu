@@ -83,6 +83,24 @@ class StorageApiClient {
       )
       .then(res => res.data);
   }
+
+  getRoomMediaOverview() {
+    return this.httpClient
+      .get(
+        '/api/v1/storage/room-media-overview',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoomMedia({ roomId, name }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/storage/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(name)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default StorageApiClient;

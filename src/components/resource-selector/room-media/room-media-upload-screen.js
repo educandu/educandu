@@ -32,8 +32,18 @@ const STAGE = {
   uploadFinished: 'uploadFinished'
 };
 
+const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) => ({
+  file,
+  status: isPristine ? ITEM_STATUS.pristine : ITEM_STATUS.preprocessed,
+  isEditable: isEditableImageFile(file),
+  errorMessage: null
+}));
+
 function RoomMediaUploadScreen({
+  canGoBack,
   uploadQueue,
+  canSelectedFilesAfterUpload,
+  onOkClick,
   onBackClick,
   onCancelClick,
   onEditFileClick,
@@ -48,12 +58,14 @@ function RoomMediaUploadScreen({
   const [optimizeImages, setOptimizeImages] = useState(true);
   const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
-  const [uploadItems, setUploadItems] = useState(uploadQueue.map(({ file, isPristine }) => ({
-    file,
-    status: isPristine ? ITEM_STATUS.pristine : ITEM_STATUS.preprocessed,
-    isEditable: isEditableImageFile(file),
-    errorMessage: null
-  })));
+  const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
+
+  useEffect(() => {
+    setOptimizeImages(true);
+    setPreviewedFileIndex(-1);
+    setCurrentStage(STAGE.uploadNotStarted);
+    setUploadItems(createUploadItems(uploadQueue));
+  }, [uploadQueue]);
 
   useEffect(() => {
     if (uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded) {
@@ -255,15 +267,22 @@ function RoomMediaUploadScreen({
           {t('optimizeImages')}
         </Checkbox>
       )}
-      <div className="u-resource-selector-screen-footer">
-        <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
+      <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
+        {!!canGoBack && (
+          <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
+        )}
         <div className="u-resource-selector-screen-footer-buttons">
-          <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
+          {(currentStage !== STAGE.uploadFinished || !!canSelectedFilesAfterUpload) && (
+            <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
+          )}
           {(currentStage === STAGE.uploadNotStarted || currentStage === STAGE.uploading) && (
             <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading}>{t('startUpload')}</Button>
           )}
-          {currentStage === STAGE.uploadFinished && (
+          {currentStage === STAGE.uploadFinished && !!canSelectedFilesAfterUpload && (
             <Button type="primary" onClick={handleSelectPreviewedFileClick} disabled={previewedFileIndex === -1}>{t('common:select')}</Button>
+          )}
+          {currentStage === STAGE.uploadFinished && !canSelectedFilesAfterUpload && (
+            <Button type="primary" onClick={onOkClick}>{t('common:ok')}</Button>
           )}
         </div>
       </div>
@@ -272,17 +291,23 @@ function RoomMediaUploadScreen({
 }
 
 RoomMediaUploadScreen.propTypes = {
-  onBackClick: PropTypes.func,
-  onCancelClick: PropTypes.func,
-  onEditFileClick: PropTypes.func,
-  onSelectFileClick: PropTypes.func,
+  canGoBack: PropTypes.bool,
+  canSelectedFilesAfterUpload: PropTypes.bool,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     isPristine: PropTypes.bool.isRequired
-  })).isRequired
+  })).isRequired,
+  onOkClick: PropTypes.func,
+  onBackClick: PropTypes.func,
+  onCancelClick: PropTypes.func,
+  onEditFileClick: PropTypes.func,
+  onSelectFileClick: PropTypes.func
 };
 
 RoomMediaUploadScreen.defaultProps = {
+  canGoBack: true,
+  canSelectedFilesAfterUpload: true,
+  onOkClick: () => {},
   onBackClick: () => {},
   onCancelClick: () => {},
   onEditFileClick: () => {},

@@ -3,22 +3,22 @@ import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
 import { Badge, Tabs, Tooltip } from 'antd';
 import { useUser } from '../user-context.js';
-import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
 import ProfileHeader from '../profile-header.js';
 import { useRequest } from '../request-context.js';
+import StorageTab from '../dashboard/storage-tab.js';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
-import { useStoragePlan } from '../storage-plan-context.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import StorageApiClient from '../../api-clients/storage-api-client.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
@@ -37,12 +37,12 @@ const TAB_KEYS = {
 function Dashboard({ PageTemplate }) {
   const user = useUser();
   const request = useRequest();
-  const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
   const notificationsCount = useNotificationsCount();
   const setNotificationsCount = useSetNotificationsCount();
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
@@ -58,10 +58,12 @@ function Dashboard({ PageTemplate }) {
   const [fetchingRooms, setFetchingRooms] = useState(true);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
+  const [roomMediaOverview, setRoomMediaOverview] = useState(null);
   const [notificationGroups, setNotificationGroups] = useState([]);
   const [fetchingFavorites, setFetchingFavorites] = useState(true);
   const [fetchingDocuments, setFetchingDocuments] = useState(true);
   const [fetchingActivities, setFetchingActivities] = useState(true);
+  const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useState(true);
   const [fetchingNotificationGroups, setFetchingNotificationGroups] = useState(true);
 
   const fetchActivities = useCallback(async () => {
@@ -119,6 +121,16 @@ function Dashboard({ PageTemplate }) {
     }
   }, [roomApiClient, userApiClient]);
 
+  const fetchRoomMediaOverview = useCallback(async () => {
+    try {
+      setFetchingRoomMediaOverview(true);
+      const overview = await storageApiClient.getRoomMediaOverview();
+      setRoomMediaOverview(overview);
+    } finally {
+      setFetchingRoomMediaOverview(false);
+    }
+  }, [storageApiClient]);
+
   useEffect(() => {
     (async () => {
       switch (selectedTab) {
@@ -137,11 +149,14 @@ function Dashboard({ PageTemplate }) {
         case TAB_KEYS.notifications:
           await fetchNotifications();
           break;
+        case TAB_KEYS.storage:
+          await fetchRoomMediaOverview();
+          break;
         default:
           break;
       }
     })();
-  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications]);
+  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications, fetchRoomMediaOverview]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
@@ -167,6 +182,10 @@ function Dashboard({ PageTemplate }) {
     const response = await notificationsApiClient.removeNotifications(notificationIds);
     setNotificationGroups(response.notificationGroups);
     setNotificationsCount(response.notificationGroups.length);
+  };
+
+  const handleRoomMediaOverviewChange = newStorage => {
+    setRoomMediaOverview(newStorage);
   };
 
   const items = [
@@ -232,44 +251,34 @@ function Dashboard({ PageTemplate }) {
             />
         </div>
       )
-    }
-  ];
-
-  if (user.storage.plan || user.storage.usedBytes) {
-    items.push({
+    },
+    {
       key: TAB_KEYS.storage,
       label: t('common:storage'),
       children: (
         <div className="Tabs-tabPane">
-          <div className="DashboardPage-tabInfo">{t('storageTabInfo')}</div>
-          <div className="DashboardPage-storageTabTitle">{t('storageTabTitle')}</div>
-          <section className="DashboardPage-storageTabContent">
-            <div className="DashboardPage-storageTabPlanName">
-              {!!storagePlan && `${t('common:name')}: "${storagePlan.name}"`}
-              {!storagePlan && t('noStoragePlan')}
-            </div>
-            <div className="DashboardPage-storageTabUsedStorage">
-              <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
-            </div>
-          </section>
+          <StorageTab
+            loading={fetchingRoomMediaOverview}
+            roomMediaOverview={roomMediaOverview}
+            onRoomMediaOverviewChange={handleRoomMediaOverviewChange}
+            />
         </div>
       )
-    });
-  }
-
-  items.push({
-    key: TAB_KEYS.settings,
-    label: t('common:settings'),
-    children: (
-      <div className="Tabs-tabPane">
-        <SettingsTab />
-      </div>
-    )
-  });
+    },
+    {
+      key: TAB_KEYS.settings,
+      label: t('common:settings'),
+      children: (
+        <div className="Tabs-tabPane">
+          <SettingsTab />
+        </div>
+      )
+    }
+  ];
 
   return (
     <PageTemplate>
-      <div className="DashboardPage">
+      <div>
         <ProfileHeader
           email={user.email}
           avatarUrl={gravatarUrl}
