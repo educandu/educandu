@@ -239,7 +239,7 @@ export default class StorageService {
     };
   }
 
-  async deleteRoomMedia({ user, roomId, name }) {
+  async deleteOwnRoomMedia({ user, roomId, name }) {
     let lock;
     try {
       lock = await this.lockStore.takeUserLock(user._id);
@@ -285,8 +285,7 @@ export default class StorageService {
     }
 
     const room = await this.roomStore.getRoomById(doc.roomId);
-    const isUserRoomOwner = user._id === room.owner;
-    const roomOwner = isUserRoomOwner ? user : await this.userStore.getUserById(room.owner);
+    const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.getUserById(room.owner);
 
     if (!roomOwner.storage.planId) {
       return null;

@@ -124,6 +124,19 @@ function StorageTab({ storage, loading, onStorageChange }) {
     filesViewerApiRef.current.open();
   };
 
+  const renderRoomSelect = () => (
+    <div className="StorageTab-roomSelectContainer">
+      <span className="u-label">{t('common:room')}:</span>
+      <Select
+        options={roomOptions}
+        value={selectedRoomId}
+        onChange={setSelectedRoomId}
+        dropdownMatchSelectWidth={false}
+        className="StorageTab-roomSelect"
+        />
+    </div>
+  );
+
   return (
     <div className="StorageTab">
       <StorageProvider value={storageProviderStorage}>
@@ -143,7 +156,7 @@ function StorageTab({ storage, loading, onStorageChange }) {
                 <RoomMediaFilesViewer
                   canDelete
                   files={files}
-                  customFilter={<Select options={roomOptions} value={selectedRoomId} onChange={setSelectedRoomId} />}
+                  customFilter={renderRoomSelect()}
                   isLoading={isUpdating}
                   apiRef={filesViewerApiRef}
                   highlightedFile={highlightedFile}

@@ -134,10 +134,10 @@ class StorageController {
     return res.send(roomMediaOverview);
   }
 
-  async handleDeleteRoomMedia(req, res) {
+  async handleDeleteOwnRoomMedia(req, res) {
     const { user } = req;
     const { roomId, name } = req.params;
-    const roomMedia = await this.storageService.deleteRoomMedia({ user, roomId, name });
+    const roomMedia = await this.storageService.deleteOwnRoomMedia({ user, roomId, name });
     return res.send(roomMedia);
   }
 
@@ -231,7 +231,7 @@ class StorageController {
       '/api/v1/storage/room-media/:roomId/:name',
       needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
       validateParams(deleteRoomMediaParamsSchema),
-      (req, res) => this.handleDeleteRoomMedia(req, res)
+      (req, res) => this.handleDeleteOwnRoomMedia(req, res)
     );
   }
 }

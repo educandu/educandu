@@ -18,11 +18,11 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import StorageApiClient from '../../api-clients/storage-api-client.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
 
 const TAB_KEYS = {
   activities: 'activities',

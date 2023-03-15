@@ -20,6 +20,22 @@
   margin-bottom: 20px;
 }
 
+.StorageTab-roomSelectContainer {
+  display: grid;
+  align-items: baseline;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: auto 1fr;
+}
+
+.StorageTab-roomSelect {
+  width: 400px;
+
+  @media @edu-media-phone {
+    width: 200px;
+  }
+}
+
 .StorageTab-fileViewer {
   height: 600px;
 }

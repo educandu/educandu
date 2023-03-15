@@ -69,8 +69,6 @@ class UserStore {
     const options = { session, returnDocument: 'after' };
 
     const { value } = await this.collection.findOneAndUpdate(filter, update, options);
-
-    validate(value, userDBSchema);
     return value;
   }
 
@@ -80,8 +78,6 @@ class UserStore {
     const options = { session, returnDocument: 'after' };
 
     const { value } = await this.collection.findOneAndUpdate(filter, update, options);
-
-    validate(value, userDBSchema);
     return value;
   }
 
