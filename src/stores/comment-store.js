@@ -30,6 +30,10 @@ class CommentStore {
     return this.collection.updateMany({ documentId, topic: oldTopic }, { $set: { topic: newTopic } }, { session, upsert: true });
   }
 
+  deleteCommentsByDocumentId(documentId, { session } = {}) {
+    return this.collection.deleteMany({ documentId }, { session });
+  }
+
   deleteCommentsByDocumentIds(documentIds, { session } = {}) {
     return this.collection.deleteMany({ documentId: { $in: documentIds } }, { session });
   }

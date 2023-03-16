@@ -12,6 +12,7 @@ import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import EventStore from '../stores/event-store.js';
 import { isRoomOwner } from '../utils/room-utils.js';
+import CommentStore from '../stores/comment-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
@@ -37,6 +38,7 @@ class DocumentService {
     DocumentOrderStore,
     DocumentStore,
     RoomStore,
+    CommentStore,
     BatchStore,
     TaskStore,
     LockStore,
@@ -45,12 +47,26 @@ class DocumentService {
     EventStore
   ];
 
-  constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, roomStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry, eventStore) {
+  constructor(
+    cdn,
+    documentRevisionStore,
+    documentOrderStore,
+    documentStore,
+    roomStore,
+    commentStore,
+    batchStore,
+    taskStore,
+    lockStore,
+    transactionRunner,
+    pluginRegistry,
+    eventStore
+  ) {
     this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
     this.roomStore = roomStore;
+    this.commentStore = commentStore;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
@@ -353,6 +369,7 @@ class DocumentService {
         await this.roomStore.saveRoom(room, { session });
         await this.documentStore.deleteDocumentById(documentId, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
+        await this.commentStore.deleteCommentsByDocumentId(documentId, { session });
       });
     } finally {
       if (documentLock) {

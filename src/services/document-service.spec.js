@@ -17,7 +17,8 @@ import {
   destroyTestEnvironment,
   pruneTestEnvironment,
   setupTestEnvironment,
-  createTestUser
+  createTestUser,
+  createTestComment
 } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -444,6 +445,8 @@ describe('document-service', () => {
 
       room = await createTestRoom(container, { owner: user._id });
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
+      await createTestComment(container, user, { documentId: documentToDelete._id });
+
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
       await sut.hardDeletePrivateDocument({ documentId: documentToDelete._id, user });
@@ -470,6 +473,11 @@ describe('document-service', () => {
     it('deletes the document', async () => {
       const documentAfterDeletion = await db.documents.findOne({ documentId: documentToDelete._id });
       expect(documentAfterDeletion).toEqual(null);
+    });
+
+    it('deletes the comments for the document', async () => {
+      const commentAfterDeletion = await db.comments.findOne({ documentId: documentToDelete._id });
+      expect(commentAfterDeletion).toEqual(null);
     });
 
     it('releases the lock on the document', () => {
