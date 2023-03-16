@@ -34,7 +34,7 @@
 
 .RoomPage-documents {
   &.RoomPage-documents--roomMemberView {
-    margin-top: 40px;
+    margin-top: 60px;
   }
 }
 
@@ -86,6 +86,65 @@
   padding: 2px 8px;
   font-size: @edu-font-size-sm;
   font-style: italic;
+}
+
+.RoomPage-messageBoard {
+  margin-top: 60px;
+}
+
+.RoomPage-messageBoardHeadline {
+  .m-content-headline;
+}
+
+.RoomPage-messageBoardPostingSection {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: row;
+}
+
+.RoomPage-messageBoardPostingSectionControls {
+  margin-left: auto;
+}
+
+.RoomPage-messageBoardMessages {
+  margin-top: 40px;
+  display: grid;
+  gap: 30px;
+  grid-auto-flow: row;
+}
+
+.RoomPage-messageBoardMessageWrapper {
+  display: grid;
+  gap: 5px;
+  align-items: end;
+  grid-template-columns: 1fr auto;
+}
+
+.RoomPage-messageBoardMessage {
+  padding: @edu-content-padding;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-background-color-light;
+}
+
+.RoomPage-messageBoardMessageDate {
+  font-style: italic;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+}
+
+.RoomPage-messageBoardMessageIcon {
+  display: flex;
+  justify-content: flex-end;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+
+  &:hover {
+    cursor: help;
+  }
+}
+
+.RoomPage-messageBoardMessageText {
+  padding: @edu-content-padding 0;
 }
 
 .RoomPage-members {

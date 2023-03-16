@@ -1,7 +1,9 @@
 import deepEqual from 'fast-deep-equal';
+import { delay } from '../utils/time-utils.js';
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS } from '../domain/constants.js';
 
 export function usePermission(permissionToCheck) {
   const user = useUser();
@@ -139,4 +141,32 @@ export function useScrollTopOffset() {
   }, []);
 
   return topOffset;
+}
+
+export function useLoadingState() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadStartTimestamp, setLoadStartTimestamp] = useState(null);
+
+  const setIsLoadingAfterMinimumPeriod = async newIsLoadingValue => {
+    if (newIsLoadingValue) {
+      setLoadStartTimestamp(new Date());
+      setIsLoading(true);
+    } else {
+      const loadEndTimestamp = new Date();
+      const remainingTimeFromMinimumPeriod = Math.max(
+        Math.min(loadEndTimestamp - loadStartTimestamp, LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS),
+        0
+      );
+
+      if (remainingTimeFromMinimumPeriod) {
+        await delay(remainingTimeFromMinimumPeriod);
+      }
+      setIsLoading(false);
+    }
+  };
+
+  return [
+    isLoading,
+    setIsLoadingAfterMinimumPeriod
+  ];
 }

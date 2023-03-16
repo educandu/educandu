@@ -1,4 +1,5 @@
 import by from 'thenby';
+import Info from '../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
@@ -9,7 +10,9 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import MarkdownInput from '../markdown-input.js';
 import { MailOutlined } from '@ant-design/icons';
+import { useLoadingState } from '../../ui/hooks.js';
 import { useDateFormat } from '../locale-context.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
@@ -21,10 +24,10 @@ import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import { Button, Tabs, message, Tooltip, Breadcrumb } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Button, Tabs, message, Tooltip, Breadcrumb, Checkbox } from 'antd';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
@@ -32,7 +35,14 @@ import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.j
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
 import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
-import { confirmDocumentDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
+import {
+  confirmDocumentDelete,
+  confirmRoomDelete,
+  confirmRoomMemberDelete,
+  confirmRoomInvitationDelete,
+  confirmLeaveRoom,
+  confirmRoomMessageDelete
+} from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -80,10 +90,13 @@ export default function Room({ PageTemplate, initialState }) {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [room, setRoom] = useState(initialState.room);
+  const [newMessageText, setNewMessageText] = useState('');
+  const [isPostingNewMessage, setIsPostingNewMessage] = useLoadingState(false);
+  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
+  const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
+  const [newMessageEmailNotification, setNewMessageEmailNotification] = useState(false);
   const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
-  const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
-  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
   const viewMode = useMemo(() => {
@@ -286,6 +299,36 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
+  const handleNewMessageTextChange = event => {
+    const { value } = event.target;
+    setNewMessageText(value);
+  };
+
+  const handlePostMessageClick = async () => {
+    setIsPostingNewMessage(true);
+    const response = await roomApiClient.addRoomMessage({
+      roomId: room._id,
+      text: newMessageText.trim(),
+      emailNotification: newMessageEmailNotification
+    });
+    await setIsPostingNewMessage(false);
+    setRoom(response.room);
+    setNewMessageText('');
+    setNewMessageEmailNotification(false);
+  };
+
+  const handleNewMessageEmailNotificationChange = event => {
+    const { checked } = event.target;
+    setNewMessageEmailNotification(checked);
+  };
+
+  const handleDeleteMessageClick = msg => {
+    confirmRoomMessageDelete(t, formatDate(msg.createdOn), async () => {
+      const response = await roomApiClient.deleteRoomMessage({ roomId: room._id, messageKey: msg.key });
+      setRoom(response.room);
+    });
+  };
+
   const renderRoomDescription = () => {
     return !!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>;
   };
@@ -415,6 +458,77 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
+  const renderMessages = () => {
+    const sortedMessages = room.messages.sort(by(msg => msg.createdOn, 'desc'));
+
+    return (
+      <div className="RoomPage-messageBoardMessages">
+        {sortedMessages.map(msg => (
+          <div key={msg.key} className="RoomPage-messageBoardMessageWrapper">
+            <div key={msg.key} className="RoomPage-messageBoardMessage">
+              {!!msg.emailNotification && (
+                <div className="RoomPage-messageBoardMessageIcon">
+                  <Tooltip title={t('messageEmailNotificationIconTooltip')}>
+                    <MailOutlined />
+                  </Tooltip>
+                </div>
+              )}
+              <div className="RoomPage-messageBoardMessageText">
+                <Markdown>{msg.text}</Markdown>
+              </div>
+              <div className="RoomPage-messageBoardMessageDate">{formatDate(msg.createdOn)}</div>
+            </div>
+            {viewMode === VIEW_MODE.owner && (
+              <DeleteButton onClick={() => handleDeleteMessageClick(msg)} />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderMessagePostingSection = () => {
+    return (
+      <div className="RoomPage-messageBoardPostingSection">
+        <MarkdownInput
+          preview
+          value={newMessageText}
+          disabled={isPostingNewMessage}
+          onChange={handleNewMessageTextChange}
+          />
+        <div className="RoomPage-messageBoardPostingSectionControls">
+          <Checkbox
+            checked={newMessageEmailNotification}
+            disabled={isPostingNewMessage}
+            onChange={handleNewMessageEmailNotificationChange}
+            >
+            <Info tooltip={t('postMessageCheckboxInfo')} iconAfterContent>
+              {t('postMessageCheckboxText')}
+            </Info>
+          </Checkbox>
+          <Button
+            type="primary"
+            loading={isPostingNewMessage}
+            disabled={!newMessageText.trim().length}
+            onClick={handlePostMessageClick}
+            >
+            {t('postMessageButtonText')}
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMessageBoard = () => {
+    return (
+      <section className="RoomPage-messageBoard">
+        <div className="RoomPage-messageBoardHeadline">{t('messageBoardSectionHeadline')}</div>
+        {viewMode === VIEW_MODE.owner && renderMessagePostingSection()}
+        {renderMessages()}
+      </section>
+    );
+  };
+
   const renderRoomMember = member => {
     return (
       <div className="RoomPage-member" key={member.userId}>
@@ -501,6 +615,7 @@ export default function Room({ PageTemplate, initialState }) {
             {!visibleDocumentsCount && t('documentsPlaceholder')}
             {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
             {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
+            {renderMessageBoard()}
           </div>
         )}
 
@@ -520,6 +635,7 @@ export default function Room({ PageTemplate, initialState }) {
                     {renderCreateDocumentButton()}
                     {!visibleDocumentsCount && t('documentsPlaceholder')}
                     {renderDocumentsAsDraggable()}
+                    {renderMessageBoard()}
                   </div>
                 )
               },

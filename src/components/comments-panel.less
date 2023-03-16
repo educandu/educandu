@@ -53,10 +53,10 @@
 }
 
 .CommentsPanel-text {
-  margin: 5px;
+  margin: 5px 0;
   padding: @edu-content-padding;
   border-radius: @edu-border-radius-base;
-  background-color: lighten(@edu-primary-color-light, 42%);
+  background-color: @edu-background-color-light;
 
   &.CommentsPanel-text--deleted {
     font-style: italic;
@@ -66,7 +66,7 @@
 .CommentsPanel-commentDeleteButton {
   position: absolute;
   bottom: 0;
-  right: -20px;
+  right: -25px;
 }
 
 .CommentsPanel-postCommentButton {
