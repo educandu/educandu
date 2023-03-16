@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
-import { determineNotificationReasonsForDocumentRevisionCreatedEvent, determineNotificationReasonsForDocumentCommentCreatedEvent, groupNotifications } from './notification-utils.js';
+import {
+  determineNotificationReasonsForRoomMessageCreatedEvent,
+  determineNotificationReasonsForDocumentCommentCreatedEvent,
+  determineNotificationReasonsForDocumentRevisionCreatedEvent,
+  groupNotifications
+} from './notification-utils.js';
 
 describe('notification-utils', () => {
 
@@ -105,14 +110,6 @@ describe('notification-utils', () => {
   describe('determineNotificationReasonsForDocumentCommentCreatedEvent', () => {
     const testCases = [
       {
-        description: 'when the notified user is the owner of the room',
-        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentCommentCreated, params: { userId: 'event-user-id' } },
-        document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
-        notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
-        expectedReasons: [NOTIFICATION_REASON.roomMembership]
-      },
-      {
         description: 'when the notified user is an invited member of the room',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentCommentCreated, params: { userId: 'event-user-id' } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
@@ -184,6 +181,58 @@ describe('notification-utils', () => {
         let result;
         beforeEach(() => {
           result = determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser });
+        });
+        it(`should return ${JSON.stringify(expectedReasons)}`, () => {
+          expect(result).toStrictEqual(expectedReasons);
+        });
+      });
+    });
+  });
+
+  describe('determineNotificationReasonsForRoomMessageCreatedEvent', () => {
+    const testCases = [
+      {
+        description: 'when the notified user is the owner of the room (meaning the same user as the event user)',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'owner-user-id', roomMessageKey: 'key' } },
+        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
+        description: 'when the notified user is an invited member of the room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
+        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is an invited member of the room but the room has been deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
+        room: null,
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
+        description: 'when the notified user is an invited member of the room but the room message has been deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
+        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [] },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
+        description: 'when the notified user is an invited member of the room and has marked the room as favorite',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
+        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [{ type: FAVORITE_TYPE.room, id: 'room-id' }] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership, NOTIFICATION_REASON.roomFavorite]
+      }
+    ];
+
+    testCases.forEach(({ description, event, document, room, notifiedUser, expectedReasons }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = determineNotificationReasonsForRoomMessageCreatedEvent({ event, document, room, notifiedUser });
         });
         it(`should return ${JSON.stringify(expectedReasons)}`, () => {
           expect(result).toStrictEqual(expectedReasons);

@@ -97,7 +97,7 @@ export default class RoomService {
     return newRoom;
   }
 
-  async createRoomMessage({ room, text, emailNotification, silentCreation = false }) {
+  async createRoomMessage({ room, text, emailNotification }) {
     const messages = cloneDeep(room.messages);
     const newMessage = {
       key: uniqueId.create(),
@@ -110,9 +110,7 @@ export default class RoomService {
 
     await this.roomStore.updateRoomMessages(room._id, messages);
 
-    if (!silentCreation) {
-      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key });
-    }
+    await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key });
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 
