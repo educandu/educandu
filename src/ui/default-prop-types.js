@@ -301,15 +301,21 @@ export const wikimediaFileShape = PropTypes.shape({
 const roomStorageShape = PropTypes.shape({
   roomId: PropTypes.string.isRequired,
   roomName: PropTypes.string.isRequired,
-  objects: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  usedBytes: PropTypes.number.isRequired
+  objects: PropTypes.arrayOf(cdnObjectShape).isRequired
 });
 
 export const roomMediaOverviewShape = PropTypes.shape({
   storagePlan: storagePlanShape,
   usedBytes: PropTypes.number.isRequired,
-  unusedBytes: PropTypes.number.isRequired,
   roomStorageList: PropTypes.arrayOf(roomStorageShape).isRequired
+});
+
+export const roomMediaContextShape = PropTypes.shape({
+  roomId: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  maxBytes: PropTypes.number.isRequired,
+  usedBytes: PropTypes.number.isRequired,
+  isDeletionEnabled: PropTypes.bool.isRequired
 });
 
 const formItemDimensionShape = PropTypes.shape({

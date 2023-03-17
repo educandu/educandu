@@ -1,11 +1,13 @@
+import by from 'thenby';
 import mime from 'mime';
 import fs from 'node:fs';
-import axios from 'axios';
 import Logger from '../common/logger.js';
+import urlUtils from '../utils/url-utils.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
-import { DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -17,57 +19,62 @@ class Cdn {
     this.rootUrl = rootUrl;
   }
 
-  listObjects({ prefix = '', recursive = false } = {}) {
-    return this.s3Client.listObjects(this.bucketName, prefix, recursive);
+  async listObjects({ directoryPath }) {
+    const prefix = urlUtils.ensureTrailingSlash(directoryPath);
+    const objects = await this.s3Client.listObjects(this.bucketName, prefix, false);
+
+    const mappedObjects = ensureIsUnique(
+      objects
+        .map(obj => {
+          const path = obj.name || '';
+          const objectSegments = path.split('/').filter(seg => !!seg);
+          const lastSegment = objectSegments[objectSegments.length - 1];
+          const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
+
+          if (lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
+            return null;
+          }
+
+          return {
+            name: lastSegment,
+            parentPath: objectSegments.slice(0, -1).join('/'),
+            path: objectSegments.join('/'),
+            url: [this.rootUrl, ...encodedObjectSegments].join('/'),
+            portableUrl: `${CDN_URL_PREFIX}${encodedObjectSegments.join('/')}`,
+            createdOn: obj.lastModified,
+            updatedOn: obj.lastModified,
+            size: obj.size
+          };
+        })
+        .filter(obj => obj),
+      obj => obj.path
+    );
+
+    return mappedObjects.sort(by(obj => obj.path));
   }
 
-  getObjectAsBuffer(objectName) {
-    return this.s3Client.getObject(this.bucketName, objectName);
-  }
-
-  async getObjectAsString(objectName, encoding = 'utf8') {
-    const buffer = await this.getObjectAsBuffer(objectName);
-    return buffer.toString(encoding);
-  }
-
-  objectExists(objectName) {
-    return this.s3Client.objectExists(this.bucketName, objectName);
-  }
-
-  uploadObject(objectName, filePath) {
+  uploadObject(objectPath, filePath) {
     const metadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
-    const sanitizedObjectName = objectName.replace(/\\/g, '/');
+    const sanitizedObjectName = objectPath.replace(/\\/g, '/');
     const contentType = mime.getType(sanitizedObjectName) || DEFAULT_CONTENT_TYPE;
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
   }
 
-  async uploadObjectFromUrl(objectName, url) {
-    try {
-      const response = await axios.get(url, { responseType: 'stream' });
-      const contentType = mime.getType(objectName) || DEFAULT_CONTENT_TYPE;
-      await this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
-    } catch (error) {
-      if (error.response?.status === 404) {
-        logger.warn(`File not found ${url}`);
-        return;
-      }
-      throw error;
-    }
+  async deleteObject(objectPath) {
+    await this.s3Client.deleteObject(this.bucketName, objectPath);
   }
 
-  uploadEmptyObject(objectName) {
+  async ensureDirectory({ directoryPath }) {
     const metadata = this._getDefaultMetadata();
-    const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, '', DEFAULT_CONTENT_TYPE, metadata);
+    const directoryMarkerPath = urlUtils.concatParts(directoryPath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.s3Client.upload(this.bucketName, directoryMarkerPath, '', DEFAULT_CONTENT_TYPE, metadata);
   }
 
-  async deleteObject(objectName) {
-    await this.s3Client.deleteObject(this.bucketName, objectName);
-  }
-
-  async deleteObjects(objectNames) {
-    await this.s3Client.deleteObjects(this.bucketName, objectNames);
+  async deleteDirectory({ directoryPath }) {
+    const prefix = urlUtils.ensureTrailingSlash(directoryPath);
+    const objects = await this.s3Client.listObjects(this.bucketName, prefix, true);
+    await this.s3Client.deleteObjects(objects.map(obj => obj.name));
   }
 
   [getDisposalInfo]() {

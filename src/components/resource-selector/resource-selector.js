@@ -1,12 +1,11 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import { useRoomId } from '../room-context.js';
 import { useTranslation } from 'react-i18next';
 import { BankOutlined } from '@ant-design/icons';
-import { useStorage } from '../storage-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { SOURCE_TYPE } from '../../domain/constants.js';
+import { useRoomMediaContext } from '../room-media-context.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getSourceType } from '../../utils/source-utils.js';
@@ -22,19 +21,17 @@ const possibleSourceTypes = [
 ];
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
-  const roomId = useRoomId();
-  const storage = useStorage();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('resourceSelector');
+  const { roomMediaContext } = useRoomMediaContext();
   const [visibleSourceTypes, setVisibleSourceTypes] = useState([]);
   const [selectedSourceType, setSelectedSourceType] = useState(null);
 
   useEffect(() => {
     const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
-      return sourceType === SOURCE_TYPE.roomMedia && (!roomId || !storage)
+      return sourceType === SOURCE_TYPE.roomMedia && !roomMediaContext
         ? false
         : possibleSourceTypes.includes(sourceType);
-
     });
 
     setVisibleSourceTypes(newVisibleSourceTypes);
@@ -53,7 +50,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
       return newSourceTypePriorityList.filter(sourceType => newVisibleSourceTypes.includes(sourceType))[0] || null;
     });
-  }, [roomId, storage, initialUrl, allowedSourceTypes, clientConfig]);
+  }, [roomMediaContext, initialUrl, allowedSourceTypes, clientConfig]);
 
   const handleSourceTypeTabChange = newSourceType => {
     setSelectedSourceType(newSourceType);

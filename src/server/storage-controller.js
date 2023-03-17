@@ -1,7 +1,6 @@
 import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
-import routes from '../utils/routes.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
@@ -80,30 +79,6 @@ class StorageController {
     const { storagePlanId } = req.params;
     await this.storageService.deleteStoragePlanById(storagePlanId);
     return res.send({});
-  }
-
-  registerBeforePages(router) {
-    router.use(async (req, _res, next) => {
-      try {
-        const { user } = req;
-        const documentId = routes.getDocIdIfDocUrl(req.originalUrl);
-
-        // eslint-disable-next-line require-atomic-updates
-        req.storage = await this.storageService.getRoomStorage({ user, documentId });
-
-        let storagePlan;
-        if (user?.storage.planId) {
-          storagePlan = await this.storageService.getStoragePlanById(user.storage.planId);
-        }
-
-        // eslint-disable-next-line require-atomic-updates
-        req.storagePlan = storagePlan || null;
-
-        return next();
-      } catch (err) {
-        return next(err);
-      }
-    });
   }
 
   registerApi(router) {

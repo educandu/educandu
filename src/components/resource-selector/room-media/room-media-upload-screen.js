@@ -5,15 +5,14 @@ import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
 import { Button, Checkbox, Tooltip } from 'antd';
-import { useRoomId } from '../../room-context.js';
 import { useLocale } from '../../locale-context.js';
 import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useRoomMediaContext } from '../../room-media-context.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { useStorage, useSetStorage } from '../../storage-context.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
@@ -50,17 +49,16 @@ function RoomMediaUploadScreen({
   onEditFileClick,
   onSelectFileClick
 }) {
-  const roomId = useRoomId();
-  const storage = useStorage();
   const { uiLocale } = useLocale();
-  const setStorage = useSetStorage();
   const { t } = useTranslation('roomMediaUploadScreen');
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-
   const [optimizeImages, setOptimizeImages] = useState(true);
   const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
+
+  const roomId = roomMediaContext?.roomId || null;
 
   useEffect(() => {
     setOptimizeImages(true);
@@ -83,11 +81,11 @@ function RoomMediaUploadScreen({
       }));
     }
 
-    const availableBytes = Math.max(0, (storage.maxBytes || 0) - (storage.usedBytes || 0));
+    const availableBytes = roomMediaContext ? Math.max(0, (roomMediaContext.maxBytes || 0) - (roomMediaContext.usedBytes || 0)) : 0;
     if (file.size > availableBytes) {
       throw new Error(t('insufficientPrivateStorge'));
     }
-  }, [t, uiLocale, storage]);
+  }, [t, uiLocale, roomMediaContext]);
 
   const uploadFiles = useCallback(async itemsToUpload => {
     const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
@@ -107,7 +105,7 @@ function RoomMediaUploadScreen({
           status: ITEM_STATUS.succeeded,
           uploadedFile: [...roomStorage.objects].sort(by(obj => obj.createdOn, 'desc'))[0] || null
         };
-        setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
+        setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
       } catch (error) {
         updatedItem = {
           ...currentItem,
@@ -118,7 +116,7 @@ function RoomMediaUploadScreen({
 
       setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
     }
-  }, [roomId, storageApiClient, ensureCanUpload, setStorage, optimizeImages]);
+  }, [roomId, storageApiClient, ensureCanUpload, setRoomMediaContext, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
@@ -231,9 +229,9 @@ function RoomMediaUploadScreen({
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
         <div className="RoomMediaUploadScreen">
-          {(storage.usedBytes > 0 || storage.maxBytes > 0) && (
+          {!!roomMediaContext && (
             <div className="RoomMediaUploadScreen-usedStorage" >
-              <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
+              <UsedStorage usedBytes={roomMediaContext.usedBytes} maxBytes={roomMediaContext.maxBytes} showLabel />
             </div>
           )}
           {renderUploadMessage()}

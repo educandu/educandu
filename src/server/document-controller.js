@@ -9,6 +9,7 @@ import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import SettingService from '../services/setting-service.js';
+import StorageService from '../services/storage-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -28,6 +29,7 @@ import {
   getPublicNonArchivedDocumentsByContributingUserParams,
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
@@ -35,11 +37,12 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer];
+  static dependencies = [DocumentService, RoomService, StorageService, ClientDataMappingService, SettingService, PageRenderer];
 
-  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer) {
+  constructor(documentService, roomService, storageService, clientDataMappingService, settingService, pageRenderer) {
     this.settingService = settingService;
     this.roomService = roomService;
+    this.storageService = storageService;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
@@ -87,6 +90,7 @@ class DocumentController {
     }
 
     let room;
+    let roomMediaContext;
     if (doc.roomId) {
       if (!user) {
         throw new Unauthorized();
@@ -101,8 +105,20 @@ class DocumentController {
       if (doc.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
         throw new Forbidden();
       }
+
+      const { storagePlan, usedBytes } = await this.storageService.getAllRoomMedia({ user, roomId: room._id });
+      roomMediaContext = storagePlan || usedBytes
+        ? {
+          roomId: room._id,
+          path: getRoomMediaRoomPath(room._id),
+          usedBytes: usedBytes || 0,
+          maxBytes: storagePlan?.maxBytes || 0,
+          isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
+        }
+        : null;
     } else {
       room = null;
+      roomMediaContext = null;
     }
 
     if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDoc({ user, doc, room })) {
@@ -113,7 +129,8 @@ class DocumentController {
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections, room: mappedRoom });
+    const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, initialState);
   }
 
   async handleGetDoc(req, res) {

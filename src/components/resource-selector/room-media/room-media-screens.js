@@ -1,14 +1,13 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { useRoomId } from '../../room-context.js';
 import urlUtils from '../../../utils/url-utils.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
+import { useRoomMediaContext } from '../../room-media-context.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { useSetStorage, useStorage } from '../../storage-context.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
@@ -22,10 +21,7 @@ const SCREEN = {
 };
 
 function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
-  const roomId = useRoomId();
-  const storage = useStorage();
   const { t } = useTranslation('');
-  const setStorage = useSetStorage();
   const [files, setFiles] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,9 +29,12 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
+
+  const roomId = roomMediaContext?.roomId || null;
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
@@ -45,10 +44,8 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     return files.filter(file => file.name.toLowerCase().includes(filterText.toLowerCase()));
   }, [filterText, files]);
 
-  const hasStorage = !!storage;
-
   const fetchStorageContent = useCallback(async () => {
-    if (!roomId || !hasStorage) {
+    if (!roomId) {
       return;
     }
 
@@ -56,13 +53,13 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
       setIsLoading(true);
       const { storagePlan, usedBytes, roomStorage } = await storageApiClient.getAllRoomMedia({ roomId });
       setFiles(roomStorage.objects);
-      setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
+      setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     } catch (err) {
       message.error(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [roomId, hasStorage, setStorage, storageApiClient]);
+  }, [roomId, setRoomMediaContext, storageApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -85,7 +82,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     confirmMediaFileHardDelete(t, file.name, async () => {
       const { storagePlan, usedBytes, roomStorage } = await storageApiClient.deleteRoomMedia({ roomId, name: file.name });
       setFiles(roomStorage.objects);
-      setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
+      setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     });
   };
 
@@ -161,7 +158,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     fetchStorageContent();
   }, [fetchStorageContent]);
 
-  if (!storage) {
+  if (!roomMediaContext) {
     return null;
   }
 

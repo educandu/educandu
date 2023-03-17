@@ -3,7 +3,6 @@ import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
-import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
@@ -13,11 +12,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
-import {
-  STORAGE_DIRECTORY_MARKER_NAME,
-  INVALID_ROOM_INVITATION_REASON,
-  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
-} from '../domain/constants.js';
+import { INVALID_ROOM_INVITATION_REASON, PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -67,8 +62,9 @@ export default class RoomService {
 
   async createRoom({ name, slug, isCollaborative, user }) {
     const roomId = uniqueId.create();
+    const roomMediaDirectoryPath = getRoomMediaRoomPath(roomId);
 
-    await this.createUploadDirectoryMarkerForRoom(roomId);
+    await this.cdn.ensureDirectory({ directoryPath: roomMediaDirectoryPath });
 
     const newRoom = {
       _id: roomId,
@@ -88,7 +84,7 @@ export default class RoomService {
     try {
       await this.roomStore.saveRoom(newRoom);
     } catch (error) {
-      await this.deleteUploadDirectoryMarkerForRoom(roomId);
+      await this.cdn.deleteDirectory({ directoryPath: roomMediaDirectoryPath });
       throw error;
     }
 
@@ -119,18 +115,6 @@ export default class RoomService {
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 
     return updatedRoom;
-  }
-
-  async createUploadDirectoryMarkerForRoom(roomId) {
-    const storagePath = getRoomMediaRoomPath(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.uploadEmptyObject(directoryMarkerPath);
-  }
-
-  async deleteUploadDirectoryMarkerForRoom(roomId) {
-    const storagePath = getRoomMediaRoomPath(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {

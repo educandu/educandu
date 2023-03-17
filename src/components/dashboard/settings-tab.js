@@ -110,7 +110,7 @@ function SettingsTab() {
         organization,
         introduction
       });
-      setUser({ ...updatedUser });
+      setUser(updatedUser);
       setIsUserProfileFormDirty(false);
       message.success(t('updateSuccessMessage'));
     } catch (error) {
@@ -135,7 +135,7 @@ function SettingsTab() {
       const { user: updatedUser } = await userApiClient.saveUserNotificationSettings({
         emailNotificationFrequency
       });
-      setUser({ ...updatedUser });
+      setUser(updatedUser);
       setIsNotificationSettingsFormDirty(false);
       message.success(t('updateSuccessMessage'));
     } catch (error) {

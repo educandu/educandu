@@ -3,7 +3,6 @@ import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
-import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
@@ -44,8 +43,8 @@ export default class MaintenanceService {
       logger.info('Finished database checks successfully');
 
       logger.info('Creating basic CDN directories');
-      await this.cdn.uploadEmptyObject(`media-library/${STORAGE_DIRECTORY_MARKER_NAME}`);
-      await this.cdn.uploadEmptyObject(`room-media/${STORAGE_DIRECTORY_MARKER_NAME}`);
+      await this.cdn.ensureDirectory('media-library');
+      await this.cdn.ensureDirectory('room-media');
       logger.info('Finished creating basic CDN directories successfully');
     } finally {
       await this.lockStore.releaseLock(lock);

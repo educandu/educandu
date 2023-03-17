@@ -57,10 +57,6 @@ class ClientDataMappingService {
       role: user.role,
       organization: user.organization,
       introduction: user.introduction,
-      storage: {
-        plan: user.storage.plan,
-        usedBytes: user.storage.usedBytes
-      },
       favorites: user.favorites.map(favorite => ({
         ...favorite,
         setOn: favorite.setOn.toISOString()
