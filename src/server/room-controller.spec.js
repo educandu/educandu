@@ -53,8 +53,7 @@ describe('room-controller', () => {
       getUserById: sandbox.stub()
     };
     storageService = {
-      deleteRoomAndResources: sandbox.stub(),
-      updateUserUsedBytes: sandbox.stub()
+      deleteRoomAndResources: sandbox.stub()
     };
     mailService = {
       sendRoomInvitationEmails: sandbox.stub(),
@@ -917,7 +916,6 @@ describe('room-controller', () => {
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB]);
         storageService.deleteRoomAndResources.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
-        storageService.updateUserUsedBytes.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
@@ -938,10 +936,6 @@ describe('room-controller', () => {
         );
       });
 
-      it('should call storageService.updateUserUsedBytes', () => {
-        assert.calledWith(storageService.updateUserUsedBytes, user._id);
-      });
-
       it('should return status 200', () => {
         expect(res.statusCode).toBe(200);
       });
@@ -957,7 +951,6 @@ describe('room-controller', () => {
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([]);
         storageService.deleteRoomAndResources.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
-        storageService.updateUserUsedBytes.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
@@ -968,10 +961,6 @@ describe('room-controller', () => {
 
       it('should not call mailService.sendRoomDeletionNotificationEmails', () => {
         assert.notCalled(mailService.sendRoomDeletionNotificationEmails);
-      });
-
-      it('should call storageService.updateUserUsedBytes once to ensure the calculation is up to date', () => {
-        assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
 
       it('should return status 200', () => {

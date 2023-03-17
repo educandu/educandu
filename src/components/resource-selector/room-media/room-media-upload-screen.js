@@ -1,11 +1,12 @@
+import by from 'thenby';
 import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
 import { Button, Checkbox, Tooltip } from 'antd';
+import { useRoomId } from '../../room-context.js';
 import { useLocale } from '../../locale-context.js';
-import cloneDeep from '../../../utils/clone-deep.js';
 import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
@@ -49,6 +50,7 @@ function RoomMediaUploadScreen({
   onEditFileClick,
   onSelectFileClick
 }) {
+  const roomId = useRoomId();
   const storage = useStorage();
   const { uiLocale } = useLocale();
   const setStorage = useSetStorage();
@@ -88,13 +90,6 @@ function RoomMediaUploadScreen({
   }, [t, uiLocale, storage]);
 
   const uploadFiles = useCallback(async itemsToUpload => {
-    let currentStorage = storage;
-
-    const result = {
-      uploadedFiles: {},
-      failedFiles: {}
-    };
-
     const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
 
     for (let i = 0; i < processedFiles.length; i += 1) {
@@ -106,17 +101,14 @@ function RoomMediaUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], storage.path);
-        result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
+        const { storagePlan, usedBytes, roomStorage } = await storageApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
-          uploadedFile: Object.values(uploadedFiles)[0]
+          uploadedFile: [...roomStorage.objects].sort(by(obj => obj.createdOn, 'desc'))[0] || null
         };
-        currentStorage = { ...cloneDeep(currentStorage), usedBytes };
-        setStorage(currentStorage);
+        setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
       } catch (error) {
-        result.failedFiles = { ...result.failedFiles, [file.name]: file };
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.failed,
@@ -126,10 +118,7 @@ function RoomMediaUploadScreen({
 
       setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
     }
-
-    return result;
-
-  }, [storageApiClient, ensureCanUpload, storage, setStorage, optimizeImages]);
+  }, [roomId, storageApiClient, ensureCanUpload, setStorage, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);

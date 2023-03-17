@@ -14,6 +14,7 @@ import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';
 import { useIsMounted } from '../../ui/hooks.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { RoomProvider } from '../room-context.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
@@ -27,13 +28,14 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isTouchDevice, supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { documentShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
+import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -48,7 +50,6 @@ import {
   getEditDocRestrictionTooltip,
   tryBringSectionIntoView
 } from '../../utils/doc-utils.js';
-import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -592,7 +593,7 @@ function Doc({ initialState, PageTemplate }) {
   }
 
   return (
-    <Fragment>
+    <RoomProvider value={room?._id || null}>
       <PageTemplate alerts={alerts}>
         <div className="DocPage" ref={pageRef}>
           {!!room && (
@@ -705,7 +706,7 @@ function Doc({ initialState, PageTemplate }) {
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
         />
-    </Fragment>
+    </RoomProvider>
   );
 }
 

@@ -69,7 +69,7 @@ function createTableRows(documents, mediaLibraryItems, tagCategoryFilter) {
 
   for (const row of finalRows) {
     row.documents.sort(by(x => x.title, { ignoreCase: true }));
-    row.mediaLibraryItems.sort(by(x => x.displayName, { ignoreCase: true }));
+    row.mediaLibraryItems.sort(by(x => x.name, { ignoreCase: true }));
     row.companionTags = Object.entries(row.companionTagFrequencies)
       .map(([name, frequency]) => ({ name, frequency }))
       .sort(by(x => x.frequency, 'desc').thenBy(x => x.name, { ignoreCase: true }));
@@ -175,7 +175,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
             <ul className="RedactionTagsTab-documentList">
               {row.mediaLibraryItems.map(item => (
                 <li key={item._id}>
-                  <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.displayName}</a>
+                  <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.name}</a>
                 </li>
               ))}
             </ul>

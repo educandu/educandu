@@ -1,8 +1,8 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import { useRoomId } from '../../room-context.js';
 import urlUtils from '../../../utils/url-utils.js';
-import cloneDeep from '../../../utils/clone-deep.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
@@ -22,17 +22,17 @@ const SCREEN = {
 };
 
 function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
-  const { t } = useTranslation('');
+  const roomId = useRoomId();
   const storage = useStorage();
+  const { t } = useTranslation('');
   const setStorage = useSetStorage();
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-
   const [files, setFiles] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
@@ -42,25 +42,27 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
   const displayedFiles = useMemo(() => {
-    return files.filter(file => file.displayName.toLowerCase().includes(filterText.toLowerCase()));
+    return files.filter(file => file.name.toLowerCase().includes(filterText.toLowerCase()));
   }, [filterText, files]);
 
+  const hasStorage = !!storage;
+
   const fetchStorageContent = useCallback(async () => {
-    if (!storage) {
+    if (!roomId || !hasStorage) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects({ parentPath: storage.path });
-
-      setFiles(result.objects);
+      const { storagePlan, usedBytes, roomStorage } = await storageApiClient.getAllRoomMedia({ roomId });
+      setFiles(roomStorage.objects);
+      setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
     } catch (err) {
       message.error(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [storage, storageApiClient]);
+  }, [roomId, hasStorage, setStorage, storageApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -80,10 +82,10 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.displayName, async () => {
-      const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
-      setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-      setStorage({ ...cloneDeep(storage), usedBytes });
+    confirmMediaFileHardDelete(t, file.name, async () => {
+      const { storagePlan, usedBytes, roomStorage } = await storageApiClient.deleteRoomMedia({ roomId, name: file.name });
+      setFiles(roomStorage.objects);
+      setStorage(oldStorage => ({ ...oldStorage, maxBytes: storagePlan.maxBytes, usedBytes }));
     });
   };
 
@@ -150,7 +152,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = displayedFiles.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = displayedFiles.find(file => file.name === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
   }, [initialUrl, showInitialFileHighlighting, displayedFiles]);

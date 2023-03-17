@@ -1,5 +1,4 @@
 import HttpClient from './http-client.js';
-import urlUtils from '../utils/url-utils.js';
 
 class StorageApiClient {
   static dependencies = [HttpClient];
@@ -8,39 +7,40 @@ class StorageApiClient {
     this.httpClient = httpClient;
   }
 
-  getCdnObjects({ parentPath }) {
+  getRoomMediaOverview() {
     return this.httpClient
       .get(
-        `/api/v1/storage/objects?${urlUtils.composeQueryString({ parentPath })}`,
+        '/api/v1/storage/room-media-overview',
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  uploadFiles(files, parentPath, { onProgress = () => {} } = {}) {
-    const formData = new FormData();
-
-    formData.set('parentPath', parentPath);
-    files.forEach(file => formData.append('files', file, file.name));
-
-    const request = this.httpClient
-      .post(
-        '/api/v1/storage/objects',
-        formData,
-        {
-          responseType: 'json',
-          headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: onProgress
-        }
-      );
-
-    return request.then(res => res.data);
+  getAllRoomMedia({ roomId }) {
+    return this.httpClient
+      .get(
+        `/api/v1/storage/room-media/${encodeURIComponent(roomId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
-  deleteCdnObject(path) {
+  postRoomMedia({ roomId, file }) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.httpClient
+      .post(
+        `/api/v1/storage/room-media/${encodeURIComponent(roomId)}`,
+        formData,
+        { responseType: 'json', headers: { 'content-type': 'multipart/form-data' } }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoomMedia({ roomId, name }) {
     return this.httpClient
       .delete(
-        `/api/v1/storage/objects?path=${encodeURIComponent(path)}`,
+        `/api/v1/storage/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(name)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -79,24 +79,6 @@ class StorageApiClient {
     return this.httpClient
       .delete(
         `/api/v1/storage/plans/${encodeURIComponent(storagePlanId)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  getRoomMediaOverview() {
-    return this.httpClient
-      .get(
-        '/api/v1/storage/room-media-overview',
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  deleteRoomMedia({ roomId, name }) {
-    return this.httpClient
-      .delete(
-        `/api/v1/storage/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(name)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

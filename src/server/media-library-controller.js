@@ -1,22 +1,19 @@
 import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
-import httpErrors from 'http-errors';
 import Cdn from '../repositories/cdn.js';
 import permissions from '../domain/permissions.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   mediaLibraryItemMetadataBodySchema,
   mediaLibraryItemIdParamsSchema,
   mediaLibrarySearchQuerySchema,
   mediaLibraryTagSearchQuerySchema
 } from '../domain/schemas/media-library-item-schemas.js';
-
-const { BadRequest } = httpErrors;
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
@@ -45,10 +42,6 @@ class MediaLibraryController {
   async handleCreateMediaLibraryItem(req, res) {
     const { user, file } = req;
     const { ...metadata } = req.body;
-
-    if (!file) {
-      throw new BadRequest('No file provided');
-    }
 
     const mediaLibraryItem = await this.mediaLibraryService.createMediaLibraryItem({ file, metadata, user });
     const mappedMediaLibraryItem = await this.clientDataMappingService.mapMediaLibraryItem(mediaLibraryItem, user);
@@ -96,7 +89,8 @@ class MediaLibraryController {
       needsPermission(permissions.CREATE_CONTENT),
       uploadLimitExceededMiddleware(),
       multipartParser.single('file'),
-      (req, res, next) => {
+      validateFile('file'),
+      (req, _res, next) => {
         // Multipart form data cannot transport "empty" arrays,
         // so in case no language was provided we have to set an empty array
         req.body.languages ||= [];

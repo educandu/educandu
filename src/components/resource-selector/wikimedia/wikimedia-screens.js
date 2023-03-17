@@ -117,7 +117,7 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
     const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = files.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = files.find(file => file.name === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
   }, [initialUrl, showInitialFileHighlighting, files]);

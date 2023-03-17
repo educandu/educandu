@@ -1,5 +1,6 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import { useRoomId } from '../room-context.js';
 import { useTranslation } from 'react-i18next';
 import { BankOutlined } from '@ant-design/icons';
 import { useStorage } from '../storage-context.js';
@@ -21,6 +22,7 @@ const possibleSourceTypes = [
 ];
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
+  const roomId = useRoomId();
   const storage = useStorage();
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('resourceSelector');
@@ -29,14 +31,10 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
   useEffect(() => {
     const newVisibleSourceTypes = allowedSourceTypes.filter(sourceType => {
-      switch (sourceType) {
-        case SOURCE_TYPE.roomMedia:
-          return !!storage;
-        case SOURCE_TYPE.mediaLibrary:
-          return possibleSourceTypes.includes(sourceType);
-        default:
-          return possibleSourceTypes.includes(sourceType);
-      }
+      return sourceType === SOURCE_TYPE.roomMedia && (!roomId || !storage)
+        ? false
+        : possibleSourceTypes.includes(sourceType);
+
     });
 
     setVisibleSourceTypes(newVisibleSourceTypes);
@@ -55,7 +53,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
       return newSourceTypePriorityList.filter(sourceType => newVisibleSourceTypes.includes(sourceType))[0] || null;
     });
-  }, [allowedSourceTypes, initialUrl, storage, clientConfig]);
+  }, [roomId, storage, initialUrl, allowedSourceTypes, clientConfig]);
 
   const handleSourceTypeTabChange = newSourceType => {
     setSelectedSourceType(newSourceType);

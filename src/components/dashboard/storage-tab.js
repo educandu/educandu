@@ -17,6 +17,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
 import RoomMediaPreviewModal from '../resource-selector/room-media/room-media-preview-modal.js';
+import { RoomProvider } from '../room-context.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -77,10 +78,10 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
   };
 
   const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.displayName, async () => {
+    confirmMediaFileHardDelete(t, file.name, async () => {
       try {
         setIsUpdating(true);
-        await storageApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.displayName });
+        await storageApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.name });
         const overview = await storageApiClient.getRoomMediaOverview();
         onRoomMediaOverviewChange(overview);
       } catch (error) {
@@ -140,47 +141,49 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
 
   return (
     <div className="StorageTab">
-      <StorageProvider value={storageProviderStorage}>
-        <div className="StorageTab-tabInfo">{t('info')}</div>
-        <section className="StorageTab-content">
-          {!roomMediaOverview?.storagePlan && !!loading && <Spin className="u-spin" />}
-          {!roomMediaOverview?.storagePlan && !loading && t('noStoragePlan')}
-          {!!roomMediaOverview?.storagePlan && (
-            <Fragment>
-              <div className="StorageTab-planName">
-                {t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b>
-              </div>
-              <div className="StorageTab-usedStorage">
-                <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan.maxBytes} showLabel />
-              </div>
-              <div className="StorageTab-fileViewer">
-                <RoomMediaFilesViewer
-                  canDelete
-                  files={files}
-                  customFilter={renderRoomSelect()}
-                  isLoading={isUpdating}
-                  apiRef={filesViewerApiRef}
-                  highlightedFile={highlightedFile}
-                  filesViewerDisplay={filesViewerDisplay}
-                  onFileClick={handleFileClick}
-                  onFilesDropped={handleFilesDropped}
-                  onDeleteFileClick={handleDeleteFileClick}
-                  onFileDoubleClick={handleFileDoubleClick}
-                  onPreviewFileClick={handlePreviewFileClick}
-                  onFilesViewerDisplayChange={setFilesViewerDisplay}
-                  />
-              </div>
-              <div>
-                <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
-                  {t('common:uploadFiles')}
-                </Button>
-              </div>
-            </Fragment>
-          )}
-        </section>
-        <RoomMediaPreviewModal {...previewModalProps} onClose={handlePreviewModalClose} />
-        <RoomMediaUploadModal {...uploadModalProps} onOk={handleUploadModalOk} onCancel={handleUploadModalCancel} />
-      </StorageProvider>
+      <RoomProvider value={selectedRoomId || null}>
+        <StorageProvider value={storageProviderStorage}>
+          <div className="StorageTab-tabInfo">{t('info')}</div>
+          <section className="StorageTab-content">
+            {!roomMediaOverview?.storagePlan && !!loading && <Spin className="u-spin" />}
+            {!roomMediaOverview?.storagePlan && !loading && t('noStoragePlan')}
+            {!!roomMediaOverview?.storagePlan && (
+              <Fragment>
+                <div className="StorageTab-planName">
+                  {t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b>
+                </div>
+                <div className="StorageTab-usedStorage">
+                  <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan.maxBytes} showLabel />
+                </div>
+                <div className="StorageTab-fileViewer">
+                  <RoomMediaFilesViewer
+                    canDelete
+                    files={files}
+                    customFilter={renderRoomSelect()}
+                    isLoading={isUpdating}
+                    apiRef={filesViewerApiRef}
+                    highlightedFile={highlightedFile}
+                    filesViewerDisplay={filesViewerDisplay}
+                    onFileClick={handleFileClick}
+                    onFilesDropped={handleFilesDropped}
+                    onDeleteFileClick={handleDeleteFileClick}
+                    onFileDoubleClick={handleFileDoubleClick}
+                    onPreviewFileClick={handlePreviewFileClick}
+                    onFilesViewerDisplayChange={setFilesViewerDisplay}
+                    />
+                </div>
+                <div>
+                  <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
+                    {t('common:uploadFiles')}
+                  </Button>
+                </div>
+              </Fragment>
+            )}
+          </section>
+          <RoomMediaPreviewModal {...previewModalProps} onClose={handlePreviewModalClose} />
+          <RoomMediaUploadModal {...uploadModalProps} onOk={handleUploadModalOk} onCancel={handleUploadModalCancel} />
+        </StorageProvider>
+      </RoomProvider>
     </div>
   );
 }

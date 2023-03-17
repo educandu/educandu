@@ -1,33 +1,24 @@
 import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
-import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
-import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { tryGetRoomIdFromStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { validateBody, validateQuery, validateParams, validateFile } from '../domain/validation-middleware.js';
 import {
-  getCdnObjectsQuerySchema,
-  postCdnObjectsBodySchema,
-  deleteCdnObjectQuerySchema,
+  deleteRoomMediaParamsSchema,
+  getAllOrPostRoomMediaParamsSchema,
   getStoragePlansQuerySchema,
-  postStoragePlanBodySchema,
-  patchStoragePlanParamsSchema,
-  deleteStoragePlanParamsSchema,
+  patchOrDeleteStoragePlanParamsSchema,
   patchStoragePlanBodySchema,
-  deleteRoomMediaParamsSchema
+  postStoragePlanBodySchema
 } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
-
-const { BadRequest, Unauthorized } = httpErrors;
 
 class StorageController {
   static dependencies = [StorageService, RoomService];
@@ -37,68 +28,31 @@ class StorageController {
     this.roomService = roomService;
   }
 
-  async handleGetCdnObjects(req, res) {
+  async handleGetRoomMediaOverview(req, res) {
     const { user } = req;
-    const { parentPath } = req.query;
-
-    await this._checkPathAccess(parentPath, user);
-
-    const objects = await this.storageService.getObjects({ parentPath });
-
-    return res.send({ objects });
+    const roomMediaOverview = await this.storageService.getRoomMediaOverview({ user });
+    return res.send(roomMediaOverview);
   }
 
-  async handleDeleteCdnObject(req, res) {
+  async handleGetAllRoomMedia(req, res) {
     const { user } = req;
-    const { path } = req.query;
-
-    const { storageClaimingUserId } = await this._checkPathAccess(path, user);
-    const { usedBytes } = await this.storageService.deleteObject({ path, storageClaimingUserId });
-
-    return res.send({ usedBytes });
+    const { roomId } = req.params;
+    const roomMedia = await this.storageService.getAllRoomMedia({ user, roomId });
+    return res.send(roomMedia);
   }
 
-  async handlePostCdnObject(req, res) {
-    const { user, files } = req;
-    const { parentPath } = req.body;
-
-    if (!files?.length) {
-      throw new BadRequest('No files provided');
-    }
-
-    const { storageClaimingUserId } = await this._checkPathAccess(parentPath, user);
-    const { uploadedFiles, usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
-
-    return res.status(201).send({ uploadedFiles, usedBytes });
+  async handlePostRoomMedia(req, res) {
+    const { user, file } = req;
+    const { roomId } = req.params;
+    const roomMedia = await this.storageService.createRoomMedia({ user, roomId, file });
+    return res.status(201).send(roomMedia);
   }
 
-  async _checkPathAccess(path, user) {
-    const storageLocationType = getStorageLocationTypeForPath(path);
-    if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
-      throw new BadRequest(`Invalid storage path '${path}'`);
-    }
-
-    let storageClaimingUserId;
-    if (storageLocationType === STORAGE_LOCATION_TYPE.roomMedia) {
-      const roomId = tryGetRoomIdFromStoragePath(path);
-      const room = roomId ? await this.roomService.getRoomById(roomId) : null;
-
-      if (!room) {
-        throw new BadRequest(`Unknown room id '${roomId}'`);
-      }
-
-      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
-        throw new Unauthorized(`User is not authorized to access room '${roomId}'`);
-      }
-
-      storageClaimingUserId = room.owner;
-    } else {
-      storageClaimingUserId = user._id;
-    }
-
-    return {
-      storageClaimingUserId
-    };
+  async handleDeleteRoomMedia(req, res) {
+    const { user } = req;
+    const { roomId, name } = req.params;
+    const roomMedia = await this.storageService.deleteRoomMedia({ user, roomId, name });
+    return res.send(roomMedia);
   }
 
   async handleGetStoragePlans(req, res) {
@@ -128,19 +82,6 @@ class StorageController {
     return res.send({});
   }
 
-  async handleGetRoomMediaOverview(req, res) {
-    const { user } = req;
-    const roomMediaOverview = await this.storageService.getRoomMediaOverview({ user });
-    return res.send(roomMediaOverview);
-  }
-
-  async handleDeleteOwnRoomMedia(req, res) {
-    const { user } = req;
-    const { roomId, name } = req.params;
-    const roomMedia = await this.storageService.deleteOwnRoomMedia({ user, roomId, name });
-    return res.send(roomMedia);
-  }
-
   registerBeforePages(router) {
     router.use(async (req, _res, next) => {
       try {
@@ -167,27 +108,33 @@ class StorageController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/storage/objects',
-      jsonParser,
+      '/api/v1/storage/room-media-overview',
       needsPermission(permissions.BROWSE_STORAGE),
-      validateQuery(getCdnObjectsQuerySchema),
-      (req, res) => this.handleGetCdnObjects(req, res)
+      (req, res) => this.handleGetRoomMediaOverview(req, res)
     );
 
-    router.delete(
-      '/api/v1/storage/objects',
-      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
-      validateQuery(deleteCdnObjectQuerySchema),
-      (req, res) => this.handleDeleteCdnObject(req, res)
+    router.get(
+      '/api/v1/storage/room-media/:roomId',
+      needsPermission(permissions.BROWSE_STORAGE),
+      validateParams(getAllOrPostRoomMediaParamsSchema),
+      (req, res) => this.handleGetAllRoomMedia(req, res)
     );
 
     router.post(
-      '/api/v1/storage/objects',
+      '/api/v1/storage/room-media/:roomId',
       needsPermission(permissions.CREATE_CONTENT),
       uploadLimitExceededMiddleware(),
-      multipartParser.array('files'),
-      validateBody(postCdnObjectsBodySchema),
-      (req, res) => this.handlePostCdnObject(req, res)
+      multipartParser.single('file'),
+      validateFile('file'),
+      validateParams(getAllOrPostRoomMediaParamsSchema),
+      (req, res) => this.handlePostRoomMedia(req, res)
+    );
+
+    router.delete(
+      '/api/v1/storage/room-media/:roomId/:name',
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
+      validateParams(deleteRoomMediaParamsSchema),
+      (req, res) => this.handleDeleteRoomMedia(req, res)
     );
 
     router.get(
@@ -209,7 +156,7 @@ class StorageController {
       '/api/v1/storage/plans/:storagePlanId',
       needsPermission(permissions.MANAGE_SETUP),
       jsonParser,
-      validateParams(patchStoragePlanParamsSchema),
+      validateParams(patchOrDeleteStoragePlanParamsSchema),
       validateBody(patchStoragePlanBodySchema),
       (req, res) => this.handlePatchStoragePlan(req, res)
     );
@@ -217,21 +164,8 @@ class StorageController {
     router.delete(
       '/api/v1/storage/plans/:storagePlanId',
       needsPermission(permissions.MANAGE_SETUP),
-      validateParams(deleteStoragePlanParamsSchema),
+      validateParams(patchOrDeleteStoragePlanParamsSchema),
       (req, res) => this.handleDeleteStoragePlan(req, res)
-    );
-
-    router.get(
-      '/api/v1/storage/room-media-overview',
-      needsPermission(permissions.BROWSE_STORAGE),
-      (req, res) => this.handleGetRoomMediaOverview(req, res)
-    );
-
-    router.delete(
-      '/api/v1/storage/room-media/:roomId/:name',
-      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
-      validateParams(deleteRoomMediaParamsSchema),
-      (req, res) => this.handleDeleteOwnRoomMedia(req, res)
     );
   }
 }

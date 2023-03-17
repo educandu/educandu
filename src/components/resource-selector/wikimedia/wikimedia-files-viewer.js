@@ -54,12 +54,12 @@ function WikimediaFilesViewer({
 
     return (
       <div className={classes} key={file.url}>
-        <Tooltip title={file.displayName} placement="bottom">
+        <Tooltip title={file.name} placement="bottom">
           <a className="WikimediaFilesViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
             <div className="WikimediaFilesViewer-fileDisplay">
               <img className="WikimediaFilesViewer-fileDisplayImage" src={file.thumbnailUrl} />
             </div>
-            <span className="WikimediaFilesViewer-fileName">{file.displayName}</span>
+            <span className="WikimediaFilesViewer-fileName">{file.name}</span>
           </a>
         </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>

@@ -247,9 +247,9 @@ export const documentRevisionShape = PropTypes.shape({
 });
 
 const commonFileProps = {
+  name: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired
@@ -290,7 +290,7 @@ export const mediaLibraryItemWithRelevanceShape = PropTypes.shape({
 export const wikimediaFileShape = PropTypes.shape({
   pageId: PropTypes.number.isRequired,
   pageUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   thumbnailUrl: PropTypes.string,
   updatedOn: PropTypes.string,
