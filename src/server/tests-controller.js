@@ -2,20 +2,18 @@ import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class TestsController {
-  static dependencies = [PageRenderer, DocumentService, RoomService, StorageService, ClientDataMappingService];
+  static dependencies = [PageRenderer, DocumentService, RoomService, ClientDataMappingService];
 
-  constructor(pageRenderer, documentService, roomService, storageService, clientDataMappingService) {
+  constructor(pageRenderer, documentService, roomService, clientDataMappingService) {
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.roomService = roomService;
-    this.storageService = storageService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -27,7 +25,7 @@ class TestsController {
 
     let roomMediaContext;
     if (room) {
-      const { storagePlan, usedBytes } = await this.storageService.getAllRoomMedia({ user, roomId: room._id });
+      const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId: room._id });
       roomMediaContext = storagePlan || usedBytes
         ? {
           roomId: room._id,

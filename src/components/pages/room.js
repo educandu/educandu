@@ -123,7 +123,7 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleRoomDelete = async () => {
     try {
-      await roomApiClient.deleteRoom(room._id);
+      await roomApiClient.deleteRoom({ roomId: room._id });
       window.location = routes.getDashboardUrl();
     } catch (error) {
       handleApiError({ error, t, logger });

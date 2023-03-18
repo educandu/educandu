@@ -7,9 +7,9 @@ import RoomMediaUploadScreen from './room-media-upload-screen.js';
 import { useRoomMediaContext } from '../../room-media-context.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
+import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -27,8 +27,8 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
@@ -51,7 +51,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const { storagePlan, usedBytes, roomStorage } = await storageApiClient.getAllRoomMedia({ roomId });
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getAllRoomMedia({ roomId });
       setFiles(roomStorage.objects);
       setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     } catch (err) {
@@ -59,7 +59,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     } finally {
       setIsLoading(false);
     }
-  }, [roomId, setRoomMediaContext, storageApiClient]);
+  }, [roomId, setRoomMediaContext, roomApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -80,7 +80,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
 
   const handleDeleteFileClick = file => {
     confirmMediaFileHardDelete(t, file.name, async () => {
-      const { storagePlan, usedBytes, roomStorage } = await storageApiClient.deleteRoomMedia({ roomId, name: file.name });
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.deleteRoomMedia({ roomId, name: file.name });
       setFiles(roomStorage.objects);
       setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     });

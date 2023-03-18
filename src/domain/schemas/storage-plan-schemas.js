@@ -1,15 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
-export const getAllOrPostRoomMediaParamsSchema = joi.object({
-  roomId: idOrKeySchema.required()
-});
-
-export const deleteRoomMediaParamsSchema = joi.object({
-  roomId: idOrKeySchema.required(),
-  name: joi.string().required()
-});
-
 export const getStoragePlansQuerySchema = joi.object({
   includeAssignedUserCount: joi.string().valid(true.toString(), false.toString())
 });

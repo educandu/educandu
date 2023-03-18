@@ -74,7 +74,7 @@ class Cdn {
   async deleteDirectory({ directoryPath }) {
     const prefix = urlUtils.ensureTrailingSlash(directoryPath);
     const objects = await this.s3Client.listObjects(this.bucketName, prefix, true);
-    await this.s3Client.deleteObjects(objects.map(obj => obj.name));
+    await this.s3Client.deleteObjects(this.bucketName, objects.map(obj => obj.name));
   }
 
   [getDisposalInfo]() {

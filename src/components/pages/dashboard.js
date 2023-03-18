@@ -18,7 +18,6 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
@@ -42,7 +41,6 @@ function Dashboard({ PageTemplate }) {
   const setNotificationsCount = useSetNotificationsCount();
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
 
@@ -124,12 +122,12 @@ function Dashboard({ PageTemplate }) {
   const fetchRoomMediaOverview = useCallback(async () => {
     try {
       setFetchingRoomMediaOverview(true);
-      const overview = await storageApiClient.getRoomMediaOverview();
+      const overview = await roomApiClient.getRoomMediaOverview();
       setRoomMediaOverview(overview);
     } finally {
       setFetchingRoomMediaOverview(false);
     }
-  }, [storageApiClient]);
+  }, [roomApiClient]);
 
   useEffect(() => {
     (async () => {

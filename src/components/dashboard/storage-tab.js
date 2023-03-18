@@ -6,11 +6,11 @@ import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
 import UploadIcon from '../icons/general/upload-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { roomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -31,7 +31,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [highlightedFile, setHighlightedFile] = useState(null);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [uploadModalProps, setUploadModalProps] = useState(createUploadModalProps({}));
   const [previewModalProps, setPreviewModalProps] = useState(createPreviewModalProps({}));
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
@@ -85,8 +85,8 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     confirmMediaFileHardDelete(t, file.name, async () => {
       try {
         setIsUpdating(true);
-        await storageApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.name });
-        const overview = await storageApiClient.getRoomMediaOverview();
+        await roomApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.name });
+        const overview = await roomApiClient.getRoomMediaOverview();
         onRoomMediaOverviewChange(overview);
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -113,7 +113,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     setUploadModalProps(oldProps => ({ ...oldProps, isOpen: false }));
     try {
       setIsUpdating(true);
-      const overview = await storageApiClient.getRoomMediaOverview();
+      const overview = await roomApiClient.getRoomMediaOverview();
       onRoomMediaOverviewChange(overview);
     } catch (error) {
       handleApiError({ error, logger, t });

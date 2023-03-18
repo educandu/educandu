@@ -3,16 +3,16 @@ import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import StorageService from './storage-service.js';
 import { assert, createSandbox, match } from 'sinon';
 import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
+import StoragePlanService from './storage-plan-service.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
-describe('storage-service', () => {
+describe('storage-plan-service', () => {
   const sandbox = createSandbox();
 
   let documentRevisionStore;
@@ -41,7 +41,7 @@ describe('storage-service', () => {
     documentRevisionStore = container.get(DocumentRevisionStore);
 
     db = container.get(Database);
-    sut = container.get(StorageService);
+    sut = container.get(StoragePlanService);
   });
 
   afterAll(async () => {
@@ -78,7 +78,7 @@ describe('storage-service', () => {
     sandbox.restore();
   });
 
-  describe('deleteRoomAndResources', () => {
+  describe('deleteRoom', () => {
     let lock;
     let roomDocuments;
     let remainingPrivateRoom;
@@ -113,7 +113,7 @@ describe('storage-service', () => {
       roomStore.getRoomIdsByOwnerId.resolves([remainingPrivateRoom._id]);
       cdn.listObjects.withArgs({ prefix: `room-media/${remainingPrivateRoom._id}/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
 
-      await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
+      await sut.deleteRoom({ roomId, roomOwnerId: myUser._id });
     });
 
     it('should take the lock on the user record', () => {

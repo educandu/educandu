@@ -15,7 +15,6 @@ describe('room-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
-  let storageService;
   let documentService;
   let serverConfig;
   let pageRenderer;
@@ -36,6 +35,7 @@ describe('room-controller', () => {
       getRoomsByOwnerOrCollaboratorUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
       getRoomInvitationById: sandbox.stub(),
+      deleteRoom: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
@@ -51,9 +51,6 @@ describe('room-controller', () => {
     };
     userService = {
       getUserById: sandbox.stub()
-    };
-    storageService = {
-      deleteRoomAndResources: sandbox.stub()
     };
     mailService = {
       sendRoomInvitationEmails: sandbox.stub(),
@@ -75,7 +72,7 @@ describe('room-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, documentService, userService, storageService, mailService, clientDataMappingService, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -914,15 +911,15 @@ describe('room-controller', () => {
 
         userService.getUserById.withArgs(user._id).resolves(user);
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB]);
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
 
-      it('should call storageService.deleteRoomAndResources for each room', () => {
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
+      it('should call roomService.deleteRoom for each room', () => {
+        assert.calledWith(roomService.deleteRoom, { room: roomA, roomOwner: user });
+        assert.calledWith(roomService.deleteRoom, { room: roomB, roomOwner: user });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
@@ -949,14 +946,14 @@ describe('room-controller', () => {
 
         userService.getUserById.withArgs(user._id).resolves(user);
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([]);
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
 
-      it('should not call storageService.deleteRoomAndResources', () => {
-        assert.notCalled(storageService.deleteRoomAndResources);
+      it('should not call roomService.deleteRoom', () => {
+        assert.notCalled(roomService.deleteRoom);
       });
 
       it('should not call mailService.sendRoomDeletionNotificationEmails', () => {
@@ -1021,7 +1018,7 @@ describe('room-controller', () => {
           members: [{ userId: uniqueId.create() }, { userId: uniqueId.create() }]
         };
 
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         roomService.getRoomById.withArgs(room._id).resolves(room);
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
@@ -1032,8 +1029,8 @@ describe('room-controller', () => {
         sut.handleDeleteOwnRoom(req, res).catch(reject);
       }));
 
-      it('should call storageService.deleteRoomAndResources', () => {
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
+      it('should call roomService.deleteRoom', () => {
+        assert.calledWith(roomService.deleteRoom, { room, roomOwner: user });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails with the right emails', () => {

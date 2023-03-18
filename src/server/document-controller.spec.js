@@ -13,7 +13,6 @@ describe('document-controller', () => {
 
   let clientDataMappingService;
   let documentService;
-  let storageService;
   let settingService;
   let pageRenderer;
   let roomService;
@@ -33,10 +32,7 @@ describe('document-controller', () => {
     };
 
     roomService = {
-      getRoomById: sandbox.stub()
-    };
-
-    storageService = {
+      getRoomById: sandbox.stub(),
       getAllRoomMedia: sandbox.stub().resolves(null)
     };
 
@@ -67,7 +63,7 @@ describe('document-controller', () => {
       }
     };
 
-    sut = new DocumentController(documentService, roomService, storageService, clientDataMappingService, settingService, pageRenderer);
+    sut = new DocumentController(documentService, roomService, clientDataMappingService, settingService, pageRenderer);
   });
 
   afterEach(() => {

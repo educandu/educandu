@@ -12,8 +12,8 @@ import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRoomMediaContext } from '../../room-media-context.js';
+import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -52,8 +52,8 @@ function RoomMediaUploadScreen({
   const { uiLocale } = useLocale();
   const { t } = useTranslation('roomMediaUploadScreen');
   const [optimizeImages, setOptimizeImages] = useState(true);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
@@ -99,7 +99,7 @@ function RoomMediaUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file);
-        const { storagePlan, usedBytes, roomStorage } = await storageApiClient.postRoomMedia({ roomId, file });
+        const { storagePlan, usedBytes, roomStorage } = await roomApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
@@ -116,7 +116,7 @@ function RoomMediaUploadScreen({
 
       setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
     }
-  }, [roomId, storageApiClient, ensureCanUpload, setRoomMediaContext, optimizeImages]);
+  }, [roomId, roomApiClient, ensureCanUpload, setRoomMediaContext, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);

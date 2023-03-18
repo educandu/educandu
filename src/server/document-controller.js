@@ -9,9 +9,9 @@ import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import SettingService from '../services/setting-service.js';
-import StorageService from '../services/storage-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -29,7 +29,6 @@ import {
   getPublicNonArchivedDocumentsByContributingUserParams,
   getSearchableDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
@@ -37,12 +36,11 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static dependencies = [DocumentService, RoomService, StorageService, ClientDataMappingService, SettingService, PageRenderer];
+  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer];
 
-  constructor(documentService, roomService, storageService, clientDataMappingService, settingService, pageRenderer) {
+  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer) {
     this.settingService = settingService;
     this.roomService = roomService;
-    this.storageService = storageService;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
@@ -106,7 +104,7 @@ class DocumentController {
         throw new Forbidden();
       }
 
-      const { storagePlan, usedBytes } = await this.storageService.getAllRoomMedia({ user, roomId: room._id });
+      const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId: room._id });
       roomMediaContext = storagePlan || usedBytes
         ? {
           roomId: room._id,
