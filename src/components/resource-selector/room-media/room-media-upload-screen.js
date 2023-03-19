@@ -1,4 +1,3 @@
-import by from 'thenby';
 import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
@@ -99,11 +98,11 @@ function RoomMediaUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file);
-        const { storagePlan, usedBytes, roomStorage } = await roomApiClient.postRoomMedia({ roomId, file });
+        const { storagePlan, usedBytes, roomStorage, createdObjectPath } = await roomApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
-          uploadedFile: [...roomStorage.objects].sort(by(obj => obj.createdOn, 'desc'))[0] || null
+          uploadedFile: roomStorage.objects.find(obj => obj.path === createdObjectPath) || null
         };
         setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
       } catch (error) {

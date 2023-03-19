@@ -220,7 +220,8 @@ export default class RoomService {
       return {
         storagePlan: overview.storagePlan,
         usedBytes: overview.usedBytes,
-        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
+        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId),
+        createdObjectPath: cdnObjectPath
       };
     } finally {
       await this.lockStore.releaseLock(lock);
