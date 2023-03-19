@@ -455,7 +455,7 @@ class ClientDataMappingService {
         case 'url':
           result.url = getAccessibleUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
           result.portableUrl = getPortableUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
-          result.displayName = urlUtils.getFileName(value);
+          result.name = urlUtils.getFileName(value);
           break;
         case 'createdOn':
         case 'updatedOn':
