@@ -5,6 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
@@ -33,7 +34,7 @@ describe('document-controller', () => {
 
     roomService = {
       getRoomById: sandbox.stub(),
-      getAllRoomMedia: sandbox.stub().resolves(null)
+      getAllRoomMedia: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -76,6 +77,8 @@ describe('document-controller', () => {
     let templateSections;
     let templateDocument;
     let mappedTemplateDocument;
+    let roomMedia;
+    let roomMediaContext;
 
     describe('when the document does not exist', () => {
       beforeEach(() => {
@@ -172,12 +175,16 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
 
+        roomMedia = null;
         templateSections = [{}];
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
+        roomMediaContext = null;
 
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+
+        roomService.getAllRoomMedia.resolves(roomMedia);
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
@@ -195,7 +202,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext });
       });
     });
 
@@ -213,7 +220,9 @@ describe('document-controller', () => {
         doc.roomId = null;
         room.owner = uniqueId.create();
         room.members = [];
+        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -239,7 +248,9 @@ describe('document-controller', () => {
         doc.roomId = null;
         room.owner = uniqueId.create();
         room.members = [];
+        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -271,6 +282,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -284,7 +296,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -308,6 +320,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -321,7 +334,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -443,7 +456,16 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
+        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaContext = {
+          roomId: room._id,
+          path: getRoomMediaRoomPath(room._id),
+          usedBytes: roomMedia.usedBytes,
+          maxBytes: roomMedia.storagePlan.maxBytes,
+          isDeletionEnabled: true
+        };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -457,7 +479,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -481,7 +503,16 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
+        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaContext = {
+          roomId: room._id,
+          path: getRoomMediaRoomPath(room._id),
+          usedBytes: roomMedia.usedBytes,
+          maxBytes: roomMedia.storagePlan.maxBytes,
+          isDeletionEnabled: true
+        };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -495,7 +526,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -519,7 +550,16 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
+        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaContext = {
+          roomId: room._id,
+          path: getRoomMediaRoomPath(room._id),
+          usedBytes: roomMedia.usedBytes,
+          maxBytes: roomMedia.storagePlan.maxBytes,
+          isDeletionEnabled: false
+        };
 
+        roomService.getAllRoomMedia.resolves(roomMedia);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -533,7 +573,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -578,7 +618,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -645,7 +685,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [] });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [], roomMediaContext: null });
       });
     });
   });
