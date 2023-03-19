@@ -49,7 +49,7 @@ import {
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
-const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 export default class RoomController {
   static dependencies = [ServerConfig, RoomService, DocumentService, UserService, MailService, ClientDataMappingService, PageRenderer];
@@ -329,29 +329,21 @@ export default class RoomController {
     const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
-
     if (!room) {
       throw new NotFound();
+    }
+
+    if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
     if (room.slug !== routeWildcardValue) {
       return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
-    if (!user) {
-      throw new Unauthorized();
-    }
-
-    let invitations = [];
-
-    const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, user._id);
-    if (!isRoomOwnerOrMember) {
-      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
-    }
-
-    if (isRoomOwner({ room, userId: user._id })) {
-      invitations = await this.roomService.getRoomInvitations(roomId);
-    }
+    const invitations = isRoomOwner({ room, userId: user._id })
+      ? await this.roomService.getRoomInvitations(roomId)
+      : [];
 
     const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
 
@@ -370,8 +362,8 @@ export default class RoomController {
       return res.status(401).end();
     }
 
-    const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
-    if (!result) {
+    const room = await this.roomService.getRoomById(roomId);
+    if (!room || !isRoomOwnerOrInvitedMember({ room, userId })) {
       return res.status(403).end();
     }
 
@@ -507,6 +499,7 @@ export default class RoomController {
   registerPages(router) {
     router.get(
       '/rooms/:roomId*',
+      needsAuthentication(),
       validateParams(getRoomWithSlugParamsSchema),
       (req, res) => this.handleGetRoomPage(req, res)
     );

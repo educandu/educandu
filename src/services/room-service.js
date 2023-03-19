@@ -426,11 +426,6 @@ export default class RoomService {
 
   // ROOM MEMBERS
 
-  async isRoomOwnerOrMember(roomId, userId) {
-    const room = await this.roomStore.getRoomsByIdOwnedOrJoinedByUser({ roomId, userId });
-    return !!room;
-  }
-
   async removeRoomMember({ room, memberUserId }) {
     const member = room.members.find(m => m.userId === memberUserId);
     const remainingMembers = ensureIsExcluded(room.members, member);

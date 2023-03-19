@@ -24,10 +24,6 @@ class RoomStore {
     return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
   }
 
-  getAllRoomIds({ session } = {}) {
-    return this.collection.distinct('_id', { session });
-  }
-
   deleteRoomById(roomId, { session } = {}) {
     return this.collection.deleteOne({ _id: roomId }, { session });
   }
@@ -44,17 +40,8 @@ class RoomStore {
     return this.collection.find({ owner: ownerId }, { session }).toArray();
   }
 
-  async getRoomIdsByOwnerId({ ownerId }, { session } = {}) {
-    const roomsProjection = await this.collection.find({ owner: ownerId }, { session, projection: { _id: 1 } }).toArray();
-    return roomsProjection.map(projection => projection._id);
-  }
-
   getRoomByIdJoinedByUser({ roomId, userId }, { session } = {}) {
     return this.collection.findOne({ '_id': roomId, 'members.userId': userId }, { session });
-  }
-
-  getRoomsByIdOwnedOrJoinedByUser({ roomId, userId }, { session } = {}) {
-    return this.collection.findOne({ $and: [{ _id: roomId }, { $or: [{ owner: userId }, { 'members.userId': userId }] }] }, { session });
   }
 
   getRoomsByOwnerOrCollaboratorUser({ userId }, { session } = {}) {

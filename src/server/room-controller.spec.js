@@ -9,7 +9,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_USER_ROLE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = createSandbox();
@@ -36,7 +36,6 @@ describe('room-controller', () => {
       getRoomById: sandbox.stub(),
       getRoomInvitationById: sandbox.stub(),
       deleteRoom: sandbox.stub(),
-      isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
       updateRoomMetadata: sandbox.stub(),
@@ -622,23 +621,11 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
+        members: [],
         isCollaborative: false,
         documents: [uniqueId.create(), uniqueId.create()]
       };
       mappedRoom = { ...room };
-    });
-
-    describe('when user is not provided (session expired)', () => {
-      beforeEach(() => {
-        roomService.getRoomById.resolves(room);
-
-        req = { params: { 0: `/${room.slug}`, roomId: room._id } };
-        res = {};
-      });
-
-      it('should throw Unauthorized', async () => {
-        await expect(() => sut.handleGetRoomPage(req, res)).rejects.toThrow(Unauthorized);
-      });
     });
 
     describe('when the request is made by the room owner', () => {
@@ -664,7 +651,6 @@ describe('room-controller', () => {
         mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(true);
 
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
         roomService.getRoomInvitations.resolves(invitations);
@@ -718,6 +704,7 @@ describe('room-controller', () => {
 
       beforeEach(async () => {
         viewingUser = { _id: 'member' };
+        room.members = [{ userId: viewingUser._id }];
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
           user: viewingUser
@@ -731,7 +718,6 @@ describe('room-controller', () => {
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(true);
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
@@ -772,7 +758,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the request is mabe by an unauthorized user', () => {
+    describe('when the request is made by an unauthorized user', () => {
       beforeEach(() => {
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
@@ -780,7 +766,6 @@ describe('room-controller', () => {
         };
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(false);
       });
 
       it('should throw a forbidden exception', async () => {
@@ -799,7 +784,9 @@ describe('room-controller', () => {
         room = {
           _id: uniqueId.create(),
           name: 'Mein schöner Raum',
-          slug: 'room-slug'
+          slug: 'room-slug',
+          owner: user._id,
+          members: []
         };
 
         req = { user, params: { 0: '/url-slug', roomId: room._id } };
@@ -831,7 +818,7 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(false);
+        roomService.getRoomById.resolves({ _id: uniqueId.create() });
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
@@ -854,13 +841,13 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(false);
+        roomService.getRoomById.resolves({ _id: roomId, owner: 'Goofy', members: [{ userId: 'Donald' }] });
 
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
-      it('should call the room service with the correct roomId and userId', () => {
-        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+      it('should call the room service with the correct roomId', () => {
+        assert.calledWith(roomService.getRoomById, roomId);
       });
 
       it('should return status 403', () => {
@@ -882,12 +869,12 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(true);
+        roomService.getRoomById.resolves({ _id: roomId, owner: 'Goofy', members: [{ userId: 'Donald' }, { userId: user._id }] });
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
-      it('should call the room service with the correct roomId and userId', () => {
-        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+      it('should call the room service with the correct roomId', () => {
+        assert.calledWith(roomService.getRoomById, roomId);
       });
 
       it('should return status 200', () => {

@@ -380,48 +380,6 @@ describe('room-service', () => {
     });
   });
 
-  describe('isRoomOwnerOrMember', () => {
-    const roomId = uniqueId.create();
-    let result;
-
-    beforeEach(async () => {
-      await roomStore.saveRoom({
-        _id: roomId,
-        name: 'my room',
-        slug: 'my-slug',
-        description: '',
-        isCollaborative: false,
-        createdBy: myUser._id,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        owner: myUser._id,
-        members: [
-          {
-            userId: otherUser._id,
-            joinedOn: new Date()
-          }
-        ],
-        messages: [],
-        documents: []
-      });
-    });
-
-    it('should return true when the user is the owner', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, myUser._id);
-      expect(result).toBe(true);
-    });
-
-    it('should return true when the user is a member', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, otherUser._id);
-      expect(result).toBe(true);
-    });
-
-    it('should return false when the is not a member', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, uniqueId.create());
-      expect(result).toBe(false);
-    });
-  });
-
   describe('updateRoomDocumentsOrder', () => {
     let lock;
     let result;
