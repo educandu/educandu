@@ -1,6 +1,6 @@
 import by from 'thenby';
 import mime from 'mime';
-import Cdn from '../repositories/cdn.js';
+import Cdn from '../stores/cdn.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
 import { getCdnPath } from '../utils/source-utils.js';

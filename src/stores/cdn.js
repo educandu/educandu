@@ -1,10 +1,9 @@
 import by from 'thenby';
 import mime from 'mime';
 import fs from 'node:fs';
+import S3Client from './s3-client.js';
 import Logger from '../common/logger.js';
 import urlUtils from '../utils/url-utils.js';
-import MinioS3Client from './minio-s3-client.js';
-import AwsSdkS3Client from './aws-sdk-s3-client.js';
 import { ensureIsUnique } from '../utils/array-utils.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
@@ -96,10 +95,7 @@ class Cdn {
   }
 
   static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
-    const s3Client = endpoint.includes('.amazonaws.com')
-      ? new AwsSdkS3Client({ endpoint, region, accessKey, secretKey })
-      : new MinioS3Client({ endpoint, region, accessKey, secretKey });
-
+    const s3Client = new S3Client({ endpoint, region, accessKey, secretKey });
     return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl));
   }
 }

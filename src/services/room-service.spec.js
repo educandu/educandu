@@ -1,5 +1,5 @@
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
-import Cdn from '../repositories/cdn.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';

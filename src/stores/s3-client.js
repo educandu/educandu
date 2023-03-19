@@ -1,6 +1,6 @@
 import awsSdk from 'aws-sdk';
 import { EOL } from 'node:os';
-import PriorityQueue from '../common/priority-queue.js';
+import { priorityQueue } from 'async';
 import { splitIntoChunks } from '../utils/array-utils.js';
 
 const { S3, Credentials } = awsSdk;
@@ -10,31 +10,25 @@ const PRIORITY_UPLOAD = 2;
 const PRIORITY_DOWNLOAD = 1;
 const PRIORITY_ADMINISTRATIVE = 0;
 
-function unescapeEtag(etag) {
-  return etag
-    .replace(/^"/g, '')
-    .replace(/"$/g, '')
-    .replace(/^&quot;/g, '')
-    .replace(/&quot;$/g, '')
-    .replace(/^&#34;/g, '')
-    .replace(/^&#34;$/g, '');
-}
-
 // Wraps AWS S3 client into a promise-friendly interface,
 // also limits concurrent requests using a priority queue.
-class AwsSdkS3Client {
+// Works with AWS S3 as well as MinIO S3-compatible storage.
+class S3Client {
   constructor({ endpoint, region, accessKey, secretKey }) {
-    this.tasks = new PriorityQueue(MAX_REQUESTS);
-    this.awsSdkS3Client = new S3({
-      apiVersion: '2006-03-01',
-      endpoint,
-      region,
-      credentials: new Credentials(accessKey, secretKey)
-    });
-  }
-
-  req(createRequest, priority) {
-    return this.tasks.push(cb => createRequest().send(cb), priority);
+    this.queue = priorityQueue(this._runTask, MAX_REQUESTS);
+    this.client = endpoint.includes('amazonaws')
+      ? new S3({
+        apiVersion: '2006-03-01',
+        endpoint,
+        region,
+        credentials: new Credentials(accessKey, secretKey)
+      })
+      : new S3({
+        endpoint,
+        credentials: new Credentials(accessKey, secretKey),
+        s3ForcePathStyle: true,
+        signatureVersion: 'v4'
+      });
   }
 
   async createBucket(bucketName, region) {
@@ -45,7 +39,7 @@ class AwsSdkS3Client {
       }
     };
 
-    await this.req(() => this.awsSdkS3Client.createBucket(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.createBucket(params), PRIORITY_ADMINISTRATIVE);
   }
 
   async putBucketPolicy(bucketName, bucketPolicy) {
@@ -54,16 +48,7 @@ class AwsSdkS3Client {
       Policy: bucketPolicy
     };
 
-    await this.req(() => this.awsSdkS3Client.putBucketPolicy(params), PRIORITY_ADMINISTRATIVE);
-  }
-
-  async listBuckets() {
-    const params = {};
-    const data = await this.req(() => this.awsSdkS3Client.listBuckets(params), PRIORITY_ADMINISTRATIVE);
-    return data.Buckets.map(b => ({
-      name: b.Name,
-      creationDate: b.CreationDate
-    }));
+    await this._pushTask(() => this.client.putBucketPolicy(params), PRIORITY_ADMINISTRATIVE);
   }
 
   async listObjects(bucketName, prefix, recursive) {
@@ -80,7 +65,7 @@ class AwsSdkS3Client {
 
     do {
       // eslint-disable-next-line no-loop-func
-      const response = await this.req(() => this.awsSdkS3Client.listObjects({ ...params, Marker: marker }), PRIORITY_DOWNLOAD);
+      const response = await this._pushTask(() => this.client.listObjects({ ...params, Marker: marker }), PRIORITY_DOWNLOAD);
 
       const keys = params.Delimiter
         ? (response.CommonPrefixes || []).map(pre => pre.Prefix)
@@ -100,7 +85,6 @@ class AwsSdkS3Client {
     const transformedObjects = objects.map(obj => ({
       name: obj.Key,
       lastModified: new Date(obj.LastModified),
-      etag: unescapeEtag(obj.ETag),
       size: obj.Size
     }));
 
@@ -112,23 +96,13 @@ class AwsSdkS3Client {
     return transformedObjects.concat(transformedCommonPrefixes);
   }
 
-  async getObject(bucketName, objectName) {
-    const params = {
-      Bucket: bucketName,
-      Key: objectName
-    };
-
-    const response = await this.req(() => this.awsSdkS3Client.getObject(params), PRIORITY_DOWNLOAD);
-    return response.Body;
-  }
-
   async deleteObject(bucketName, objectName) {
     const params = {
       Bucket: bucketName,
       Key: objectName
     };
 
-    await this.req(() => this.awsSdkS3Client.deleteObject(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.deleteObject(params), PRIORITY_ADMINISTRATIVE);
   }
 
   async deleteObjects(bucketName, objectNames) {
@@ -143,7 +117,7 @@ class AwsSdkS3Client {
         }
       };
 
-      return this.req(() => this.awsSdkS3Client.deleteObjects(params), PRIORITY_ADMINISTRATIVE);
+      return this._pushTask(() => this.client.deleteObjects(params), PRIORITY_ADMINISTRATIVE);
     });
 
     const results = await Promise.all(requests);
@@ -167,10 +141,9 @@ class AwsSdkS3Client {
       queueSize: 1
     };
 
-    const data = await this.req(() => this.awsSdkS3Client.upload(params, options), PRIORITY_UPLOAD);
+    const data = await this._pushTask(() => this.client.upload(params, options), PRIORITY_UPLOAD);
     return {
-      name: data.Key,
-      etag: unescapeEtag(data.ETag)
+      name: data.Key
     };
   }
 
@@ -179,8 +152,30 @@ class AwsSdkS3Client {
       Bucket: bucketName
     };
 
-    await this.req(() => this.awsSdkS3Client.deleteBucket(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.deleteBucket(params), PRIORITY_ADMINISTRATIVE);
+  }
+
+  _pushTask(createRequest, priority) {
+    const func = cb => createRequest().send(cb);
+    return new Promise((resolve, reject) => {
+      this.queue.push({ func, reject, resolve }, priority);
+    });
+  }
+
+  _runTask(task, callback) {
+    try {
+      task.func((err, result) => {
+        if (err) {
+          task.reject(err);
+        } else {
+          task.resolve(result);
+        }
+        callback(err);
+      });
+    } catch (error) {
+      task.reject(error);
+    }
   }
 }
 
-export default AwsSdkS3Client;
+export default S3Client;

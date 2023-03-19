@@ -1,4 +1,4 @@
-import Cdn from './repositories/cdn.js';
+import Cdn from './stores/cdn.js';
 import deepEqual from 'fast-deep-equal';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';

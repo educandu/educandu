@@ -158,28 +158,32 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
               <div className="StorageTab-usedStorage">
                 <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan.maxBytes} showLabel />
               </div>
-              <div className="StorageTab-fileViewer">
-                <RoomMediaFilesViewer
-                  canDelete
-                  files={files}
-                  customFilter={renderRoomSelect()}
-                  isLoading={isUpdating}
-                  apiRef={filesViewerApiRef}
-                  highlightedFile={highlightedFile}
-                  filesViewerDisplay={filesViewerDisplay}
-                  onFileClick={handleFileClick}
-                  onFilesDropped={handleFilesDropped}
-                  onDeleteFileClick={handleDeleteFileClick}
-                  onFileDoubleClick={handleFileDoubleClick}
-                  onPreviewFileClick={handlePreviewFileClick}
-                  onFilesViewerDisplayChange={setFilesViewerDisplay}
-                  />
-              </div>
-              <div>
-                <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
-                  {t('common:uploadFiles')}
-                </Button>
-              </div>
+              {!!selectedRoomId && (
+                <Fragment>
+                  <div className="StorageTab-fileViewer">
+                    <RoomMediaFilesViewer
+                      canDelete
+                      files={files}
+                      customFilter={renderRoomSelect()}
+                      isLoading={isUpdating}
+                      apiRef={filesViewerApiRef}
+                      highlightedFile={highlightedFile}
+                      filesViewerDisplay={filesViewerDisplay}
+                      onFileClick={handleFileClick}
+                      onFilesDropped={handleFilesDropped}
+                      onDeleteFileClick={handleDeleteFileClick}
+                      onFileDoubleClick={handleFileDoubleClick}
+                      onPreviewFileClick={handlePreviewFileClick}
+                      onFilesViewerDisplayChange={setFilesViewerDisplay}
+                      />
+                  </div>
+                  <div>
+                    <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
+                      {t('common:uploadFiles')}
+                    </Button>
+                  </div>
+                </Fragment>
+              )}
             </Fragment>
           )}
         </section>

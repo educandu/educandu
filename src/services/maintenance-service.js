@@ -1,4 +1,4 @@
-import Cdn from '../repositories/cdn.js';
+import Cdn from '../stores/cdn.js';
 import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
