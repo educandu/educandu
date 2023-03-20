@@ -137,7 +137,7 @@ function FilesListViewer({
   const rows = files.map(file => {
     return {
       key: file.portableUrl,
-      name: file.displayName,
+      name: file.name,
       size: file.size,
       createdOn: file.createdOn,
       typeTranslated: t(`common:resource_${getResourceType(file.url)}`),

@@ -19,11 +19,13 @@ import DimensionsProvider from '../dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
 import LanguageSelect from '../localization/language-select.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import ResourceSelector from '../resource-selector/resource-selector.js';
 import { WIKIMEDIA_API_FILE_TYPE } from '../../utils/wikimedia-utils.js';
 import WikimediaApiClient from '../../api-clients/wikimedia-api-client.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
+import { roomMediaContextShape, roomShape } from '../../ui/default-prop-types.js';
 import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-canvas.js';
 import { HORIZONTAL_ALIGNMENT, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message, Upload } from 'antd';
@@ -42,7 +44,7 @@ const IMAGE_URL_PNG = 'https://cdn.openmusic.academy/media-library/Bossa%20Nova%
 
 const createTimelinePart = (startPosition, key) => ({ key, title: `Part ${key}`, startPosition });
 
-function Tests({ PageTemplate }) {
+function Tests({ PageTemplate, initialState }) {
   // Page
   const req = useRequest();
   const initialTab = req.query.tab || null;
@@ -227,311 +229,317 @@ function Tests({ PageTemplate }) {
   const handleUrlInputChange = url => setUrlInputValue(url);
 
   return (
-    <PageTemplate>
-      <div className="TestsPage">
-        <Tabs
-          defaultActiveKey={initialTab}
-          onChange={handleTabChange}
-          destroyInactiveTabPane
-          items={[
-            {
-              key: 'ResourceSelector',
-              label: 'ResourceSelector',
-              children: (
-                <div>
-                  <h3>Select</h3>
+    <RoomMediaContextProvider context={initialState.roomMediaContext}>
+      <PageTemplate>
+        <div className="TestsPage">
+          <Tabs
+            defaultActiveKey={initialTab}
+            onChange={handleTabChange}
+            destroyInactiveTabPane
+            items={[
+              {
+                key: 'ResourceSelector',
+                label: 'ResourceSelector',
+                children: (
                   <div>
-                    <UrlInput value={rsResourceUrl} onChange={setRsResourceUrl} />
+                    <h3>Select</h3>
+                    <div>
+                      <UrlInput value={rsResourceUrl} onChange={setRsResourceUrl} />
+                    </div>
+                    <h3>Dialog Content</h3>
+                    <div style={{ border: '2px solid silver', padding: '10px' }}>
+                      <ResourceSelector
+                        allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.roomMedia, SOURCE_TYPE.MediaLibrary, SOURCE_TYPE.wikimedia]}
+                        initialUrl={rsResourceUrl}
+                        onSelect={setRsResourceUrl}
+                        />
+                    </div>
                   </div>
-                  <h3>Dialog Content</h3>
-                  <div style={{ border: '2px solid silver', padding: '10px' }}>
-                    <ResourceSelector
-                      allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.roomMedia, SOURCE_TYPE.MediaLibrary, SOURCE_TYPE.wikimedia]}
-                      initialUrl={rsResourceUrl}
-                      onSelect={setRsResourceUrl}
+                )
+              },
+              {
+                key: 'MediaLibrary',
+                label: 'MediaLibrary',
+                children: (
+                  <div style={{ display: 'grid', gridTemplateColumns: '100px 640px', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                      <h3>Select</h3>
+                    </div>
+                    <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                      <UrlInput value={mediaLibraryUrl} onChange={setMediaLibraryUrl} allowedSourceTypes={[SOURCE_TYPE.mediaLibrary]} />
+                    </div>
+                    <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+                      <h3>Upload</h3>
+                    </div>
+                    <div>Description:</div>
+                    <TextArea rows={3} value={mediaLibraryDescription} onChange={event => setMediaLibraryDescription(event.target.value)} />
+                    <div>Languages:</div>
+                    <LanguageSelect multi value={mediaLibraryLanguages} onChange={setMediaLibraryLanguages} />
+                    <div>Licenses:</div>
+                    <LicenseSelect multi value={mediaLibraryLicenses} onChange={setMediaLibraryLicenses} />
+                    <div>Tags:</div>
+                    <TagSelect value={mediaLibraryTags} onChange={setMediaLibraryTags} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
+                    <div>File:</div>
+                    <Upload maxCount={1} multiple={false} fileList={mediaLibraryFileList} onChange={({ fileList }) => setMediaLibraryFileList(fileList)}>
+                      <Button icon={<UploadOutlined />}>Select file</Button>
+                    </Upload>
+                    <div>&nbsp;</div>
+                    <Button type="primary" onClick={handleMediaLibraryUploadClick}>Upload</Button>
+                  </div>
+                )
+              },
+              {
+                key: 'WikimediaApiClient',
+                label: 'WikimediaApiClient',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
+                      File types:
+                      <Checkbox.Group options={Object.values(WIKIMEDIA_API_FILE_TYPE)} value={wikimediaFileTypes} onChange={setWikimediaFileTypes} />
+                      Search text:
+                      <Input value={wikimediaQuery} onChange={event => setWikimediaQuery(event.target.value)} />
+                      <Button type="primary" onClick={handleWikimediaSearchClick}>Search</Button>
+                    </div>
+                    <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
+                      {wikimediaResult}
+                    </pre>
+                  </div>
+                )
+              },
+              {
+                key: 'UrlInput',
+                label: 'UrlInput',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
+                      <Button onClick={handleUrlInputCopyWikimediaClick}>Copy Wikimedia URL</Button>
+                      <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
+                      <Button onClick={handleUrlInputCopyRoomMediaCdnClick}>Copy room-media CDN URL</Button>
+                      <Button onClick={handleUrlInputCopyMediaLibraryCdnClick}>Copy media-library CDN URL</Button>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
+                      <Button onClick={handleUrlInputSetWikimediaClick}>Set Wikimedia URL</Button>
+                      <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
+                      <Button onClick={handleUrlInputSetRoomMediaCdnClick}>Set room-media CDN URL</Button>
+                      <Button onClick={handleUrlInputSetMediaLibrareyCdnClick}>Set media library CDN URL</Button>
+                    </div>
+                    <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
+                  </div>
+                )
+              },
+              {
+                key: 'AudioWaveformCanvas',
+                label: 'AudioWaveformCanvas',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      Pen width:
+                      <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={awcPenWidth} onChange={value => setAwcPenWidth(value)} />
+                      Smoothing:
+                      <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
+                      Pen color:
+                      <ColorPicker color={awcPenColor} onChange={value => setAwcPenColor(value)} />
+                      Baseline color:
+                      <ColorPicker color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
+                      Background color:
+                      <ColorPicker color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
+                      <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
+                    </div>
+                    <div style={{ border: '1px solid silver' }}>
+                      <DimensionsProvider>
+                        {({ containerWidth }) => (
+                          <AudioWaveformCanvas
+                            apiRef={awcApiRef}
+                            width={containerWidth}
+                            height={Math.round(containerWidth / 2.5)}
+                            penWidth={awcPenWidth}
+                            smoothing={awcSmoothing}
+                            penColor={awcPenColor}
+                            baselineColor={awcBaselineColor}
+                            backgroundColor={awcBackgroundColor}
+                            />
+                        )}
+                      </DimensionsProvider>
+                    </div>
+                  </div>
+                )
+              },
+              {
+                key: 'MusicXmlDocument',
+                label: 'MusicXmlDocument',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      <div>Load Url:</div>
+                      {mxdSources.map(({ title, url }) => <Button key={url} onClick={() => setMxdUrl(url)}>{title}</Button>)}
+                      <div>Zoom:</div>
+                      <Slider style={{ width: '200px' }} min={0.5} max={1.5} step={0.05} value={mxdZoom} onChange={setMxdZoom} />
+                    </div>
+                    <MusicXmlDocument url={mxdUrl} zoom={mxdZoom} />
+                  </div>
+                )
+              },
+              {
+                key: 'DebouncedInput',
+                label: 'DebouncedInput',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      Element type:
+                      <Radio.Group value={diElementType} onChange={event => setDiElementType(event.target.value)}>
+                        {Object.keys(diElementTypes).map(key => <Radio.Button key={key} value={key}>{key}</Radio.Button>)}
+                      </Radio.Group>
+                      Time limit:
+                      <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={500} value={diTimeLimit} onChange={setDiTimeLimit} />
+                      <Button onClick={() => diApiRef.current.flush()}>Flush</Button>
+                    </div>
+                    <div>Event Log</div>
+                    <div ref={diEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
+                      <pre>{diEventLog}</pre>
+                    </div>
+                    <DebouncedInput
+                      apiRef={diApiRef}
+                      timeLimit={diTimeLimit}
+                      elementType={diElementTypes[diElementType].elementType}
+                      value={diValue}
+                      onBlur={() => handleDiEvent('onBlur')}
+                      onChange={event => handleDiEvent('onChange', event.target.value)}
+                      {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
                       />
                   </div>
-                </div>
-              )
-            },
-            {
-              key: 'MediaLibrary',
-              label: 'MediaLibrary',
-              children: (
-                <div style={{ display: 'grid', gridTemplateColumns: '100px 640px', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-                    <h3>Select</h3>
-                  </div>
-                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-                    <UrlInput value={mediaLibraryUrl} onChange={setMediaLibraryUrl} allowedSourceTypes={[SOURCE_TYPE.mediaLibrary]} />
-                  </div>
-                  <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-                    <h3>Upload</h3>
-                  </div>
-                  <div>Description:</div>
-                  <TextArea rows={3} value={mediaLibraryDescription} onChange={event => setMediaLibraryDescription(event.target.value)} />
-                  <div>Languages:</div>
-                  <LanguageSelect multi value={mediaLibraryLanguages} onChange={setMediaLibraryLanguages} />
-                  <div>Licenses:</div>
-                  <LicenseSelect multi value={mediaLibraryLicenses} onChange={setMediaLibraryLicenses} />
-                  <div>Tags:</div>
-                  <TagSelect value={mediaLibraryTags} onChange={setMediaLibraryTags} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
-                  <div>File:</div>
-                  <Upload maxCount={1} multiple={false} fileList={mediaLibraryFileList} onChange={({ fileList }) => setMediaLibraryFileList(fileList)}>
-                    <Button icon={<UploadOutlined />}>Select file</Button>
-                  </Upload>
-                  <div>&nbsp;</div>
-                  <Button type="primary" onClick={handleMediaLibraryUploadClick}>Upload</Button>
-                </div>
-              )
-            },
-            {
-              key: 'WikimediaApiClient',
-              label: 'WikimediaApiClient',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', whiteSpace: 'nowrap' }}>
-                    File types:
-                    <Checkbox.Group options={Object.values(WIKIMEDIA_API_FILE_TYPE)} value={wikimediaFileTypes} onChange={setWikimediaFileTypes} />
-                    Search text:
-                    <Input value={wikimediaQuery} onChange={event => setWikimediaQuery(event.target.value)} />
-                    <Button type="primary" onClick={handleWikimediaSearchClick}>Search</Button>
-                  </div>
-                  <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
-                    {wikimediaResult}
-                  </pre>
-                </div>
-              )
-            },
-            {
-              key: 'UrlInput',
-              label: 'UrlInput',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <Button onClick={handleUrlInputCopyYoutubeClick}>Copy Youtube URL</Button>
-                    <Button onClick={handleUrlInputCopyWikimediaClick}>Copy Wikimedia URL</Button>
-                    <Button onClick={handleUrlInputCopyExternalClick}>Copy external URL</Button>
-                    <Button onClick={handleUrlInputCopyRoomMediaCdnClick}>Copy room-media CDN URL</Button>
-                    <Button onClick={handleUrlInputCopyMediaLibraryCdnClick}>Copy media-library CDN URL</Button>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <Button onClick={handleUrlInputSetYoutubeClick}>Set Youtube URL</Button>
-                    <Button onClick={handleUrlInputSetWikimediaClick}>Set Wikimedia URL</Button>
-                    <Button onClick={handleUrlInputSetExternalClick}>Set external URL</Button>
-                    <Button onClick={handleUrlInputSetRoomMediaCdnClick}>Set room-media CDN URL</Button>
-                    <Button onClick={handleUrlInputSetMediaLibrareyCdnClick}>Set media library CDN URL</Button>
-                  </div>
-                  <UrlInput value={urlInputValue} onChange={handleUrlInputChange} />
-                </div>
-              )
-            },
-            {
-              key: 'AudioWaveformCanvas',
-              label: 'AudioWaveformCanvas',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    Pen width:
-                    <Slider style={{ width: '100px' }} min={1} max={5} step={1} value={awcPenWidth} onChange={value => setAwcPenWidth(value)} />
-                    Smoothing:
-                    <Checkbox checked={awcSmoothing} onChange={event => setAwcSmoothing(event.target.checked)} />
-                    Pen color:
-                    <ColorPicker color={awcPenColor} onChange={value => setAwcPenColor(value)} />
-                    Baseline color:
-                    <ColorPicker color={awcBaselineColor} onChange={value => setAwcBaselineColor(value)} />
-                    Background color:
-                    <ColorPicker color={awcBackgroundColor} onChange={value => setAwcBackgroundColor(value)} />
-                    <Button onClick={() => awcApiRef.current.clear()}>Reset</Button>
-                  </div>
-                  <div style={{ border: '1px solid silver' }}>
-                    <DimensionsProvider>
-                      {({ containerWidth }) => (
-                        <AudioWaveformCanvas
-                          apiRef={awcApiRef}
-                          width={containerWidth}
-                          height={Math.round(containerWidth / 2.5)}
-                          penWidth={awcPenWidth}
-                          smoothing={awcSmoothing}
-                          penColor={awcPenColor}
-                          baselineColor={awcBaselineColor}
-                          backgroundColor={awcBackgroundColor}
-                          />
-                      )}
-                    </DimensionsProvider>
-                  </div>
-                </div>
-              )
-            },
-            {
-              key: 'MusicXmlDocument',
-              label: 'MusicXmlDocument',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <div>Load Url:</div>
-                    {mxdSources.map(({ title, url }) => <Button key={url} onClick={() => setMxdUrl(url)}>{title}</Button>)}
-                    <div>Zoom:</div>
-                    <Slider style={{ width: '200px' }} min={0.5} max={1.5} step={0.05} value={mxdZoom} onChange={setMxdZoom} />
-                  </div>
-                  <MusicXmlDocument url={mxdUrl} zoom={mxdZoom} />
-                </div>
-              )
-            },
-            {
-              key: 'DebouncedInput',
-              label: 'DebouncedInput',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    Element type:
-                    <Radio.Group value={diElementType} onChange={event => setDiElementType(event.target.value)}>
-                      {Object.keys(diElementTypes).map(key => <Radio.Button key={key} value={key}>{key}</Radio.Button>)}
-                    </Radio.Group>
-                    Time limit:
-                    <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={500} value={diTimeLimit} onChange={setDiTimeLimit} />
-                    <Button onClick={() => diApiRef.current.flush()}>Flush</Button>
-                  </div>
-                  <div>Event Log</div>
-                  <div ref={diEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
-                    <pre>{diEventLog}</pre>
-                  </div>
-                  <DebouncedInput
-                    apiRef={diApiRef}
-                    timeLimit={diTimeLimit}
-                    elementType={diElementTypes[diElementType].elementType}
-                    value={diValue}
-                    onBlur={() => handleDiEvent('onBlur')}
-                    onChange={event => handleDiEvent('onChange', event.target.value)}
-                    {...(diElementTypes[diElementType].handleSearch ? { onSearch: value => handleDiEvent('onSearch', value) } : {})}
-                    />
-                </div>
-              )
-            },
-            {
-              key: 'MarkdownInput',
-              label: 'MarkdownInput',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <Checkbox checked={miInline} onChange={event => setMiInline(event.target.checked)}>Inline</Checkbox>
-                    <Checkbox checked={miDebounced} onChange={event => setMiDebounced(event.target.checked)}>Debounced</Checkbox>
-                    <Checkbox checked={miSanitizeCdnUrls} onChange={event => setMiSanitizeCdnUrls(event.target.checked)}>Sanitize CDN URLs</Checkbox>
-                  </div>
-                  <div>Event Log</div>
-                  <div ref={miEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
-                    <pre>{miEventLog}</pre>
-                  </div>
-                  <MarkdownInput
-                    value={miValue}
-                    inline={miInline}
-                    debounced={miDebounced}
-                    sanitizeCdnUrls={miSanitizeCdnUrls}
-                    onBlur={() => handleMiEvent('onBlur')}
-                    onChange={event => handleMiEvent('onChange', event.target.value)}
-                    />
-                </div>
-              )
-            },
-            {
-              key: 'ImageEditor',
-              label: 'ImageEditor',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
-                    <Button onClick={() => setIeFileUrl(IMAGE_URL_JPG)}>Set to JPG</Button>
-                    <Button onClick={handleIeDownloadClick}>Download</Button>
-                    <div>DIRTY: {ieIsDirty.toString()}</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    URL: {ieFileUrl}
-                  </div>
-                  {!!ieFile && (
-                  <div style={{ height: '50vh' }}>
-                    <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
-                  </div>
-                  )}
-                </div>
-              )
-            },
-            {
-              key: 'Timeline',
-              label: 'Timeline',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-                    Duration in milliseconds:
-                    <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={1} value={timelineDuration} onChange={setTimelineDuration} />
-                    <Button onClick={() => setTimelineDuration(0)}>Set to unknown</Button>
-                    <Button onClick={() => setTimelineDuration(5 * 60 * 1000)}>Set to 5 minutes</Button>
-                    <Button onClick={() => setTimelineDuration(10 * 60 * 1000)}>Set to 10 minutes</Button>
-                  </div>
-                  <Timeline
-                    durationInMilliseconds={timelineDuration}
-                    parts={timelineParts}
-                    selectedPartIndex={-1}
-                    onPartAdd={handleTimelinePartAdd}
-                    onPartDelete={handleTimelinePartDelete}
-                    onStartPositionChange={handleTimelineStartPositionChange}
-                    />
-                </div>
-              )
-            },
-            {
-              key: 'NeverScrollingTextArea',
-              label: 'NeverScrollingTextArea',
-              children: (
-                <div>
-                  <h4>Grid aligned</h4>
-                  <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
-                    <NeverScrollingTextArea value={nstaValue1} onChange={event => setNstaValue1(event.target.value)} minRows={3} />
-                    <NeverScrollingTextArea value={nstaValue2} onChange={event => setNstaValue2(event.target.value)} minRows={4} />
-                    <NeverScrollingTextArea value={nstaValue3} onChange={event => setNstaValue3(event.target.value)} minRows={5} />
-                  </div>
-                  <br />
-                  <h4>Alignment</h4>
-                  <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px', minHeight: '100px' }}>
-                    <NeverScrollingTextArea value={nstaValue4} onChange={event => setNstaValue4(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.top} horizontalAlignment={HORIZONTAL_ALIGNMENT.left} />
-                    <NeverScrollingTextArea value={nstaValue5} onChange={event => setNstaValue5(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.middle} horizontalAlignment={HORIZONTAL_ALIGNMENT.center} />
-                    <NeverScrollingTextArea value={nstaValue6} onChange={event => setNstaValue6(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.bottom} horizontalAlignment={HORIZONTAL_ALIGNMENT.right} />
-                  </div>
-                  <br />
-                  <h4>Within Form</h4>
-                  <Form initialValues={{ ta1: 'Hello World', ta2: 'Hello World', ta3: 'Hello World', ta4: 'Hello World', ta5: 'Hello World', ta6: 'Hello World' }}>
-                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
-                      <Form.Item name="ta1" validateStatus="success" hasFeedback>
-                        <NeverScrollingTextArea minRows={3} />
-                      </Form.Item>
-                      <Form.Item name="ta2" validateStatus="warning" hasFeedback>
-                        <NeverScrollingTextArea minRows={4} />
-                      </Form.Item>
-                      <Form.Item name="ta3" validateStatus="error" hasFeedback>
-                        <NeverScrollingTextArea minRows={5} />
-                      </Form.Item>
-                      <Form.Item name="ta4" validateStatus="validating" hasFeedback>
-                        <NeverScrollingTextArea minRows={3} />
-                      </Form.Item>
-                      <Form.Item name="ta5">
-                        <NeverScrollingTextArea minRows={4} disabled />
-                      </Form.Item>
-                      <Form.Item name="ta6" validateStatus="error" hasFeedback>
-                        <NeverScrollingTextArea minRows={5} disabled />
-                      </Form.Item>
+                )
+              },
+              {
+                key: 'MarkdownInput',
+                label: 'MarkdownInput',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      <Checkbox checked={miInline} onChange={event => setMiInline(event.target.checked)}>Inline</Checkbox>
+                      <Checkbox checked={miDebounced} onChange={event => setMiDebounced(event.target.checked)}>Debounced</Checkbox>
+                      <Checkbox checked={miSanitizeCdnUrls} onChange={event => setMiSanitizeCdnUrls(event.target.checked)}>Sanitize CDN URLs</Checkbox>
                     </div>
-                  </Form>
-                </div>
-              )
-            }
-          ]}
-          />
-      </div>
-    </PageTemplate>
+                    <div>Event Log</div>
+                    <div ref={miEventLogRef} style={{ height: '140px', overflow: 'auto', border: '1px solid #ddd', backgroundColor: '#fbfbfb', fontSize: '10px', marginBottom: '15px' }}>
+                      <pre>{miEventLog}</pre>
+                    </div>
+                    <MarkdownInput
+                      value={miValue}
+                      inline={miInline}
+                      debounced={miDebounced}
+                      sanitizeCdnUrls={miSanitizeCdnUrls}
+                      onBlur={() => handleMiEvent('onBlur')}
+                      onChange={event => handleMiEvent('onChange', event.target.value)}
+                      />
+                  </div>
+                )
+              },
+              {
+                key: 'ImageEditor',
+                label: 'ImageEditor',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      <Button onClick={() => setIeFileUrl(IMAGE_URL_PNG)}>Set to PNG</Button>
+                      <Button onClick={() => setIeFileUrl(IMAGE_URL_JPG)}>Set to JPG</Button>
+                      <Button onClick={handleIeDownloadClick}>Download</Button>
+                      <div>DIRTY: {ieIsDirty.toString()}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      URL: {ieFileUrl}
+                    </div>
+                    {!!ieFile && (
+                    <div style={{ height: '50vh' }}>
+                      <ImageEditor file={ieFile} editorRef={ieEditorRef} onCrop={handleIeCrop} />
+                    </div>
+                    )}
+                  </div>
+                )
+              },
+              {
+                key: 'Timeline',
+                label: 'Timeline',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                      Duration in milliseconds:
+                      <InputNumber min={0} max={Number.MAX_SAFE_INTEGER} step={1} value={timelineDuration} onChange={setTimelineDuration} />
+                      <Button onClick={() => setTimelineDuration(0)}>Set to unknown</Button>
+                      <Button onClick={() => setTimelineDuration(5 * 60 * 1000)}>Set to 5 minutes</Button>
+                      <Button onClick={() => setTimelineDuration(10 * 60 * 1000)}>Set to 10 minutes</Button>
+                    </div>
+                    <Timeline
+                      durationInMilliseconds={timelineDuration}
+                      parts={timelineParts}
+                      selectedPartIndex={-1}
+                      onPartAdd={handleTimelinePartAdd}
+                      onPartDelete={handleTimelinePartDelete}
+                      onStartPositionChange={handleTimelineStartPositionChange}
+                      />
+                  </div>
+                )
+              },
+              {
+                key: 'NeverScrollingTextArea',
+                label: 'NeverScrollingTextArea',
+                children: (
+                  <div>
+                    <h4>Grid aligned</h4>
+                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
+                      <NeverScrollingTextArea value={nstaValue1} onChange={event => setNstaValue1(event.target.value)} minRows={3} />
+                      <NeverScrollingTextArea value={nstaValue2} onChange={event => setNstaValue2(event.target.value)} minRows={4} />
+                      <NeverScrollingTextArea value={nstaValue3} onChange={event => setNstaValue3(event.target.value)} minRows={5} />
+                    </div>
+                    <br />
+                    <h4>Alignment</h4>
+                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px', minHeight: '100px' }}>
+                      <NeverScrollingTextArea value={nstaValue4} onChange={event => setNstaValue4(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.top} horizontalAlignment={HORIZONTAL_ALIGNMENT.left} />
+                      <NeverScrollingTextArea value={nstaValue5} onChange={event => setNstaValue5(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.middle} horizontalAlignment={HORIZONTAL_ALIGNMENT.center} />
+                      <NeverScrollingTextArea value={nstaValue6} onChange={event => setNstaValue6(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.bottom} horizontalAlignment={HORIZONTAL_ALIGNMENT.right} />
+                    </div>
+                    <br />
+                    <h4>Within Form</h4>
+                    <Form initialValues={{ ta1: 'Hello World', ta2: 'Hello World', ta3: 'Hello World', ta4: 'Hello World', ta5: 'Hello World', ta6: 'Hello World' }}>
+                      <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px' }}>
+                        <Form.Item name="ta1" validateStatus="success" hasFeedback>
+                          <NeverScrollingTextArea minRows={3} />
+                        </Form.Item>
+                        <Form.Item name="ta2" validateStatus="warning" hasFeedback>
+                          <NeverScrollingTextArea minRows={4} />
+                        </Form.Item>
+                        <Form.Item name="ta3" validateStatus="error" hasFeedback>
+                          <NeverScrollingTextArea minRows={5} />
+                        </Form.Item>
+                        <Form.Item name="ta4" validateStatus="validating" hasFeedback>
+                          <NeverScrollingTextArea minRows={3} />
+                        </Form.Item>
+                        <Form.Item name="ta5">
+                          <NeverScrollingTextArea minRows={4} disabled />
+                        </Form.Item>
+                        <Form.Item name="ta6" validateStatus="error" hasFeedback>
+                          <NeverScrollingTextArea minRows={5} disabled />
+                        </Form.Item>
+                      </div>
+                    </Form>
+                  </div>
+                )
+              }
+            ]}
+            />
+        </div>
+      </PageTemplate>
+    </RoomMediaContextProvider>
   );
 }
 
 Tests.propTypes = {
-  PageTemplate: PropTypes.func.isRequired
+  PageTemplate: PropTypes.func.isRequired,
+  initialState: PropTypes.shape({
+    room: roomShape,
+    roomMediaContext: roomMediaContextShape
+  }).isRequired
 };
 
 export default Tests;

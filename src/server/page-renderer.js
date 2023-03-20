@@ -35,9 +35,7 @@ class PageRenderer extends PageRendererBase {
     const clientConfig = this.clientConfig;
     const request = requestUtils.expressReqToRequest(req);
     const user = this.clientDataMappingService.mapWebsiteUser(req.user);
-    const storagePlan = req.storagePlan;
     const notificationsCount = req.notificationsCount;
-    const storage = req.storage;
     const resources = this.resourceManager.getResources();
     const theme = this.themeManager.getTheme();
     const licenses = this.licenseManager.getLicenses();
@@ -53,8 +51,6 @@ class PageRenderer extends PageRendererBase {
       request: cloneDeep(request),
       user: cloneDeep(user),
       notificationsCount,
-      storage: cloneDeep(storage),
-      storagePlan: cloneDeep(storagePlan),
       container,
       initialState: cloneDeep(initialState),
       theme: cloneDeep(theme),
@@ -70,8 +66,6 @@ class PageRenderer extends PageRendererBase {
     const inlineScript = [
       `window.__user__=${htmlescape(user)};`,
       `window.__notificationsCount__=${htmlescape(notificationsCount)};`,
-      `window.__storage__=${htmlescape(storage)};`,
-      `window.__storagePlan__=${htmlescape(storagePlan)};`,
       `window.__request__=${htmlescape(request)};`,
       `window.__pageName__=${htmlescape(pageName)};`,
       `window.__uiLanguage__=${htmlescape(uiLanguage)};`,

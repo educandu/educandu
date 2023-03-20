@@ -37,7 +37,7 @@ function createTableRows(mediaLibraryItems, t) {
 }
 
 function filterRow(row, lowerCasedFilterText) {
-  return row.displayName.toLowerCase().includes(lowerCasedFilterText)
+  return row.name.toLowerCase().includes(lowerCasedFilterText)
     || row.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilterText))
     || row.licenses.some(license => license.toLowerCase().includes(lowerCasedFilterText))
     || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilterText)
@@ -82,7 +82,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   }, [t]);
 
   const tableSorters = useMemo(() => ({
-    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.displayName, { direction, ignoreCase: true })),
+    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.name, { direction, ignoreCase: true })),
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
     user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
@@ -126,7 +126,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
 
   const handleDeleteItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    confirmMediaFileHardDelete(t, mediaLibraryItem.displayName, async () => {
+    confirmMediaFileHardDelete(t, mediaLibraryItem.name, async () => {
       try {
         await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItem._id });
         onMediaLibraryItemsChange(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
@@ -151,7 +151,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     return (
       <ResourceInfoCell
         url={row.url}
-        title={row.displayName}
+        title={row.name}
         description={row.description}
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">

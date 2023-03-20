@@ -148,8 +148,8 @@ function MediaLibaryItemModal({
       dialogTitle = t('common:preview');
       dialogContent = (
         <div className="MediaLibaryItemModal">
-          <div className="MediaLibaryItemModal-displayName">
-            {mediaLibraryItem.displayName}
+          <div className="MediaLibaryItemModal-name">
+            {mediaLibraryItem.name}
           </div>
           <div className="MediaLibaryItemModal-splitView">
             <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
@@ -173,8 +173,8 @@ function MediaLibaryItemModal({
       dialogTitle = t('common:edit');
       dialogContent = (
         <div className="MediaLibaryItemModal">
-          <div className="MediaLibaryItemModal-displayName">
-            {mediaLibraryItem.displayName}
+          <div className="MediaLibaryItemModal-name">
+            {mediaLibraryItem.name}
           </div>
           <div className="MediaLibaryItemModal-splitView">
             <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />

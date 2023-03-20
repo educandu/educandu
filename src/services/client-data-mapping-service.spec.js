@@ -190,10 +190,6 @@ describe('client-data-mapping-service', () => {
         role: 'admin',
         organization: 'Educandu',
         introduction: 'Educandu test user',
-        storage: {
-          plan: 'lkdkgfj',
-          usedBytes: 0
-        },
         favorites: [
           {
             type: FAVORITE_TYPE.document,

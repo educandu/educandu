@@ -2,15 +2,14 @@ import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
-import cloneDeep from '../../../utils/clone-deep.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
+import { useRoomMediaContext } from '../../room-media-context.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
+import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { useSetStorage, useStorage } from '../../storage-context.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -23,44 +22,44 @@ const SCREEN = {
 
 function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
-  const storage = useStorage();
-  const setStorage = useSetStorage();
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-
   const [files, setFiles] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
+  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
+
+  const roomId = roomMediaContext?.roomId || null;
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
   const displayedFiles = useMemo(() => {
-    return files.filter(file => file.displayName.toLowerCase().includes(filterText.toLowerCase()));
+    return files.filter(file => file.name.toLowerCase().includes(filterText.toLowerCase()));
   }, [filterText, files]);
 
   const fetchStorageContent = useCallback(async () => {
-    if (!storage) {
+    if (!roomId) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const result = await storageApiClient.getCdnObjects({ parentPath: storage.path });
-
-      setFiles(result.objects);
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getAllRoomMedia({ roomId });
+      setFiles(roomStorage.objects);
+      setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     } catch (err) {
       message.error(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [storage, storageApiClient]);
+  }, [roomId, setRoomMediaContext, roomApiClient]);
 
   const handleFileClick = newFile => {
     setShowInitialFileHighlighting(false);
@@ -80,10 +79,10 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.displayName, async () => {
-      const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
-      setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
-      setStorage({ ...cloneDeep(storage), usedBytes });
+    confirmMediaFileHardDelete(t, file.name, async () => {
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.deleteRoomMedia({ roomId, name: file.name });
+      setFiles(roomStorage.objects);
+      setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     });
   };
 
@@ -150,7 +149,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = displayedFiles.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = displayedFiles.find(file => file.name === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
   }, [initialUrl, showInitialFileHighlighting, displayedFiles]);
@@ -159,7 +158,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     fetchStorageContent();
   }, [fetchStorageContent]);
 
-  if (!storage) {
+  if (!roomMediaContext) {
     return null;
   }
 

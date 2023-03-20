@@ -1,4 +1,4 @@
-import Cdn from './repositories/cdn.js';
+import Cdn from './stores/cdn.js';
 import deepEqual from 'fast-deep-equal';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
@@ -14,17 +14,13 @@ async function purgeDatabase(db) {
   await Promise.all(collections.map(col => col.deleteMany({})));
 }
 
-async function purgeBucket(cdn, bucketNameOverride = null) {
-  const s3Client = cdn.s3Client;
-  const finalBucketName = bucketNameOverride || cdn.bucketName;
-  const objects = await s3Client.listObjects(finalBucketName, '', true);
-  await s3Client.deleteObjects(finalBucketName, objects.map(obj => obj.name));
+async function purgeBucket(cdn) {
+  await cdn.deleteDirectory({ directoryPath: '' });
 }
 
 async function removeBucket(cdn) {
-  const s3Client = cdn.s3Client;
-  await purgeBucket(cdn, cdn.bucketName);
-  await s3Client.deleteBucket(cdn.bucketName);
+  await cdn.deleteDirectory({ directoryPath: '' });
+  await cdn.s3Client.deleteBucket(cdn.bucketName);
 }
 
 export async function setupTestEnvironment() {

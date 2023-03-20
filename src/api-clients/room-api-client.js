@@ -56,6 +56,91 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
+  deleteRoomMember({ roomId, memberUserId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/members/${encodeURIComponent(memberUserId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  addRoomMessage({ roomId, text, emailNotification }) {
+    return this.httpClient
+      .post(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`,
+        { text, emailNotification },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoomMessage({ roomId, messageKey }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/messages/${encodeURIComponent(messageKey)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoom({ roomId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteAllRoomsForUser({ ownerId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getRoomMediaOverview() {
+    return this.httpClient
+      .get(
+        '/api/v1/room-media-overview',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  getAllRoomMedia({ roomId }) {
+    return this.httpClient
+      .get(
+        `/api/v1/room-media/${encodeURIComponent(roomId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  postRoomMedia({ roomId, file }) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.httpClient
+      .post(
+        `/api/v1/room-media/${encodeURIComponent(roomId)}`,
+        formData,
+        { responseType: 'json', headers: { 'content-type': 'multipart/form-data' } }
+      )
+      .then(res => res.data);
+  }
+
+  deleteRoomMedia({ roomId, name }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(name)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   addRoomInvitations({ emails, roomId }) {
     return this.httpClient
       .post(
@@ -71,52 +156,6 @@ class RoomApiClient {
       .post(
         '/api/v1/room-invitations/confirm',
         { token },
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  addRoomMessage({ roomId, text, emailNotification }) {
-    return this.httpClient
-      .post(
-        `/api/v1/rooms/${encodeURIComponent(roomId)}/message`,
-        { text, emailNotification },
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  deleteAllRoomsForUser({ ownerId }) {
-    return this.httpClient
-      .delete(
-        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  deleteRoom(roomId) {
-    return this.httpClient
-      .delete(
-        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  deleteRoomMember({ roomId, memberUserId }) {
-    return this.httpClient
-      .delete(
-        `/api/v1/rooms/${encodeURIComponent(roomId)}/members/${encodeURIComponent(memberUserId)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  deleteRoomMessage({ roomId, messageKey }) {
-    return this.httpClient
-      .delete(
-        `/api/v1/rooms/${encodeURIComponent(roomId)}/messages/${encodeURIComponent(messageKey)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

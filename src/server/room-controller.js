@@ -1,3 +1,5 @@
+import os from 'node:os';
+import multer from 'multer';
 import express from 'express';
 import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
@@ -9,12 +11,12 @@ import RoomService from '../services/room-service.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import StorageService from '../services/storage-service.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
+import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   NOT_ROOM_OWNER_ERROR_MESSAGE,
@@ -39,24 +41,55 @@ import {
   deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
-  getRoomMembershipConfirmationParamsSchema
+  getRoomMembershipConfirmationParamsSchema,
+  deleteRoomMediaParamsSchema,
+  getAllRoomMediaParamsSchema,
+  postRoomMediaParamsSchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
+const multipartParser = multer({ dest: os.tmpdir() });
+
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static dependencies = [ServerConfig, RoomService, DocumentService, UserService, StorageService, MailService, ClientDataMappingService, PageRenderer];
+  static dependencies = [ServerConfig, RoomService, DocumentService, UserService, MailService, ClientDataMappingService, PageRenderer];
 
-  constructor(serverConfig, roomService, documentService, userService, storageService, mailService, clientDataMappingService, pageRenderer) {
+  constructor(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;
     this.userService = userService;
     this.mailService = mailService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
-    this.storageService = storageService;
     this.clientDataMappingService = clientDataMappingService;
+  }
+
+  async handleGetRoomMediaOverview(req, res) {
+    const { user } = req;
+    const roomMediaOverview = await this.roomService.getRoomMediaOverview({ user });
+    return res.send(roomMediaOverview);
+  }
+
+  async handleGetAllRoomMedia(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+    const roomMedia = await this.roomService.getAllRoomMedia({ user, roomId });
+    return res.send(roomMedia);
+  }
+
+  async handlePostRoomMedia(req, res) {
+    const { user, file } = req;
+    const { roomId } = req.params;
+    const roomMedia = await this.roomService.createRoomMedia({ user, roomId, file });
+    return res.status(201).send(roomMedia);
+  }
+
+  async handleDeleteRoomMedia(req, res) {
+    const { user } = req;
+    const { roomId, name } = req.params;
+    const roomMedia = await this.roomService.deleteRoomMedia({ user, roomId, name });
+    return res.send(roomMedia);
   }
 
   async handleGetRoomMembershipConfirmationPage(req, res) {
@@ -167,16 +200,14 @@ export default class RoomController {
     const roomOwner = await this.userService.getUserById(ownerId);
 
     if (!roomOwner) {
-      throw new BadRequest(`Unknown room owner with ID '${ownerId}'`);
+      throw new NotFound(`Unknown room owner with ID '${ownerId}'`);
     }
 
     const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
 
     for (const room of rooms) {
-      await this._deleteRoom({ room, roomOwner });
+      await this._deleteRoomAndNotify({ room, roomOwner });
     }
-
-    await this.storageService.updateUserUsedBytes(ownerId);
 
     return res.send({});
   }
@@ -195,7 +226,7 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
-    await this._deleteRoom({ room, roomOwner: user });
+    await this._deleteRoomAndNotify({ room, roomOwner: user });
 
     return res.send({});
   }
@@ -303,29 +334,21 @@ export default class RoomController {
     const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
-
     if (!room) {
       throw new NotFound();
+    }
+
+    if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
     if (room.slug !== routeWildcardValue) {
       return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
-    if (!user) {
-      throw new Unauthorized();
-    }
-
-    let invitations = [];
-
-    const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, user._id);
-    if (!isRoomOwnerOrMember) {
-      throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
-    }
-
-    if (isRoomOwner({ room, userId: user._id })) {
-      invitations = await this.roomService.getRoomInvitations(roomId);
-    }
+    const invitations = isRoomOwner({ room, userId: user._id })
+      ? await this.roomService.getRoomInvitations(roomId)
+      : [];
 
     const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
 
@@ -344,16 +367,16 @@ export default class RoomController {
       return res.status(401).end();
     }
 
-    const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
-    if (!result) {
+    const room = await this.roomService.getRoomById(roomId);
+    if (!room || !isRoomOwnerOrInvitedMember({ room, userId })) {
       return res.status(403).end();
     }
 
     return res.status(200).end();
   }
 
-  async _deleteRoom({ room, roomOwner }) {
-    await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: roomOwner._id });
+  async _deleteRoomAndNotify({ room, roomOwner }) {
+    await this.roomService.deleteRoom({ room, roomOwner });
     await this.mailService.sendRoomDeletionNotificationEmails({
       roomName: room.name,
       ownerName: roomOwner.displayName,
@@ -410,6 +433,36 @@ export default class RoomController {
       (req, res) => this.handleDeleteRoomMember(req, res)
     );
 
+    router.get(
+      '/api/v1/room-media-overview',
+      needsPermission(permissions.BROWSE_STORAGE),
+      (req, res) => this.handleGetRoomMediaOverview(req, res)
+    );
+
+    router.get(
+      '/api/v1/room-media/:roomId',
+      needsPermission(permissions.BROWSE_STORAGE),
+      validateParams(getAllRoomMediaParamsSchema),
+      (req, res) => this.handleGetAllRoomMedia(req, res)
+    );
+
+    router.post(
+      '/api/v1/room-media/:roomId',
+      needsPermission(permissions.CREATE_CONTENT),
+      uploadLimitExceededMiddleware(),
+      multipartParser.single('file'),
+      validateFile('file'),
+      validateParams(postRoomMediaParamsSchema),
+      (req, res) => this.handlePostRoomMedia(req, res)
+    );
+
+    router.delete(
+      '/api/v1/room-media/:roomId/:name',
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
+      validateParams(deleteRoomMediaParamsSchema),
+      (req, res) => this.handleDeleteRoomMedia(req, res)
+    );
+
     router.post(
       '/api/v1/room-invitations',
       [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomInvitationsBodySchema)],
@@ -429,7 +482,7 @@ export default class RoomController {
     );
 
     router.post(
-      '/api/v1/rooms/:roomId/message',
+      '/api/v1/rooms/:roomId/messages',
       [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateBody(postRoomMessageBodySchema)],
       (req, res) => this.handlePostRoomMessage(req, res)
     );
@@ -451,6 +504,7 @@ export default class RoomController {
   registerPages(router) {
     router.get(
       '/rooms/:roomId*',
+      needsAuthentication(),
       validateParams(getRoomWithSlugParamsSchema),
       (req, res) => this.handleGetRoomPage(req, res)
     );

@@ -57,7 +57,7 @@ export function processWikimediaResponse(responseData) {
     .map(page => ({
       pageId: page.pageid,
       pageUrl: page.canonicalurl,
-      displayName: page.title.replace(/^File:/, ''),
+      name: page.title.replace(/^File:/, ''),
       url: page.imageinfo[0].url,
       thumbnailUrl: page.imageinfo[0].thumburl,
       updatedOn: page.touched,

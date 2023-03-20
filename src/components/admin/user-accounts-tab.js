@@ -16,9 +16,9 @@ import { ensureIsExcluded } from '../../utils/array-utils.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import StoragePlanApiClient from '../../api-clients/storage-plan-api-client.js';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
 import { Table, Tabs, Select, Radio, message, Tag, Modal, Segmented } from 'antd';
 
@@ -132,9 +132,9 @@ function UserAccountsTab() {
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [selectedAccountKeys, setSelectedAccountKeys] = useState([]);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [currentTable, setCurrentTable] = useState(TABLE.activeAccounts);
   const [accountTableItemsById, setAccountTableItemsById] = useState([]);
+  const storagePlanApiClient = useSessionAwareApiClient(StoragePlanApiClient);
   const [currentBatchStoragePlan, setCurrentBatchStoragePlan] = useState(null);
   const [closedAccountsTableItems, setClosedAccountsTableItems] = useState([]);
   const [activeAccountsTableItems, setActiveAccountsTableItems] = useState([]);
@@ -151,7 +151,7 @@ function UserAccountsTab() {
       const [usersResponse, externalAccountsResponse, storagePlansResponse] = await Promise.all([
         userApiClient.getUsers(),
         userApiClient.getExternalAccounts(),
-        storageApiClient.getAllStoragePlans(false)
+        storagePlanApiClient.getAllStoragePlans(false)
       ]);
       setUsers(usersResponse.users);
       setExternalAccounts(externalAccountsResponse.externalAccounts);
@@ -161,7 +161,7 @@ function UserAccountsTab() {
     } finally {
       setIsLoading(false);
     }
-  }, [userApiClient, storageApiClient, t]);
+  }, [userApiClient, storagePlanApiClient, t]);
 
   useEffect(() => {
     refreshData();

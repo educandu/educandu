@@ -6,12 +6,10 @@ import { UserProvider } from './user-context.js';
 import { DialogProvider } from './dialog-context.js';
 import { LocaleProvider } from './locale-context.js';
 import { RequestProvider } from './request-context.js';
-import { StorageProvider } from './storage-context.js';
 import { SettingsProvider } from './settings-context.js';
 import { PageNameProvider } from './page-name-context.js';
 import { useReloadPersistedWindow } from '../ui/hooks.js';
 import { ContainerProvider } from './container-context.js';
-import { StoragePlanProvider } from './storage-plan-context.js';
 import { NotificationProvider } from './notification-context.js';
 import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/default-prop-types.js';
 
@@ -19,8 +17,6 @@ function Root({
   request,
   user,
   notificationsCount,
-  storage,
-  storagePlan,
   container,
   initialState,
   theme,
@@ -44,18 +40,14 @@ function Root({
               <RequestProvider value={request}>
                 <UserProvider value={user}>
                   <NotificationProvider value={notificationsCount}>
-                    <StoragePlanProvider value={storagePlan}>
-                      <StorageProvider value={storage}>
-                        <DialogProvider>
-                          <PageComponent
-                            initialState={initialState}
-                            PageTemplate={PageTemplateComponent}
-                            HomePageTemplate={HomePageTemplateComponent}
-                            SiteLogo={SiteLogoComponent}
-                            />
-                        </DialogProvider>
-                      </StorageProvider>
-                    </StoragePlanProvider>
+                    <DialogProvider>
+                      <PageComponent
+                        initialState={initialState}
+                        PageTemplate={PageTemplateComponent}
+                        HomePageTemplate={HomePageTemplateComponent}
+                        SiteLogo={SiteLogoComponent}
+                        />
+                    </DialogProvider>
                   </NotificationProvider>
                 </UserProvider>
               </RequestProvider>
