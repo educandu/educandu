@@ -1,4 +1,4 @@
-export default class Educandu_2023_03_15_01_change_events_names_in_events_collection_and_notifications_collection {
+export default class Educandu_2023_03_20_01_change_events_names_in_events_collection_and_notifications_collection {
   constructor(db) {
     this.db = db;
   }
