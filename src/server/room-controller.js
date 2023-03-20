@@ -42,8 +42,9 @@ import {
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema,
-  getAllOrPostRoomMediaParamsSchema,
-  deleteRoomMediaParamsSchema
+  deleteRoomMediaParamsSchema,
+  getAllRoomMediaParamsSchema,
+  postRoomMediaParamsSchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
@@ -437,7 +438,7 @@ export default class RoomController {
     router.get(
       '/api/v1/room-media/:roomId',
       needsPermission(permissions.BROWSE_STORAGE),
-      validateParams(getAllOrPostRoomMediaParamsSchema),
+      validateParams(getAllRoomMediaParamsSchema),
       (req, res) => this.handleGetAllRoomMedia(req, res)
     );
 
@@ -447,7 +448,7 @@ export default class RoomController {
       uploadLimitExceededMiddleware(),
       multipartParser.single('file'),
       validateFile('file'),
-      validateParams(getAllOrPostRoomMediaParamsSchema),
+      validateParams(postRoomMediaParamsSchema),
       (req, res) => this.handlePostRoomMedia(req, res)
     );
 

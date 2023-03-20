@@ -2,7 +2,11 @@ import joi from 'joi';
 import { ROOM_USER_ROLE } from '../constants.js';
 import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
-export const getAllOrPostRoomMediaParamsSchema = joi.object({
+export const getAllRoomMediaParamsSchema = joi.object({
+  roomId: idOrKeySchema.required()
+});
+
+export const postRoomMediaParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });
 
