@@ -464,23 +464,25 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="RoomPage-messageBoardMessages">
         {sortedMessages.map(msg => (
-          <div key={msg.key} className="RoomPage-messageBoardMessageWrapper">
-            <div key={msg.key} className="RoomPage-messageBoardMessage">
-              {!!msg.emailNotification && (
-                <div className="RoomPage-messageBoardMessageIcon">
-                  <Tooltip title={t('messageEmailNotificationIconTooltip')}>
-                    <MailOutlined />
-                  </Tooltip>
-                </div>
-              )}
-              <div className="RoomPage-messageBoardMessageText">
-                <Markdown>{msg.text}</Markdown>
+          <div key={msg.key} className="RoomPage-messageBoardMessage">
+            <div className="RoomPage-messageBoardMessageHeadline">
+              <div>{formatDate(msg.createdOn)}</div>
+              <div className="RoomPage-messageBoardMessageHeadlineIcons">
+                {!!msg.emailNotification && (
+                  <div className="RoomPage-messageBoardMessageIcon">
+                    <Tooltip title={t('messageEmailNotificationIconTooltip')}>
+                      <MailOutlined />
+                    </Tooltip>
+                  </div>
+                )}
+                {viewMode === VIEW_MODE.owner && (
+                  <DeleteButton onClick={() => handleDeleteMessageClick(msg)} />
+                )}
               </div>
-              <div className="RoomPage-messageBoardMessageDate">{formatDate(msg.createdOn)}</div>
             </div>
-            {viewMode === VIEW_MODE.owner && (
-              <DeleteButton onClick={() => handleDeleteMessageClick(msg)} />
-            )}
+            <div className="RoomPage-messageBoardMessageText">
+              <Markdown>{msg.text}</Markdown>
+            </div>
           </div>
         ))}
       </div>

@@ -113,23 +113,25 @@
   grid-auto-flow: row;
 }
 
-.RoomPage-messageBoardMessageWrapper {
+.RoomPage-messageBoardMessage {
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-base;
+}
+
+.RoomPage-messageBoardMessageHeadline {
+  display: flex;
+  justify-content: space-between;
+  padding: calc(@edu-content-padding / 2);
+  background-color: @edu-background-color-base;
+  border-top-left-radius: @edu-border-radius-base;
+  border-top-right-radius: @edu-border-radius-base;
+}
+
+.RoomPage-messageBoardMessageHeadlineIcons {
   display: grid;
   gap: 5px;
-  align-items: end;
-  grid-template-columns: 1fr auto;
-}
-
-.RoomPage-messageBoardMessage {
-  padding: @edu-content-padding;
-  border-radius: @edu-border-radius-base;
-  background-color: @edu-background-color-light;
-}
-
-.RoomPage-messageBoardMessageDate {
-  font-style: italic;
-  font-size: @edu-font-size-sm;
-  color: @edu-text-color-secondary;
+  grid-auto-flow: column;
+  align-items: center;
 }
 
 .RoomPage-messageBoardMessageIcon {
@@ -144,7 +146,7 @@
 }
 
 .RoomPage-messageBoardMessageText {
-  padding: @edu-content-padding 0;
+  padding: @edu-content-padding;
 }
 
 .RoomPage-members {
