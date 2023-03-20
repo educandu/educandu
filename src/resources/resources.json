@@ -3914,11 +3914,11 @@
     },
     "roomMessageEmail.text": {
       "en": "Hello {userDisplayName}!\n\nA new message was just posted in this {appName} room: \"{roomName}\".\nOpen {roomLink} in your browser in order to read it.\n",
-      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht war in diesem {appName}-Raum geschrieben: \"{roomName}\".\nÖffne {roomLink} in deinem Browser, um sie abzurufen.\n"
+      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht wurde in diesem {appName}-Raum gepostet: \"{roomName}\".\nÖffne {roomLink} in deinem Browser, um sie abzurufen.\n"
     },
     "roomMessageEmail.markdown": {
       "en": "Hello {userDisplayName}!\n\nA new message was just posted in this {appName} room: [{roomName}]({roomLink}).\n",
-      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht war in diesem {appName}-Raum geschrieben: [{roomName}]({roomLink}).\n"
+      "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).\n"
     }
   },
   "mimeTypeHelper": {

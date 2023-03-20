@@ -223,7 +223,7 @@ mailService:
     de: |
       Hallo {userDisplayName}!
 
-      Eine neue Nachricht war in diesem {appName}-Raum geschrieben: "{roomName}".
+      Eine neue Nachricht wurde in diesem {appName}-Raum gepostet: "{roomName}".
       Öffne {roomLink} in deinem Browser, um sie abzurufen.
   roomMessageEmail.markdown:
     en: |
@@ -233,4 +233,4 @@ mailService:
     de: |
       Hallo {userDisplayName}!
 
-      Eine neue Nachricht war in diesem {appName}-Raum geschrieben: [{roomName}]({roomLink}).
+      Eine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).
