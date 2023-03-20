@@ -7,15 +7,11 @@ import RoomStore from '../stores/room-store.js';
 import { serializeError } from 'serialize-error';
 import EventStore from '../stores/event-store.js';
 import DocumentStore from '../stores/document-store.js';
+import notificationUtils from '../utils/notification-utils.js';
 import NotificationStore from '../stores/notification-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, NOTIFICATION_EXPIRATION_IN_MONTHS } from '../domain/constants.js';
-import {
-  determineNotificationReasonsForRoomMessageCreatedEvent,
-  determineNotificationReasonsForDocumentCommentCreatedEvent,
-  determineNotificationReasonsForDocumentRevisionCreatedEvent
-} from '../utils/notification-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -69,7 +65,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForDocumentRevisionCreatedEvent({
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentRevisionCreatedEvent({
           event,
           documentRevision,
           document,
@@ -106,7 +102,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForDocumentCommentCreatedEvent({
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentCommentCreatedEvent({
           event,
           document,
           room,
@@ -141,7 +137,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForRoomMessageCreatedEvent({
+        const reasons = notificationUtils.determineNotificationReasonsForRoomMessageCreatedEvent({
           event,
           room,
           notifiedUser: user
@@ -222,10 +218,11 @@ class EventService {
         return false;
       }
 
-      if (!context.cancellationRequested) {
-        await this._processEvent(eventId, context);
+      if (context.cancellationRequested) {
+        return false;
       }
 
+      await this._processEvent(eventId, context);
       return true;
     } catch (error) {
       logger.error(`Error processing event '${eventId}': `, error);

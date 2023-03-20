@@ -81,7 +81,7 @@ function collectFavoriteReasonsAfterRoomEvent({ reasons, roomId, notifiedUser })
   }
 }
 
-export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser }) {
+function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, documentRevision, document, room, notifiedUser })) {
     return [];
   }
@@ -94,7 +94,7 @@ export function determineNotificationReasonsForDocumentRevisionCreatedEvent({ ev
   return [...reasons];
 }
 
-export function determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser }) {
+function determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, documentRevision: null, document, room, notifiedUser })) {
     return [];
   }
@@ -107,7 +107,7 @@ export function determineNotificationReasonsForDocumentCommentCreatedEvent({ eve
   return [...reasons];
 }
 
-export function determineNotificationReasonsForRoomMessageCreatedEvent({ event, room, notifiedUser }) {
+function determineNotificationReasonsForRoomMessageCreatedEvent({ event, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, room, notifiedUser })) {
     return [];
   }
@@ -132,7 +132,7 @@ function _createGroupKey(notification) {
   }
 }
 
-export function groupNotifications(notifications) {
+function groupNotifications(notifications) {
   const groups = [];
 
   let lastGroupKey = null;
@@ -156,3 +156,10 @@ export function groupNotifications(notifications) {
 
   return groups;
 }
+
+export default {
+  groupNotifications,
+  determineNotificationReasonsForRoomMessageCreatedEvent,
+  determineNotificationReasonsForDocumentCommentCreatedEvent,
+  determineNotificationReasonsForDocumentRevisionCreatedEvent
+};

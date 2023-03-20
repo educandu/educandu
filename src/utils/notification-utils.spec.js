@@ -1,11 +1,6 @@
+import notificationUtils from './notification-utils.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
-import {
-  determineNotificationReasonsForRoomMessageCreatedEvent,
-  determineNotificationReasonsForDocumentCommentCreatedEvent,
-  determineNotificationReasonsForDocumentRevisionCreatedEvent,
-  groupNotifications
-} from './notification-utils.js';
 
 describe('notification-utils', () => {
 
@@ -98,7 +93,7 @@ describe('notification-utils', () => {
       describe(description, () => {
         let result;
         beforeEach(() => {
-          result = determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser });
+          result = notificationUtils.determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser });
         });
         it(`should return ${JSON.stringify(expectedReasons)}`, () => {
           expect(result).toStrictEqual(expectedReasons);
@@ -180,7 +175,7 @@ describe('notification-utils', () => {
       describe(description, () => {
         let result;
         beforeEach(() => {
-          result = determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser });
+          result = notificationUtils.determineNotificationReasonsForDocumentCommentCreatedEvent({ event, document, room, notifiedUser });
         });
         it(`should return ${JSON.stringify(expectedReasons)}`, () => {
           expect(result).toStrictEqual(expectedReasons);
@@ -232,7 +227,7 @@ describe('notification-utils', () => {
       describe(description, () => {
         let result;
         beforeEach(() => {
-          result = determineNotificationReasonsForRoomMessageCreatedEvent({ event, document, room, notifiedUser });
+          result = notificationUtils.determineNotificationReasonsForRoomMessageCreatedEvent({ event, document, room, notifiedUser });
         });
         it(`should return ${JSON.stringify(expectedReasons)}`, () => {
           expect(result).toStrictEqual(expectedReasons);
@@ -253,7 +248,7 @@ describe('notification-utils', () => {
           { _id: 'notification-3', eventType: EVENT_TYPE.documentRevisionCreated, eventParams: { documentId: 'document-3' }, createdOn: new Date('2023-02-28T12:03:00Z') }
         ];
 
-        result = groupNotifications(notifications);
+        result = notificationUtils.groupNotifications(notifications);
       });
 
       it('should create a new group for each notification', () => {
@@ -292,7 +287,7 @@ describe('notification-utils', () => {
           { _id: 'notification-4', eventType: EVENT_TYPE.documentRevisionCreated, eventParams: { documentId: 'document-3' }, createdOn: new Date('2023-02-28T12:04:00Z') }
         ];
 
-        result = groupNotifications(notifications);
+        result = notificationUtils.groupNotifications(notifications);
       });
 
       it('should group these notifications together', () => {
@@ -332,7 +327,7 @@ describe('notification-utils', () => {
           { _id: 'notification-5', eventType: EVENT_TYPE.documentRevisionCreated, eventParams: { documentId: 'document-2' }, createdOn: new Date('2023-02-28T12:05:00Z') }
         ];
 
-        result = groupNotifications(notifications);
+        result = notificationUtils.groupNotifications(notifications);
       });
 
       it('should start a new group each time', () => {
