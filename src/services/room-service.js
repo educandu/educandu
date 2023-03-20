@@ -427,9 +427,10 @@ export default class RoomService {
 
     messages.push(newMessage);
 
-    await this.roomStore.updateRoomMessages(room._id, messages);
-
-    await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key });
+    await this.transactionRunner.run(async session => {
+      await this.roomStore.updateRoomMessages(room._id, messages, { session });
+      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key }, { session });
+    });
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 
@@ -439,6 +440,7 @@ export default class RoomService {
   async deleteRoomMessage({ room, messageKey }) {
     const message = room.messages.find(m => m.key === messageKey);
     const remainingMessages = ensureIsExcluded(room.messages, message);
+
     await this.roomStore.updateRoomMessages(room._id, remainingMessages);
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
