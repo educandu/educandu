@@ -8,6 +8,7 @@ import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
 import CommentsIcon from '../icons/user-notifications/comments-icon.js';
+import RoomMessageIcon from '../icons/user-notifications/room-message-icon.js';
 import { EditDocIconComponent } from '../icons/user-notifications/edit-doc-icon.js';
 
 function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
@@ -15,30 +16,43 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
   const { t } = useTranslation('notificationsTab');
 
   const renderNotificationGroup = notificationGroup => {
-    const isDeprecated = !notificationGroup.eventParams.document;
-
-    const title = isDeprecated ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
-    const href = isDeprecated ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
-
     let icon;
+    let href;
+    let title;
     let description;
 
-    if (notificationGroup.eventType === EVENT_TYPE.revisionCreated) {
+    const roomNotAvailable = !notificationGroup.eventParams.room;
+    const documentNotAvailable = !notificationGroup.eventParams.document;
+
+    if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
       icon = <EditDocIconComponent />;
+      title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
+      href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
+
       if (!notificationGroup.eventParams.document) {
-        description = t('revisionCreatedNotification');
+        description = t('documentRevisionCreatedNotification');
       } else {
-        description = notificationGroup.eventParams.document.roomId ? t('roomRevisionCreatedNotification') : t('publicRevisionCreatedNotification');
+        description = notificationGroup.eventParams.document.roomId ? t('roomDocumentRevisionCreatedNotification') : t('publicDocumentRevisionCreatedNotification');
       }
     }
 
-    if (notificationGroup.eventType === EVENT_TYPE.commentCreated) {
+    if (notificationGroup.eventType === EVENT_TYPE.documentCommentCreated) {
       icon = <CommentsIcon />;
+      title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
+      href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
+
       if (!notificationGroup.eventParams.document) {
-        description = t('commentCreatedNotification');
+        description = t('documentCommentCreatedNotification');
       } else {
-        description = notificationGroup.eventParams.document.roomId ? t('roomCommentCreatedNotification') : t('publicCommentCreatedNotification');
+        description = notificationGroup.eventParams.document.roomId ? t('roomDocumentCommentCreatedNotification') : t('publicDocumentCommentCreatedNotification');
       }
+    }
+
+    if (notificationGroup.eventType === EVENT_TYPE.roomMessageCreated) {
+      icon = <RoomMessageIcon />;
+      title = roomNotAvailable ? t('roomNotAvailable') : notificationGroup.eventParams.room.name;
+      href = roomNotAvailable ? null : routes.getRoomUrl(notificationGroup.eventParams.room._id);
+      description = t('roomMessageCreatedNotification');
     }
 
     return (
@@ -48,8 +62,8 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
           <div className="NotificationsTab-notificationContentText">
             <div className="NotificationsTab-notificationContentTextMain">
               <span className="NotificationsTab-notificationDescription">{description}:</span>
-              {!!isDeprecated && <span className="NotificationsTab-notificationTitle">[{ title }]</span>}
-              {!isDeprecated && <span className="NotificationsTab-notificationLink"><a href={href}>{title}</a></span>}
+              {!href && <span className="NotificationsTab-notificationTitle">[{ title }]</span>}
+              {!!href && <span className="NotificationsTab-notificationLink"><a href={href}>{title}</a></span>}
             </div>
             <span className="NotificationsTab-notificationContentTextSecondary">{formatDate(notificationGroup.lastCreatedOn)}</span>
           </div>

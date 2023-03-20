@@ -53,6 +53,7 @@ describe('room-controller', () => {
     };
     mailService = {
       sendRoomInvitationEmails: sandbox.stub(),
+      sendRoomMessageEmailsToMembers: sandbox.stub(),
       sendRoomDeletionNotificationEmails: sandbox.stub(),
       sendRoomMemberRemovalNotificationEmail: sandbox.stub(),
       sendRoomInvitationDeletionNotificationEmail: sandbox.stub()
@@ -1304,7 +1305,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the request is valid', () => {
+    describe('when the request is valid and emailNotification is set to false', () => {
       let updatedRoom;
       let mappedRoom;
 
@@ -1325,6 +1326,7 @@ describe('room-controller', () => {
         roomService.getRoomById.resolves(room);
         roomService.createRoomMessage.resolves(updatedRoom);
         clientDataMappingService.mapRoom.resolves(mappedRoom);
+        mailService.sendRoomMessageEmailsToMembers.resolves();
 
         req = {
           user,
@@ -1343,6 +1345,65 @@ describe('room-controller', () => {
 
       it('should call mapRoom with the room returned by the service', () => {
         assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
+      });
+
+      it('should not call mailService.sendRoomMessageEmailsToMembers', () => {
+        assert.notCalled(mailService.sendRoomMessageEmailsToMembers);
+      });
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should respond with the mapped updated room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+    });
+
+    describe('when the request is valid and emailNotification is set to true', () => {
+      let updatedRoom;
+      let mappedRoom;
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        room = {
+          _id: uniqueId.create(),
+          name: 'Raum',
+          slug: 'room-slug',
+          owner: user._id,
+          isCollaborative: false,
+          members: [],
+          messages: [],
+          documents: []
+        };
+        updatedRoom = cloneDeep(room);
+        mappedRoom = cloneDeep(updatedRoom);
+
+        roomService.getRoomById.resolves(room);
+        roomService.createRoomMessage.resolves(updatedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        mailService.sendRoomMessageEmailsToMembers.resolves();
+
+        req = {
+          user,
+          params: { roomId: room._id },
+          body: { text: 'message text', emailNotification: true }
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        sut.handlePostRoomMessage(req, res).catch(reject);
+      }));
+
+      it('should call roomService.createRoomMessage', () => {
+        assert.calledWith(roomService.createRoomMessage, { room, ...req.body });
+      });
+
+      it('should call mapRoom with the room returned by the service', () => {
+        assert.calledWith(clientDataMappingService.mapRoom, { room: updatedRoom, viewingUser: user });
+      });
+
+      it('should call mailService.sendRoomMessageEmailsToMembers', () => {
+        assert.calledWith(mailService.sendRoomMessageEmailsToMembers, { room });
       });
 
       it('should respond with status code 201', () => {

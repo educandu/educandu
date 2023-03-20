@@ -76,7 +76,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
       sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
-      sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
+      sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
 
       createdRevision = null;
       room = await createTestRoom(container, { owner: user._id });
@@ -234,7 +234,7 @@ describe('document-service', () => {
     });
 
     it('creates an event', () => {
-      assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+      assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
     });
   });
 
@@ -248,7 +248,7 @@ describe('document-service', () => {
     let persistedSecondRevision;
 
     beforeEach(async () => {
-      sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
+      sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
 
       secondUser = await createTestUser(container);
 
@@ -428,7 +428,7 @@ describe('document-service', () => {
     });
 
     it('creates an event', () => {
-      assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+      assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
     });
   });
 
@@ -536,7 +536,7 @@ describe('document-service', () => {
           }
         ]);
 
-        sandbox.stub(eventStore, 'recordRevisionCreatedEvent').resolves();
+        sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
       });
 
       describe('and no section has been hard-deleted', () => {
@@ -594,7 +594,7 @@ describe('document-service', () => {
           });
 
           it('should create an event', () => {
-            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+            assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
           });
         });
       });
@@ -665,7 +665,7 @@ describe('document-service', () => {
           });
 
           it('should create an event', () => {
-            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+            assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
           });
         });
       });
@@ -736,7 +736,7 @@ describe('document-service', () => {
           });
 
           it('should create an event', () => {
-            assert.calledOnce(eventStore.recordRevisionCreatedEvent);
+            assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
           });
         });
       });

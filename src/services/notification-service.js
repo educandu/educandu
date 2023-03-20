@@ -1,8 +1,8 @@
 import moment from 'moment';
 import Logger from '../common/logger.js';
 import UserStore from '../stores/user-store.js';
+import notificationUtils from '../utils/notification-utils.js';
 import NotificationStore from '../stores/notification-store.js';
-import { groupNotifications } from '../utils/notification-utils.js';
 import {
   EMAIL_NOTIFICATION_FREQUENCY,
   EMAIL_NOTIFICATION_DUE_DAY_OF_MONTH,
@@ -21,7 +21,7 @@ class EventService {
 
   async getNotificationGroups({ user }) {
     const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
-    return groupNotifications(notifications);
+    return notificationUtils.groupNotifications(notifications);
   }
 
   async deleteUserNotificationsByIds({ user, notificationIds }) {
@@ -51,7 +51,7 @@ class EventService {
           const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
 
           if (notifications.length) {
-            const groupedNotifications = groupNotifications(notifications);
+            const groupedNotifications = notificationUtils.groupNotifications(notifications);
             emailNotifications.push({ user, notificationsCount: groupedNotifications.length });
           }
         }

@@ -9,6 +9,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
+import EventStore from '../stores/event-store.js';
 import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
@@ -34,6 +35,7 @@ export default class RoomService {
     CommentStore,
     UserStore,
     StoragePlanStore,
+    EventStore,
     LockStore,
     TransactionRunner
   ];
@@ -47,6 +49,7 @@ export default class RoomService {
     commentStore,
     userStore,
     storagePlanStore,
+    eventStore,
     lockStore,
     transactionRunner
   ) {
@@ -54,6 +57,7 @@ export default class RoomService {
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
+    this.eventStore = eventStore;
     this.commentStore = commentStore;
     this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
@@ -414,14 +418,19 @@ export default class RoomService {
 
   async createRoomMessage({ room, text, emailNotification }) {
     const messages = cloneDeep(room.messages);
-    messages.push({
+    const newMessage = {
       key: uniqueId.create(),
       text,
       emailNotification,
       createdOn: new Date()
-    });
+    };
 
-    await this.roomStore.updateRoomMessages(room._id, messages);
+    messages.push(newMessage);
+
+    await this.transactionRunner.run(async session => {
+      await this.roomStore.updateRoomMessages(room._id, messages, { session });
+      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key }, { session });
+    });
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 
@@ -431,6 +440,7 @@ export default class RoomService {
   async deleteRoomMessage({ room, messageKey }) {
     const message = room.messages.find(m => m.key === messageKey);
     const remainingMessages = ensureIsExcluded(room.messages, message);
+
     await this.roomStore.updateRoomMessages(room._id, remainingMessages);
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);

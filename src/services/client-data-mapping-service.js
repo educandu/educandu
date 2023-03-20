@@ -153,12 +153,16 @@ class ClientDataMappingService {
     });
   }
 
-  _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById) {
+  _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById) {
     switch (eventType) {
-      case EVENT_TYPE.revisionCreated:
-      case EVENT_TYPE.commentCreated:
+      case EVENT_TYPE.documentRevisionCreated:
+      case EVENT_TYPE.documentCommentCreated:
         return {
           document: allowedDocumentsById.get(eventParams.documentId) || null
+        };
+      case EVENT_TYPE.roomMessageCreated:
+        return {
+          room: allowedRoomsById.get(eventParams.roomId) || null
         };
       default:
         throw new Error(`Unsupported event type '${eventType}'`);
@@ -190,7 +194,7 @@ class ClientDataMappingService {
     return notificationGroups.map(group => ({
       notificationIds: group.notificationIds,
       eventType: group.eventType,
-      eventParams: this._mapNotificationEventParams(group.eventType, group.eventParams, allowedDocumentsById),
+      eventParams: this._mapNotificationEventParams(group.eventType, group.eventParams, allowedDocumentsById, allowedRoomsById),
       firstCreatedOn: group.firstCreatedOn.toISOString(),
       lastCreatedOn: group.lastCreatedOn.toISOString()
     }));

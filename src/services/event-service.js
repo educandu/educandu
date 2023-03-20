@@ -7,14 +7,11 @@ import RoomStore from '../stores/room-store.js';
 import { serializeError } from 'serialize-error';
 import EventStore from '../stores/event-store.js';
 import DocumentStore from '../stores/document-store.js';
+import notificationUtils from '../utils/notification-utils.js';
 import NotificationStore from '../stores/notification-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, NOTIFICATION_EXPIRATION_IN_MONTHS } from '../domain/constants.js';
-import {
-  determineNotificationReasonsForCommentCreatedEvent,
-  determineNotificationReasonsForRevisionCreatedEvent
-} from '../utils/notification-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -24,6 +21,19 @@ const PROCESSING_RESULT = {
   succeeded: 'succeeded',
   cancelled: 'cancelled',
   failed: 'failed'
+};
+
+const createNotificationForEvent = ({ event, user, reasons }) => {
+  return {
+    _id: uniqueId.create(),
+    notifiedUserId: user._id,
+    eventId: event._id,
+    eventType: event.type,
+    eventParams: event.params,
+    reasons,
+    createdOn: event.createdOn,
+    expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate()
+  };
 };
 
 class EventService {
@@ -40,12 +50,12 @@ class EventService {
     this.transactionRunner = transactionRunner;
   }
 
-  async _processRevisionCreatedEvent(event, session, context) {
+  async _processDocumentRevisionCreatedEvent(event, session, context) {
     const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
-      const { revisionId, documentId, roomId } = event.params;
-      const revision = await this.documentRevisionStore.getDocumentRevisionById(revisionId, { session });
+      const { documentRevisionId, documentId, roomId } = event.params;
+      const documentRevision = await this.documentRevisionStore.getDocumentRevisionById(documentRevisionId, { session });
       const document = await this.documentStore.getDocumentById(documentId, { session });
       const room = roomId ? await this.roomStore.getRoomById(roomId, { session }) : null;
 
@@ -55,25 +65,16 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForRevisionCreatedEvent({
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentRevisionCreatedEvent({
           event,
-          revision,
+          documentRevision,
           document,
           room,
           notifiedUser: user
         });
 
         if (reasons.length) {
-          createdNotifications.push({
-            _id: uniqueId.create(),
-            notifiedUserId: user._id,
-            eventId: event._id,
-            eventType: event.type,
-            eventParams: event.params,
-            reasons,
-            createdOn: event.createdOn,
-            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate()
-          });
+          createdNotifications.push(createNotificationForEvent({ event, user, reasons }));
         }
       }
 
@@ -87,7 +88,7 @@ class EventService {
     }
   }
 
-  async _processCommentCreatedEvent(event, session, context) {
+  async _processDocumentCommentCreatedEvent(event, session, context) {
     const userIterator = this.userStore.getActiveUsersIterator({ session });
 
     try {
@@ -101,7 +102,7 @@ class EventService {
           return PROCESSING_RESULT.cancelled;
         }
 
-        const reasons = determineNotificationReasonsForCommentCreatedEvent({
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentCommentCreatedEvent({
           event,
           document,
           room,
@@ -109,16 +110,41 @@ class EventService {
         });
 
         if (reasons.length) {
-          createdNotifications.push({
-            _id: uniqueId.create(),
-            notifiedUserId: user._id,
-            eventId: event._id,
-            eventType: event.type,
-            eventParams: event.params,
-            reasons,
-            createdOn: event.createdOn,
-            expiresOn: moment(event.createdOn).add(NOTIFICATION_EXPIRATION_IN_MONTHS, 'months').toDate()
-          });
+          createdNotifications.push(createNotificationForEvent({ event, user, reasons }));
+        }
+      }
+
+      if (createdNotifications.length) {
+        await this.notificationStore.insertNotifications(createdNotifications, { session });
+      }
+
+      return PROCESSING_RESULT.succeeded;
+    } finally {
+      await userIterator.close();
+    }
+  }
+
+  async _processRoomMessageCreatedEvent(event, session, context) {
+    const userIterator = this.userStore.getActiveUsersIterator({ session });
+
+    try {
+      const { roomId } = event.params;
+      const room = await this.roomStore.getRoomById(roomId, { session });
+
+      const createdNotifications = [];
+      for await (const user of userIterator) {
+        if (context.cancellationRequested) {
+          return PROCESSING_RESULT.cancelled;
+        }
+
+        const reasons = notificationUtils.determineNotificationReasonsForRoomMessageCreatedEvent({
+          event,
+          room,
+          notifiedUser: user
+        });
+
+        if (reasons.length) {
+          createdNotifications.push(createNotificationForEvent({ event, user, reasons }));
         }
       }
 
@@ -153,11 +179,14 @@ class EventService {
         let processingResult;
         try {
           switch (event.type) {
-            case EVENT_TYPE.revisionCreated:
-              processingResult = await this._processRevisionCreatedEvent(event, session, context);
+            case EVENT_TYPE.documentRevisionCreated:
+              processingResult = await this._processDocumentRevisionCreatedEvent(event, session, context);
               break;
-            case EVENT_TYPE.commentCreated:
-              processingResult = await this._processCommentCreatedEvent(event, session, context);
+            case EVENT_TYPE.documentCommentCreated:
+              processingResult = await this._processDocumentCommentCreatedEvent(event, session, context);
+              break;
+            case EVENT_TYPE.roomMessageCreated:
+              processingResult = await this._processRoomMessageCreatedEvent(event, session, context);
               break;
             default:
               throw new Error(`Event type ${event.type} is unknown`);

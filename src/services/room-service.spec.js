@@ -11,8 +11,8 @@ import { assert, createSandbox, match } from 'sinon';
 import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
-import { INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { EVENT_TYPE, INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
@@ -464,6 +464,22 @@ describe('room-service', () => {
     beforeEach(async () => {
       room = await createTestRoom(container, { name: 'room', owner: myUser._id, createdBy: myUser._id });
       result = await sut.createRoomMessage({ room, text: 'message', emailNotification: true });
+    });
+
+    it('should create an event', async () => {
+      const eventFromDb = await db.events.findOne();
+      expect(eventFromDb).toEqual({
+        _id: expect.stringMatching(/\w+/),
+        createdOn: now,
+        params: {
+          roomId: room._id,
+          roomMessageKey: expect.stringMatching(/\w+/),
+          userId: myUser._id
+        },
+        processedOn: null,
+        processingErrors: [],
+        type: EVENT_TYPE.roomMessageCreated
+      });
     });
 
     it('should return the updated room', () => {

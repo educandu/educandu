@@ -211,3 +211,26 @@ mailService:
 
       Falls du die Einstellungen für diese Erinnerungsmail ändern möchtest, kannst du dies in den [Einstellungen]({settingsLink}) auf
       deinem Dashboard tun.
+  roomMessageEmail.subject:
+    en: New message in {appName} room
+    de: Neue Nachricht im {appName}-Raum
+  roomMessageEmail.text:
+    en: |
+      Hello {userDisplayName}!
+
+      A new message was just posted in this {appName} room: "{roomName}".
+      Open {roomLink} in your browser in order to read it.
+    de: |
+      Hallo {userDisplayName}!
+
+      Eine neue Nachricht wurde in diesem {appName}-Raum gepostet: "{roomName}".
+      Öffne {roomLink} in deinem Browser, um sie abzurufen.
+  roomMessageEmail.markdown:
+    en: |
+      Hello {userDisplayName}!
+
+      A new message was just posted in this {appName} room: [{roomName}]({roomLink}).
+    de: |
+      Hallo {userDisplayName}!
+
+      Eine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).

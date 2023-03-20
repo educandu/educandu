@@ -41,7 +41,7 @@ describe('comment-service', () => {
     let document;
 
     beforeEach(async () => {
-      sandbox.stub(eventStore, 'recordCommentCreatedEvent').resolves();
+      sandbox.stub(eventStore, 'recordDocumentCommentCreatedEvent').resolves();
 
       document = await createTestDocument(container, user, {});
 
@@ -74,7 +74,7 @@ describe('comment-service', () => {
     });
 
     it('should create an event', () => {
-      assert.calledOnce(eventStore.recordCommentCreatedEvent);
+      assert.calledOnce(eventStore.recordDocumentCommentCreatedEvent);
     });
   });
 

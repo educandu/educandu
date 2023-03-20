@@ -144,6 +144,13 @@ class MailService {
     return this._sendMail(message);
   }
 
+  async sendRoomMessageEmailsToMembers({ room }) {
+    const userIds = room.members.map(member => member.userId);
+    const users = await this.userStore.getUsersByIds(userIds);
+
+    await Promise.all(users.map(user => this._sendRoomMessageEmailToUser({ room, user })));
+  }
+
   sendRoomMemberRemovalNotificationEmail({ roomName, ownerName, memberUser }) {
     logger.info(`Sending room member removal notification to ${memberUser.email}`);
 
@@ -237,6 +244,39 @@ class MailService {
       .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
     const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
+    return this._sendMail(message);
+  }
+
+  _sendRoomMessageEmailToUser({ room, user }) {
+    logger.info(`Sending room message email to ${user.email}`);
+
+    const appName = this.serverConfig.appName;
+    const origin = this.serverConfig.appRootUrl;
+    const roomLink = new URL(routes.getRoomUrl(room._id), origin).href;
+
+    const subject = this.translators
+      .map(t => t('mailService:roomMessageEmail.subject', { appName }))
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
+
+    const text = this.translators
+      .map(t => t('mailService:roomMessageEmail.text', {
+        appName,
+        userDisplayName: user.displayName,
+        roomLink,
+        roomName: room.name
+      }))
+      .join(TEXT_LANGUAGE_SEPARATOR);
+
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:roomMessageEmail.markdown', {
+        appName: escapeMarkdown(appName),
+        userDisplayName: escapeMarkdown(user.displayName),
+        roomLink: escapeMarkdown(roomLink),
+        roomName: escapeMarkdown(room.name)
+      }))
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
+
+    const message = { from: this.serverConfig.emailSenderAddress, to: user.email, subject, text, html };
     return this._sendMail(message);
   }
 
