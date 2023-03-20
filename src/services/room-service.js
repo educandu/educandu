@@ -1,39 +1,65 @@
 import moment from 'moment';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
+import prettyBytes from 'pretty-bytes';
 import Logger from '../common/logger.js';
-import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
 import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
+import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
-import {
-  STORAGE_DIRECTORY_MARKER_NAME,
-  INVALID_ROOM_INVITATION_REASON,
-  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
-} from '../domain/constants.js';
+import { createUniqueStorageFileName, getRoomMediaRoomPath } from '../utils/storage-utils.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
+import { INVALID_ROOM_INVITATION_REASON, PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS } from '../domain/constants.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, Forbidden, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
 export default class RoomService {
-  static dependencies = [Cdn, RoomStore, RoomInvitationStore, LockStore, UserStore, DocumentStore, TransactionRunner];
+  static dependencies = [
+    Cdn,
+    RoomStore,
+    RoomInvitationStore,
+    DocumentRevisionStore,
+    DocumentStore,
+    CommentStore,
+    UserStore,
+    StoragePlanStore,
+    LockStore,
+    TransactionRunner
+  ];
 
-  constructor(cdn, roomStore, roomInvitationStore, lockStore, userStore, documentStore, transactionRunner) {
+  constructor(
+    cdn,
+    roomStore,
+    roomInvitationStore,
+    documentRevisionStore,
+    documentStore,
+    commentStore,
+    userStore,
+    storagePlanStore,
+    lockStore,
+    transactionRunner
+  ) {
     this.cdn = cdn;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
+    this.commentStore = commentStore;
     this.documentStore = documentStore;
+    this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
+    this.documentRevisionStore = documentRevisionStore;
   }
 
   getRoomById(roomId) {
@@ -56,19 +82,11 @@ export default class RoomService {
     return this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId });
   }
 
-  getRoomInvitationsByEmail(email) {
-    return this.roomInvitationStore.getRoomInvitationsByEmail(email);
-  }
-
-  async isRoomOwnerOrMember(roomId, userId) {
-    const room = await this.roomStore.getRoomsByIdOwnedOrJoinedByUser({ roomId, userId });
-    return !!room;
-  }
-
   async createRoom({ name, slug, isCollaborative, user }) {
     const roomId = uniqueId.create();
+    const roomMediaDirectoryPath = getRoomMediaRoomPath(roomId);
 
-    await this.createUploadDirectoryMarkerForRoom(roomId);
+    await this.cdn.ensureDirectory({ directoryPath: roomMediaDirectoryPath });
 
     const newRoom = {
       _id: roomId,
@@ -88,49 +106,11 @@ export default class RoomService {
     try {
       await this.roomStore.saveRoom(newRoom);
     } catch (error) {
-      await this.deleteUploadDirectoryMarkerForRoom(roomId);
+      await this.cdn.deleteDirectory({ directoryPath: roomMediaDirectoryPath });
       throw error;
     }
 
     return newRoom;
-  }
-
-  async createRoomMessage({ room, text, emailNotification }) {
-    const messages = cloneDeep(room.messages);
-    messages.push({
-      key: uniqueId.create(),
-      text,
-      emailNotification,
-      createdOn: new Date()
-    });
-
-    await this.roomStore.updateRoomMessages(room._id, messages);
-
-    const updatedRoom = await this.roomStore.getRoomById(room._id);
-
-    return updatedRoom;
-  }
-
-  async deleteRoomMessage({ room, messageKey }) {
-    const message = room.messages.find(m => m.key === messageKey);
-    const remainingMessages = ensureIsExcluded(room.messages, message);
-    await this.roomStore.updateRoomMessages(room._id, remainingMessages);
-
-    const updatedRoom = await this.roomStore.getRoomById(room._id);
-
-    return updatedRoom;
-  }
-
-  async createUploadDirectoryMarkerForRoom(roomId) {
-    const storagePath = getRoomMediaRoomPath(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.uploadEmptyObject(directoryMarkerPath);
-  }
-
-  async deleteUploadDirectoryMarkerForRoom(roomId) {
-    const storagePath = getRoomMediaRoomPath(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(storagePath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {
@@ -168,6 +148,155 @@ export default class RoomService {
 
     const updatedRoom = await this.roomStore.getRoomById(roomId);
     return updatedRoom;
+  }
+
+  async deleteRoom({ room, roomOwner }) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeUserLock(roomOwner._id);
+      logger.info(`Deleting room with ID ${room._id}`);
+
+      await this.transactionRunner.run(async session => {
+        const documents = await this.documentStore.getDocumentsMetadataByRoomId(room._id, { session });
+        const documentIds = documents.map(doc => doc._id);
+
+        await this.commentStore.deleteCommentsByDocumentIds(documentIds, { session });
+        await this.documentRevisionStore.deleteDocumentsByRoomId(room._id, { session });
+        await this.documentStore.deleteDocumentsByRoomId(room._id, { session });
+        await this.roomInvitationStore.deleteRoomInvitationsByRoomId(room._id, { session });
+        await this.roomStore.deleteRoomById(room._id, { session });
+      });
+
+      await this.cdn.deleteDirectory({ directoryPath: getRoomMediaRoomPath(room._id) });
+
+      const { usedBytes } = await this.getRoomMediaOverview({ user: roomOwner });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes });
+
+      Object.assign(roomOwner, updatedUser);
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+  }
+
+  async getRoomMediaOverview({ user }) {
+    const storagePlan = user.storage.planId
+      ? await this.storagePlanStore.getStoragePlanById(user.storage.planId)
+      : null;
+
+    const rooms = await this.roomStore.getRoomsByOwnerId(user._id);
+    const objectsPerRoom = await Promise.all(rooms.map(async room => {
+      const objects = await this.cdn.listObjects({ directoryPath: getRoomMediaRoomPath(room._id) });
+      return { room, objects, usedBytes: objects.reduce((accu, obj) => accu + obj.size, 0) };
+    }));
+
+    const usedBytesInAllRooms = objectsPerRoom.reduce((accu, { usedBytes }) => accu + usedBytes, 0);
+
+    return {
+      storagePlan: storagePlan || null,
+      usedBytes: usedBytesInAllRooms,
+      roomStorageList: objectsPerRoom.map(({ room, objects }) => ({
+        roomId: room._id,
+        roomName: room.name,
+        objects
+      }))
+    };
+  }
+
+  async getAllRoomMedia({ user, roomId }) {
+    const room = await this.roomStore.getRoomById(roomId);
+    if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
+      throw new Forbidden(`User is not authorized to access media for room '${roomId}'`);
+    }
+
+    const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.owner);
+    const overview = await this.getRoomMediaOverview({ user: roomOwner });
+
+    return {
+      storagePlan: overview.storagePlan,
+      usedBytes: overview.usedBytes,
+      roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
+    };
+  }
+
+  async createRoomMedia({ user, roomId, file }) {
+    let lock;
+    try {
+      const room = await this.roomStore.getRoomById(roomId);
+      if (!isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+        throw new Forbidden(`User is not authorized to create media for room '${roomId}'`);
+      }
+
+      lock = await this.lockStore.takeUserLock(room.owner);
+
+      const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.owner);
+      if (!roomOwner.storage.planId) {
+        throw new BadRequest('Cannot upload to room-media storage without a storage plan');
+      }
+
+      const storagePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
+      const availableBytes = storagePlan.maxBytes - roomOwner.storage.usedBytes;
+      if (availableBytes < file.size) {
+        throw new BadRequest(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(file.size)}`);
+      }
+
+      const parentPath = getRoomMediaRoomPath(roomId);
+      const uniqueFileName = createUniqueStorageFileName(file.originalname);
+      const cdnObjectPath = urlUtils.concatParts(parentPath, uniqueFileName);
+      await this.cdn.uploadObject(cdnObjectPath, file.path);
+
+      const overview = await this.getRoomMediaOverview({ user: roomOwner });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
+
+      Object.assign(roomOwner, updatedUser);
+
+      return {
+        storagePlan: overview.storagePlan,
+        usedBytes: overview.usedBytes,
+        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId),
+        createdObjectPath: cdnObjectPath
+      };
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+  }
+
+  async deleteRoomMedia({ user, roomId, name }) {
+    let lock;
+    try {
+      lock = await this.lockStore.takeUserLock(user._id);
+
+      const room = await this.roomStore.getRoomById(roomId);
+      if (!isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden(`User is not authorized to delete media for room '${roomId}'`);
+      }
+
+      const objects = await this.cdn.listObjects({ directoryPath: getRoomMediaRoomPath(roomId) });
+
+      const itemToDelete = objects.find(obj => obj.name === name);
+      if (!itemToDelete) {
+        throw new NotFound(`Object '${name}' could not be found`);
+      }
+
+      await this.cdn.deleteObject(itemToDelete.path);
+
+      const overview = await this.getRoomMediaOverview({ user });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: user._id, usedBytes: overview.usedBytes });
+
+      Object.assign(user, updatedUser);
+
+      return {
+        storagePlan: overview.storagePlan,
+        usedBytes: overview.usedBytes,
+        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
+      };
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+  }
+
+  getRoomInvitationsByEmail(email) {
+    return this.roomInvitationStore.getRoomInvitationsByEmail(email);
   }
 
   getRoomInvitations(roomId) {
@@ -276,6 +405,39 @@ export default class RoomService {
     });
   }
 
+  async deleteRoomInvitation({ room, invitation }) {
+    await this.roomInvitationStore.deleteRoomInvitationById(invitation._id);
+    const remainingRoomInvitations = await this.getRoomInvitations(room._id);
+
+    return remainingRoomInvitations;
+  }
+
+  async createRoomMessage({ room, text, emailNotification }) {
+    const messages = cloneDeep(room.messages);
+    messages.push({
+      key: uniqueId.create(),
+      text,
+      emailNotification,
+      createdOn: new Date()
+    });
+
+    await this.roomStore.updateRoomMessages(room._id, messages);
+
+    const updatedRoom = await this.roomStore.getRoomById(room._id);
+
+    return updatedRoom;
+  }
+
+  async deleteRoomMessage({ room, messageKey }) {
+    const message = room.messages.find(m => m.key === messageKey);
+    const remainingMessages = ensureIsExcluded(room.messages, message);
+    await this.roomStore.updateRoomMessages(room._id, remainingMessages);
+
+    const updatedRoom = await this.roomStore.getRoomById(room._id);
+
+    return updatedRoom;
+  }
+
   async removeRoomMember({ room, memberUserId }) {
     const member = room.members.find(m => m.userId === memberUserId);
     const remainingMembers = ensureIsExcluded(room.members, member);
@@ -288,12 +450,5 @@ export default class RoomService {
 
   async removeMembershipFromAllRoomsForUser(memberUserId) {
     await this.roomStore.deleteRoomsMemberById(memberUserId);
-  }
-
-  async deleteRoomInvitation({ room, invitation }) {
-    await this.roomInvitationStore.deleteRoomInvitationById(invitation._id);
-    const remainingRoomInvitations = await this.getRoomInvitations(room._id);
-
-    return remainingRoomInvitations;
   }
 }

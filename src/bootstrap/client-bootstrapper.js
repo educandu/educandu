@@ -66,8 +66,6 @@ export async function hydrateApp({ customResolvers }) {
   const props = {
     user: window.__user__,
     notificationsCount: window.__notificationsCount__,
-    storage: window.__storage__,
-    storagePlan: window.__storagePlan__,
     request,
     uiLanguage: window.__uiLanguage__,
     settings: window.__settings__,

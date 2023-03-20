@@ -11,6 +11,7 @@ import { shuffleItems } from '../utils/array-utils.js';
 import SettingService from '../services/setting-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -87,6 +88,7 @@ class DocumentController {
     }
 
     let room;
+    let roomMediaContext;
     if (doc.roomId) {
       if (!user) {
         throw new Unauthorized();
@@ -101,8 +103,20 @@ class DocumentController {
       if (doc.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
         throw new Forbidden();
       }
+
+      const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId: room._id });
+      roomMediaContext = storagePlan || usedBytes
+        ? {
+          roomId: room._id,
+          path: getRoomMediaRoomPath(room._id),
+          usedBytes: usedBytes || 0,
+          maxBytes: storagePlan?.maxBytes || 0,
+          isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
+        }
+        : null;
     } else {
       room = null;
+      roomMediaContext = null;
     }
 
     if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDoc({ user, doc, room })) {
@@ -113,7 +127,8 @@ class DocumentController {
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections, room: mappedRoom });
+    const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, initialState);
   }
 
   async handleGetDoc(req, res) {

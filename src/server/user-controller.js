@@ -14,7 +14,6 @@ import RoomService from '../services/room-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
-import StorageService from '../services/storage-service.js';
 import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ExternalAccountService from '../services/external-account-service.js';
@@ -45,7 +44,7 @@ import {
 const jsonParser = express.json();
 const { MultiSamlStrategy } = passportSaml;
 const { Strategy: LocalStrategy } = passportLocal;
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, BadRequest } = httpErrors;
 
 const SYMBOL_IDP_KEY = Symbol('SYMBOL_IDP_KEY');
 const SYMBOL_REDIRECT_AFTER_SAML_LOGIN = Symbol('SYMBOL_REDIRECT_AFTER_SAML_LOGIN');
@@ -54,7 +53,6 @@ class UserController {
   static dependencies = [
     ServerConfig,
     UserService,
-    StorageService,
     PasswordResetRequestService,
     RequestLimitRecordService,
     ExternalAccountService,
@@ -68,7 +66,6 @@ class UserController {
   constructor(
     serverConfig,
     userService,
-    storageService,
     passwordResetRequestService,
     requestLimitRecordService,
     externalAccountService,
@@ -83,7 +80,6 @@ class UserController {
     this.roomService = roomService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
-    this.storageService = storageService;
     this.samlConfigService = samlConfigService;
     this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
@@ -484,20 +480,15 @@ class UserController {
     return res.send({ invitations: mappedInvitations });
   }
 
-  async handleCloseUserAccount(req, res) {
+  async handleCloseOwnUserAccount(req, res) {
     const { user } = req;
-    const { userId } = req.params;
 
-    if (user._id !== userId) {
-      throw new Forbidden();
-    }
-
-    const userRooms = await this.roomService.getRoomsOwnedByUser(userId);
+    const userRooms = await this.roomService.getRoomsOwnedByUser(user._id);
     for (const room of userRooms) {
-      await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: userId });
+      await this.roomService.deleteRoom({ room, roomOwner: user });
     }
-    await this.roomService.removeMembershipFromAllRoomsForUser(userId);
-    await this.userService.closeUserAccount(userId);
+    await this.roomService.removeMembershipFromAllRoomsForUser(user._id);
+    await this.userService.closeUserAccount(user._id);
 
     return res.status(204).end();
   }
@@ -788,10 +779,9 @@ class UserController {
     );
 
     router.delete(
-      '/api/v1/users/:userId',
+      '/api/v1/users/account',
       needsAuthentication(),
-      validateParams(userIdParamsSchema),
-      (req, res) => this.handleCloseUserAccount(req, res)
+      (req, res) => this.handleCloseOwnUserAccount(req, res)
     );
   }
 }

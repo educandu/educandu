@@ -18,7 +18,6 @@ describe('user-controller', () => {
   let requestLimitRecordService;
   let clientDataMappingService;
   let externalAccountService;
-  let storageService;
   let pageRenderer;
   let serverConfig;
   let userService;
@@ -41,9 +40,6 @@ describe('user-controller', () => {
       addFavorite: sandbox.stub(),
       deleteFavorite: sandbox.stub(),
       recordUserLogIn: sandbox.stub()
-    };
-    storageService = {
-      getAllStoragePlans: sandbox.stub()
     };
     passwordResetRequestService = {
       getRequestById: sandbox.stub()
@@ -75,7 +71,6 @@ describe('user-controller', () => {
     sut = new UserController(
       serverConfig,
       userService,
-      storageService,
       passwordResetRequestService,
       requestLimitRecordService,
       externalAccountService,

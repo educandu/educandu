@@ -4,6 +4,11 @@ import { AVATAR_SIZE } from '../domain/constants.js';
 // Copied from: https://urlregex.com/
 const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/;
 
+function ensureTrailingSlash(path) {
+  const basePath = String(path).replace(/\/*$/, '');
+  return basePath ? `${basePath}/` : '';
+}
+
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
 }
@@ -72,6 +77,7 @@ function getGravatarUrl(userEmail) {
 }
 
 export default {
+  ensureTrailingSlash,
   removeTrailingSlashes,
   removeLeadingSlashes,
   encodeURIParts,

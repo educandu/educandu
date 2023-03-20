@@ -104,7 +104,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.displayName, async () => {
+    confirmMediaFileHardDelete(t, file.name, async () => {
       await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: file._id });
       setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
       setHighlightedFile(oldFile => oldFile.portableUrl !== file.portableUrl ? oldFile : null);
@@ -165,7 +165,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     const initialResourceName = urlUtils.getFileName(initialUrl);
 
     if (initialResourceName) {
-      const preSelectedFile = files.find(file => file.displayName === initialResourceName);
+      const preSelectedFile = files.find(file => file.name === initialResourceName);
       setHighlightedFile(preSelectedFile);
     }
   }, [initialUrl, showInitialFileHighlighting, files]);

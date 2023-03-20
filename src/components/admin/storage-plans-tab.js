@@ -10,29 +10,29 @@ import StoragePlanModal from '../storage-plan-modal.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmStoragePlanDeletion } from '../confirmation-dialogs.js';
+import StoragePlanApiClient from '../../api-clients/storage-plan-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
 function StoragePlansTab() {
   const { uiLocale } = useLocale();
   const { t } = useTranslation('storagePlansTab');
-  const [storagePlans, setStoragePlans] = useState([]);
-  const [editedStoragePlan, setEditedStoragePlan] = useState(null);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [storagePlanNamesInUse, setStoragePlanNamesInUse] = useState([]);
-  const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
-  const [isStoragePlanModalOpen, setIsStoragePlanModalOpen] = useState(false);
-  const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [storagePlans, setStoragePlans] = useState([]);
+  const [editedStoragePlan, setEditedStoragePlan] = useState(null);
+  const [storagePlanNamesInUse, setStoragePlanNamesInUse] = useState([]);
+  const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
+  const storagePlanApiClient = useSessionAwareApiClient(StoragePlanApiClient);
+  const [isStoragePlanModalOpen, setIsStoragePlanModalOpen] = useState(false);
+  const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
 
   useEffect(() => {
     (async () => {
       try {
         setIsLoading(true);
-        const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
+        const currentStoragePlans = await storagePlanApiClient.getAllStoragePlans(true);
         setStoragePlans(currentStoragePlans);
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -40,7 +40,7 @@ function StoragePlansTab() {
         setIsLoading(false);
       }
     })();
-  }, [storageApiClient, t]);
+  }, [storagePlanApiClient, t]);
 
   const handleEditClick = storagePlan => {
     const { _id, name, maxBytes } = storagePlan;
@@ -59,8 +59,8 @@ function StoragePlansTab() {
     confirmStoragePlanDeletion(t, storagePlan, async () => {
       try {
         setIsSaving(true);
-        await storageApiClient.deleteStoragePlan(storagePlan._id);
-        const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
+        await storagePlanApiClient.deleteStoragePlan(storagePlan._id);
+        const currentStoragePlans = await storagePlanApiClient.getAllStoragePlans(true);
         setStoragePlans(currentStoragePlans);
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -75,19 +75,19 @@ function StoragePlansTab() {
       setIsSaving(true);
 
       if (storagePlan._id) {
-        await storageApiClient.updateStoragePlan({
+        await storagePlanApiClient.updateStoragePlan({
           storagePlanId: storagePlan._id,
           name: storagePlan.name,
           maxBytes: storagePlan.maxBytes
         });
       } else {
-        await storageApiClient.createStoragePlan({
+        await storagePlanApiClient.createStoragePlan({
           name: storagePlan.name,
           maxBytes: storagePlan.maxBytes
         });
       }
 
-      const currentStoragePlans = await storageApiClient.getAllStoragePlans(true);
+      const currentStoragePlans = await storagePlanApiClient.getAllStoragePlans(true);
       setStoragePlans(currentStoragePlans);
       setEditedStoragePlan(null);
       setStoragePlanNamesInUse([]);

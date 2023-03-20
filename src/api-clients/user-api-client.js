@@ -228,10 +228,10 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  closeUserAccount({ userId }) {
+  closeUserAccount() {
     return this.httpClient
       .delete(
-        `/api/v1/users/${encodeURIComponent(userId)}`,
+        '/api/v1/users/account',
         { responseType: 'json' }
       )
       .then(res => res.data);

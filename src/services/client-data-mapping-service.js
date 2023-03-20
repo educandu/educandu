@@ -57,10 +57,6 @@ class ClientDataMappingService {
       role: user.role,
       organization: user.organization,
       introduction: user.introduction,
-      storage: {
-        plan: user.storage.plan,
-        usedBytes: user.storage.usedBytes
-      },
       favorites: user.favorites.map(favorite => ({
         ...favorite,
         setOn: favorite.setOn.toISOString()
@@ -459,7 +455,7 @@ class ClientDataMappingService {
         case 'url':
           result.url = getAccessibleUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
           result.portableUrl = getPortableUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
-          result.displayName = urlUtils.getFileName(value);
+          result.name = urlUtils.getFileName(value);
           break;
         case 'createdOn':
         case 'updatedOn':

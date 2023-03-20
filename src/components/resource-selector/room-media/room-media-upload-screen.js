@@ -5,15 +5,14 @@ import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
 import { Button, Checkbox, Tooltip } from 'antd';
 import { useLocale } from '../../locale-context.js';
-import cloneDeep from '../../../utils/clone-deep.js';
 import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useRoomMediaContext } from '../../room-media-context.js';
+import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { useStorage, useSetStorage } from '../../storage-context.js';
-import StorageApiClient from '../../../api-clients/storage-api-client.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -49,16 +48,16 @@ function RoomMediaUploadScreen({
   onEditFileClick,
   onSelectFileClick
 }) {
-  const storage = useStorage();
   const { uiLocale } = useLocale();
-  const setStorage = useSetStorage();
   const { t } = useTranslation('roomMediaUploadScreen');
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-
   const [optimizeImages, setOptimizeImages] = useState(true);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
+  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
+
+  const roomId = roomMediaContext?.roomId || null;
 
   useEffect(() => {
     setOptimizeImages(true);
@@ -81,20 +80,13 @@ function RoomMediaUploadScreen({
       }));
     }
 
-    const availableBytes = Math.max(0, (storage.maxBytes || 0) - (storage.usedBytes || 0));
+    const availableBytes = roomMediaContext ? Math.max(0, (roomMediaContext.maxBytes || 0) - (roomMediaContext.usedBytes || 0)) : 0;
     if (file.size > availableBytes) {
       throw new Error(t('insufficientPrivateStorge'));
     }
-  }, [t, uiLocale, storage]);
+  }, [t, uiLocale, roomMediaContext]);
 
   const uploadFiles = useCallback(async itemsToUpload => {
-    let currentStorage = storage;
-
-    const result = {
-      uploadedFiles: {},
-      failedFiles: {}
-    };
-
     const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
 
     for (let i = 0; i < processedFiles.length; i += 1) {
@@ -106,17 +98,14 @@ function RoomMediaUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file);
-        const { uploadedFiles, usedBytes } = await storageApiClient.uploadFiles([file], storage.path);
-        result.uploadedFiles = { ...result.uploadedFiles, ...uploadedFiles };
+        const { storagePlan, usedBytes, roomStorage, createdObjectPath } = await roomApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
-          uploadedFile: Object.values(uploadedFiles)[0]
+          uploadedFile: roomStorage.objects.find(obj => obj.path === createdObjectPath) || null
         };
-        currentStorage = { ...cloneDeep(currentStorage), usedBytes };
-        setStorage(currentStorage);
+        setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
       } catch (error) {
-        result.failedFiles = { ...result.failedFiles, [file.name]: file };
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.failed,
@@ -126,10 +115,7 @@ function RoomMediaUploadScreen({
 
       setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
     }
-
-    return result;
-
-  }, [storageApiClient, ensureCanUpload, storage, setStorage, optimizeImages]);
+  }, [roomId, roomApiClient, ensureCanUpload, setRoomMediaContext, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
@@ -242,9 +228,9 @@ function RoomMediaUploadScreen({
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
       <div className="u-resource-selector-screen-content">
         <div className="RoomMediaUploadScreen">
-          {(storage.usedBytes > 0 || storage.maxBytes > 0) && (
+          {!!roomMediaContext && (
             <div className="RoomMediaUploadScreen-usedStorage" >
-              <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
+              <UsedStorage usedBytes={roomMediaContext.usedBytes} maxBytes={roomMediaContext.maxBytes} showLabel />
             </div>
           )}
           {renderUploadMessage()}

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
-import { useStorage } from '../../storage-context.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import RoomMediaFilesViewer from './room-media-files-viewer.js';
+import { useRoomMediaContext } from '../../room-media-context.js';
 import { cdnObjectShape } from '../../../ui/default-prop-types.js';
 
 function RoomMediaDefaultScreen({
@@ -24,8 +24,8 @@ function RoomMediaDefaultScreen({
   onFilesViewerDisplayChange,
   onFilesDropped
 }) {
-  const storage = useStorage();
   const filesViewerApiRef = useRef();
+  const { roomMediaContext } = useRoomMediaContext();
   const { t } = useTranslation('roomMediaDefaultScreen');
 
   const handleSelectHighlightedFileClick = () => {
@@ -37,16 +37,15 @@ function RoomMediaDefaultScreen({
   };
 
   const renderStorageInfo = () => {
-    if (!storage.usedBytes > 0 && !storage.maxBytes) {
-      return null;
-    }
-    return (
-      <div className="RoomMediaDefaultScreen-alertPrivateStorage">
-        <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
-          <UsedStorage usedBytes={storage.usedBytes} maxBytes={storage.maxBytes} showLabel />
+    return roomMediaContext
+      ? (
+        <div className="RoomMediaDefaultScreen-alertPrivateStorage">
+          <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
+            <UsedStorage usedBytes={roomMediaContext.usedBytes} maxBytes={roomMediaContext.maxBytes} showLabel />
+          </div>
         </div>
-      </div>
-    );
+      )
+      : null;
   };
 
   return (
@@ -57,7 +56,7 @@ function RoomMediaDefaultScreen({
         filterText={filterText}
         apiRef={filesViewerApiRef}
         highlightedFile={highlightedFile}
-        canDelete={storage.isDeletionEnabled}
+        canDelete={roomMediaContext?.isDeletionEnabled || false}
         filesViewerDisplay={filesViewerDisplay}
         onFileClick={onFileClick}
         onFilesDropped={onFilesDropped}

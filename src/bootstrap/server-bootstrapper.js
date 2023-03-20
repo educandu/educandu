@@ -1,8 +1,8 @@
 import url from 'node:url';
 import path from 'node:path';
-import { promises as fs } from 'node:fs';
-import Cdn from '../repositories/cdn.js';
+import Cdn from '../stores/cdn.js';
 import Logger from '../common/logger.js';
+import { promises as fs } from 'node:fs';
 import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';

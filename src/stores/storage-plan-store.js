@@ -1,6 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { storagePlanDBSchema } from '../domain/schemas/storage-schemas.js';
+import { storagePlanDBSchema } from '../domain/schemas/storage-plan-schemas.js';
 
 class StoragePlanStore {
   static dependencies = [Database];

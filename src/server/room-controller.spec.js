@@ -9,13 +9,12 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_USER_ROLE } from '../domain/constants.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
-  let storageService;
   let documentService;
   let serverConfig;
   let pageRenderer;
@@ -36,7 +35,7 @@ describe('room-controller', () => {
       getRoomsByOwnerOrCollaboratorUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
       getRoomInvitationById: sandbox.stub(),
-      isRoomOwnerOrMember: sandbox.stub(),
+      deleteRoom: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
       updateRoomMetadata: sandbox.stub(),
@@ -51,10 +50,6 @@ describe('room-controller', () => {
     };
     userService = {
       getUserById: sandbox.stub()
-    };
-    storageService = {
-      deleteRoomAndResources: sandbox.stub(),
-      updateUserUsedBytes: sandbox.stub()
     };
     mailService = {
       sendRoomInvitationEmails: sandbox.stub(),
@@ -76,7 +71,7 @@ describe('room-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, documentService, userService, storageService, mailService, clientDataMappingService, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -626,23 +621,11 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
+        members: [],
         isCollaborative: false,
         documents: [uniqueId.create(), uniqueId.create()]
       };
       mappedRoom = { ...room };
-    });
-
-    describe('when user is not provided (session expired)', () => {
-      beforeEach(() => {
-        roomService.getRoomById.resolves(room);
-
-        req = { params: { 0: `/${room.slug}`, roomId: room._id } };
-        res = {};
-      });
-
-      it('should throw Unauthorized', async () => {
-        await expect(() => sut.handleGetRoomPage(req, res)).rejects.toThrow(Unauthorized);
-      });
     });
 
     describe('when the request is made by the room owner', () => {
@@ -668,7 +651,6 @@ describe('room-controller', () => {
         mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(true);
 
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
         roomService.getRoomInvitations.resolves(invitations);
@@ -722,6 +704,7 @@ describe('room-controller', () => {
 
       beforeEach(async () => {
         viewingUser = { _id: 'member' };
+        room.members = [{ userId: viewingUser._id }];
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
           user: viewingUser
@@ -735,7 +718,6 @@ describe('room-controller', () => {
         mappedInvitations = [];
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(true);
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
@@ -776,7 +758,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the request is mabe by an unauthorized user', () => {
+    describe('when the request is made by an unauthorized user', () => {
       beforeEach(() => {
         request = {
           params: { 0: `/${room.slug}`, roomId: room._id },
@@ -784,7 +766,6 @@ describe('room-controller', () => {
         };
 
         roomService.getRoomById.resolves(room);
-        roomService.isRoomOwnerOrMember.resolves(false);
       });
 
       it('should throw a forbidden exception', async () => {
@@ -803,7 +784,9 @@ describe('room-controller', () => {
         room = {
           _id: uniqueId.create(),
           name: 'Mein schöner Raum',
-          slug: 'room-slug'
+          slug: 'room-slug',
+          owner: user._id,
+          members: []
         };
 
         req = { user, params: { 0: '/url-slug', roomId: room._id } };
@@ -835,7 +818,7 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(false);
+        roomService.getRoomById.resolves({ _id: uniqueId.create() });
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
@@ -858,13 +841,13 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(false);
+        roomService.getRoomById.resolves({ _id: roomId, owner: 'Goofy', members: [{ userId: 'Donald' }] });
 
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
-      it('should call the room service with the correct roomId and userId', () => {
-        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+      it('should call the room service with the correct roomId', () => {
+        assert.calledWith(roomService.getRoomById, roomId);
       });
 
       it('should return status 403', () => {
@@ -886,12 +869,12 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.isRoomOwnerOrMember.resolves(true);
+        roomService.getRoomById.resolves({ _id: roomId, owner: 'Goofy', members: [{ userId: 'Donald' }, { userId: user._id }] });
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
-      it('should call the room service with the correct roomId and userId', () => {
-        assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+      it('should call the room service with the correct roomId', () => {
+        assert.calledWith(roomService.getRoomById, roomId);
       });
 
       it('should return status 200', () => {
@@ -915,16 +898,15 @@ describe('room-controller', () => {
 
         userService.getUserById.withArgs(user._id).resolves(user);
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB]);
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
-        storageService.updateUserUsedBytes.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
 
-      it('should call storageService.deleteRoomAndResources for each room', () => {
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
+      it('should call roomService.deleteRoom for each room', () => {
+        assert.calledWith(roomService.deleteRoom, { room: roomA, roomOwner: user });
+        assert.calledWith(roomService.deleteRoom, { room: roomB, roomOwner: user });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
@@ -936,10 +918,6 @@ describe('room-controller', () => {
           mailService.sendRoomDeletionNotificationEmails,
           { roomName: roomB.name, ownerName: user.displayName, roomMembers: roomB.members }
         );
-      });
-
-      it('should call storageService.updateUserUsedBytes', () => {
-        assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
 
       it('should return status 200', () => {
@@ -955,23 +933,18 @@ describe('room-controller', () => {
 
         userService.getUserById.withArgs(user._id).resolves(user);
         roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([]);
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
-        storageService.updateUserUsedBytes.resolves();
 
         sut.handleDeleteRoomsForUser(req, res).catch(reject);
       }));
 
-      it('should not call storageService.deleteRoomAndResources', () => {
-        assert.notCalled(storageService.deleteRoomAndResources);
+      it('should not call roomService.deleteRoom', () => {
+        assert.notCalled(roomService.deleteRoom);
       });
 
       it('should not call mailService.sendRoomDeletionNotificationEmails', () => {
         assert.notCalled(mailService.sendRoomDeletionNotificationEmails);
-      });
-
-      it('should call storageService.updateUserUsedBytes once to ensure the calculation is up to date', () => {
-        assert.calledWith(storageService.updateUserUsedBytes, user._id);
       });
 
       it('should return status 200', () => {
@@ -1032,7 +1005,7 @@ describe('room-controller', () => {
           members: [{ userId: uniqueId.create() }, { userId: uniqueId.create() }]
         };
 
-        storageService.deleteRoomAndResources.resolves();
+        roomService.deleteRoom.resolves();
         roomService.getRoomById.withArgs(room._id).resolves(room);
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
@@ -1043,8 +1016,8 @@ describe('room-controller', () => {
         sut.handleDeleteOwnRoom(req, res).catch(reject);
       }));
 
-      it('should call storageService.deleteRoomAndResources', () => {
-        assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
+      it('should call roomService.deleteRoom', () => {
+        assert.calledWith(roomService.deleteRoom, { room, roomOwner: user });
       });
 
       it('should call mailService.sendRoomDeletionNotificationEmails with the right emails', () => {

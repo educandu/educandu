@@ -1,11 +1,18 @@
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
-import { assert, createSandbox } from 'sinon';
+import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
+import UserStore from '../stores/user-store.js';
+import { assert, createSandbox, match } from 'sinon';
+import CommentStore from '../stores/comment-store.js';
+import DocumentStore from '../stores/document-store.js';
+import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
@@ -19,14 +26,19 @@ import {
 const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
-  let db;
-  let sut;
-  let myUser;
-  let result;
+  let documentRevisionStore;
+  let roomInvitationStore;
+  let documentStore;
+  let commentStore;
+  let roomStore;
+  let userStore;
+  let lockStore;
   let container;
   let otherUser;
-  let roomStore;
-  let lockStore;
+  let myUser;
+  let cdn;
+  let sut;
+  let db;
 
   const now = new Date();
   const sandbox = createSandbox();
@@ -34,11 +46,17 @@ describe('room-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
 
+    cdn = container.get(Cdn);
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
+    userStore = container.get(UserStore);
+    commentStore = container.get(CommentStore);
+    documentStore = container.get(DocumentStore);
+    roomInvitationStore = container.get(RoomInvitationStore);
+    documentRevisionStore = container.get(DocumentRevisionStore);
 
-    sut = container.get(RoomService);
     db = container.get(Database);
+    sut = container.get(RoomService);
   });
 
   afterAll(async () => {
@@ -46,10 +64,11 @@ describe('room-service', () => {
   });
 
   beforeEach(async () => {
-    sandbox.useFakeTimers(now);
-
-    sandbox.stub(lockStore, 'takeRoomLock');
     sandbox.stub(lockStore, 'releaseLock');
+    sandbox.stub(lockStore, 'takeUserLock');
+    sandbox.stub(lockStore, 'takeRoomLock');
+
+    sandbox.useFakeTimers(now);
 
     myUser = await createTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
     otherUser = await createTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
@@ -61,10 +80,10 @@ describe('room-service', () => {
   });
 
   describe('createRoom', () => {
-    let createdRoom;
+    let result;
 
     beforeEach(async () => {
-      createdRoom = await sut.createRoom({
+      result = await sut.createRoom({
         name: 'my room',
         slug: '  my-room  ',
         isCollaborative: false,
@@ -73,7 +92,7 @@ describe('room-service', () => {
     });
 
     it('should create a room', () => {
-      expect(createdRoom).toEqual({
+      expect(result).toEqual({
         _id: expect.stringMatching(/\w+/),
         name: 'my room',
         slug: 'my-room',
@@ -90,8 +109,77 @@ describe('room-service', () => {
     });
 
     it('should write it to the database', async () => {
-      const retrievedRoom = await roomStore.getRoomById(createdRoom._id);
-      expect(retrievedRoom).toEqual(createdRoom);
+      const retrievedRoom = await roomStore.getRoomById(result._id);
+      expect(retrievedRoom).toEqual(result);
+    });
+  });
+
+  describe('deleteRoom', () => {
+    let room;
+    let userLock;
+    let roomDocuments;
+    let roomMediaOverviewAfterDeletion;
+
+    beforeEach(async () => {
+      room = { _id: uniqueId.create() };
+      userLock = { id: uniqueId.create() };
+      roomDocuments = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
+      roomMediaOverviewAfterDeletion = { usedBytes: 100 };
+
+      lockStore.takeUserLock.resolves(userLock);
+      lockStore.releaseLock.resolves();
+
+      sandbox.stub(documentStore, 'getDocumentsMetadataByRoomId').resolves(roomDocuments);
+      sandbox.stub(commentStore, 'deleteCommentsByDocumentIds').resolves();
+      sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId').resolves();
+      sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
+      sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId').resolves();
+      sandbox.stub(roomStore, 'deleteRoomById').resolves();
+      sandbox.stub(cdn, 'deleteDirectory').resolves();
+      sandbox.stub(sut, 'getRoomMediaOverview').resolves(roomMediaOverviewAfterDeletion);
+      sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
+
+      await sut.deleteRoom({ room, roomOwner: myUser });
+    });
+
+    it('should take the lock on the user record', () => {
+      assert.calledWith(lockStore.takeUserLock, myUser._id);
+    });
+
+    it('should call documentStore.getDocumentsMetadataByRoomId', () => {
+      assert.calledWith(documentStore.getDocumentsMetadataByRoomId, room._id, { session: match.object });
+    });
+
+    it('should call commentStore.deleteCommentsByDocumentIds', () => {
+      assert.calledWith(commentStore.deleteCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: match.object });
+    });
+
+    it('should call documentStore.deleteDocumentsByRoomId', () => {
+      assert.calledWith(documentStore.deleteDocumentsByRoomId, room._id, { session: match.object });
+    });
+
+    it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {
+      assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, room._id, { session: match.object });
+    });
+
+    it('should call roomInvitationStore.deleteRoomInvitationsByRoomId', () => {
+      assert.calledWith(roomInvitationStore.deleteRoomInvitationsByRoomId, room._id, { session: match.object });
+    });
+
+    it('should call roomStore.deleteRoomById', () => {
+      assert.calledWith(roomStore.deleteRoomById, room._id, { session: match.object });
+    });
+
+    it('should call cdn.deleteDirectory for the room being deleted', () => {
+      assert.calledWith(cdn.deleteDirectory, { directoryPath: `room-media/${room._id}` });
+    });
+
+    it('should call userStore.updateUserUsedBytes', () => {
+      assert.calledWith(userStore.updateUserUsedBytes, { userId: myUser._id, usedBytes: roomMediaOverviewAfterDeletion.usedBytes });
+    });
+
+    it('should release the lock', () => {
+      assert.called(lockStore.releaseLock);
     });
   });
 
@@ -292,49 +380,9 @@ describe('room-service', () => {
     });
   });
 
-  describe('isRoomOwnerOrMember', () => {
-    const roomId = uniqueId.create();
-
-    beforeEach(async () => {
-      await roomStore.saveRoom({
-        _id: roomId,
-        name: 'my room',
-        slug: 'my-slug',
-        description: '',
-        isCollaborative: false,
-        createdBy: myUser._id,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        owner: myUser._id,
-        members: [
-          {
-            userId: otherUser._id,
-            joinedOn: new Date()
-          }
-        ],
-        messages: [],
-        documents: []
-      });
-    });
-
-    it('should return true when the user is the owner', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, myUser._id);
-      expect(result).toBe(true);
-    });
-
-    it('should return true when the user is a member', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, otherUser._id);
-      expect(result).toBe(true);
-    });
-
-    it('should return false when the is not a member', async () => {
-      result = await sut.isRoomOwnerOrMember(roomId, uniqueId.create());
-      expect(result).toBe(false);
-    });
-  });
-
   describe('updateRoomDocumentsOrder', () => {
     let lock;
+    let result;
     let roomId;
     let document1;
     let document2;
@@ -411,6 +459,7 @@ describe('room-service', () => {
 
   describe('createRoomMessage', () => {
     let room;
+    let result;
 
     beforeEach(async () => {
       room = await createTestRoom(container, { name: 'room', owner: myUser._id, createdBy: myUser._id });
@@ -444,6 +493,7 @@ describe('room-service', () => {
 
   describe('deleteRoomMessage', () => {
     let room;
+    let result;
 
     beforeEach(async () => {
       room = await createTestRoom(

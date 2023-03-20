@@ -12,7 +12,7 @@ describe('maintenance-service', () => {
 
   beforeAll(() => {
     cdn = {
-      uploadEmptyObject: () => Promise.reject(new Error('not stubbed'))
+      ensureDirectory: () => Promise.reject(new Error('not stubbed'))
     };
     database = {
       runMigrationScripts: () => Promise.reject(new Error('not stubbed')),
@@ -26,7 +26,7 @@ describe('maintenance-service', () => {
   });
 
   beforeEach(() => {
-    sandbox.stub(cdn, 'uploadEmptyObject');
+    sandbox.stub(cdn, 'ensureDirectory');
     sandbox.stub(database, 'runMigrationScripts');
     sandbox.stub(database, 'checkDb');
     sandbox.stub(lockStore, 'takeMaintenanceLock');
@@ -45,7 +45,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
-        cdn.uploadEmptyObject.resolves();
+        cdn.ensureDirectory.resolves();
 
         await sut.runMaintenance();
       });
@@ -67,7 +67,7 @@ describe('maintenance-service', () => {
       });
 
       it('should have created the initial CDN directories', () => {
-        assert.calledTwice(cdn.uploadEmptyObject);
+        assert.calledTwice(cdn.ensureDirectory);
       });
     });
 
@@ -81,7 +81,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
-        cdn.uploadEmptyObject.resolves();
+        cdn.ensureDirectory.resolves();
 
         await sut.runMaintenance();
       });
@@ -111,7 +111,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.rejects(new Error('Migration failed'));
         database.checkDb.resolves();
-        cdn.uploadEmptyObject.resolves();
+        cdn.ensureDirectory.resolves();
 
         caughtError = null;
         try {
@@ -142,7 +142,7 @@ describe('maintenance-service', () => {
       });
 
       it('should not have created the initial CDN directories', () => {
-        assert.notCalled(cdn.uploadEmptyObject);
+        assert.notCalled(cdn.ensureDirectory);
       });
     });
 

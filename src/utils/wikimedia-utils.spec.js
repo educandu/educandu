@@ -89,7 +89,7 @@ describe('wikimedia-utils', () => {
         expect(result.files[0]).toStrictEqual({
           pageId: 1819832,
           pageUrl: 'https://commons.wikimedia.org/wiki/File:Www_usda_gov_Acceptence_Test_for_Digital.pdf',
-          displayName: 'Www usda gov Acceptence Test for Digital.pdf',
+          name: 'Www usda gov Acceptence Test for Digital.pdf',
           url: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Www_usda_gov_Acceptence_Test_for_Digital.pdf',
           thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Www_usda_gov_Acceptence_Test_for_Digital.pdf/page1-139px-Www_usda_gov_Acceptence_Test_for_Digital.pdf.jpg',
           updatedOn: '2022-10-25T14:27:10Z',
