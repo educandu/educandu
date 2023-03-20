@@ -62,8 +62,6 @@ export default class RoomService {
     this.documentRevisionStore = documentRevisionStore;
   }
 
-  // ROOMS
-
   getRoomById(roomId) {
     return this.roomStore.getRoomById(roomId);
   }
@@ -115,6 +113,43 @@ export default class RoomService {
     return newRoom;
   }
 
+  async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {
+    await this.roomStore.updateRoomMetadata(
+      roomId,
+      {
+        name: name.trim(),
+        slug: (slug || '').trim(),
+        isCollaborative,
+        description: (description || '').trim(),
+        updatedOn: new Date()
+      }
+    );
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
+
+    return updatedRoom;
+  }
+
+  async updateRoomDocumentsOrder(roomId, documentIds) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeRoomLock(roomId);
+      const room = await this.roomStore.getRoomById(roomId);
+      const allDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, room.documents).length === 0;
+
+      if (!allDocumentIdsCorrectlyProvided) {
+        throw new BadRequest('Incorrect list of document ids was provided.');
+      }
+
+      await this.roomStore.updateRoomDocuments(roomId, documentIds);
+    } finally {
+      await this.lockStore.releaseLock(lock);
+    }
+
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
+    return updatedRoom;
+  }
+
   async deleteRoom({ room, roomOwner }) {
     let lock;
 
@@ -143,8 +178,6 @@ export default class RoomService {
       await this.lockStore.releaseLock(lock);
     }
   }
-
-  // ROOM MEDIA
 
   async getRoomMediaOverview({ user }) {
     const storagePlan = user.storage.planId
@@ -261,8 +294,6 @@ export default class RoomService {
       await this.lockStore.releaseLock(lock);
     }
   }
-
-  // ROOM INVITATIONS
 
   getRoomInvitationsByEmail(email) {
     return this.roomInvitationStore.getRoomInvitationsByEmail(email);
@@ -381,8 +412,6 @@ export default class RoomService {
     return remainingRoomInvitations;
   }
 
-  // ROOM MESSAGES
-
   async createRoomMessage({ room, text, emailNotification }) {
     const messages = cloneDeep(room.messages);
     messages.push({
@@ -399,22 +428,6 @@ export default class RoomService {
     return updatedRoom;
   }
 
-  async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {
-    await this.roomStore.updateRoomMetadata(
-      roomId,
-      {
-        name: name.trim(),
-        slug: (slug || '').trim(),
-        isCollaborative,
-        description: (description || '').trim(),
-        updatedOn: new Date()
-      }
-    );
-    const updatedRoom = await this.roomStore.getRoomById(roomId);
-
-    return updatedRoom;
-  }
-
   async deleteRoomMessage({ room, messageKey }) {
     const message = room.messages.find(m => m.key === messageKey);
     const remainingMessages = ensureIsExcluded(room.messages, message);
@@ -424,8 +437,6 @@ export default class RoomService {
 
     return updatedRoom;
   }
-
-  // ROOM MEMBERS
 
   async removeRoomMember({ room, memberUserId }) {
     const member = room.members.find(m => m.userId === memberUserId);
@@ -439,28 +450,5 @@ export default class RoomService {
 
   async removeMembershipFromAllRoomsForUser(memberUserId) {
     await this.roomStore.deleteRoomsMemberById(memberUserId);
-  }
-
-  // ROOM DOCUMENT ORDER
-
-  async updateRoomDocumentsOrder(roomId, documentIds) {
-    let lock;
-
-    try {
-      lock = await this.lockStore.takeRoomLock(roomId);
-      const room = await this.roomStore.getRoomById(roomId);
-      const allDocumentIdsCorrectlyProvided = getSymmetricalDifference(documentIds, room.documents).length === 0;
-
-      if (!allDocumentIdsCorrectlyProvided) {
-        throw new BadRequest('Incorrect list of document ids was provided.');
-      }
-
-      await this.roomStore.updateRoomDocuments(roomId, documentIds);
-    } finally {
-      await this.lockStore.releaseLock(lock);
-    }
-
-    const updatedRoom = await this.roomStore.getRoomById(roomId);
-    return updatedRoom;
   }
 }
