@@ -1,33 +1,35 @@
 import md5 from 'md5';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
 import CustomAlert from './custom-alert.js';
 import { useService } from './container-context.js';
+import useDimensionsNs from 'react-cool-dimensions';
 import { useSettings } from './settings-context.js';
 import { useScrollTopOffset } from '../ui/hooks.js';
 import NavigationMobile from './navigation-mobile.js';
 import NavigationDesktop from './navigation-desktop.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import DefaultHeaderLogo from './default-header-logo.js';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getCookie, setLongLastingCookie } from '../common/cookie.js';
+
+const useDimensions = useDimensionsNs.default || useDimensionsNs;
 
 const generateCookieHash = textInAllLanguages => {
   return textInAllLanguages ? md5(JSON.stringify(textInAllLanguages)) : '';
 };
 
-function DefaultPageHeader() {
+function DefaultPageHeader({ focusContent }) {
   const settings = useSettings();
-  const headerRef = useRef(null);
-  const { announcementCookieNamePrefix } = useService(ClientConfig);
-
   const topOffset = useScrollTopOffset();
   const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const { announcementCookieNamePrefix } = useService(ClientConfig);
+  const { observe, height } = useDimensions({ useBorderBoxSize: true });
 
-  const isScrolled = useMemo(() => topOffset > 0, [topOffset]);
-  const scrolledHeaderPadding = useMemo(() => isScrolled ? headerRef.current?.getBoundingClientRect()?.height : 0, [headerRef, isScrolled]);
-
-  const announcementCookieName = `${announcementCookieNamePrefix}_${useMemo(() => generateCookieHash(JSON.stringify(settings.announcement)), [settings.announcement])}`;
+  const isSticky = !!topOffset || !!focusContent;
+  const cookieHash = useMemo(() => generateCookieHash(JSON.stringify(settings.announcement)), [settings.announcement]);
+  const announcementCookieName = `${announcementCookieNamePrefix}_${cookieHash}`;
 
   useEffect(() => {
     const announcementCookie = getCookie(announcementCookieName);
@@ -42,20 +44,25 @@ function DefaultPageHeader() {
   };
 
   return (
-    <header className="DefaultPageHeader" ref={headerRef} style={{ paddingBottom: `${scrolledHeaderPadding}px` }}>
-      <div className={classNames('DefaultPageHeader-container', { 'is-sticky': isScrolled })}>
-        <div className="DefaultPageHeader-content">
-          <div className="DefaultPageHeader-logo">
-            <DefaultHeaderLogo />
+    <header className="DefaultPageHeader" style={{ paddingBottom: `${isSticky ? height : 0}px` }}>
+      <div ref={observe} className={classNames('DefaultPageHeader-container', { 'is-sticky': isSticky })}>
+        {!!focusContent && (
+          <div>{focusContent}</div>
+        )}
+        {!focusContent && (
+          <div className="DefaultPageHeader-content">
+            <div className="DefaultPageHeader-logo">
+              <DefaultHeaderLogo />
+            </div>
+            <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
+              <NavigationDesktop />
+            </div>
+            <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--mobile">
+              <NavigationMobile />
+            </div>
           </div>
-          <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--desktop">
-            <NavigationDesktop />
-          </div>
-          <div className="DefaultPageHeader-navigation DefaultPageHeader-navigation--mobile">
-            <NavigationMobile />
-          </div>
-        </div>
-        {!!showAnnouncement && (
+        )}
+        {!focusContent && !!showAnnouncement && (
           <CustomAlert
             closable
             banner
@@ -69,5 +76,13 @@ function DefaultPageHeader() {
     </header>
   );
 }
+
+DefaultPageHeader.propTypes = {
+  focusContent: PropTypes.node
+};
+
+DefaultPageHeader.defaultProps = {
+  focusContent: null
+};
 
 export default DefaultPageHeader;

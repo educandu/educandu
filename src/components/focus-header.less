@@ -1,0 +1,20 @@
+.FocusHeader {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: auto 1fr auto;
+}
+
+.FocusHeader-title {
+  .m-overflow-ellipsis;
+  font-weight: bold;
+}
+
+.FocusHeader-content {
+  display: grid;
+  align-items: center;
+  justify-content: end;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+}

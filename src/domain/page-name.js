@@ -7,6 +7,7 @@ export const PAGE_NAME = {
   tests: 'tests',
   search: 'search',
   batches: 'batches',
+  document: 'document',
   revision: 'revision',
   register: 'register',
   redaction: 'redaction',

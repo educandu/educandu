@@ -4,8 +4,8 @@ import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
@@ -15,6 +15,7 @@ describe('document-controller', () => {
   let clientDataMappingService;
   let documentService;
   let settingService;
+  let serverConfig;
   let pageRenderer;
   let roomService;
 
@@ -52,6 +53,10 @@ describe('document-controller', () => {
       sendPage: sandbox.stub()
     };
 
+    serverConfig = {
+      disabledFeatures: []
+    };
+
     user = { _id: uniqueId.create() };
     room = { _id: uniqueId.create() };
     doc = {
@@ -64,7 +69,7 @@ describe('document-controller', () => {
       }
     };
 
-    sut = new DocumentController(documentService, roomService, clientDataMappingService, settingService, pageRenderer);
+    sut = new DocumentController(documentService, roomService, clientDataMappingService, settingService, pageRenderer, serverConfig);
   });
 
   afterEach(() => {
@@ -202,7 +207,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: null, templateSections, roomMediaContext });
       });
     });
 
@@ -296,7 +301,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -334,7 +339,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -479,7 +484,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -526,7 +531,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -573,7 +578,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -618,7 +623,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -685,7 +690,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, room: null, templateSections: [], roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, room: null, templateSections: [], roomMediaContext: null });
       });
     });
   });
