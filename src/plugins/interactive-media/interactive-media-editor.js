@@ -183,7 +183,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     const newChapters = cloneDeep(chapters);
     const currentChapter = newChapters[selectedChapterIndex];
 
-    currentChapter.answers.push(`[${t('common:answer')}]`);
+    currentChapter.answers.push('');
     if (currentChapter.correctAnswerIndex === -1) {
       currentChapter.correctAnswerIndex = 0;
     }
