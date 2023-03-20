@@ -218,11 +218,10 @@ class EventService {
         return false;
       }
 
-      if (context.cancellationRequested) {
-        return false;
+      if (!context.cancellationRequested) {
+        await this._processEvent(eventId, context);
       }
 
-      await this._processEvent(eventId, context);
       return true;
     } catch (error) {
       logger.error(`Error processing event '${eventId}': `, error);

@@ -103,8 +103,8 @@ describe('event-service', () => {
         expect(notification).toBe(null);
       });
 
-      it('should return false', () => {
-        expect(result).toEqual(false);
+      it('should return true', () => {
+        expect(result).toEqual(true);
       });
     });
 
