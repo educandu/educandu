@@ -12,7 +12,8 @@ import {
   mediaLibraryItemMetadataBodySchema,
   mediaLibraryItemIdParamsSchema,
   mediaLibrarySearchQuerySchema,
-  mediaLibraryTagSearchQuerySchema
+  mediaLibraryTagSearchQuerySchema,
+  mediaLibraryFindParamsSchema
 } from '../domain/schemas/media-library-item-schemas.js';
 
 const jsonParser = express.json();
@@ -37,6 +38,16 @@ class MediaLibraryController {
     const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
 
     return res.send(mappedMediaLibraryItems);
+  }
+
+  async handleFindMediaLibraryItemByUrl(req, res) {
+    const { user } = req;
+    const { url } = req.params;
+
+    const mediaLibraryItem = await this.mediaLibraryService.getMediaLibraryItemByUrl({ url });
+    const mappedMediaLibraryItem = mediaLibraryItem ? await this.clientDataMappingService.mapMediaLibraryItem(mediaLibraryItem, user) : null;
+
+    return res.send(mappedMediaLibraryItem);
   }
 
   async handleCreateMediaLibraryItem(req, res) {
@@ -82,6 +93,13 @@ class MediaLibraryController {
       needsPermission(permissions.BROWSE_STORAGE),
       validateQuery(mediaLibrarySearchQuerySchema),
       (req, res) => this.handleQueryMediaLibraryItems(req, res)
+    );
+
+    router.get(
+      '/api/v1/media-library/items/:url',
+      needsPermission(permissions.BROWSE_STORAGE),
+      validateParams(mediaLibraryFindParamsSchema),
+      (req, res) => this.handleFindMediaLibraryItemByUrl(req, res)
     );
 
     router.post(

@@ -5,15 +5,18 @@ import reactDropzoneNs from 'react-dropzone';
 import CustomAlert from '../../custom-alert.js';
 import { useUser } from '../../user-context.js';
 import { Trans, useTranslation } from 'react-i18next';
-import React, { Fragment, useRef, useState } from 'react';
+import { useService } from '../../container-context.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import ActionInvitation from '../shared/action-invitation.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
+import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
+import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
 import { ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES } from '../../../utils/media-library-utils.js';
 
@@ -46,7 +49,21 @@ function MediaLibrarySearchScreen({
   const user = useUser();
   const dropzoneRef = useRef();
   const { t } = useTranslation('mediaLibrarySearchScreen');
+  const mediaLibraryApiClient = useService(MediaLibraryApiClient);
+
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
+  const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
+
+  useEffect(() => {
+    if (!initialUrl) {
+      return;
+    }
+
+    (async () => {
+      const item = await mediaLibraryApiClient.findMediaLibraryItem({ url: initialUrl });
+      setInitialMediaLibraryItem(item);
+    })();
+  }, [initialUrl, mediaLibraryApiClient]);
 
   let currentScreen;
   let canSelectUrl;
@@ -160,7 +177,13 @@ function MediaLibrarySearchScreen({
                     <Fragment>
                       <input {...getInputProps()} hidden />
                       {!!initialUrl && (
-                        <SelectedResourceDisplay urlOrFile={initialUrl} footer={t('common:useSearchToChangeFile')} />
+                        <SelectedResourceDisplay
+                          urlOrFile={initialUrl}
+                          metadata={!!initialMediaLibraryItem && (
+                            <MediaLibraryMetadataDisplay mediaLibraryItem={initialMediaLibraryItem} />
+                          )}
+                          footer={t('common:useSearchToChangeFile')}
+                          />
                       )}
                       {!initialUrl && (
                         <ActionInvitation

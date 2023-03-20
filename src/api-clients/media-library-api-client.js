@@ -17,6 +17,15 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
+  findMediaLibraryItem({ url }) {
+    return this.httpClient
+      .get(
+        `/api/v1/media-library/items/${encodeURIComponent(url)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   createMediaLibraryItem({ file, description, languages, licenses, tags, onProgress = () => {} }) {
     const formData = new FormData();
     languages.forEach(language => formData.append('languages[]', language));

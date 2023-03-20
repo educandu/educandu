@@ -48,3 +48,7 @@ export const mediaLibrarySearchQuerySchema = joi.object({
   query: joi.string().required(),
   resourceTypes: joi.string().required()
 });
+
+export const mediaLibraryFindParamsSchema = joi.object({
+  url: joi.string().required()
+});
