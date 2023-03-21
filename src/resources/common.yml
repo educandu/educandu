@@ -580,20 +580,23 @@ common:
     en: (not available)
     de: (nicht verfügbar)
   resourceType_unknown:
-    en: Other
+    en: other
     de: Andere
   resourceType_audio:
-    en: Audio
+    en: audio
     de: Audio
   resourceType_video:
-    en: Video
+    en: video
     de: Video
   resourceType_image:
-    en: Image
+    en: image
     de: Bild
   resourceType_pdf:
     en: PDF
     de: PDF
+  any:
+    en: any
+    de: Alle
   creator:
     en: Creator
     de: Ersteller

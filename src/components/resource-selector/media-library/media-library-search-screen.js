@@ -11,6 +11,7 @@ import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import ActionInvitation from '../shared/action-invitation.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
+import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
@@ -18,7 +19,6 @@ import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
-import { ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES } from '../../../utils/media-library-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -128,12 +128,7 @@ function MediaLibrarySearchScreen({
     <div className={classNames('MediaLibrarySearchScreen', { 'is-hidden': isHidden })}>
       <div className="u-resource-selector-screen">
         <div className="MediaLibrarySearchScreen-searchBar">
-          <ResourceSearchBar
-            isLoading={isLoading}
-            initialSearchParams={searchParams}
-            allowedResourceTypes={ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES}
-            onSearch={handleSearch}
-            />
+          <ResourceSearchBar isLoading={isLoading} initialSearchParams={searchParams} onSearch={handleSearch} />
         </div>
         {currentScreen === SCREEN.search && (
           <div className="MediaLibrarySearchScreen-searchContent u-resource-selector-screen-content">
@@ -232,7 +227,7 @@ MediaLibrarySearchScreen.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchResourceTypes: PropTypes.arrayOf(PropTypes.oneOf(ALLOWED_MEDIA_LIBRARY_RESOURCE_TYPES)).isRequired
+    searchResourceType: PropTypes.oneOf(Object.values(SEARCH_RESOURCE_TYPE)).isRequired
   }).isRequired,
   onFileDrop: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,

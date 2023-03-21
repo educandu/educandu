@@ -95,6 +95,14 @@ export const RESOURCE_TYPE = {
   pdf: 'pdf'
 };
 
+export const SEARCH_RESOURCE_TYPE = {
+  audio: RESOURCE_TYPE.audio,
+  video: RESOURCE_TYPE.video,
+  image: RESOURCE_TYPE.image,
+  pdf: RESOURCE_TYPE.pdf,
+  any: 'any'
+};
+
 export const MEDIA_ASPECT_RATIO = {
   sixteenToNine: '16:9',
   fourToThree: '4:3'

@@ -5,10 +5,11 @@ import { useIsMounted } from '../../../ui/hooks.js';
 import { useService } from '../../container-context.js';
 import { ensureIsUnique } from '../../../utils/array-utils.js';
 import WikimediaSearchScreen from './wikimedia-search-screen.js';
+import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import WikimediaApiClient from '../../../api-clients/wikimedia-api-client.js';
-import { ALLOWED_WIKIMEDIA_RESOURCE_TYPES, mapResourceTypesToWikimediaApiFileTypes, processWikimediaResponse } from '../../../utils/wikimedia-utils.js';
+import { mapSearchResourceTypeToWikimediaApiFileTypes, processWikimediaResponse } from '../../../utils/wikimedia-utils.js';
 
 const SCREEN = {
   search: 'search',
@@ -25,20 +26,20 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
-  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceTypes: Object.values(ALLOWED_WIKIMEDIA_RESOURCE_TYPES) });
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: SEARCH_RESOURCE_TYPE.any });
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
   const popScreen = () => setScreenStack(oldVal => oldVal.length > 1 ? oldVal.slice(0, -1) : oldVal);
 
-  const fetchWikimediaFiles = useCallback(async ({ searchTerm, searchResourceTypes }, searchOffset) => {
+  const fetchWikimediaFiles = useCallback(async ({ searchTerm, searchResourceType }, searchOffset) => {
     if (!isMounted.current) {
       return;
     }
 
     try {
       setIsLoading(true);
-      const fileTypes = mapResourceTypesToWikimediaApiFileTypes(searchResourceTypes);
+      const fileTypes = mapSearchResourceTypeToWikimediaApiFileTypes(searchResourceType);
       const response = await wikimediaApiClient.queryMediaFiles({
         searchText: searchTerm,
         offset: searchOffset,
