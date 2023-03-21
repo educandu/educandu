@@ -15,8 +15,7 @@ export default function MusicAccentuationDisplay({ content }) {
       isCollapsible={behavior !== BEHAVIOR.static}
       isCollapsed={behavior === BEHAVIOR.expandable}
       icon={<MusicAccentuationIconRenderer icon={icon} />}
-      className="MusicAccentuationDisplay"
-      headerClassName={`MusicAccentuation-colorScheme MusicAccentuation-colorScheme--${colorScheme}`}
+      customColorSchemeClassName={`MusicAccentuation-colorScheme MusicAccentuation-colorScheme--${colorScheme}`}
       >
       <Markdown>{content.text}</Markdown>
     </Collapsible>
