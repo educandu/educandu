@@ -50,19 +50,22 @@ class EventService {
     this.transactionRunner = transactionRunner;
   }
 
-  async _processDocumentRevisionCreatedEvent(event, session, context) {
-    const userIterator = this.userStore.getActiveUsersIterator({ session });
+  async _processDocumentRevisionCreatedEvent(event, context) {
+    const userIterator = this.userStore.getActiveUsersIterator();
 
     try {
       const { documentRevisionId, documentId, roomId } = event.params;
-      const documentRevision = await this.documentRevisionStore.getDocumentRevisionById(documentRevisionId, { session });
-      const document = await this.documentStore.getDocumentById(documentId, { session });
-      const room = roomId ? await this.roomStore.getRoomById(roomId, { session }) : null;
+      const documentRevision = await this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
+      const document = await this.documentStore.getDocumentById(documentId);
+      const room = roomId ? await this.roomStore.getRoomById(roomId) : null;
 
       const createdNotifications = [];
       for await (const user of userIterator) {
         if (context.cancellationRequested) {
-          return PROCESSING_RESULT.cancelled;
+          return {
+            status: PROCESSING_RESULT.cancelled,
+            notifications: []
+          };
         }
 
         const reasons = notificationUtils.determineNotificationReasonsForDocumentRevisionCreatedEvent({
@@ -78,28 +81,30 @@ class EventService {
         }
       }
 
-      if (createdNotifications.length) {
-        await this.notificationStore.insertNotifications(createdNotifications, { session });
-      }
-
-      return PROCESSING_RESULT.succeeded;
+      return {
+        status: PROCESSING_RESULT.succeeded,
+        notifications: createdNotifications
+      };
     } finally {
       await userIterator.close();
     }
   }
 
-  async _processDocumentCommentCreatedEvent(event, session, context) {
-    const userIterator = this.userStore.getActiveUsersIterator({ session });
+  async _processDocumentCommentCreatedEvent(event, context) {
+    const userIterator = this.userStore.getActiveUsersIterator();
 
     try {
       const { documentId, roomId } = event.params;
-      const document = await this.documentStore.getDocumentById(documentId, { session });
-      const room = roomId ? await this.roomStore.getRoomById(roomId, { session }) : null;
+      const document = await this.documentStore.getDocumentById(documentId);
+      const room = roomId ? await this.roomStore.getRoomById(roomId) : null;
 
       const createdNotifications = [];
       for await (const user of userIterator) {
         if (context.cancellationRequested) {
-          return PROCESSING_RESULT.cancelled;
+          return {
+            status: PROCESSING_RESULT.cancelled,
+            notifications: []
+          };
         }
 
         const reasons = notificationUtils.determineNotificationReasonsForDocumentCommentCreatedEvent({
@@ -114,27 +119,29 @@ class EventService {
         }
       }
 
-      if (createdNotifications.length) {
-        await this.notificationStore.insertNotifications(createdNotifications, { session });
-      }
-
-      return PROCESSING_RESULT.succeeded;
+      return {
+        status: PROCESSING_RESULT.succeeded,
+        notifications: createdNotifications
+      };
     } finally {
       await userIterator.close();
     }
   }
 
-  async _processRoomMessageCreatedEvent(event, session, context) {
-    const userIterator = this.userStore.getActiveUsersIterator({ session });
+  async _processRoomMessageCreatedEvent(event, context) {
+    const userIterator = this.userStore.getActiveUsersIterator();
 
     try {
       const { roomId } = event.params;
-      const room = await this.roomStore.getRoomById(roomId, { session });
+      const room = await this.roomStore.getRoomById(roomId);
 
       const createdNotifications = [];
       for await (const user of userIterator) {
         if (context.cancellationRequested) {
-          return PROCESSING_RESULT.cancelled;
+          return {
+            status: PROCESSING_RESULT.cancelled,
+            notifications: []
+          };
         }
 
         const reasons = notificationUtils.determineNotificationReasonsForRoomMessageCreatedEvent({
@@ -148,11 +155,10 @@ class EventService {
         }
       }
 
-      if (createdNotifications.length) {
-        await this.notificationStore.insertNotifications(createdNotifications, { session });
-      }
-
-      return PROCESSING_RESULT.succeeded;
+      return {
+        status: PROCESSING_RESULT.succeeded,
+        notifications: createdNotifications
+      };
     } finally {
       await userIterator.close();
     }
@@ -168,40 +174,46 @@ class EventService {
     }
 
     try {
+      const event = await this.eventStore.getEventById(eventId);
+      if (event.processedOn) {
+        return;
+      }
+
+      logger.debug(`Processing event '${eventId}'`);
+
+      let processingResult;
+      try {
+        switch (event.type) {
+          case EVENT_TYPE.documentRevisionCreated:
+            processingResult = await this._processDocumentRevisionCreatedEvent(event, context);
+            break;
+          case EVENT_TYPE.documentCommentCreated:
+            processingResult = await this._processDocumentCommentCreatedEvent(event, context);
+            break;
+          case EVENT_TYPE.roomMessageCreated:
+            processingResult = await this._processRoomMessageCreatedEvent(event, context);
+            break;
+          default:
+            throw new Error(`Event type ${event.type} is unknown`);
+        }
+      } catch (err) {
+        event.processingErrors.push(serializeError(err));
+        processingResult = {
+          status: PROCESSING_RESULT.failed,
+          notifications: []
+        };
+      }
+
+      const hasSuccessfullyFinished = processingResult.status === PROCESSING_RESULT.succeeded;
+      const hasReachedMaxAttempts = event.processingErrors.length >= MAX_PROCESSING_ATTEMPTS;
+      const shouldBeConsideredProcessed = hasSuccessfullyFinished || hasReachedMaxAttempts;
+      event.processedOn = shouldBeConsideredProcessed ? new Date() : null;
+
       await this.transactionRunner.run(async session => {
-        const event = await this.eventStore.getEventById(eventId, { session });
-        if (event.processedOn) {
-          return;
-        }
-
-        logger.debug(`Processing event '${eventId}'`);
-
-        let processingResult;
-        try {
-          switch (event.type) {
-            case EVENT_TYPE.documentRevisionCreated:
-              processingResult = await this._processDocumentRevisionCreatedEvent(event, session, context);
-              break;
-            case EVENT_TYPE.documentCommentCreated:
-              processingResult = await this._processDocumentCommentCreatedEvent(event, session, context);
-              break;
-            case EVENT_TYPE.roomMessageCreated:
-              processingResult = await this._processRoomMessageCreatedEvent(event, session, context);
-              break;
-            default:
-              throw new Error(`Event type ${event.type} is unknown`);
-          }
-        } catch (err) {
-          event.processingErrors.push(serializeError(err));
-          processingResult = PROCESSING_RESULT.failed;
-        }
-
-        const hasSuccessfullyFinished = processingResult === PROCESSING_RESULT.succeeded;
-        const hasReachedMaxAttempts = event.processingErrors.length >= MAX_PROCESSING_ATTEMPTS;
-        const shouldBeConsideredProcessed = hasSuccessfullyFinished || hasReachedMaxAttempts;
-        event.processedOn = shouldBeConsideredProcessed ? new Date() : null;
-
         await this.eventStore.updateEvent(event, { session });
+        if (processingResult.notifications.length) {
+          await this.notificationStore.insertNotifications(processingResult.notifications, { session });
+        }
       });
     } finally {
       await this.lockStore.releaseLock(lock);

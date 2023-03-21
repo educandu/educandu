@@ -1,7 +1,7 @@
 import EventService from '../../event-service.js';
 
 const IDLE_POLL_INTERVAL_IN_MS = 10000;
-const BUSY_POLL_INTERVAL_IN_MS = 0;
+const BUSY_POLL_INTERVAL_IN_MS = 1000;
 
 export default class ProcessEventsJob {
   static dependencies = [EventService];

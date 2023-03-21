@@ -7,7 +7,7 @@ import TaskProcessor from '../batch-task-processors/task-processor.js';
 const logger = new Logger(import.meta.url);
 
 const IDLE_POLL_INTERVAL_IN_MS = 10000;
-const BUSY_POLL_INTERVAL_IN_MS = 0;
+const BUSY_POLL_INTERVAL_IN_MS = 200;
 
 export default class ProcessBatchesJob {
   static dependencies = [BatchStore, TaskStore, TaskProcessor];

@@ -56,7 +56,9 @@ const testAppEnv = {
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
   TEST_APP_AMB_API_KEY: '4985nvcz56v1',
   TEST_APP_ENABLE_SAML_AUTH: false.toString(),
-  TEST_APP_SAML_AUTH_DECRYPTION: String(null)
+  TEST_APP_SAML_AUTH_DECRYPTION: String(null),
+  EDUCANDU_LOG_COLOR: true.toString(),
+  EDUCANDU_LOG_LEVEL: 'debug'
 };
 
 const mongoContainer = new MongoContainer({
