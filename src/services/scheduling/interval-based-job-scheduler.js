@@ -1,3 +1,4 @@
+import { hrtime } from 'node:process';
 import Logger from '../../common/logger.js';
 import ToadSchedulerWrapper from './toad-scheduler-wrapper.js';
 
@@ -30,8 +31,11 @@ export default class IntervalBasedJobScheduler {
           logger.debug(`Starting job '${job.name}'`);
           this.runningTasksCount += 1;
           try {
+            const startInNs = hrtime.bigint();
             await job.process(this.context);
-            logger.debug(`Job '${job.name}' finished successfully`);
+            const endInNs = hrtime.bigint();
+            const durationInMs = (endInNs - startInNs) / 1000000n;
+            logger.debug(`Job '${job.name}' finished successfully in ${durationInMs} ms`);
           } catch (error) {
             logger.error(`Error in job '${job.name}':`, error);
           } finally {
