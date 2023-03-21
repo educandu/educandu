@@ -8,11 +8,12 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import SettingService from '../services/setting-service.js';
-import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { DOC_VIEW_QUERY_PARAM, FEATURE_TOGGLES } from '../domain/constants.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -36,14 +37,15 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer];
+  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer, ServerConfig];
 
-  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer) {
+  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer, serverConfig) {
     this.settingService = settingService;
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
     this.clientDataMappingService = clientDataMappingService;
+    this.serverConfig = serverConfig;
   }
 
   async handleGetDocPage(req, res) {
@@ -128,7 +130,8 @@ class DocumentController {
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
     const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, initialState);
+    const pageName = this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.newDocumentPage) ? PAGE_NAME.doc : PAGE_NAME.document;
+    return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
 
   async handleGetDoc(req, res) {

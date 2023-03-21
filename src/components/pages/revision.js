@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CreditsFooter from '../credits-footer.js';
 import SectionsDisplay from '../sections-display.js';
-import { documentRevisionShape } from '../../ui/default-prop-types.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
+import { documentRevisionShape } from '../../ui/default-prop-types.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 
 class RevisionPreloader {

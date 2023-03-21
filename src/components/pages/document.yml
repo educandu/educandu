@@ -1,0 +1,46 @@
+document:
+  permalinkCopied:
+    en: The permalink was copied to the clipboard
+    de: Der Permalink wurde in die Zwischenablage kopiert
+  permalinkCouldNotBeCopied:
+    en: The permalink could not be copied to the clipboard
+    de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+  commentsPanelTitle:
+    en: You are viewing the document page in "comments" mode
+    de: Du befindest dich im Kommentar-Modus
+  editRestrictionTooltip_anonymous:
+    en: Log in in order to edit this document
+    de: Melde dich an, um dieses Dokument zu bearbeiten
+  editRestrictionTooltip_protected:
+    en: This document cannot be edited because it is protected
+    de: Dieses Dokument kann nicht bearbeitet werden, da es geschützt ist
+  editRestrictionTooltip_archive:
+    en: This document cannot be edited because it is archived
+    de: Dieses Dokument kann nicht bearbeitet werden, da es archiviert ist
+  editRestrictionTooltip_room:
+    en: Editing this document is only allowed for the room owner
+    de: Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt
+  duplicateDocument:
+    en: Duplicate document
+    de: Dokument duplizieren
+  editDocument:
+    en: Edit document
+    de: Dokument bearbeiten
+  statusIconTooltipSaved:
+    en: There are no unsaved changes
+    de: Keine ungespeicherten Änderungen
+  statusIconTooltipDirty:
+    en: There are unsaved changes
+    de: Änderungen nicht gespeichert
+  editMetadata:
+    en: Edit metadata
+    de: Metadaten bearbeiten
+  saveChanges:
+    en: Save changes
+    de: Änderungen speichern
+  comments:
+    en: Comments
+    de: Komentare
+  history:
+    en: Version history
+    de: Versionshistorie

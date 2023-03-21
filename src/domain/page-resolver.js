@@ -12,6 +12,7 @@ const pageImporters = {
   [PAGE_NAME.search]: async () => (await import('../components/pages/search.js')).default,
   [PAGE_NAME.batches]: async () => (await import('../components/pages/batches.js')).default,
   [PAGE_NAME.register]: async () => (await import('../components/pages/register.js')).default,
+  [PAGE_NAME.document]: async () => (await import('../components/pages/document.js')).default,
   [PAGE_NAME.revision]: async () => (await import('../components/pages/revision.js')).default,
   [PAGE_NAME.dashboard]: async () => (await import('../components/pages/dashboard.js')).default,
   [PAGE_NAME.redaction]: async () => (await import('../components/pages/redaction.js')).default,

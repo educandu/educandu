@@ -1,0 +1,44 @@
+.DocumentPage {}
+
+.DocumentPage-commentsSection {
+  margin: 60px 0;
+}
+
+.DocumentPage-commentsSectionHeader {
+  .m-content-headline;
+}
+
+.DocumentPage-badges {
+  .m-control-group;
+  justify-content: end;
+  margin-bottom: 10px;
+}
+
+.DocumentPage-badge {
+  padding: 8px;
+  font-size: @edu-font-size-lg;
+  color: @edu-text-color-secondary;
+  background-color: @edu-background-color-base;
+  border-radius: 50%;
+}
+
+.DocumentPage-cloneButton {
+  background-color: @edu-background-color-base !important;
+}
+
+.DocumentPage-focusHeaderButton {
+  .m-icon-button;
+}
+
+.DocumentPage-focusHeaderDirtyInfo {
+  display: flex;
+  align-items: center;
+}
+
+.DocumentPage-focusHeaderDirtyInfoText {
+  margin-left: @edu-control-spacing-base;
+
+  @media @edu-media-not-desktop {
+    display: none;
+  }
+}

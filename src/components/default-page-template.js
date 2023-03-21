@@ -6,7 +6,7 @@ import ConsentDialog from './consent-dialog.js';
 import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
 
-function DefaultPageTemplate({ children, fullScreen, alerts }) {
+function DefaultPageTemplate({ children, fullScreen, focusHeader, alerts }) {
   const contentAreaClasses = classNames({
     'DefaultPageTemplate-contentArea': true,
     'DefaultPageTemplate-contentArea--fullScreen': fullScreen
@@ -38,7 +38,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
 
   return (
     <div className="DefaultPageTemplate">
-      <DefaultPageHeader />
+      <DefaultPageHeader focusContent={focusHeader} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
           {!!alerts?.length && (
@@ -49,7 +49,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
           {children}
         </div>
       </main>
-      <DefaultPageFooter />
+      {!focusHeader && <DefaultPageFooter />}
       <ConsentDialog />
     </div>
   );
@@ -63,13 +63,15 @@ DefaultPageTemplate.propTypes = {
     onClose: PropTypes.func
   })),
   children: PropTypes.node,
-  fullScreen: PropTypes.bool
+  fullScreen: PropTypes.bool,
+  focusHeader: PropTypes.node
 };
 
 DefaultPageTemplate.defaultProps = {
   alerts: [],
   children: null,
-  fullScreen: false
+  fullScreen: false,
+  focusHeader: null
 };
 
 export default DefaultPageTemplate;
